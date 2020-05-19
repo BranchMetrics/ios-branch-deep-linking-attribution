@@ -456,7 +456,7 @@
     if (self.preferenceHelper.instrumentationDictionary.count && [reqType isEqualToString:@"POST"]) {
         fullParamDict[BRANCH_REQUEST_KEY_INSTRUMENTATION] = self.preferenceHelper.instrumentationDictionary;
     }
-   
+    
     return fullParamDict;
 }
 
@@ -529,6 +529,11 @@
         [self safeSetValue:deviceInfo.applicationVersion forKey:@"app_version" onDict:dict];
         [self safeSetValue:deviceInfo.pluginName forKey:@"plugin_name" onDict:dict];
         [self safeSetValue:deviceInfo.pluginVersion forKey:@"plugin_version" onDict:dict];
+        
+        BOOL disableAdNetworkCallouts = self.preferenceHelper.disableAdNetworkCallouts;
+        if (disableAdNetworkCallouts) {
+            [dict setObject:[NSNumber numberWithBool:disableAdNetworkCallouts] forKey:@"disable_ad_network_callouts"];
+        }
     }
 }
 

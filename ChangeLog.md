@@ -1,5 +1,23 @@
 Branch iOS SDK Change Log
 
+- v0.33.1
+* _*Master Release*_ - April 16, 2020
+  * SDK-957 Carthage missing BranchScene.h
+
+- v0.33.0
+* _*Master Release*_ - April 9, 2020
+  * SDK-938, SDK-937, SDK-934 Logging API updates
+  * SDK-870 Deeplink handler with UIScene
+  * Xcode 11+ is now required.  Apple will no longer accept submissions from older versions.
+
+- v0.32.0
+* _*Master Release*_ - March 26, 2020
+  * SDK-842 - disableAdNetworkCallouts
+  * SDK-777 - BranchEvent logEvent with callback
+  * SDK-114 - remove cert pinning
+  * SDK-422 - replace MD5 with SHA256 for caching objects. Prevents security scanner false alarms.
+  * INTENG-8758 - restore previous behavior of always returning on main
+
 - v0.31.4
 * _*Master Release*_ - Feb 3, 2020
   * INTENG-8456 Sharesheet placeholder URL override.  Allows more customization of iOS 13 sharesheet preview header.

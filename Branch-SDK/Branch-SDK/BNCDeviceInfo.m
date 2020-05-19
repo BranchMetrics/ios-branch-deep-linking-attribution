@@ -32,8 +32,6 @@
 
 @interface BNCDeviceInfo()
 
-@property (nonatomic, strong, readwrite) BNCReachability *reachability;
-
 @property (nonatomic, copy, readwrite) NSString *randomId;
 
 @end
@@ -65,36 +63,34 @@
 }
 
 - (void)loadDeviceInfo {
-    
+
     BNCLocale *locale = [BNCLocale new];
     BNCDeviceSystem *deviceSystem = [BNCDeviceSystem new];
-    
-    self.reachability = [BNCReachability new];
-    
+
     // The random id is regenerated per app launch.  This maintains existing behavior.
     self.randomId = [[NSUUID UUID] UUIDString];
     self.vendorId = [BNCSystemObserver getVendorId];
     [self checkAdvertisingIdentifier];
-    
+
     self.brandName = [BNCSystemObserver getBrand];
     self.modelName = [BNCSystemObserver getModel];
     self.osName = [BNCSystemObserver getOS];
     self.osVersion = [BNCSystemObserver getOSVersion];
     self.osBuildVersion = deviceSystem.systemBuildVersion;
-    
+
     if (deviceSystem.cpuType) {
         self.cpuType = [deviceSystem.cpuType stringValue];
     }
-    
+
     self.screenWidth = [BNCSystemObserver getScreenWidth];
     self.screenHeight = [BNCSystemObserver getScreenHeight];
     self.screenScale = @([UIScreen mainScreen].scale);
-    
+
     #if !TARGET_OS_TV
     BNCTelephony *telephony = [BNCTelephony new];
     self.carrierName = telephony.carrierName;
     #endif
-    
+
     self.locale = [NSLocale currentLocale].localeIdentifier;
     self.country = [locale country];
     self.language = [locale language];
@@ -120,7 +116,7 @@
 }
 
 - (NSString *)connectionType {
-    return [self.reachability reachabilityStatus];
+    return [[BNCReachability shared] reachabilityStatus];
 }
 
 - (NSString *)userAgentString {
@@ -137,17 +133,17 @@
     self.isAdTrackingEnabled = [BNCSystemObserver adTrackingSafe];
     self.advertiserId = [BNCSystemObserver getAdId];
     BOOL ignoreIdfa = [BNCPreferenceHelper preferenceHelper].isDebug;
-    
+
     if (self.advertiserId && !ignoreIdfa) {
         self.hardwareId = self.advertiserId;
         self.hardwareIdType = @"idfa";
         self.isRealHardwareId = YES;
-    
+
     } else if (self.vendorId) {
         self.hardwareId = self.vendorId;
         self.hardwareIdType = @"vendor_id";
         self.isRealHardwareId = YES;
-        
+
     } else {
         self.hardwareId = self.randomId;
         self.hardwareIdType = @"random";
@@ -159,19 +155,24 @@
     NSMutableDictionary *dictionary = [NSMutableDictionary new];
     @synchronized (self) {
         [self checkAdvertisingIdentifier];
-        
+
+        BOOL disableAdNetworkCallouts = [BNCPreferenceHelper preferenceHelper].disableAdNetworkCallouts;
+        if (disableAdNetworkCallouts) {
+            dictionary[@"disable_ad_network_callouts"] = [NSNumber numberWithBool:disableAdNetworkCallouts];
+        }
+
         if ([BNCPreferenceHelper preferenceHelper].isDebug) {
             dictionary[@"unidentified_device"] = @(YES);
         } else {
             [dictionary bnc_safeSetObject:self.vendorId forKey:@"idfv"];
             [dictionary bnc_safeSetObject:self.advertiserId forKey:@"idfa"];
         }
-        [dictionary bnc_safeSetObject:[BNCNetworkInterface localIPAddress] forKey:@"local_ip"];
-        
+        [dictionary bnc_safeSetObject:[self localIPAddress] forKey:@"local_ip"];
+
         if (!self.isAdTrackingEnabled) {
             dictionary[@"limit_ad_tracking"] = @(YES);
         }
-        
+
         if ([BNCPreferenceHelper preferenceHelper].limitFacebookTracking) {
             dictionary[@"limit_facebook_tracking"] = @(YES);
         }
@@ -190,16 +191,13 @@
         [dictionary bnc_safeSetObject:self.language forKey:@"language"];
         [dictionary bnc_safeSetObject:self.carrierName forKey:@"device_carrier"];
         [dictionary bnc_safeSetObject:[self connectionType] forKey:@"connection_type"];
-        
-        #if !TARGET_OS_TV
-        [dictionary bnc_safeSetObject:[BNCUserAgentCollector instance].userAgent forKey:@"user_agent"];
-        #endif
-        
+        [dictionary bnc_safeSetObject:[self userAgentString] forKey:@"user_agent"];
+
         [dictionary bnc_safeSetObject:[BNCPreferenceHelper preferenceHelper].userIdentity forKey:@"developer_identity"];
         [dictionary bnc_safeSetObject:[BNCPreferenceHelper preferenceHelper].deviceFingerprintID forKey:@"device_fingerprint_id"];
-        
+
         [dictionary bnc_safeSetObject:self.applicationVersion forKey:@"app_version"];
-        
+
         [dictionary bnc_safeSetObject:self.pluginName forKey:@"plugin_name"];
         [dictionary bnc_safeSetObject:self.pluginVersion forKey:@"plugin_version"];
         dictionary[@"sdk_version"] = BNC_SDK_VERSION;
