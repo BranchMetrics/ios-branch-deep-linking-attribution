@@ -121,7 +121,7 @@ static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstIns
     
     #if !TARGET_OS_TV
     // tvOS always returns a creation date of Unix epoch 0 on device
-    installDate = [self creationDateForDirectory:NSLibraryDirectory displayName:@"Library"];
+    installDate = [self creationDateForLibraryDirectory];
     #endif
     
     if (installDate == nil || [installDate timeIntervalSince1970] <= 0.0) {
@@ -130,13 +130,13 @@ static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstIns
     return installDate;
 }
 
-+ (NSDate *)creationDateForDirectory:(NSSearchPathDirectory) directory displayName:(NSString *)displayName {
++ (NSDate *)creationDateForLibraryDirectory {
     NSError *error = nil;
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSURL *directoryURL = [[fileManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] firstObject];
+    NSURL *directoryURL = [[fileManager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
     NSDictionary *attributes = [fileManager attributesOfItemAtPath:directoryURL.path error:&error];
     if (error) {
-        BNCLogError(@"Can't get creation date for %@ directory: %@", displayName, error);
+        BNCLogError(@"Can't get creation date for Library directory: %@", error);
        return nil;
     }
     return [attributes fileCreationDate];
