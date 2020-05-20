@@ -911,27 +911,35 @@ NSURL* _Null_unspecified BNCCreateDirectoryForBranchURLWithSearchPath_Unthreaded
         if (success) {
             return branchURL;
         } else  {
-            BNCLogWarning(@"CreateBranchURL failed: %@ URL: %@.", error, branchURL);
+            // BNCLog is dependent on BNCCreateDirectoryForBranchURLWithSearchPath_Unthreaded and cannot be used to log errors from it.
+            NSLog(@"CreateBranchURL failed: %@ URL: %@.", error, branchURL);
         }
     }
     return nil;
 }
 
 NSURL* _Nonnull BNCURLForBranchDirectory_Unthreaded() {
+    #if TARGET_OS_TV
+    // tvOS only allows the caches or temp directory
+    NSArray *kSearchDirectories = @[
+        @(NSCachesDirectory)
+    ];
+    #else
     NSArray *kSearchDirectories = @[
         @(NSApplicationSupportDirectory),
         @(NSLibraryDirectory),
         @(NSCachesDirectory),
         @(NSDocumentDirectory),
     ];
-
+    #endif
+    
     for (NSNumber *directory in kSearchDirectories) {
         NSSearchPathDirectory directoryValue = [directory unsignedLongValue];
         NSURL *URL = BNCCreateDirectoryForBranchURLWithSearchPath_Unthreaded(directoryValue);
         if (URL) return URL;
     }
 
-    //  Worst case backup plan:
+    //  Worst case backup plan.  This does NOT work on tvOS.
     NSString *path = [@"~/Library/io.branch" stringByExpandingTildeInPath];
     NSURL *branchURL = [NSURL fileURLWithPath:path isDirectory:YES];
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -943,7 +951,8 @@ NSURL* _Nonnull BNCURLForBranchDirectory_Unthreaded() {
             attributes:nil
             error:&error];
     if (!success) {
-        BNCLogError(@"Worst case CreateBranchURL error was: %@ URL: %@.", error, branchURL);
+        // BNCLog is dependent on BNCURLForBranchDirectory_Unthreaded and cannot be used to log errors from it.
+        NSLog(@"Worst case CreateBranchURL error was: %@ URL: %@.", error, branchURL);
     }
     return branchURL;
 }
