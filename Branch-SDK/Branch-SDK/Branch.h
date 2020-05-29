@@ -36,6 +36,7 @@
 #import "BranchScene.h"
 
 #if !TARGET_OS_TV
+// tvOS does not support these features
 #import "BranchShareLink.h"
 #import "BranchActivityItemProvider.h"
 #import "BranchCSSearchableItemAttributeSet.h"
