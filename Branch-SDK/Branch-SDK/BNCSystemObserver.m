@@ -142,7 +142,11 @@
 }
 
 + (NSString *)getOS {
+    #if TARGET_OS_TV
+    return @"tv_OS";
+    #else
     return @"iOS";
+    #endif
 }
 
 + (NSString *)getOSVersion {

@@ -26,7 +26,7 @@
 
 - (nullable NSString *)countryOS10 {
     NSString *country = nil;
-    if (@available(iOS 10, *)) {
+    if (@available(iOS 10, tvOS 10, *)) {
         country = [[NSLocale currentLocale] countryCode];
     }
     return country;
@@ -63,7 +63,7 @@
 
 - (nullable NSString *)languageOS10 {
     NSString *language = nil;
-    if (@available(iOS 10, *)) {
+    if (@available(iOS 10, tvOS 10, *)) {
         language = [[NSLocale currentLocale] languageCode];
     }
     return language;
@@ -71,7 +71,7 @@
 
 - (nullable NSString *)languageOS9 {
     NSString *language = nil;
-    if (@available(iOS 9, *)) {
+    if (@available(iOS 9, tvOS 9, *)) {
         NSString *rawLanguage = [[NSLocale preferredLanguages] firstObject];
         NSDictionary *languageDictionary = [NSLocale componentsFromLocaleIdentifier:rawLanguage];
         language = [languageDictionary objectForKey:@"kCFLocaleLanguageCodeKey"];

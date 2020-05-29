@@ -9,10 +9,14 @@
 #import "BranchShareLink.h"
 #import "BranchConstants.h"
 #import "BranchActivityItemProvider.h"
-#import "BNCUserAgentCollector.h"
 #import "BNCAvailability.h"
 #import "BNCLog.h"
 #import "Branch.h"
+
+#if !TARGET_OS_TV
+#import "BNCUserAgentCollector.h"
+#endif
+
 @class BranchShareActivityItem;
 
 typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
@@ -278,7 +282,9 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     ]];
     NSString *userAgentString = nil;
     if (self.linkProperties.channel && [scrapers containsObject:self.linkProperties.channel]) {
+        #if !TARGET_OS_TV
         userAgentString = [BNCUserAgentCollector instance].userAgent;
+        #endif
     }
     NSString *URLString =
         [[Branch getInstance]

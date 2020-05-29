@@ -15,18 +15,22 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.license          = 'MIT'
   s.author           = { "Branch" => "support@branch.io" }
   s.source           = { git: "https://github.com/BranchMetrics/ios-branch-deep-linking-attribution", tag: s.version.to_s }
-  s.platform         = :ios, '8.0'
-  s.requires_arc     = true
+  s.ios.deployment_target = '8.0'
+  s.tvos.deployment_target = '9.0'
 
-  source_files =
-    "Branch-SDK/Branch-SDK/*.{h,m}",
-    "Branch-SDK/Branch-SDK/Networking/*.{h,m}",
-    "Branch-SDK/Branch-SDK/Networking/Requests/*.{h,m}",
-  s.default_subspec = 'Core'
+  s.ios.source_files = "Branch-SDK/Branch-SDK/*.{h,m}", "Branch-SDK/Branch-SDK/Networking/*.{h,m}", "Branch-SDK/Branch-SDK/Networking/Requests/*.{h,m}"
 
-  s.subspec 'Core' do |core|
-    core.source_files = source_files
-    core.frameworks = 'AdSupport', 'WebKit', 'iAd', 'SystemConfiguration', 'CoreTelephony', 'CoreServices'
-  end
+  s.tvos.source_files = "Branch-SDK/Branch-SDK/*.{h,m}","Branch-SDK/Branch-SDK/Networking/*.{h,m}","Branch-SDK/Branch-SDK/Networking/Requests/*.{h,m}"
+  s.tvos.exclude_files = "Branch-SDK/Branch-SDK/BNCAdClient.{h,m}",
+	"Branch-SDK/Branch-SDK/BNCAppleSearchAds.{h,m}",
+	"Branch-SDK/Branch-SDK/BNCContentDiscoveryManager.{h,m}",
+	"Branch-SDK/Branch-SDK/BNCTelephony.{h,m}",
+	"Branch-SDK/Branch-SDK/BNCUserAgentCollector.{h,m}",
+	"Branch-SDK/Branch-SDK/BNCSpotlightService.{h,m}",
+	"Branch-SDK/Branch-SDK/BranchActivityItemProvider.{h,m}",
+	"Branch-SDK/Branch-SDK/BranchCSSearchableItemAttributeSet.{h,m}",
+	"Branch-SDK/Branch-SDK/BranchShareLink.{h,m}"
 
+  s.frameworks = 'AdSupport', 'CoreServices', 'SystemConfiguration'
+  s.ios.frameworks = 'WebKit', 'iAd', 'CoreTelephony'
 end
