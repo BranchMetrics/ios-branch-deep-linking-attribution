@@ -18,6 +18,7 @@
 #import "BNCDeviceSystem.h"
 
 #if !TARGET_OS_TV
+// tvOS does not support webkit or telephony
 #import "BNCTelephony.h"
 #import "BNCUserAgentCollector.h"
 #endif
@@ -123,7 +124,7 @@
     #if !TARGET_OS_TV
     return [BNCUserAgentCollector instance].userAgent;
     #else
-    // tvOS has not web browser or webview
+    // tvOS has no web browser or webview
     return @"";
     #endif
 }
