@@ -116,38 +116,48 @@ static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstIns
     return firstBuildDate;
 }
 
-+ (NSDate*) currentInstallDate {
-    NSError *error = nil;
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSURL *libraryURL =
-        [[fileManager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
-    NSDictionary *attributes = [fileManager attributesOfItemAtPath:libraryURL.path error:&error];
-    if (error) {
-        BNCLogError(@"Can't get library date: %@.", error);
-        return nil;
-    }
-    NSDate *installDate = [attributes fileCreationDate];
++ (NSDate *) currentInstallDate {
+    NSDate *installDate = [NSDate date];
+    
+    #if !TARGET_OS_TV
+    // tvOS always returns a creation date of Unix epoch 0 on device
+    installDate = [self creationDateForLibraryDirectory];
+    #endif
+    
     if (installDate == nil || [installDate timeIntervalSince1970] <= 0.0) {
-        BNCLogError(@"Invalid install date.");
+        BNCLogWarning(@"Invalid install date, using [NSDate date].");
     }
     return installDate;
 }
 
-+ (NSDate*) firstInstallDate {
++ (NSDate *)creationDateForLibraryDirectory {
     NSError *error = nil;
-    NSDate* firstInstallDate =
-        [BNCKeyChain retrieveValueForService:kBranchKeychainService
-            key:kBranchKeychainFirstInstalldKey
-            error:&error];
-    if (firstInstallDate)
-        return firstInstallDate;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSURL *directoryURL = [[fileManager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
+    NSDictionary *attributes = [fileManager attributesOfItemAtPath:directoryURL.path error:&error];
+    if (error) {
+        BNCLogError(@"Can't get creation date for Library directory: %@", error);
+       return nil;
+    }
+    return [attributes fileCreationDate];
+}
 
++ (NSDate*) firstInstallDate {
+    // check keychain for stored install date, on iOS this is lost on app deletion.
+    NSError *error = nil;
+    NSDate* firstInstallDate = [BNCKeyChain retrieveValueForService:kBranchKeychainService key:kBranchKeychainFirstInstalldKey error:&error];
+    if (firstInstallDate) {
+        return firstInstallDate;
+    }
+    
+    // check filesytem for creation date
     firstInstallDate = [self currentInstallDate];
-    error = [BNCKeyChain storeValue:firstInstallDate
-        forService:kBranchKeychainService
-        key:kBranchKeychainFirstInstalldKey
-        cloudAccessGroup:nil];
-    if (error) BNCLogError(@"Keychain store: %@.", error);
+    
+    // save filesystem time to keychain
+    error = [BNCKeyChain storeValue:firstInstallDate forService:kBranchKeychainService key:kBranchKeychainFirstInstalldKey cloudAccessGroup:nil];
+    if (error) {
+        BNCLogError(@"Keychain store: %@.", error);
+    }
     return firstInstallDate;
 }
 

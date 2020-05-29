@@ -13,7 +13,10 @@
 #import "BNCLocalization.h"
 #import "BNCEncodingUtils.h"
 #import "Branch.h"
+
+#if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
+#endif
 
 #pragma mark BranchContentSchema
 
@@ -293,9 +296,13 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         if (callback) callback([[NSDictionary alloc] init], error);
         return;
     }
+    
+    #if !TARGET_OS_TV
     if (self.locallyIndex) {
         [self listOnSpotlight];
     }
+    #endif
+    
     [[BranchEvent standardEvent:BranchStandardEventViewItem withContentItem:self] logEvent];
     if (callback) callback(@{}, nil);
 }
@@ -317,8 +324,11 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         actionPayload[self.canonicalIdentifier] = linkParams;
         if (state) [actionPayload addEntriesFromDictionary:state];
 
-        if ([action isEqualToString:BNCRegisterViewEvent])
+        #if !TARGET_OS_TV
+        if ([action isEqualToString:BNCRegisterViewEvent]) {
             [self listOnSpotlight];
+        }
+        #endif
     }
 }
 
@@ -369,7 +379,11 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     }
     
     // user agent should be cached on startup
-    NSString *UAString = [BNCUserAgentCollector instance].userAgent;
+    NSString *UAString = nil;
+    #if !TARGET_OS_TV
+    UAString = [BNCUserAgentCollector instance].userAgent;
+    #endif
+    
     return [[Branch getInstance] getShortURLWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties]
                                         andTags:linkProperties.tags
                                      andChannel:linkProperties.channel
@@ -398,6 +412,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 }
 
 #pragma mark - Share Sheets
+#if !TARGET_OS_TV
 
 - (UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(BranchLinkProperties *)linkProperties {
     if (!self.canonicalIdentifier && !self.canonicalUrl && !self.title) {
@@ -609,6 +624,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         if (completion) completion(error);
     }
 }
+#endif
 
 #pragma mark - Dictionary Methods
 

@@ -192,7 +192,7 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
                                     andAlias:(nullable NSString *)alias;
 
 /// @name Share Sheet Handling
-
+#if !TARGET_OS_TV
 
 - (nullable UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(nonnull BranchLinkProperties *)linkProperties;
 
@@ -243,6 +243,8 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
                                                             NSError * _Nullable error))completion;
 
 - (void)removeFromSpotlightWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion;
+
+#endif
 
 - (NSDictionary*_Nonnull)getDictionaryWithCompleteLinkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
 - (NSDictionary*_Nonnull)getParamsForServerRequestWithAddedLinkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
