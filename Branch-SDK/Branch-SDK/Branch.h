@@ -1091,7 +1091,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  
- @param window attribution window in days.  If the window is outside the server supported range, it will default to 30 days.
+ @param window attribution window in days.  If the window is 0 or outside the server supported range, it will default to 30 days.
  @param completion callback with attribution data
  */
 - (void)lastAttributedTouchDataWithAttributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData * _Nullable latd))completion;
