@@ -44,7 +44,8 @@ nano ChangeLog.md
 # Pre-release CocoaPod lint
 echo ">>> Linting build for release..." 1>&2
 
-pod lib lint Branch.podspec --verbose
+# allow warnings, tvOS lint is warning about signing the validation app
+pod lib lint Branch.podspec --verbose --allow-warnings
 
 # Build the framework
 echo ">>> Building the framework..." 1>&2

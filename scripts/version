@@ -31,7 +31,7 @@ Options:
 USAGE
 }
 
-version=0.33.1
+version=0.34.0
 
 if (( $# == 0 )); then
     echo $version
@@ -101,14 +101,16 @@ fi
 if [[ $update ]]; then
 
     # Update the SDK version:
-    sed -i '' -e "/BNC_SDK_VERSION/ {s/\".*\"/\"$version\"/; }" ../Branch-SDK/Branch-SDK/BNCConfig.m
+    sed -i '' -e "/BNC_SDK_VERSION/ {s/\".*\"/\"$version\"/; }" ../Branch-SDK/BNCConfig.m
 
     # Update the Podspec version:
     sed -i '' -e "/^[[:space:]]*s\.version/ {s/\".*\"/\"$version\"/; }" ../Branch.podspec
 
     # Update the Carthage version:
-    plutil -replace CFBundleVersion -string "$version"  ../carthage-files/Info.plist
-    plutil -replace CFBundleShortVersionString -string "$version"  ../carthage-files/Info.plist
+    plutil -replace CFBundleVersion -string "$version"  ../carthage-files/Branch/Info.plist
+    plutil -replace CFBundleShortVersionString -string "$version"  ../carthage-files/Branch/Info.plist
+    plutil -replace CFBundleVersion -string "$version"  ../carthage-files/Branch-tvOS/Info.plist
+    plutil -replace CFBundleShortVersionString -string "$version"  ../carthage-files/Branch-tvOS/Info.plist
 
     # Update the Carthage version:
     plutil -replace CFBundleVersion -string "$version"  ../Branch-TestBed/Framework-Info.plist
