@@ -1,5 +1,12 @@
 Branch iOS SDK Change Log
 
+- v0.34.0
+* _*Master Release*_ - June 1, 2020
+  * SDK-989 tvOS support
+  * SDK-1004 clarify LATD API description
+  * SDK-977 remove CircleCI
+  * SDK-989 correct error message when disable tracking is enabled
+
 - v0.33.1
 * _*Master Release*_ - April 16, 2020
   * SDK-957 Carthage missing BranchScene.h

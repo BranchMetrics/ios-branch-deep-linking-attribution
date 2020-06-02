@@ -1,0 +1,8 @@
+framework module Branch {
+    umbrella header "Branch.h"
+
+    export *
+    module * { export * }
+
+    link framework "MobileCoreServices"
+}
