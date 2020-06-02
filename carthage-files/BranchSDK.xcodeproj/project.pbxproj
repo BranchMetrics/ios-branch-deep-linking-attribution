@@ -501,7 +501,7 @@
 				4D9607F81FBF9633008AB3C2 /* UIViewController+Branch.m */,
 			);
 			name = "Branch-SDK";
-			path = "../Branch-SDK/Branch-SDK";
+			path = "../Branch-SDK";
 			sourceTree = "<group>";
 		};
 		E298D0481C73D1B800589D22 = {
