@@ -72,7 +72,7 @@ echo '>>> Commit and tag...' 1>&2
 ./scripts/deploy-git-tag
 
 echo '>>> Pushing Branch CocoaPod...' 1>&2
-pod trunk push Branch.podspec
+pod trunk push Branch.podspec --allow-warnings
 
 echo '>>> Uploading to AWS...' 1>&2
 ./scripts/deploy-aws
