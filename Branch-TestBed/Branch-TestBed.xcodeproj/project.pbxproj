@@ -1048,7 +1048,7 @@
 				5FE693F62405E91500E3AEE2 /* BNCCallbackMap.m */,
 			);
 			name = "Branch-SDK";
-			path = "../Branch-SDK/Branch-SDK";
+			path = "../Branch-SDK";
 			sourceTree = "<group>";
 		};
 		7D0C97081D875177004E14B1 /* BranchContentDiscovery */ = {
