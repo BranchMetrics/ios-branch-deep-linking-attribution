@@ -487,7 +487,7 @@
 				4DAB177B1EE8A31B0079EEB4 /* BNCServerResponse.m */,
 				4DAB177C1EE8A31B0079EEB4 /* Requests */,
 			);
-			path = Networking;
+			name = Networking;
 			sourceTree = "<group>";
 		};
 		4DAB177C1EE8A31B0079EEB4 /* Requests */ = {
@@ -524,7 +524,7 @@
 				4DAB17951EE8A31B0079EEB4 /* BranchUserCompletedActionRequest.h */,
 				4DAB17961EE8A31B0079EEB4 /* BranchUserCompletedActionRequest.m */,
 			);
-			path = Requests;
+			name = Requests;
 			sourceTree = "<group>";
 		};
 		5FC4CFA02486123F0001E701 /* Branch-tvOS */ = {

@@ -18,9 +18,9 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.ios.deployment_target = '8.0'
   s.tvos.deployment_target = '9.0'
 
-  s.ios.source_files = "Branch-SDK/*.{h,m}", "Branch-SDK/Networking/*.{h,m}", "Branch-SDK/Networking/Requests/*.{h,m}"
+  s.ios.source_files = "Branch-SDK/*.{h,m}""
 
-  s.tvos.source_files = "Branch-SDK/*.{h,m}","Branch-SDK/Networking/*.{h,m}","Branch-SDK/Networking/Requests/*.{h,m}"
+  s.tvos.source_files = "Branch-SDK/*.{h,m}""
   s.tvos.exclude_files = "Branch-SDK/BNCAdClient.{h,m}",
 	"Branch-SDK/BNCAppleSearchAds.{h,m}",
 	"Branch-SDK/BNCContentDiscoveryManager.{h,m}",
