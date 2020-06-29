@@ -25,13 +25,12 @@
 
 @implementation BranchCSSearchableItemAttributeSet
 
-- (id)init {
+- (instancetype)init {
     return [self initWithItemContentType:kUTTypeGeneric];
 }
 
-- (id)initWithItemContentType:(NSString *)type {
-    NSString *typeOrDefault = type ?: (NSString *)kUTTypeGeneric;
-    if (self = [super initWithItemContentType:typeOrDefault]) {
+- (instancetype)initWithItemContentType:(nonnull NSString *)type {
+    if (self = [super initWithItemContentType:type]) {
         self.publiclyIndexable = YES;
     }
     return self;

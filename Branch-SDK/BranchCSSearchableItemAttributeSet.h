@@ -22,7 +22,8 @@
 
 @interface BranchCSSearchableItemAttributeSet : CSSearchableItemAttributeSet
 
-- (id)init;
+- (instancetype)init;
+- (instancetype)initWithItemContentType:(nonnull NSString *)type;
 
 - (void)indexWithCallback:(void (^) (NSString * url, NSString * spotlightIdentifier, NSError * error))callback;
 
