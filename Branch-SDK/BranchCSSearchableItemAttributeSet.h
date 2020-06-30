@@ -23,6 +23,11 @@
 @interface BranchCSSearchableItemAttributeSet : CSSearchableItemAttributeSet
 
 - (instancetype)init;
+
+#ifdef __IPHONE_14_0
+- (instancetype)initWithContentType:(nonnull UTType *)contentType NS_AVAILABLE(10_16, 14_0);
+#endif
+
 - (instancetype)initWithItemContentType:(nonnull NSString *)type;
 
 - (void)indexWithCallback:(void (^) (NSString * url, NSString * spotlightIdentifier, NSError * error))callback;

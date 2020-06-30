@@ -29,6 +29,15 @@
     return [self initWithItemContentType:kUTTypeGeneric];
 }
 
+#ifdef __IPHONE_14_0
+- (instancetype)initWithContentType:(nonnull UTType *)contentType {
+    if (self = [super initWithContentType:contentType]) {
+        self.publiclyIndexable = YES;
+    }
+    return self;
+}
+#endif
+
 - (instancetype)initWithItemContentType:(nonnull NSString *)type {
     if (self = [super initWithItemContentType:type]) {
         self.publiclyIndexable = YES;
