@@ -37,9 +37,8 @@
         self.ignoreCount++;
         return;
     }
-    
-    // Search Ads requires iOS 10+ but the API is iOS 9+
-    if (@available(iOS 9, *)) {
+
+    if (@available(iOS 10, *)) {
         [[ADClient sharedClient] requestAttributionDetailsWithBlock:completionHandler];
     }
 }

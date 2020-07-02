@@ -15,7 +15,7 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.license          = 'MIT'
   s.author           = { "Branch" => "support@branch.io" }
   s.source           = { git: "https://github.com/BranchMetrics/ios-branch-deep-linking-attribution", tag: s.version.to_s }
-  s.ios.deployment_target = '8.0'
+  s.ios.deployment_target = '9.0'
   s.tvos.deployment_target = '9.0'
 
   s.ios.source_files = "Branch-SDK/*.{h,m}", "Branch-SDK/Networking/*.{h,m}", "Branch-SDK/Networking/Requests/*.{h,m}"
