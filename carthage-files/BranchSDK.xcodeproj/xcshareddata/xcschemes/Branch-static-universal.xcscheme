@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5F19B4EA24B500D000D7D3CB"
-               BuildableName = "Branch-universal"
-               BlueprintName = "Branch-universal"
+               BlueprintIdentifier = "5F19B4E524B4FFBA00D7D3CB"
+               BuildableName = "Branch-static-universal"
+               BlueprintName = "Branch-static-universal"
                ReferencedContainer = "container:BranchSDK.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -50,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5F19B4EA24B500D000D7D3CB"
-            BuildableName = "Branch-universal"
-            BlueprintName = "Branch-universal"
+            BlueprintIdentifier = "5F19B4E524B4FFBA00D7D3CB"
+            BuildableName = "Branch-static-universal"
+            BlueprintName = "Branch-static-universal"
             ReferencedContainer = "container:BranchSDK.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
