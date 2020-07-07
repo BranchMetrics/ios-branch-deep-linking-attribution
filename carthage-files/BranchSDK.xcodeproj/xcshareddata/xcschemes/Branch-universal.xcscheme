@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5FC4CF9E2486123F0001E701"
-               BuildableName = "Branch.framework"
-               BlueprintName = "Branch-tvOS"
+               BlueprintIdentifier = "5F19B4EA24B500D000D7D3CB"
+               BuildableName = "Branch-universal"
+               BlueprintName = "Branch-universal"
                ReferencedContainer = "container:BranchSDK.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -31,7 +31,7 @@
       </Testables>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -50,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5FC4CF9E2486123F0001E701"
-            BuildableName = "Branch.framework"
-            BlueprintName = "Branch-tvOS"
+            BlueprintIdentifier = "5F19B4EA24B500D000D7D3CB"
+            BuildableName = "Branch-universal"
+            BlueprintName = "Branch-universal"
             ReferencedContainer = "container:BranchSDK.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
