@@ -5,19 +5,32 @@ set -euo pipefail
 #
 # Edward Smith, December 2016
 
+scriptname=$(basename "${BASH_SOURCE[0]}")
+scriptpath="${BASH_SOURCE[0]}"
+scriptpath=$(cd "$(dirname "${scriptpath}")" && pwd)
+cd ${scriptpath}/../carthage-files/output
 
 # Zip the SDK files
-echo '>>> Zipping Branch-iOS-SDK...' 1>&2
-zip -rqy Branch-iOS-SDK.zip Branch-SDK/ Branch.framework/
-
-echo '>>> Zipping Branch-iOS-TestBed...' 1>&2
-zip -rqy Branch-iOS-TestBed.zip Branch-SDK/ Branch-TestBed/ Branch.framework/
+echo "Zipping frameworks"
+zip -rqy Branch/Branch.zip Branch/Branch.framework/
+zip -rqy Branch-static/Branch-static.zip Branch-static/Branch.framework/
+zip -rqy Branch-tvOS/Branch-tvOS.zip Branch-tvOS/Branch.framework/
 
 # Checksum the zip files
-echo '>>> Creating checksum file...' 1>&2
+echo "Creating checksums"
 checksum_file=checksum
-echo '#checksum for Branch-iOS-SDK found at https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK.zip' > "$checksum_file"
-shasum Branch-iOS-SDK.zip >> $checksum_file
 
-echo '#checksum for Branch-iOS-TestBed found at https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-TestBed.zip' >> "$checksum_file"
-shasum Branch-iOS-TestBed.zip >> $checksum_file
+echo '#checksum for Branch.zip on Github' > "$checksum_file"
+shasum Branch/Branch.zip >> $checksum_file
+
+echo '#checksum for Branch-static.zip on Github' >> "$checksum_file"
+shasum Branch-static/Branch-static.zip >> $checksum_file
+
+echo '#checksum for Branch-tvOS.zip on Github' >> "$checksum_file"
+shasum Branch-tvOS/Branch-tvOS.zip >> $checksum_file
+
+# remove source frameworks
+echo "Cleaning up"
+rm -rf Branch/Branch.framework
+rm -rf Branch-static/Branch.framework
+rm -rf Branch-tvOS/Branch.framework

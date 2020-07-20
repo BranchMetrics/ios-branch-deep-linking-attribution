@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5FC4CF9E2486123F0001E701"
-               BuildableName = "Branch_tvOS.framework"
+               BuildableName = "Branch.framework"
                BlueprintName = "Branch-tvOS"
                ReferencedContainer = "container:BranchSDK.xcodeproj">
             </BuildableReference>
@@ -51,7 +51,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5FC4CF9E2486123F0001E701"
-            BuildableName = "Branch_tvOS.framework"
+            BuildableName = "Branch.framework"
             BlueprintName = "Branch-tvOS"
             ReferencedContainer = "container:BranchSDK.xcodeproj">
          </BuildableReference>
