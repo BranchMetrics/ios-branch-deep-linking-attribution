@@ -42,9 +42,6 @@ function checkVariable() {
     fi
 }
 
-# Check vim
-checkTool vim
-
 # Check Xcode
 checkApp Xcode
 
@@ -60,15 +57,8 @@ if ! git push --dry-run &> /dev/null; then
     wasError=1
 fi
 
-# Check AWS
-checkTool aws
-checkVariable AWS_ACCESS_KEY_ID
-checkVariable AWS_SECRET_ACCESS_KEY
-checkVariable AWS_DEFAULT_REGION
-
 # Check Google login
 #open 'https://groups.google.com/forum/#!newtopic/branch-sdk-releases'
-
 
 if [[ $wasError != 0 ]]; then
     echo ">>> Error: deploy-preflight failed." 1>&2
