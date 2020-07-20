@@ -20,21 +20,24 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface BranchCSSearchableItemAttributeSet : CSSearchableItemAttributeSet
 
 - (instancetype)init;
 
 #ifdef __IPHONE_14_0
-- (instancetype)initWithContentType:(nonnull UTType *)contentType NS_AVAILABLE(10_16, 14_0);
+- (instancetype)initWithContentType:(UTType *)contentType NS_AVAILABLE(10_16, 14_0);
 #endif
 
-- (instancetype)initWithItemContentType:(nonnull NSString *)type;
+- (instancetype)initWithItemContentType:(NSString *)type;
 
-- (void)indexWithCallback:(void (^) (NSString * url, NSString * spotlightIdentifier, NSError * error))callback;
+- (void)indexWithCallback:(void (^) (NSString * _Nullable url, NSString * _Nullable spotlightIdentifier, NSError * _Nullable error))callback;
 
-@property (nonatomic, strong) NSDictionary *params;
-@property (nonatomic, strong) NSSet *keywords;
+@property (nonatomic, strong, nullable) NSDictionary *params;
+@property (nonatomic, strong, nullable) NSSet *keywords;
 @property (nonatomic) BOOL publiclyIndexable; //!< Defaults to YES
 
 @end
 
+NS_ASSUME_NONNULL_END
