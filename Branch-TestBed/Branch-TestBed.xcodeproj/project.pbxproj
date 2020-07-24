@@ -678,7 +678,7 @@
 				4D130E561EE0C7B000A69A0A /* BNCServerResponse.m */,
 				4D130E571EE0C7B000A69A0A /* Requests */,
 			);
-			path = Networking;
+			name = Networking;
 			sourceTree = "<group>";
 		};
 		4D130E571EE0C7B000A69A0A /* Requests */ = {
@@ -715,7 +715,7 @@
 				5F909B6D2332B82200A774D2 /* BranchLATDRequest.h */,
 				5F909B6E2332B82200A774D2 /* BranchLATDRequest.m */,
 			);
-			path = Requests;
+			name = Requests;
 			sourceTree = "<group>";
 		};
 		4D16837A2098C901008819E3 /* Branch-SDK-Tests */ = {
