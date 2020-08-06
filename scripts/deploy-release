@@ -64,18 +64,11 @@ if ! ./scripts/askYN "Commit and deploy Branch release version ${version}?"; the
     exit 1
 fi
 
-#  Archive the framework files into a zip file:
-rm Branch.framework.zip || true
-ditto -c -k -v -V --sequesterRsrc --keepParent Branch.framework  Branch.framework.zip
-
 echo '>>> Commit and tag...' 1>&2
 ./scripts/deploy-git-tag
 
 echo '>>> Pushing Branch CocoaPod...' 1>&2
 pod trunk push Branch.podspec --allow-warnings
-
-echo '>>> Uploading to AWS...' 1>&2
-./scripts/deploy-aws
 
 # Prompts for SDK Release announcements
 ./scripts/deploy-announce
