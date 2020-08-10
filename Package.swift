@@ -19,7 +19,7 @@ let package = Package(
             name: "Branch",
             path: "Branch-SDK",
             cSettings: [
-            .headerSearchPath("Branch-SDK"),
+            .headerSearchPath("."),
             ]
         ),
     ]
