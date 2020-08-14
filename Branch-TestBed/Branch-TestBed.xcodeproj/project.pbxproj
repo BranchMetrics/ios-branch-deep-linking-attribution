@@ -237,6 +237,10 @@
 		5FC7326922D81002006E6FBC /* BNCAppleReceipt.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC7326722D81002006E6FBC /* BNCAppleReceipt.m */; };
 		5FC7327022DD1F93006E6FBC /* BNCAppleReceiptTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC7326F22DD1F93006E6FBC /* BNCAppleReceiptTests.m */; };
 		5FC7327722DE9A44006E6FBC /* BNCServerInterfaceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC7327622DE9A44006E6FBC /* BNCServerInterfaceTests.m */; };
+		5FDB04ED24E4D23300F2F267 /* BNCSKAdNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FDB04EB24E4D23300F2F267 /* BNCSKAdNetwork.h */; };
+		5FDB04EE24E4D23300F2F267 /* BNCSKAdNetwork.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FDB04EC24E4D23300F2F267 /* BNCSKAdNetwork.m */; };
+		5FDB04F024E4D27000F2F267 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FDB04EF24E4D27000F2F267 /* StoreKit.framework */; };
+		5FDB04F424E6156800F2F267 /* BNCSKAdNetworkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FDB04F324E6156800F2F267 /* BNCSKAdNetworkTests.m */; };
 		5FE276AF2432705B00EA1BD2 /* BNCInitSessionResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FE276AD2432705B00EA1BD2 /* BNCInitSessionResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FE276B02432705B00EA1BD2 /* BNCInitSessionResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FE276AE2432705B00EA1BD2 /* BNCInitSessionResponse.m */; };
 		5FE693F72405E91500E3AEE2 /* BNCCallbackMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FE693F52405E91500E3AEE2 /* BNCCallbackMap.h */; };
@@ -535,6 +539,10 @@
 		5FC7326722D81002006E6FBC /* BNCAppleReceipt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCAppleReceipt.m; sourceTree = "<group>"; };
 		5FC7326F22DD1F93006E6FBC /* BNCAppleReceiptTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCAppleReceiptTests.m; sourceTree = "<group>"; };
 		5FC7327622DE9A44006E6FBC /* BNCServerInterfaceTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCServerInterfaceTests.m; sourceTree = "<group>"; };
+		5FDB04EB24E4D23300F2F267 /* BNCSKAdNetwork.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCSKAdNetwork.h; sourceTree = "<group>"; };
+		5FDB04EC24E4D23300F2F267 /* BNCSKAdNetwork.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCSKAdNetwork.m; sourceTree = "<group>"; };
+		5FDB04EF24E4D27000F2F267 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk/System/iOSSupport/System/Library/Frameworks/StoreKit.framework; sourceTree = DEVELOPER_DIR; };
+		5FDB04F324E6156800F2F267 /* BNCSKAdNetworkTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCSKAdNetworkTests.m; sourceTree = "<group>"; };
 		5FE276AD2432705B00EA1BD2 /* BNCInitSessionResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCInitSessionResponse.h; sourceTree = "<group>"; };
 		5FE276AE2432705B00EA1BD2 /* BNCInitSessionResponse.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCInitSessionResponse.m; sourceTree = "<group>"; };
 		5FE693F52405E91500E3AEE2 /* BNCCallbackMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCCallbackMap.h; sourceTree = "<group>"; };
@@ -607,6 +615,7 @@
 				466B58521B17776500A69EDE /* Foundation.framework in Frameworks */,
 				4D1851C120180F3300E48994 /* Security.framework in Frameworks */,
 				466B58531B17776A00A69EDE /* UIKit.framework in Frameworks */,
+				5FDB04F024E4D27000F2F267 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -725,6 +734,7 @@
 				5F437E3F237E1A560052064B /* BNCDeviceSystemTests.m */,
 				5FE694372405FA2700E3AEE2 /* BNCCallbackMapTests.m */,
 				5F2035CB240DDE90004FDC3E /* BNCDisableAdNetworkCalloutsTests.m */,
+				5FDB04F324E6156800F2F267 /* BNCSKAdNetworkTests.m */,
 			);
 			path = "Branch-SDK-Tests";
 			sourceTree = "<group>";
@@ -801,6 +811,7 @@
 		670016621940F51400A9E103 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5FDB04EF24E4D27000F2F267 /* StoreKit.framework */,
 				5F92B2352383644C00CA909B /* SystemConfiguration.framework */,
 				5F437E37237DE1320052064B /* CoreTelephony.framework */,
 				5F205D04231864E800C776D1 /* WebKit.framework */,
@@ -910,6 +921,8 @@
 				5F5EC45A2374D95300AAAFC7 /* BNCAppleAdClient.m */,
 				5F892EB72360EFE90023AEC1 /* BNCAppleSearchAds.h */,
 				5F892EB62360EFE90023AEC1 /* BNCAppleSearchAds.m */,
+				5FDB04EB24E4D23300F2F267 /* BNCSKAdNetwork.h */,
+				5FDB04EC24E4D23300F2F267 /* BNCSKAdNetwork.m */,
 				5FC7326622D81002006E6FBC /* BNCAppleReceipt.h */,
 				5FC7326722D81002006E6FBC /* BNCAppleReceipt.m */,
 				4D59B51B2006979B00F89FD5 /* BNCApplication.h */,
@@ -1027,6 +1040,7 @@
 				F185BAAA1F3D30D70056300C /* BNCSpotlightService.h in Headers */,
 				4DCAC80F1F426F7C00405D1D /* BNCAvailability.h in Headers */,
 				5F38021024DCC2E800E6FAFD /* BranchCloseRequest.h in Headers */,
+				5FDB04ED24E4D23300F2F267 /* BNCSKAdNetwork.h in Headers */,
 				5F5EC45B2374D95300AAAFC7 /* BNCAppleAdClient.h in Headers */,
 				4D955CCC2035021400FB8008 /* BNCURLBlackList.h in Headers */,
 				5F38023824DCC2E800E6FAFD /* BranchContentDiscoverer.h in Headers */,
@@ -1363,6 +1377,7 @@
 				5F3D6714232C589100454FF1 /* BranchLastAttributedTouchData.m in Sources */,
 				4D8EE7A61E1F0A5D00B1F450 /* BNCCommerceEvent.m in Sources */,
 				5F08461223480008005B17E6 /* BNCTuneUtility.m in Sources */,
+				5FDB04EE24E4D23300F2F267 /* BNCSKAdNetwork.m in Sources */,
 				5F38021924DCC2E800E6FAFD /* BranchUserCompletedActionRequest.m in Sources */,
 				4DB328001FA10B9000ACF9B0 /* BranchDelegate.m in Sources */,
 				5F38022F24DCC2E800E6FAFD /* BranchSpotlightUrlRequest.m in Sources */,
@@ -1475,6 +1490,7 @@
 				4D1683B32098C902008819E3 /* BranchGetCreditHistoryRequestTests.m in Sources */,
 				5F892ECE23624E0A0023AEC1 /* BNCFacebookAppLinksTests.m in Sources */,
 				5FE694382405FA2700E3AEE2 /* BNCCallbackMapTests.m in Sources */,
+				5FDB04F424E6156800F2F267 /* BNCSKAdNetworkTests.m in Sources */,
 				4D1683BB2098C902008819E3 /* BranchShortUrlRequestTests.m in Sources */,
 				4D1683C32098C902008819E3 /* BranchLoadRewardsRequestTests.m in Sources */,
 				4D1683BA2098C902008819E3 /* BNCLog.Test.m in Sources */,
