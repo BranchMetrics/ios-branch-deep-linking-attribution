@@ -997,7 +997,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     #endif
 }
 
-- (void)setUpdateConversionValueMaxTimeInterval:(NSTimeInterval)maxTimeInterval {
+- (void)setSKAdNetworkCalloutMaxTimeSinceInstall:(NSTimeInterval)maxTimeInterval {
     [BNCSKAdNetwork sharedInstance].maxTimeSinceInstall = maxTimeInterval;
 }
 

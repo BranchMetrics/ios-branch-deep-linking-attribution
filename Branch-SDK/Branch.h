@@ -678,11 +678,11 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)ignoreAppleSearchAdsTestData;
 
 /**
- Adjust time window for SKAdNetwork callouts.  By default, Branch limits calls to SKAdNetwork to within 72 hours after first install.
+ Set time window for SKAdNetwork callouts.  By default, Branch limits calls to SKAdNetwork to within 72 hours after first install.
  
  Note: Branch does not automatically call SKAdNetwork unless configured on the dashboard.
  */
-- (void)setUpdateConversionValueMaxTimeInterval:(NSTimeInterval)maxTimeInterval;
+- (void)setSKAdNetworkCalloutMaxTimeSinceInstall:(NSTimeInterval)maxTimeInterval;
 
 /**
  Specify the time to wait in seconds between retries in the case of a Branch server error

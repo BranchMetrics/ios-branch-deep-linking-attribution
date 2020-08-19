@@ -9,9 +9,6 @@
 #import "BNCSKAdNetwork.h"
 #import "BNCApplication.h"
 
-// hard import for now, need this to be optional later
-// #import <StoreKit/SKAdNetwork.h>
-
 @interface BNCSKAdNetwork()
 
 @property (nonatomic, copy, readwrite) NSDate *installDate;
@@ -36,7 +33,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        // by default, we send updates to SKAdNetwork for 3 days after install
+        // by default, we send updates to SKAdNetwork for up to 3 days after install
         self.maxTimeSinceInstall = 3600.0 * 24.0 * 3.0;
         self.installDate = [BNCApplication currentApplication].currentInstallDate;
         
