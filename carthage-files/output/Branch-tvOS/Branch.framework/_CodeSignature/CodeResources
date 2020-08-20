@@ -66,11 +66,11 @@
 		</data>
 		<key>Headers/Branch.h</key>
 		<data>
-		XIitM6Fkakp8wRobgfY8P0go/aQ=
+		cBX7B3KhmRc7mHnv19TMqVAYa8k=
 		</data>
 		<key>Headers/BranchConstants.h</key>
 		<data>
-		XcgfbQRqG29hIWcy0sdsOxo9Gq8=
+		QuDMUqgrktAU6YCOgvXdPKRuy4g=
 		</data>
 		<key>Headers/BranchCrossPlatformID.h</key>
 		<data>
@@ -114,7 +114,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		xDvd922Elzkhv7ZZyFlzyEGwCak=
+		z7Mn2S+/CE7Goo0Pa+Bxot69a88=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -292,22 +292,22 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			XIitM6Fkakp8wRobgfY8P0go/aQ=
+			cBX7B3KhmRc7mHnv19TMqVAYa8k=
 			</data>
 			<key>hash2</key>
 			<data>
-			85EgBJnuUoS7fv09RR/v8gQiTWdIAmMOrGDu2jOlXxU=
+			/5Jrw5tKp1ZD/+VB2cy2FXY27z8GKRi8/w+HZQIsxbw=
 			</data>
 		</dict>
 		<key>Headers/BranchConstants.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			XcgfbQRqG29hIWcy0sdsOxo9Gq8=
+			QuDMUqgrktAU6YCOgvXdPKRuy4g=
 			</data>
 			<key>hash2</key>
 			<data>
-			eCqbRtjwOVwWgBhHz2FvwD0cXSWqgGcAE0CZypokGf4=
+			ReDSQm0TPpLXggLoRHyp8J3Cddt8+BngjeKzPDPBmQ8=
 			</data>
 		</dict>
 		<key>Headers/BranchCrossPlatformID.h</key>
