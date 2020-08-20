@@ -45,7 +45,7 @@
 }
 
 - (BOOL)shouldAttemptSKAdNetworkCallout {
-    if (self.installDate) {
+    if (self.installDate && self.skAdNetworkClass) {
         NSDate *now = [NSDate date];
         NSDate *maxDate = [self.installDate dateByAddingTimeInterval:self.maxTimeSinceInstall];
         if ([now compare:maxDate] == NSOrderedDescending) {
@@ -58,7 +58,7 @@
 }
 
 - (void)registerAppForAdNetworkAttribution {
-    if (@available(iOS 11.3, *)) {
+    if (@available(iOS 14.0, *)) {
         if ([self shouldAttemptSKAdNetworkCallout]) {
 
             // Equivalent call [SKAdNetwork registerAppForAdNetworkAttribution];
