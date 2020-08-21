@@ -338,6 +338,12 @@
 		5F92B2542387703700CA909B /* BNCNetworkInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F92B24A2387703600CA909B /* BNCNetworkInterface.m */; platformFilter = ios; };
 		5F92B2552387703700CA909B /* BNCLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F92B24B2387703600CA909B /* BNCLocale.h */; platformFilter = ios; };
 		5F92B2562387703700CA909B /* BNCTelephony.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F92B24C2387703600CA909B /* BNCTelephony.m */; platformFilter = ios; };
+		5F9FD26124EF31B000292D35 /* BNCSKAdNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F9FD25F24EF31B000292D35 /* BNCSKAdNetwork.h */; };
+		5F9FD26224EF31B000292D35 /* BNCSKAdNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F9FD25F24EF31B000292D35 /* BNCSKAdNetwork.h */; };
+		5F9FD26324EF31B000292D35 /* BNCSKAdNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F9FD25F24EF31B000292D35 /* BNCSKAdNetwork.h */; };
+		5F9FD26424EF31B000292D35 /* BNCSKAdNetwork.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F9FD26024EF31B000292D35 /* BNCSKAdNetwork.m */; };
+		5F9FD26524EF31B000292D35 /* BNCSKAdNetwork.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F9FD26024EF31B000292D35 /* BNCSKAdNetwork.m */; };
+		5F9FD26624EF31B000292D35 /* BNCSKAdNetwork.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F9FD26024EF31B000292D35 /* BNCSKAdNetwork.m */; };
 		5FB6D3D623219B48006C5094 /* BNCUserAgentCollector.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB6D3D223219B48006C5094 /* BNCUserAgentCollector.m */; platformFilter = ios; };
 		5FB6D3D723219B48006C5094 /* BNCUserAgentCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB6D3D323219B48006C5094 /* BNCUserAgentCollector.h */; platformFilter = ios; };
 		5FB6D3D823219B48006C5094 /* BNCAppleReceipt.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB6D3D423219B48006C5094 /* BNCAppleReceipt.h */; platformFilter = ios; };
@@ -587,6 +593,8 @@
 		5F92B24A2387703600CA909B /* BNCNetworkInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCNetworkInterface.m; sourceTree = "<group>"; };
 		5F92B24B2387703600CA909B /* BNCLocale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCLocale.h; sourceTree = "<group>"; };
 		5F92B24C2387703600CA909B /* BNCTelephony.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCTelephony.m; sourceTree = "<group>"; };
+		5F9FD25F24EF31B000292D35 /* BNCSKAdNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCSKAdNetwork.h; sourceTree = "<group>"; };
+		5F9FD26024EF31B000292D35 /* BNCSKAdNetwork.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSKAdNetwork.m; sourceTree = "<group>"; };
 		5FB6D3D223219B48006C5094 /* BNCUserAgentCollector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCUserAgentCollector.m; sourceTree = "<group>"; };
 		5FB6D3D323219B48006C5094 /* BNCUserAgentCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCUserAgentCollector.h; sourceTree = "<group>"; };
 		5FB6D3D423219B48006C5094 /* BNCAppleReceipt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCAppleReceipt.h; sourceTree = "<group>"; };
@@ -696,6 +704,8 @@
 		E230A1141D03DB9E006181D8 /* Branch-SDK */ = {
 			isa = PBXGroup;
 			children = (
+				5F9FD25F24EF31B000292D35 /* BNCSKAdNetwork.h */,
+				5F9FD26024EF31B000292D35 /* BNCSKAdNetwork.m */,
 				5F38024624DCE72D00E6FAFD /* BNCNetworkService.h */,
 				5F38024F24DCE72E00E6FAFD /* BNCNetworkService.m */,
 				5F38025524DCE72F00E6FAFD /* BNCNetworkServiceProtocol.h */,
@@ -931,6 +941,7 @@
 				5F19B4BB24B4F44B00D7D3CB /* BNCFacebookAppLinks.h in Headers */,
 				5F19B4BD24B4F44B00D7D3CB /* BranchLastAttributedTouchData.h in Headers */,
 				5F19B4BE24B4F44B00D7D3CB /* BranchContentPathProperties.h in Headers */,
+				5F9FD26224EF31B000292D35 /* BNCSKAdNetwork.h in Headers */,
 				5F19B4BF24B4F44B00D7D3CB /* BNCLocale.h in Headers */,
 				5F38029324DCE7A200E6FAFD /* BNCServerRequest.h in Headers */,
 				5F19B4C024B4F44B00D7D3CB /* BNCNetworkInterface.h in Headers */,
@@ -982,6 +993,7 @@
 				5FC4D06D248614840001E701 /* BNCCommerceEvent.h in Headers */,
 				5FC4D0172486145E0001E701 /* NSString+Branch.h in Headers */,
 				5FC4D0A7248614860001E701 /* BranchLinkProperties.h in Headers */,
+				5F9FD26324EF31B000292D35 /* BNCSKAdNetwork.h in Headers */,
 				5F38029824DCE7C000E6FAFD /* BNCNetworkService.h in Headers */,
 				5FC4D062248614830001E701 /* BNCThreads.h in Headers */,
 				5FC4D09C248614850001E701 /* BranchContentPathProperties.h in Headers */,
@@ -1092,6 +1104,7 @@
 				5F8FC23C236BB18A00B8474A /* BNCFacebookAppLinks.h in Headers */,
 				5F9071C3233D5FD5003AACAD /* BranchLastAttributedTouchData.h in Headers */,
 				7DA3BF211D889CE500CA8AE0 /* BranchContentPathProperties.h in Headers */,
+				5F9FD26124EF31B000292D35 /* BNCSKAdNetwork.h in Headers */,
 				5F92B2552387703700CA909B /* BNCLocale.h in Headers */,
 				5F38028624DCE73100E6FAFD /* BranchLATDRequest.h in Headers */,
 				5F92B2502387703700CA909B /* BNCNetworkInterface.h in Headers */,
@@ -1270,7 +1283,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Config\nTARGET_NAME=\"Branch-static\"\nFRAMEWORK_NAME=\"Branch\"\nSUFFIX=\"-static\"\nSDK=\"iphoneos\"\nSIMSDK=\"iphonesimulator\"\n\n# Build path without framework\nSIMULATOR_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-simulator${SUFFIX}\"\nUNSIGNED_SIMULATOR_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-simulator-unsigned${SUFFIX}\"\nDEVICE_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-device${SUFFIX}\"\nUNIVERSAL_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-universal${SUFFIX}\"\n\n# Build path with framework\nSIMULATOR_FRAMEWORK=\"${SIMULATOR_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nUNSIGNED_SIMULATOR_FRAMEWORK=\"${UNSIGNED_SIMULATOR_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nDEVICE_FRAMEWORK=\"${DEVICE_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nFRAMEWORK=\"${UNIVERSAL_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\n\n# Build simulator \nxcodebuild -project ${PROJECT_NAME}.xcodeproj BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -target ${TARGET_NAME} -sdk ${SIMSDK} -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-simulator${SUFFIX}\n\n# Build device\nxcodebuild -project ${PROJECT_NAME}.xcodeproj BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -target ${TARGET_NAME} -sdk ${SDK} -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-device${SUFFIX}\n\n# Remove signature from simulator\n# xcodebuild signs simulator as adhoc, remove it\nrm -rf \"${UNSIGNED_SIMULATOR_LIBRARY_DIR}\"\nmkdir \"${UNSIGNED_SIMULATOR_LIBRARY_DIR}\"\nmkdir \"${UNSIGNED_SIMULATOR_FRAMEWORK}\"\ncp -r \"${SIMULATOR_FRAMEWORK}/.\" \"${UNSIGNED_SIMULATOR_FRAMEWORK}/\"\n\ncodesign --remove-signature ${UNSIGNED_SIMULATOR_FRAMEWORK}\n\n# Create directory for universal\nrm -rf \"${UNIVERSAL_LIBRARY_DIR}\"\nmkdir \"${UNIVERSAL_LIBRARY_DIR}\"\nmkdir \"${FRAMEWORK}\"\n\n# Copy files Framework\ncp -r \"${DEVICE_FRAMEWORK}/.\" \"${FRAMEWORK}\"\n\n# Make an universal binary\nlipo \"${UNSIGNED_SIMULATOR_FRAMEWORK}/${FRAMEWORK_NAME}\" \"${DEVICE_FRAMEWORK}/${FRAMEWORK_NAME}\" -create -output \"${FRAMEWORK}/${FRAMEWORK_NAME}\" | echo\n\n# Copy finished binary to project\nrm -rf \"${PROJECT_DIR}/output/${TARGET_NAME}/${FRAMEWORK_NAME}.framework\"\ncp -r \"${FRAMEWORK}\" \"${PROJECT_DIR}/output/${TARGET_NAME}/\"\n";
+			shellScript = "# Config\nTARGET_NAME=\"Branch-static\"\nFRAMEWORK_NAME=\"Branch\"\nSUFFIX=\"-static\"\nSDK=\"iphoneos\"\nSIMSDK=\"iphonesimulator\"\n\n# Build path without framework\nSIMULATOR_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-simulator${SUFFIX}\"\nUNSIGNED_SIMULATOR_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-simulator-unsigned${SUFFIX}\"\nDEVICE_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-device${SUFFIX}\"\nUNIVERSAL_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-universal${SUFFIX}\"\n\n# Build path with framework\nSIMULATOR_FRAMEWORK=\"${SIMULATOR_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nUNSIGNED_SIMULATOR_FRAMEWORK=\"${UNSIGNED_SIMULATOR_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nDEVICE_FRAMEWORK=\"${DEVICE_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nFRAMEWORK=\"${UNIVERSAL_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\n\n# Build simulator \nxcodebuild -project ${PROJECT_NAME}.xcodeproj BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -target ${TARGET_NAME} -sdk ${SIMSDK} -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-simulator${SUFFIX}\n\n# Build device\nxcodebuild -project ${PROJECT_NAME}.xcodeproj BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -target ${TARGET_NAME} -sdk ${SDK} -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-device${SUFFIX}\n\n# Remove signature from simulator\n# xcodebuild signs simulator as adhoc, remove it\nrm -rf \"${UNSIGNED_SIMULATOR_LIBRARY_DIR}\"\nmkdir \"${UNSIGNED_SIMULATOR_LIBRARY_DIR}\"\nmkdir \"${UNSIGNED_SIMULATOR_FRAMEWORK}\"\ncp -r \"${SIMULATOR_FRAMEWORK}/.\" \"${UNSIGNED_SIMULATOR_FRAMEWORK}/\"\n\ncodesign --remove-signature ${UNSIGNED_SIMULATOR_FRAMEWORK}\n\n# Create directory for universal\nrm -rf \"${UNIVERSAL_LIBRARY_DIR}\"\nmkdir \"${UNIVERSAL_LIBRARY_DIR}\"\nmkdir \"${FRAMEWORK}\"\n\n# Copy files Framework\ncp -r \"${UNSIGNED_SIMULATOR_FRAMEWORK}/.\" \"${FRAMEWORK}\"\n\n# Make an universal binary\nlipo \"${UNSIGNED_SIMULATOR_FRAMEWORK}/${FRAMEWORK_NAME}\" \"${DEVICE_FRAMEWORK}/${FRAMEWORK_NAME}\" -create -output \"${FRAMEWORK}/${FRAMEWORK_NAME}\" | echo\n\n# Copy finished binary to project\nrm -rf \"${PROJECT_DIR}/output/${TARGET_NAME}/${FRAMEWORK_NAME}.framework\"\ncp -r \"${FRAMEWORK}\" \"${PROJECT_DIR}/output/${TARGET_NAME}/\"\n";
 		};
 		5F19B4F224B500F300D7D3CB /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1287,7 +1300,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Config\nTARGET_NAME=\"Branch\"\nFRAMEWORK_NAME=\"Branch\"\nSUFFIX=\"\"\nSDK=\"iphoneos\"\nSIMSDK=\"iphonesimulator\"\n\n# Build path without framework\nSIMULATOR_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-simulator${SUFFIX}\"\nUNSIGNED_SIMULATOR_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-simulator-unsigned${SUFFIX}\"\nDEVICE_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-device${SUFFIX}\"\nUNIVERSAL_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-universal${SUFFIX}\"\n\n# Build path with framework\nSIMULATOR_FRAMEWORK=\"${SIMULATOR_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nUNSIGNED_SIMULATOR_FRAMEWORK=\"${UNSIGNED_SIMULATOR_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nDEVICE_FRAMEWORK=\"${DEVICE_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nFRAMEWORK=\"${UNIVERSAL_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\n\n# Build simulator \nxcodebuild -project ${PROJECT_NAME}.xcodeproj BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -target ${TARGET_NAME} -sdk ${SIMSDK} -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-simulator${SUFFIX}\n\n# Build device\nxcodebuild -project ${PROJECT_NAME}.xcodeproj BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -target ${TARGET_NAME} -sdk ${SDK} -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-device${SUFFIX}\n\n# Remove signature from simulator\n# xcodebuild signs simulator as adhoc, remove it\nrm -rf \"${UNSIGNED_SIMULATOR_LIBRARY_DIR}\"\nmkdir \"${UNSIGNED_SIMULATOR_LIBRARY_DIR}\"\nmkdir \"${UNSIGNED_SIMULATOR_FRAMEWORK}\"\ncp -r \"${SIMULATOR_FRAMEWORK}/.\" \"${UNSIGNED_SIMULATOR_FRAMEWORK}/\"\n\ncodesign --remove-signature ${UNSIGNED_SIMULATOR_FRAMEWORK}\n\n# Create directory for universal\nrm -rf \"${UNIVERSAL_LIBRARY_DIR}\"\nmkdir \"${UNIVERSAL_LIBRARY_DIR}\"\nmkdir \"${FRAMEWORK}\"\n\n# Copy files Framework\ncp -r \"${DEVICE_FRAMEWORK}/.\" \"${FRAMEWORK}\"\n\n# Make an universal binary\nlipo \"${UNSIGNED_SIMULATOR_FRAMEWORK}/${FRAMEWORK_NAME}\" \"${DEVICE_FRAMEWORK}/${FRAMEWORK_NAME}\" -create -output \"${FRAMEWORK}/${FRAMEWORK_NAME}\" | echo\n\n# Copy finished binary to project\nrm -rf \"${PROJECT_DIR}/output/${TARGET_NAME}/${FRAMEWORK_NAME}.framework\"\ncp -r \"${FRAMEWORK}\" \"${PROJECT_DIR}/output/${TARGET_NAME}/\"\n";
+			shellScript = "# Config\nTARGET_NAME=\"Branch\"\nFRAMEWORK_NAME=\"Branch\"\nSUFFIX=\"\"\nSDK=\"iphoneos\"\nSIMSDK=\"iphonesimulator\"\n\n# Build path without framework\nSIMULATOR_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-simulator${SUFFIX}\"\nUNSIGNED_SIMULATOR_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-simulator-unsigned${SUFFIX}\"\nDEVICE_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-device${SUFFIX}\"\nUNIVERSAL_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-universal${SUFFIX}\"\n\n# Build path with framework\nSIMULATOR_FRAMEWORK=\"${SIMULATOR_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nUNSIGNED_SIMULATOR_FRAMEWORK=\"${UNSIGNED_SIMULATOR_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nDEVICE_FRAMEWORK=\"${DEVICE_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nFRAMEWORK=\"${UNIVERSAL_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\n\n# Build simulator \nxcodebuild -project ${PROJECT_NAME}.xcodeproj BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -target ${TARGET_NAME} -sdk ${SIMSDK} -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-simulator${SUFFIX}\n\n# Build device\nxcodebuild -project ${PROJECT_NAME}.xcodeproj BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -target ${TARGET_NAME} -sdk ${SDK} -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-device${SUFFIX}\n\n# Remove signature from simulator\n# xcodebuild signs simulator as adhoc, remove it\nrm -rf \"${UNSIGNED_SIMULATOR_LIBRARY_DIR}\"\nmkdir \"${UNSIGNED_SIMULATOR_LIBRARY_DIR}\"\nmkdir \"${UNSIGNED_SIMULATOR_FRAMEWORK}\"\ncp -r \"${SIMULATOR_FRAMEWORK}/.\" \"${UNSIGNED_SIMULATOR_FRAMEWORK}/\"\n\ncodesign --remove-signature ${UNSIGNED_SIMULATOR_FRAMEWORK}\n\n# Create directory for universal\nrm -rf \"${UNIVERSAL_LIBRARY_DIR}\"\nmkdir \"${UNIVERSAL_LIBRARY_DIR}\"\nmkdir \"${FRAMEWORK}\"\n\n# Copy files Framework\ncp -r \"${UNSIGNED_SIMULATOR_FRAMEWORK}/.\" \"${FRAMEWORK}\"\n\n# Make an universal binary\nlipo \"${UNSIGNED_SIMULATOR_FRAMEWORK}/${FRAMEWORK_NAME}\" \"${DEVICE_FRAMEWORK}/${FRAMEWORK_NAME}\" -create -output \"${FRAMEWORK}/${FRAMEWORK_NAME}\" | echo\n\n# Copy finished binary to project\nrm -rf \"${PROJECT_DIR}/output/${TARGET_NAME}/${FRAMEWORK_NAME}.framework\"\ncp -r \"${FRAMEWORK}\" \"${PROJECT_DIR}/output/${TARGET_NAME}/\"\n";
 		};
 		5F19B4F324B5018200D7D3CB /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1304,7 +1317,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Config\nTARGET_NAME=\"Branch-tvOS\"\nFRAMEWORK_NAME=\"Branch\"\nSUFFIX=\"-tvOS\"\nSDK=\"appletvos\"\nSIMSDK=\"appletvsimulator\"\n\n# Build path without framework\nSIMULATOR_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-simulator${SUFFIX}\"\nUNSIGNED_SIMULATOR_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-simulator-unsigned${SUFFIX}\"\nDEVICE_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-device${SUFFIX}\"\nUNIVERSAL_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-universal${SUFFIX}\"\n\n# Build path with framework\nSIMULATOR_FRAMEWORK=\"${SIMULATOR_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nUNSIGNED_SIMULATOR_FRAMEWORK=\"${UNSIGNED_SIMULATOR_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nDEVICE_FRAMEWORK=\"${DEVICE_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nFRAMEWORK=\"${UNIVERSAL_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\n\n# Build simulator \nxcodebuild -project ${PROJECT_NAME}.xcodeproj BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -target ${TARGET_NAME} -sdk ${SIMSDK} -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-simulator${SUFFIX}\n\n# Build device\nxcodebuild -project ${PROJECT_NAME}.xcodeproj BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -target ${TARGET_NAME} -sdk ${SDK} -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-device${SUFFIX}\n\n# Remove signature from simulator\n# xcodebuild signs simulator as adhoc, remove it\nrm -rf \"${UNSIGNED_SIMULATOR_LIBRARY_DIR}\"\nmkdir \"${UNSIGNED_SIMULATOR_LIBRARY_DIR}\"\nmkdir \"${UNSIGNED_SIMULATOR_FRAMEWORK}\"\ncp -r \"${SIMULATOR_FRAMEWORK}/.\" \"${UNSIGNED_SIMULATOR_FRAMEWORK}/\"\n\ncodesign --remove-signature ${UNSIGNED_SIMULATOR_FRAMEWORK}\n\n# Create directory for universal\nrm -rf \"${UNIVERSAL_LIBRARY_DIR}\"\nmkdir \"${UNIVERSAL_LIBRARY_DIR}\"\nmkdir \"${FRAMEWORK}\"\n\n# Copy files Framework\ncp -r \"${DEVICE_FRAMEWORK}/.\" \"${FRAMEWORK}\"\n\n# Make an universal binary\nlipo \"${UNSIGNED_SIMULATOR_FRAMEWORK}/${FRAMEWORK_NAME}\" \"${DEVICE_FRAMEWORK}/${FRAMEWORK_NAME}\" -create -output \"${FRAMEWORK}/${FRAMEWORK_NAME}\" | echo\n\n# Copy finished binary to project\nrm -rf \"${PROJECT_DIR}/output/${TARGET_NAME}/${FRAMEWORK_NAME}.framework\"\ncp -r \"${FRAMEWORK}\" \"${PROJECT_DIR}/output/${TARGET_NAME}/\"\n";
+			shellScript = "# Config\nTARGET_NAME=\"Branch-tvOS\"\nFRAMEWORK_NAME=\"Branch\"\nSUFFIX=\"-tvOS\"\nSDK=\"appletvos\"\nSIMSDK=\"appletvsimulator\"\n\n# Build path without framework\nSIMULATOR_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-simulator${SUFFIX}\"\nUNSIGNED_SIMULATOR_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-simulator-unsigned${SUFFIX}\"\nDEVICE_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-device${SUFFIX}\"\nUNIVERSAL_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-universal${SUFFIX}\"\n\n# Build path with framework\nSIMULATOR_FRAMEWORK=\"${SIMULATOR_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nUNSIGNED_SIMULATOR_FRAMEWORK=\"${UNSIGNED_SIMULATOR_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nDEVICE_FRAMEWORK=\"${DEVICE_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nFRAMEWORK=\"${UNIVERSAL_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\n\n# Build simulator \nxcodebuild -project ${PROJECT_NAME}.xcodeproj BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -target ${TARGET_NAME} -sdk ${SIMSDK} -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-simulator${SUFFIX}\n\n# Build device\nxcodebuild -project ${PROJECT_NAME}.xcodeproj BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -target ${TARGET_NAME} -sdk ${SDK} -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-device${SUFFIX}\n\n# Remove signature from simulator\n# xcodebuild signs simulator as adhoc, remove it\nrm -rf \"${UNSIGNED_SIMULATOR_LIBRARY_DIR}\"\nmkdir \"${UNSIGNED_SIMULATOR_LIBRARY_DIR}\"\nmkdir \"${UNSIGNED_SIMULATOR_FRAMEWORK}\"\ncp -r \"${SIMULATOR_FRAMEWORK}/.\" \"${UNSIGNED_SIMULATOR_FRAMEWORK}/\"\n\ncodesign --remove-signature ${UNSIGNED_SIMULATOR_FRAMEWORK}\n\n# Create directory for universal\nrm -rf \"${UNIVERSAL_LIBRARY_DIR}\"\nmkdir \"${UNIVERSAL_LIBRARY_DIR}\"\nmkdir \"${FRAMEWORK}\"\n\n# Copy files Framework\ncp -r \"${UNSIGNED_SIMULATOR_FRAMEWORK}/.\" \"${FRAMEWORK}\"\n\n# Make an universal binary\nlipo \"${UNSIGNED_SIMULATOR_FRAMEWORK}/${FRAMEWORK_NAME}\" \"${DEVICE_FRAMEWORK}/${FRAMEWORK_NAME}\" -create -output \"${FRAMEWORK}/${FRAMEWORK_NAME}\" | echo\n\n# Copy finished binary to project\nrm -rf \"${PROJECT_DIR}/output/${TARGET_NAME}/${FRAMEWORK_NAME}.framework\"\ncp -r \"${FRAMEWORK}\" \"${PROJECT_DIR}/output/${TARGET_NAME}/\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1334,6 +1347,7 @@
 				5F3802B324DCE80200E6FAFD /* BranchInstallRequest.m in Sources */,
 				5F19B45724B4F44B00D7D3CB /* BNCNetworkInterface.m in Sources */,
 				5F19B45A24B4F44B00D7D3CB /* BNCAppleSearchAds.m in Sources */,
+				5F9FD26524EF31B000292D35 /* BNCSKAdNetwork.m in Sources */,
 				5F3802D724DCE8FB00E6FAFD /* BranchShortUrlSyncRequest.m in Sources */,
 				5F19B45B24B4F44B00D7D3CB /* BNCKeyChain.m in Sources */,
 				5F19B45D24B4F44B00D7D3CB /* BNCAppleAdClient.m in Sources */,
@@ -1421,6 +1435,7 @@
 				5F3802B024DCE7FA00E6FAFD /* BranchCreditHistoryRequest.m in Sources */,
 				5FC4D065248614840001E701 /* BNCAppleReceipt.m in Sources */,
 				5FC4D05D248614830001E701 /* BNCJSONUtility.m in Sources */,
+				5F9FD26624EF31B000292D35 /* BNCSKAdNetwork.m in Sources */,
 				5F3802B824DCE81200E6FAFD /* BranchLATDRequest.m in Sources */,
 				5FC4D057248614830001E701 /* BNCFacebookAppLinks.m in Sources */,
 				5FC4D01A2486145F0001E701 /* UIViewController+Branch.m in Sources */,
@@ -1487,6 +1502,7 @@
 				5F92B2542387703700CA909B /* BNCNetworkInterface.m in Sources */,
 				5F8FC23B236BB18A00B8474A /* BNCAppleSearchAds.m in Sources */,
 				5F38026D24DCE73100E6FAFD /* BranchSpotlightUrlRequest.m in Sources */,
+				5F9FD26424EF31B000292D35 /* BNCSKAdNetwork.m in Sources */,
 				4D1851CA2019127700E48994 /* BNCKeyChain.m in Sources */,
 				5F7DB5FC237C95C30077A95F /* BNCAppleAdClient.m in Sources */,
 				E230A1901D03DB9E006181D8 /* BranchLinkProperties.m in Sources */,
@@ -1558,7 +1574,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "Branch-static/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1567,7 +1583,7 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.34.0;
+				MARKETING_VERSION = 0.35.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.Branch;
@@ -1590,7 +1606,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "Branch-static/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_DYLIB_INSTALL_NAME = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1599,7 +1615,7 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.34.0;
+				MARKETING_VERSION = 0.35.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.Branch;
@@ -1694,7 +1710,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.34.0;
+				MARKETING_VERSION = 0.35.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1732,7 +1748,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.34.0;
+				MARKETING_VERSION = 0.35.0;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.Branch;
@@ -1793,7 +1809,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1845,7 +1861,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1867,14 +1883,14 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Branch/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.34.0;
+				MARKETING_VERSION = 0.35.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.Branch;
@@ -1897,14 +1913,14 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Branch/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 0.34.0;
+				MARKETING_VERSION = 0.35.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.Branch;
