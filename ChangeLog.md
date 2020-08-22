@@ -1,5 +1,34 @@
 Branch iOS SDK Change Log
 
+v0.35.0
+August 22, 2020
+
+With iOS 14, IDFA is only available if the app requests permission from the end user via the AppTrackingTransparency framework.  
+The Branch SDK will not ask for it.
+
+AdSupport is no longer included by default with Cocoapods.  This fixes an app submission issue for apps that cannot contain IDFA.
+
+INTENG-10312 
+iOS 14 introduces an API that conflicts with a Branch API.  Refactor BranchCSSearchableItemAttributeSet init.
+
+CORE-1146 
+Build dynamic, static and tvOS frameworks.  Previously we only built the dynamic framework for Carthage.
+These prebuilt frameworks can be found in 'carthage-files/output/'
+
+CORE-1166
+Add nullability to BranchCSSearchableItemAttributeSet
+
+SDK-449
+Add support for Swift Package Manager
+
+CORE-1209
+Add optional SKAdNetwork support
+If configured on the Branch Dashboard, the SDK can call SKAdNetwork on installs, opens and events.
+
+Known issues:
+Framework import warnings in Xcode 12.  We need to refactor our unit test host app.
+SPM does not support tvOS.  We need to refactor some classes.
+
 - v0.34.0
 * _*Master Release*_ - June 1, 2020
   * SDK-989 tvOS support
