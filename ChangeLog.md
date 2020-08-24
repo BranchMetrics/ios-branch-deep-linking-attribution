@@ -1,7 +1,7 @@
 Branch iOS SDK Change Log
 
 v0.35.0
-August 22, 2020
+August 24, 2020
 
 With iOS 14, IDFA is only available if the app requests permission from the end user via the AppTrackingTransparency framework.  
 The Branch SDK will not ask for it.
