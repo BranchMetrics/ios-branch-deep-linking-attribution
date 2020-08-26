@@ -1932,11 +1932,10 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             }
 
             dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-            __weak __typeof__(self) weakSelf = self;
             dispatch_async(queue, ^ {
-                [req makeRequest:weakSelf.serverInterface key:weakSelf.class.branchKey callback:
-                 ^(BNCServerResponse* response, NSError* error) {
-                    [weakSelf processRequest:req response:response error:error];
+                [req makeRequest:self.serverInterface key:self.class.branchKey callback:
+                    ^(BNCServerResponse* response, NSError* error) {
+                        [self processRequest:req response:response error:error];
                 }];
             });
         }
