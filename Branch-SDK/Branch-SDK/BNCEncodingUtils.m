@@ -142,10 +142,6 @@ NSString* BNCWireFormatFromString(NSString *string) {
 }
 
 + (NSString *)sanitizedStringFromString:(NSString *)dirtyString {
-    if ([dirtyString isEqual:[NSNull null]]) {
-        return @"";
-    }
-    
     NSString *dirtyCopy = [dirtyString copy]; // dirtyString seems to get dealloc'ed sometimes. Make a copy.
     NSString *cleanString = [[[[[[[[dirtyCopy
         stringByReplacingOccurrencesOfString:@"\\" withString:@"\\\\"]
