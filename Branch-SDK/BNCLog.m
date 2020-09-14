@@ -100,23 +100,3 @@ void BNCLogWriteMessage(
         NSLog(@"%@", s); // Upgrade this to unified logging when we can.
     }
 }
-
-void BNCLogDebugSDK(NSString *_Nonnull message) {
-    BNCLogWriteMessage(BNCLogLevelDebugSDK, __FILE__, __LINE__, message);
-}
-
-void BNCLogDebug(NSString *_Nonnull message) {
-    BNCLogWriteMessage(BNCLogLevelDebugSDK, __FILE__, __LINE__, message);
-}
-
-void BNCLogWarning(NSString *_Nonnull message) {
-    BNCLogWriteMessage(BNCLogLevelDebugSDK, __FILE__, __LINE__, message);
-}
-
-void BNCLogError(NSString *_Nonnull message) {
-    BNCLogWriteMessage(BNCLogLevelDebugSDK, __FILE__, __LINE__, message);
-}
-
-void BNCLog(NSString *_Nonnull message) {
-    BNCLogWriteMessage(BNCLogLevelDebugSDK, __FILE__, __LINE__, message);
-}

@@ -59,22 +59,22 @@ extern void BNCLogWriteMessage(
     NSString *_Nullable message
 );
 
-extern void BNCLogDebugSDK(
-    NSString *_Nonnull message
-);
+///@param format Log an info message
+#define BNCLogDebugSDK(...) \
+    do  { BNCLogWriteMessage(BNCLogLevelDebugSDK, __FILE__, __LINE__, __VA_ARGS__); } while (0)
 
-extern void BNCLogDebug(
-    NSString *_Nonnull message
-);
+///@param format Log a debug message
+#define BNCLogDebug(...) \
+    do  { BNCLogWriteMessage(BNCLogLevelDebug, __FILE__, __LINE__, __VA_ARGS__); } while (0)
 
-extern void BNCLogWarning(
-    NSString *_Nonnull message
-);
+///@param format Log a warning message
+#define BNCLogWarning(...) \
+    do  { BNCLogWriteMessage(BNCLogLevelWarning, __FILE__, __LINE__, __VA_ARGS__); } while (0)
 
-extern void BNCLogError(
-    NSString *_Nonnull message
-);
+///@param format Log an error message
+#define BNCLogError(...) \
+    do  { BNCLogWriteMessage(BNCLogLevelError, __FILE__, __LINE__, __VA_ARGS__); } while (0)
 
-extern void BNCLog(
-    NSString *_Nonnull message
-);
+///@param format Log a message
+#define BNCLog(...) \
+    do  { BNCLogWriteMessage(BNCLogLevelLog, __FILE__, __LINE__, __VA_ARGS__); } while (0)
