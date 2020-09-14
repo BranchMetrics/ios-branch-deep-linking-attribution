@@ -8,14 +8,8 @@
  @copyright     Copyright © 2016 Branch. All rights reserved.
 */
 
-#import "BNCDebug.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
 ///@functiongroup Branch Logging Functions
+#import <Foundation/Foundation.h>
 
 #pragma mark Log Initialization
 
@@ -126,115 +120,34 @@ extern BNCLogFlushFunctionPtr _Nullable BNCLogFlushFunction(void);
 
 #pragma mark - BNCLogWriteMessage
 
-
 /// The main logging function used in the variadic logging defines.
-extern void BNCLogWriteMessageFormat(
+extern void BNCLogWriteMessage(
     BNCLogLevel logLevel,
     const char *_Nullable sourceFileName,
     int32_t sourceLineNumber,
-    NSString* _Nullable messageFormat,
-    ...
-) NS_FORMAT_FUNCTION(4,5);
+    NSString *_Nullable message
+);
 
-/// Swift-friendly wrapper for BNCLogWriteMessageFormat
-extern void BNCLogWriteMessage(
-    BNCLogLevel logLevel,
-    NSString *_Nonnull sourceFileName,
-    int32_t sourceLineNumber,
+extern void BNCLogDebugSDK(
+    NSString *_Nonnull message
+);
+
+extern void BNCLogDebug(
+    NSString *_Nonnull message
+);
+
+extern void BNCLogWarning(
+    NSString *_Nonnull message
+);
+
+extern void BNCLogError(
+    NSString *_Nonnull message
+);
+
+extern void BNCLog(
     NSString *_Nonnull message
 );
 
 /// This function synchronizes all outstanding log messages and writes them to the logging function
 /// set by BNCLogSetOutputFunction.
 extern void BNCLogFlushMessages(void);
-
-
-#pragma mark - Logging
-///@info Logging
-
-///@param format Log an info message with the specified formatting.
-#define BNCLogDebugSDK(...) \
-    do  { BNCLogWriteMessageFormat(BNCLogLevelDebugSDK, __FILE__, __LINE__, __VA_ARGS__); } while (0)
-
-///@param format Log a debug message with the specified formatting.
-#define BNCLogDebug(...) \
-    do  { BNCLogWriteMessageFormat(BNCLogLevelDebug, __FILE__, __LINE__, __VA_ARGS__); } while (0)
-
-///@param format Log a warning message with the specified formatting.
-#define BNCLogWarning(...) \
-    do  { BNCLogWriteMessageFormat(BNCLogLevelWarning, __FILE__, __LINE__, __VA_ARGS__); } while (0)
-
-///@param format Log an error message with the specified formatting.
-#define BNCLogError(...) \
-    do  { BNCLogWriteMessageFormat(BNCLogLevelError, __FILE__, __LINE__, __VA_ARGS__); } while (0)
-
-///@param format Log a message with the specified formatting.
-#define BNCLog(...) \
-    do  { BNCLogWriteMessageFormat(BNCLogLevelLog, __FILE__, __LINE__, __VA_ARGS__); } while (0)
-
-///Cause a programmatic breakpoint if breakpoints are enabled.
-#define BNCLogBreakPoint() \
-    do  { \
-        if (BNCLogBreakPointsAreEnabled()) { \
-            BNCLogWriteMessageFormat(BNCLogLevelBreakPoint, __FILE__, __LINE__, @"Programmatic breakpoint."); \
-            if (BNCDebuggerIsAttached()) { \
-                BNCLogFlushMessages(); \
-                BNCDebugBreakpoint(); \
-            } \
-        } \
-    } while (0)
-
-///Log a message and cause a programmatic breakpoint if breakpoints are enabled.
-#define BNCBreakPointWithMessage(...) \
-    do  { \
-        if (BNCLogBreakPointsAreEnabled() { \
-            BNCLogWriteMessageFormat(BNCLogLevelBreakPoint, __FILE__, __LINE__, __VA_ARGS__); \
-            if (BNCDebuggerIsAttached()) { \
-                BNCLogFlushMessages(); \
-                BNCDebugBreakpoint(); \
-            } \
-        } \
-    } while (0)
-
-///Check if an asserting is true.  If programmatic breakpoints are enabled then break.
-#define BNCLogAssert(condition) \
-    do  { \
-        if (!(condition)) { \
-            BNCLogWriteMessageFormat(BNCLogLevelAssert, __FILE__, __LINE__, @"(%s) !!!", #condition); \
-            if (BNCLogBreakPointsAreEnabled() && BNCDebuggerIsAttached()) { \
-                BNCLogFlushMessages(); \
-                BNCDebugBreakpoint(); \
-            } \
-        } \
-    } while (0)
-
-///Check if an asserting is true logging a message if the assertion fails.
-///If programmatic breakpoints are enabled then break.
-#define BNCLogAssertWithMessage(condition, message, ...) \
-    do  { \
-        if (!(condition)) { \
-            NSString *m = [NSString stringWithFormat:message, __VA_ARGS__]; \
-            BNCLogWriteMessageFormat(BNCLogLevelAssert, __FILE__, __LINE__, @"(%s) !!! %@", #condition, m); \
-            if (BNCLogBreakPointsAreEnabled() && BNCDebuggerIsAttached()) { \
-                BNCLogFlushMessages(); \
-                BNCDebugBreakpoint(); \
-            } \
-        } \
-    } while (0)
-
-///Assert that the current thread is the main thread.
-#define BNCLogAssertIsMainThread() \
-    BNCLogAssert([NSThread isMainThread])
-
-///Write the name of the current method to the log.
-#define BNCLogMethodName() \
-    BNCLogDebug(@"Method '%@'.",  NSStringFromSelector(_cmd))
-
-///Write the name of the current function to the log.
-#define BNCLogFunctionName() \
-    BNCLogDebug(@"Function '%s'.", __FUNCTION__)
-
-
-#ifdef __cplusplus
-}
-#endif

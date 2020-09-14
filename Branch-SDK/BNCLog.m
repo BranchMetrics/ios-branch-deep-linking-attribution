@@ -26,20 +26,10 @@ static NSDateFormatter *bnc_LogDateFormatter = nil;
 
 // A fallback attempt at logging if an error occurs in BNCLog.
 // BNCLog can't log itself, but if an error occurs it uses this simple define:
-extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
-void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...) {
-
-    va_list args;
-    va_start(args, format);
-    NSString* message = [[NSString alloc] initWithFormat:format arguments:args];
-    va_end(args);
-
-    NSLog(@"[branch.io] BNCLog.m (%d) Log error: %@", linenumber, message);
+extern void BNCLogInternalError(NSString *message);
+void BNCLogInternalError(NSString *message) {
+    NSLog(@"[branch.io] BNCLog.m (%d) Log error: %@", __LINE__, message);
 }
-
-#define BNCLogInternalError(...) \
-    BNCLogInternalErrorFunction(__LINE__, __VA_ARGS__)
-
 
 inline static void BNCLogInitializeClient_Internal() {
     BNCLogInitialize();
@@ -63,7 +53,7 @@ void BNCLogFunctionOutputToStdOut(
     long n = write(STDOUT_FILENO, data.bytes, data.length);
     if (n < 0) {
         int e = errno;
-        BNCLogInternalError(@"Can't write log message (%d): %s.", e, strerror(e));
+        BNCLogInternalError([NSString stringWithFormat:@"Can't write log message (%d): %s.", e, strerror(e)]);
     }
     write(STDOUT_FILENO, "\n   ", sizeof('\n'));
 }
@@ -78,7 +68,7 @@ void BNCLogFunctionOutputToStdErr(
     long n = write(STDERR_FILENO, data.bytes, data.length);
     if (n < 0) {
         int e = errno;
-        BNCLogInternalError(@"Can't write log message (%d): %s.", e, strerror(e));
+        BNCLogInternalError([NSString stringWithFormat:@"Can't write log message (%d): %s.", e, strerror(e)]);
     }
     write(STDERR_FILENO, "\n   ", sizeof('\n'));
 }
@@ -102,7 +92,7 @@ void BNCLogFunctionOutputToFileDescriptor(
     long n = write(bnc_LogDescriptor, data.bytes, data.length);
     if (n < 0) {
         int e = errno;
-        BNCLogInternalError(@"Can't write log message (%d): %s.", e, strerror(e));
+        BNCLogInternalError([NSString stringWithFormat:@"Can't write log message (%d): %s.", e, strerror(e)]);
     }
 }
 
@@ -121,8 +111,8 @@ void BNCLogSetOutputToURL_Interal(NSURL *_Nullable url) {
     );
     if (bnc_LogDescriptor < 0) {
         int e = errno;
-        BNCLogInternalError(@"Can't open log file '%@'.", url);
-        BNCLogInternalError(@"Can't open log file (%d): %s.", e, strerror(e));
+        BNCLogInternalError([NSString stringWithFormat:@"Can't open log file '%@'.", url]);
+        BNCLogInternalError([NSString stringWithFormat:@"Can't open log file (%d): %s.", e, strerror(e)]);
         return;
     }
     bnc_LoggingFunction = BNCLogFunctionOutputToFileDescriptor;
@@ -158,7 +148,7 @@ void BNCLogRecordWrapWrite(NSDate*_Nonnull timestamp, BNCLogLevel level, NSStrin
     off_t n = write(bnc_LogDescriptor, buffer, sizeof(buffer));
     if (n < 0) {
         int e = errno;
-        BNCLogInternalError(@"Can't write log message (%d): %s.", e, strerror(e));
+        BNCLogInternalError([NSString stringWithFormat:@"Can't write log message (%d): %s.", e, strerror(e)]);
     }
     bnc_LogOffset++;
     if (bnc_LogOffset >= bnc_LogOffsetMax) {
@@ -166,7 +156,7 @@ void BNCLogRecordWrapWrite(NSDate*_Nonnull timestamp, BNCLogLevel level, NSStrin
         n = lseek(bnc_LogDescriptor, 0, SEEK_SET);
         if (n < 0) {
             int e = errno;
-            BNCLogInternalError(@"Can't seek in log (%d): %s.", e, strerror(e));
+            BNCLogInternalError([NSString stringWithFormat:@"Can't seek in log (%d): %s.", e, strerror(e)]);
         }
     }
 }
@@ -192,8 +182,8 @@ BOOL BNCLogRecordWrapOpenURL_Internal(NSURL *url, long maxRecords, long recordSi
     );
     if (bnc_LogDescriptor < 0) {
         int e = errno;
-        BNCLogInternalError(@"Can't open log file '%@'.", url);
-        BNCLogInternalError(@"Can't open log file (%d): %s.", e, strerror(e));
+        BNCLogInternalError([NSString stringWithFormat:@"Can't open log file '%@'.", url]);
+        BNCLogInternalError([NSString stringWithFormat:@"Can't open log file (%d): %s.", e, strerror(e)]);
         return NO;
     }
     bnc_LoggingFunction = BNCLogRecordWrapWrite;
@@ -206,12 +196,12 @@ BOOL BNCLogRecordWrapOpenURL_Internal(NSURL *url, long maxRecords, long recordSi
     off_t sz = lseek(bnc_LogDescriptor, 0, SEEK_END);
     if (sz < 0) {
         int e = errno;
-        BNCLogInternalError(@"Can't seek in log (%d): %s.", e, strerror(e));
+        BNCLogInternalError([NSString stringWithFormat:@"Can't seek in log (%d): %s.", e, strerror(e)]);
     } else if (sz > maxSz) {
         fileOffset = ftruncate(bnc_LogDescriptor, maxSz);
         if (fileOffset < 0) {
             int e = errno;
-            BNCLogInternalError(@"Can't truncate log (%d): %s.", e, strerror(e));
+            BNCLogInternalError([NSString stringWithFormat:@"Can't truncate log (%d): %s.", e, strerror(e)]);
         }
     }
     lseek(bnc_LogDescriptor, 0, SEEK_SET);
@@ -248,7 +238,7 @@ BOOL BNCLogRecordWrapOpenURL_Internal(NSURL *url, long maxRecords, long recordSi
     sz = lseek(bnc_LogDescriptor, bnc_LogOffset*bnc_LogRecordSize, SEEK_SET);
     if (sz < 0) {
         int e = errno;
-        BNCLogInternalError(@"Can't seek in log (%d): %s.", e, strerror(e));
+        BNCLogInternalError([NSString stringWithFormat:@"Can't seek in log (%d): %s.", e, strerror(e)]);
     }
     return YES;
 }
@@ -297,7 +287,7 @@ void BNCLogByteWrapWrite(NSDate*_Nonnull timestamp, BNCLogLevel level, NSString 
         long n = ftruncate(bnc_LogDescriptor, bnc_LogOffset);
         if (n < 0) {
             int e = errno;
-            BNCLogInternalError(@"Can't truncate log (%d): %s.", e, strerror(e));
+            BNCLogInternalError([NSString stringWithFormat:@"Can't truncate log (%d): %s.", e, strerror(e)]);
         }
         lseek(bnc_LogDescriptor, 0, SEEK_SET);
         bnc_LogOffset = 0;
@@ -306,7 +296,7 @@ void BNCLogByteWrapWrite(NSDate*_Nonnull timestamp, BNCLogLevel level, NSString 
     long n = write(bnc_LogDescriptor, stringData.bytes, stringData.length);
     if (n < 0) {
         int e = errno;
-        BNCLogInternalError(@"Can't write log message (%d): %s.", e, strerror(e));
+        BNCLogInternalError([NSString stringWithFormat:@"Can't write log message (%d): %s.", e, strerror(e)]);
     } else {
         bnc_LogOffset += n;
     }
@@ -325,7 +315,7 @@ NSString *BNCLogByteWrapReadNextRecord() {
     off_t originalOffset = lseek(bnc_LogDescriptor, 0, SEEK_CUR);
     if (originalOffset < 0) {
         int e = errno;
-        BNCLogInternalError(@"Can't find offset in log file (%d): %s.", e, strerror(e));
+        BNCLogInternalError([NSString stringWithFormat:@"Can't find offset in log file (%d): %s.", e, strerror(e)]);
         goto error_exit;
     }
 
@@ -335,14 +325,14 @@ NSString *BNCLogByteWrapReadNextRecord() {
         if (buffer) free(buffer);
         buffer = malloc(bufferSize);
         if (!buffer) {
-            BNCLogInternalError(@"Can't allocate a buffer of %ld bytes.", bufferSize);
+            BNCLogInternalError([NSString stringWithFormat:@"Can't allocate a buffer of %ld bytes.", bufferSize]);
             goto error_exit;
         }
 
         off_t newOffset = lseek(bnc_LogDescriptor, originalOffset, SEEK_SET);
         if (newOffset < 0) {
             int e = errno;
-            BNCLogInternalError(@"Can't seek in log file (%d): %s.", e, strerror(e));
+            BNCLogInternalError([NSString stringWithFormat:@"Can't seek in log file (%d): %s.", e, strerror(e)]);
             goto error_exit;
         }
         ssize_t bytesRead = read(bnc_LogDescriptor, buffer, bufferSize);
@@ -351,7 +341,7 @@ NSString *BNCLogByteWrapReadNextRecord() {
         } else if (bytesRead < 0) {
             int e = errno;
             if (e != EOF) {
-                BNCLogInternalError(@"Can't read log message (%d): %s.", e, strerror(e));
+                BNCLogInternalError([NSString stringWithFormat:@"Can't read log message (%d): %s.", e, strerror(e)]);
             }
             goto error_exit;
         }
@@ -370,7 +360,7 @@ NSString *BNCLogByteWrapReadNextRecord() {
             newOffset = lseek(bnc_LogDescriptor, bnc_LogOffset, SEEK_SET);
             if (newOffset < 0) {
                 int e = errno;
-                BNCLogInternalError(@"Can't seek in log file (%d): %s.", e, strerror(e));
+                BNCLogInternalError([NSString stringWithFormat:@"Can't seek in log file (%d): %s.", e, strerror(e)]);
             }
             free(buffer);
             return result;
@@ -393,8 +383,8 @@ BOOL BNCLogByteWrapOpenURL_Internal(NSURL *url, long maxBytes) {
     );
     if (bnc_LogDescriptor < 0) {
         int e = errno;
-        BNCLogInternalError(@"Can't open log file '%@'.", url);
-        BNCLogInternalError(@"Can't open log file (%d): %s.", e, strerror(e));
+        BNCLogInternalError([NSString stringWithFormat:@"Can't open log file '%@'.", url]);
+        BNCLogInternalError([NSString stringWithFormat:@"Can't open log file (%d): %s.", e, strerror(e)]);
         return NO;
     }
     bnc_LoggingFunction = BNCLogByteWrapWrite;
@@ -407,12 +397,12 @@ BOOL BNCLogByteWrapOpenURL_Internal(NSURL *url, long maxBytes) {
     off_t sz = lseek(bnc_LogDescriptor, 0, SEEK_END);
     if (sz < 0) {
         int e = errno;
-        BNCLogInternalError(@"Can't seek in log (%d): %s.", e, strerror(e));
+        BNCLogInternalError([NSString stringWithFormat:@"Can't seek in log (%d): %s.", e, strerror(e)]);
     } else if (sz > maxSz) {
         newOffset = ftruncate(bnc_LogDescriptor, maxSz);
         if (newOffset < 0) {
             int e = errno;
-            BNCLogInternalError(@"Can't truncate log (%d): %s.", e, strerror(e));
+            BNCLogInternalError([NSString stringWithFormat:@"Can't truncate log (%d): %s.", e, strerror(e)]);
         }
     }
     bnc_LogOffset = 0;
@@ -448,7 +438,7 @@ BOOL BNCLogByteWrapOpenURL_Internal(NSURL *url, long maxBytes) {
     newOffset = lseek(bnc_LogDescriptor, bnc_LogOffset, SEEK_SET);
     if (newOffset < 0) {
         int e = errno;
-        BNCLogInternalError(@"Can't seek in log (%d): %s.", e, strerror(e));
+        BNCLogInternalError([NSString stringWithFormat:@"Can't seek in log (%d): %s.", e, strerror(e)]);
     }
     return YES;
 }
@@ -591,12 +581,11 @@ void BNCLogSetFlushFunction(BNCLogFlushFunctionPtr flushFunction) {
 
 #pragma mark - BNCLogInternal
 
-void BNCLogWriteMessageFormat(
+void BNCLogWriteMessage(
         BNCLogLevel logLevel,
         const char *_Nullable file,
         int32_t lineNumber,
-        NSString *_Nullable message,
-        ...
+        NSString *_Nullable message
     ) {
     BNCLogInitializeClient_Internal();
     if (!file) file = "";
@@ -623,13 +612,7 @@ void BNCLogWriteMessageFormat(
 
     logLevel = MAX(MIN(logLevel, BNCLogLevelMax-1), 0);
     NSString *levelString = logLevels[logLevel];
-
-    va_list args;
-    va_start(args, message);
-    NSString* m = [[NSString alloc] initWithFormat:message arguments:args];
-    NSString* s = [NSString stringWithFormat:
-        @"[branch.io] %@(%d) %@: %@", filename, lineNumber, levelString, m];
-    va_end(args);
+    NSString *s = [NSString stringWithFormat:@"[branch.io] %@(%d) %@: %@", filename, lineNumber, levelString, message];
 
     dispatch_async(bnc_LogQueue, ^{
         if (logLevel >= bnc_LogDisplayLevel) {
@@ -640,13 +623,24 @@ void BNCLogWriteMessageFormat(
     });
 }
 
-void BNCLogWriteMessage(
-        BNCLogLevel logLevel,
-        NSString *_Nonnull file,
-        int32_t lineNumber,
-        NSString *_Nonnull message
-    ) {
-    BNCLogWriteMessageFormat(logLevel, file.UTF8String, lineNumber, @"%@", message);
+void BNCLogDebugSDK(NSString *_Nonnull message) {
+    BNCLogWriteMessage(BNCLogLevelDebugSDK, __FILE__, __LINE__, message);
+}
+
+void BNCLogDebug(NSString *_Nonnull message) {
+    BNCLogWriteMessage(BNCLogLevelDebugSDK, __FILE__, __LINE__, message);
+}
+
+void BNCLogWarning(NSString *_Nonnull message) {
+    BNCLogWriteMessage(BNCLogLevelDebugSDK, __FILE__, __LINE__, message);
+}
+
+void BNCLogError(NSString *_Nonnull message) {
+    BNCLogWriteMessage(BNCLogLevelDebugSDK, __FILE__, __LINE__, message);
+}
+
+void BNCLog(NSString *_Nonnull message) {
+    BNCLogWriteMessage(BNCLogLevelDebugSDK, __FILE__, __LINE__, message);
 }
 
 void BNCLogFlushMessages() {

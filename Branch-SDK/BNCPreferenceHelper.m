@@ -747,7 +747,7 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
         }
         @catch (id exception) {
             data = nil;
-            BNCLogWarning(@"Exception creating preferences data: %@.", exception);
+            BNCLogWarning([NSString stringWithFormat:@"Exception creating preferences data: %@.", exception]);
         }
         if (!data) {
             BNCLogWarning(@"Can't create preferences data.");
@@ -758,7 +758,7 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
             NSError *error = nil;
             [data writeToURL:prefsURL options:NSDataWritingAtomic error:&error];
             if (error) {
-                BNCLogWarning(@"Failed to persist preferences: %@.", error);
+                BNCLogWarning([NSString stringWithFormat:@"Failed to persist preferences: %@.", error]);
             }
         }];
         [_persistPrefsQueue addOperation:newPersistOp];
@@ -880,7 +880,7 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
                 removeItemAtURL:oldURL
                 error:&error];
         } else {
-            BNCLogError(@"Can't move prefs file: %@.", error);
+            BNCLogError([NSString stringWithFormat:@"Can't move prefs file: %@.", error]);
         }
     }
 }

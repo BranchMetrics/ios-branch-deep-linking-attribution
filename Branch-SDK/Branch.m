@@ -192,7 +192,7 @@ static NSURL* bnc_logURL = nil;
                 BNCLogSetDisplayLevel([logLevel integerValue]);
             }
 
-            BNCLog(@"Branch version %@ started at %@.", BNC_SDK_VERSION, [NSDate date]);
+            BNCLog([NSString stringWithFormat:@"Branch version %@ started at %@.", BNC_SDK_VERSION, [NSDate date]]);
         }
     }
 }
@@ -290,9 +290,9 @@ static Class bnc_networkServiceClass = NULL;
             return;
         }
         if (![networkServiceClass conformsToProtocol:@protocol(BNCNetworkServiceProtocol)]) {
-            BNCLogError(@"Class '%@' doesn't conform to protocol '%@'.",
+            BNCLogError([NSString stringWithFormat:@"Class '%@' doesn't conform to protocol '%@'.",
                 NSStringFromClass(networkServiceClass),
-                NSStringFromProtocol(@protocol(BNCNetworkServiceProtocol))
+                NSStringFromProtocol(@protocol(BNCNetworkServiceProtocol))]
             );
             return;
         }
@@ -371,7 +371,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [self setBranchKey:branchKey error:&error];
 
     if (error) {
-        BNCLogError(@"Branch init error: %@", error.localizedDescription);
+        BNCLogError([NSString stringWithFormat:@"Branch init error: %@", error.localizedDescription]);
     }
 }
 
@@ -2256,8 +2256,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             [branchSharingController configureControlWithData:latestReferringParams];
         }
         else {
-            BNCLogWarning(@"The automatic deeplink view controller '%@' for key '%@' does not implement 'configureControlWithData:'.",
-                branchSharingController, key);
+            BNCLogWarning([NSString stringWithFormat:@"The automatic deeplink view controller '%@' for key '%@' does not implement 'configureControlWithData:'.",
+                branchSharingController, key]);
         }
 
         self.deepLinkPresentingController = [UIViewController bnc_currentViewController];

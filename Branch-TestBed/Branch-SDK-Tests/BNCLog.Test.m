@@ -28,13 +28,6 @@ void TestLogProcedure(NSDate*timestamp, BNCLogLevel level, NSString* message) {
     globalTestLogString = nil;
 }
 
-extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
-
-- (void) testInternalError {
-    int e = 9;
-    BNCLogInternalErrorFunction(__LINE__, @"Test error success (%d): %s.", e, strerror(e));
-}
-
 - (void) testLogLineNumbers {
 
     BNCLogSetOutputFunction(TestLogProcedure);
@@ -54,7 +47,7 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
     BNCLog(@"Debug message with no parameters.");
     BNCLogFlushMessages();
     XCTAssertEqualObjects(globalTestLogString,
-        @"[branch.io] BNCLog.Test.m(54) Log: Debug message with no parameters.");
+        @"[branch.io] BNCLog.Test.m(47) Log: Debug message with no parameters.");
 }
 
 - (void) testLog {
@@ -74,39 +67,10 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
     XCTAssert([globalTestLogString bnc_isEqualToMaskedString:
         @"[branch.io] BNCLog.Test.m(**) Log: Debug message with no parameters."]);
 
-    BNCLog(@"Debug message with one parameter: %d.", 1);
+    BNCLog([NSString stringWithFormat:@"Debug message with one parameter: %d.", 1]);
     BNCLogFlushMessages();
     XCTAssert([globalTestLogString bnc_isEqualToMaskedString:
         @"[branch.io] BNCLog.Test.m(**) Log: Debug message with one parameter: 1."]);
-
-    BNCLogMethodName();
-    BNCLogFlushMessages();
-    XCTAssert([globalTestLogString bnc_isEqualToMaskedString:
-        @"[branch.io] BNCLog.Test.m(**) Debug: Method 'testLog'."]);
-
-    //  Test breakpoints --
-
-    if (self.class.breakpointsAreEnabledInTests) {  // Test break points too:
-        BNCLogSetBreakPointsEnabled(YES);
-        BNCLogBreakPoint();
-        XCTAssert([globalTestLogString bnc_isEqualToMaskedString:
-            @"[branch.io] BNCLog.Test.m(**)   Break: Programmatic breakpoint."]
-        );
-        BNCLogSetBreakPointsEnabled(NO);
-        globalTestLogString = nil;
-        BNCLogBreakPoint();
-        XCTAssertFalse(globalTestLogString);
-        BNCLogSetBreakPointsEnabled(YES);
-    }
-
-    BNCLogSetBreakPointsEnabled(NO);
-    BNCLogAssert(1 == 2);
-    XCTAssert([globalTestLogString bnc_isEqualToMaskedString:
-        @"[branch.io] BNCLog.Test.m(***) Assert: (1 == 2) !!!"]);
-
-    BNCLogAssertWithMessage(1 == 2, @"Assert message! Parameter: %d.", 2);
-    XCTAssert([globalTestLogString bnc_isEqualToMaskedString:
-        @"[branch.io] BNCLog.Test.m(***) Assert: (1 == 2) !!! Assert message! Parameter: 2."]);
 }
 
 - (void) testOutputFunctions {
@@ -406,7 +370,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     BNCLogSetOutputToURLRecordWrapSize(URL, 5, 80);
     for (long i = 1; i <= 23; i++)
-        BNCLog(@"Log %ld.", i);
+        BNCLog([NSString stringWithFormat:@"Log %ld.", i]);
     BNCLogCloseLogFile();
 
     data = [NSData dataWithContentsOfURL:URL options:NSDataReadingUncached error:&error];
@@ -460,23 +424,22 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
-            BNCLog(@"Message 1x%ld.", i);
+            BNCLog([NSString stringWithFormat:@"Message 1x%ld.", i]);
     });
 
     dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
-            BNCLog(@"Message 2x%ld.", i);
+            BNCLog([NSString stringWithFormat:@"Message 2x%ld.", i]);
     });
 
     dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
-            BNCLog(@"Message 3x%ld.", i);
+            BNCLog([NSString stringWithFormat:@"Message 3x%ld.", i]);
     });
 
     dispatch_group_wait(waitGroup, DISPATCH_TIME_FOREVER);
     BNCLogCloseLogFile();
-    NSLog(@"%@: Synchronized time: %1.5f.",
-        BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
+    NSLog(@"testLogRecordWrapPerformanceTesting: Synchronized time: %1.5f.", - startTime.timeIntervalSinceNow);
 
 /*
     //  Non-sychronized -- There is only synchronized.
@@ -537,7 +500,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     BNCLogSetOutputToURLRecordWrapSize(URL, 23, 80);
     for (long i = 0; i < 23; i++) {
-        BNCLog(@"Log %ld.", i);
+        BNCLog([NSString stringWithFormat:@"Log %ld.", i]);
     }
     BNCLogCloseLogFile();
 
@@ -550,7 +513,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     BNCLogSetOutputToURLRecordWrapSize(URL, 5, 80);
     for (long i = 0; i < 23; i++) {
-        BNCLog(@"Log %ld.", i);
+        BNCLog([NSString stringWithFormat:@"Log %ld.", i]);
     }
     BNCLogCloseLogFile();
 
@@ -680,7 +643,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     BNCLogSetOutputToURLByteWrap(URL, kLogSize);
     for (long i = 1; i <= 23; i++)
-        BNCLog(@"Log %ld.", i);
+        BNCLog([NSString stringWithFormat:@"Log %ld.", i]);
     BNCLogCloseLogFile();
 
     data = [NSData dataWithContentsOfURL:URL options:NSDataReadingUncached error:&error];
@@ -738,23 +701,22 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
-            BNCLog(@"Message 1 1x%ld.", i);
+            BNCLog([NSString stringWithFormat:@"Message 1 1x%ld.", i]);
     });
 
     dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
-            BNCLog(@"Message 1 2x%ld.", i);
+            BNCLog([NSString stringWithFormat:@"Message 1 2x%ld.", i]);
     });
 
     dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
-            BNCLog(@"Message 1 3x%ld.", i);
+            BNCLog([NSString stringWithFormat:@"Message 1 3x%ld.", i]);
     });
 
     dispatch_group_wait(waitGroup, DISPATCH_TIME_FOREVER);
     BNCLogCloseLogFile();
-    NSLog(@"%@: Synchronized time: %1.5f.",
-        BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
+    NSLog(@"testLogByteWrapPerformanceTesting: Synchronized time: %1.5f.", - startTime.timeIntervalSinceNow);
 
     // Test open and closed synchronization & threading --
 
@@ -764,7 +726,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++) {
-            BNCLog(@"Message 2 1x%ld.", i);
+            BNCLog([NSString stringWithFormat:@"Message 2 1x%ld.", i]);
             if (i % 100 == 0) {
                 BNCLogCloseLogFile();
                 BNCLogSetOutputToURLByteWrap(URL, kLogSize);
@@ -774,7 +736,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++) {
-            BNCLog(@"Message 2 2x%ld.", i);
+            BNCLog([NSString stringWithFormat:@"Message 2 2x%ld.", i]);
             if (i % 25 == 0) {
                 BNCLogCloseLogFile();
                 BNCLogSetOutputToURLByteWrap(URL, kLogSize);
@@ -784,7 +746,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++) {
-            BNCLog(@"Message 2 3x%ld.", i);
+            BNCLog([NSString stringWithFormat:@"Message 2 3x%ld.", i]);
             if (i % 10 == 0) {
                 BNCLogCloseLogFile();
                 BNCLogSetOutputToURLByteWrap(URL, kLogSize);
@@ -794,8 +756,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     dispatch_group_wait(waitGroup, DISPATCH_TIME_FOREVER);
     BNCLogCloseLogFile();
-    NSLog(@"%@: Synchronized time: %1.5f.",
-        BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
+    NSLog(@"testLogByteWrapPerformanceTesting: Synchronized time: %1.5f.", - startTime.timeIntervalSinceNow);
 }
 
 - (void) testByteWrapTruncate {
@@ -826,7 +787,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     BNCLogSetOutputToURLByteWrap(URL, 1024);
     for (long i = 0; i < 100; i++) {
-        BNCLog(@"Log %ld.", i);
+        BNCLog([NSString stringWithFormat:@"Log %ld.", i]);
     }
     BNCLogCloseLogFile();
 
@@ -839,7 +800,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     BNCLogSetOutputToURLByteWrap(URL, 512);
     for (long i = 0; i < 100; i++) {
-        BNCLog(@"Log %ld.", i);
+        BNCLog([NSString stringWithFormat:@"Log %ld.", i]);
     }
     BNCLogCloseLogFile();
 

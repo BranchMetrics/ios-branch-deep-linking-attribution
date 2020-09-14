@@ -10,7 +10,6 @@
 #import "NSError+Branch.h"
 #import "BranchConstants.h"
 #import "BNCLog.h"
-#import "BNCLocalization.h"
 #import "BNCEncodingUtils.h"
 #import "Branch.h"
 
@@ -290,9 +289,9 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 
 - (void)registerViewWithCallback:(callbackWithParams)callback {
     if (!self.canonicalIdentifier && !self.title) {
-        NSString *message = BNCLocalizedString(@"Could not register view.");
+        NSString *message = @"Could not register view.";
         NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError localizedMessage:message];
-        BNCLogWarning(@"%@", error);
+        BNCLogWarning([NSString stringWithFormat:@"%@", error]);
         if (callback) callback([[NSDictionary alloc] init], error);
         return;
     }
@@ -352,9 +351,9 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 
 - (void)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties andCallback:(callbackWithUrl)callback {
     if (!self.canonicalIdentifier && !self.title) {
-        NSString *message = BNCLocalizedString(@"Could not generate a URL.");
+        NSString *message = @"Could not generate a URL.";
         NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError localizedMessage:message];
-        BNCLogWarning(@"%@", error);
+        BNCLogWarning([NSString stringWithFormat:@"%@", error]);
         if (callback) callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
         return;
     }
@@ -372,9 +371,9 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 
 - (NSString *)getShortUrlWithLinkPropertiesAndIgnoreFirstClick:(BranchLinkProperties *)linkProperties {
     if (!self.canonicalIdentifier && !self.title) {
-        NSString *message = BNCLocalizedString(@"Could not generate a URL.");
+        NSString *message = @"Could not generate a URL.";
         NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError localizedMessage:message];
-        BNCLogWarning(@"%@", error);
+        BNCLogWarning([NSString stringWithFormat:@"%@", error]);
         return nil;
     }
     

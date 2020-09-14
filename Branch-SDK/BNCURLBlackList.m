@@ -81,7 +81,7 @@
                 options: NSRegularExpressionAnchorsMatchLines | NSRegularExpressionUseUnicodeWordBoundaries
                 error:&error];
         if (error || !regex) {
-            BNCLogError(@"Invalid regular expression '%@': %@.", pattern, error);
+            BNCLogError([NSString stringWithFormat:@"Invalid regular expression '%@': %@.", pattern, error]);
             if (error_ && !*error_) *error_ = error;
         } else {
             [array addObject:regex];
@@ -151,8 +151,8 @@
     if (operation.response.statusCode == 404) {
         BNCLogDebugSDK(@"No new BlackList refresh found.");
     } else {
-        BNCLogDebugSDK(@"BlackList refresh result. Error: %@ status: %ld body:\n%@.",
-            operation.error, (long)operation.response.statusCode, responseString);
+        BNCLogDebugSDK([NSString stringWithFormat:@"BlackList refresh result. Error: %@ status: %ld body:\n%@.",
+            operation.error, (long)operation.response.statusCode, responseString]);
     }
     if (operation.error || operation.responseData == nil || operation.response.statusCode != 200) {
         self.error = operation.error;
@@ -162,7 +162,7 @@
     NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:operation.responseData options:0 error:&error];
     if (error) {
         self.error = error;
-        BNCLogError(@"Can't parse JSON: %@.", error);
+        BNCLogError([NSString stringWithFormat:@"Can't parse JSON: %@.", error]);
         return;
     }
 
