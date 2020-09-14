@@ -38,7 +38,6 @@ extern BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex);
 - (NSString*)stringFromBundleWithKey:(NSString*)key;
 - (NSMutableDictionary*) mutableDictionaryFromBundleJSONWithKey:(NSString*)key;
 
-+ (BOOL) breakpointsAreEnabledInTests;
 + (void) clearAllBranchSettings;
 + (BOOL) isApplication;
 @end

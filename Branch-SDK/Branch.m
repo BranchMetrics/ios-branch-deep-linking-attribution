@@ -154,65 +154,6 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 
 #pragma mark - GetInstance methods
 
-static NSURL* bnc_logURL = nil;
-
-+ (void)openLog {
-    // Initialize the log
-    @synchronized (self) {
-        if (bnc_logURL) {
-            #if defined(BNCKeepLogfiles)
-                BNCLogSetOutputToURLByteWrap(bnc_logURL, 102400);
-            #else
-                BNCLogSetOutputFunction(NULL);
-            #endif
-        } else {
-            BNCLogInitialize();
-            BNCLogSetDisplayLevel(BNCLogLevelAll);
-            bnc_logURL = BNCURLForBranchDirectory();
-            bnc_logURL = [[NSURL alloc] initWithString:@"Branch.log" relativeToURL:bnc_logURL];
-            #if defined(BNCKeepLogfiles)
-                BNCLogSetOutputToURLByteWrap(bnc_logURL, 102400);
-            #else
-                BNCLogSetOutputFunction(NULL);
-                if (bnc_logURL)
-                    [[NSFileManager defaultManager] removeItemAtURL:bnc_logURL error:nil];
-            #endif
-            BNCLogSetDisplayLevel(BNCLogLevelWarning);  // Default
-
-            // Try loading from the Info.plist
-            NSString *logLevelString = [[NSBundle mainBundle] infoDictionary][@"BranchLogLevel"];
-            if ([logLevelString isKindOfClass:[NSString class]]) {
-                BNCLogLevel logLevel = BNCLogLevelFromString(logLevelString);
-                BNCLogSetDisplayLevel(logLevel);
-            }
-
-            // Try loading from user defaults
-            NSNumber *logLevel = [[NSUserDefaults standardUserDefaults] objectForKey:BNCLogLevelKey];
-            if ([logLevel isKindOfClass:[NSNumber class]]) {
-                BNCLogSetDisplayLevel([logLevel integerValue]);
-            }
-
-            BNCLog([NSString stringWithFormat:@"Branch version %@ started at %@.", BNC_SDK_VERSION, [NSDate date]]);
-        }
-    }
-}
-
-+ (void)closeLog {
-    BNCLogCloseLogFile();
-}
-
-void BranchClassInitializeLog(void);
-void BranchClassInitializeLog(void) {
-    [Branch openLog];
-}
-
-+ (void)load {
-    static dispatch_once_t onceToken = 0;
-    dispatch_once(&onceToken, ^{
-        BNCLogSetClientInitializeFunction(BranchClassInitializeLog);
-    });
-}
-
 // deprecated
 + (Branch *)getTestInstance {
     Branch.useTestBranchKey = YES;
@@ -1888,8 +1829,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         [self.requestQueue persistImmediately];
         [BranchOpenRequest setWaitNeededForOpenResponseLock];
         BNCLogDebugSDK(@"Application resigned active.");
-        [self.class closeLog];
-        [self.class openLog];
     }
 }
 

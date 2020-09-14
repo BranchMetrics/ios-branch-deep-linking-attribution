@@ -77,6 +77,11 @@
                BlueprintName = "Branch-SDK-Tests"
                ReferencedContainer = "container:Branch-TestBed.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "BNCLogTest">
+               </Test>
+            </SkippedTests>
             <DeviceAppData
                resolvedPath = "../Simulate-FirstRun.xcappdata">
             </DeviceAppData>
