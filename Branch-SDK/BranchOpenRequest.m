@@ -170,17 +170,17 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     if (sessionData == nil || [sessionData isKindOfClass:[NSString class]]) {
     } else
     if ([sessionData isKindOfClass:[NSDictionary class]]) {
-        BNCLogWarning(@"Received session data of type '%@' data is '%@'.",
-            NSStringFromClass(sessionData.class), sessionData);        
+        BNCLogWarning([NSString stringWithFormat:@"Received session data of type '%@' data is '%@'.",
+            NSStringFromClass(sessionData.class), sessionData]);
         sessionData = [BNCEncodingUtils encodeDictionaryToJsonString:(NSDictionary*)sessionData];
     } else
     if ([sessionData isKindOfClass:[NSArray class]]) {
-        BNCLogWarning(@"Received session data of type '%@' data is '%@'.",
-            NSStringFromClass(sessionData.class), sessionData);
+        BNCLogWarning([NSString stringWithFormat:@"Received session data of type '%@' data is '%@'.",
+            NSStringFromClass(sessionData.class), sessionData]);
         sessionData = [BNCEncodingUtils encodeArrayToJsonString:(NSArray*)sessionData];
     } else {
-        BNCLogError(@"Received session data of type '%@' data is '%@'.",
-            NSStringFromClass(sessionData.class), sessionData);
+        BNCLogError([NSString stringWithFormat:@"Received session data of type '%@' data is '%@'.",
+            NSStringFromClass(sessionData.class), sessionData]);
         sessionData = nil;
     }
 

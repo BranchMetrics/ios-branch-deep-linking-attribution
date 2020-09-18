@@ -9,7 +9,6 @@
 #import "BNCNetworkService.h"
 #import "BNCEncodingUtils.h"
 #import "BNCLog.h"
-#import "BNCDebug.h"
 #import "NSError+Branch.h"
 
 #pragma mark BNCNetworkOperation
@@ -197,17 +196,17 @@
                         (long)operation.response.statusCode);
                     */
                 } else {
-                    BNCLogDebug(@"Network finish operation %@ %1.3fs. Status %ld error %@.\n%@.",
+                    BNCLogDebug([NSString stringWithFormat:@"Network finish operation %@ %1.3fs. Status %ld error %@.\n%@.",
                         operation.request.URL.absoluteString,
                         [[NSDate date] timeIntervalSinceDate:operation.startDate],
                         (long)operation.response.statusCode,
                         operation.error,
-                        operation.stringFromResponseData);
+                        operation.stringFromResponseData]);
                 }
                 if (operation.completionBlock)
                     operation.completionBlock(operation);
             }];
-    BNCLogDebug(@"Network start operation %@.", operation.request.URL);
+    BNCLogDebug([NSString stringWithFormat:@"Network start operation %@.", operation.request.URL]);
     [operation.sessionTask resume];
 }
 

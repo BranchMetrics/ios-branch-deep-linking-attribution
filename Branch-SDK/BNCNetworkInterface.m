@@ -49,7 +49,7 @@ typedef NS_ENUM(NSInteger, BNCNetworkAddressType) {
     // Retrieve the current interfaces - returns 0 on success
     if (getifaddrs(&interfaces) != 0) {
         int e = errno;
-        BNCLogError(@"Can't read ip address: (%d): %s.", e, strerror(e));
+        BNCLogError([NSString stringWithFormat:@"Can't read ip address: (%d): %s.", e, strerror(e)]);
         goto exit;
     }
 
