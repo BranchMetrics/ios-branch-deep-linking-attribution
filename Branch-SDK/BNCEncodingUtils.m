@@ -167,7 +167,7 @@ NSString* BNCWireFormatFromString(NSString *string) {
         
         // protect against non-string keys
         if (![key isKindOfClass:[NSString class]]) {
-            BNCLogError(@"Unexpected key type %@. Skipping key.", [key class]);
+            BNCLogError([NSString stringWithFormat:@"Unexpected key type %@. Skipping key.", [key class]]);
             continue;
         }
         
@@ -208,7 +208,7 @@ NSString* BNCWireFormatFromString(NSString *string) {
         }
         else {
             // If this type is not a known type, don't attempt to encode it.
-            BNCLogError(@"Cannot encode value for key %@. The value is not an accepted type.", key);
+            BNCLogError([NSString stringWithFormat:@"Cannot encode value for key %@. The value is not an accepted type.", key]);
             continue;
         }
         
@@ -230,7 +230,7 @@ NSString* BNCWireFormatFromString(NSString *string) {
 
     [encodedDictionary appendString:@"}"];
 
-    BNCLogDebugSDK(@"Encoded dictionary: %@.", encodedDictionary);
+    BNCLogDebugSDK([NSString stringWithFormat:@"Encoded dictionary: %@.", encodedDictionary]);
     return encodedDictionary;
 }
 
@@ -272,7 +272,7 @@ NSString* BNCWireFormatFromString(NSString *string) {
         }
         else {
             // If this type is not a known type, don't attempt to encode it.
-            BNCLogError(@"Cannot encode value %@. The value is not an accepted type.", obj);
+            BNCLogError([NSString stringWithFormat:@"Cannot encode value %@. The value is not an accepted type.", obj]);
             continue;
         }
         
@@ -290,7 +290,7 @@ NSString* BNCWireFormatFromString(NSString *string) {
     [encodedArray deleteCharactersInRange:NSMakeRange([encodedArray length] - 1, 1)];
     [encodedArray appendString:@"]"];
     
-    BNCLogDebugSDK(@"Encoded array: %@.", encodedArray);
+    BNCLogDebugSDK([NSString stringWithFormat:@"Encoded array: %@.", encodedArray]);
     return encodedArray;
 }
 
@@ -323,7 +323,7 @@ NSString* BNCWireFormatFromString(NSString *string) {
             }
             else {
                 // If this type is not a known type, don't attempt to encode it.
-                BNCLogError(@"Cannot encode value %@. The value is not an accepted type.", obj);
+                BNCLogError([NSString stringWithFormat:@"Cannot encode value %@. The value is not an accepted type.", obj]);
                 continue;
             }
             
@@ -483,7 +483,6 @@ NSString* BNCWireFormatFromString(NSString *string) {
 
 exit:
     if (bytes) {
-        BNCLogAssert((size_t)(b-bytes)<=length);
         free(bytes);
     }
     return data;

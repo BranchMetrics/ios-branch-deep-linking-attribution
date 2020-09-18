@@ -112,24 +112,11 @@ BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex) {
     return [UIDevice currentDevice].systemVersion.floatValue;
 }
 
-static BOOL _breakpointsAreEnabledInTests = NO;
-
-+ (BOOL) breakpointsAreEnabledInTests {
-    return _breakpointsAreEnabledInTests;
-}
-
 static NSString* savedIdentityID = nil;
 
 + (void) initialize {
     if (self != [BNCTestCase self]) return;
     BNCLogSetDisplayLevel(BNCLogLevelAll);
-
-    // Load test options from environment variables:
-    NSDictionary<NSString*, NSString*> *environment = [NSProcessInfo processInfo].environment;
-    NSString *BNCTestBreakpoints = environment[@"BNCTestBreakpointsEnabled"];
-    if ([BNCTestBreakpoints boolValue]) {
-        _breakpointsAreEnabledInTests = YES;
-    }
 
     savedIdentityID = [BNCPreferenceHelper preferenceHelper].identityID;
     [Branch clearAll];

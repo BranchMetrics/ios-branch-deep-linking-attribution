@@ -10,7 +10,6 @@
 
 #import "BNCTestCase.h"
 #import "NSError+Branch.h"
-#import "BNCLocalization.h"
 
 @interface NSErrorBranchCategoryTests : BNCTestCase
 @end
@@ -45,10 +44,8 @@
         XCTAssert([error.localizedFailureReason isEqualToString:@"The file doesn’t exist."]);
     }
 
-    NSString *message =
-        BNCLocalizedFormattedString(
-            @"Network operation of class '%@' does not conform to the BNCNetworkOperationProtocol.",
-                NSStringFromClass([self class]));
+    NSString *message = [NSString stringWithFormat:@"Network operation of class '%@' does not conform to the BNCNetworkOperationProtocol.",
+                         NSStringFromClass([self class])];
     error = [NSError branchErrorWithCode:BNCNetworkServiceInterfaceError localizedMessage:message];
     XCTAssert(error.domain == [NSError bncErrorDomain]);
     XCTAssert(error.code == BNCNetworkServiceInterfaceError);

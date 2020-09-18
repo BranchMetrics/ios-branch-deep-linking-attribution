@@ -9,7 +9,6 @@
 */
 
 #import "NSError+Branch.h"
-#import "BNCLocalization.h"
 
 __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad() {
     // Nothing here, but forces linker to load the category.
@@ -55,7 +54,7 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad() {
 + (NSError *) branchErrorWithCode:(BNCErrorCode)errorCode error:(NSError*)error localizedMessage:(NSString*_Nullable)message {
     NSMutableDictionary *userInfo = [NSMutableDictionary new];
 
-    NSString *localizedString = BNCLocalizedString([self messageForCode:errorCode]);
+    NSString *localizedString = [self messageForCode:errorCode];
     if (localizedString) {
         userInfo[NSLocalizedDescriptionKey] = localizedString;
     }

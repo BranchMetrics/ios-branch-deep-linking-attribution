@@ -66,8 +66,8 @@
 
 - (NSString *)processResponse:(BNCServerResponse *)response {
     if (![response.statusCode isEqualToNumber:@200]) {
-        BNCLogWarning(@"Short link creation received HTTP status code %@. Using long link instead.",
-            response.statusCode);
+        BNCLogWarning([NSString stringWithFormat:@"Short link creation received HTTP status code %@. Using long link instead.",
+            response.statusCode]);
         NSString *failedUrl = nil;
         NSString *userUrl = [BNCPreferenceHelper preferenceHelper].userUrl;
         if (userUrl) {

@@ -283,13 +283,13 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             [data writeToURL:self.class.URLForQueueFile
                 options:NSDataWritingAtomic error:&error];
             if (error) {
-                BNCLogError(@"Failed to persist queue to disk: %@.", error);
+                BNCLogError([NSString stringWithFormat:@"Failed to persist queue to disk: %@.", error]);
             }
         }
         @catch (NSException *exception) {
             BNCLogError(
-                @"An exception occurred while attempting to save the queue. Exception information:\n\n%@.",
-                [self.class exceptionString:exception]
+                [NSString stringWithFormat:@"An exception occurred while attempting to save the queue. Exception information:\n\n%@.",
+                [self.class exceptionString:exception]]
             );
         }
     }
@@ -321,9 +321,9 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
         }
         @catch (NSException *exception) {
             BNCLogError(
-                @"An exception occurred while attempting to load the queue file, "
+                [NSString stringWithFormat:@"An exception occurred while attempting to load the queue file, "
                 "proceeding without requests. Exception information:\n\n%@.",
-                [self.class exceptionString:exception]
+                [self.class exceptionString:exception]]
             );
             self.queue = queue;
             return;
@@ -343,7 +343,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             
             // Throw out invalid request types
             if (![request isKindOfClass:[BNCServerRequest class]]) {
-                BNCLogWarning(@"Found an invalid request object, discarding. Object is: %@.", request);
+                BNCLogWarning([NSString stringWithFormat:@"Found an invalid request object, discarding. Object is: %@.", request]);
                 continue;
             }
             
@@ -397,7 +397,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
                 removeItemAtURL:oldURL
                 error:&error];
         } else {
-            BNCLogError(@"Failed to move the queue file: %@.", error);
+            BNCLogError([NSString stringWithFormat:@"Failed to move the queue file: %@.", error]);
         }
     }
 }
@@ -416,7 +416,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     dispatch_once(&onceToken, ^ {
         sharedQueue = [[BNCServerRequestQueue alloc] init];
         [sharedQueue retrieve];
-        BNCLogDebugSDK(@"Retrieved from storage: %@.", sharedQueue);
+        BNCLogDebugSDK([NSString stringWithFormat:@"Retrieved from storage: %@.", sharedQueue]);
     });
     return sharedQueue;
 }
