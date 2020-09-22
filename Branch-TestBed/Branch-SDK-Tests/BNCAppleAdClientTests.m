@@ -31,9 +31,9 @@
     // Put teardown code here. This method is called after the invocation of each test method in the class.
 }
 
-// verifies AdClient loaded via reflection is the sharedClient
 - (void)testAdClientLoadsViaReflection {
-    XCTAssertTrue([ADClient sharedClient] == [BNCAppleAdClient new].adClient);
+    XCTAssertNotNil([BNCAppleAdClient new].adClient);
+    XCTAssertTrue([[BNCAppleAdClient new].adClient isKindOfClass:ADClient.class]);
 }
 
 /*
