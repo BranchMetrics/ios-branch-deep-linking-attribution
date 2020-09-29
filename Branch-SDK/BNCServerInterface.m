@@ -498,7 +498,7 @@
         [self safeSetValue:deviceInfo.osName forKey:BRANCH_REQUEST_KEY_OS onDict:dict];
         [self safeSetValue:deviceInfo.osVersion forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:dict];
         [self safeSetValue:deviceInfo.osBuildVersion forKey:@"build" onDict:dict];
-        [self safeSetValue:deviceInfo.extensionType forKey:@"environment" onDict:dict];
+        [self safeSetValue:deviceInfo.environment forKey:@"environment" onDict:dict];
         [self safeSetValue:deviceInfo.locale forKey:@"locale" onDict:dict];
         [self safeSetValue:deviceInfo.country forKey:@"country" onDict:dict];
         [self safeSetValue:deviceInfo.language forKey:@"language" onDict:dict];

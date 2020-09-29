@@ -44,7 +44,7 @@
 @property (nonatomic, copy, readwrite) NSString *osName;
 @property (nonatomic, copy, readwrite) NSString *osVersion;
 @property (nonatomic, copy, readwrite) NSString *osBuildVersion;
-@property (nonatomic, copy, readwrite) NSString *extensionType;
+@property (nonatomic, copy, readwrite) NSString *environment;
 @property (nonatomic, copy, readwrite) NSString *cpuType;
 @property (nonatomic, copy, readwrite) NSNumber *screenWidth;
 @property (nonatomic, copy, readwrite) NSNumber *screenHeight;

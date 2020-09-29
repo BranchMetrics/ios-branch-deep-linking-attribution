@@ -54,8 +54,8 @@
     XCTAssertNotNil(self.deviceInfo.osBuildVersion);
 }
 
-- (void)testExtensionType {
-    XCTAssert([@"FULL_APP" isEqualToString:self.deviceInfo.extensionType]);
+- (void)testEnvironment {
+    XCTAssert([@"FULL_APP" isEqualToString:self.deviceInfo.environment]);
 }
 
 - (void)testCpuType_Simulator {
