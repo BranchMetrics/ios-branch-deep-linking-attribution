@@ -22,6 +22,7 @@
 #import "BranchContentDiscoverer.h"
 #import "BranchCreditHistoryRequest.h"
 #import "BranchInstallRequest.h"
+#import "BranchJsonConfig.h"
 #import "BranchLoadRewardsRequest.h"
 #import "BranchLogoutRequest.h"
 #import "BranchOpenRequest.h"
@@ -218,6 +219,22 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     // queue up async data loading
     [self loadApplicationData];
     [self loadUserAgent];
+    
+    BranchJsonConfig *config = BranchJsonConfig.instance;
+    
+    if (config.delayInitToCheckForSearchAds) {
+        [self delayInitToCheckForSearchAds];
+    }
+
+    if (config.enableFacebookLinkCheck) {
+        Class FBSDKAppLinkUtility = NSClassFromString(@"FBSDKAppLinkUtility");
+        if (FBSDKAppLinkUtility) {
+            [self registerFacebookDeepLinkingClass:FBSDKAppLinkUtility];
+        }
+        else {
+            BNCLogWarning(@"FBSDKAppLinkUtility not found but enableFacebookLinkCheck set to true. Please be sure you have integrated the Facebook SDK.");
+        }
+    }
 
     return self;
 }
@@ -361,15 +378,23 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 + (NSString *)branchKey {
     @synchronized (self) {
         if (bnc_branchKey) return bnc_branchKey;
-
-        NSDictionary *branchDictionary = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_key"];
+        
         NSString *branchKey = nil;
-        if ([branchDictionary isKindOfClass:[NSString class]]) {
-            branchKey = (NSString*) branchDictionary;
-        } else
-        if ([branchDictionary isKindOfClass:[NSDictionary class]]) {
-            branchKey =
-                (self.useTestBranchKey) ? branchDictionary[@"test"] : branchDictionary[@"live"];
+        
+        BranchJsonConfig *config = BranchJsonConfig.instance;
+        BOOL usingTestInstance = bnc_useTestBranchKey || config.useTestInstance;
+        branchKey = config.branchKey ?: usingTestInstance ? config.testKey : config.liveKey;
+        [self setUseTestBranchKey:usingTestInstance];
+        
+        if (branchKey == nil) {
+            NSDictionary *branchDictionary = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_key"];
+            if ([branchDictionary isKindOfClass:[NSString class]]) {
+                branchKey = (NSString*) branchDictionary;
+            } else
+            if ([branchDictionary isKindOfClass:[NSDictionary class]]) {
+                branchKey =
+                    (self.useTestBranchKey) ? branchDictionary[@"test"] : branchDictionary[@"live"];
+            }
         }
 
         self.branchKey = branchKey;
