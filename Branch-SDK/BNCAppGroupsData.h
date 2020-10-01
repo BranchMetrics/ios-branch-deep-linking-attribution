@@ -12,7 +12,23 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BNCAppGroupsData : NSObject
 
-- (instancetype)initWithAppGroup:(NSString *)appGroup;
+// app group used to share data between the App Clip and the Full App
+@property (nonatomic, strong, readwrite) NSString *appGroup;
+
+// App Clip data
+@property (nonatomic, strong, readwrite) NSString *bundleID;
+@property (nonatomic, strong, readwrite) NSDate *installDate;
+@property (nonatomic, strong, readwrite) NSString *url;
+@property (nonatomic, strong, readwrite) NSString *branchToken;
+@property (nonatomic, strong, readwrite) NSString *bundleToken;
+
++ (instancetype)shared;
+
+// saves app clip data when appropriate
+- (void)saveAppClipData;
+
+// loads app clip data
+- (BOOL)loadAppClipData;
 
 @end
 

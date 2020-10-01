@@ -938,6 +938,10 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     #endif
 }
 
+- (void)setAppClipAppGroup:(NSString *)appGroup {
+    [BNCAppGroupsData shared].appGroup = appGroup;
+}
+
 - (void)setSKAdNetworkCalloutMaxTimeSinceInstall:(NSTimeInterval)maxTimeInterval {
     [BNCSKAdNetwork sharedInstance].maxTimeSinceInstall = maxTimeInterval;
 }

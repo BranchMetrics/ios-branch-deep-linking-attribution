@@ -21,9 +21,9 @@
 - (NSDictionary *) v2dictionary;
 
 /*
- Everything below this line should be private.  Thread safety is the callee's responsibility!
+ Thread safety is the callee's responsibility!
  
- Currently BNCServerInterface.updateDeviceInfoToMutableDictionary and unit tests use these.
+ BNCServerInterface.updateDeviceInfoToMutableDictionary, BNCAppGroupsData.saveAppClipData and unit tests use these.
  */
 
 - (void)checkAdvertisingIdentifier;
@@ -60,5 +60,6 @@
 @property (nonatomic, copy, readwrite) NSString *pluginVersion;
 @property (nonatomic, copy, readwrite) NSString *branchSDKVersion;
 
+- (BOOL)isAppClip;
 
 @end

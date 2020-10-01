@@ -213,7 +213,7 @@
 		5F92B242238752A500CA909B /* BNCDeviceInfoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F92B241238752A500CA909B /* BNCDeviceInfoTests.m */; };
 		5FB0AA6B231875B500A0F9EA /* BNCUserAgentCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB0AA69231875B400A0F9EA /* BNCUserAgentCollector.h */; };
 		5FB0AA6C231875B500A0F9EA /* BNCUserAgentCollector.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB0AA6A231875B500A0F9EA /* BNCUserAgentCollector.m */; };
-		5FB38C802521234F00E9A85A /* BNCAppGroupsData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB38C7E2521234F00E9A85A /* BNCAppGroupsData.h */; };
+		5FB38C802521234F00E9A85A /* BNCAppGroupsData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB38C7E2521234F00E9A85A /* BNCAppGroupsData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FB38C812521234F00E9A85A /* BNCAppGroupsData.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB38C7F2521234F00E9A85A /* BNCAppGroupsData.m */; };
 		5FC4CF8C24860C440001E701 /* latd.json in Resources */ = {isa = PBXBuildFile; fileRef = 5FC4CF7E24860C320001E701 /* latd.json */; };
 		5FC4CF8D24860C440001E701 /* latd_missing_window.json in Resources */ = {isa = PBXBuildFile; fileRef = 5FC4CF7F24860C320001E701 /* latd_missing_window.json */; };

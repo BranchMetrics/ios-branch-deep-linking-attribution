@@ -33,6 +33,7 @@
 #import "BNCInitSessionResponse.h"
 #import "UIViewController+Branch.h"
 #import "BranchScene.h"
+#import "BNCAppGroupsData.h"
 
 #if !TARGET_OS_TV
 // tvOS does not support these features
@@ -675,6 +676,13 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  Apple returns test data for all calls made to the Apple Search Ads API on developer and testflight builds.
  */
 - (void)ignoreAppleSearchAdsTestData;
+
+/**
+ Set the AppGroup used to share data between the App Clip and the Full App.
+ 
+ This must be set before initSession is called.
+ */
+- (void)setAppClipAppGroup:(NSString *)appGroup;
 
 /**
  Set time window for SKAdNetwork callouts.  By default, Branch limits calls to SKAdNetwork to within 72 hours after first install.
