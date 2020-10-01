@@ -41,6 +41,7 @@
 #import "BNCDeviceInfo.h"
 #import "BNCCallbackMap.h"
 #import "BNCSKAdNetwork.h"
+#import "BNCAppGroupsData.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
