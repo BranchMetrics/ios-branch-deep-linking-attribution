@@ -70,7 +70,7 @@
 
     // The random id is regenerated per app launch.  This maintains existing behavior.
     self.randomId = [[NSUUID UUID] UUIDString];
-    self.vendorId = [BNCSystemObserver getVendorId];
+    self.vendorId = [[UIDevice currentDevice].identifierForVendor UUIDString];
     [self checkAdvertisingIdentifier];
 
     self.brandName = [BNCSystemObserver getBrand];
@@ -95,7 +95,7 @@
     self.locale = [NSLocale currentLocale].localeIdentifier;
     self.country = [locale country];
     self.language = [locale language];
-    self.extensionType = [self extensionType];
+    self.environment = [self environment];
     self.branchSDKVersion = [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION];
     self.applicationVersion = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
     if (!self.applicationVersion.length) {
@@ -103,12 +103,27 @@
     }
 }
 
-- (NSString *)extensionType {
+// App Clips have a zero'd out IDFV
+- (BOOL)isAppClip {
+    if ([@"00000000-0000-0000-0000-000000000000" isEqualToString:[[UIDevice currentDevice].identifierForVendor UUIDString]]) {
+        return YES;
+    }
+    return NO;
+}
+
+- (NSString *)environment {
     NSString *result = @"FULL_APP";
+    
+    if ([self isAppClip]) {
+        result = @"APP_CLIP";
+    }
+    
+    // iMessage has an extension id set in the Bundle
     NSString *extensionType = [NSBundle mainBundle].infoDictionary[@"NSExtension"][@"NSExtensionPointIdentifier"];
     if ([extensionType isEqualToString:@"com.apple.identitylookup.message-filter"]) {
         result = @"IMESSAGE_APP";
     }
+    
     return result;
 }
 
@@ -182,7 +197,7 @@
         [dictionary bnc_safeSetObject:self.osName forKey:@"os"];
         [dictionary bnc_safeSetObject:self.osVersion forKey:@"os_version"];
         [dictionary bnc_safeSetObject:self.osBuildVersion forKey:@"build"];
-        [dictionary bnc_safeSetObject:self.extensionType forKey:@"environment"];
+        [dictionary bnc_safeSetObject:self.environment forKey:@"environment"];
         [dictionary bnc_safeSetObject:self.cpuType forKey:@"cpu_type"];
         [dictionary bnc_safeSetObject:self.screenScale forKey:@"screen_dpi"];
         [dictionary bnc_safeSetObject:self.screenHeight forKey:@"screen_height"];

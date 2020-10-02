@@ -677,6 +677,13 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)ignoreAppleSearchAdsTestData;
 
 /**
+ Set the AppGroup used to share data between the App Clip and the Full App.
+ 
+ This must be set before initSession is called.
+ */
+- (void)setAppClipAppGroup:(NSString *)appGroup;
+
+/**
  Set time window for SKAdNetwork callouts.  By default, Branch limits calls to SKAdNetwork to within 72 hours after first install.
  
  Note: Branch does not automatically call SKAdNetwork unless configured on the dashboard.

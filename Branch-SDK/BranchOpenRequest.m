@@ -19,6 +19,7 @@
 #import "BNCAppleReceipt.h"
 #import "BNCTuneUtility.h"
 #import "BNCSKAdNetwork.h"
+#import "BNCAppGroupsData.h"
 
 @interface BranchOpenRequest ()
 @property (assign, nonatomic) BOOL isInstall;
@@ -253,7 +254,11 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     if ([cdManifest isCDEnabled]) {
         [[BranchContentDiscoverer getInstance] startDiscoveryTaskWithManifest:cdManifest];
     }
-
+    
+    if (self.isInstall) {
+        [[BNCAppGroupsData shared] saveAppClipData];
+    }
+    
     if (self.callback) {
         self.callback(YES, nil);
     }

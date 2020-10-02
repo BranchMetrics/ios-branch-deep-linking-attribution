@@ -75,11 +75,6 @@
     #endif
 }
 
-+ (NSString *)getVendorId {
-    NSString *vendorId = [[UIDevice currentDevice].identifierForVendor UUIDString];    
-    return vendorId;
-}
-
 + (BOOL)adTrackingSafe {
     
     // This macro is unnecessary since this code only runs if AdSupport.framework is included

@@ -17,7 +17,6 @@
 + (NSString *)getUniqueHardwareId:(BOOL *)isReal
                           isDebug:(BOOL)debug
                           andType:(NSString *__autoreleasing*)type;
-+ (NSString *)getVendorId;
 + (NSString *)getDefaultUriScheme;
 + (NSString *)getAppVersion;
 + (NSString *)getBundleID;
