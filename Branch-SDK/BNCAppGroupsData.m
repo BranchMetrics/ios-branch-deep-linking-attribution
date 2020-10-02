@@ -105,7 +105,7 @@
         self.branchToken = [self getStringForKey:@"BranchAppClipToken"];
         self.bundleToken = [self getStringForKey:@"BranchAppClipBundleToken"];
         
-        if (self.bundleID && self.installDate && self.url && self.branchToken) {
+        if (self.bundleID && self.installDate && self.url && self.branchToken && self.bundleToken) {
             NSString *logMessage = [NSString stringWithFormat:@"Loading App Clip Data: %@, %@, %@, %@, %@", self.bundleID, self.installDate, self.url, self.branchToken, self.bundleToken];
             BNCLogDebug(logMessage);
             
