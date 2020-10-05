@@ -248,7 +248,7 @@
         if (![self whiteListContainsEndpoint:endpoint]) {
             [[BNCPreferenceHelper preferenceHelper] clearTrackingInformation];
             NSError *error = [NSError branchErrorWithCode:BNCTrackingDisabledError];
-            BNCLogError([NSString stringWithFormat:@"Network service error: %@.", error]);
+            BNCLogError([NSString stringWithFormat:@"Network service error: %@ - %@", error, endpoint]);
             if (callback) {
                 callback(nil, error);
             }

@@ -105,7 +105,7 @@ NSString * _Nonnull const BranchJsonConfigEnableFacebookLinkCheck = @"enableFace
     }];
 
     if (!configFileURL) {
-        BNCLog(@"Could not find branch.json in app bundle.");
+        BNCLogDebug(@"No branch.json in app bundle.");
         return;
     }
 
