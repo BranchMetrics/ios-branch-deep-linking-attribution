@@ -1,5 +1,11 @@
 Branch iOS SDK Change Log
 
+v0.35.1
+October 6, 2020
+
+INTENG-11208
+Bug fix.  It is possible to block all network calls if the user never opts in.  This leads to link resolution reliability issues.
+
 v0.35.0
 August 24, 2020
 
