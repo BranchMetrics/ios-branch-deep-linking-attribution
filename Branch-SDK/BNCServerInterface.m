@@ -249,7 +249,7 @@
         if (![self whiteListContainsEndpoint:endpoint]) {
             [[BNCPreferenceHelper preferenceHelper] clearTrackingInformation];
             NSError *error = [NSError branchErrorWithCode:BNCTrackingDisabledError];
-            BNCLogError(@"Network service error: %@.", error);
+            BNCLogWarning(@"Dropping Request %@: - %@", endpoint, error);
             if (callback) {
                 callback(nil, error);
             }
