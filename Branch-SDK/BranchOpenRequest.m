@@ -152,8 +152,11 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
     preferenceHelper.previousAppBuildDate = [BNCApplication currentApplication].currentBuildDate;
 
-    if (data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP]) {
-        [[BNCSKAdNetwork sharedInstance] registerAppForAdNetworkAttribution];
+    if ([data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP] isKindOfClass:NSNumber.class]) {
+        NSNumber *invokeRegister = (NSNumber *)data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP];
+        if (invokeRegister.boolValue) {
+            [[BNCSKAdNetwork sharedInstance] registerAppForAdNetworkAttribution];
+        }
     }
     
     if (Branch.enableFingerprintIDInCrashlyticsReports) {

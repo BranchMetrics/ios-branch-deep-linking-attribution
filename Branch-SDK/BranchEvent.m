@@ -74,7 +74,7 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
 	NSDictionary *dictionary = ([response.data isKindOfClass:[NSDictionary class]])
 		? (NSDictionary*) response.data : nil;
 	
-    if (dictionary) {
+    if (dictionary && [dictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE] isKindOfClass:NSNumber.class]) {
         NSNumber *conversionValue = (NSNumber *)dictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
         if (conversionValue) {
             [[BNCSKAdNetwork sharedInstance] updateConversionValue:conversionValue.integerValue];
