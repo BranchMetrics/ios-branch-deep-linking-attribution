@@ -2041,21 +2041,24 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
         if (req) {
 
-            if (![req isKindOfClass:[BranchInstallRequest class]] && !self.preferenceHelper.identityID) {
-                BNCLogError(@"User session has not been initialized!");
-                BNCPerformBlockOnMainThreadSync(^{
-                    [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
-                });
-                return;
+            // If tracking is disabled, then do not check for install event.  It won't exist.
+            if (!Branch.trackingDisabled) {
+                if (![req isKindOfClass:[BranchInstallRequest class]] && !self.preferenceHelper.identityID) {
+                    BNCLogError(@"User session has not been initialized!");
+                    BNCPerformBlockOnMainThreadSync(^{
+                        [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
+                    });
+                    return;
 
-            } else if (![req isKindOfClass:[BranchOpenRequest class]] &&
-                (!self.preferenceHelper.deviceFingerprintID || !self.preferenceHelper.sessionID)) {
-                BNCLogError(@"Missing session items!");
-                BNCPerformBlockOnMainThreadSync(^{
-                    [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
-                });
-                return;
+                } else if (![req isKindOfClass:[BranchOpenRequest class]] &&
+                    (!self.preferenceHelper.deviceFingerprintID || !self.preferenceHelper.sessionID)) {
+                    BNCLogError(@"Missing session items!");
+                    BNCPerformBlockOnMainThreadSync(^{
+                        [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
+                    });
+                    return;
 
+                }
             }
 
             dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
