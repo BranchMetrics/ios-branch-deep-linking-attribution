@@ -492,6 +492,15 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     }
 }
 
+- (NSDictionary *)instrumentationParameters {
+    @synchronized (self) {
+        if (_instrumentationDictionary.count == 0) {
+            return nil; // this avoids the .count check in prepareParamDict
+        }
+        return [[NSDictionary alloc] initWithDictionary:_instrumentationDictionary];
+    }
+}
+
 - (NSMutableDictionary *)instrumentationDictionary {
     @synchronized (self) {
         if (!_instrumentationDictionary) {
