@@ -454,6 +454,9 @@
                                         data:(NSData *)data
                                        error:(NSError *)error {
     BNCServerResponse *serverResponse = [[BNCServerResponse alloc] init];
+    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+    BNCLogDebug([NSString stringWithFormat: @"All response headers: %@", httpResponse.allHeaderFields]);
+
     if (!error) {
         serverResponse.statusCode = @([(NSHTTPURLResponse *)response statusCode]);
         serverResponse.data = [BNCEncodingUtils decodeJsonDataToDictionary:data];
