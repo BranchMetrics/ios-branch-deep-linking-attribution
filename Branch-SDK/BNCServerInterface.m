@@ -458,7 +458,7 @@
     BNCLogDebug([NSString stringWithFormat: @"All response headers: %@", httpResponse.allHeaderFields]);
 
     if (!error) {
-        serverResponse.statusCode = @([(NSHTTPURLResponse *)response statusCode]);
+        serverResponse.statusCode = @([httpResponse statusCode]);
         serverResponse.data = [BNCEncodingUtils decodeJsonDataToDictionary:data];
     }
     else {
