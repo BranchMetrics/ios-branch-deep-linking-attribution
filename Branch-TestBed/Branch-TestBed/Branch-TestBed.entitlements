@@ -6,7 +6,10 @@
 	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:itrdp-jdee.branchbeta.link</string>
+		<string>applinks:bnc.lt</string>
+		<string>applinks:bnctestbed.app.link</string>
+		<string>applinks:bnctestbed.test-app.link</string>
+		<string>applinks:bnctestbed-alternate.app.link</string>
 	</array>
 </dict>
 </plist>
