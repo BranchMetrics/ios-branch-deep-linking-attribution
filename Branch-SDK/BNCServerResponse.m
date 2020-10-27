@@ -11,7 +11,12 @@
 @implementation BNCServerResponse
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"Status: %@; Data: %@", self.statusCode, self.data];
+    if (self.requestId) {
+        return [NSString stringWithFormat:@"[%@] Status: %@; Data: %@", self.requestId, self.statusCode, self.data];
+    }
+    else {
+        return [NSString stringWithFormat:@"Status: %@; Data: %@", self.statusCode, self.data];
+    }
 }
 
 @end

@@ -454,14 +454,20 @@
                                         data:(NSData *)data
                                        error:(NSError *)error {
     BNCServerResponse *serverResponse = [[BNCServerResponse alloc] init];
+    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+    NSString *requestId = httpResponse.allHeaderFields[@"X-Branch-Request-Id"];
+
     if (!error) {
-        serverResponse.statusCode = @([(NSHTTPURLResponse *)response statusCode]);
+        serverResponse.statusCode = @([httpResponse statusCode]);
         serverResponse.data = [BNCEncodingUtils decodeJsonDataToDictionary:data];
+        serverResponse.requestId = requestId;
     }
     else {
         serverResponse.statusCode = @(error.code);
         serverResponse.data = error.userInfo;
+        serverResponse.requestId = requestId;
     }
+
     BNCLogDebug([NSString stringWithFormat:@"Server returned: %@.", serverResponse]);
     return serverResponse;
 }
