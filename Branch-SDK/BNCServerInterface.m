@@ -455,7 +455,7 @@
                                        error:(NSError *)error {
     BNCServerResponse *serverResponse = [[BNCServerResponse alloc] init];
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-    BNCLogDebug([NSString stringWithFormat: @"All response headers: %@", httpResponse.allHeaderFields]);
+    NSString *requestId = httpResponse.allHeaderFields[@"X-Branch-Request-Id"];
 
     if (!error) {
         serverResponse.statusCode = @([httpResponse statusCode]);
@@ -465,7 +465,12 @@
         serverResponse.statusCode = @(error.code);
         serverResponse.data = error.userInfo;
     }
-    BNCLogDebug([NSString stringWithFormat:@"Server returned: %@.", serverResponse]);
+    if (requestId) {
+        BNCLogDebug([NSString stringWithFormat:@"[%@] Server returned: %@.", requestId, serverResponse]);
+    }
+    else {
+        BNCLogDebug([NSString stringWithFormat:@"Server returned: %@.", serverResponse]);
+    }
     return serverResponse;
 }
 
