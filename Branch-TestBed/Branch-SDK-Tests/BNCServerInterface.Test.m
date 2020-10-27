@@ -396,7 +396,6 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
         // Return the following response for any request
         return YES;
     } withStubResponse:^HTTPStubsResponse *(NSURLRequest *request) {
-        BNCAfterSecondsPerformBlockOnMainThread(0.01, ^{ [successExpectation fulfill]; });
         // Stub out a response with a X-Branch-Request-Id header
         return [HTTPStubsResponse responseWithJSONObject:@{} statusCode:200 headers:@{@"X-Branch-Request-Id": requestId}];
     }];
@@ -404,7 +403,8 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     // POST to trigger the stubbed response.
     [serverInterface postRequest:@{} url:@"https://api.branch.io/v1/open" key:@"key_live_xxxx" callback:^(BNCServerResponse *response, NSError *error) {
         // Verify the request ID value on the BNCServerResponse
-        XCTAssertEqual(response.requestId, requestId);
+        BNCAfterSecondsPerformBlockOnMainThread(0.01, ^{ [successExpectation fulfill]; });
+        XCTAssertEqualObjects(response.requestId, requestId);
     }];
 
     [self waitForExpectationsWithTimeout:1.0 handler:nil];
