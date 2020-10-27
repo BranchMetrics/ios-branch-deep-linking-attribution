@@ -13,6 +13,8 @@
 #endif
 
 @interface BNCServerResponse : NSObject
-@property (nonatomic, strong) NSNumber *statusCode;
-@property (nonatomic, strong) id data;
+// statusCode is always populated from an NSInteger argument, so will never be null.
+@property (nonatomic, strong, nonnull) NSNumber *statusCode;
+@property (nonatomic, strong, nullable) id data;
+@property (nonatomic, copy, nullable) NSString *requestId;
 @end

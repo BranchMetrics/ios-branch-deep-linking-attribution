@@ -460,17 +460,15 @@
     if (!error) {
         serverResponse.statusCode = @([httpResponse statusCode]);
         serverResponse.data = [BNCEncodingUtils decodeJsonDataToDictionary:data];
+        serverResponse.requestId = requestId;
     }
     else {
         serverResponse.statusCode = @(error.code);
         serverResponse.data = error.userInfo;
+        serverResponse.requestId = requestId;
     }
-    if (requestId) {
-        BNCLogDebug([NSString stringWithFormat:@"[%@] Server returned: %@.", requestId, serverResponse]);
-    }
-    else {
-        BNCLogDebug([NSString stringWithFormat:@"Server returned: %@.", serverResponse]);
-    }
+
+    BNCLogDebug([NSString stringWithFormat:@"Server returned: %@.", serverResponse]);
     return serverResponse;
 }
 
