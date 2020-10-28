@@ -379,4 +379,35 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 //  [self waitForExpectationsWithTimeout:10.0 handler:nil];
 //}
 
+
+//==================================================================================
+// TEST 10
+// Test mapping of X-Branch-Request-Id to [BNCServerResponse requestId]
+
+- (void)testRequestIdFromHeader {
+    [HTTPStubs removeAllStubs];
+
+    BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
+    NSString *requestId = @"1325e434fa294d3bb7d461349118602d-2020102721";
+
+    XCTestExpectation* successExpectation = [self expectationWithDescription:@"success"];
+
+    [HTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+        // Return the following response for any request
+        return YES;
+    } withStubResponse:^HTTPStubsResponse *(NSURLRequest *request) {
+        // Stub out a response with a X-Branch-Request-Id header
+        return [HTTPStubsResponse responseWithJSONObject:@{} statusCode:200 headers:@{@"X-Branch-Request-Id": requestId}];
+    }];
+
+    // POST to trigger the stubbed response.
+    [serverInterface postRequest:@{} url:@"https://api.branch.io/v1/open" key:@"key_live_xxxx" callback:^(BNCServerResponse *response, NSError *error) {
+        // Verify the request ID value on the BNCServerResponse
+        BNCAfterSecondsPerformBlockOnMainThread(0.01, ^{ [successExpectation fulfill]; });
+        XCTAssertEqualObjects(response.requestId, requestId);
+    }];
+
+    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+}
+
 @end
