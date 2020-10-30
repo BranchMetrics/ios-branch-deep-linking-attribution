@@ -1869,7 +1869,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         BranchContentDiscoverer *contentDiscoverer = [BranchContentDiscoverer getInstance];
         if (contentDiscoverer) [contentDiscoverer stopDiscoveryTask];
 
-        if (self.preferenceHelper.sessionID && ![self.requestQueue containsClose]) {
+        BOOL sendCloseRequests = [[BNCPreferenceHelper preferenceHelper] sendCloseRequests];
+        if (sendCloseRequests && self.preferenceHelper.sessionID && ![self.requestQueue containsClose]) {
             BranchCloseRequest *req = [[BranchCloseRequest alloc] init];
             [self.requestQueue enqueue:req];
             [self processNextQueueItem];

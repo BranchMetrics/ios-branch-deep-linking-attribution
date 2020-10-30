@@ -597,6 +597,23 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     }
 }
 
+- (BOOL)sendCloseRequests {
+    @synchronized(self) {
+        NSNumber *b = (id) [self readObjectFromDefaults:@"sendCloseRequests"];
+        if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
+        
+        // by default, we send close requests
+        return true;
+    }
+}
+
+- (void)setSendCloseRequests:(BOOL)disabled {
+    @synchronized(self) {
+        NSNumber *b = [NSNumber numberWithBool:disabled];
+        [self writeObjectToDefaults:@"sendCloseRequests" value:b];
+    }
+}
+
 - (void) clearTrackingInformation {
     @synchronized(self) {
         /* Don't clear these:
