@@ -609,8 +609,7 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 
 - (void)setSendCloseRequests:(BOOL)disabled {
     @synchronized(self) {
-        NSNumber *b = [NSNumber numberWithBool:disabled];
-        [self writeObjectToDefaults:@"sendCloseRequests" value:b];
+        [self writeObjectToDefaults:@"sendCloseRequests" value:@(disabled)];
     }
 }
 
