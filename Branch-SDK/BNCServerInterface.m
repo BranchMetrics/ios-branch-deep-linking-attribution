@@ -457,7 +457,7 @@
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
     NSString *requestId = httpResponse.allHeaderFields[@"X-Branch-Request-Id"];
 
-    NSString *sendCloseRequests = httpResponse.allHeaderFields[@"X-Branch-Send-Close-Request"];
+    NSString *sendCloseRequests = httpResponse.allHeaderFields[@"x-branch-send-close-request"];
     if (sendCloseRequests != nil) {
         [[BNCPreferenceHelper preferenceHelper] setSendCloseRequests:sendCloseRequests.boolValue];
     }
