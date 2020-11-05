@@ -57,6 +57,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, atomic) NSInteger URLBlackListVersion;
 @property (assign, atomic) BOOL blacklistURLOpen;
 
+@property (assign, nonatomic) BOOL sendCloseRequests;
+
 @property (assign, atomic) BOOL trackingDisabled;
 - (void) clearTrackingInformation;
 
