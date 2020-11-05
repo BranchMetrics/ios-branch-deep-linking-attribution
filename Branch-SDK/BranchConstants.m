@@ -99,7 +99,6 @@ NSString * const BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA = @"branch_view_data";
 NSString * const BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK = @"~referring_link";
 NSString * const BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP = @"invoke_register_app";
 NSString * const BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE = @"update_conversion_value";
-NSString * const BRANCH_REQUEST_KEY_SEND_CLOSE_REQUESTS = @"send_close_request";
 
 NSString * const BRANCH_LINK_DATA_KEY_OG_TITLE = @"$og_title";
 NSString * const BRANCH_LINK_DATA_KEY_OG_DESCRIPTION = @"$og_description";

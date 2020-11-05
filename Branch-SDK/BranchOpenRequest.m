@@ -161,13 +161,6 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
         }
     }
     
-    if ([data[BRANCH_REQUEST_KEY_SEND_CLOSE_REQUESTS] isKindOfClass:NSNumber.class]) {
-        NSNumber *sendCloseRequests = (NSNumber *)data[BRANCH_REQUEST_KEY_SEND_CLOSE_REQUESTS];
-        if (sendCloseRequests) {
-            [[BNCPreferenceHelper preferenceHelper] setSendCloseRequests:sendCloseRequests.boolValue];
-        }
-    }
-    
     if (Branch.enableFingerprintIDInCrashlyticsReports) {
         BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
         [crashlytics setObjectValue:preferenceHelper.deviceFingerprintID
