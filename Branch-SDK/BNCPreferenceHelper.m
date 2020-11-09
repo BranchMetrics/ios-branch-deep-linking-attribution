@@ -602,8 +602,8 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
         NSNumber *b = (id) [self readObjectFromDefaults:@"sendCloseRequests"];
         if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
         
-        // by default, we send close requests
-        return true;
+        // by default, we do not send close events
+        return NO;
     }
 }
 
