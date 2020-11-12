@@ -1,5 +1,26 @@
 Branch iOS SDK Change Log
 
+v0.36.0
+November 11, 2020
+
+CORE-1185 
+Enable an App Clip to share data with the Full App
+This optional feature requires the client to setup an app group and provide the app group id to the Branch SDK. 
+Full documentation for this feature will be available on the Branch docs site next week.
+
+CORE-1184
+Address security scanner warnings by removing variadic log methods, log to file and programmatic breakpoints.
+If you are directly using these Branch debug and log features, you will need to update your code.
+
+SDK-953
+Support SDK configuration via json file.  This improves support for platforms such as React Native and Cordova.
+
+CORE-1354
+Reduce SDK network traffic by omitting close calls by default.
+
+SDK-1076
+Log the server request id to help debug request issues.
+
 v0.35.1
 October 6, 2020
 
