@@ -43,6 +43,7 @@
 #import "BNCCallbackMap.h"
 #import "BNCSKAdNetwork.h"
 #import "BNCAppGroupsData.h"
+#import "BNCPartnerParameters.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
@@ -970,6 +971,16 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 - (void)setSKAdNetworkCalloutMaxTimeSinceInstall:(NSTimeInterval)maxTimeInterval {
     [BNCSKAdNetwork sharedInstance].maxTimeSinceInstall = maxTimeInterval;
+}
+
+#pragma mark - Partner Parameters
+
+- (void)clearPartnerParameters {
+    [[BNCPartnerParameters shared] clearAllParameters];
+}
+
+- (void)addFacebookPartnerParameterWithName:(NSString *)name value:(NSString *)value {
+    [[BNCPartnerParameters shared] addFaceBookParameterWithName:name value:value];
 }
 
 #pragma mark - Pre-initialization support

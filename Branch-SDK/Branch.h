@@ -690,6 +690,19 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (void)setSKAdNetworkCalloutMaxTimeSinceInstall:(NSTimeInterval)maxTimeInterval;
 
+/*
+ Add a Partner Parameter for Facebook.
+ Once set, this parameter is attached to install, opens and events until cleared or the app restarts.
+ 
+ See Facebook's documentation for details on valid parameters
+ */
+- (void)addFacebookPartnerParameterWithName:(NSString *)name value:(NSString *)value;
+
+/**
+ Clears all Partner Parameters
+ */
+- (void)clearPartnerParameters;
+
 /**
  Specify the time to wait in seconds between retries in the case of a Branch server error
 

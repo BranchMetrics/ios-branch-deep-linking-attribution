@@ -11,6 +11,7 @@
 #import "BNCCallbackMap.h"
 #import "BNCReachability.h"
 #import "BNCSKAdNetwork.h"
+#import "BNCPartnerParameters.h"
 
 #pragma mark BranchStandardEvents
 
@@ -301,6 +302,12 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
     if (contentItemDictionaries.count) {
         eventDictionary[@"content_items"] = contentItemDictionaries;
     }
+    
+    NSDictionary *partnerParameters = [[BNCPartnerParameters shared] parameterJson];
+    if (partnerParameters.count > 0) {
+        eventDictionary[BRANCH_REQUEST_KEY_PARTNER_PARAMETERS] = partnerParameters;
+    }
+    
     return eventDictionary;
 }
 

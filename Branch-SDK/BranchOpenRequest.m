@@ -20,6 +20,7 @@
 #import "BNCTuneUtility.h"
 #import "BNCSKAdNetwork.h"
 #import "BNCAppGroupsData.h"
+#import "BNCPartnerParameters.h"
 
 @interface BranchOpenRequest ()
 @property (assign, nonatomic) BOOL isInstall;
@@ -84,6 +85,11 @@
         [self safeSetValue:encodedSearchData
                     forKey:BRANCH_REQUEST_KEY_SEARCH_AD
                     onDict:params];
+    }
+    
+    NSDictionary *partnerParameters = [[BNCPartnerParameters shared] parameterJson];
+    if (partnerParameters.count > 0) {
+        [self safeSetValue:partnerParameters forKey:BRANCH_REQUEST_KEY_PARTNER_PARAMETERS onDict:params];
     }
 
     BNCApplication *application = [BNCApplication currentApplication];

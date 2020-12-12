@@ -14,6 +14,7 @@
 #import "BNCApplication.h"
 #import "BNCAppleReceipt.h"
 #import "BNCAppGroupsData.h"
+#import "BNCPartnerParameters.h"
 
 @implementation BranchInstallRequest
 
@@ -48,6 +49,11 @@
         [self safeSetValue:[BNCAppGroupsData shared].bundleToken forKey:BRANCH_REQUEST_KEY_APP_CLIP_RANDOMIZED_BUNDLE_TOKEN onDict:params];
     }
     
+    NSDictionary *partnerParameters = [[BNCPartnerParameters shared] parameterJson];
+    if (partnerParameters.count > 0) {
+        [self safeSetValue:partnerParameters forKey:BRANCH_REQUEST_KEY_PARTNER_PARAMETERS onDict:params];
+    }
+        
     params[BRANCH_REQUEST_KEY_DEBUG] = @(preferenceHelper.isDebug);
 
     if (preferenceHelper.appleSearchAdNeedsSend) {
