@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)shared;
 
 // FB partner parameters, see FB documentation for details
-// Values that do not looks like a valid SHA-256 hash are ignored
+// Values that do not look like a valid SHA-256 hash are ignored
 - (void)addFaceBookParameterWithName:(NSString *)name value:(NSString *)value;
 
 - (void)clearAllParameters;
