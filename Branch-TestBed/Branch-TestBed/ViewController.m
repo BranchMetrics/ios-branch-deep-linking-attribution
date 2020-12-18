@@ -684,4 +684,13 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     });
 }
 
+- (IBAction)setFBParams:(id)sender {
+    [[Branch getInstance] addFacebookPartnerParameterWithName:@"ph" value:@"b90598b67534f00b1e3e68e8006631a40d24fba37a3a34e2b84922f1f0b3b29b"];
+    [[Branch getInstance] addFacebookPartnerParameterWithName:@"em" value:@"11234e56af071e9c79927651156bd7a10bca8ac34672aba121056e2698ee7088"];
+}
+
+- (IBAction)clearFBParams:(id)sender {
+    [[Branch getInstance] clearPartnerParameters];
+}
+
 @end

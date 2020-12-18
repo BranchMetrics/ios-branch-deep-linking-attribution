@@ -68,6 +68,8 @@ NSString * const BRANCH_REQUEST_KEY_LATEST_APP_CLIP_INSTALL_TIME = @"latest_app_
 NSString * const BRANCH_REQUEST_KEY_APP_CLIP_RANDOMIZED_DEVICE_TOKEN = @"app_clip_randomized_device_token";
 NSString * const BRANCH_REQUEST_KEY_APP_CLIP_RANDOMIZED_BUNDLE_TOKEN = @"app_clip_randomized_bundle_token";
 
+NSString * const BRANCH_REQUEST_KEY_PARTNER_PARAMETERS = @"partner_data";
+
 NSString * const BRANCH_REQUEST_ENDPOINT_SET_IDENTITY = @"profile";
 NSString * const BRANCH_REQUEST_ENDPOINT_APP_LINK_SETTINGS = @"app-link-settings";
 NSString * const BRANCH_REQUEST_ENDPOINT_LOGOUT = @"logout";
