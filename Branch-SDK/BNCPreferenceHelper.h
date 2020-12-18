@@ -85,6 +85,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 
 - (void)addInstrumentationDictionaryKey:(NSString *)key value:(NSString *)value;
 - (NSMutableDictionary *)instrumentationDictionary;
+- (NSDictionary *)instrumentationParameters; // a safe copy to use in a POST body
 - (void)clearInstrumentationDictionary;
 
 - (void)saveBranchAnalyticsData:(NSDictionary *)analyticsData;

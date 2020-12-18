@@ -443,10 +443,12 @@
         fullParamDict[BRANCH_REQUEST_KEY_STATE] = metadata;
     }
     // we only send instrumentation info in the POST body request
-    if (self.preferenceHelper.instrumentationDictionary.count && [reqType isEqualToString:@"POST"]) {
-        fullParamDict[BRANCH_REQUEST_KEY_INSTRUMENTATION] = self.preferenceHelper.instrumentationDictionary;
+    if ([reqType isEqualToString:@"POST"]) {
+        NSDictionary *instrumentationDictionary = self.preferenceHelper.instrumentationParameters;
+        if (instrumentationDictionary) {
+            fullParamDict[BRANCH_REQUEST_KEY_INSTRUMENTATION] = instrumentationDictionary;
+        }
     }
-    
     return fullParamDict;
 }
 
