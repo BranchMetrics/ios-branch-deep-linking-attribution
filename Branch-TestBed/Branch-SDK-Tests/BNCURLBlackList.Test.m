@@ -9,10 +9,10 @@
 */
 
 #import "BNCTestCase.h"
-#import "BNCURLBlackList.h"
+#import "BNCURLFilterList.h"
 #import "Branch.h"
 
-@interface BNCURLBlackList ()
+@interface BNCURLFilterList ()
 @property (readwrite) NSURL *blackListJSONURL;
 @end
 
@@ -33,7 +33,7 @@
 
 - (void)testListDownLoad {
     XCTestExpectation *expectation = [self expectationWithDescription:@"BlackList Download"];
-    BNCURLBlackList *blackList = [BNCURLBlackList new];
+    BNCURLFilterList *blackList = [BNCURLFilterList new];
     [blackList refreshBlackListFromServerWithCompletion:^ (NSError*error, NSArray*list) {
         XCTAssertNil(error);
         XCTAssertTrue(list.count == 6);
@@ -80,7 +80,7 @@
 
 - (void)testBadURLs {
     // Test default list.
-    BNCURLBlackList *blackList = [BNCURLBlackList new];
+    BNCURLFilterList *blackList = [BNCURLFilterList new];
     for (NSString *string in self.badURLs) {
         NSURL *URL = [NSURL URLWithString:string];
         XCTAssertTrue([blackList isBlackListedURL:URL], @"Checking '%@'.", URL);
@@ -90,7 +90,7 @@
 - (void) testDownloadBadURLs {
     // Test download list.
     XCTestExpectation *expectation = [self expectationWithDescription:@"BlackList Download"];
-    BNCURLBlackList *blackList = [BNCURLBlackList new];
+    BNCURLFilterList *blackList = [BNCURLFilterList new];
     blackList.blackListJSONURL = [NSURL URLWithString:@"https://cdn.branch.io/sdk/uriskiplist_tv1.json"];
     [blackList refreshBlackListFromServerWithCompletion:^ (NSError*error, NSArray*list) {
         XCTAssertNil(error);
@@ -106,7 +106,7 @@
 
 - (void)testGoodURLs {
     // Test default list.
-    BNCURLBlackList *blackList = [BNCURLBlackList new];
+    BNCURLFilterList *blackList = [BNCURLFilterList new];
     for (NSString *string in self.goodURLs) {
         NSURL *URL = [NSURL URLWithString:string];
         XCTAssertFalse([blackList isBlackListedURL:URL], @"Checking '%@'", URL);
@@ -116,7 +116,7 @@
 - (void) testDownloadGoodURLs {
     // Test download list.
     XCTestExpectation *expectation = [self expectationWithDescription:@"BlackList Download"];
-    BNCURLBlackList *blackList = [BNCURLBlackList new];
+    BNCURLFilterList *blackList = [BNCURLFilterList new];
     blackList.blackListJSONURL = [NSURL URLWithString:@"https://cdn.branch.io/sdk/uriskiplist_tv1.json"];
     [blackList refreshBlackListFromServerWithCompletion:^ (NSError*error, NSArray*list) {
         XCTAssertNil(error);

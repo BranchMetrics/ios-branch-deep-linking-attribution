@@ -37,7 +37,7 @@
 #import "NSString+Branch.h"
 #import "Branch+Validator.h"
 #import "BNCApplication.h"
-#import "BNCURLBlackList.h"
+#import "BNCURLFilter.h"
 #import "BNCFacebookAppLinks.h"
 #import "BNCDeviceInfo.h"
 #import "BNCCallbackMap.h"
@@ -123,7 +123,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 
 @interface Branch() <BranchDeepLinkingControllerCompletionDelegate> {
     NSInteger _networkCount;
-    BNCURLBlackList *_userURLBlackList;
+    BNCURLFilter *_userURLBlackList;
 }
 
 // This isolation queue protects branch initialization and ensures things are processed in order.
@@ -141,7 +141,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (weak,   nonatomic) UIViewController *deepLinkPresentingController;
 @property (strong, nonatomic) NSDictionary *deepLinkDebugParams;
 @property (strong, nonatomic) NSMutableArray *whiteListedSchemeList;
-@property (strong, nonatomic) BNCURLBlackList *URLBlackList;
+@property (strong, nonatomic) BNCURLFilter *URLBlackList;
 
 #if !TARGET_OS_TV
 @property (strong, nonatomic) BNCContentDiscoveryManager *contentDiscoveryManager;
@@ -200,7 +200,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     #endif
 
     self.class.branchKey = key;
-    self.URLBlackList = [BNCURLBlackList new];
+    self.URLBlackList = [BNCURLFilter new];
 
     [BranchOpenRequest setWaitNeededForOpenResponseLock];
 
@@ -675,7 +675,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 - (void)setBlackListURLRegex:(NSArray<NSString*>*)blackListURLs {
     @synchronized (self) {
-        _userURLBlackList = [[BNCURLBlackList alloc] init];
+        _userURLBlackList = [[BNCURLFilter alloc] init];
         _userURLBlackList.blackList = blackListURLs;
     }
 }

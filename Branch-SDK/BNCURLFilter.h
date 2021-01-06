@@ -1,5 +1,5 @@
 /**
- @file          BNCURLBlackList.h
+ @file          BNCURLFilter.h
  @package       Branch-SDK
  @brief         Manages a list of sensitive URLs such as login data that should not be handled by Branch.
 
@@ -14,7 +14,7 @@
 #import <Foundation/Foundation.h>
 #endif
 
-@interface BNCURLBlackList : NSObject
+@interface BNCURLFilter : NSObject
 
 /**
  @brief         Checks if a given URL should be ignored (blacklisted).

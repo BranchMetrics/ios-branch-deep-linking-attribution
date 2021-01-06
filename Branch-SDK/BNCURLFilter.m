@@ -1,5 +1,5 @@
 /**
- @file          BNCURLBlackList.m
+ @file          BNCURLFilter.m
  @package       Branch-SDK
  @brief         Manages a list of URLs that we should ignore.
 
@@ -8,10 +8,10 @@
  @copyright     Copyright © 2018 Branch. All rights reserved.
 */
 
-#import "BNCURLBlackList.h"
+#import "BNCURLFilter.h"
 #import "Branch.h"
 
-@interface BNCURLBlackList () {
+@interface BNCURLFilter () {
     NSArray<NSString*>*_blackList;
 }
 @property (strong) NSArray<NSRegularExpression*> *blackListRegex;
@@ -22,7 +22,7 @@
 @property (strong) NSURL *blackListJSONURL;
 @end
 
-@implementation BNCURLBlackList
+@implementation BNCURLFilter
 
 - (instancetype) init {
     self = [super init];
