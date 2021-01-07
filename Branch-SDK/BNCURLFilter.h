@@ -17,20 +17,20 @@
 @interface BNCURLFilter : NSObject
 
 /**
- @brief         Checks if a given URL should be ignored (blacklisted).
+ @brief Checks if a given URL should be ignored.
 
- @param url     The URL to be checked.
- @return        Returns true if the provided URL should be ignored.
+ @param url The URL to be checked.
+ @return Returns true if the provided URL should be ignored.
 */
-- (BOOL) isBlackListedURL:(NSURL*_Nullable)url;
+- (BOOL) shouldIgnoreURL:(NSURL*_Nullable)url;
 
 /**
- @brief         Returns the pattern that matches a URL, if any.
+ @brief Returns the pattern that matches a URL, if any.
 
- @param url     The URL to be checked.
- @return        Returns the pattern matching the URL or `nil` if no patterns match.
+ @param url The URL to be checked.
+ @return Returns the pattern matching the URL or `nil` if no patterns match.
 */
-- (NSString*_Nullable) blackListPatternMatchingURL:(NSURL*_Nullable)url;
+- (NSString*_Nullable) patternMatchingURL:(NSURL*_Nullable)url;
 
 /// Refreshes the list of ignored URLs from the server.
 - (void) refreshBlackListFromServerWithCompletion:(void (^_Nullable) (NSError*_Nullable error, NSArray*_Nullable list))completion;

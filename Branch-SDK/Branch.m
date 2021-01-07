@@ -702,9 +702,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     self.initializationStatus = BNCInitStatusUninitialized;
 
     NSString *blackListPattern = nil;
-    blackListPattern = [self.URLBlackList blackListPatternMatchingURL:url];
+    blackListPattern = [self.URLBlackList patternMatchingURL:url];
     if (!blackListPattern) {
-        blackListPattern = [_userURLBlackList blackListPatternMatchingURL:url];
+        blackListPattern = [_userURLBlackList patternMatchingURL:url];
     }
     if (blackListPattern) {
         self.preferenceHelper.blacklistURLOpen = YES;

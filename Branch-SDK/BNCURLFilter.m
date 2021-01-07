@@ -14,7 +14,7 @@
 @interface BNCURLFilter () {
     NSArray<NSString*>*_blackList;
 }
-@property (strong) NSArray<NSRegularExpression*> *blackListRegex;
+@property (strong) NSArray<NSRegularExpression*> *ignoredURLRegex;
 @property (assign) NSInteger blackListVersion;
 @property (strong) id<BNCNetworkServiceProtocol> networkService;
 @property (assign) BOOL hasRefreshedBlackListFromServer;
@@ -46,7 +46,7 @@
     }
 
     NSError *error = nil;
-    _blackListRegex = [self.class compileRegexArray:self.blackList error:&error];
+    _ignoredURLRegex = [self.class compileRegexArray:self.blackList error:&error];
     self.error = error;
 
     return self;
@@ -60,7 +60,7 @@
 - (void) setBlackList:(NSArray<NSString *> *)blackList {
     @synchronized (self) {
         _blackList = blackList;
-        _blackListRegex = [self.class compileRegexArray:_blackList error:nil];
+        _ignoredURLRegex = [self.class compileRegexArray:_blackList error:nil];
     }
 }
 
@@ -90,12 +90,12 @@
     return array;
 }
 
-- (NSString*_Nullable) blackListPatternMatchingURL:(NSURL*_Nullable)url {
+- (NSString*_Nullable) patternMatchingURL:(NSURL*_Nullable)url {
     NSString *urlString = url.absoluteString;
     if (urlString == nil || urlString.length <= 0) return nil;
     NSRange range = NSMakeRange(0, urlString.length);
 
-    for (NSRegularExpression* regex in self.blackListRegex) {
+    for (NSRegularExpression* regex in self.ignoredURLRegex) {
         NSUInteger matches = [regex numberOfMatchesInString:urlString options:0 range:range];
         if (matches > 0) return regex.pattern;
     }
@@ -103,8 +103,8 @@
     return nil;
 }
 
-- (BOOL) isBlackListedURL:(NSURL *)url {
-    return ([self blackListPatternMatchingURL:url]) ? YES : NO;
+- (BOOL) shouldIgnoreURL:(NSURL *)url {
+    return ([self patternMatchingURL:url]) ? YES : NO;
 }
 
 - (void) refreshBlackListFromServer {
