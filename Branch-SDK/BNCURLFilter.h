@@ -33,9 +33,9 @@
 - (NSString*_Nullable) patternMatchingURL:(NSURL*_Nullable)url;
 
 /// Refreshes the list of ignored URLs from the server.
-- (void) refreshBlackListFromServerWithCompletion:(void (^_Nullable) (NSError*_Nullable error, NSArray*_Nullable list))completion;
+- (void) updatePatternListWithCompletion:(void (^_Nullable) (NSError*_Nullable error, NSArray*_Nullable list))completion;
 
 /// Is YES if the listed has already been updated from the server.
-@property (assign, readonly) BOOL hasRefreshedBlackListFromServer;
-@property (strong) NSArray<NSString*>*_Nullable blackList;
+@property (assign, readonly) BOOL hasUpdatedPatternList;
+@property (strong) NSArray<NSString*>*_Nullable patternList;
 @end

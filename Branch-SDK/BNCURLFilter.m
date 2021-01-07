@@ -17,7 +17,7 @@
 @property (strong) NSArray<NSRegularExpression*> *ignoredURLRegex;
 @property (assign) NSInteger blackListVersion;
 @property (strong) id<BNCNetworkServiceProtocol> networkService;
-@property (assign) BOOL hasRefreshedBlackListFromServer;
+@property (assign) BOOL hasUpdatedPatternList;
 @property (strong) NSError *error;
 @property (strong) NSURL *blackListJSONURL;
 @end
@@ -28,7 +28,7 @@
     self = [super init];
     if (!self) return self;
 
-    self.blackList = @[
+    self.patternList = @[
         @"^fb\\d+:",
         @"^li\\d+:",
         @"^pdk\\d+:",
@@ -41,12 +41,12 @@
 
     NSArray *storedList = [BNCPreferenceHelper preferenceHelper].URLBlackList;
     if (storedList.count > 0) {
-        self.blackList = storedList;
+        self.patternList = storedList;
         self.blackListVersion = [BNCPreferenceHelper preferenceHelper].URLBlackListVersion;
     }
 
     NSError *error = nil;
-    _ignoredURLRegex = [self.class compileRegexArray:self.blackList error:&error];
+    _ignoredURLRegex = [self.class compileRegexArray:self.patternList error:&error];
     self.error = error;
 
     return self;
@@ -57,14 +57,14 @@
     self.networkService = nil;
 }
 
-- (void) setBlackList:(NSArray<NSString *> *)blackList {
+- (void) setPatternList:(NSArray<NSString *> *)blackList {
     @synchronized (self) {
         _blackList = blackList;
         _ignoredURLRegex = [self.class compileRegexArray:_blackList error:nil];
     }
 }
 
-- (NSArray<NSString*>*) blackList {
+- (NSArray<NSString*>*) patternList {
     @synchronized (self) {
         return _blackList;
     }
@@ -108,16 +108,16 @@
 }
 
 - (void) refreshBlackListFromServer {
-    [self refreshBlackListFromServerWithCompletion:nil];
+    [self updatePatternListWithCompletion:nil];
 }
 
-- (void) refreshBlackListFromServerWithCompletion:(void (^) (NSError*error, NSArray*list))completion {
+- (void) updatePatternListWithCompletion:(void (^) (NSError*error, NSArray*list))completion {
     @synchronized(self) {
-        if (self.hasRefreshedBlackListFromServer) {
-            if (completion) completion(self.error, self.blackList);
+        if (self.hasUpdatedPatternList) {
+            if (completion) completion(self.error, self.patternList);
             return;
         }
-        self.hasRefreshedBlackListFromServer = YES;
+        self.hasUpdatedPatternList = YES;
     }
 
     self.error = nil;
@@ -135,7 +135,7 @@
         [self.networkService networkOperationWithURLRequest:request completion:
             ^(id<BNCNetworkOperationProtocol> operation) {
                 [self processServerOperation:operation];
-                if (completion) completion(self.error, self.blackList);
+                if (completion) completion(self.error, self.patternList);
                 [self.networkService cancelAllOperations];
                 self.networkService = nil;
             }
@@ -172,9 +172,9 @@
     NSNumber *blackListVersion = dictionary[@"version"];
     if (![blackListVersion isKindOfClass:NSNumber.class]) return;
 
-    self.blackList = blackListURLs;
+    self.patternList = blackListURLs;
     self.blackListVersion = [blackListVersion longValue];
-    [BNCPreferenceHelper preferenceHelper].URLBlackList = self.blackList;
+    [BNCPreferenceHelper preferenceHelper].URLBlackList = self.patternList;
     [BNCPreferenceHelper preferenceHelper].URLBlackListVersion = self.blackListVersion;
 }
 

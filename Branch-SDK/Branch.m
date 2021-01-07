@@ -676,13 +676,13 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 - (void)setBlackListURLRegex:(NSArray<NSString*>*)blackListURLs {
     @synchronized (self) {
         _userURLBlackList = [[BNCURLFilter alloc] init];
-        _userURLBlackList.blackList = blackListURLs;
+        _userURLBlackList.patternList = blackListURLs;
     }
 }
 
 - (NSArray<NSString *> *)blackListURLRegex {
     @synchronized (self) {
-        return _userURLBlackList.blackList;
+        return _userURLBlackList.patternList;
     }
 }
 
@@ -2212,8 +2212,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
     [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
 
-    if (!self.URLBlackList.hasRefreshedBlackListFromServer) {
-        [self.URLBlackList refreshBlackListFromServerWithCompletion:nil];
+    if (!self.URLBlackList.hasUpdatedPatternList) {
+        [self.URLBlackList updatePatternListWithCompletion:nil];
     }
 
     if (self.shouldAutomaticallyDeepLink) {
