@@ -12,14 +12,14 @@
 #import "Branch.h"
 
 @interface BNCURLFilter () {
-    NSArray<NSString*>*_blackList;
+    NSArray<NSString*>*_patternList;
 }
 @property (strong) NSArray<NSRegularExpression*> *ignoredURLRegex;
-@property (assign) NSInteger blackListVersion;
+@property (assign) NSInteger listVersion;
 @property (strong) id<BNCNetworkServiceProtocol> networkService;
 @property (assign) BOOL hasUpdatedPatternList;
 @property (strong) NSError *error;
-@property (strong) NSURL *blackListJSONURL;
+@property (strong) NSURL *jsonURL;
 @end
 
 @implementation BNCURLFilter
@@ -37,12 +37,12 @@
         @"^(?i)(?!(http|https):).*(:|:.*\\b)(password|o?auth|o?auth.?token|access|access.?token)\\b",
         @"^(?i)((http|https):\\/\\/).*[\\/|?|#].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b",
     ];
-    self.blackListVersion = -1; // First time always refresh the list version, version 0.
+    self.listVersion = -1; // First time always refresh the list version, version 0.
 
-    NSArray *storedList = [BNCPreferenceHelper preferenceHelper].URLBlackList;
+    NSArray *storedList = [BNCPreferenceHelper preferenceHelper].savedURLPatternList;
     if (storedList.count > 0) {
         self.patternList = storedList;
-        self.blackListVersion = [BNCPreferenceHelper preferenceHelper].URLBlackListVersion;
+        self.listVersion = [BNCPreferenceHelper preferenceHelper].savedURLPatternListVersion;
     }
 
     NSError *error = nil;
@@ -57,24 +57,24 @@
     self.networkService = nil;
 }
 
-- (void) setPatternList:(NSArray<NSString *> *)blackList {
+- (void) setPatternList:(NSArray<NSString *> *)patternList {
     @synchronized (self) {
-        _blackList = blackList;
-        _ignoredURLRegex = [self.class compileRegexArray:_blackList error:nil];
+        _patternList = patternList;
+        _ignoredURLRegex = [self.class compileRegexArray:_patternList error:nil];
     }
 }
 
 - (NSArray<NSString*>*) patternList {
     @synchronized (self) {
-        return _blackList;
+        return _patternList;
     }
 }
 
-+ (NSArray<NSRegularExpression*>*) compileRegexArray:(NSArray<NSString*>*)blacklist
++ (NSArray<NSRegularExpression*>*) compileRegexArray:(NSArray<NSString*>*)patternList
                                                error:(NSError*_Nullable __autoreleasing *_Nullable)error_ {
     if (error_) *error_ = nil;
     NSMutableArray *array = [NSMutableArray new];
-    for (NSString *pattern in blacklist) {
+    for (NSString *pattern in patternList) {
         NSError *error = nil;
         NSRegularExpression *regex =
             [NSRegularExpression regularExpressionWithPattern:pattern
@@ -107,7 +107,7 @@
     return ([self patternMatchingURL:url]) ? YES : NO;
 }
 
-- (void) refreshBlackListFromServer {
+- (void) updatePatternList {
     [self updatePatternListWithCompletion:nil];
 }
 
@@ -121,9 +121,9 @@
     }
 
     self.error = nil;
-    NSString *urlString = [self.blackListJSONURL absoluteString];
+    NSString *urlString = [self.jsonURL absoluteString];
     if (!urlString) {
-        urlString = [NSString stringWithFormat:@"%@/sdk/uriskiplist_v%ld.json", [BNCPreferenceHelper preferenceHelper].branchBlacklistURL, (long) self.blackListVersion+1];
+        urlString = [NSString stringWithFormat:@"%@/sdk/uriskiplist_v%ld.json", [BNCPreferenceHelper preferenceHelper].patternListURL, (long) self.listVersion+1];
     }
     NSMutableURLRequest *request =
         [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]
@@ -149,9 +149,9 @@
     if (operation.responseData)
         responseString = [[NSString alloc] initWithData:operation.responseData encoding:NSUTF8StringEncoding];
     if (operation.response.statusCode == 404) {
-        BNCLogDebugSDK(@"No new BlackList refresh found.");
+        BNCLogDebugSDK(@"No new URL ignore list found.");
     } else {
-        BNCLogDebugSDK([NSString stringWithFormat:@"BlackList refresh result. Error: %@ status: %ld body:\n%@.",
+        BNCLogDebugSDK([NSString stringWithFormat:@"URL ignore list update result. Error: %@ status: %ld body:\n%@.",
             operation.error, (long)operation.response.statusCode, responseString]);
     }
     if (operation.error || operation.responseData == nil || operation.response.statusCode != 200) {
@@ -166,16 +166,16 @@
         return;
     }
 
-    NSArray *blackListURLs = dictionary[@"uri_skip_list"];
-    if (![blackListURLs isKindOfClass:NSArray.class]) return;
+    NSArray *urls = dictionary[@"uri_skip_list"];
+    if (![urls isKindOfClass:NSArray.class]) return;
 
-    NSNumber *blackListVersion = dictionary[@"version"];
-    if (![blackListVersion isKindOfClass:NSNumber.class]) return;
+    NSNumber *version = dictionary[@"version"];
+    if (![version isKindOfClass:NSNumber.class]) return;
 
-    self.patternList = blackListURLs;
-    self.blackListVersion = [blackListVersion longValue];
-    [BNCPreferenceHelper preferenceHelper].URLBlackList = self.patternList;
-    [BNCPreferenceHelper preferenceHelper].URLBlackListVersion = self.blackListVersion;
+    self.patternList = urls;
+    self.listVersion = [version longValue];
+    [BNCPreferenceHelper preferenceHelper].savedURLPatternList = self.patternList;
+    [BNCPreferenceHelper preferenceHelper].savedURLPatternListVersion = self.listVersion;
 }
 
 @end

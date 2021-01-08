@@ -645,7 +645,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
             These are ICU standard regular expressions.
 */
-@property (copy, nullable) NSArray<NSString*>/*_Nullable*/* blackListURLRegex;
+@property (copy, nullable) NSArray<NSString*>/*_Nullable*/* urlsToIgnore;
 
 /**
  Register your Facebook SDK's FBSDKAppLinkUtility class to be used by Branch for deferred deep linking from their platform

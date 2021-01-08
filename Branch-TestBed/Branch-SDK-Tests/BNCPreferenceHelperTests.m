@@ -43,11 +43,11 @@
 }
 
 - (void)testBlacklistURL {
-    XCTAssertTrue([@"https://cdn.branch.io" isEqualToString:self.prefHelper.branchBlacklistURL]);
+    XCTAssertTrue([@"https://cdn.branch.io" isEqualToString:self.prefHelper.patternListURL]);
     
     NSString *customBlacklistURL = @"https://blacklist.branch.io";
-    self.prefHelper.branchBlacklistURL = customBlacklistURL;
-    XCTAssertTrue([customBlacklistURL isEqualToString:self.prefHelper.branchBlacklistURL]);
+    self.prefHelper.patternListURL = customBlacklistURL;
+    XCTAssertTrue([customBlacklistURL isEqualToString:self.prefHelper.patternListURL]);
 }
 
 // only verifies that the flag is stored correctly

@@ -22,13 +22,13 @@
 @implementation BNCURLBlackListTest
 
 - (void) setUp {
-    [BNCPreferenceHelper preferenceHelper].URLBlackList = nil;
-    [BNCPreferenceHelper preferenceHelper].URLBlackListVersion = 0;
-    [BNCPreferenceHelper preferenceHelper].blacklistURLOpen = NO;
+    [BNCPreferenceHelper preferenceHelper].URLPatternList = nil;
+    [BNCPreferenceHelper preferenceHelper].URLListVersion = 0;
+    [BNCPreferenceHelper preferenceHelper].dropURLOpen = NO;
 }
 
 - (void) tearDown {
-    [BNCPreferenceHelper preferenceHelper].blacklistURLOpen = NO;
+    [BNCPreferenceHelper preferenceHelper].dropURLOpen = NO;
 }
 
 - (void)testListDownLoad {
@@ -172,7 +172,7 @@
     BNCLogSetDisplayLevel(BNCLogLevelAll);
     Branch *branch = (Branch.branchKey.length) ? Branch.getInstance : [Branch getInstance:@"key_live_foo"];
     [branch clearNetworkQueue];
-    branch.blackListURLRegex = @[
+    branch.urlsToIgnore = @[
         @"\\/bob\\/"
     ];
     id serverInterfaceMock = OCMPartialMock(branch.serverInterface);

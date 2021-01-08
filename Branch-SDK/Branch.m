@@ -123,7 +123,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 
 @interface Branch() <BranchDeepLinkingControllerCompletionDelegate> {
     NSInteger _networkCount;
-    BNCURLFilter *_userURLBlackList;
+    BNCURLFilter *_userURLFilter;
 }
 
 // This isolation queue protects branch initialization and ensures things are processed in order.
@@ -141,7 +141,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (weak,   nonatomic) UIViewController *deepLinkPresentingController;
 @property (strong, nonatomic) NSDictionary *deepLinkDebugParams;
 @property (strong, nonatomic) NSMutableArray *whiteListedSchemeList;
-@property (strong, nonatomic) BNCURLFilter *URLBlackList;
+@property (strong, nonatomic) BNCURLFilter *urlFilter;
 
 #if !TARGET_OS_TV
 @property (strong, nonatomic) BNCContentDiscoveryManager *contentDiscoveryManager;
@@ -200,7 +200,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     #endif
 
     self.class.branchKey = key;
-    self.URLBlackList = [BNCURLFilter new];
+    self.urlFilter = [BNCURLFilter new];
 
     [BranchOpenRequest setWaitNeededForOpenResponseLock];
 
@@ -673,16 +673,16 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [self.whiteListedSchemeList addObject:scheme];
 }
 
-- (void)setBlackListURLRegex:(NSArray<NSString*>*)blackListURLs {
+- (void)setUrlsToIgnore:(NSArray<NSString*>*)urlsToIgnore {
     @synchronized (self) {
-        _userURLBlackList = [[BNCURLFilter alloc] init];
-        _userURLBlackList.patternList = blackListURLs;
+        _userURLFilter = [[BNCURLFilter alloc] init];
+        _userURLFilter.patternList = urlsToIgnore;
     }
 }
 
-- (NSArray<NSString *> *)blackListURLRegex {
+- (NSArray<NSString *> *)urlsToIgnore {
     @synchronized (self) {
-        return _userURLBlackList.patternList;
+        return _userURLFilter.patternList;
     }
 }
 
@@ -701,15 +701,15 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     // this allows foreground links to callback
     self.initializationStatus = BNCInitStatusUninitialized;
 
-    NSString *blackListPattern = nil;
-    blackListPattern = [self.URLBlackList patternMatchingURL:url];
-    if (!blackListPattern) {
-        blackListPattern = [_userURLBlackList patternMatchingURL:url];
+    NSString *pattern = nil;
+    pattern = [self.urlFilter patternMatchingURL:url];
+    if (!pattern) {
+        pattern = [_userURLFilter patternMatchingURL:url];
     }
-    if (blackListPattern) {
-        self.preferenceHelper.blacklistURLOpen = YES;
-        self.preferenceHelper.externalIntentURI = blackListPattern;
-        self.preferenceHelper.referringURL = blackListPattern;
+    if (pattern) {
+        self.preferenceHelper.dropURLOpen = YES;
+        self.preferenceHelper.externalIntentURI = pattern;
+        self.preferenceHelper.referringURL = pattern;
 
         [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier];
         return NO;
@@ -2212,8 +2212,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
     [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
 
-    if (!self.URLBlackList.hasUpdatedPatternList) {
-        [self.URLBlackList updatePatternListWithCompletion:nil];
+    if (!self.urlFilter.hasUpdatedPatternList) {
+        [self.urlFilter updatePatternListWithCompletion:nil];
     }
 
     if (self.shouldAutomaticallyDeepLink) {

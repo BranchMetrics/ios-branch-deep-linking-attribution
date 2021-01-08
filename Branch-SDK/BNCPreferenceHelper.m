@@ -107,7 +107,7 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
         _persistPrefsQueue = [[NSOperationQueue alloc] init];
         _persistPrefsQueue.maxConcurrentOperationCount = 1;
 
-        self.branchBlacklistURL = @"https://cdn.branch.io";
+        self.patternListURL = @"https://cdn.branch.io";
         self.disableAdNetworkCallouts = NO;
     }
     return self;
@@ -551,41 +551,41 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     }
 }
 
-- (NSArray<NSString*>*) URLBlackList {
+- (NSArray<NSString*>*) savedURLPatternList {
     @synchronized(self) {
-        id a = [self readObjectFromDefaults:@"URLBlackList"];
+        id a = [self readObjectFromDefaults:@"URLPatternList"];
         if ([a isKindOfClass:NSArray.class]) return a;
         return nil;
     }
 }
 
-- (void) setURLBlackList:(NSArray<NSString *> *)URLBlackList {
+- (void) setSavedURLPatternList:(NSArray<NSString *> *)URLPatternList {
     @synchronized(self) {
-        [self writeObjectToDefaults:@"URLBlackList" value:URLBlackList];
+        [self writeObjectToDefaults:@"URLPatternList" value:URLPatternList];
     }
 }
 
-- (NSInteger) URLBlackListVersion {
+- (NSInteger) savedURLPatternListVersion {
     @synchronized(self) {
-        return [self readIntegerFromDefaults:@"URLBlackListVersion"];
+        return [self readIntegerFromDefaults:@"URLPatternListVersion"];
     }
 }
 
-- (void) setURLBlackListVersion:(NSInteger)URLBlackListVersion {
+- (void) setSavedURLPatternListVersion:(NSInteger)URLPatternListVersion {
     @synchronized(self) {
-        [self writeIntegerToDefaults:@"URLBlackListVersion" value:URLBlackListVersion];
+        [self writeIntegerToDefaults:@"URLPatternListVersion" value:URLPatternListVersion];
     }
 }
 
-- (BOOL) blacklistURLOpen {
+- (BOOL) dropURLOpen {
     @synchronized(self) {
-        return [self readBoolFromDefaults:@"blacklistURLOpen"];
+        return [self readBoolFromDefaults:@"dropURLOpen"];
     }
 }
 
-- (void) setBlacklistURLOpen:(BOOL)value {
+- (void) setDropURLOpen:(BOOL)value {
     @synchronized(self) {
-        [self writeBoolToDefaults:@"blacklistURLOpen" value:value];
+        [self writeBoolToDefaults:@"dropURLOpen" value:value];
     }
 }
 
