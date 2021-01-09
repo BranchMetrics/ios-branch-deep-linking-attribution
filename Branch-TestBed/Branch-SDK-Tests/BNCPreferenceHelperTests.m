@@ -42,12 +42,12 @@
     XCTAssertEqual(self.prefHelper.timeout, NSIntegerMax);
 }
 
-- (void)testBlacklistURL {
+- (void)testURLFilter {
     XCTAssertTrue([@"https://cdn.branch.io" isEqualToString:self.prefHelper.patternListURL]);
     
-    NSString *customBlacklistURL = @"https://blacklist.branch.io";
-    self.prefHelper.patternListURL = customBlacklistURL;
-    XCTAssertTrue([customBlacklistURL isEqualToString:self.prefHelper.patternListURL]);
+    NSString *customURL = @"https://banned.branch.io";
+    self.prefHelper.patternListURL = customURL;
+    XCTAssertTrue([customURL isEqualToString:self.prefHelper.patternListURL]);
 }
 
 // only verifies that the flag is stored correctly

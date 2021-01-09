@@ -1,7 +1,7 @@
 /**
- @file          BNCURLBlackList.Test.m
+ @file          BNCURLFilterTests.m
  @package       Branch-SDK-Tests
- @brief         BNCURLBlackList tests.
+ @brief         BNCURLFilter  tests.
 
  @author        Edward Smith
  @date          February 14, 2018
@@ -9,21 +9,21 @@
 */
 
 #import "BNCTestCase.h"
-#import "BNCURLFilterList.h"
+#import "BNCURLFilter.h"
 #import "Branch.h"
 
-@interface BNCURLFilterList ()
-@property (readwrite) NSURL *blackListJSONURL;
+@interface BNCURLFilter ()
+@property (readwrite) NSURL *jsonURL;
 @end
 
-@interface BNCURLBlackListTest : BNCTestCase
+@interface BNCURLFilterTests : BNCTestCase
 @end
 
-@implementation BNCURLBlackListTest
+@implementation BNCURLFilterTests
 
 - (void) setUp {
-    [BNCPreferenceHelper preferenceHelper].URLPatternList = nil;
-    [BNCPreferenceHelper preferenceHelper].URLListVersion = 0;
+    [BNCPreferenceHelper preferenceHelper].savedURLPatternList = nil;
+    [BNCPreferenceHelper preferenceHelper].savedURLPatternListVersion = 0;
     [BNCPreferenceHelper preferenceHelper].dropURLOpen = NO;
 }
 
@@ -32,9 +32,9 @@
 }
 
 - (void)testListDownLoad {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"BlackList Download"];
-    BNCURLFilterList *blackList = [BNCURLFilterList new];
-    [blackList refreshBlackListFromServerWithCompletion:^ (NSError*error, NSArray*list) {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"List Download"];
+    BNCURLFilter *filter = [BNCURLFilter new];
+    [filter updatePatternListWithCompletion:^ (NSError*error, NSArray*list) {
         XCTAssertNil(error);
         XCTAssertTrue(list.count == 6);
         [expectation fulfill];
@@ -80,19 +80,19 @@
 
 - (void)testBadURLs {
     // Test default list.
-    BNCURLFilterList *blackList = [BNCURLFilterList new];
+    BNCURLFilter *filter = [BNCURLFilter new];
     for (NSString *string in self.badURLs) {
         NSURL *URL = [NSURL URLWithString:string];
-        XCTAssertTrue([blackList isBlackListedURL:URL], @"Checking '%@'.", URL);
+        XCTAssertTrue([filter shouldIgnoreURL:URL], @"Checking '%@'.", URL);
     }
 }
 
 - (void) testDownloadBadURLs {
     // Test download list.
-    XCTestExpectation *expectation = [self expectationWithDescription:@"BlackList Download"];
-    BNCURLFilterList *blackList = [BNCURLFilterList new];
-    blackList.blackListJSONURL = [NSURL URLWithString:@"https://cdn.branch.io/sdk/uriskiplist_tv1.json"];
-    [blackList refreshBlackListFromServerWithCompletion:^ (NSError*error, NSArray*list) {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"List Download"];
+    BNCURLFilter *filter = [BNCURLFilter new];
+    filter.jsonURL = [NSURL URLWithString:@"https://cdn.branch.io/sdk/uriskiplist_tv1.json"];
+    [filter updatePatternListWithCompletion:^ (NSError*error, NSArray*list) {
         XCTAssertNil(error);
         XCTAssertTrue(list.count == 7);
         [expectation fulfill];
@@ -100,25 +100,25 @@
     [self awaitExpectations];
     for (NSString *string in self.badURLs) {
         NSURL *URL = [NSURL URLWithString:string];
-        XCTAssertTrue([blackList isBlackListedURL:URL], @"Checking '%@'.", URL);
+        XCTAssertTrue([filter shouldIgnoreURL:URL], @"Checking '%@'.", URL);
     }
 }
 
 - (void)testGoodURLs {
     // Test default list.
-    BNCURLFilterList *blackList = [BNCURLFilterList new];
+    BNCURLFilter *filter = [BNCURLFilter new];
     for (NSString *string in self.goodURLs) {
         NSURL *URL = [NSURL URLWithString:string];
-        XCTAssertFalse([blackList isBlackListedURL:URL], @"Checking '%@'", URL);
+        XCTAssertFalse([filter shouldIgnoreURL:URL], @"Checking '%@'", URL);
     }
 }
 
 - (void) testDownloadGoodURLs {
     // Test download list.
-    XCTestExpectation *expectation = [self expectationWithDescription:@"BlackList Download"];
-    BNCURLFilterList *blackList = [BNCURLFilterList new];
-    blackList.blackListJSONURL = [NSURL URLWithString:@"https://cdn.branch.io/sdk/uriskiplist_tv1.json"];
-    [blackList refreshBlackListFromServerWithCompletion:^ (NSError*error, NSArray*list) {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"List Download"];
+    BNCURLFilter *filter = [BNCURLFilter new];
+    filter.jsonURL = [NSURL URLWithString:@"https://cdn.branch.io/sdk/uriskiplist_tv1.json"];
+    [filter updatePatternListWithCompletion:^ (NSError*error, NSArray*list) {
         XCTAssertNil(error);
         XCTAssertTrue(list.count == 7);
         [expectation fulfill];
@@ -126,11 +126,11 @@
     [self awaitExpectations];
     for (NSString *string in self.goodURLs) {
         NSURL *URL = [NSURL URLWithString:string];
-        XCTAssertFalse([blackList isBlackListedURL:URL], @"Checking '%@'.", URL);
+        XCTAssertFalse([filter shouldIgnoreURL:URL], @"Checking '%@'.", URL);
     }
 }
 
-- (void) testStandardBlackList {
+- (void) testStandardList {
     BNCLogSetDisplayLevel(BNCLogLevelAll);
     Branch *branch = (Branch.branchKey.length) ? Branch.getInstance : [Branch getInstance:@"key_live_foo"];
     id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
@@ -168,7 +168,7 @@
     [[BNCPreferenceHelper preferenceHelper] synchronize];
 }
 
-- (void) testUserBlackList {
+- (void) testUserList {
     BNCLogSetDisplayLevel(BNCLogLevelAll);
     Branch *branch = (Branch.branchKey.length) ? Branch.getInstance : [Branch getInstance:@"key_live_foo"];
     [branch clearNetworkQueue];
