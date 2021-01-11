@@ -323,6 +323,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		033FC71025AC1E5800D8319E /* Branch-TestBed.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = "Branch-TestBed.xctestplan"; path = "Branch-TestBed.xcodeproj/Branch-TestBed.xctestplan"; sourceTree = "<group>"; };
 		3A78D573251EB59B002A25CF /* BranchJsonConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchJsonConfig.h; sourceTree = "<group>"; };
 		3A78D575251EB5BF002A25CF /* BranchJsonConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchJsonConfig.m; sourceTree = "<group>"; };
 		423ACD2DEBB9A2E4FAF64B08 /* libPods-Branch-SDK-Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Branch-SDK-Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -784,6 +785,7 @@
 		670016571940F51400A9E103 = {
 			isa = PBXGroup;
 			children = (
+				033FC71025AC1E5800D8319E /* Branch-TestBed.xctestplan */,
 				4D93D8592098CC4400CFABA6 /* README.md */,
 				670016BB1946309100A9E103 /* Branch-SDK */,
 				4D16837A2098C901008819E3 /* Branch-SDK-Tests */,
