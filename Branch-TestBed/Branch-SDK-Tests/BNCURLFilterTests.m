@@ -172,7 +172,7 @@
     BNCLogSetDisplayLevel(BNCLogLevelAll);
     Branch *branch = (Branch.branchKey.length) ? Branch.getInstance : [Branch getInstance:@"key_live_foo"];
     [branch clearNetworkQueue];
-    branch.urlsToIgnore = @[
+    branch.urlPatternsToIgnore = @[
         @"\\/bob\\/"
     ];
     id serverInterfaceMock = OCMPartialMock(branch.serverInterface);

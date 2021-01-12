@@ -673,14 +673,14 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [self.whiteListedSchemeList addObject:scheme];
 }
 
-- (void)setUrlsToIgnore:(NSArray<NSString*>*)urlsToIgnore {
+- (void)setUrlPatternsToIgnore:(NSArray<NSString*>*)urlsToIgnore {
     @synchronized (self) {
         _userURLFilter = [[BNCURLFilter alloc] init];
         _userURLFilter.patternList = urlsToIgnore;
     }
 }
 
-- (NSArray<NSString *> *)urlsToIgnore {
+- (NSArray<NSString *> *)urlPatternsToIgnore {
     @synchronized (self) {
         return _userURLFilter.patternList;
     }
