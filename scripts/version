@@ -31,7 +31,7 @@ Options:
 USAGE
 }
 
-version=0.36.0
+version=0.37.0
 
 if (( $# == 0 )); then
     echo $version
@@ -105,12 +105,6 @@ if [[ $update ]]; then
 
     # Update the Podspec version:
     sed -i '' -e "/^[[:space:]]*s\.version/ {s/\".*\"/\"$version\"/; }" ../Branch.podspec
-
-    # Update the Carthage version:
-    plutil -replace CFBundleVersion -string "$version"  ../carthage-files/Branch/Info.plist
-    plutil -replace CFBundleShortVersionString -string "$version"  ../carthage-files/Branch/Info.plist
-    plutil -replace CFBundleVersion -string "$version"  ../carthage-files/Branch-tvOS/Info.plist
-    plutil -replace CFBundleShortVersionString -string "$version"  ../carthage-files/Branch-tvOS/Info.plist
 
     # Update the Carthage version:
     plutil -replace CFBundleVersion -string "$version"  ../Branch-TestBed/Framework-Info.plist
