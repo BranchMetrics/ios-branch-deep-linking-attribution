@@ -1,5 +1,18 @@
 Branch iOS SDK Change Log
 
+v0.37.0
+January 14, 2021
+
+CORE-1198
+Remove some non-inclusive terms.
+The method 'blackListURLRegex' is now named 'urlPatternsToIgnore'.
+
+CORE-1521
+Add API to attach Facebook partner parameters to Branch install, opens and events.
+See Facebook's documentation on advanced matching for details on valid parameters.
+
+Thread safety improvement to server performance metrics. Thanks benski!
+
 v0.36.0
 November 11, 2020
 
