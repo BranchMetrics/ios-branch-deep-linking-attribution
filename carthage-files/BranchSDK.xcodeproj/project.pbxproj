@@ -7,38 +7,16 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		5F19B4E524B4FFBA00D7D3CB /* Branch-static-universal */ = {
+		5F85112825B1452100D544A1 /* Branch-xcframework */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 5F19B4E624B4FFBA00D7D3CB /* Build configuration list for PBXAggregateTarget "Branch-static-universal" */;
+			buildConfigurationList = 5F85112925B1452100D544A1 /* Build configuration list for PBXAggregateTarget "Branch-xcframework" */;
 			buildPhases = (
-				5F19B4E924B4FFD100D7D3CB /* ShellScript */,
+				5F85112C25B1452500D544A1 /* ShellScript */,
 			);
 			dependencies = (
 			);
-			name = "Branch-static-universal";
-			productName = "Branch-static-universal";
-		};
-		5F19B4EA24B500D000D7D3CB /* Branch-universal */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 5F19B4EB24B500D000D7D3CB /* Build configuration list for PBXAggregateTarget "Branch-universal" */;
-			buildPhases = (
-				5F19B4F224B500F300D7D3CB /* ShellScript */,
-			);
-			dependencies = (
-			);
-			name = "Branch-universal";
-			productName = "Branch-universal";
-		};
-		5F19B4EE24B500E100D7D3CB /* Branch-tvOS-universal */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 5F19B4EF24B500E100D7D3CB /* Build configuration list for PBXAggregateTarget "Branch-tvOS-universal" */;
-			buildPhases = (
-				5F19B4F324B5018200D7D3CB /* ShellScript */,
-			);
-			dependencies = (
-			);
-			name = "Branch-tvOS-universal";
-			productName = "Branch-tvOS-universal";
+			name = "Branch-xcframework";
+			productName = "Branch-xcframework";
 		};
 /* End PBXAggregateTarget section */
 
@@ -1216,14 +1194,8 @@
 				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Branch, Inc.";
 				TargetAttributes = {
-					5F19B4E524B4FFBA00D7D3CB = {
-						CreatedOnToolsVersion = 11.5;
-					};
-					5F19B4EA24B500D000D7D3CB = {
-						CreatedOnToolsVersion = 11.5;
-					};
-					5F19B4EE24B500E100D7D3CB = {
-						CreatedOnToolsVersion = 11.5;
+					5F85112825B1452100D544A1 = {
+						CreatedOnToolsVersion = 12.3;
 					};
 					5FC4CF9E2486123F0001E701 = {
 						CreatedOnToolsVersion = 11.5;
@@ -1249,9 +1221,7 @@
 				E298D0511C73D1B800589D22 /* Branch */,
 				5F19B44224B4F44B00D7D3CB /* Branch-static */,
 				5FC4CF9E2486123F0001E701 /* Branch-tvOS */,
-				5F19B4EA24B500D000D7D3CB /* Branch-universal */,
-				5F19B4E524B4FFBA00D7D3CB /* Branch-static-universal */,
-				5F19B4EE24B500E100D7D3CB /* Branch-tvOS-universal */,
+				5F85112825B1452100D544A1 /* Branch-xcframework */,
 			);
 		};
 /* End PBXProject section */
@@ -1281,7 +1251,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		5F19B4E924B4FFD100D7D3CB /* ShellScript */ = {
+		5F85112C25B1452500D544A1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1296,41 +1266,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Config\nTARGET_NAME=\"Branch-static\"\nFRAMEWORK_NAME=\"Branch\"\nSUFFIX=\"-static\"\nSDK=\"iphoneos\"\nSIMSDK=\"iphonesimulator\"\n\n# Build path without framework\nSIMULATOR_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-simulator${SUFFIX}\"\nUNSIGNED_SIMULATOR_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-simulator-unsigned${SUFFIX}\"\nDEVICE_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-device${SUFFIX}\"\nUNIVERSAL_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-universal${SUFFIX}\"\n\n# Build path with framework\nSIMULATOR_FRAMEWORK=\"${SIMULATOR_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nUNSIGNED_SIMULATOR_FRAMEWORK=\"${UNSIGNED_SIMULATOR_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nDEVICE_FRAMEWORK=\"${DEVICE_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nFRAMEWORK=\"${UNIVERSAL_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\n\n# Build simulator \nxcodebuild -project ${PROJECT_NAME}.xcodeproj BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -target ${TARGET_NAME} -sdk ${SIMSDK} -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-simulator${SUFFIX}\n\n# Build device\nxcodebuild -project ${PROJECT_NAME}.xcodeproj BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -target ${TARGET_NAME} -sdk ${SDK} -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-device${SUFFIX}\n\n# Remove signature from simulator\n# xcodebuild signs simulator as adhoc, remove it\nrm -rf \"${UNSIGNED_SIMULATOR_LIBRARY_DIR}\"\nmkdir \"${UNSIGNED_SIMULATOR_LIBRARY_DIR}\"\nmkdir \"${UNSIGNED_SIMULATOR_FRAMEWORK}\"\ncp -r \"${SIMULATOR_FRAMEWORK}/.\" \"${UNSIGNED_SIMULATOR_FRAMEWORK}/\"\n\ncodesign --remove-signature ${UNSIGNED_SIMULATOR_FRAMEWORK}\n\n# Create directory for universal\nrm -rf \"${UNIVERSAL_LIBRARY_DIR}\"\nmkdir \"${UNIVERSAL_LIBRARY_DIR}\"\nmkdir \"${FRAMEWORK}\"\n\n# Copy files Framework\ncp -r \"${DEVICE_FRAMEWORK}/.\" \"${FRAMEWORK}\"\n\n# Make an universal binary\nlipo \"${UNSIGNED_SIMULATOR_FRAMEWORK}/${FRAMEWORK_NAME}\" \"${DEVICE_FRAMEWORK}/${FRAMEWORK_NAME}\" -create -output \"${FRAMEWORK}/${FRAMEWORK_NAME}\" | echo\n\n# Copy finished binary to project\nrm -rf \"${PROJECT_DIR}/output/${TARGET_NAME}/${FRAMEWORK_NAME}.framework\"\ncp -r \"${FRAMEWORK}\" \"${PROJECT_DIR}/output/${TARGET_NAME}/\"\n";
-		};
-		5F19B4F224B500F300D7D3CB /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Config\nTARGET_NAME=\"Branch\"\nFRAMEWORK_NAME=\"Branch\"\nSUFFIX=\"\"\nSDK=\"iphoneos\"\nSIMSDK=\"iphonesimulator\"\n\n# Build path without framework\nSIMULATOR_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-simulator${SUFFIX}\"\nUNSIGNED_SIMULATOR_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-simulator-unsigned${SUFFIX}\"\nDEVICE_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-device${SUFFIX}\"\nUNIVERSAL_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-universal${SUFFIX}\"\n\n# Build path with framework\nSIMULATOR_FRAMEWORK=\"${SIMULATOR_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nUNSIGNED_SIMULATOR_FRAMEWORK=\"${UNSIGNED_SIMULATOR_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nDEVICE_FRAMEWORK=\"${DEVICE_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nFRAMEWORK=\"${UNIVERSAL_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\n\n# Build simulator \nxcodebuild -project ${PROJECT_NAME}.xcodeproj BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -target ${TARGET_NAME} -sdk ${SIMSDK} -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-simulator${SUFFIX}\n\n# Build device\nxcodebuild -project ${PROJECT_NAME}.xcodeproj BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -target ${TARGET_NAME} -sdk ${SDK} -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-device${SUFFIX}\n\n# Remove signature from simulator\n# xcodebuild signs simulator as adhoc, remove it\nrm -rf \"${UNSIGNED_SIMULATOR_LIBRARY_DIR}\"\nmkdir \"${UNSIGNED_SIMULATOR_LIBRARY_DIR}\"\nmkdir \"${UNSIGNED_SIMULATOR_FRAMEWORK}\"\ncp -r \"${SIMULATOR_FRAMEWORK}/.\" \"${UNSIGNED_SIMULATOR_FRAMEWORK}/\"\n\ncodesign --remove-signature ${UNSIGNED_SIMULATOR_FRAMEWORK}\n\n# Create directory for universal\nrm -rf \"${UNIVERSAL_LIBRARY_DIR}\"\nmkdir \"${UNIVERSAL_LIBRARY_DIR}\"\nmkdir \"${FRAMEWORK}\"\n\n# Copy files Framework\ncp -r \"${DEVICE_FRAMEWORK}/.\" \"${FRAMEWORK}\"\n\n# Make an universal binary\nlipo \"${UNSIGNED_SIMULATOR_FRAMEWORK}/${FRAMEWORK_NAME}\" \"${DEVICE_FRAMEWORK}/${FRAMEWORK_NAME}\" -create -output \"${FRAMEWORK}/${FRAMEWORK_NAME}\" | echo\n\n# Copy finished binary to project\nrm -rf \"${PROJECT_DIR}/output/${TARGET_NAME}/${FRAMEWORK_NAME}.framework\"\ncp -r \"${FRAMEWORK}\" \"${PROJECT_DIR}/output/${TARGET_NAME}/\"\n";
-		};
-		5F19B4F324B5018200D7D3CB /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Config\nTARGET_NAME=\"Branch-tvOS\"\nFRAMEWORK_NAME=\"Branch\"\nSUFFIX=\"-tvOS\"\nSDK=\"appletvos\"\nSIMSDK=\"appletvsimulator\"\n\n# Build path without framework\nSIMULATOR_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-simulator${SUFFIX}\"\nUNSIGNED_SIMULATOR_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-simulator-unsigned${SUFFIX}\"\nDEVICE_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-device${SUFFIX}\"\nUNIVERSAL_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-universal${SUFFIX}\"\n\n# Build path with framework\nSIMULATOR_FRAMEWORK=\"${SIMULATOR_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nUNSIGNED_SIMULATOR_FRAMEWORK=\"${UNSIGNED_SIMULATOR_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nDEVICE_FRAMEWORK=\"${DEVICE_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\nFRAMEWORK=\"${UNIVERSAL_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\n\n# Build simulator \nxcodebuild -project ${PROJECT_NAME}.xcodeproj BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -target ${TARGET_NAME} -sdk ${SIMSDK} -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-simulator${SUFFIX}\n\n# Build device\nxcodebuild -project ${PROJECT_NAME}.xcodeproj BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -target ${TARGET_NAME} -sdk ${SDK} -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-device${SUFFIX}\n\n# Remove signature from simulator\n# xcodebuild signs simulator as adhoc, remove it\nrm -rf \"${UNSIGNED_SIMULATOR_LIBRARY_DIR}\"\nmkdir \"${UNSIGNED_SIMULATOR_LIBRARY_DIR}\"\nmkdir \"${UNSIGNED_SIMULATOR_FRAMEWORK}\"\ncp -r \"${SIMULATOR_FRAMEWORK}/.\" \"${UNSIGNED_SIMULATOR_FRAMEWORK}/\"\n\ncodesign --remove-signature ${UNSIGNED_SIMULATOR_FRAMEWORK}\n\n# Create directory for universal\nrm -rf \"${UNIVERSAL_LIBRARY_DIR}\"\nmkdir \"${UNIVERSAL_LIBRARY_DIR}\"\nmkdir \"${FRAMEWORK}\"\n\n# Copy files Framework\ncp -r \"${DEVICE_FRAMEWORK}/.\" \"${FRAMEWORK}\"\n\n# Make an universal binary\nlipo \"${UNSIGNED_SIMULATOR_FRAMEWORK}/${FRAMEWORK_NAME}\" \"${DEVICE_FRAMEWORK}/${FRAMEWORK_NAME}\" -create -output \"${FRAMEWORK}/${FRAMEWORK_NAME}\" | echo\n\n# Copy finished binary to project\nrm -rf \"${PROJECT_DIR}/output/${TARGET_NAME}/${FRAMEWORK_NAME}.framework\"\ncp -r \"${FRAMEWORK}\" \"${PROJECT_DIR}/output/${TARGET_NAME}/\"\n";
+			shellScript = "# config\nIOS_PATH=\"./build/ios/ios.xcarchive\"\nIOS_SIM_PATH=\"./build/ios/ios_sim.xcarchive\"\nIOS_XCFRAMEWORK_PATH=\"./build/ios/Branch.xcframework\"\nTVOS_PATH=\"./build/tvos/tvos.xcarchive\"\nTVOS_SIM_PATH=\"./build/tvos/tvos_sim.xcarchive\"\nTVOS_XCFRAMEWORK_PATH=\"./build/tvos/Branch.xcframework\"\n\n# build iOS framework\nxcodebuild archive \\\n    -scheme Branch \\\n    -archivePath \"${IOS_PATH}\" \\\n    -sdk iphoneos \\\n    SKIP_INSTALL=NO\n\n# build iOS simulator framework\nxcodebuild archive \\\n    -scheme Branch \\\n    -archivePath \"${IOS_SIM_PATH}\" \\\n    -sdk iphonesimulator \\\n    SKIP_INSTALL=NO\n\n# package iOS frameworks\nxcodebuild -create-xcframework \\\n    -framework \"${IOS_PATH}/Products/Library/Frameworks/Branch.framework\" \\\n    -framework \"${IOS_SIM_PATH}/Products/Library/Frameworks/Branch.framework\" \\\n    -output \"${IOS_XCFRAMEWORK_PATH}\"\n\n# build tvOS framework\nxcodebuild archive \\\n    -scheme Branch-tvOS \\\n    -archivePath \"${TVOS_PATH}\" \\\n    -sdk appletvos \\\n    SKIP_INSTALL=NO\n\n# build tvOS simulator framework\nxcodebuild archive \\\n    -scheme Branch-tvOS \\\n    -archivePath \"${TVOS_SIM_PATH}\" \\\n    -sdk appletvsimulator \\\n    SKIP_INSTALL=NO\n\n# package tvOS frameworks\nxcodebuild -create-xcframework \\\n    -framework \"${TVOS_PATH}/Products/Library/Frameworks/Branch.framework\" \\\n    -framework \"${TVOS_SIM_PATH}/Products/Library/Frameworks/Branch.framework\" \\\n    -output \"${TVOS_XCFRAMEWORK_PATH}\"\n    \n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1582,6 +1518,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -1614,6 +1551,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -1642,62 +1580,20 @@
 			};
 			name = Release;
 		};
-		5F19B4E724B4FFBA00D7D3CB /* Debug */ = {
+		5F85112A25B1452100D544A1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R63EM248DP;
-				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
-		5F19B4E824B4FFBA00D7D3CB /* Release */ = {
+		5F85112B25B1452100D544A1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R63EM248DP;
-				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		5F19B4EC24B500D000D7D3CB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = R63EM248DP;
-				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		5F19B4ED24B500D000D7D3CB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = R63EM248DP;
-				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		5F19B4F024B500E100D7D3CB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = R63EM248DP;
-				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		5F19B4F124B500E100D7D3CB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = R63EM248DP;
-				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1705,6 +1601,7 @@
 		5FC4CFA42486123F0001E701 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1743,6 +1640,7 @@
 		5FC4CFA52486123F0001E701 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1891,6 +1789,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -1921,6 +1820,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -1959,29 +1859,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5F19B4E624B4FFBA00D7D3CB /* Build configuration list for PBXAggregateTarget "Branch-static-universal" */ = {
+		5F85112925B1452100D544A1 /* Build configuration list for PBXAggregateTarget "Branch-xcframework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5F19B4E724B4FFBA00D7D3CB /* Debug */,
-				5F19B4E824B4FFBA00D7D3CB /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		5F19B4EB24B500D000D7D3CB /* Build configuration list for PBXAggregateTarget "Branch-universal" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5F19B4EC24B500D000D7D3CB /* Debug */,
-				5F19B4ED24B500D000D7D3CB /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		5F19B4EF24B500E100D7D3CB /* Build configuration list for PBXAggregateTarget "Branch-tvOS-universal" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5F19B4F024B500E100D7D3CB /* Debug */,
-				5F19B4F124B500E100D7D3CB /* Release */,
+				5F85112A25B1452100D544A1 /* Debug */,
+				5F85112B25B1452100D544A1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
