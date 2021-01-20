@@ -11,6 +11,10 @@ CORE-1521
 Add API to attach Facebook partner parameters to Branch install, opens and events.
 See Facebook's documentation on advanced matching for details on valid parameters.
 
+CORE-1316
+Add support for xcframework.  This changes the manual and Carthage integrations.
+See documentation on the Branch docs website for details.
+
 Thread safety improvement to server performance metrics. Thanks benski!
 
 v0.36.0
