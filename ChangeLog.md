@@ -1,7 +1,7 @@
 Branch iOS SDK Change Log
 
 v0.37.0
-January 14, 2021
+January 20, 2021
 
 CORE-1198
 Remove some non-inclusive terms.
