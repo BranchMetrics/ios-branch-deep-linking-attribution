@@ -14,7 +14,7 @@ See Facebook's documentation on advanced matching for details on valid parameter
 CORE-1316
 Add support for xcframework.
 Branch.xcframework has replaced Branch.framework. iOS and tvOS are both included in the same xcframework. 
-The pre-built xcframework is Branch.zip in the carthage-files folder.
+The pre-built xcframework is Branch.zip attached to the github release page.
 Carthage integrations require the '--use-xcframeworks' flag. This feature is not yet in the general carthage release, you will need to install carthage from source.
 
 Thread safety improvement to server performance metrics. Thanks benski!
