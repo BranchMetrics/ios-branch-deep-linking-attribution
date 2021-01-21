@@ -22,6 +22,8 @@ echo '#checksum for Branch.zip on Github' > "$checksum_file"
 shasum Branch.zip >> $checksum_file
 
 # remove source frameworks
+mv Branch.zip ..
+mv checksum ..
 echo "Cleaning up"
 rm -rf Branch.xcframework
 
