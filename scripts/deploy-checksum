@@ -8,29 +8,20 @@ set -euo pipefail
 scriptname=$(basename "${BASH_SOURCE[0]}")
 scriptpath="${BASH_SOURCE[0]}"
 scriptpath=$(cd "$(dirname "${scriptpath}")" && pwd)
-cd ${scriptpath}/../carthage-files/output
+cd ${scriptpath}/../carthage-files/build
 
 # Zip the SDK files
 echo "Zipping frameworks"
-zip -rqy Branch/Branch.zip Branch/Branch.framework/
-zip -rqy Branch-static/Branch-static.zip Branch-static/Branch.framework/
-zip -rqy Branch-tvOS/Branch-tvOS.zip Branch-tvOS/Branch.framework/
+zip -rqy Branch.zip Branch.xcframework/
 
 # Checksum the zip files
 echo "Creating checksums"
 checksum_file=checksum
 
 echo '#checksum for Branch.zip on Github' > "$checksum_file"
-shasum Branch/Branch.zip >> $checksum_file
-
-echo '#checksum for Branch-static.zip on Github' >> "$checksum_file"
-shasum Branch-static/Branch-static.zip >> $checksum_file
-
-echo '#checksum for Branch-tvOS.zip on Github' >> "$checksum_file"
-shasum Branch-tvOS/Branch-tvOS.zip >> $checksum_file
+shasum Branch.zip >> $checksum_file
 
 # remove source frameworks
 echo "Cleaning up"
-rm -rf Branch/Branch.framework
-rm -rf Branch-static/Branch.framework
-rm -rf Branch-tvOS/Branch.framework
+rm -rf Branch.xcframework
+

@@ -55,9 +55,6 @@ echo ">>> Building the framework..." 1>&2
 echo ">>> Zipping and checksumming framework files..." 1>&2
 ./scripts/deploy-checksum
 
-echo '>>> Making Carthage build...' 1>&2
-./scripts/deploy-carthage
-
 echo '>>> The Branch SDK build is successful so far.' 1>&2
 if ! ./scripts/askYN "Commit and deploy Branch release version ${version}?"; then
     echo ">>> Nothing deployed." 1>&2
@@ -68,13 +65,10 @@ echo '>>> Commit and tag...' 1>&2
 ./scripts/deploy-git-tag
 
 echo '>>> Pushing Branch CocoaPod...' 1>&2
-pod trunk push Branch.podspec --allow-warnings
+pod trunk push Branch.podspec
 
 # Prompts for SDK Release announcements
 ./scripts/deploy-announce
-
-# Remove remnants:
-./scripts/deploy-cleanup
 
 echo ""
 echo "The Branch SDK has been released.  Rejoice and pay tribute to Steve Jobs!"

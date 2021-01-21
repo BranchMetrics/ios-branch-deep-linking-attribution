@@ -11,7 +11,4 @@ scriptpath=$(cd "$(dirname "${scriptpath}")" && pwd)
 cd ${scriptpath}/../carthage-files
 
 # Build
-xcodebuild -scheme 'Branch-universal'
-xcodebuild -scheme 'Branch-static-universal'
-xcodebuild -scheme 'Branch-tvOS-universal'
- 
+xcodebuild -scheme 'Branch-xcframework'
