@@ -20,9 +20,9 @@ Options:
 
     Updates version numbers in files:
 
-        Branch version:     ../Branch-SDK/Branch-SDK/BNCConfig.m
+        Branch version:     ../Branch-SDK/BNCConfig.m
         Podspec version:    ../Branch.podspec
-        Carthage version:   ../carthage-files/Info.plist
+        Framework version:  ../Branch-TestBed/Framework-Info.plist
 
   -M  Print or increment the \`major\` version number.
   -m  Print or increment the \`minor\` version number.
