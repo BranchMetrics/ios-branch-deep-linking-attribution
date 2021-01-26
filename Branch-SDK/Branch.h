@@ -619,7 +619,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 -(void)setDeepLinkDebugMode:(nullable NSDictionary *)debugParams;
 
 /**
- Allow a URI scheme tol be tracked by Branch. Default to all schemes.
+ Allow a URI scheme to be tracked by Branch. Default to all schemes.
 
  @param scheme URI scheme allowed to track, i.e. @"http", @"https" or @"myapp"
  */
