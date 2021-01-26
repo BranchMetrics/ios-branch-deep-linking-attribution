@@ -140,7 +140,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (strong, nonatomic) NSMutableDictionary *deepLinkControllers;
 @property (weak,   nonatomic) UIViewController *deepLinkPresentingController;
 @property (strong, nonatomic) NSDictionary *deepLinkDebugParams;
-@property (strong, nonatomic) NSMutableArray *whiteListedSchemeList;
+@property (strong, nonatomic) NSMutableArray *allowedSchemeList;
 @property (strong, nonatomic) BNCURLFilter *urlFilter;
 
 #if !TARGET_OS_TV
@@ -193,7 +193,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     _processing_sema = dispatch_semaphore_create(1);
     _networkCount = 0;
     _deepLinkControllers = [[NSMutableDictionary alloc] init];
-    _whiteListedSchemeList = [[NSMutableArray alloc] init];
+    _allowedSchemeList = [[NSMutableArray alloc] init];
 
     #if !TARGET_OS_TV
     _contentDiscoveryManager = [[BNCContentDiscoveryManager alloc] init];
@@ -665,12 +665,12 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     self.deepLinkDebugParams = debugParams;
 }
 
-- (void)setWhiteListedSchemes:(NSArray *)schemes {
-    self.whiteListedSchemeList = [schemes mutableCopy];
+- (void)setAllowedSchemes:(NSArray *)schemes {
+    self.allowedSchemeList = [schemes mutableCopy];
 }
 
-- (void)addWhiteListedScheme:(NSString *)scheme {
-    [self.whiteListedSchemeList addObject:scheme];
+- (void)addAllowedScheme:(NSString *)scheme {
+    [self.allowedSchemeList addObject:scheme];
 }
 
 - (void)setUrlPatternsToIgnore:(NSArray<NSString*>*)urlsToIgnore {
@@ -731,8 +731,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         NSString *urlScheme = [url scheme];
 
         // save the incoming url in the preferenceHelper in the externalIntentURI field
-        if ([self.whiteListedSchemeList count]) {
-            for (NSString *scheme in self.whiteListedSchemeList) {
+        if ([self.allowedSchemeList count]) {
+            for (NSString *scheme in self.allowedSchemeList) {
                 if (urlScheme && [scheme isEqualToString:urlScheme]) {
                     self.preferenceHelper.externalIntentURI = [url absoluteString];
                     self.preferenceHelper.referringURL = [url absoluteString];
