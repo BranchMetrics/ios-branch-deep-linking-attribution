@@ -26,7 +26,7 @@
     return nil;
 }
 
-+ (void)requestLastTouchAttributedData:(BNCServerInterface *)serverInterface key:(NSString *)key attributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData *latd))completion {
++ (void)requestLastTouchAttributedData:(BNCServerInterface *)serverInterface key:(NSString *)key attributionWindow:(NSInteger)window completion:(void (^)(BranchLastAttributedTouchData *__nullable latd, NSError *__nullable error))completion {
     BranchLATDRequest *request = [BranchLATDRequest new];
     
     // Limit attribution range to about a year.  Although the server only supports up to 90 days as of Nov. 2019, it will fail gracefully for higher values.
@@ -41,14 +41,14 @@
         // error is logged by the network service, skip parsing on error
         if (error) {
             if (completion) {
-                completion(nil);
+                completion(nil, error);
             }
             return;
         }
     
         BranchLastAttributedTouchData *latd = [self buildFromJSON:response.data];
         if (completion) {
-            completion(latd);
+            completion(latd, error);
         }
     }];
 }
