@@ -244,8 +244,8 @@
     if (Branch.trackingDisabled) {
         NSString *endpoint = request.URL.absoluteString;
         
-        // if endpoint is not on the whitelist, fail it.
-        if (![self whiteListContainsEndpoint:endpoint]) {
+        // if endpoint is not linking related, fail it.
+        if (![self isLinkingRelatedRequest:endpoint]) {
             [[BNCPreferenceHelper preferenceHelper] clearTrackingInformation];
             NSError *error = [NSError branchErrorWithCode:BNCTrackingDisabledError];
             BNCLogWarning([NSString stringWithFormat:@"Dropping Request %@: - %@", endpoint, error]);
@@ -269,7 +269,7 @@
     }
 }
 
-- (BOOL)whiteListContainsEndpoint:(NSString *)endpoint {
+- (BOOL)isLinkingRelatedRequest:(NSString *)endpoint {
     BNCPreferenceHelper *prefs = [BNCPreferenceHelper preferenceHelper];
     BOOL hasIdentifier = (prefs.linkClickIdentifier.length > 0 ) || (prefs.spotlightIdentifier.length > 0 ) || (prefs.universalLinkUrl.length > 0);
     

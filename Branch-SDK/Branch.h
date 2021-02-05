@@ -619,18 +619,18 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 -(void)setDeepLinkDebugMode:(nullable NSDictionary *)debugParams;
 
 /**
- Add a scheme to a whitelist of URI schemes that will be tracked by Branch. Default to all schemes.
+ Allow a URI scheme to be tracked by Branch. Default to all schemes.
 
- @param scheme to add to the whitelist, i.e. @"http", @"https" or @"myapp"
+ @param scheme URI scheme allowed to track, i.e. @"http", @"https" or @"myapp"
  */
--(void)addWhiteListedScheme:(nullable NSString *)scheme;
+-(void)addAllowedScheme:(nullable NSString *)scheme;
 
 /**
- Add an array of schemes to a whitelist of URI schemes that will be tracked by Branch. Default to all schemes.
+ Allow an array of URI schemes to be tracked by Branch. Default to all schemes.
 
- @param schemes array to add to the whitelist, i.e. @[@"http", @"https", @"myapp"]
+ @param schemes An array of URI schemes allowed to track, i.e. @[@"http", @"https", @"myapp"]
  */
--(void)setWhiteListedSchemes:(nullable NSArray *)schemes;
+-(void)setAllowedSchemes:(nullable NSArray *)schemes;
 
 /**
  @brief     Sets an array of regex patterns that match URLs for Branch to ignore.
