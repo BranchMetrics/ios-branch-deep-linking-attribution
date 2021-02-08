@@ -32,7 +32,7 @@ if [ ! -f "${scriptpath}/../carthage-files/Branch.zip" ]; then
     exit 1
 fi
 
-if [ ! -f "${scriptpath}/../carthage-files/Branch-static.zip"]; then
+if [ ! -f "${scriptpath}/../carthage-files/Branch_static.zip" ]; then
     echo "Branch-static.zip not found"
     exit 1
 fi
