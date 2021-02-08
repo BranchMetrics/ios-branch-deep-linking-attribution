@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# deploy-git-tag  -  Commit and push the current git changes.  Create a version tag and push to master.
+# git_commit_and_tag.sh  -  Commit and push the current git changes.  Create a version tag and push to master.
 #
 # Edward Smith, January 2017
 
@@ -10,7 +10,7 @@ scriptfile="${scriptfile}"/$(basename "$0")
 cd $(dirname "$scriptfile")/..
 
 git_branch=$(git symbolic-ref --short HEAD)
-version=$(./scripts/version)
+version=$(./scripts/version.sh)
 
 echo ">>> Merging and pushing '$git_branch' to master..." 1>&2
 

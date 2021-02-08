@@ -9,7 +9,7 @@
 #
 #	E.B. Smith  -  January 2014
 
-scriptname=whichapp
+scriptname=whichapp.sh
 
 usage () {
 cat <<USAGE

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# deploy-preflight  -  Check that the development environment is set up for deployment.
+# check_build_environment.sh  -  Check that the development environment is set up for deployment.
 #
 # Edward Smith, January 2017
 
