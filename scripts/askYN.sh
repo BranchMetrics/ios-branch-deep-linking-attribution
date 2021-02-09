@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#   askYN  -  Ask the user a yes/no question on stdout/stdin.
+#   askYN.sh  -  Ask the user a yes/no question on stdout/stdin.
 #
-#   Usage:  askYN [ "Question?" ]
+#   Usage:  askYN.sh [ "Question?" ]
 #
 #   Exits with code 0 for yes, 1 for no.
 #

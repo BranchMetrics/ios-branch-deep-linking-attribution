@@ -1,11 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 
-# deploy-announce  -  Prompts to check the announcement of a new SDK version.
+# announce_sdk_release.sh  -  Prompts to check the announcement of a new SDK version.
 #
 # Edward Smith, January 2017
 
-version=$(./scripts/version)
+version=$(./scripts/version.sh)
 
 echo ""
 echo ""
