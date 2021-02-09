@@ -35,7 +35,7 @@ if ! ./scripts/askYN.sh "Build Branch release candidate version ${version}?"; th
 fi
 
 # Prompt for editor input for ChangeLog.
-nano ChangeLog.md
+"${VISUAL:-nano}" ChangeLog.md
 
 # Check that deployment software is installed
 ./scripts/check_build_environment.sh
