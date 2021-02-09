@@ -6,9 +6,9 @@ function usage() {
 cat <<USAGE
 version  -  Print or increment a version number.
 
-Usage:  version  [ -hiMmp ]
+Usage:  version.sh  [ -hiMmp ]
 
-With no options given, \`version\` simply prints the current version number.
+With no options given, \`version.sh\` simply prints the current version number.
 
 Version numbers are:  Major.Minor.Patch
 
@@ -31,7 +31,7 @@ Options:
 USAGE
 }
 
-version=0.37.0
+version=1.38.0
 
 if (( $# == 0 )); then
     echo $version
