@@ -365,47 +365,10 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             [exception.callStackSymbols componentsJoinedByString:@"\n\t"]];
 }
 
-+ (NSString *)queueFile_deprecated {
-    NSString *path =
-        [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)
-            firstObject]
-                stringByAppendingPathComponent:BRANCH_QUEUE_FILE];
-    return path;
-}
-
 + (NSURL* _Nonnull) URLForQueueFile {
     NSURL *URL = BNCURLForBranchDirectory();
     URL = [URL URLByAppendingPathComponent:BRANCH_QUEUE_FILE isDirectory:NO];
     return URL;
-}
-
-+ (void) moveOldQueueFile {
-    NSURL *oldURL = [NSURL fileURLWithPath:self.queueFile_deprecated];
-    NSURL *newURL = [self URLForQueueFile];
-    
-    if (!oldURL || !newURL) { return; }
-    
-    NSError *error = nil;
-    [[NSFileManager defaultManager]
-        moveItemAtURL:oldURL
-        toURL:newURL
-        error:&error];
-
-    if (error && error.code != NSFileNoSuchFileError) {
-        if (error.code == NSFileWriteFileExistsError) {
-            [[NSFileManager defaultManager]
-                removeItemAtURL:oldURL
-                error:&error];
-        } else {
-            BNCLogError([NSString stringWithFormat:@"Failed to move the queue file: %@.", error]);
-        }
-    }
-}
-
-+ (void) initialize {
-    if (self == [BNCServerRequestQueue self]) {
-        [self moveOldQueueFile];
-    }
 }
 
 #pragma mark - Shared Method
