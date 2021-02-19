@@ -87,6 +87,14 @@
                     onDict:params];
     }
     
+    if (!preferenceHelper.appleAttributionTokenChecked) {
+        NSString *appleAttributionToken = [BNCSystemObserver appleAttributionToken];
+        if (appleAttributionToken) {
+            preferenceHelper.appleAttributionTokenChecked = YES;
+            [self safeSetValue:appleAttributionToken forKey:BRANCH_REQUEST_KEY_APPLE_ATTRIBUTION_TOKEN onDict:params];
+        }
+    }
+    
     NSDictionary *partnerParameters = [[BNCPartnerParameters shared] parameterJson];
     if (partnerParameters.count > 0) {
         [self safeSetValue:partnerParameters forKey:BRANCH_REQUEST_KEY_PARTNER_PARAMETERS onDict:params];

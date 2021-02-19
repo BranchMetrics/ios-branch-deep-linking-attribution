@@ -57,6 +57,7 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 @property (strong, nonatomic) NSMutableDictionary *creditsDictionary;
 @property (strong, nonatomic) NSMutableDictionary *requestMetadataDictionary;
 @property (strong, nonatomic) NSMutableDictionary *instrumentationDictionary;
+
 @end
 
 @implementation BNCPreferenceHelper
@@ -381,6 +382,14 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 
 - (BOOL) appleSearchAdNeedsSend {
     return [self readBoolFromDefaults:@"_appleSearchAdNeedsSend"];
+}
+
+- (void)setAppleAttributionTokenChecked:(BOOL)appleAttributionTokenChecked {
+    [self writeBoolToDefaults:@"_appleAttributionTokenChecked" value:appleAttributionTokenChecked];
+}
+
+- (BOOL)appleAttributionTokenChecked {
+    return [self readBoolFromDefaults:@"_appleAttributionTokenChecked"];
 }
 
 - (NSString*) lastSystemBuildVersion {

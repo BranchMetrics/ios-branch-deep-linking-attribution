@@ -13,10 +13,12 @@
 @import UIKit;
 @import SystemConfiguration;
 @import Darwin.POSIX.sys.utsname;
+@import AdServices;
 #else
 #import <UIKit/UIKit.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 #import <sys/utsname.h>
+#import <AdServices/AdServices.h>
 #endif
 
 @implementation BNCSystemObserver
@@ -46,7 +48,18 @@
     return uid;
 }
 
-+ (NSString*) getAdId {
++ (NSString *)appleAttributionToken {
+    if (@available(iOS 14.3, *)) {
+        NSError *error;
+        NSString *appleAttributionToken = [AAAttribution attributionTokenWithError:&error];
+        if (!error) {
+            return appleAttributionToken;
+        }
+    }
+    return nil;
+}
+
++ (NSString *)getAdId {
     
     // This macro is unnecessary since this code only runs if AdSupport.framework is included
     // However, some clients feel more comfortable with no IDFA code at all.
@@ -75,6 +88,7 @@
     #endif
 }
 
+// on iOS 14+ this value is always NO
 + (BOOL)adTrackingSafe {
     
     // This macro is unnecessary since this code only runs if AdSupport.framework is included
