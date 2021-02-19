@@ -684,7 +684,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)setAppClipAppGroup:(NSString *)appGroup;
 
 /**
- Set time window for SKAdNetwork callouts.  By default, Branch limits calls to SKAdNetwork to within 72 hours after first install.
+ Set time window for SKAdNetwork callouts.  By default, Branch limits calls to SKAdNetwork to within 24 hours after first install.
  
  Note: Branch does not automatically call SKAdNetwork unless configured on the dashboard.
  */
