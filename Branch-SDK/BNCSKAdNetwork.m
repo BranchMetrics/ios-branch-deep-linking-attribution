@@ -33,8 +33,8 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        // by default, we send updates to SKAdNetwork for up to 3 days after install
-        self.maxTimeSinceInstall = 3600.0 * 24.0 * 3.0;
+        // by default, we send updates to SKAdNetwork for up a day after install
+        self.maxTimeSinceInstall = 3600.0 * 24.0;
         self.installDate = [BNCApplication currentApplication].currentInstallDate;
         
         self.skAdNetworkClass = NSClassFromString(@"SKAdNetwork");
