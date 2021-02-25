@@ -48,6 +48,7 @@
     [tablesQuery/*@START_MENU_TOKEN@*/.staticTexts[@"Share Link"]/*[[".cells",".buttons[@\"Share Link\"].staticTexts[@\"Share Link\"]",".staticTexts[@\"Share Link\"]"],[[[-1,2],[-1,1],[-1,0,1]],[[-1,2],[-1,1]]],[0]]@END_MENU_TOKEN@*/ tap];
     sleep(6);
     [[[[app/*@START_MENU_TOKEN@*/.collectionViews/*[[".otherElements[@\"ActivityListView\"].collectionViews",".collectionViews"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.buttons[@"Copy"].otherElements containingType:XCUIElementTypeImage identifier:@"copy"] childrenMatchingType:XCUIElementTypeOther].element childrenMatchingType:XCUIElementTypeOther].element tap];
+    sleep(3);
     XCUIElement *branchLinkTextField = tablesQuery/*@START_MENU_TOKEN@*/.textFields[@"Branch Link"]/*[[".cells.textFields[@\"Branch Link\"]",".textFields[@\"Branch Link\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/;
     NSString *pasteboardString = [UIPasteboard generalPasteboard].string;
     
