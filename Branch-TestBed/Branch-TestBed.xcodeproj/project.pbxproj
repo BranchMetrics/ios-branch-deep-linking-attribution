@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0399DD122599BF8A00CDB36E /* UITestSendV2Event.m in Sources */ = {isa = PBXBuildFile; fileRef = 0399DD112599BF8A00CDB36E /* UITestSendV2Event.m */; };
 		1F241CE72639A862AD0840CF /* libPods-Branch-SDK-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 423ACD2DEBB9A2E4FAF64B08 /* libPods-Branch-SDK-Tests.a */; };
 		3A78D574251EB59B002A25CF /* BranchJsonConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A78D573251EB59B002A25CF /* BranchJsonConfig.h */; };
 		3A78D576251EB5BF002A25CF /* BranchJsonConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A78D575251EB5BF002A25CF /* BranchJsonConfig.m */; };
@@ -323,6 +324,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0399DD112599BF8A00CDB36E /* UITestSendV2Event.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UITestSendV2Event.m; sourceTree = "<group>"; };
+				
 		033FC71025AC1E5800D8319E /* Branch-TestBed.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = "Branch-TestBed.xctestplan"; path = "Branch-TestBed.xcodeproj/Branch-TestBed.xctestplan"; sourceTree = "<group>"; };
 		3A78D573251EB59B002A25CF /* BranchJsonConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchJsonConfig.h; sourceTree = "<group>"; };
 		3A78D575251EB5BF002A25CF /* BranchJsonConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchJsonConfig.m; sourceTree = "<group>"; };
@@ -649,9 +652,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F241CE72639A862AD0840CF /* libPods-Branch-SDK-Tests.a in Frameworks */,
 				4DD056122177A65C009BD3DD /* libOCMock.a in Frameworks */,
 				4DD056142177A65C009BD3DD /* libOHHTTPStubs.a in Frameworks */,
-				1F241CE72639A862AD0840CF /* libPods-Branch-SDK-Tests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -746,6 +749,7 @@
 			children = (
 				4D93D85F2098D43C00CFABA6 /* Info.plist */,
 				4D93D8602098D43C00CFABA6 /* UITestSafari.m */,
+				0399DD112599BF8A00CDB36E /* UITestSendV2Event.m */,
 			);
 			path = "Branch-TestBed-UITests";
 			sourceTree = "<group>";
@@ -1530,6 +1534,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0399DD122599BF8A00CDB36E /* UITestSendV2Event.m in Sources */,
 				4D93D8622098D43C00CFABA6 /* UITestSafari.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
