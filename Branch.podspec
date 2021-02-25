@@ -31,6 +31,6 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
 	"Branch-SDK/BranchCSSearchableItemAttributeSet.{h,m}",
 	"Branch-SDK/BranchShareLink.{h,m}"
 
-  s.frameworks = 'CoreServices', 'SystemConfiguration'
+  s.frameworks = 'CoreServices', 'SystemConfiguration', 'AdServices'
   s.ios.frameworks = 'WebKit', 'iAd', 'CoreTelephony'
 end

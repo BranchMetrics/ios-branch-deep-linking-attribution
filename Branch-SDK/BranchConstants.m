@@ -147,6 +147,7 @@ NSString * const BRANCH_PACKAGE_NAME_KEY = @"p";
 NSString * const BRANCH_ENTITIES_KEY = @"e";
 
 NSString * const BRANCH_REQUEST_KEY_SEARCH_AD = @"search_ad_encoded";
+NSString * const BRANCH_REQUEST_KEY_APPLE_ATTRIBUTION_TOKEN = @"apple_attribution_token";
 
 NSString * const BRANCH_CRASHLYTICS_SDK_VERSION_KEY = @"io.branch.sdk.version";
 NSString * const BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY = @"io.branch.device.fingerprintid";

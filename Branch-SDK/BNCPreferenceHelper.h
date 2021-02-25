@@ -35,6 +35,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) BOOL isDebug;
 @property (assign, nonatomic) BOOL checkedFacebookAppLinks;
 @property (assign, nonatomic) BOOL checkedAppleSearchAdAttribution;
+@property (nonatomic, assign, readwrite) BOOL appleAttributionTokenChecked;
 @property (assign, nonatomic) NSInteger retryCount;
 @property (assign, nonatomic) NSTimeInterval retryInterval;
 @property (assign, nonatomic) NSTimeInterval timeout;
