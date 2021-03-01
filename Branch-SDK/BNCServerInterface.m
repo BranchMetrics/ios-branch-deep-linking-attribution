@@ -527,7 +527,7 @@
         [self safeSetValue:[deviceInfo connectionType] forKey:@"connection_type" onDict:dict];
         [self safeSetValue:[deviceInfo userAgentString] forKey:@"user_agent" onDict:dict];
         
-        [self safeSetValue:[deviceInfo optInStatus] forKey:BRANCH_REQUEST_KEY_OPT_IN_STATUS onDict:dict];
+        [self safeSetValue:[deviceInfo optInStatus] forKey:BRANCH_REQUEST_KEY_OPTED_IN_STATUS onDict:dict];
         [self safeSetValue:@(deviceInfo.isAdTrackingEnabled) forKey:BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED onDict:dict];
         
         [self safeSetValue:deviceInfo.applicationVersion forKey:@"app_version" onDict:dict];
