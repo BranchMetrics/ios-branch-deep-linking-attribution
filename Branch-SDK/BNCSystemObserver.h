@@ -30,7 +30,7 @@
 + (BOOL)isSimulator;
 + (BOOL)adTrackingSafe;
 + (NSString *)getAdId;
-+ (NSString *)attOptInStatus;
++ (NSString *)attOptedInStatus;
 + (NSString *)appleAttributionToken;
 
 @end

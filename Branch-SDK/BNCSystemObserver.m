@@ -86,7 +86,7 @@
 }
 
 // Returns AppTrackingTransparency status. It does not trigger the prompt.
-+ (NSString *)attOptInStatus {
++ (NSString *)attOptedInStatus {
     NSString *statusString = @"unavailable";
 
     #ifdef BRANCH_EXCLUDE_ATT_STATUS_CODE

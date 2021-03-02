@@ -34,7 +34,7 @@
 
 @property (nonatomic, copy, readwrite) NSString *advertiserId;
 @property (nonatomic, copy, readwrite) NSString *vendorId;
-@property (nonatomic, copy, readwrite) NSString *optInStatus;
+@property (nonatomic, copy, readwrite) NSString *optedInStatus;
 @property (nonatomic, assign, readwrite) BOOL isAdTrackingEnabled;
 @property (nonatomic, assign, readwrite) BOOL unidentifiedDevice;
 - (NSString *)localIPAddress;

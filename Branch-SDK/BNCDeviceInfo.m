@@ -146,7 +146,7 @@
 
 // IDFA should never be cached
 - (void)checkAdvertisingIdentifier {
-    self.optInStatus = [BNCSystemObserver attOptInStatus];
+    self.optedInStatus = [BNCSystemObserver attOptedInStatus];
     self.isAdTrackingEnabled = [BNCSystemObserver adTrackingSafe];
     self.advertiserId = [BNCSystemObserver getAdId];
     BOOL ignoreIdfa = [BNCPreferenceHelper preferenceHelper].isDebug;
@@ -186,7 +186,7 @@
         }
         [dictionary bnc_safeSetObject:[self localIPAddress] forKey:@"local_ip"];
 
-        [dictionary bnc_safeSetObject:[self optInStatus] forKey:@"opt_in_status"];
+        [dictionary bnc_safeSetObject:[self optedInStatus] forKey:@"opted_in_status"];
         if (!self.isAdTrackingEnabled) {
             dictionary[@"limit_ad_tracking"] = @(YES);
         }
