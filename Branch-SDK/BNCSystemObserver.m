@@ -60,9 +60,6 @@
 }
 
 + (NSString *)getAdId {
-    
-    // This macro is unnecessary since this code only runs if AdSupport.framework is included
-    // However, some clients feel more comfortable with no IDFA code at all.
     #ifdef BRANCH_EXCLUDE_IDFA_CODE
     return nil;
     
@@ -88,11 +85,43 @@
     #endif
 }
 
+// Returns AppTrackingTransparency status. It does not trigger the prompt.
++ (NSString *)attOptedInStatus {
+    NSString *statusString = @"unavailable";
+
+    #ifdef BRANCH_EXCLUDE_ATT_STATUS_CODE
+    #else
+
+    Class ATTrackingManagerClass = NSClassFromString(@"ATTrackingManager");
+    if (ATTrackingManagerClass) {
+        SEL trackingAuthorizationStatusSelector = NSSelectorFromString(@"trackingAuthorizationStatus");
+        unsigned long status = ((unsigned long (*)(id, SEL))[ATTrackingManagerClass methodForSelector:trackingAuthorizationStatusSelector])(ATTrackingManagerClass, trackingAuthorizationStatusSelector);
+        
+        // map ATT status to string values
+        switch (status) {
+            case 0:
+                statusString = @"not_determined";
+                break;
+            case 1:
+                statusString = @"restricted";
+                break;
+            case 2:
+                statusString = @"denied";
+                break;
+            case 3:
+                statusString = @"authorized";
+                break;
+            default:
+                break;
+        }
+    }
+    
+    #endif
+    return statusString;
+}
+
 // on iOS 14+ this value is always NO
 + (BOOL)adTrackingSafe {
-    
-    // This macro is unnecessary since this code only runs if AdSupport.framework is included
-    // However, some clients feel more comfortable with no IDFA code at all.
     #ifdef BRANCH_EXCLUDE_IDFA_CODE
     return NO;
     
