@@ -13,12 +13,18 @@
 @import UIKit;
 @import SystemConfiguration;
 @import Darwin.POSIX.sys.utsname;
-@import AdServices;
 #else
 #import <UIKit/UIKit.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 #import <sys/utsname.h>
+#endif
+
+#if !TARGET_OS_TV
+#if __has_feature(modules)
+@import AdServices;
+#else
 #import <AdServices/AdServices.h>
+#endif
 #endif
 
 @implementation BNCSystemObserver
@@ -49,6 +55,7 @@
 }
 
 + (NSString *)appleAttributionToken {
+#if !TARGET_OS_TV
     if (@available(iOS 14.3, *)) {
         NSError *error;
         NSString *appleAttributionToken = [AAAttribution attributionTokenWithError:&error];
@@ -56,6 +63,7 @@
             return appleAttributionToken;
         }
     }
+#endif
     return nil;
 }
 
