@@ -1,5 +1,20 @@
 Branch iOS SDK Change Log
 
+v1.39.0
+March 4, 2021
+
+CORE-1715
+Check AppTrackingTransparency status. The Branch SDK does not prompt the user, however it does check what the current ATT authorization status is. This provides more clarity into why IDFA is not authorized.
+
+CORE-1575
+Add support for AdServices.framework and the Apple Attribution Token. For cocoapods, AdServices.framework is included by default. For other integration options, you should include the AdServices.framework.
+
+CORE-1711
+Reduce default SKAN timeout per FB request.
+
+CORE-1753
+Remove a debug log message to address security scanner false alarm.
+
 v1.38.0
 Feb. 10, 2021
 
