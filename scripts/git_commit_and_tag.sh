@@ -15,9 +15,7 @@ version=$(./scripts/version.sh)
 echo ">>> Merging and pushing '$git_branch' to master..." 1>&2
 
 # Tag and merge the release to master:
-git add --all
-git commit -m "Release ${version}."
-git push
+
 git checkout master
 git pull
 git merge -m "Merge ${git_branch}." origin "${git_branch}"
