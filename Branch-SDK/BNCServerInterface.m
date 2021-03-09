@@ -528,6 +528,12 @@
         [self safeSetValue:[deviceInfo userAgentString] forKey:@"user_agent" onDict:dict];
         
         [self safeSetValue:[deviceInfo optedInStatus] forKey:BRANCH_REQUEST_KEY_OPTED_IN_STATUS onDict:dict];
+        if ([deviceInfo isFirstOptIn]) {
+            // save that the server was informed that this is the first time we've seen the user opt in
+            [self safeSetValue:@(deviceInfo.isFirstOptIn) forKey:BRANCH_REQUEST_KEY_FIRST_OPT_IN onDict:dict];
+            [BNCPreferenceHelper preferenceHelper].hasOptedInBefore = YES;
+        }
+        
         [self safeSetValue:@(deviceInfo.isAdTrackingEnabled) forKey:BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED onDict:dict];
         
         [self safeSetValue:deviceInfo.applicationVersion forKey:@"app_version" onDict:dict];
