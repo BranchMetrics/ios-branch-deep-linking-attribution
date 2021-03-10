@@ -553,7 +553,7 @@
     //NSTimeInterval maxTimeSinceInstall = 60.0;
     NSTimeInterval maxTimeSinceInstall = 3600.0 * 24.0 * 7;
     NSDate *now = [NSDate date];
-    NSDate *maxDate = [[BNCApplication currentApplication].currentBuildDate dateByAddingTimeInterval:maxTimeSinceInstall];
+    NSDate *maxDate = [[BNCApplication currentApplication].currentInstallDate dateByAddingTimeInterval:maxTimeSinceInstall];
     
     if ([now compare:maxDate] == NSOrderedDescending) {
         return NO;
