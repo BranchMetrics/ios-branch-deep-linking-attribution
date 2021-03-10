@@ -530,7 +530,6 @@
         
         [self safeSetValue:[deviceInfo optedInStatus] forKey:BRANCH_REQUEST_KEY_OPTED_IN_STATUS onDict:dict];
         
-
         if ([self installDateIsRecent] && [deviceInfo isFirstOptIn]) {
             [self safeSetValue:@(deviceInfo.isFirstOptIn) forKey:BRANCH_REQUEST_KEY_FIRST_OPT_IN onDict:dict];
             [BNCPreferenceHelper preferenceHelper].hasOptedInBefore = YES;

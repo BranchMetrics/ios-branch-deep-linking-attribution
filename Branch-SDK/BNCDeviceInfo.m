@@ -151,9 +151,6 @@
     // indicate if this is first time we've seen the user opt in, this reduces work on the server
     if ([self.optedInStatus isEqualToString:@"authorized"] && ![BNCPreferenceHelper preferenceHelper].hasOptedInBefore) {
         self.isFirstOptIn = YES;
-        
-        // don't save this until an install or open is queued up
-        //[BNCPreferenceHelper preferenceHelper].hasOptedInBefore = YES;
     } else {
         self.isFirstOptIn = NO;
     }
