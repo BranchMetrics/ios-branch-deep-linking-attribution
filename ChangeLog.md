@@ -1,5 +1,12 @@
 Branch iOS SDK Change Log
 
+v1.39.1
+CORE-1769 
+Fix podspec framewor issue. This addresses  a crash on launch for older iOS versions.
+
+CORE-1766
+First time opt in indicator. Reduces load on the server.
+
 v1.39.0
 March 4, 2021
 
