@@ -548,10 +548,10 @@
     }
 }
 
-// we do not need to send first_opt_in, if the install is older than 7 days
+// we do not need to send first_opt_in, if the install is older than 30 days
 - (BOOL)installDateIsRecent {
     //NSTimeInterval maxTimeSinceInstall = 60.0;
-    NSTimeInterval maxTimeSinceInstall = 3600.0 * 24.0 * 7;
+    NSTimeInterval maxTimeSinceInstall = 3600.0 * 24.0 * 30;
     NSDate *now = [NSDate date];
     NSDate *maxDate = [[BNCApplication currentApplication].currentInstallDate dateByAddingTimeInterval:maxTimeSinceInstall];
     
