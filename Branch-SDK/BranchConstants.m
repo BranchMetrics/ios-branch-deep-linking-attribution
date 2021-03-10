@@ -42,6 +42,7 @@ NSString * const BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL = @"is_hardware_id_real"
 NSString * const BRANCH_REQUEST_KEY_IOS_VENDOR_ID = @"ios_vendor_id";
 NSString * const BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED = @"ad_tracking_enabled";
 NSString * const BRANCH_REQUEST_KEY_OPTED_IN_STATUS = @"opted_in_status";
+NSString * const BRANCH_REQUEST_KEY_FIRST_OPT_IN = @"first_opt_in";
 NSString * const BRANCH_REQUEST_KEY_DEBUG = @"debug";
 NSString * const BRANCH_REQUEST_KEY_BUNDLE_ID = @"ios_bundle_id";
 NSString * const BRANCH_REQUEST_KEY_TEAM_ID = @"ios_team_id";

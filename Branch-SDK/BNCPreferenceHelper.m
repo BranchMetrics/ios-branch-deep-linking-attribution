@@ -392,6 +392,14 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     return [self readBoolFromDefaults:@"_appleAttributionTokenChecked"];
 }
 
+- (void)setHasOptedInBefore:(BOOL)hasOptedInBefore {
+    [self writeBoolToDefaults:@"_hasOptedInBefore" value:hasOptedInBefore];
+}
+
+- (BOOL)hasOptedInBefore {
+    return [self readBoolFromDefaults:@"_hasOptedInBefore"];
+}
+
 - (NSString*) lastSystemBuildVersion {
     if (!_lastSystemBuildVersion) {
         _lastSystemBuildVersion = [self readStringFromDefaults:@"_lastSystemBuildVersion"];

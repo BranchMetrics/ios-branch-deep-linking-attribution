@@ -16,6 +16,7 @@
 #import "BNCLog.h"
 #import "Branch.h"
 #import "NSString+Branch.h"
+#import "BNCApplication.h"
 
 @interface BNCServerInterface ()
 @property (strong) NSString *requestEndpoint;
@@ -528,6 +529,12 @@
         [self safeSetValue:[deviceInfo userAgentString] forKey:@"user_agent" onDict:dict];
         
         [self safeSetValue:[deviceInfo optedInStatus] forKey:BRANCH_REQUEST_KEY_OPTED_IN_STATUS onDict:dict];
+        
+        if ([self installDateIsRecent] && [deviceInfo isFirstOptIn]) {
+            [self safeSetValue:@(deviceInfo.isFirstOptIn) forKey:BRANCH_REQUEST_KEY_FIRST_OPT_IN onDict:dict];
+            [BNCPreferenceHelper preferenceHelper].hasOptedInBefore = YES;
+        }
+        
         [self safeSetValue:@(deviceInfo.isAdTrackingEnabled) forKey:BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED onDict:dict];
         
         [self safeSetValue:deviceInfo.applicationVersion forKey:@"app_version" onDict:dict];
@@ -538,6 +545,20 @@
         if (disableAdNetworkCallouts) {
             [dict setObject:[NSNumber numberWithBool:disableAdNetworkCallouts] forKey:@"disable_ad_network_callouts"];
         }
+    }
+}
+
+// we do not need to send first_opt_in, if the install is older than 30 days
+- (BOOL)installDateIsRecent {
+    //NSTimeInterval maxTimeSinceInstall = 60.0;
+    NSTimeInterval maxTimeSinceInstall = 3600.0 * 24.0 * 30;
+    NSDate *now = [NSDate date];
+    NSDate *maxDate = [[BNCApplication currentApplication].currentInstallDate dateByAddingTimeInterval:maxTimeSinceInstall];
+    
+    if ([now compare:maxDate] == NSOrderedDescending) {
+        return NO;
+    } else {
+        return YES;
     }
 }
 

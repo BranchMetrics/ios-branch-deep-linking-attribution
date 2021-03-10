@@ -147,6 +147,14 @@
 // IDFA should never be cached
 - (void)checkAdvertisingIdentifier {
     self.optedInStatus = [BNCSystemObserver attOptedInStatus];
+    
+    // indicate if this is first time we've seen the user opt in, this reduces work on the server
+    if ([self.optedInStatus isEqualToString:@"authorized"] && ![BNCPreferenceHelper preferenceHelper].hasOptedInBefore) {
+        self.isFirstOptIn = YES;
+    } else {
+        self.isFirstOptIn = NO;
+    }
+    
     self.isAdTrackingEnabled = [BNCSystemObserver adTrackingSafe];
     self.advertiserId = [BNCSystemObserver getAdId];
     BOOL ignoreIdfa = [BNCPreferenceHelper preferenceHelper].isDebug;
