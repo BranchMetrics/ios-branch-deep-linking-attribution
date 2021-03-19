@@ -684,6 +684,16 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)setAppClipAppGroup:(NSString *)appGroup;
 
 /**
+ Pass the AppTrackingTransparency authorization status to Branch to measure ATT prompt performance.
+ This method should be called from the callback of ATTrackingManager.requestTrackingAuthorization.
+ 
+ Note:
+ Before prompting the user, check that ATTrackingManager.trackingAuthorizationStatus is notDetermined.
+ Otherwise the prompt will not display and the completion will be called with current status. This will inflate the number of events shown in the Branch Dashboard.
+ */
+- (void)handleOptInStatus:(unsigned long)status;
+
+/**
  Set time window for SKAdNetwork callouts.  By default, Branch limits calls to SKAdNetwork to within 24 hours after first install.
  
  Note: Branch does not automatically call SKAdNetwork unless configured on the dashboard.
@@ -694,7 +704,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  Add a Partner Parameter for Facebook.
  Once set, this parameter is attached to install, opens and events until cleared or the app restarts.
  
- See Facebook's documentation for details on valid parameters
+ See Facebook's documentation for details on valid parameters0
  */
 - (void)addFacebookPartnerParameterWithName:(NSString *)name value:(NSString *)value;
 
