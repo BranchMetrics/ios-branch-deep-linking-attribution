@@ -704,7 +704,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  Add a Partner Parameter for Facebook.
  Once set, this parameter is attached to install, opens and events until cleared or the app restarts.
  
- See Facebook's documentation for details on valid parameters0
+ See Facebook's documentation for details on valid parameters
  */
 - (void)addFacebookPartnerParameterWithName:(NSString *)name value:(NSString *)value;
 
