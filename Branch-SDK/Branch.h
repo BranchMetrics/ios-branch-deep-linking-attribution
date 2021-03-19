@@ -689,7 +689,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  
  Note:
  Before prompting the user, check that ATTrackingManager.trackingAuthorizationStatus is notDetermined.
- Otherwise the prompt will not display and the completion will be called with current status. This will inflate the number of events shown in the Branch Dashboard.
+ Otherwise the prompt will not display and the completion will be called with current status.
+ This will inflate the number of OPT_IN and OPT_OUT events tracked by Branch.
  */
 - (void)handleOptInStatus:(unsigned long)status;
 
