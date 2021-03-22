@@ -228,6 +228,8 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
         BranchStandardEventStartTrial,
         BranchStandardEventClickAd,
         BranchStandardEventViewAd,
+        BranchStandardEventOptOut,
+        BranchStandardEventOptIn,
     ];
 }
 

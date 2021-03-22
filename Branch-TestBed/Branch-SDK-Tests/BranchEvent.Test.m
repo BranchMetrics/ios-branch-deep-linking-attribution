@@ -641,6 +641,50 @@
     XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
 }
 
+- (void)testStandardOptInEvent {
+    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventOptIn];
+    
+    NSDictionary *eventDictionary = [event buildEventDictionary];
+    XCTAssertNotNil(eventDictionary);
+    XCTAssert([eventDictionary[@"name"] isEqualToString:@"OPT_IN"]);
+    
+    BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
+    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
+}
+
+- (void)testCustomOptInEvent {
+    BranchEvent *event = [BranchEvent customEventWithName:@"OPT_IN"];
+    
+    NSDictionary *eventDictionary = [event buildEventDictionary];
+    XCTAssertNotNil(eventDictionary);
+    XCTAssert([eventDictionary[@"name"] isEqualToString:@"OPT_IN"]);
+    
+    BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
+    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
+}
+
+- (void)testStandardOptOutEvent {
+    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventOptOut];
+    
+    NSDictionary *eventDictionary = [event buildEventDictionary];
+    XCTAssertNotNil(eventDictionary);
+    XCTAssert([eventDictionary[@"name"] isEqualToString:@"OPT_OUT"]);
+    
+    BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
+    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
+}
+
+- (void)testCustomOptOutEvent {
+    BranchEvent *event = [BranchEvent customEventWithName:@"OPT_OUT"];
+    
+    NSDictionary *eventDictionary = [event buildEventDictionary];
+    XCTAssertNotNil(eventDictionary);
+    XCTAssert([eventDictionary[@"name"] isEqualToString:@"OPT_OUT"]);
+    
+    BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
+    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
+}
+
 - (void)testJsonStringForAdTypeNone {
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventViewAd];
     XCTAssertNil([event jsonStringForAdType:BranchEventAdTypeNone]);
