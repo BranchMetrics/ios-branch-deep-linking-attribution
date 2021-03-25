@@ -684,6 +684,17 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)setAppClipAppGroup:(NSString *)appGroup;
 
 /**
+ Pass the AppTrackingTransparency authorization status to Branch to measure ATT prompt performance.
+ This method should be called from the callback of ATTrackingManager.requestTrackingAuthorization.
+ 
+ Note:
+ Before prompting the user, check that ATTrackingManager.trackingAuthorizationStatus is notDetermined.
+ Otherwise the prompt will not display and the completion will be called with current status.
+ This will inflate the number of OPT_IN and OPT_OUT events tracked by Branch.
+ */
+- (void)handleOptInStatus:(NSUInteger)status;
+
+/**
  Set time window for SKAdNetwork callouts.  By default, Branch limits calls to SKAdNetwork to within 24 hours after first install.
  
  Note: Branch does not automatically call SKAdNetwork unless configured on the dashboard.
