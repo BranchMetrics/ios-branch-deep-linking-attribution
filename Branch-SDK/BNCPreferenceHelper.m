@@ -400,6 +400,14 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     return [self readBoolFromDefaults:@"_hasOptedInBefore"];
 }
 
+- (void)setHasCalledHandleATTAuthorizationStatus:(BOOL)hasCalledHandleATTAuthorizationStatus {
+    [self writeBoolToDefaults:@"_hasCalledHandleATTAuthorizationStatus" value:hasCalledHandleATTAuthorizationStatus];
+}
+
+- (BOOL)hasCalledHandleATTAuthorizationStatus {
+    return [self readBoolFromDefaults:@"_hasCalledHandleATTAuthorizationStatus"];
+}
+
 - (NSString*) lastSystemBuildVersion {
     if (!_lastSystemBuildVersion) {
         _lastSystemBuildVersion = [self readStringFromDefaults:@"_lastSystemBuildVersion"];
