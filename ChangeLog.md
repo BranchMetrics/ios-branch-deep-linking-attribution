@@ -1,8 +1,14 @@
 Branch iOS SDK Change Log
 
+v1.39.2
+CORE-1768 Add 'handleATTAuthorizationStatus' method to monitor ATT prompt performance.
+
+Pass the AppTrackingTransparency authorization status from the callback of ATTrackingManager.requestTrackingAuthorization.
+Before prompting the user, check that ATTrackingManager.trackingAuthorizationStatus is notDetermined.
+
 v1.39.1
 CORE-1769 
-Fix podspec AdServices.framework issue. This addresses  a crash on launch for older iOS versions.
+Fix podspec AdServices.framework issue. This addresses a crash on launch for older iOS versions.
 
 CORE-1766
 First time opt in indicator. Reduces load on the server.

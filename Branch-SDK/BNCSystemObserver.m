@@ -128,7 +128,7 @@
     return statusString;
 }
 
-// on iOS 14+ this value is always NO
+// this value is deprecated on iOS 14+
 + (BOOL)adTrackingSafe {
     #ifdef BRANCH_EXCLUDE_IDFA_CODE
     return NO;
