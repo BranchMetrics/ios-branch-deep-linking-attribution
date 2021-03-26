@@ -970,7 +970,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [BNCAppGroupsData shared].appGroup = appGroup;
 }
 
-- (void)handleOptInStatus:(NSUInteger)status {
+- (void)handleATTAuthorizationStatus:(NSUInteger)status {
     BranchEvent *event;
     switch (status) {
         case 2:

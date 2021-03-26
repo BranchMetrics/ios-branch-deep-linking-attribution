@@ -692,7 +692,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  Otherwise the prompt will not display and the completion will be called with current status.
  This will inflate the number of OPT_IN and OPT_OUT events tracked by Branch.
  */
-- (void)handleOptInStatus:(NSUInteger)status;
+- (void)handleATTAuthorizationStatus:(NSUInteger)status;
 
 /**
  Set time window for SKAdNetwork callouts.  By default, Branch limits calls to SKAdNetwork to within 24 hours after first install.
