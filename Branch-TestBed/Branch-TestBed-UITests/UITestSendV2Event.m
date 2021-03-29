@@ -7,54 +7,126 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "Branch.h"
+#import "BranchEvent.h"
+#import "UITestCaseTestBed.h"
 
-@interface UITestSendV2Event : XCTestCase
+@interface UITestSendV2Event : UITestCaseTestBed
 
 @end
 
 @implementation UITestSendV2Event
 
 - (void)setUp {
+    [super setUp];
     [[[XCUIApplication alloc] init] launch];
+    [self disableTracking:FALSE];
 }
 
 - (void)tearDown {
 }
 
-- (void)testExample {
-    
-    XCUIApplication *app = [[XCUIApplication alloc] init];
-    
-    sleep(3);
-    
-    XCUIElementQuery *tablesQuery = app.tables;
-    
-    XCUIElement *sendV2EventStaticText = tablesQuery.staticTexts[@"Send v2 Event"];
-    [sendV2EventStaticText tap];
-    
-    XCUIElement * pickerWheel = [app.pickerWheels elementBoundByIndex:0];
-    [pickerWheel adjustToPickerWheelValue:@"SHARE"];
-   
-    XCUIElement *sendButton = app.toolbars[@"Toolbar"].buttons[@"Send"];
-    [sendButton tap];
-
+- (void)testBranchStandardEventAddToCart {
+    [self sendEvent:BranchStandardEventAddToCart];
 }
 
-- (void)testShareLink {
-    
-    XCUIApplication *app = [[XCUIApplication alloc] init];
-    XCUIElementQuery *tablesQuery = app.tables;
-    [tablesQuery/*@START_MENU_TOKEN@*/.staticTexts[@"Create Branch Link"]/*[[".cells",".buttons[@\"Create Branch Link\"].staticTexts[@\"Create Branch Link\"]",".staticTexts[@\"Create Branch Link\"]"],[[[-1,2],[-1,1],[-1,0,1]],[[-1,2],[-1,1]]],[0]]@END_MENU_TOKEN@*/ tap];
-    [tablesQuery/*@START_MENU_TOKEN@*/.staticTexts[@"Share Link"]/*[[".cells",".buttons[@\"Share Link\"].staticTexts[@\"Share Link\"]",".staticTexts[@\"Share Link\"]"],[[[-1,2],[-1,1],[-1,0,1]],[[-1,2],[-1,1]]],[0]]@END_MENU_TOKEN@*/ tap];
-    sleep(6);
-    [[[[app/*@START_MENU_TOKEN@*/.collectionViews/*[[".otherElements[@\"ActivityListView\"].collectionViews",".collectionViews"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.buttons[@"Copy"].otherElements containingType:XCUIElementTypeImage identifier:@"copy"] childrenMatchingType:XCUIElementTypeOther].element childrenMatchingType:XCUIElementTypeOther].element tap];
-    sleep(3);
-    XCUIElement *branchLinkTextField = tablesQuery/*@START_MENU_TOKEN@*/.textFields[@"Branch Link"]/*[[".cells.textFields[@\"Branch Link\"]",".textFields[@\"Branch Link\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/;
-    NSString *pasteboardString = [UIPasteboard generalPasteboard].string;
-    
-    if ([pasteboardString containsString:@"Shared through 'Pasteboard'"] != YES) {
-        XCTFail("Link not copied");
-    }
+- (void)testBranchStandardEventAddToWishlist{
+    [self sendEvent:BranchStandardEventAddToWishlist];
+}
+
+- (void)testBranchStandardEventViewCart{
+    [self sendEvent:BranchStandardEventViewCart];
+}
+
+- (void)testBranchStandardEventInitiatePurchase{
+    [self sendEvent:BranchStandardEventInitiatePurchase];
+}
+
+- (void)testBranchStandardEventAddPaymentInfo{
+    [self sendEvent:BranchStandardEventAddPaymentInfo];
+}
+
+- (void)testBranchStandardEventPurchase{
+    [self sendEvent:BranchStandardEventPurchase];
+}
+
+- (void)testBranchStandardEventSpendCredits{
+    [self sendEvent:BranchStandardEventSpendCredits];
+}
+
+- (void)testBranchStandardEventSearch{
+    [self sendEvent:BranchStandardEventSearch];
+}
+
+- (void)testBranchStandardEventViewItem{
+    [self sendEvent:BranchStandardEventViewItem];
+}
+
+- (void)testBranchStandardEventViewItems{
+    [self sendEvent:BranchStandardEventViewItems];
+}
+
+- (void)testBranchStandardEventRate{
+    [self sendEvent:BranchStandardEventRate];
+}
+
+- (void)testBranchStandardEventShare{
+    [self sendEvent:BranchStandardEventShare];
+}
+
+- (void)testBranchStandardEventCompleteRegistration{
+    [self sendEvent:BranchStandardEventCompleteRegistration];
+}
+
+- (void)testBranchStandardEventCompleteTutorial{
+    [self sendEvent:BranchStandardEventCompleteTutorial];
+}
+
+- (void)testBranchStandardEventAchieveLevel{
+    [self sendEvent:BranchStandardEventAchieveLevel];
+}
+
+- (void)testBranchStandardEventUnlockAchievement{
+    [self sendEvent:BranchStandardEventUnlockAchievement];
+}
+
+- (void)testBranchStandardEventInvite{
+    [self sendEvent:BranchStandardEventInvite];
+}
+
+- (void)testBranchStandardEventLogin{
+    [self sendEvent:BranchStandardEventLogin];
+}
+
+- (void)testBranchStandardEventReserve{
+    [self sendEvent:BranchStandardEventReserve];
+}
+
+- (void)testBranchStandardEventSubscribe{
+    [self sendEvent:BranchStandardEventSubscribe];
+}
+
+- (void)testBranchStandardEventStartTrial{
+    [self sendEvent:BranchStandardEventStartTrial];
+}
+
+- (void)testBranchStandardEventClickAd{
+    [self sendEvent:BranchStandardEventClickAd];
+}
+
+- (void)testBranchStandardEventViewAd{
+    [self sendEvent:BranchStandardEventViewAd];
+}
+
+- (void)testiOSCustomEvent{
+    [self sendEvent:@"iOS-CustomEvent"];
+}
+
+- (NSString *)pathToDocumentsDir
+{
+    NSArray *allPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [allPaths objectAtIndex:0];
+    return documentsDirectory;
 }
 
 @end

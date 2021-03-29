@@ -13,10 +13,16 @@
 #import "Branch.h"
 #import "BNCEncodingUtils.h"
 
+AppDelegate* appDelegate = nil;
+void APPLogHookFunction(NSDate*_Nonnull timestamp, BNCLogLevel level, NSString*_Nullable message);
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    appDelegate = self;
+    BNCLogSetOutputFunction(APPLogHookFunction);
     BNCLogSetDisplayLevel(BNCLogLevelAll);
 
     /*
@@ -34,6 +40,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Comment out (for match guarantee testing) / or un-comment to toggle debugging:
     // Note: Unit tests will fail if 'setDebug' is set.
     // [branch setDebug];
+     [branch enableLogging];
     
     // Comment out in production. Un-comment to test your Branch SDK Integration:
     //[branch validateSDKIntegration];
@@ -48,10 +55,12 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
      *    Required: Initialize Branch, passing a deep link handler block:
      */
 
+    [self setLogFile:@"OpenNInstall"];
     // [branch setIdentity:@"Bobby Branch"];
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandlerUsingBranchUniversalObject:
         ^ (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) {
+        [self setLogFile:nil];
             [self handleDeepLinkObject:universalObject linkProperties:linkProperties error:error];
     }];
 
@@ -217,6 +226,56 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
 -(void)application:(UIApplication *)application
 didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     NSLog(@"Error registering for remote notifications: %@", error);
+}
+
+// Hook Fucntion for SDK - Its for taking control of Logging messages.
+void APPLogHookFunction(NSDate*_Nonnull timestamp, BNCLogLevel level, NSString*_Nullable message) {
+    [appDelegate processLogMessage:message];
+}
+
+// Writes message to log File.
+- (void) processLogMessage:(NSString *)message {
+    
+    if (!self.logFileName)
+        return;
+
+    @synchronized (self) {
+        NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:self.logFileName];
+        if (fileHandle){
+            [fileHandle seekToEndOfFile];
+            [fileHandle writeData:[message dataUsingEncoding:NSUTF8StringEncoding]];
+            [fileHandle closeFile];
+        } else { // Create file if it doesnt exist
+            [message writeToFile:self.logFileName
+                      atomically:NO
+                        encoding:NSStringEncodingConversionAllowLossy
+                           error:nil];
+        }
+        NSLog(@"%@", message); // Log mmessages to console - remove if required.
+    }
+}
+
+// Set log File. If another file with the same name exits, delete it,
+// Different log files can be set for each command. This will make parsing of log files(for Test Automation) easier
+- (void) setLogFile:(NSString*)fileName {
+    
+    if (!fileName) {
+        self.logFileName = nil;
+        return;
+    }
+    
+    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *pathForLog =  [[NSString alloc] initWithFormat:@"%@/%@.txt" , documentsDirectory, fileName];
+    
+    if ( [[NSFileManager defaultManager] fileExistsAtPath:pathForLog]) {
+        [[NSFileManager defaultManager] removeItemAtPath:pathForLog error:nil];
+    }
+    if (!self.logFileName) {
+        self.PrevCommandLogFileName = self.logFileName = pathForLog;
+    } else {
+        self.PrevCommandLogFileName = self.logFileName;
+        self.logFileName = pathForLog;
+    }
 }
 
 @end

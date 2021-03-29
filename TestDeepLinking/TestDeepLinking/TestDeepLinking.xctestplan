@@ -1,0 +1,36 @@
+{
+  "configurations" : [
+    {
+      "id" : "21B9F7C4-BF2C-40DB-B313-9320AC57EB78",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:TestDeepLinking.xcodeproj",
+      "identifier" : "033608112605E2110032A5DC",
+      "name" : "TestDeepLinking"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:TestDeepLinking.xcodeproj",
+        "identifier" : "032DAED92607430600891641",
+        "name" : "TestDeepLinkingUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:TestDeepLinking.xcodeproj",
+        "identifier" : "032DAEFA2607491B00891641",
+        "name" : "TestDeepLinkingUITestsWithHostApp"
+      }
+    }
+  ],
+  "version" : 1
+}
