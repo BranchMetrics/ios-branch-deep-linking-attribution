@@ -78,6 +78,7 @@
     XCUIApplication *app = [[XCUIApplication alloc] init];
     if ([ app waitForExistenceWithTimeout:5] != NO) {
         sleep(1);
+        [app.navigationBars[@"Branch-TestBed"].buttons[@"Branch-TestBed"] tap];
         XCTFail("Application Launched - Universal Link is still working");
     }
 }
@@ -107,6 +108,7 @@
         sleep(2);
         NSString *deepLinkData = app.textViews[@"DeepLinkData"].value;
         XCTAssertTrue([deepLinkData containsString:self.deeplinkDataToCheck]);
+        [app.navigationBars[@"Branch-TestBed"].buttons[@"Branch-TestBed"] tap];
     } else {
         XCTFail("Application not launched");
     }
@@ -157,6 +159,7 @@
         sleep(1);
         NSString *deepLinkData = app.textViews[@"DeepLinkData"].value;
         XCTAssertTrue([deepLinkData containsString:self.deeplinkDataToCheck]);
+        [app.navigationBars[@"Branch-TestBed"].buttons[@"Branch-TestBed"] tap];
     } else {
         XCTFail("Application not launched");
     }
