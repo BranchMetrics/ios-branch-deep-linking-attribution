@@ -262,7 +262,11 @@ BOOL checkFBParams = FALSE;
     [[[safariApp descendantsMatchingType:XCUIElementTypeAny] elementMatchingPredicate:predicateAddTab] tap];
     sleep(3);
 
-    [safariApp.textFields[@"Search or enter website name"] tap];
+    NSPredicate *predicateURL = [NSPredicate predicateWithFormat:[NSString stringWithFormat:@"label == '%@'",@"Address"]];
+    XCUIElement *addressBar = [[safariApp descendantsMatchingType:XCUIElementTypeAny] elementMatchingPredicate:predicateURL];
+    if (addressBar) {
+        [addressBar tap];
+    }
     [safariApp typeText:webPageLink];
     [safariApp.buttons[@"Go"] tap];
     sleep(3.0);
