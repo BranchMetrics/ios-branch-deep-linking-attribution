@@ -263,9 +263,12 @@ BOOL checkFBParams = FALSE;
     sleep(3);
 
     NSPredicate *predicateURL = [NSPredicate predicateWithFormat:[NSString stringWithFormat:@"label == '%@'",@"Address"]];
-    XCUIElement *addressBar = [[safariApp descendantsMatchingType:XCUIElementTypeAny] elementMatchingPredicate:predicateURL];
-    if (addressBar) {
+    XCUIElement *addressBar = [[safariApp descendantsMatchingType:XCUIElementTypeButton] elementMatchingPredicate:predicateURL];
+    if ([addressBar waitForExistenceWithTimeout:10]) {
         [addressBar tap];
+    }
+    else {
+        [safariApp activate];
     }
     [safariApp typeText:webPageLink];
     [safariApp.buttons[@"Go"] tap];
