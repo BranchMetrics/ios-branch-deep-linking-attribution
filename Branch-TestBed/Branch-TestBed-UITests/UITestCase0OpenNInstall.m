@@ -96,6 +96,7 @@
     
     XCUIApplication *app = [[XCUIApplication alloc] init];
     if ([ app waitForExistenceWithTimeout:15] != NO) {
+        sleep(1);
         NSString *deepLinkData = app.textViews[@"DeepLinkData"].value;
         XCTAssertTrue([deepLinkData containsString:self.deeplinkDataToCheck]);
     } else {

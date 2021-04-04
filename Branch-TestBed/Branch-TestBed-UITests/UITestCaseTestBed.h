@@ -24,7 +24,9 @@ extern BOOL checkFBParams;
 -(void)parseURL:(NSString **)url andJSON:(NSDictionary **)json FromLogs:(NSString*)logs;
 -(void)parseURL:(NSString **)url andJSON:(NSDictionary **)json andStatus:(NSString**)status andDataJSON:(NSDictionary **)dataJson FromLogs:(NSString*)logs;
 - (void)clickLinkInWebPage:(NSString*)webPage;
-//- (void)OpenLinkInWebPage:(NSString*)webPage;
+- (void)OpenLinkInNewTab:(NSString*)webPage;
+- (void) OpenLinkWithMenuToEnableUniversalLink:(NSString*)webPage;
+- (XCUIApplication *) launchSafariNOpenLink:(NSString*)webPage;
 - (void)disableTracking:(BOOL)disable;
 @end
 

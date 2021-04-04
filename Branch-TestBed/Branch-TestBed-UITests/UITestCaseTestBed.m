@@ -209,19 +209,57 @@ BOOL checkFBParams = FALSE;
 
 - (void) clickLinkInWebPage:(NSString*)webPage
 {
-    NSString *webPagePath = [NSString stringWithFormat:@"%@%@%@", [[NSBundle mainBundle] bundlePath], @"/Contents/PlugIns/TestBed-macOSUITests.xctest/Contents/Resources/", webPage];
-    XCUIApplication *safariApp = [[XCUIApplication alloc] initWithBundleIdentifier:@"com.apple.mobilesafari"];
-    //[safariApp setLaunchArguments: @[@"-u",@"https://ndixit-branch.github.io/TestWebPage.html"]];
-    [safariApp launch];
-
-    sleep(1.0);
-    [safariApp.buttons[@"URL"] tap];
-    [safariApp.textFields[@"Search or enter website name"] tap];
-    [safariApp typeText:@"https://ndixit-branch.github.io/TestWebPage.html"];
-    [safariApp.buttons[@"Go"] tap];
+    XCUIApplication *safariApp = [self launchSafariNOpenLink:webPage];
+  
     XCUIElement *testBedLink = [[safariApp.webViews descendantsMatchingType:XCUIElementTypeLink] elementBoundByIndex:0];
     
     [testBedLink tap];
+}
+
+- (void) OpenLinkInNewTab:(NSString*)webPage
+{
+   
+    XCUIApplication *safariApp = [self launchSafariNOpenLink:webPage];
+    sleep(1);
+    XCUIElement *testBedLink = [[safariApp.webViews descendantsMatchingType:XCUIElementTypeLink] elementBoundByIndex:0];
+    
+    [testBedLink pressForDuration:1];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:[NSString stringWithFormat:@"label == '%@'",@"Open in New Tab"]];
+    
+    [[[safariApp descendantsMatchingType:XCUIElementTypeAny] elementMatchingPredicate:predicate] tap];
+}
+
+- (void) OpenLinkWithMenuToEnableUniversalLink:(NSString*)webPage
+{
+    XCUIApplication *safariApp = [self launchSafariNOpenLink:webPage];
+    sleep(1);
+    XCUIElement *testBedLink = [[safariApp.webViews descendantsMatchingType:XCUIElementTypeLink] elementBoundByIndex:0];
+    
+    [testBedLink pressForDuration:1];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:[NSString stringWithFormat:@"label == 'Open in “Branch-TestBed”'"]];
+    NSLog(@"%@" , [safariApp debugDescription]);
+    [[[safariApp descendantsMatchingType:XCUIElementTypeAny] elementMatchingPredicate:predicate] tap];
+}
+
+- (XCUIApplication *) launchSafariNOpenLink:(NSString*)webPage
+{
+    NSString *webPageLink = [NSString stringWithFormat:@"%@%@", @"https://ndixit-branch.github.io/", webPage];
+    XCUIApplication *safariApp = [[XCUIApplication alloc] initWithBundleIdentifier:@"com.apple.mobilesafari"];
+    [safariApp activate];
+    sleep(1.0);
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:[NSString stringWithFormat:@"label == '%@'",@"Tabs"]];
+    [[[safariApp descendantsMatchingType:XCUIElementTypeAny] elementMatchingPredicate:predicate] tap];
+    sleep(1);
+    NSPredicate *predicateAddTab = [NSPredicate predicateWithFormat:[NSString stringWithFormat:@"label == '%@'",@"New tab"]];
+    [[[safariApp descendantsMatchingType:XCUIElementTypeAny] elementMatchingPredicate:predicateAddTab] tap];
+    sleep(1);
+
+    [safariApp.textFields[@"Search or enter website name"] tap];
+    [safariApp typeText:webPageLink];
+    [safariApp.buttons[@"Go"] tap];
+    sleep(3.0);
+    return safariApp;
 }
 
 - (void)disableTracking:(BOOL)disable
