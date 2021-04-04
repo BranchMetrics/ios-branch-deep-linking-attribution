@@ -37,8 +37,10 @@ BOOL checkFBParams = FALSE;
     XCUIApplication *app = [[XCUIApplication alloc] init];
     
     XCUIElement *trackButton = app.buttons[@"tracking"];
-    if (![trackButton waitForExistenceWithTimeout:10]) {
-        XCTFail("Timeout : Tracking button not found.");
+    if (![trackButton waitForExistenceWithTimeout:10]) { [app.navigationBars[@"Branch-TestBed"].buttons[@"Branch-TestBed"] tap];
+        if (![trackButton waitForExistenceWithTimeout:5]) {
+                XCTFail("Timeout : Tracking button not found.");
+        }
     }
     BOOL isTrackingEnabled = [trackButton.label isEqualToString:@"Disable Tracking"];
     XCUIElementQuery *tablesQuery = app.tables;
@@ -272,7 +274,10 @@ BOOL checkFBParams = FALSE;
     XCUIApplication *app = [[XCUIApplication alloc] init];
     XCUIElement *trackButton = app.buttons[@"tracking"];
     if (![trackButton waitForExistenceWithTimeout:10]) {
-        XCTFail("Timeout : Tracking button not found.");
+        [app.navigationBars[@"Branch-TestBed"].buttons[@"Branch-TestBed"] tap];
+        if (![trackButton waitForExistenceWithTimeout:5]) {
+                XCTFail("Timeout : Tracking button not found.");
+        }
     }
     if ( disable && ([trackButton.label isEqualToString:@"Disable Tracking"])) {
         [trackButton tap];

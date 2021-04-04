@@ -29,7 +29,10 @@
     // Tap Tracking button
     XCUIElement *trackingButton = app.buttons[@"tracking"];
     if (![trackingButton waitForExistenceWithTimeout:10]) {
-        XCTFail("Timeout : Tracking button not found.");
+        [app.navigationBars[@"Branch-TestBed"].buttons[@"Branch-TestBed"] tap];
+        if (![trackingButton waitForExistenceWithTimeout:5]) {
+                XCTFail("Timeout : Tracking button not found.");
+        }
     }
    
     [trackingButton tap];
