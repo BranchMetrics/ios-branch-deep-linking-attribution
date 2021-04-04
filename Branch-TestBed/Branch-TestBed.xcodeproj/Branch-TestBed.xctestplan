@@ -37,6 +37,9 @@
       }
     },
     {
+      "skippedTests" : [
+        "UITestSafari\/testDeepLinking"
+      ],
       "target" : {
         "containerPath" : "container:Branch-TestBed.xcodeproj",
         "identifier" : "F1D4F9AB1F323F01002D13FF",
