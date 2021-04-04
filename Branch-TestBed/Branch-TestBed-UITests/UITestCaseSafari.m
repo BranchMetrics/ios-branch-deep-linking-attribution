@@ -15,7 +15,6 @@
 @implementation UITestCaseSafari
 
 - (void)setUp {
-    self.continueAfterFailure = NO;
     [super setUp];
 }
 
