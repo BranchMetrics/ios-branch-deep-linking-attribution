@@ -260,7 +260,7 @@ BOOL checkFBParams = FALSE;
     sleep(1);
     NSPredicate *predicateAddTab = [NSPredicate predicateWithFormat:[NSString stringWithFormat:@"label == '%@'",@"New tab"]];
     [[[safariApp descendantsMatchingType:XCUIElementTypeAny] elementMatchingPredicate:predicateAddTab] tap];
-    sleep(1);
+    sleep(3);
 
     [safariApp.textFields[@"Search or enter website name"] tap];
     [safariApp typeText:webPageLink];
