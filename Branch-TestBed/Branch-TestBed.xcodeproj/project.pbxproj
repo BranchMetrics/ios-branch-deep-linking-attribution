@@ -1368,7 +1368,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		032DAF2E2607E78A00891641 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
+			buildActionMask = 8;
 			files = (
 			);
 			inputFileListPaths = (
@@ -1379,7 +1379,7 @@
 			);
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "xcrun simctl terminate booted io.branch.sdk.Branch-TestBed\nxcrun simctl uninstall booted io.branch.sdk.Branch-TestBed\n";
 		};
