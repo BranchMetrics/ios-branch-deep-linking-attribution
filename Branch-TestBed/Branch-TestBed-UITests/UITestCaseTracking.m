@@ -28,6 +28,10 @@
     [app launch];
     // Tap Tracking button
     XCUIElement *trackingButton = app.buttons[@"tracking"];
+    if (![trackingButton waitForExistenceWithTimeout:10]) {
+        XCTFail("Timeout : Tracking button not found.");
+    }
+   
     [trackingButton tap];
     // Send Event
     [self sendEvent:BranchStandardEventAddToCart];

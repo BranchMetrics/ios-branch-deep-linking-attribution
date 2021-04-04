@@ -35,7 +35,12 @@ BOOL checkFBParams = FALSE;
 - (void)sendEvent:(NSString*)eventName {
     
     XCUIApplication *app = [[XCUIApplication alloc] init];
-    BOOL isTrackingEnabled = [app.buttons[@"tracking"].label isEqualToString:@"Disable Tracking"];
+    
+    XCUIElement *trackButton = app.buttons[@"tracking"];
+    if (![trackButton waitForExistenceWithTimeout:10]) {
+        XCTFail("Timeout : Tracking button not found.");
+    }
+    BOOL isTrackingEnabled = [trackButton.label isEqualToString:@"Disable Tracking"];
     XCUIElementQuery *tablesQuery = app.tables;
     sleep(1);
     XCUIElement *sendV2EventStaticText = tablesQuery.staticTexts[@"Send v2 Event"];
@@ -266,6 +271,9 @@ BOOL checkFBParams = FALSE;
 {
     XCUIApplication *app = [[XCUIApplication alloc] init];
     XCUIElement *trackButton = app.buttons[@"tracking"];
+    if (![trackButton waitForExistenceWithTimeout:10]) {
+        XCTFail("Timeout : Tracking button not found.");
+    }
     if ( disable && ([trackButton.label isEqualToString:@"Disable Tracking"])) {
         [trackButton tap];
     }
