@@ -89,9 +89,6 @@
     [[[XCUIApplication alloc] init] terminate];
     sleep(1);
 
-    XCUIApplication *safariApp = [[XCUIApplication alloc] initWithBundleIdentifier:@"com.apple.mobilesafari"];
-    [safariApp activate];
-
     // Open Link in New Tab - This will disable Universal links
     [self OpenLinkWithMenuToEnableUniversalLink:@"TestWebPage.html"];
 
