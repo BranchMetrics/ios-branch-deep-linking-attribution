@@ -38,7 +38,15 @@
     },
     {
       "skippedTests" : [
-        "UITestSafari\/testDeepLinking"
+        "UITestCase0OpenNInstall",
+        "UITestCaseMisc",
+        "UITestCaseTestBed",
+        "UITestCaseTracking",
+        "UITestRewards",
+        "UITestSafari",
+        "UITestSafari\/testDeepLinking",
+        "UITestSendV2Event",
+        "UITestSetIdentity"
       ],
       "target" : {
         "containerPath" : "container:Branch-TestBed.xcodeproj",

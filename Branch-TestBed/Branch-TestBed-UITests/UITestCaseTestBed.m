@@ -267,9 +267,7 @@ BOOL checkFBParams = FALSE;
     if ([addressBar waitForExistenceWithTimeout:10]) {
         [addressBar tap];
     }
-    else {
-        [safariApp activate];
-    }
+    [safariApp activate];
     [safariApp typeText:webPageLink];
     [safariApp.buttons[@"Go"] tap];
     sleep(3.0);
