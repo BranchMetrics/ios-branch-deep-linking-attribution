@@ -37,13 +37,14 @@
 #import "NSString+Branch.h"
 #import "Branch+Validator.h"
 #import "BNCApplication.h"
-#import "BNCURLBlackList.h"
+#import "BNCURLFilter.h"
 #import "BNCFacebookAppLinks.h"
 #import "BNCDeviceInfo.h"
 #import "BNCCallbackMap.h"
 #import "BNCSKAdNetwork.h"
 #import "BNCAppGroupsData.h"
 #import "BNCPartnerParameters.h"
+#import "BranchEvent.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
@@ -123,7 +124,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 
 @interface Branch() <BranchDeepLinkingControllerCompletionDelegate> {
     NSInteger _networkCount;
-    BNCURLBlackList *_userURLBlackList;
+    BNCURLFilter *_userURLFilter;
 }
 
 // This isolation queue protects branch initialization and ensures things are processed in order.
@@ -140,8 +141,8 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (strong, nonatomic) NSMutableDictionary *deepLinkControllers;
 @property (weak,   nonatomic) UIViewController *deepLinkPresentingController;
 @property (strong, nonatomic) NSDictionary *deepLinkDebugParams;
-@property (strong, nonatomic) NSMutableArray *whiteListedSchemeList;
-@property (strong, nonatomic) BNCURLBlackList *URLBlackList;
+@property (strong, nonatomic) NSMutableArray *allowedSchemeList;
+@property (strong, nonatomic) BNCURLFilter *urlFilter;
 
 #if !TARGET_OS_TV
 @property (strong, nonatomic) BNCContentDiscoveryManager *contentDiscoveryManager;
@@ -193,14 +194,14 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     _processing_sema = dispatch_semaphore_create(1);
     _networkCount = 0;
     _deepLinkControllers = [[NSMutableDictionary alloc] init];
-    _whiteListedSchemeList = [[NSMutableArray alloc] init];
+    _allowedSchemeList = [[NSMutableArray alloc] init];
 
     #if !TARGET_OS_TV
     _contentDiscoveryManager = [[BNCContentDiscoveryManager alloc] init];
     #endif
 
     self.class.branchKey = key;
-    self.URLBlackList = [BNCURLBlackList new];
+    self.urlFilter = [BNCURLFilter new];
 
     [BranchOpenRequest setWaitNeededForOpenResponseLock];
 
@@ -665,24 +666,24 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     self.deepLinkDebugParams = debugParams;
 }
 
-- (void)setWhiteListedSchemes:(NSArray *)schemes {
-    self.whiteListedSchemeList = [schemes mutableCopy];
+- (void)setAllowedSchemes:(NSArray *)schemes {
+    self.allowedSchemeList = [schemes mutableCopy];
 }
 
-- (void)addWhiteListedScheme:(NSString *)scheme {
-    [self.whiteListedSchemeList addObject:scheme];
+- (void)addAllowedScheme:(NSString *)scheme {
+    [self.allowedSchemeList addObject:scheme];
 }
 
-- (void)setBlackListURLRegex:(NSArray<NSString*>*)blackListURLs {
+- (void)setUrlPatternsToIgnore:(NSArray<NSString*>*)urlsToIgnore {
     @synchronized (self) {
-        _userURLBlackList = [[BNCURLBlackList alloc] init];
-        _userURLBlackList.blackList = blackListURLs;
+        _userURLFilter = [[BNCURLFilter alloc] init];
+        _userURLFilter.patternList = urlsToIgnore;
     }
 }
 
-- (NSArray<NSString *> *)blackListURLRegex {
+- (NSArray<NSString *> *)urlPatternsToIgnore {
     @synchronized (self) {
-        return _userURLBlackList.blackList;
+        return _userURLFilter.patternList;
     }
 }
 
@@ -701,15 +702,15 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     // this allows foreground links to callback
     self.initializationStatus = BNCInitStatusUninitialized;
 
-    NSString *blackListPattern = nil;
-    blackListPattern = [self.URLBlackList blackListPatternMatchingURL:url];
-    if (!blackListPattern) {
-        blackListPattern = [_userURLBlackList blackListPatternMatchingURL:url];
+    NSString *pattern = nil;
+    pattern = [self.urlFilter patternMatchingURL:url];
+    if (!pattern) {
+        pattern = [_userURLFilter patternMatchingURL:url];
     }
-    if (blackListPattern) {
-        self.preferenceHelper.blacklistURLOpen = YES;
-        self.preferenceHelper.externalIntentURI = blackListPattern;
-        self.preferenceHelper.referringURL = blackListPattern;
+    if (pattern) {
+        self.preferenceHelper.dropURLOpen = YES;
+        self.preferenceHelper.externalIntentURI = pattern;
+        self.preferenceHelper.referringURL = pattern;
 
         [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier];
         return NO;
@@ -731,8 +732,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         NSString *urlScheme = [url scheme];
 
         // save the incoming url in the preferenceHelper in the externalIntentURI field
-        if ([self.whiteListedSchemeList count]) {
-            for (NSString *scheme in self.whiteListedSchemeList) {
+        if ([self.allowedSchemeList count]) {
+            for (NSString *scheme in self.allowedSchemeList) {
                 if (urlScheme && [scheme isEqualToString:urlScheme]) {
                     self.preferenceHelper.externalIntentURI = [url absoluteString];
                     self.preferenceHelper.referringURL = [url absoluteString];
@@ -967,6 +968,32 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 - (void)setAppClipAppGroup:(NSString *)appGroup {
     [BNCAppGroupsData shared].appGroup = appGroup;
+}
+
+- (void)handleATTAuthorizationStatus:(NSUInteger)status {
+    // limits impact if the client fails to check that status = notDetermined before calling
+    if ([BNCPreferenceHelper preferenceHelper].hasCalledHandleATTAuthorizationStatus) {
+        return;
+    } else {
+        [BNCPreferenceHelper preferenceHelper].hasCalledHandleATTAuthorizationStatus = YES;
+    }
+    
+    BranchEvent *event;
+    switch (status) {
+        case 2:
+            // denied
+            event = [BranchEvent standardEvent:BranchStandardEventOptOut];
+            break;
+        case 3:
+            // authorized
+            event = [BranchEvent standardEvent:BranchStandardEventOptIn];
+            break;
+        default:
+            break;
+    }
+    if (event) {
+        [event logEvent];
+    }
 }
 
 - (void)setSKAdNetworkCalloutMaxTimeSinceInstall:(NSTimeInterval)maxTimeInterval {
@@ -1285,7 +1312,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     });
 }
 
-- (void)lastAttributedTouchDataWithAttributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData * _Nullable latd))completion {
+- (void)lastAttributedTouchDataWithAttributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData * _Nullable latd, NSError * _Nullable error))completion {
     [self initSafetyCheck];
     dispatch_async(self.isolationQueue, ^(){
         [BranchLastAttributedTouchData requestLastTouchAttributedData:self.serverInterface key:self.class.branchKey attributionWindow:window completion:completion];
@@ -2212,8 +2239,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
     [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
 
-    if (!self.URLBlackList.hasRefreshedBlackListFromServer) {
-        [self.URLBlackList refreshBlackListFromServerWithCompletion:nil];
+    if (!self.urlFilter.hasUpdatedPatternList) {
+        [self.urlFilter updatePatternListWithCompletion:nil];
     }
 
     if (self.shouldAutomaticallyDeepLink) {

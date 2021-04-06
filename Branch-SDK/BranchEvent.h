@@ -45,6 +45,8 @@ FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventUnlockAchievem
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventInvite;
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventLogin;
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventReserve;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull  BranchStandardEventOptIn;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull  BranchStandardEventOptOut;
 
 typedef NS_ENUM(NSInteger, BranchEventAdType) {
     BranchEventAdTypeNone,

@@ -1,5 +1,75 @@
 Branch iOS SDK Change Log
 
+v1.39.2
+CORE-1768 Add 'handleATTAuthorizationStatus' method to monitor ATT prompt performance.
+
+Pass the AppTrackingTransparency authorization status from the callback of ATTrackingManager.requestTrackingAuthorization.
+Before prompting the user, check that ATTrackingManager.trackingAuthorizationStatus is notDetermined.
+
+v1.39.1
+CORE-1769 
+Fix podspec AdServices.framework issue. This addresses a crash on launch for older iOS versions.
+
+CORE-1766
+First time opt in indicator. Reduces load on the server.
+
+v1.39.0
+March 4, 2021
+
+CORE-1715
+Check AppTrackingTransparency status. The Branch SDK does not prompt the user, however it does check what the current ATT authorization status is. This provides more clarity into why IDFA is not authorized.
+
+CORE-1575
+Add support for AdServices.framework and the Apple Attribution Token. For cocoapods, AdServices.framework is included by default. For other integration options, you should include the AdServices.framework.
+
+CORE-1711
+Reduce default SKAN timeout per FB request.
+
+CORE-1753
+Remove a debug log message to address security scanner false alarm.
+
+v1.38.0
+Feb. 10, 2021
+
+CORE-1608
+Switch to semantic versioning.
+
+CORE-1677
+Add a static xcframework.
+The pre-built static xcframework is Branch_static.zip attached to the github release page. Note that tvOS does not support static frameworks.
+
+CORE-1626
+Remove some non-inclusive terms.
+The method 'addWhiteListedScheme' is now named 'addAllowedScheme'
+The method 'setWhiteListedSchemes' is now named 'setAllowedSchemes'
+
+SDK-1111
+The method to obtain last attributed touch data now includes an NSError in the completion block.
+
+- (void)lastAttributedTouchDataWithAttributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData * _Nullable latd, NSError * _Nullable error))completion;
+
+SDK-1106
+Remove old data transfer code. Addresses a potential crash.
+
+v0.37.0
+January 20, 2021
+
+CORE-1198
+Remove some non-inclusive terms.
+The method 'blackListURLRegex' is now named 'urlPatternsToIgnore'.
+
+CORE-1521
+Add API to attach Facebook partner parameters to Branch install, opens and events.
+See Facebook's documentation on advanced matching for details on valid parameters.
+
+CORE-1316
+Add support for xcframework.
+Branch.xcframework has replaced Branch.framework. iOS and tvOS are both included in the same xcframework. 
+The pre-built xcframework is Branch.zip attached to the github release page.
+Carthage integrations require the '--use-xcframeworks' flag. This feature is not yet in the general carthage release, you will need to install carthage from source.
+
+Thread safety improvement to server performance metrics. Thanks benski!
+
 v0.36.0
 November 11, 2020
 

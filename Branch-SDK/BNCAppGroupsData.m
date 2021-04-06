@@ -89,9 +89,6 @@
         [self saveObject:url forKey:@"BranchAppClipURL"];
         [self saveObject:token forKey:@"BranchAppClipToken"];
         [self saveObject:bundleToken forKey:@"BranchAppClipBundleToken"];
-        
-        NSString *logMessage = [NSString stringWithFormat:@"Saving App Clip Data: %@, %@, %@, %@, %@", bundleId, installDate, url, token, bundleToken];
-        BNCLogDebug(logMessage);
     }
 }
 
@@ -106,9 +103,6 @@
         self.bundleToken = [self getStringForKey:@"BranchAppClipBundleToken"];
         
         if (self.bundleID && self.installDate && self.url && self.branchToken && self.bundleToken) {
-            NSString *logMessage = [NSString stringWithFormat:@"Loading App Clip Data: %@, %@, %@, %@, %@", self.bundleID, self.installDate, self.url, self.branchToken, self.bundleToken];
-            BNCLogDebug(logMessage);
-            
             return YES;
         } else {
             return NO;

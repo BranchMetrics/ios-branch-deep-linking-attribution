@@ -19,6 +19,14 @@
 #import <sys/utsname.h>
 #endif
 
+#if !TARGET_OS_TV
+#if __has_feature(modules)
+@import AdServices;
+#else
+#import <AdServices/AdServices.h>
+#endif
+#endif
+
 @implementation BNCSystemObserver
 
 + (NSString *)getUniqueHardwareId:(BOOL *)isReal
@@ -46,10 +54,20 @@
     return uid;
 }
 
-+ (NSString*) getAdId {
-    
-    // This macro is unnecessary since this code only runs if AdSupport.framework is included
-    // However, some clients feel more comfortable with no IDFA code at all.
++ (NSString *)appleAttributionToken {
+#if !TARGET_OS_TV
+    if (@available(iOS 14.3, *)) {
+        NSError *error;
+        NSString *appleAttributionToken = [AAAttribution attributionTokenWithError:&error];
+        if (!error) {
+            return appleAttributionToken;
+        }
+    }
+#endif
+    return nil;
+}
+
++ (NSString *)getAdId {
     #ifdef BRANCH_EXCLUDE_IDFA_CODE
     return nil;
     
@@ -75,10 +93,43 @@
     #endif
 }
 
-+ (BOOL)adTrackingSafe {
+// Returns AppTrackingTransparency status. It does not trigger the prompt.
++ (NSString *)attOptedInStatus {
+    NSString *statusString = @"unavailable";
+
+    #ifdef BRANCH_EXCLUDE_ATT_STATUS_CODE
+    #else
+
+    Class ATTrackingManagerClass = NSClassFromString(@"ATTrackingManager");
+    if (ATTrackingManagerClass) {
+        SEL trackingAuthorizationStatusSelector = NSSelectorFromString(@"trackingAuthorizationStatus");
+        unsigned long status = ((unsigned long (*)(id, SEL))[ATTrackingManagerClass methodForSelector:trackingAuthorizationStatusSelector])(ATTrackingManagerClass, trackingAuthorizationStatusSelector);
+        
+        // map ATT status to string values
+        switch (status) {
+            case 0:
+                statusString = @"not_determined";
+                break;
+            case 1:
+                statusString = @"restricted";
+                break;
+            case 2:
+                statusString = @"denied";
+                break;
+            case 3:
+                statusString = @"authorized";
+                break;
+            default:
+                break;
+        }
+    }
     
-    // This macro is unnecessary since this code only runs if AdSupport.framework is included
-    // However, some clients feel more comfortable with no IDFA code at all.
+    #endif
+    return statusString;
+}
+
+// this value is deprecated on iOS 14+
++ (BOOL)adTrackingSafe {
     #ifdef BRANCH_EXCLUDE_IDFA_CODE
     return NO;
     

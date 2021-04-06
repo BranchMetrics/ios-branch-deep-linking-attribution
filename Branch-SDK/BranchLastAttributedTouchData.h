@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (nullable BranchLastAttributedTouchData *)buildFromJSON:(NSDictionary *)json;
 
-+ (void)requestLastTouchAttributedData:(BNCServerInterface *)serverInterface key:(NSString *)key attributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData *latd))completion;
++ (void)requestLastTouchAttributedData:(BNCServerInterface *)serverInterface key:(NSString *)key attributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData *latd, NSError *error))completion;
 
 @end
 

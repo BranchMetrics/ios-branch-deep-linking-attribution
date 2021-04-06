@@ -87,6 +87,14 @@
                     onDict:params];
     }
     
+    if (!preferenceHelper.appleAttributionTokenChecked) {
+        NSString *appleAttributionToken = [BNCSystemObserver appleAttributionToken];
+        if (appleAttributionToken) {
+            preferenceHelper.appleAttributionTokenChecked = YES;
+            [self safeSetValue:appleAttributionToken forKey:BRANCH_REQUEST_KEY_APPLE_ATTRIBUTION_TOKEN onDict:params];
+        }
+    }
+    
     NSDictionary *partnerParameters = [[BNCPartnerParameters shared] parameterJson];
     if (partnerParameters.count > 0) {
         [self safeSetValue:partnerParameters forKey:BRANCH_REQUEST_KEY_PARTNER_PARAMETERS onDict:params];
@@ -128,7 +136,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    if (error && preferenceHelper.blacklistURLOpen) {
+    if (error && preferenceHelper.dropURLOpen) {
         // Ignore this response from the server. Dummy up a response:
         error = nil;
         response.data = @{
@@ -248,7 +256,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     preferenceHelper.externalIntentURI = nil;
     preferenceHelper.appleSearchAdNeedsSend = NO;
     preferenceHelper.referringURL = referringURL;
-    preferenceHelper.blacklistURLOpen = NO;
+    preferenceHelper.dropURLOpen = NO;
 
     NSString *string = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]);
     if (string) preferenceHelper.identityID = string;

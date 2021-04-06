@@ -619,18 +619,18 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 -(void)setDeepLinkDebugMode:(nullable NSDictionary *)debugParams;
 
 /**
- Add a scheme to a whitelist of URI schemes that will be tracked by Branch. Default to all schemes.
+ Allow a URI scheme to be tracked by Branch. Default to all schemes.
 
- @param scheme to add to the whitelist, i.e. @"http", @"https" or @"myapp"
+ @param scheme URI scheme allowed to track, i.e. @"http", @"https" or @"myapp"
  */
--(void)addWhiteListedScheme:(nullable NSString *)scheme;
+-(void)addAllowedScheme:(nullable NSString *)scheme;
 
 /**
- Add an array of schemes to a whitelist of URI schemes that will be tracked by Branch. Default to all schemes.
+ Allow an array of URI schemes to be tracked by Branch. Default to all schemes.
 
- @param schemes array to add to the whitelist, i.e. @[@"http", @"https", @"myapp"]
+ @param schemes An array of URI schemes allowed to track, i.e. @[@"http", @"https", @"myapp"]
  */
--(void)setWhiteListedSchemes:(nullable NSArray *)schemes;
+-(void)setAllowedSchemes:(nullable NSArray *)schemes;
 
 /**
  @brief     Sets an array of regex patterns that match URLs for Branch to ignore.
@@ -645,7 +645,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
             These are ICU standard regular expressions.
 */
-@property (copy, nullable) NSArray<NSString*>/*_Nullable*/* blackListURLRegex;
+@property (copy, nullable) NSArray<NSString*>/*_Nullable*/* urlPatternsToIgnore;
 
 /**
  Register your Facebook SDK's FBSDKAppLinkUtility class to be used by Branch for deferred deep linking from their platform
@@ -684,7 +684,18 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)setAppClipAppGroup:(NSString *)appGroup;
 
 /**
- Set time window for SKAdNetwork callouts.  By default, Branch limits calls to SKAdNetwork to within 72 hours after first install.
+ Pass the AppTrackingTransparency authorization status to Branch to measure ATT prompt performance.
+ This method should be called from the callback of ATTrackingManager.requestTrackingAuthorization.
+ 
+ Note:
+ Before prompting the user, check that ATTrackingManager.trackingAuthorizationStatus is notDetermined.
+ Otherwise the prompt will not display and the completion will be called with current status.
+ This will inflate the number of OPT_IN and OPT_OUT events tracked by Branch.
+ */
+- (void)handleATTAuthorizationStatus:(NSUInteger)status;
+
+/**
+ Set time window for SKAdNetwork callouts.  By default, Branch limits calls to SKAdNetwork to within 24 hours after first install.
  
  Note: Branch does not automatically call SKAdNetwork unless configured on the dashboard.
  */
@@ -857,7 +868,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  Indicates whether or not this user has a custom identity specified for them. Note that this is *independent of installs*. If you call setIdentity, this device
  will have that identity associated with this user until `logout` is called. This includes persisting through uninstalls, as we track device id.
  
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  */
@@ -902,7 +913,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Loads credit totals from the server.
  
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
@@ -913,7 +924,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Redeem credits from the default bucket.
 
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  
@@ -925,7 +936,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Redeem credits from the default bucket.
 
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  
@@ -938,7 +949,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Redeem credits from the specified bucket.
 
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  
@@ -951,7 +962,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Redeem credits from the specified bucket.
  
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  
@@ -980,7 +991,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Loads the last 100 credit transaction history items for the default bucket.
 
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  
@@ -991,7 +1002,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Loads the last 100 credit transaction history items for the specified bucket.
 
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  
@@ -1003,7 +1014,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Loads the last n credit transaction history items after the specified transaction ID for the default.
 
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  
@@ -1017,7 +1028,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Loads the last n credit transaction history items after the specified transaction ID for the specified bucket.
 
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  
@@ -1038,7 +1049,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Send a user action to the server. Some examples actions could be things like `viewed_personal_welcome`, `purchased_an_item`, etc.
 
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  
@@ -1049,7 +1060,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Send a user action to the server with additional state items. Some examples actions could be things like `viewed_personal_welcome`, `purchased_an_item`, etc.
 
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  
@@ -1061,7 +1072,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Send a user action to the server with additional state items. Some examples actions could be things like `viewed_personal_welcome`, `purchased_an_item`, etc.
  
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  
@@ -1081,7 +1092,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  the Branch dashboard along with your other events so you can judge the effectiveness of
  campaigns and other analytics.
  
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
@@ -1101,7 +1112,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Branch includes SDK methods to allow retrieval of our Cross Platform ID (CPID) from the client. This results in an asynchronous call being made to Branch’s servers with CPID data returned when possible.
  
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  
@@ -1113,14 +1124,14 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  Branch includes SDK methods to allow retrieval of our last attributed touch data (LATD) from the client. This results in an asynchronous call being made to Branch's servers with LATD data returned when possible.
  Last attributed touch data contains the information associated with that user's last viewed impression or clicked link.
  
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  
  @param window attribution window in days.  If the window is 0, the server will use the server side default.  If the window is outside the server supported range, it will default to 30 days.
  @param completion callback with attribution data
  */
-- (void)lastAttributedTouchDataWithAttributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData * _Nullable latd))completion;
+- (void)lastAttributedTouchDataWithAttributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData * _Nullable latd, NSError * _Nullable error))completion;
 
 #pragma mark - Short Url Sync methods
 
@@ -1389,7 +1400,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Get a short url without any items specified. The usage type will default to unlimited.
  
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
@@ -1400,7 +1411,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Get a short url with the specified params. The usage type will default to unlimited.
  
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
@@ -1412,7 +1423,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Get a short url with the specified params, channel, and feature. The usage type will default to unlimited.
  
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
@@ -1426,7 +1437,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Get a short url with the specified params, channel, feature, and stage. The usage type will default to unlimited.
  
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
@@ -1441,7 +1452,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Get a short url with the specified params, channel, feature, stage, and alias. The usage type will default to unlimited.
  
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
@@ -1458,7 +1469,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Get a short url with the specified params, channel, feature, stage, and link type.
  
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
@@ -1474,7 +1485,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Get a short url with the specified params, channel, feature, stage, and match duration. The usage type will default to unlimited.
  
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
@@ -1490,7 +1501,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Get a short url with the specified params, tags, channel, feature, and stage. The usage type will default to unlimited.
  
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
@@ -1506,7 +1517,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Get a short url with the specified params, tags, channel, feature, stage, and alias. The usage type will default to unlimited.
  
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
@@ -1524,7 +1535,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Get a short url with the specified params, tags, channel, feature, stage, and link type.
  
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
@@ -1541,7 +1552,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Get a short url with the specified params, tags, channel, feature, stage, and match duration. The usage type will default to unlimited.
 
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  
@@ -1558,7 +1569,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Get a short url with the specified params, tags, channel, feature, stage, and match duration. The usage type will default to unlimited.
 
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  
@@ -1577,7 +1588,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Get a short url with the specified params, tags, channel, feature, stage, campaign and match duration. The usage type will default to unlimited.
 
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  
@@ -1596,7 +1607,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 /**
  
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
@@ -1870,7 +1881,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Method used by BranchUniversalObject to register a view on content
  
- This method should only be invoked after initSession.
+ This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 

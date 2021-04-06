@@ -66,6 +66,12 @@
                     forKey:BRANCH_REQUEST_KEY_SEARCH_AD
                     onDict:params];
     }
+    
+    NSString *appleAttributionToken = [BNCSystemObserver appleAttributionToken];
+    if (appleAttributionToken) {
+        preferenceHelper.appleAttributionTokenChecked = YES;
+        [self safeSetValue:appleAttributionToken forKey:BRANCH_REQUEST_KEY_APPLE_ATTRIBUTION_TOKEN onDict:params];
+    }
 
     BNCApplication *application = [BNCApplication currentApplication];
     params[@"lastest_update_time"] = BNCWireFormatFromDate(application.currentBuildDate);

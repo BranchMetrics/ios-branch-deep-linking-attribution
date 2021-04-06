@@ -36,8 +36,8 @@
 }
 
 - (void)testDefaultMaxTimeout {
-    NSTimeInterval threeDays = 3600.0 * 24.0 * 3.0;
-    XCTAssertTrue(self.skAdNetwork.maxTimeSinceInstall == threeDays);
+    NSTimeInterval oneDay = 3600.0 * 24.0;
+    XCTAssertTrue(self.skAdNetwork.maxTimeSinceInstall == oneDay);
 }
 
 - (void)testShouldAttemptSKAdNetworkCallout {

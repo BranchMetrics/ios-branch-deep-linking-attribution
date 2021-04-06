@@ -46,6 +46,8 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
 BranchStandardEvent BranchStandardEventInvite                 = @"INVITE";
 BranchStandardEvent BranchStandardEventLogin                  = @"LOGIN";
 BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
+BranchStandardEvent BranchStandardEventOptIn                  = @"OPT_IN";
+BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
 
 @implementation BranchEventRequest
 
@@ -226,6 +228,8 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
         BranchStandardEventStartTrial,
         BranchStandardEventClickAd,
         BranchStandardEventViewAd,
+        BranchStandardEventOptOut,
+        BranchStandardEventOptIn,
     ];
 }
 

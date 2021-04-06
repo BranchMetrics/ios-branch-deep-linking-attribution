@@ -41,6 +41,8 @@ NSString * const BRANCH_REQUEST_KEY_HARDWARE_ID_TYPE = @"hardware_id_type";
 NSString * const BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL = @"is_hardware_id_real";
 NSString * const BRANCH_REQUEST_KEY_IOS_VENDOR_ID = @"ios_vendor_id";
 NSString * const BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED = @"ad_tracking_enabled";
+NSString * const BRANCH_REQUEST_KEY_OPTED_IN_STATUS = @"opted_in_status";
+NSString * const BRANCH_REQUEST_KEY_FIRST_OPT_IN = @"first_opt_in";
 NSString * const BRANCH_REQUEST_KEY_DEBUG = @"debug";
 NSString * const BRANCH_REQUEST_KEY_BUNDLE_ID = @"ios_bundle_id";
 NSString * const BRANCH_REQUEST_KEY_TEAM_ID = @"ios_team_id";
@@ -147,6 +149,7 @@ NSString * const BRANCH_PACKAGE_NAME_KEY = @"p";
 NSString * const BRANCH_ENTITIES_KEY = @"e";
 
 NSString * const BRANCH_REQUEST_KEY_SEARCH_AD = @"search_ad_encoded";
+NSString * const BRANCH_REQUEST_KEY_APPLE_ATTRIBUTION_TOKEN = @"apple_attribution_token";
 
 NSString * const BRANCH_CRASHLYTICS_SDK_VERSION_KEY = @"io.branch.sdk.version";
 NSString * const BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY = @"io.branch.device.fingerprintid";

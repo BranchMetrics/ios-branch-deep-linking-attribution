@@ -29,6 +29,8 @@
 + (NSNumber *)getScreenHeight;
 + (BOOL)isSimulator;
 + (BOOL)adTrackingSafe;
-+ (NSString*) getAdId;
++ (NSString *)getAdId;
++ (NSString *)attOptedInStatus;
++ (NSString *)appleAttributionToken;
 
 @end
