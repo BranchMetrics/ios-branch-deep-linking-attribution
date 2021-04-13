@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0328C5D9260C82F30007F741 /* UITestCaseSafari.m in Sources */ = {isa = PBXBuildFile; fileRef = 0328C5D8260C82F30007F741 /* UITestCaseSafari.m */; };
+		032DAF232607B59300891641 /* UITestCaseTracking.m in Sources */ = {isa = PBXBuildFile; fileRef = 032DAF222607B59300891641 /* UITestCaseTracking.m */; };
+		033E096325F459C300F39CB3 /* UITestSetIdentity.m in Sources */ = {isa = PBXBuildFile; fileRef = 033E096225F459C200F39CB3 /* UITestSetIdentity.m */; };
+		033E097225F541D400F39CB3 /* UITestCaseTestBed.m in Sources */ = {isa = PBXBuildFile; fileRef = 033E097125F541D400F39CB3 /* UITestCaseTestBed.m */; };
+		033E099B25F6104300F39CB3 /* UITestRewards.m in Sources */ = {isa = PBXBuildFile; fileRef = 033E099A25F6104300F39CB3 /* UITestRewards.m */; };
+		0372076425E8418F00F29C30 /* libBranch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 466B58381B17773000A69EDE /* libBranch.a */; };
+		0372078825E9F81100F29C30 /* UITestCaseMisc.m in Sources */ = {isa = PBXBuildFile; fileRef = 0372078725E9F81000F29C30 /* UITestCaseMisc.m */; };
+		0399DD122599BF8A00CDB36E /* UITestSendV2Event.m in Sources */ = {isa = PBXBuildFile; fileRef = 0399DD112599BF8A00CDB36E /* UITestSendV2Event.m */; };
+		03B49EEB25F9F315000BF105 /* UITestCase0OpenNInstall.m in Sources */ = {isa = PBXBuildFile; fileRef = 03B49EEA25F9F315000BF105 /* UITestCase0OpenNInstall.m */; };
 		1F241CE72639A862AD0840CF /* libPods-Branch-SDK-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 423ACD2DEBB9A2E4FAF64B08 /* libPods-Branch-SDK-Tests.a */; };
 		3A78D574251EB59B002A25CF /* BranchJsonConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A78D573251EB59B002A25CF /* BranchJsonConfig.h */; };
 		3A78D576251EB5BF002A25CF /* BranchJsonConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A78D575251EB5BF002A25CF /* BranchJsonConfig.m */; };
@@ -324,6 +333,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0328C5D8260C82F30007F741 /* UITestCaseSafari.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UITestCaseSafari.m; sourceTree = "<group>"; };
+		032DAF222607B59300891641 /* UITestCaseTracking.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UITestCaseTracking.m; sourceTree = "<group>"; };
+		033E096225F459C200F39CB3 /* UITestSetIdentity.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UITestSetIdentity.m; sourceTree = "<group>"; };
+		033E097125F541D400F39CB3 /* UITestCaseTestBed.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UITestCaseTestBed.m; sourceTree = "<group>"; };
+		033E097825F5454800F39CB3 /* UITestCaseTestBed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UITestCaseTestBed.h; sourceTree = "<group>"; };
+		033E099A25F6104300F39CB3 /* UITestRewards.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UITestRewards.m; sourceTree = "<group>"; };
+		033FC71025AC1E5800D8319E /* Branch-TestBed.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = "Branch-TestBed.xctestplan"; path = "Branch-TestBed.xcodeproj/Branch-TestBed.xctestplan"; sourceTree = "<group>"; };
+		0372078725E9F81000F29C30 /* UITestCaseMisc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UITestCaseMisc.m; sourceTree = "<group>"; };
+		0399DD112599BF8A00CDB36E /* UITestSendV2Event.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UITestSendV2Event.m; sourceTree = "<group>"; };
+		03B49EEA25F9F315000BF105 /* UITestCase0OpenNInstall.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UITestCase0OpenNInstall.m; sourceTree = "<group>"; };
 		3A78D573251EB59B002A25CF /* BranchJsonConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchJsonConfig.h; sourceTree = "<group>"; };
 		3A78D575251EB5BF002A25CF /* BranchJsonConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchJsonConfig.m; sourceTree = "<group>"; };
 		423ACD2DEBB9A2E4FAF64B08 /* libPods-Branch-SDK-Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Branch-SDK-Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -651,9 +670,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F241CE72639A862AD0840CF /* libPods-Branch-SDK-Tests.a in Frameworks */,
 				4DD056122177A65C009BD3DD /* libOCMock.a in Frameworks */,
 				4DD056142177A65C009BD3DD /* libOHHTTPStubs.a in Frameworks */,
-				1F241CE72639A862AD0840CF /* libPods-Branch-SDK-Tests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -661,6 +680,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0372076425E8418F00F29C30 /* libBranch.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -747,7 +767,16 @@
 			isa = PBXGroup;
 			children = (
 				4D93D85F2098D43C00CFABA6 /* Info.plist */,
+				03B49EEA25F9F315000BF105 /* UITestCase0OpenNInstall.m */,
+				0399DD112599BF8A00CDB36E /* UITestSendV2Event.m */,
+				033E096225F459C200F39CB3 /* UITestSetIdentity.m */,
+				033E099A25F6104300F39CB3 /* UITestRewards.m */,
+				032DAF222607B59300891641 /* UITestCaseTracking.m */,
+				0372078725E9F81000F29C30 /* UITestCaseMisc.m */,
+				033E097825F5454800F39CB3 /* UITestCaseTestBed.h */,
+				033E097125F541D400F39CB3 /* UITestCaseTestBed.m */,
 				4D93D8602098D43C00CFABA6 /* UITestSafari.m */,
+				0328C5D8260C82F30007F741 /* UITestCaseSafari.m */,
 			);
 			path = "Branch-TestBed-UITests";
 			sourceTree = "<group>";
@@ -787,6 +816,7 @@
 		670016571940F51400A9E103 = {
 			isa = PBXGroup;
 			children = (
+				033FC71025AC1E5800D8319E /* Branch-TestBed.xctestplan */,
 				4D93D8592098CC4400CFABA6 /* README.md */,
 				670016BB1946309100A9E103 /* Branch-SDK */,
 				4D16837A2098C901008819E3 /* Branch-SDK-Tests */,
@@ -1170,6 +1200,7 @@
 				6700165C1940F51400A9E103 /* Sources */,
 				6700165D1940F51400A9E103 /* Frameworks */,
 				6700165E1940F51400A9E103 /* Resources */,
+				032DAF2E2607E78A00891641 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1339,6 +1370,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		032DAF2E2607E78A00891641 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "xcrun simctl terminate booted io.branch.sdk.Branch-TestBed\nxcrun simctl uninstall booted io.branch.sdk.Branch-TestBed\n";
+		};
 		B58A8EEAA66A7460C0BD3488 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1532,7 +1580,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0372078825E9F81100F29C30 /* UITestCaseMisc.m in Sources */,
+				0328C5D9260C82F30007F741 /* UITestCaseSafari.m in Sources */,
+				033E097225F541D400F39CB3 /* UITestCaseTestBed.m in Sources */,
+				0399DD122599BF8A00CDB36E /* UITestSendV2Event.m in Sources */,
+				03B49EEB25F9F315000BF105 /* UITestCase0OpenNInstall.m in Sources */,
+				033E096325F459C300F39CB3 /* UITestSetIdentity.m in Sources */,
+				032DAF232607B59300891641 /* UITestCaseTracking.m in Sources */,
 				4D93D8622098D43C00CFABA6 /* UITestSafari.m in Sources */,
+				033E099B25F6104300F39CB3 /* UITestRewards.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1875,8 +1931,10 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = R63EM248DP;
+				HEADER_SEARCH_PATHS = "\"${PODS_ROOT}/Headers/Public\"";
 				INFOPLIST_FILE = "Branch-TestBed-UITests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1893,9 +1951,11 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = R63EM248DP;
+				HEADER_SEARCH_PATHS = "\"${PODS_ROOT}/Headers/Public\"";
 				INFOPLIST_FILE = "Branch-TestBed-UITests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";

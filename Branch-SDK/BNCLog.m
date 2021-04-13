@@ -12,6 +12,8 @@
 
 #define _countof(array)  (sizeof(array)/sizeof(array[0]))
 
+static BNCLogOutputFunctionPtr bnc_LoggingFunction = nil; // Default to just NSLog output.
+
 // A fallback attempt at logging if an error occurs in BNCLog.
 // BNCLog can't log itself, but if an error occurs it uses this simple define:
 extern void BNCLogInternalError(NSString *message);
@@ -62,6 +64,9 @@ BNCLogLevel BNCLogLevelFromString(NSString*string) {
     return BNCLogLevelNone;
 }
 
+void BNCLogSetOutputFunction(BNCLogOutputFunctionPtr _Nullable logFunction) {
+        bnc_LoggingFunction = logFunction;
+}
 #pragma mark - BNCLogInternal
 
 void BNCLogWriteMessage(
@@ -98,5 +103,7 @@ void BNCLogWriteMessage(
 
     if (logLevel >= bnc_LogDisplayLevel) {
         NSLog(@"%@", s); // Upgrade this to unified logging when we can.
+        if (bnc_LoggingFunction)
+            bnc_LoggingFunction([NSDate date], logLevel, message);
     }
 }

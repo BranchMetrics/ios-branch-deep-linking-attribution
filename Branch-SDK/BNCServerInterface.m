@@ -403,7 +403,7 @@
     NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:preparedParams];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
 
-    BNCLogDebug([NSString stringWithFormat:@"URL: %@.", url]);
+    BNCLogDebug([NSString stringWithFormat:@"URL: %@.\n", url]);
     BNCLogDebug([NSString stringWithFormat:@"Body: %@\nJSON: %@.",
         preparedParams,
         [[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding]]

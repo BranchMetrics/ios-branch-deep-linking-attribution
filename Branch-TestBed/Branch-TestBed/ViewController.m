@@ -13,6 +13,10 @@
 #import "ArrayPickerView.h"
 #import "BranchUniversalObject.h"
 #import "BranchLinkProperties.h"
+#import "LogOutputViewController.h"
+#import "AppDelegate.h"
+
+extern AppDelegate* appDelegate;
 
 static NSString *cononicalIdentifier = @"item/12346";
 static NSString *canonicalUrl = @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/";
@@ -44,6 +48,8 @@ static NSString *type = @"some type";
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
 @property (strong, nonatomic) BranchUniversalObject *branchUniversalObject;
+@property (copy) void (^completionBlock)(BOOL success, NSError * _Nullable error);
+@property (weak, nonatomic) IBOutlet UIButton *disableTrackingButton;
 
 @end
 
@@ -85,6 +91,29 @@ static NSString *type = @"some type";
             BNC_SDK_VERSION];
     [self.versionLabel sizeToFit];
     [self.activityIndicator stopAnimating];
+    
+    __block __weak ViewController *_self = self;
+    self.completionBlock = ^(BOOL success, NSError * _Nullable error) {
+        UINavigationController *navigationController =
+            (UINavigationController *)_self.view.window.rootViewController;
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        LogOutputViewController *logOutputViewController =
+            [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
+        [navigationController pushViewController:logOutputViewController animated:YES];
+        if (success) {
+            logOutputViewController.logOutput = [NSString stringWithFormat:@"\nRESULT: SUCCESS"];
+        } else {
+            logOutputViewController.logOutput = [NSString stringWithFormat:@"\nRESULT: FAILED\n ERROR: %@", [error description]];
+        }
+        [appDelegate setLogFile:nil];
+    };
+   
+    if ([Branch trackingDisabled]) {
+        [self.disableTrackingButton setTitle:@"Enable Tracking" forState:UIControlStateNormal];
+    } else {
+        [self.disableTrackingButton setTitle:@"Disable Tracking" forState:UIControlStateNormal];
+    }
+
 }
 
 
@@ -123,8 +152,10 @@ static NSString *type = @"some type";
 
 - (IBAction)setUserIDButtonTouchUpInside:(id)sender {
     Branch *branch = [Branch getInstance];
+    [appDelegate setLogFile:@"SetUserID"];
     [branch setIdentity: user_id2 withCallback:^(NSDictionary *params, NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
+            [appDelegate setLogFile:nil];
             if (!error) {
                 NSLog(@"Branch TestBed: Identity Successfully Set%@", params);
                 [self performSegueWithIdentifier:@"ShowLogOutput"
@@ -451,6 +482,7 @@ static NSString *type = @"some type";
 
 - (void)sendV2EventWithName:(NSString *)eventName {
 
+    [appDelegate setLogFile:eventName];
     // standard events with data requirements
     if ([eventName isEqualToString:BranchStandardEventInvite]) {
         [self sendInviteEvent];
@@ -477,38 +509,39 @@ static NSString *type = @"some type";
 
 - (void)sendInviteEvent {
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventInvite];
-    [event logEvent];
+    [event logEventWithCompletion:self.completionBlock];
 }
 
 - (void)sendLoginEvent {
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventLogin];
-    [event logEvent];
+    [event logEventWithCompletion:self.completionBlock];
 }
 
 - (void)sendSubscribeEvent {
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventSubscribe];
     event.currency = BNCCurrencyUSD;
     event.revenue = [NSDecimalNumber decimalNumberWithString:@"1.0"];
-    [event logEvent];
+    [event logEventWithCompletion:self.completionBlock];
 }
 
 - (void)sendStartTrialEvent {
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventStartTrial];
     event.currency = BNCCurrencyUSD;
     event.revenue = [NSDecimalNumber decimalNumberWithString:@"1.0"];
-    [event logEvent];
+    [event logEventWithCompletion:self.completionBlock];
+
 }
 
 - (void)sendClickAdEvent {
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventClickAd];
     event.adType = BranchEventAdTypeBanner;
-    [event logEvent];
+    [event logEventWithCompletion:self.completionBlock];
 }
 
 - (void)sendViewAdEvent {
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventClickAd];
     event.adType = BranchEventAdTypeBanner;
-    [event logEvent];
+    [event logEventWithCompletion:self.completionBlock];
 }
 
 - (void)sendStandardV2Event:(BranchStandardEvent)event {
@@ -582,7 +615,7 @@ static NSString *type = @"some type";
     event.contentItems = (id) @[ buo ];
     event.alias = @"event alias";
     
-    [event logEvent];
+    [event logEventWithCompletion:self.completionBlock];
 }
 
 #pragma mark - Spotlight
@@ -692,5 +725,32 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
 - (IBAction)clearFBParams:(id)sender {
     [[Branch getInstance] clearPartnerParameters];
 }
+
+- (IBAction)loadLogs:(id)sender {
+    UINavigationController *navigationController =
+        (UINavigationController *)self.view.window.rootViewController;
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    LogOutputViewController *logOutputViewController =
+        [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
+    [navigationController pushViewController:logOutputViewController animated:YES];
+    
+    NSString *logFileContents = [NSString stringWithContentsOfFile:appDelegate.PrevCommandLogFileName encoding:NSUTF8StringEncoding error:nil];
+    
+    logOutputViewController.logOutput = [NSString stringWithFormat:@"%@", logFileContents];
+
+}
+
+- (IBAction)disableTracking:(id)sender {
+   
+    NSString *title = [self.disableTrackingButton titleForState:UIControlStateNormal];
+    if ([title isEqualToString:@"Disable Tracking"]) {
+        [Branch setTrackingDisabled:YES];
+        [self.disableTrackingButton setTitle:@"Enable Tracking" forState:UIControlStateNormal];
+    } else {
+        [Branch setTrackingDisabled:NO];
+        [self.disableTrackingButton setTitle:@"Disable Tracking" forState:UIControlStateNormal];
+    }
+}
+
 
 @end

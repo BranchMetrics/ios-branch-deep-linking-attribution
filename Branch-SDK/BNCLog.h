@@ -49,6 +49,14 @@ extern NSString *_Nonnull BNCLogStringFromLogLevel(BNCLogLevel level);
 */
 extern BNCLogLevel BNCLogLevelFromString(NSString*_Null_unspecified string);
 
+///@name Pre-defined log message handlers --
+typedef void (*BNCLogOutputFunctionPtr)(NSDate*_Nonnull timestamp, BNCLogLevel level, NSString*_Nullable message);
+
+///@param functionPtr   A pointer to the logging function.  Setting the parameter to NULL will flush
+///                     and close the currently set log function and future log messages will be
+///                     ignored until a non-NULL logging function is set.
+extern void BNCLogSetOutputFunction(BNCLogOutputFunctionPtr _Nullable functionPtr);
+
 #pragma mark - BNCLogWriteMessage
 
 /// The main logging function used in the variadic logging defines.

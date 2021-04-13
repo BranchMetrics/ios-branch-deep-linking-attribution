@@ -1,0 +1,58 @@
+{
+  "configurations" : [
+    {
+      "id" : "0B86D901-0EFE-4D91-A1D1-B69EC7EBE153",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "BNCTestBreakpoints",
+        "value" : "0"
+      }
+    ],
+    "nsZombieEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Branch-TestBed.xcodeproj",
+      "identifier" : "6700165F1940F51400A9E103",
+      "name" : "Branch-TestBed"
+    },
+    "threadSanitizerEnabled" : true,
+    "undefinedBehaviorSanitizerEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "deviceAppDataReference" : {
+        "resolvedPath" : "..\/Simulate-FirstRun.xcappdata"
+      },
+      "target" : {
+        "containerPath" : "container:Branch-TestBed.xcodeproj",
+        "identifier" : "7E6B3B501AA42D0E005F45BF",
+        "name" : "Branch-SDK-Tests"
+      }
+    },
+    {
+      "skippedTests" : [
+        "UITestSafari",
+        "UITestSafari\/testDeepLinking"
+      ],
+      "target" : {
+        "containerPath" : "container:Branch-TestBed.xcodeproj",
+        "identifier" : "F1D4F9AB1F323F01002D13FF",
+        "name" : "Branch-TestBed-UITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Branch-TestBed.xcodeproj",
+        "identifier" : "5F8B7B3A21B5F5CD009CE0A6",
+        "name" : "Branch-SDK-Unhosted-Tests"
+      }
+    }
+  ],
+  "version" : 1
+}
