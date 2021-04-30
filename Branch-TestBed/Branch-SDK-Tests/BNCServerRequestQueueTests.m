@@ -219,14 +219,26 @@
     //  Test handling an exception when unarchiving.
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"UnarchiveThrowExpectation"];
-    id unarchiverMock = [OCMockObject mockForClass:[NSKeyedUnarchiver class]];
-    [[[[unarchiverMock expect]
-        andDo:^(NSInvocation *invocation) {
+    id unarchiverMock;
+    if (@available(iOS 12.0, *)) {
+        unarchiverMock = [OCMockObject mockForClass:[NSKeyedUnarchiver class]];
+        [[[[unarchiverMock expect]
+           andDo:^(NSInvocation *invocation) {
             [expectation fulfill];
         }]
-        andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]]
-            unarchiveObjectWithData:[OCMArg any]];
-
+          andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]]
+         unarchivedObjectOfClass:[NSArray class] fromData:[OCMArg any] error:NULL];
+    } else {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
+        unarchiverMock = [OCMockObject mockForClass:[NSKeyedUnarchiver class]];
+        [[[[unarchiverMock expect]
+           andDo:^(NSInvocation *invocation) {
+            [expectation fulfill];
+        }]
+          andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]]
+         unarchiveObjectWithData:[OCMArg any]];
+#endif
+    }
     BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
     [queue cancelTimer];
     [queue retrieve];
@@ -239,14 +251,26 @@
     //  Test handling an exception when unarchiving.
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"UnarchiveThrowExpectation"];
-    id unarchiverMock = [OCMockObject mockForClass:[NSKeyedUnarchiver class]];
-    [[[[unarchiverMock expect]
-        andDo:^(NSInvocation *invocation) {
+    id unarchiverMock;
+    if (@available(iOS 12.0, *)) {
+        unarchiverMock = [OCMockObject mockForClass:[NSKeyedUnarchiver class]];
+        [[[[unarchiverMock expect]
+           andDo:^(NSInvocation *invocation) {
             [expectation fulfill];
         }]
-        andReturn:@[ [@"Garbage" dataUsingEncoding:NSUTF8StringEncoding] ]]
-            unarchiveObjectWithData:[OCMArg any]];
-
+          andReturn:@[ [@"Garbage" dataUsingEncoding:NSUTF8StringEncoding] ]]
+         unarchivedObjectOfClass:[NSArray class] fromData:[OCMArg any] error:NULL];
+    } else {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
+        unarchiverMock = [OCMockObject mockForClass:[NSKeyedUnarchiver class]];
+        [[[[unarchiverMock expect]
+           andDo:^(NSInvocation *invocation) {
+            [expectation fulfill];
+        }]
+          andReturn:@[ [@"Garbage" dataUsingEncoding:NSUTF8StringEncoding] ]]
+         unarchiveObjectWithData:[OCMArg any]];
+#endif
+    }
     BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
     [queue retrieve];
     [self awaitExpectations];
@@ -259,19 +283,36 @@
 
     BranchCloseRequest *closeRequest = [[BranchCloseRequest alloc] init];
     BranchOpenRequest *openRequest = [[BranchOpenRequest alloc] init];
-    NSArray *requests = @[
-        [NSKeyedArchiver archivedDataWithRootObject:closeRequest],
-        [NSKeyedArchiver archivedDataWithRootObject:openRequest],
-        [NSKeyedArchiver archivedDataWithRootObject:closeRequest]
-    ];
-
-    id nsdataMock = [OCMockObject mockForClass:[NSData class]];
-    [[[nsdataMock expect]
-        andReturn:[NSKeyedArchiver archivedDataWithRootObject:requests]]
-            dataWithContentsOfURL:[OCMArg any]
-            options:0
-            error:[OCMArg anyObjectRef]];
-
+    NSArray *requests;
+    id nsdataMock;
+    if (@available(iOS 12.0, *)) {
+        requests = @[
+            [NSKeyedArchiver archivedDataWithRootObject:closeRequest requiringSecureCoding:YES error:NULL],
+            [NSKeyedArchiver archivedDataWithRootObject:openRequest requiringSecureCoding:YES error:NULL],
+            [NSKeyedArchiver archivedDataWithRootObject:closeRequest requiringSecureCoding:YES error:NULL]];
+        nsdataMock = [OCMockObject mockForClass:[NSData class]];
+        [[[nsdataMock expect]
+          andReturn:[NSKeyedArchiver archivedDataWithRootObject:requests requiringSecureCoding:YES error:NULL]]
+         dataWithContentsOfURL:[OCMArg any]
+         options:0
+         error:[OCMArg anyObjectRef]];
+        
+        
+    } else {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
+        requests = @[
+            [NSKeyedArchiver archivedDataWithRootObject:closeRequest],
+            [NSKeyedArchiver archivedDataWithRootObject:openRequest],
+            [NSKeyedArchiver archivedDataWithRootObject:closeRequest]
+            nsdataMock = [OCMockObject mockForClass:[NSData class]];
+            [[[nsdataMock expect]
+              andReturn:[NSKeyedArchiver archivedDataWithRootObject:requests]]
+             dataWithContentsOfURL:[OCMArg any]
+             options:0
+             error:[OCMArg anyObjectRef]];
+#endif
+    }
+   
     BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
     [queue retrieve];
     [nsdataMock verify];

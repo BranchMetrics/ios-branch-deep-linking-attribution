@@ -89,7 +89,13 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
         for (NSData* data in dataArray) {
             id value = nil;
             @try {
-                value = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+                if (@available(iOS 12.0, *)) {
+                    value = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSData class] fromData:data error:NULL];
+                } else {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
+                    value = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+#endif
+                }
             }
             @catch (id) {
                 value = nil;
@@ -134,7 +140,13 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
     id value = nil;
     if (valueData) {
         @try {
-            value = [NSKeyedUnarchiver unarchiveObjectWithData:(__bridge NSData*)valueData];
+            if (@available(iOS 12.0, *)) {
+                value = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSData class] fromData:(__bridge NSData*)valueData error:NULL];
+            } else {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
+                value = [NSKeyedUnarchiver unarchiveObjectWithData:(__bridge NSData*)valueData];
+#endif
+            }
         }
         @catch (id) {
             value = nil;
@@ -156,7 +168,13 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
 
     NSData* valueData = nil;
     @try {
-        valueData = [NSKeyedArchiver archivedDataWithRootObject:value];
+        if (@available( iOS 12.0, *)) {
+            valueData = [NSKeyedArchiver archivedDataWithRootObject:value requiringSecureCoding:YES error:NULL];
+        } else {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
+            valueData = [NSKeyedArchiver archivedDataWithRootObject:value];
+#endif
+        }
     }
     @catch(id) {
         valueData = nil;
