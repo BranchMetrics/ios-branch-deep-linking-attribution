@@ -55,6 +55,11 @@
 }
 
 + (NSString *)appleAttributionToken {
+    // token is not available on simulator
+    if ([self isSimulator]) {
+        return nil;
+    }
+    
     __block NSString *token = nil;
     
 #if !TARGET_OS_TV
@@ -72,8 +77,8 @@
             dispatch_semaphore_signal(semaphore);
         });
 
-        // Apple said this API should respond within 50ms, lets give up after 100 ms
-        dispatch_semaphore_wait(semaphore, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(100 * NSEC_PER_MSEC)));
+        // Apple said this API should respond within 50ms, lets give up after 500 ms
+        dispatch_semaphore_wait(semaphore, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(500 * NSEC_PER_MSEC)));
         if (token == nil) {
             BNCLogDebug([NSString stringWithFormat:@"AppleAttributionToken request timed out"]);
         }
