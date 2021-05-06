@@ -55,16 +55,37 @@
 }
 
 + (NSString *)appleAttributionToken {
+    // token is not available on simulator
+    if ([self isSimulator]) {
+        return nil;
+    }
+    
+    __block NSString *token = nil;
+    
 #if !TARGET_OS_TV
     if (@available(iOS 14.3, *)) {
-        NSError *error;
-        NSString *appleAttributionToken = [AAAttribution attributionTokenWithError:&error];
-        if (!error) {
-            return appleAttributionToken;
+
+        // We are getting reports on iOS 14.5 that this API can hang, adding a short timeout for now.
+        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSError *error;
+            NSString *appleAttributionToken = [AAAttribution attributionTokenWithError:&error];
+            if (!error) {
+                token = appleAttributionToken;
+            }
+            dispatch_semaphore_signal(semaphore);
+        });
+
+        // Apple said this API should respond within 50ms, lets give up after 500 ms
+        dispatch_semaphore_wait(semaphore, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(500 * NSEC_PER_MSEC)));
+        if (token == nil) {
+            BNCLogDebug([NSString stringWithFormat:@"AppleAttributionToken request timed out"]);
         }
     }
 #endif
-    return nil;
+    
+    return token;
 }
 
 + (NSString *)getAdId {
