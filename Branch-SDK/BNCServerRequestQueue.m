@@ -271,10 +271,26 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
                 if ([req isKindOfClass:[BranchCloseRequest class]]) {
                     continue;
                 }
-                NSData *encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
+                NSData *encodedReq = nil;
+                if (@available( iOS 12.0, *)) {
+                    encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req requiringSecureCoding:YES error:NULL];
+                } else {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
+                    encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
+#endif
+                }
+                
                 if (encodedReq) [encodedRequests addObject:encodedReq];
             }
-            NSData *data = [NSKeyedArchiver archivedDataWithRootObject:encodedRequests];
+            NSData *data = nil;
+            
+            if (@available( iOS 12.0, *)) {
+                data = [NSKeyedArchiver archivedDataWithRootObject:encodedRequests requiringSecureCoding:YES error:NULL];
+            } else {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
+                data = [NSKeyedArchiver archivedDataWithRootObject:encodedRequests];
+#endif
+            }
             if (!data) {
                 BNCLogError(@"Cannot create archive data.");
                 return;
@@ -312,8 +328,15 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             NSData *data = [NSData dataWithContentsOfURL:self.class.URLForQueueFile options:0 error:&error];
             if ([error.domain isEqualToString:NSCocoaErrorDomain] && error.code == NSFileReadNoSuchFileError) {
                 encodedRequests = [NSArray new];
-            } else if (!error && data)
-                encodedRequests = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+            } else if (!error && data){
+                if (@available(iOS 12.0, *)) {
+                    encodedRequests = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSArray class] fromData:data error:NULL];
+                } else {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
+                    encodedRequests = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+#endif
+                }
+            }
             if (![encodedRequests isKindOfClass:[NSArray class]]) {
                 @throw [NSException exceptionWithName:NSInvalidArgumentException
                     reason:@"Saved server queue is invalid." userInfo:nil];
@@ -334,7 +357,13 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 
             // Capture exceptions while parsing individual request objects
             @try {
-                request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
+                if (@available(iOS 12.0, *)) {
+                    request = [NSKeyedUnarchiver unarchivedObjectOfClass:[BNCServerRequest class] fromData:encodedRequest error:NULL];
+                } else {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
+                    request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
+#endif
+                }
             }
             @catch (NSException*) {
                 BNCLogWarning(@"An exception occurred while attempting to parse a queued request, discarding.");

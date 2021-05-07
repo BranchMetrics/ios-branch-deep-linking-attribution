@@ -793,7 +793,13 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
         if (!self.persistenceDict) return;
         NSData *data = nil;
         @try {
-            data = [NSKeyedArchiver archivedDataWithRootObject:self.persistenceDict];
+            if (@available( iOS 12.0, *)) {
+                data = [NSKeyedArchiver archivedDataWithRootObject:self.persistenceDict requiringSecureCoding:YES error:NULL];
+            } else {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
+                data = [NSKeyedArchiver archivedDataWithRootObject:self.persistenceDict];
+#endif
+            }
         }
         @catch (id exception) {
             data = nil;
@@ -830,7 +836,13 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
                 NSError *error = nil;
                 NSData *data = [NSData dataWithContentsOfURL:self.class.URLForPrefsFile options:0 error:&error];
                 if (!error && data) {
-                    persistenceDict = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+                    if (@available(iOS 12.0, *)) {
+                        persistenceDict = [NSKeyedUnarchiver unarchivedObjectOfClass:[BNCServerRequest class] fromData:data error:NULL];
+                    } else {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
+                        persistenceDict = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+#endif
+                    }
                 }
             }
             @catch (NSException*) {
