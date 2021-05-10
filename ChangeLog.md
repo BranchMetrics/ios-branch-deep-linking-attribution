@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v1.39.3
+CORE-1893 Add timeout to Apple attribution token. Some users are reporting the call can hang.
+
 v1.39.2
 CORE-1768 Add 'handleATTAuthorizationStatus' method to monitor ATT prompt performance.
 
