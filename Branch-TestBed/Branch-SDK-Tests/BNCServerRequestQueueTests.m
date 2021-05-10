@@ -296,14 +296,14 @@
          dataWithContentsOfURL:[OCMArg any]
          options:0
          error:[OCMArg anyObjectRef]];
-        
-        
+
+
     } else {
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
         requests = @[
             [NSKeyedArchiver archivedDataWithRootObject:closeRequest],
             [NSKeyedArchiver archivedDataWithRootObject:openRequest],
-            [NSKeyedArchiver archivedDataWithRootObject:closeRequest]
+            [NSKeyedArchiver archivedDataWithRootObject:closeRequest]];
             nsdataMock = [OCMockObject mockForClass:[NSData class]];
             [[[nsdataMock expect]
               andReturn:[NSKeyedArchiver archivedDataWithRootObject:requests]]

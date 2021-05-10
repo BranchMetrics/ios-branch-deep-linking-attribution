@@ -18,11 +18,12 @@
 @implementation BNCKeyChainTest
 
 - (void)testKeyChain {
+    NSDate *testDate = [NSDate date];
+    
     NSError *error = nil;
-    NSString *value = nil;
-    NSArray *array = nil;
-    NSString*const kServiceName = @"Service";
-
+    NSDate *date = nil;
+    NSString * const kServiceName = @"Service";
+    
     // Remove and validate gone:
 
     error = [BNCKeyChain removeValuesForService:nil key:nil];
@@ -30,19 +31,12 @@
     // This happens when the unit test bundle isn't code signed.
     XCTAssertTrue(error == nil || error.code == -34018);
 
-    array = [BNCKeyChain retieveAllValuesWithError:&error];
-    XCTAssertTrue(array == nil && error == errSecSuccess);
-
     // Check some keys:
+    date = [BNCKeyChain retrieveDateForService:kServiceName key:@"key1" error:&error];
+    XCTAssertTrue(date == nil && error.code == errSecItemNotFound);
 
-    value = [BNCKeyChain retrieveValueForService:kServiceName key:@"key1" error:&error];
-    XCTAssertTrue(value == nil && error.code == errSecItemNotFound);
-
-    value = [BNCKeyChain retrieveValueForService:kServiceName key:@"key2" error:&error];
-    XCTAssertTrue(value == nil && error.code == errSecItemNotFound);
-
-    value = [BNCKeyChain retrieveValueForService:kServiceName key:@"key3" error:&error];
-    XCTAssertTrue(value == nil && error.code == errSecItemNotFound);
+    date = [BNCKeyChain retrieveDateForService:kServiceName key:@"key2" error:&error];
+    XCTAssertTrue(date == nil && error.code == errSecItemNotFound);
 
     // TODO: Fix this.
     if ([UIApplication sharedApplication] == nil) {
@@ -52,37 +46,24 @@
     
     // Test that local storage works:
 
-    error = [BNCKeyChain storeValue:@"1xyz123" forService:kServiceName key:@"key1" cloudAccessGroup:nil];
+    error = [BNCKeyChain storeDate:testDate forService:kServiceName key:@"key1" cloudAccessGroup:nil];
     XCTAssertTrue(error == nil);
-    value = [BNCKeyChain retrieveValueForService:kServiceName key:@"key1" error:&error];
-    XCTAssertTrue(error == nil && [value isEqualToString:@"1xyz123"]);
+    date = [BNCKeyChain retrieveDateForService:kServiceName key:@"key1" error:&error];
+    XCTAssertTrue(error == nil && [date isEqual:testDate]);
 
-    error = [BNCKeyChain storeValue:@"2xyz123" forService:kServiceName key:@"key2" cloudAccessGroup:nil];
+    error = [BNCKeyChain storeDate:[NSDate date] forService:kServiceName key:@"key2" cloudAccessGroup:nil];
     XCTAssertTrue(error == nil);
-    value = [BNCKeyChain retrieveValueForService:kServiceName key:@"key2" error:&error];
-    XCTAssertTrue(error == nil && [value isEqualToString:@"2xyz123"]);
-
-    error = [BNCKeyChain storeValue:@"3xyz123" forService:@"Service2" key:@"skey2" cloudAccessGroup:nil];
-    XCTAssertTrue(error == nil);
-    value = [BNCKeyChain retrieveValueForService:@"Service2" key:@"skey2" error:&error];
-    XCTAssertTrue(error == nil && [value isEqualToString:@"3xyz123"]);
+    date = [BNCKeyChain retrieveDateForService:kServiceName key:@"key2" error:&error];
+    XCTAssertTrue(error == nil && ![date isEqual:testDate]);
 
     // Remove by service:
 
     error = [BNCKeyChain removeValuesForService:kServiceName key:nil];
-    value = [BNCKeyChain retrieveValueForService:kServiceName key:@"key1" error:&error];
-    XCTAssertTrue(value == nil && error.code == errSecItemNotFound);
+    date = [BNCKeyChain retrieveDateForService:kServiceName key:@"key1" error:&error];
+    XCTAssertTrue(date == nil && error.code == errSecItemNotFound);
 
-    value = [BNCKeyChain retrieveValueForService:kServiceName key:@"key2" error:&error];
-    XCTAssertTrue(value == nil && error.code == errSecItemNotFound);
-
-    value = [BNCKeyChain retrieveValueForService:@"Service2" key:@"skey2" error:&error];
-    XCTAssertTrue(error == nil && [value isEqualToString:@"3xyz123"]);
-
-    // Check all values:
-
-    array = [BNCKeyChain retieveAllValuesWithError:&error];
-    XCTAssertTrue([array isEqualToArray:@[ @"3xyz123" ]] && error == errSecSuccess);
+    date = [BNCKeyChain retrieveDateForService:kServiceName key:@"key2" error:&error];
+    XCTAssertTrue(date == nil && error.code == errSecItemNotFound);
 }
 
 - (void) testSecurityAccessGroup {
