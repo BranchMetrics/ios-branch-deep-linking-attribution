@@ -2,9 +2,9 @@
 set -euo pipefail
 
 # checksum file
-scheme='Branch-static-xcframework'
-checksum_file=checksum_static.txt
-zip_file=Branch_static.zip
+scheme='Branch-xcframework-noidfa'
+checksum_file=checksum_noidfa.txt
+zip_file=Branch_noidfa.zip
 
 scriptname=$(basename "${BASH_SOURCE[0]}")
 scriptpath="${BASH_SOURCE[0]}"
@@ -19,7 +19,7 @@ xcodebuild -scheme $scheme
 cd ${scriptpath}/../carthage-files/build
 
 # Zip the SDK files
-echo "Zipping Branch.xcframework and static library"
+echo "Zipping Branch.xcframework"
 zip -rqy $zip_file Branch.xcframework/
 
 # Checksum the zip file
