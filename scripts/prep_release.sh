@@ -42,7 +42,7 @@ fi
 
 # Pre-release CocoaPod lint
 echo ">>> Linting release candidate..." 1>&2
-pod lib lint Branch.podspec --verbose 
+pod lib lint Branch.podspec --verbose --allow-warnings
 
 # Build the frameworks
 echo ">>> Building the frameworks..." 1>&2
