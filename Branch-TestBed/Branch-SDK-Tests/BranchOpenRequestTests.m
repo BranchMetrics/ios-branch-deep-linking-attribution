@@ -123,7 +123,7 @@
     NSString * const OS_VERSION = @"foo-os-version";
     NSString * const URI_SCHEME = @"foo-uri-scheme";
     NSString * const LINK_IDENTIFIER = @"foo-link-id";
-    NSString * const FINGERPRINT_ID = @"foo-fingerprint";
+    NSString * const DEVICE_TOKEN = @"foo-fingerprint";
     NSString * const IDENTITY_ID = @"foo-identity";
     NSString * hardwareType = nil;
 
@@ -142,7 +142,7 @@
 
     preferenceHelper.isDebug = [IS_DEBUG boolValue];
     preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
-    preferenceHelper.deviceFingerprintID = FINGERPRINT_ID;
+    preferenceHelper.deviceFingerprintID = DEVICE_TOKEN;
     preferenceHelper.identityID = IDENTITY_ID;
 
     NSTimeInterval kOneDayAgo = -1.0*24.0*60.0*60.0;
@@ -162,7 +162,7 @@
             @"pn": BUNDLE_ID
         },
         @"debug":                       IS_DEBUG,
-        @"device_fingerprint_id":       FINGERPRINT_ID,
+        @"randomized_device_token":     DEVICE_TOKEN,
         @"facebook_app_link_checked":   @0,
         @"identity_id":                 IDENTITY_ID,
         @"ios_bundle_id":               BUNDLE_ID,
@@ -192,7 +192,7 @@
 }
 
 - (void)testSuccessWithAllKeysAndIsReferrable {
-    NSString * const FINGERPRINT_ID = @"foo-fingerprint";
+    NSString * const DEVICE_TOKEN = @"foo-fingerprint";
     NSString * const USER_URL = @"http://foo";
     NSString * const DEVELOPER_ID = @"foo";
     NSString * const SESSION_ID = @"foo-session";
@@ -201,7 +201,7 @@
     
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = @{
-        BRANCH_RESPONSE_KEY_DEVICE_FINGERPRINT_ID: FINGERPRINT_ID,
+        BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN: DEVICE_TOKEN,
         BRANCH_RESPONSE_KEY_USER_URL: USER_URL,
         BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY: DEVELOPER_ID,
         BRANCH_RESPONSE_KEY_SESSION_ID: SESSION_ID,
@@ -222,7 +222,7 @@
     
     [self awaitExpectations];
     
-    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, FINGERPRINT_ID);
+    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, DEVICE_TOKEN);
     XCTAssertEqualObjects(preferenceHelper.userUrl, USER_URL);
     XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
     XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
@@ -233,7 +233,7 @@
 }
 
 - (void)testSuccessWithAllKeysAndIsNotReferrable {
-    NSString * const FINGERPRINT_ID = @"foo-fingerprint";
+    NSString * const DEVICE_TOKEN = @"foo-fingerprint";
     NSString * const USER_URL = @"http://foo";
     NSString * const DEVELOPER_ID = @"foo";
     NSString * const SESSION_ID = @"foo-session";
@@ -243,7 +243,7 @@
     
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = @{
-        BRANCH_RESPONSE_KEY_DEVICE_FINGERPRINT_ID: FINGERPRINT_ID,
+        BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN: DEVICE_TOKEN,
         BRANCH_RESPONSE_KEY_USER_URL: USER_URL,
         BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY: DEVELOPER_ID,
         BRANCH_RESPONSE_KEY_SESSION_ID: SESSION_ID,
@@ -265,7 +265,7 @@
     
     [self awaitExpectations];
     
-    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, FINGERPRINT_ID);
+    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, DEVICE_TOKEN);
     XCTAssertEqualObjects(preferenceHelper.userUrl, USER_URL);
     XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
     XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
@@ -276,7 +276,7 @@
 }
 
 - (void)testSuccessWithNoSessionParamsAndIsNotReferrable {
-    NSString * const FINGERPRINT_ID = @"foo-fingerprint";
+    NSString * const DEVICE_TOKEN = @"foo-fingerprint";
     NSString * const USER_URL = @"http://foo";
     NSString * const DEVELOPER_ID = @"foo";
     NSString * const SESSION_ID = @"foo-session";
@@ -285,7 +285,7 @@
     
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = @{
-        BRANCH_RESPONSE_KEY_DEVICE_FINGERPRINT_ID: FINGERPRINT_ID,
+        BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN: DEVICE_TOKEN,
         BRANCH_RESPONSE_KEY_USER_URL: USER_URL,
         BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY: DEVELOPER_ID,
         BRANCH_RESPONSE_KEY_SESSION_ID: SESSION_ID,
@@ -306,7 +306,7 @@
     
     [self awaitExpectations];
     
-    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, FINGERPRINT_ID);
+    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, DEVICE_TOKEN);
     XCTAssertEqualObjects(preferenceHelper.userUrl, USER_URL);
     XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
     XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
@@ -317,7 +317,7 @@
 }
 
 - (void)testSuccessWithNoSessionParamsAndIsReferrableAndAllowToBeClearIsNotSet {
-    NSString * const FINGERPRINT_ID = @"foo-fingerprint";
+    NSString * const DEVICE_TOKEN = @"foo-fingerprint";
     NSString * const USER_URL = @"http://foo";
     NSString * const DEVELOPER_ID = @"foo";
     NSString * const SESSION_ID = @"foo-session";
@@ -326,7 +326,7 @@
     
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = @{
-        BRANCH_RESPONSE_KEY_DEVICE_FINGERPRINT_ID: FINGERPRINT_ID,
+        BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN: DEVICE_TOKEN,
         BRANCH_RESPONSE_KEY_USER_URL: USER_URL,
         BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY: DEVELOPER_ID,
         BRANCH_RESPONSE_KEY_SESSION_ID: SESSION_ID,
@@ -347,7 +347,7 @@
     
     [self awaitExpectations];
     
-    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, FINGERPRINT_ID);
+    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, DEVICE_TOKEN);
     XCTAssertEqualObjects(preferenceHelper.userUrl, USER_URL);
     XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
     XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
@@ -358,7 +358,7 @@
 }
 
 - (void)testSuccessWithNoSessionParamsAndIsReferrableAndAllowToBeClearIsSet {
-    NSString * const FINGERPRINT_ID = @"foo-fingerprint";
+    NSString * const DEVICE_TOKEN = @"foo-fingerprint";
     NSString * const USER_URL = @"http://foo";
     NSString * const DEVELOPER_ID = @"foo";
     NSString * const SESSION_ID = @"foo-session";
@@ -366,7 +366,7 @@
     
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = @{
-        BRANCH_RESPONSE_KEY_DEVICE_FINGERPRINT_ID: FINGERPRINT_ID,
+        BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN: DEVICE_TOKEN,
         BRANCH_RESPONSE_KEY_USER_URL: USER_URL,
         BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY: DEVELOPER_ID,
         BRANCH_RESPONSE_KEY_SESSION_ID: SESSION_ID,
@@ -386,7 +386,7 @@
     
     [self awaitExpectations];
     
-    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, FINGERPRINT_ID);
+    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, DEVICE_TOKEN);
     XCTAssertEqualObjects(preferenceHelper.userUrl, USER_URL);
     XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
     XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);

@@ -161,7 +161,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
         userIdentity = [userIdentity stringValue];
     }
 
-    preferenceHelper.deviceFingerprintID = data[BRANCH_RESPONSE_KEY_DEVICE_FINGERPRINT_ID];
+    preferenceHelper.deviceFingerprintID = data[BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN];
     preferenceHelper.userUrl = data[BRANCH_RESPONSE_KEY_USER_URL];
     preferenceHelper.userIdentity = userIdentity;
     preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];

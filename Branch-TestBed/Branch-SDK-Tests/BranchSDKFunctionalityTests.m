@@ -45,7 +45,7 @@ NSInteger const  TEST_CREDITS = 30;
     BNCServerResponse *openInstallResponse = [[BNCServerResponse alloc] init];
     openInstallResponse.data = @{
         @"browser_fingerprint_id": TEST_BROWSER_FINGERPRINT_ID,
-        @"device_fingerprint_id": TEST_DEVICE_FINGERPRINT_ID,
+        @"randomized_device_token": TEST_DEVICE_FINGERPRINT_ID,
         @"identity_id": TEST_IDENTITY_ID,
         @"link": TEST_IDENTITY_LINK,
         @"session_id": TEST_SESSION_ID
@@ -384,7 +384,7 @@ NSInteger const  TEST_CREDITS = 30;
     openInstallResponse.data = @{
         @"session_id": TEST_SESSION_ID,
         @"identity_id": TEST_IDENTITY_ID,
-        @"device_fingerprint_id": TEST_DEVICE_FINGERPRINT_ID,
+        @"randomized_device_token": TEST_DEVICE_FINGERPRINT_ID,
         @"browser_fingerprint_id": TEST_BROWSER_FINGERPRINT_ID,
         @"link": TEST_IDENTITY_LINK,
         @"new_identity_id": TEST_NEW_IDENTITY_ID

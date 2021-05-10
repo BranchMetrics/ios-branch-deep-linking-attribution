@@ -53,7 +53,7 @@
     XCTAssertTrue([url containsString:@"/v1/install"]);
     
     // Get and Assert device_fingerprint_id & identity_id
-    NSNumber *device_fingerprint_id = [dataJson objectForKey:@"device_fingerprint_id"];
+    NSNumber *device_fingerprint_id = [dataJson objectForKey:@"randomized_device_token"];
     NSNumber *identity_id = [dataJson objectForKey:@"identity_id"];
     XCTAssertNotNil(identity_id);
     XCTAssertNotNil(device_fingerprint_id);
@@ -79,8 +79,8 @@
     NSNumber *newID = [NSNumber numberWithInteger: [[json objectForKey:@"identity_id"] integerValue]] ;
     XCTAssertTrue([newID isEqualToNumber:identity_id]);
     
-    XCTAssertNotNil([json valueForKey:@"device_fingerprint_id"]);
-    NSNumber *newFPID = [NSNumber numberWithInteger: [[json objectForKey:@"device_fingerprint_id"] integerValue]] ;
+    XCTAssertNotNil([json valueForKey:@"randomized_device_token"]);
+    NSNumber *newFPID = [NSNumber numberWithInteger: [[json objectForKey:@"randomized_device_token"] integerValue]] ;
     XCTAssertTrue([newFPID isEqualToNumber:device_fingerprint_id]);
     XCTAssertTrue([status containsString:@"200"]);
 }
