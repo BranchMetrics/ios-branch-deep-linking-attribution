@@ -48,6 +48,8 @@ pod lib lint Branch.podspec --verbose --allow-warnings
 echo ">>> Building the frameworks..." 1>&2
 ./scripts/build_framework.sh
 ./scripts/build_static_framework.sh
+./scripts/build_framework_noidfa.sh
+./scripts/build_static_framework_noidfa.sh
 
 echo ""
 echo "SDK release candidate is ready for testing"

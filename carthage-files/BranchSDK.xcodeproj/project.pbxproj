@@ -18,6 +18,28 @@
 			name = "Branch-xcframework";
 			productName = "Branch-xcframework";
 		};
+		5FB6CC042649C7380020E478 /* Branch-xcframework-noidfa */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5FB6CC062649C7380020E478 /* Build configuration list for PBXAggregateTarget "Branch-xcframework-noidfa" */;
+			buildPhases = (
+				5FB6CC052649C7380020E478 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Branch-xcframework-noidfa";
+			productName = "Branch-xcframework";
+		};
+		5FB6CC092649C73B0020E478 /* Branch-static-xcframework-noidfa */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5FB6CC0B2649C73B0020E478 /* Build configuration list for PBXAggregateTarget "Branch-static-xcframework-noidfa" */;
+			buildPhases = (
+				5FB6CC0A2649C73B0020E478 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Branch-static-xcframework-noidfa";
+			productName = "Branch-static-xcframework";
+		};
 		5FD0FB0E25CE4B8A008200EE /* Branch-static-xcframework */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 5FD0FB0F25CE4B8A008200EE /* Build configuration list for PBXAggregateTarget "Branch-static-xcframework" */;
@@ -1234,9 +1256,11 @@
 			targets = (
 				E298D0511C73D1B800589D22 /* Branch */,
 				5FC4CF9E2486123F0001E701 /* Branch-tvOS */,
-				5F85112825B1452100D544A1 /* Branch-xcframework */,
 				5FD0FA3E25CE46BD008200EE /* Branch-static */,
+				5F85112825B1452100D544A1 /* Branch-xcframework */,
 				5FD0FB0E25CE4B8A008200EE /* Branch-static-xcframework */,
+				5FB6CC042649C7380020E478 /* Branch-xcframework-noidfa */,
+				5FB6CC092649C73B0020E478 /* Branch-static-xcframework-noidfa */,
 			);
 		};
 /* End PBXProject section */
@@ -1282,6 +1306,40 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# config\nIOS_PATH=\"./build/ios/ios.xcarchive\"\nIOS_SIM_PATH=\"./build/ios/ios_sim.xcarchive\"\nTVOS_PATH=\"./build/tvos/tvos.xcarchive\"\nTVOS_SIM_PATH=\"./build/tvos/tvos_sim.xcarchive\"\nXCFRAMEWORK_PATH=\"./build/Branch.xcframework\"\n\n# delete previous build\nrm -rf \"./build\" \n\n# build iOS framework\nxcodebuild archive \\\n    -scheme Branch \\\n    -archivePath \"${IOS_PATH}\" \\\n    -sdk iphoneos \\\n    SKIP_INSTALL=NO\n\n# build iOS simulator framework\nxcodebuild archive \\\n    -scheme Branch \\\n    -archivePath \"${IOS_SIM_PATH}\" \\\n    -sdk iphonesimulator \\\n    SKIP_INSTALL=NO\n\n# build tvOS framework\nxcodebuild archive \\\n    -scheme Branch-tvOS \\\n    -archivePath \"${TVOS_PATH}\" \\\n    -sdk appletvos \\\n    SKIP_INSTALL=NO\n\n# build tvOS simulator framework\nxcodebuild archive \\\n    -scheme Branch-tvOS \\\n    -archivePath \"${TVOS_SIM_PATH}\" \\\n    -sdk appletvsimulator \\\n    SKIP_INSTALL=NO\n\n# package frameworks\nxcodebuild -create-xcframework \\\n    -framework \"${IOS_PATH}/Products/Library/Frameworks/Branch.framework\" \\\n    -framework \"${IOS_SIM_PATH}/Products/Library/Frameworks/Branch.framework\" \\\n    -framework \"${TVOS_PATH}/Products/Library/Frameworks/Branch.framework\" \\\n    -framework \"${TVOS_SIM_PATH}/Products/Library/Frameworks/Branch.framework\" \\\n    -output \"${XCFRAMEWORK_PATH}\"\n    \n";
+		};
+		5FB6CC052649C7380020E478 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# config\nIOS_PATH=\"./build/ios/ios.xcarchive\"\nIOS_SIM_PATH=\"./build/ios/ios_sim.xcarchive\"\nTVOS_PATH=\"./build/tvos/tvos.xcarchive\"\nTVOS_SIM_PATH=\"./build/tvos/tvos_sim.xcarchive\"\nXCFRAMEWORK_PATH=\"./build/Branch.xcframework\"\n\n# delete previous build\nrm -rf \"./build\" \n\n# build iOS framework\nxcodebuild archive \\\n    -scheme Branch \\\n    -archivePath \"${IOS_PATH}\" \\\n    -sdk iphoneos \\\n    SKIP_INSTALL=NO \\\n    GCC_PREPROCESSOR_DEFINITIONS='${inherited} BRANCH_EXCLUDE_IDFA_CODE=1'\n\n# build iOS simulator framework\nxcodebuild archive \\\n    -scheme Branch \\\n    -archivePath \"${IOS_SIM_PATH}\" \\\n    -sdk iphonesimulator \\\n    SKIP_INSTALL=NO \\\n    GCC_PREPROCESSOR_DEFINITIONS='${inherited} BRANCH_EXCLUDE_IDFA_CODE=1'\n    \n# build tvOS framework\nxcodebuild archive \\\n    -scheme Branch-tvOS \\\n    -archivePath \"${TVOS_PATH}\" \\\n    -sdk appletvos \\\n    SKIP_INSTALL=NO \\\n    GCC_PREPROCESSOR_DEFINITIONS='${inherited} BRANCH_EXCLUDE_IDFA_CODE=1'\n    \n# build tvOS simulator framework\nxcodebuild archive \\\n    -scheme Branch-tvOS \\\n    -archivePath \"${TVOS_SIM_PATH}\" \\\n    -sdk appletvsimulator \\\n    SKIP_INSTALL=NO \\\n    GCC_PREPROCESSOR_DEFINITIONS='${inherited} BRANCH_EXCLUDE_IDFA_CODE=1'\n    \n# package frameworks\nxcodebuild -create-xcframework \\\n    -framework \"${IOS_PATH}/Products/Library/Frameworks/Branch.framework\" \\\n    -framework \"${IOS_SIM_PATH}/Products/Library/Frameworks/Branch.framework\" \\\n    -framework \"${TVOS_PATH}/Products/Library/Frameworks/Branch.framework\" \\\n    -framework \"${TVOS_SIM_PATH}/Products/Library/Frameworks/Branch.framework\" \\\n    -output \"${XCFRAMEWORK_PATH}\"\n    \n";
+		};
+		5FB6CC0A2649C73B0020E478 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# config\nIOS_PATH=\"./build/ios/ios.xcarchive\"\nIOS_SIM_PATH=\"./build/ios/ios_sim.xcarchive\"\nXCFRAMEWORK_PATH=\"./build/Branch.xcframework\"\nSTATIC_LIB_SIM_PATH=\"./build/Branch.sim\"\nSTATIC_LIB_PATH=\"./build/Branch.a\"\n\n# delete previous build\nrm -rf \"./build\" \n\n# build iOS framework\nxcodebuild archive \\\n    -scheme Branch-static \\\n    -archivePath \"${IOS_PATH}\" \\\n    -sdk iphoneos \\\n    SKIP_INSTALL=NO \\\n    GCC_PREPROCESSOR_DEFINITIONS='${inherited} BRANCH_EXCLUDE_IDFA_CODE=1'\n    \n# build iOS simulator framework\nxcodebuild archive \\\n    -scheme Branch-static \\\n    -archivePath \"${IOS_SIM_PATH}\" \\\n    -sdk iphonesimulator \\\n    SKIP_INSTALL=NO \\\n    GCC_PREPROCESSOR_DEFINITIONS='${inherited} BRANCH_EXCLUDE_IDFA_CODE=1'\n    \n# package frameworks\nxcodebuild -create-xcframework \\\n    -framework \"${IOS_PATH}/Products/Library/Frameworks/Branch.framework\" \\\n    -framework \"${IOS_SIM_PATH}/Products/Library/Frameworks/Branch.framework\" \\\n    -output \"${XCFRAMEWORK_PATH}\"\n";
 		};
 		5FD0FB1725CE4B93008200EE /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1556,6 +1614,42 @@
 			name = Debug;
 		};
 		5F85112B25B1452100D544A1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = R63EM248DP;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5FB6CC072649C7380020E478 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = R63EM248DP;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5FB6CC082649C7380020E478 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = R63EM248DP;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5FB6CC0C2649C73B0020E478 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = R63EM248DP;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5FB6CC0D2649C73B0020E478 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -1907,6 +2001,24 @@
 			buildConfigurations = (
 				5F85112A25B1452100D544A1 /* Debug */,
 				5F85112B25B1452100D544A1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5FB6CC062649C7380020E478 /* Build configuration list for PBXAggregateTarget "Branch-xcframework-noidfa" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5FB6CC072649C7380020E478 /* Debug */,
+				5FB6CC082649C7380020E478 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5FB6CC0B2649C73B0020E478 /* Build configuration list for PBXAggregateTarget "Branch-static-xcframework-noidfa" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5FB6CC0C2649C73B0020E478 /* Debug */,
+				5FB6CC0D2649C73B0020E478 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -2,9 +2,9 @@
 set -euo pipefail
 
 # checksum file
-scheme='Branch-static-xcframework'
-checksum_file=checksum_static.txt
-zip_file=Branch_static.zip
+scheme='Branch-static-xcframework-noidfa'
+checksum_file=checksum_static_noidfa.txt
+zip_file=Branch_static_noidfa.zip
 
 scriptname=$(basename "${BASH_SOURCE[0]}")
 scriptpath="${BASH_SOURCE[0]}"
