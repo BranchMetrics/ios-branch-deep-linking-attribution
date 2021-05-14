@@ -215,38 +215,6 @@
     [nsdataMock stopMocking];
 }
 
-- (void)testRetrieveFailWhenUnarchivingFile {
-    //  Test handling an exception when unarchiving.
-
-    XCTestExpectation *expectation = [self expectationWithDescription:@"UnarchiveThrowExpectation"];
-    id unarchiverMock;
-    if (@available(iOS 12.0, *)) {
-        unarchiverMock = [OCMockObject mockForClass:[NSKeyedUnarchiver class]];
-        [[[[unarchiverMock expect]
-           andDo:^(NSInvocation *invocation) {
-            [expectation fulfill];
-        }]
-          andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]]
-         unarchivedObjectOfClass:[NSArray class] fromData:[OCMArg any] error:NULL];
-    } else {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
-        unarchiverMock = [OCMockObject mockForClass:[NSKeyedUnarchiver class]];
-        [[[[unarchiverMock expect]
-           andDo:^(NSInvocation *invocation) {
-            [expectation fulfill];
-        }]
-          andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]]
-         unarchiveObjectWithData:[OCMArg any]];
-#endif
-    }
-    BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
-    [queue cancelTimer];
-    [queue retrieve];
-    [self awaitExpectations];
-    [unarchiverMock verify];
-    [unarchiverMock stopMocking];
-}
-
 - (void)testRetrieveFailWhenUnarchivingRecord {
     //  Test handling an exception when unarchiving.
 
@@ -280,7 +248,6 @@
 
 - (void)testPersistedCloseRequestsArentLoaded {
     //  Mock up the 'saved' data:
-
     BranchCloseRequest *closeRequest = [[BranchCloseRequest alloc] init];
     BranchOpenRequest *openRequest = [[BranchOpenRequest alloc] init];
     NSArray *requests;
@@ -289,15 +256,16 @@
         requests = @[
             [NSKeyedArchiver archivedDataWithRootObject:closeRequest requiringSecureCoding:YES error:NULL],
             [NSKeyedArchiver archivedDataWithRootObject:openRequest requiringSecureCoding:YES error:NULL],
-            [NSKeyedArchiver archivedDataWithRootObject:closeRequest requiringSecureCoding:YES error:NULL]];
+            [NSKeyedArchiver archivedDataWithRootObject:closeRequest requiringSecureCoding:YES error:NULL]
+        ];
+        NSData *encodedRequests = [NSKeyedArchiver archivedDataWithRootObject:requests requiringSecureCoding:YES error:NULL];
+        
         nsdataMock = [OCMockObject mockForClass:[NSData class]];
-        [[[nsdataMock expect]
-          andReturn:[NSKeyedArchiver archivedDataWithRootObject:requests requiringSecureCoding:YES error:NULL]]
+        [[[nsdataMock expect] andReturn:encodedRequests]
          dataWithContentsOfURL:[OCMArg any]
          options:0
          error:[OCMArg anyObjectRef]];
-
-
+        
     } else {
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
         requests = @[
