@@ -33,7 +33,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 
 
 @interface BNCServerRequestQueue()
-@property (strong) NSMutableArray *queue;
+@property (strong) NSMutableArray<BNCServerRequest *> *queue;
 @property (strong) dispatch_queue_t asyncQueue;
 @property (strong) dispatch_source_t persistTimer;
 @end
@@ -45,7 +45,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     self = [super init];
     if (!self) return self;
 
-    self.queue = [NSMutableArray array];
+    self.queue = [NSMutableArray<BNCServerRequest *> new];
     self.asyncQueue = dispatch_queue_create("io.branch.persist_queue", DISPATCH_QUEUE_SERIAL);
     return self;
 }
@@ -169,12 +169,12 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 - (BOOL)removeInstallOrOpen {
     @synchronized (self) {
         for (NSUInteger i = 0; i < self.queue.count; i++) {
-            BranchOpenRequest *req = [self.queue objectAtIndex:i];
+            BNCServerRequest *request = [self.queue objectAtIndex:i];
             // Install extends open, so only need to check open.
-            if ([req isKindOfClass:[BranchOpenRequest class]]) {
+            if ([request isKindOfClass:[BranchOpenRequest class]]) {
                 BNCLogDebugSDK(@"Removing open request.");
-                req.callback = nil;
-                [self remove:req];
+                ((BranchOpenRequest *)request).callback = nil;
+                [self remove:request];
                 return YES;
             }
         }
@@ -291,8 +291,8 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 }
 
 // assumes queue no longer mutable
-- (NSData *)archiveQueue:(NSArray *)queue {
-    NSMutableArray *archivedRequests = [[NSMutableArray alloc] init];
+- (NSData *)archiveQueue:(NSArray<BNCServerRequest *> *)queue {
+    NSMutableArray<BNCServerRequest *> *archivedRequests = [NSMutableArray<BNCServerRequest *> new];
     NSSet<Class> *requestClasses = [BNCServerRequestQueue replayableRequestClasses];
     for (BNCServerRequest *request in queue) {
         
@@ -306,8 +306,8 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 
 // For testing backwards compatibility
 // The old version did a double archive and didn't filter replayable requests
-- (NSData *)oldArchiveQueue:(NSArray *)queue {
-    NSMutableArray *archivedRequests = [[NSMutableArray alloc] init];
+- (NSData *)oldArchiveQueue:(NSArray<BNCServerRequest *> *)queue {
+    NSMutableArray<NSData *> *archivedRequests = [NSMutableArray<NSData *> new];
     for (BNCServerRequest *request in queue) {
         
         // only close requests were ignored
@@ -345,13 +345,13 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     }
 }
 
-- (NSMutableArray *)unarchiveQueueFromData:(NSData *)data {
-    NSMutableArray *queue = [NSMutableArray new];
+- (NSMutableArray<BNCServerRequest *> *)unarchiveQueueFromData:(NSData *)data {
+    NSMutableArray<BNCServerRequest *> *queue = [NSMutableArray new];
     
     NSArray *requestArray = nil;
     id tmp = [self unarchiveObjectFromData:data];
     if ([tmp isKindOfClass:[NSArray class]]) {
-        requestArray = [((NSArray *)tmp) mutableCopy];
+        requestArray = (NSArray *)tmp;
     }
     
     // validate request array
@@ -364,7 +364,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             tmpRequest = [self unarchiveObjectFromData:request];
         }
           
-        // make sure we didn't unarchive something bad
+        // make sure we didn't unarchive something unexpected
         if ([[BNCServerRequestQueue replayableRequestClasses] containsObject:[tmpRequest class]]) {
             [queue addObject:tmpRequest];
         }

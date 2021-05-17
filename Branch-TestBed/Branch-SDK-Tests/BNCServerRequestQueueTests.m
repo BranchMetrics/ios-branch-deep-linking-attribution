@@ -14,14 +14,14 @@
 #import "BranchEvent.h"
 
 @interface BNCServerRequestQueue ()
-- (NSData *)archiveQueue:(NSArray *)queue;
-- (NSMutableArray *)unarchiveQueueFromData:(NSData *)data;
+- (NSData *)archiveQueue:(NSArray<BNCServerRequest *> *)queue;
+- (NSMutableArray<BNCServerRequest *> *)unarchiveQueueFromData:(NSData *)data;
 
 - (NSData *)archiveObject:(NSObject *)object;
 - (id)unarchiveObjectFromData:(NSData *)data;
 
 // returns data in the legacy format
-- (NSData *)oldArchiveQueue:(NSArray *)queue;
+- (NSData *)oldArchiveQueue:(NSArray<BNCServerRequest *> *)queue;
 
 @end
 
@@ -74,7 +74,7 @@
 }
 
 - (void)testArchiveArrayOfRequests {
-    NSMutableArray *tmp = [NSMutableArray new];
+    NSMutableArray<BNCServerRequest *> *tmp = [NSMutableArray<BNCServerRequest *> new];
     [tmp addObject:[BranchOpenRequest new]];
     [tmp addObject:[BranchEventRequest new]];
     
@@ -87,7 +87,7 @@
 }
 
 - (void)testOldArchiveArrayOfRequests {
-    NSMutableArray *tmp = [NSMutableArray new];
+    NSMutableArray<BNCServerRequest *> *tmp = [NSMutableArray<BNCServerRequest *> new];
     [tmp addObject:[BranchOpenRequest new]];
     [tmp addObject:[BranchEventRequest new]];
     
@@ -100,7 +100,7 @@
 }
 
 - (void)testArchiveArrayOfInvalidObjects {
-    NSMutableArray *tmp = [NSMutableArray new];
+    NSMutableArray<BNCServerRequest *> *tmp = [NSMutableArray<BNCServerRequest *> new];
     [tmp addObject:[BranchOpenRequest new]];
     [tmp addObject:@"Hello World"];
     [tmp addObject:[BranchEventRequest new]];
@@ -116,7 +116,7 @@
 }
 
 - (void)testOldArchiveArrayOfInvalidObjects {
-    NSMutableArray *tmp = [NSMutableArray new];
+    NSMutableArray<BNCServerRequest *> *tmp = [NSMutableArray<BNCServerRequest *> new];
     [tmp addObject:[BranchOpenRequest new]];
     [tmp addObject:@"Hello World"];
     [tmp addObject:[BranchEventRequest new]];
@@ -130,6 +130,5 @@
     XCTAssertNotNil(unarchived);
     XCTAssert(unarchived.count == 2);
 }
-
 
 @end
