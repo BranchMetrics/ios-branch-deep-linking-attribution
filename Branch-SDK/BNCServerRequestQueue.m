@@ -380,7 +380,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 
     } else {
         #if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
-          object = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        object = [NSKeyedUnarchiver unarchiveObjectWithData:data];
         #endif
     }
     return object;
