@@ -9,35 +9,16 @@
 
 #import "BNCServerRequestQueue.h"
 #import "BNCPreferenceHelper.h"
-
-// ignored requests
 #import "BranchCloseRequest.h"
 
-// all other requests
+// Analytics requests
 #import "BranchInstallRequest.h"
 #import "BranchOpenRequest.h"
-
-#import "BranchCPIDRequest.h"
-#import "BranchLATDRequest.h"
-
-#import "BranchSetIdentityRequest.h"
-#import "BranchLogoutRequest.h"
-
-#import "BranchShortUrlRequest.h"
-#import "BranchShortUrlSyncRequest.h"
-
-#import "BranchLoadRewardsRequest.h"
-#import "BranchRedeemRewardsRequest.h"
-#import "BranchCreditHistoryRequest.h"
-
-#import "BranchUserCompletedActionRequest.h"
-
-#import "BranchSpotlightUrlRequest.h"
-#import "BranchRegisterViewRequest.h"
-
-// includes Event Requests
 #import "BranchEvent.h"
 #import "BNCCommerceEvent.h"
+#import "BranchUserCompletedActionRequest.h"
+#import "BranchSetIdentityRequest.h"
+#import "BranchLogoutRequest.h"
 
 #import "BNCLog.h"
 
@@ -289,71 +270,60 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 
 - (void)persistImmediately {
     @synchronized (self) {
-        if (!self.queue) {
+        if (!self.queue || self.queue.count == 0) {
             return;
         }
-        
-        NSArray *requestsToPersist = [self.queue copy];
-        NSMutableArray *encodedRequests = [[NSMutableArray alloc] init];
-        NSArray<Class> *requestClasses = [self replayableRequestClasses];
-        
-        for (BNCServerRequest *req in requestsToPersist) {
-
-            if (![requestClasses containsObject:req.class]) {
-                continue;
-            }
-            
-            // encode each request object
-            NSData *encodedReq = [self archiveObject:req];
-            if (encodedReq) {
-                [encodedRequests addObject:encodedReq];
-            }
-        }
+        NSArray *queueCopy = [self.queue copy];
         
         // encode the list of encoded request objects
-        NSData *data = [self archiveObject:encodedRequests];
-        if (!data) {
-            BNCLogError(@"Cannot create archive data.");
-            return;
-        }
-        NSError *error = nil;
-        [data writeToURL:self.class.URLForQueueFile options:NSDataWritingAtomic error:&error];
-        if (error) {
-            BNCLogError([NSString stringWithFormat:@"Failed to persist queue to disk: %@.", error]);
-        }
-    }
-}
-
-- (BOOL)isDirty {
-    @synchronized (self) {
-        return (self.persistTimer != nil);
-    }
-}
-
-- (void)retrieve {
-    @synchronized (self) {
-        NSMutableArray *queue = [[NSMutableArray alloc] init];
-        NSArray *encodedRequests = nil;
-        
-        NSError *error = nil;
-        NSData *data = [NSData dataWithContentsOfURL:self.class.URLForQueueFile options:0 error:&error];
-        if (!error && data) {
-            encodedRequests = [self decodeArrayFromData:data];
-        }
-
-        for (NSData *encodedRequest in encodedRequests) {
-            BNCServerRequest *request = [self decodeRequestFromData:encodedRequest];
-            if (request) {
-                [queue addObject:request];
+        NSData *data = [self archiveQueue:queueCopy];
+        if (data) {
+            NSError *error = nil;
+            [data writeToURL:self.class.URLForQueueFile options:NSDataWritingAtomic error:&error];
+            
+            if (error) {
+                BNCLogError([NSString stringWithFormat:@"Failed to persist queue to disk: %@.", error]);
             }
+        } else {
+            BNCLogError([NSString stringWithFormat:@"Failed to encode queue."]);
         }
-        self.queue = queue;
     }
+}
+
+// assumes queue no longer mutable
+- (NSData *)archiveQueue:(NSArray *)queue {
+    NSMutableArray *archivedRequests = [[NSMutableArray alloc] init];
+    NSSet<Class> *requestClasses = [BNCServerRequestQueue replayableRequestClasses];
+    for (BNCServerRequest *request in queue) {
+        
+        // only persist analytics requests, skip the rest
+        if ([requestClasses containsObject:request.class]) {
+            [archivedRequests addObject:request];
+        }
+    }
+    return [self archiveObject:archivedRequests];
+}
+
+// For testing backwards compatibility
+// The old version did a double archive and didn't filter replayable requests
+- (NSData *)oldArchiveQueue:(NSArray *)queue {
+    NSMutableArray *archivedRequests = [[NSMutableArray alloc] init];
+    for (BNCServerRequest *request in queue) {
+        
+        // only close requests were ignored
+        if (![BranchCloseRequest.class isEqual:request.class]) {
+            
+            // archive every request
+            NSData *encodedRequest = [self archiveObject:request];
+            [archivedRequests addObject:encodedRequest];
+        }
+    }
+    return [self archiveObject:archivedRequests];
 }
 
 - (NSData *)archiveObject:(NSObject *)object {
     NSData *data = nil;
-    if (@available( iOS 12.0, *)) {
+    if (@available(iOS 12.0, *)) {
         data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:YES error:NULL];
     } else {
         #if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
@@ -363,92 +333,108 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     return data;
 }
 
-- (NSArray<Class> *)replayableRequestClasses {
-    /*
-     Elsewhere only these are considered replayable.
-     I see no reason to save anything other than these and install.
-     
-     BranchEventRequest.class,
-     BranchUserCompletedActionRequest.class,
-     BranchSetIdentityRequest.class,
-     BranchCommerceEventRequest.class,
-     
-     TODO: verify behavior with team.
-     
-     */
-    NSArray<Class> *requestClasses = @[
-        [BranchEventRequest class],
-        [BranchCommerceEventRequest class],
-        [BranchUserCompletedActionRequest class],
-        [BranchSetIdentityRequest class],
-        [BranchLogoutRequest class],
-        [BranchInstallRequest class],
-
-//        [BranchOpenRequest class],
-//        [BranchShortUrlRequest class],
-//        [BranchShortUrlSyncRequest class],
-//        [BranchLoadRewardsRequest class],
-//        [BranchRedeemRewardsRequest class],
-//        [BranchCreditHistoryRequest class],
-//        [BranchSpotlightUrlRequest class],
-//        [BranchRegisterViewRequest class],
-    ];
-    
-    return requestClasses;
-}
-
-- (BNCServerRequest *)decodeRequestFromData:(NSData *)data {
-    NSArray<Class> *requestClasses = [self replayableRequestClasses];
-    
-    BNCServerRequest *request = nil;
-    for (Class class in requestClasses) {
-        request = [self decodeObjectFromData:data withClass:class];
-        if (request && [request isKindOfClass:class]) {
-            return (BNCServerRequest *)request;
+// Loads saved requests from disk. Only called on app start.
+- (void)retrieve {
+    @synchronized (self) {
+        NSError *error = nil;
+        NSData *data = [NSData dataWithContentsOfURL:self.class.URLForQueueFile options:0 error:&error];
+        if (!error && data) {
+            NSMutableArray *decodedQueue = [self unarchiveQueueFromData:data];
+            self.queue = decodedQueue;
         }
     }
+}
+
+- (NSMutableArray *)unarchiveQueueFromData:(NSData *)data {
+    NSMutableArray *queue = [NSMutableArray new];
     
-    if (request) {
-        NSLog(@"Unexpected Object found in queue: %@", request);
-    }
-    return nil;
-}
-
-- (NSArray *)decodeArrayFromData:(NSData *)data {
-    id tmp = [self decodeObjectFromData:data withClass:[NSArray class]];
+    NSArray *requestArray = nil;
+    id tmp = [self unarchiveObjectFromData:data];
     if ([tmp isKindOfClass:[NSArray class]]) {
-        return (NSArray *)tmp;
+        requestArray = [((NSArray *)tmp) mutableCopy];
     }
-    return nil;
+    
+    // validate request array
+    // There should never be an object that is not a replayable class or NSData
+    for (id request in requestArray) {
+        id tmpRequest = request;
+        
+        // handle legacy NSData
+        if ([request isKindOfClass:[NSData class]]) {
+            tmpRequest = [self unarchiveObjectFromData:request];
+        }
+          
+        // make sure we didn't unarchive something bad
+        if ([[BNCServerRequestQueue replayableRequestClasses] containsObject:[tmpRequest class]]) {
+            [queue addObject:tmpRequest];
+        }
+    }
+
+    return queue;
 }
 
-- (id)decodeObjectFromData:(NSData *)data withClass:(Class)class {
+- (id)unarchiveObjectFromData:(NSData *)data {
     id object = nil;
     if (@available(iOS 12.0, *)) {
-        object = [NSKeyedUnarchiver unarchivedObjectOfClass:class fromData:data error:NULL];
+        object = [NSKeyedUnarchiver unarchivedObjectOfClasses:[BNCServerRequestQueue encodableClasses] fromData:data error:nil];
+
     } else {
         #if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
-        object = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
+          object = [NSKeyedUnarchiver unarchiveObjectWithData:data];
         #endif
     }
     return object;
 }
 
-+ (NSString *)exceptionString:(NSException *)exception {
-    return [NSString stringWithFormat:@"Name: %@\nReason: %@\nStack:\n\t%@\n\n",
-        exception.name, exception.reason,
-            [exception.callStackSymbols componentsJoinedByString:@"\n\t"]];
+// only replay analytics requests, the others are time sensitive
++ (NSSet<Class> *)replayableRequestClasses {
+    static NSSet<Class> *requestClasses = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^ {
+        NSArray *tmp = @[
+            [BranchOpenRequest class],
+            [BranchInstallRequest class],
+            [BranchEventRequest class],
+            [BranchCommerceEventRequest class],
+            [BranchUserCompletedActionRequest class],
+            [BranchSetIdentityRequest class],
+            [BranchLogoutRequest class],
+        ];
+        requestClasses = [NSSet setWithArray:tmp];
+    });
+        
+    return requestClasses;
+}
+
+// encodable classes also includes NSArray and NSData
++ (NSSet<Class> *)encodableClasses {
+    static NSSet<Class> *classes = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^ {
+        NSMutableArray *tmp = [NSMutableArray new];
+        [tmp addObject:[NSArray class]]; // root object
+        [tmp addObject:[NSData class]]; // legacy format compatibility
+        
+        // add all replayable request objects
+        [tmp addObjectsFromArray: [[BNCServerRequestQueue replayableRequestClasses] allObjects]];
+        
+        classes = [NSSet setWithArray:tmp];
+    });
+        
+    return classes;
 }
 
 + (NSURL * _Nonnull) URLForQueueFile {
-    NSURL *URL = BNCURLForBranchDirectory();
-    URL = [URL URLByAppendingPathComponent:BRANCH_QUEUE_FILE isDirectory:NO];
+    static NSURL *URL = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^ {
+        URL = BNCURLForBranchDirectory();
+        URL = [URL URLByAppendingPathComponent:BRANCH_QUEUE_FILE isDirectory:NO];
+    });
     return URL;
 }
 
-#pragma mark - Shared Method
-
-+ (id)getInstance {
++ (instancetype)getInstance {
     static BNCServerRequestQueue *sharedQueue = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^ {

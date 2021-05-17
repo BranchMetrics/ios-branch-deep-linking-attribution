@@ -1,291 +1,135 @@
 //
 //  BNCServerRequestQueueTests.m
-//  Branch-TestBed
+//  Branch-SDK-Tests
 //
-//  Created by Graham Mueller on 6/17/15.
-//  Copyright (c) 2015 Branch Metrics. All rights reserved.
+//  Created by Ernest Cho on 5/14/21.
+//  Copyright © 2021 Branch, Inc. All rights reserved.
 //
 
-#import "BNCTestCase.h"
+#import <XCTest/XCTest.h>
 #import "BNCServerRequestQueue.h"
+#import "BNCServerRequest.h"
 #import "BranchOpenRequest.h"
 #import "BranchCloseRequest.h"
-#import <OCMock/OCMock.h>
-#import "Branch.h"
+#import "BranchEvent.h"
 
-@interface BNCServerRequestQueue (BNCTests)
-- (void)retrieve;
-- (void) cancelTimer;
+@interface BNCServerRequestQueue ()
+- (NSData *)archiveQueue:(NSArray *)queue;
+- (NSMutableArray *)unarchiveQueueFromData:(NSData *)data;
+
+- (NSData *)archiveObject:(NSObject *)object;
+- (id)unarchiveObjectFromData:(NSData *)data;
+
+// returns data in the legacy format
+- (NSData *)oldArchiveQueue:(NSArray *)queue;
+
 @end
 
-@interface BNCServerRequestQueueTests : BNCTestCase
+@interface BNCServerRequestQueueTests : XCTestCase
+@property (nonatomic, strong, readwrite) BNCServerRequestQueue *queue;
 @end
 
 @implementation BNCServerRequestQueueTests
 
-#pragma mark - MoveOpenOrInstallToFront tests
-
-+ (void) setUp {
-    [self clearAllBranchSettings]; // Clear any saved data before our tests start.
-//    Branch*branch = [Branch getInstance:@"key_live_foo"];
-//    [self clearAllBranchSettings];
+- (void)setUp {
+    self.queue = [BNCServerRequestQueue new];
 }
 
-- (void)testMoveOpenOrInstallToFrontWhenEmpty {
-    BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
-    XCTAssertNoThrow([requestQueue moveInstallOrOpenToFront:0]);
+- (void)tearDown {
+    self.queue = nil;
 }
 
-- (void)testMoveOpenOrInstallToFrontWhenNotPresent {
-    BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
-    [requestQueue insert:[[BNCServerRequest alloc] init] at:0];
-    [requestQueue insert:[[BNCServerRequest alloc] init] at:0];
-    XCTAssertNoThrow([requestQueue moveInstallOrOpenToFront:0]);
-}
-
-- (void)testMoveOpenOrInstallToFrontWhenAlreadyInFrontAndNoRequestsInProgress {
-    BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
-    [requestQueue insert:[[BranchOpenRequest alloc] init] at:0];
+- (void)testArchiveNil {
+    NSString *object = nil;
     
-    id requestQueueMock = OCMPartialMock(requestQueue);
-    [[requestQueueMock reject] removeAt:0];
+    NSData *archived = [self.queue archiveObject:object];
+    XCTAssertNotNil(archived);
     
-    [requestQueue moveInstallOrOpenToFront:0];
+    NSString *unarchived = [self.queue unarchiveObjectFromData:archived];
+    XCTAssertNil(unarchived);
 }
 
-- (void)testMoveOpenOrInstallToFrontWhenAlreadyInFrontWithRequestsInProgress {
-    BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
-    [requestQueue insert:[[BranchOpenRequest alloc] init] at:0];
-
-    id requestQueueMock = OCMPartialMock(requestQueue);
-    [[requestQueueMock reject] removeAt:0];
+- (void)testArchiveString {
+    NSString *object = @"Hello World";
     
-    [requestQueue moveInstallOrOpenToFront:1];
+    NSData *archived = [self.queue archiveObject:object];
+    XCTAssertNotNil(archived);
+    
+    NSString *unarchived = [self.queue unarchiveObjectFromData:archived];
+    XCTAssertNotNil(unarchived);
+    XCTAssert([object isEqual:unarchived]);
 }
 
-- (void)testMoveOpenOrInstallToFrontWhenSecondInLineWithRequestsInProgress {
-    BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
-    [requestQueue insert:[[BNCServerRequest alloc] init] at:0];
-    [requestQueue insert:[[BranchOpenRequest alloc] init] at:1];
+- (void)testArchiveRequest {
+    BranchOpenRequest *object = [BranchOpenRequest new];
     
-    id requestQueueMock = OCMPartialMock(requestQueue);
-    [[requestQueueMock reject] removeAt:1];
+    NSData *archived = [self.queue archiveObject:object];
+    XCTAssertNotNil(archived);
     
-    [requestQueue moveInstallOrOpenToFront:1];
+    BranchOpenRequest *unarchived = [self.queue unarchiveObjectFromData:archived];
+    XCTAssertNotNil(unarchived);
+    XCTAssert([unarchived isKindOfClass:[BranchOpenRequest class]]);
+
+    // The request object is not very test friendly, so comparing the two is not helpful at the moment
 }
 
-- (void)testMoveOpenOrInstallToFrontWhenSecondInLineWithNoRequestsInProgress {
-    BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
-    BranchOpenRequest *openRequest = [[BranchOpenRequest alloc] init];
-    [requestQueue insert:[[BNCServerRequest alloc] init] at:0];
-    [requestQueue insert:openRequest at:1];
+- (void)testArchiveArrayOfRequests {
+    NSMutableArray *tmp = [NSMutableArray new];
+    [tmp addObject:[BranchOpenRequest new]];
+    [tmp addObject:[BranchEventRequest new]];
     
-    id requestQueueMock = OCMPartialMock(requestQueue);
-    [[[requestQueueMock expect] andForwardToRealObject] removeAt:1];
-    
-    [requestQueue moveInstallOrOpenToFront:0];
-    XCTAssertEqual([requestQueue peek], openRequest);
-    
-    [requestQueueMock verify];
+    NSData *data = [self.queue archiveQueue:tmp];
+    XCTAssertNotNil(data);
+
+    NSMutableArray *unarchived = [self.queue unarchiveQueueFromData:data];
+    XCTAssertNotNil(unarchived);
+    XCTAssert(unarchived.count == 2);
 }
 
-- (void)testMoveOpenOrInstallToFrontWhenThirdInLineWithRequestsInProgress {
-    BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
-    BranchOpenRequest *openRequest = [[BranchOpenRequest alloc] init];
-    [requestQueue insert:[[BNCServerRequest alloc] init] at:0];
-    [requestQueue insert:[[BNCServerRequest alloc] init] at:1];
-    [requestQueue insert:openRequest at:2];
+- (void)testOldArchiveArrayOfRequests {
+    NSMutableArray *tmp = [NSMutableArray new];
+    [tmp addObject:[BranchOpenRequest new]];
+    [tmp addObject:[BranchEventRequest new]];
     
-    id requestQueueMock = OCMPartialMock(requestQueue);
-    [[[requestQueueMock expect] andForwardToRealObject] removeAt:2];
+    NSData *data = [self.queue oldArchiveQueue:tmp];
+    XCTAssertNotNil(data);
+
+    NSMutableArray *unarchived = [self.queue unarchiveQueueFromData:data];
+    XCTAssertNotNil(unarchived);
+    XCTAssert(unarchived.count == 2);
+}
+
+- (void)testArchiveArrayOfInvalidObjects {
+    NSMutableArray *tmp = [NSMutableArray new];
+    [tmp addObject:[BranchOpenRequest new]];
+    [tmp addObject:@"Hello World"];
+    [tmp addObject:[BranchEventRequest new]];
+    [tmp addObject:[BranchCloseRequest new]];
     
-    [requestQueue moveInstallOrOpenToFront:1];
-    XCTAssertEqual([requestQueue peekAt:1], openRequest);
+    NSData *data = [self.queue archiveQueue:tmp];
+    XCTAssertNotNil(data);
+
+    NSMutableArray *unarchived = [self.queue unarchiveQueueFromData:data];
     
-    [requestQueueMock verify];
+    XCTAssertNotNil(unarchived);
+    XCTAssert(unarchived.count == 2);
 }
 
-- (void)testMoveOpenOrInstallToFrontWhenThirdInLineWithNoRequestsInProgress {
-    BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
-    BranchOpenRequest *openRequest = [[BranchOpenRequest alloc] init];
-    [requestQueue insert:[[BNCServerRequest alloc] init] at:0];
-    [requestQueue insert:[[BNCServerRequest alloc] init] at:1];
-    [requestQueue insert:openRequest at:2];
+- (void)testOldArchiveArrayOfInvalidObjects {
+    NSMutableArray *tmp = [NSMutableArray new];
+    [tmp addObject:[BranchOpenRequest new]];
+    [tmp addObject:@"Hello World"];
+    [tmp addObject:[BranchEventRequest new]];
+    [tmp addObject:[BranchCloseRequest new]];
     
-    id requestQueueMock = OCMPartialMock(requestQueue);
-    [[[requestQueueMock expect] andForwardToRealObject] removeAt:2];
+    NSData *data = [self.queue oldArchiveQueue:tmp];
+    XCTAssertNotNil(data);
+
+    NSMutableArray *unarchived = [self.queue unarchiveQueueFromData:data];
     
-    [requestQueue moveInstallOrOpenToFront:0];
-    XCTAssertEqual([requestQueue peek], openRequest);
-    
-    [requestQueueMock verify];
+    XCTAssertNotNil(unarchived);
+    XCTAssert(unarchived.count == 2);
 }
 
-#pragma mark - Persist Tests
-
-- (void)testPersistEventually {
-    BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
-    [queue persistEventually];
-    XCTAssert(queue.isDirty);
-    sleep(4);
-    XCTAssert(!queue.isDirty);
-}
-
-// TODO: Mocking NSKeyedArchiver interferes with too many other classes. Maybe try something else?
-/*
-- (void)testPersistWhenArchiveFails {
-    BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
-    [queue cancelTimer];
-
-    XCTestExpectation *expectation = [self expectationWithDescription:@"testPersistWhenArchiveFails"];
-    id archiverMock = OCMClassMock([NSKeyedArchiver class]);
-    [[[[[archiverMock expect]
-        andDo:^(NSInvocation *invocation) {
-            [expectation fulfill];
-        }]
-        andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:@{@"Test": @"TestReason"}]]
-        andReturn:[NSData data]]
-            archivedDataWithRootObject:[OCMArg any]];
-
-    [queue enqueue:[[BNCServerRequest alloc] init]];
-    [queue cancelTimer];
-
-    [queue persistImmediately];
-    [self awaitExpectations];
-    [archiverMock verify];
-    [archiverMock stopMocking];
-    [queue cancelTimer];
-}
-*/
-
-// TODO: Mocking NSKeyedArchiver interferes with too many other classes. Maybe try something else?
-/*
-- (void)testCloseRequestsArentPersisted {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"testCloseRequestsArentPersisted"];
-    BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
-    [requestQueue cancelTimer];
-
-    id archiverMock = OCMClassMock([NSKeyedArchiver class]);
-    [[archiverMock reject] archiveRootObject:[OCMArg any] toFile:[OCMArg any]];
-    [[[archiverMock expect]
-        andReturn:[NSData data]]
-            archivedDataWithRootObject:[OCMArg checkWithBlock:^BOOL(NSArray *reqs) {
-                if ([reqs isKindOfClass:[NSArray class]]) {
-                    XCTAssert(reqs.count == 0);
-                    [self safelyFulfillExpectation:expectation];
-                    return YES;
-                }
-                return NO;
-            }]];
-
-    BranchCloseRequest *closeRequest = [[BranchCloseRequest alloc] init];
-    [requestQueue enqueue:closeRequest];
-    XCTAssertEqual(requestQueue.queueDepth, 1);
-    [requestQueue cancelTimer];
-    [requestQueue persistImmediately];
-
-    // Wait for operation to occur
-    [self awaitExpectations];
-    [archiverMock verify];
-    [archiverMock stopMocking];
-}
-*/
-
-#pragma mark - Retrieve Tests
-
-- (void)testRetrieveFailWhenReadingData {
-    //  Test handling an exception when reading data from storage.
-
-    XCTestExpectation *expectation = [self expectationWithDescription:@"RetrieveExpectation"];
-    id nsdataMock = [OCMockObject mockForClass:[NSData class]];
-    [[[[nsdataMock expect]
-        andDo:^(NSInvocation *invocation) {
-            [expectation fulfill];
-        }]
-        andReturn:nil]
-            dataWithContentsOfURL:[OCMArg any]
-            options:0
-            error:[OCMArg anyObjectRef]];
-
-    BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
-    [queue cancelTimer];
-    [queue retrieve];
-    [self awaitExpectations];
-    [nsdataMock verify];
-    [nsdataMock stopMocking];
-}
-
-- (void)testRetrieveFailWhenUnarchivingRecord {
-    //  Test handling an exception when unarchiving.
-
-    XCTestExpectation *expectation = [self expectationWithDescription:@"UnarchiveThrowExpectation"];
-    id unarchiverMock;
-    if (@available(iOS 12.0, *)) {
-        unarchiverMock = [OCMockObject mockForClass:[NSKeyedUnarchiver class]];
-        [[[[unarchiverMock expect]
-           andDo:^(NSInvocation *invocation) {
-            [expectation fulfill];
-        }]
-          andReturn:@[ [@"Garbage" dataUsingEncoding:NSUTF8StringEncoding] ]]
-         unarchivedObjectOfClass:[NSArray class] fromData:[OCMArg any] error:NULL];
-    } else {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
-        unarchiverMock = [OCMockObject mockForClass:[NSKeyedUnarchiver class]];
-        [[[[unarchiverMock expect]
-           andDo:^(NSInvocation *invocation) {
-            [expectation fulfill];
-        }]
-          andReturn:@[ [@"Garbage" dataUsingEncoding:NSUTF8StringEncoding] ]]
-         unarchiveObjectWithData:[OCMArg any]];
-#endif
-    }
-    BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
-    [queue retrieve];
-    [self awaitExpectations];
-    [unarchiverMock verify];
-    [unarchiverMock stopMocking];
-}
-
-- (void)testPersistedCloseRequestsArentLoaded {
-    //  Mock up the 'saved' data:
-    BranchCloseRequest *closeRequest = [[BranchCloseRequest alloc] init];
-    BranchOpenRequest *openRequest = [[BranchOpenRequest alloc] init];
-    NSArray *requests;
-    id nsdataMock;
-    if (@available(iOS 12.0, *)) {
-        requests = @[
-            [NSKeyedArchiver archivedDataWithRootObject:closeRequest requiringSecureCoding:YES error:NULL],
-            [NSKeyedArchiver archivedDataWithRootObject:openRequest requiringSecureCoding:YES error:NULL],
-            [NSKeyedArchiver archivedDataWithRootObject:closeRequest requiringSecureCoding:YES error:NULL]
-        ];
-        NSData *encodedRequests = [NSKeyedArchiver archivedDataWithRootObject:requests requiringSecureCoding:YES error:NULL];
-        
-        nsdataMock = [OCMockObject mockForClass:[NSData class]];
-        [[[nsdataMock expect] andReturn:encodedRequests]
-         dataWithContentsOfURL:[OCMArg any]
-         options:0
-         error:[OCMArg anyObjectRef]];
-        
-    } else {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
-        requests = @[
-            [NSKeyedArchiver archivedDataWithRootObject:closeRequest],
-            [NSKeyedArchiver archivedDataWithRootObject:openRequest],
-            [NSKeyedArchiver archivedDataWithRootObject:closeRequest]];
-            nsdataMock = [OCMockObject mockForClass:[NSData class]];
-            [[[nsdataMock expect]
-              andReturn:[NSKeyedArchiver archivedDataWithRootObject:requests]]
-             dataWithContentsOfURL:[OCMArg any]
-             options:0
-             error:[OCMArg anyObjectRef]];
-#endif
-    }
-   
-    BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
-    [queue retrieve];
-    [nsdataMock verify];
-    XCTAssertEqual([queue queueDepth], 1);
-    [nsdataMock stopMocking];
-}
 
 @end
