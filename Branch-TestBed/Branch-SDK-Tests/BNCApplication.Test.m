@@ -48,18 +48,17 @@
     XCTAssertTrue(application.currentBuildDate && [application.currentBuildDate timeIntervalSinceNow] > kOneYearAgo);
 
     NSString*const kBranchKeychainService          = @"BranchKeychainService";
-//  NSString*const kBranchKeychainDevicesKey       = @"BranchKeychainDevices";
     NSString*const kBranchKeychainFirstBuildKey    = @"BranchKeychainFirstBuild";
     NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstInstall";
 
     NSDate * firstBuildDate =
-        [BNCKeyChain retrieveValueForService:kBranchKeychainService
+        [BNCKeyChain retrieveDateForService:kBranchKeychainService
             key:kBranchKeychainFirstBuildKey
             error:nil];
     XCTAssertEqualObjects(application.firstInstallBuildDate, firstBuildDate);
 
     NSDate * firstInstallDate =
-        [BNCKeyChain retrieveValueForService:kBranchKeychainService
+        [BNCKeyChain retrieveDateForService:kBranchKeychainService
             key:kBranchKeychainFirstInstalldKey
             error:nil];
     XCTAssertEqualObjects(application.firstInstallDate, firstInstallDate);
