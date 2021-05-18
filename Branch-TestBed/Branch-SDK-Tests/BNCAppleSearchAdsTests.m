@@ -194,16 +194,24 @@
     __block XCTestExpectation *expectation = [self expectationWithDescription:@"AppleSearchAds"];
     
     [self.appleSearchAds requestAttributionWithCompletion:^(NSDictionary * _Nullable attributionDetails, NSError * _Nullable error, NSTimeInterval elapsedSeconds) {
-        XCTAssertNil(error);
-        XCTAssertTrue(elapsedSeconds > 0);
-        
-        NSDictionary *tmpDict = [attributionDetails objectForKey:@"Version3.1"];
-        XCTAssertNotNil(tmpDict);
-        
-        NSNumber *tmpBool = [tmpDict objectForKey:@"iad-attribution"];
-        XCTAssertNotNil(tmpBool);
-        
-        [expectation fulfill];
+        if (@available(iOS 14.5, *)) {
+            // Need ATT permission to use get old Apple Search Ads info
+            XCTAssertNotNil(error);
+            XCTAssertTrue(elapsedSeconds > 0);
+            [expectation fulfill];
+            
+        } else {
+            XCTAssertNil(error);
+            XCTAssertTrue(elapsedSeconds > 0);
+            
+            NSDictionary *tmpDict = [attributionDetails objectForKey:@"Version3.1"];
+            XCTAssertNotNil(tmpDict);
+            
+            NSNumber *tmpBool = [tmpDict objectForKey:@"iad-attribution"];
+            XCTAssertNotNil(tmpBool);
+            
+            [expectation fulfill];
+        }
     }];
     
     [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
@@ -216,16 +224,25 @@
     __block XCTestExpectation *expectation = [self expectationWithDescription:@"AppleSearchAds"];
     
     [self.appleSearchAds requestAttributionWithMaxAttempts:0 completion:^(NSDictionary * _Nullable attributionDetails, NSError * _Nullable error, NSTimeInterval elapsedSeconds) {
-        XCTAssertNil(error);
-        XCTAssertTrue(elapsedSeconds > 0);
-        
-        NSDictionary *tmpDict = [attributionDetails objectForKey:@"Version3.1"];
-        XCTAssertNotNil(tmpDict);
-        
-        NSNumber *tmpBool = [tmpDict objectForKey:@"iad-attribution"];
-        XCTAssertNotNil(tmpBool);
-        
-        [expectation fulfill];
+        if (@available(iOS 14.5, *)) {
+            // Need ATT permission to use get old Apple Search Ads info
+            XCTAssertNotNil(error);
+            XCTAssert([@"The app is not authorized for ad tracking" isEqualToString:error.localizedDescription]);
+            XCTAssertTrue(elapsedSeconds > 0);
+            [expectation fulfill];
+            
+        } else {
+            XCTAssertNil(error);
+            XCTAssertTrue(elapsedSeconds > 0);
+            
+            NSDictionary *tmpDict = [attributionDetails objectForKey:@"Version3.1"];
+            XCTAssertNotNil(tmpDict);
+            
+            NSNumber *tmpBool = [tmpDict objectForKey:@"iad-attribution"];
+            XCTAssertNotNil(tmpBool);
+            
+            [expectation fulfill];
+        }
     }];
     
     [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
@@ -238,16 +255,25 @@
     __block XCTestExpectation *expectation = [self expectationWithDescription:@"AppleSearchAds"];
     
     [self.appleSearchAds requestAttributionWithMaxAttempts:1 completion:^(NSDictionary * _Nullable attributionDetails, NSError * _Nullable error, NSTimeInterval elapsedSeconds) {
-        XCTAssertNil(error);
-        XCTAssertTrue(elapsedSeconds > 0);
-        
-        NSDictionary *tmpDict = [attributionDetails objectForKey:@"Version3.1"];
-        XCTAssertNotNil(tmpDict);
-        
-        NSNumber *tmpBool = [tmpDict objectForKey:@"iad-attribution"];
-        XCTAssertNotNil(tmpBool);
-        
-        [expectation fulfill];
+        if (@available(iOS 14.5, *)) {
+            // Need ATT permission to use get old Apple Search Ads info
+            XCTAssertNotNil(error);
+            XCTAssert([@"The app is not authorized for ad tracking" isEqualToString:error.localizedDescription]);
+            XCTAssertTrue(elapsedSeconds > 0);
+            [expectation fulfill];
+            
+        } else {
+            XCTAssertNil(error);
+            XCTAssertTrue(elapsedSeconds > 0);
+            
+            NSDictionary *tmpDict = [attributionDetails objectForKey:@"Version3.1"];
+            XCTAssertNotNil(tmpDict);
+            
+            NSNumber *tmpBool = [tmpDict objectForKey:@"iad-attribution"];
+            XCTAssertNotNil(tmpBool);
+            
+            [expectation fulfill];
+        }
     }];
     
     [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
@@ -265,7 +291,7 @@
         XCTAssertNotNil(error);
         XCTAssertTrue(elapsedSeconds > 0);
         XCTAssertNil(attributionDetails);
-                
+        
         [expectation fulfill];
     }];
     
@@ -283,19 +309,32 @@
     self.appleSearchAds.adClient = mock;
     
     [self.appleSearchAds requestAttributionWithMaxAttempts:3 completion:^(NSDictionary * _Nullable attributionDetails, NSError * _Nullable error, NSTimeInterval elapsedSeconds) {
-        XCTAssertNil(error);
-        XCTAssertTrue(elapsedSeconds > 0);
-        
-        NSDictionary *tmpDict = [attributionDetails objectForKey:@"Version3.1"];
-        XCTAssertNotNil(tmpDict);
-        
-        NSNumber *tmpBool = [tmpDict objectForKey:@"iad-attribution"];
-        XCTAssertNotNil(tmpBool);
-        
-        // verifies things were ignored
-        XCTAssert(mock.ignoreCount == 2);
-                
-        [expectation fulfill];
+        if (@available(iOS 14.5, *)) {
+            // Need ATT permission to use get old Apple Search Ads info
+            XCTAssertNotNil(error);
+            XCTAssert([@"The app is not authorized for ad tracking" isEqualToString:error.localizedDescription]);
+            XCTAssertTrue(elapsedSeconds > 0);
+            
+            // verifies things were ignored
+            XCTAssert(mock.ignoreCount == 2);
+            
+            [expectation fulfill];
+            
+        } else {
+            XCTAssertNil(error);
+            XCTAssertTrue(elapsedSeconds > 0);
+            
+            NSDictionary *tmpDict = [attributionDetails objectForKey:@"Version3.1"];
+            XCTAssertNotNil(tmpDict);
+            
+            NSNumber *tmpBool = [tmpDict objectForKey:@"iad-attribution"];
+            XCTAssertNotNil(tmpBool);
+            
+            // verifies things were ignored
+            XCTAssert(mock.ignoreCount == 2);
+                    
+            [expectation fulfill];
+        }
     }];
     
     [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
