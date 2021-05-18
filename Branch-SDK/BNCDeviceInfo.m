@@ -221,7 +221,7 @@
 
         [dictionary bnc_safeSetObject:[BNCPreferenceHelper preferenceHelper].userIdentity forKey:@"developer_identity"];
         
-        [dictionary bnc_safeSetObject:[BNCPreferenceHelper preferenceHelper].deviceFingerprintID forKey:@"randomized_device_token"];
+        [dictionary bnc_safeSetObject:[BNCPreferenceHelper preferenceHelper].randomizedDeviceToken forKey:@"randomized_device_token"];
 
         [dictionary bnc_safeSetObject:self.applicationVersion forKey:@"app_version"];
 

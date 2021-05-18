@@ -237,7 +237,7 @@
     Branch *branch = [Branch getInstance:@"key_live_foo"];
     [BNCPreferenceHelper preferenceHelper].identityID = @"1234567";
     [BNCPreferenceHelper preferenceHelper].sessionID = @"654321";
-    [BNCPreferenceHelper preferenceHelper].deviceFingerprintID = @"987654321";
+    [BNCPreferenceHelper preferenceHelper].randomizedDeviceToken = @"987654321";
     XCTestExpectation *expectation = [self expectationWithDescription:@"testRegisterView"];
     id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
 

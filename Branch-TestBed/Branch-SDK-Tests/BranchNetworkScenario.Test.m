@@ -454,7 +454,7 @@
     XCTestExpectation *expecation = [self expectationWithDescription:@"Scenario8 Expectation"];
     [self initSessionExpectingSuccess:branch serverInterface:serverInterfaceMock callback:^{
         preferenceHelper.sessionID = nil;
-        preferenceHelper.deviceFingerprintID = nil;
+        preferenceHelper.randomizedDeviceToken = nil;
         
         [branch getShortURLWithCallback:^(NSString *url, NSError *error) {
             XCTAssertNotNil(error);

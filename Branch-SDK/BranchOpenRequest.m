@@ -46,8 +46,8 @@
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    if (preferenceHelper.deviceFingerprintID) {
-        params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+    if (preferenceHelper.randomizedDeviceToken) {
+        params[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = preferenceHelper.randomizedDeviceToken;
     }
 
     params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
@@ -161,7 +161,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
         userIdentity = [userIdentity stringValue];
     }
 
-    preferenceHelper.deviceFingerprintID = data[BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN];
+    preferenceHelper.randomizedDeviceToken = data[BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN];
     preferenceHelper.userUrl = data[BRANCH_RESPONSE_KEY_USER_URL];
     preferenceHelper.userIdentity = userIdentity;
     preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
@@ -177,7 +177,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     
     if (Branch.enableFingerprintIDInCrashlyticsReports) {
         BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
-        [crashlytics setObjectValue:preferenceHelper.deviceFingerprintID
+        [crashlytics setObjectValue:preferenceHelper.randomizedDeviceToken
             forKey:BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY];
     }
 

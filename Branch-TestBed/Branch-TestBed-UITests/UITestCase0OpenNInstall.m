@@ -52,11 +52,11 @@
     XCTAssertNotNil(json);
     XCTAssertTrue([url containsString:@"/v1/install"]);
     
-    // Get and Assert device_fingerprint_id & identity_id
-    NSNumber *device_fingerprint_id = [dataJson objectForKey:@"randomized_device_token"];
+    // Get and Assert randomized_device_token & identity_id
+    NSNumber *randomized_device_token = [dataJson objectForKey:@"randomized_device_token"];
     NSNumber *identity_id = [dataJson objectForKey:@"identity_id"];
     XCTAssertNotNil(identity_id);
-    XCTAssertNotNil(device_fingerprint_id);
+    XCTAssertNotNil(randomized_device_token);
     
     //Re-launch App
     [app.navigationBars[@"Branch-TestBed"].buttons[@"Branch-TestBed"] tap];
@@ -65,7 +65,7 @@
     
     // Load logs and assert -
     // - URL contains /v1/open
-    // - device_fingerprint_id is the same as returned above
+    // - randomized_device_token is the same as returned above
     // - identity_id is the same as returned above
     [tablesQuery/*@START_MENU_TOKEN@*/.staticTexts[@"Load Logs for Last Command"]/*[[".cells",".buttons[@\"Load Logs for Last Command\"].staticTexts[@\"Load Logs for Last Command\"]",".staticTexts[@\"Load Logs for Last Command\"]"],[[[-1,2],[-1,1],[-1,0,1]],[[-1,2],[-1,1]]],[0]]@END_MENU_TOKEN@*/ tap];
     deeplinkdataTextView = app.textViews[@"DeepLinkData"];
@@ -81,7 +81,7 @@
     
     XCTAssertNotNil([json valueForKey:@"randomized_device_token"]);
     NSNumber *newFPID = [NSNumber numberWithInteger: [[json objectForKey:@"randomized_device_token"] integerValue]] ;
-    XCTAssertTrue([newFPID isEqualToNumber:device_fingerprint_id]);
+    XCTAssertTrue([newFPID isEqualToNumber:randomized_device_token]);
     XCTAssertTrue([status containsString:@"200"]);
 }
 

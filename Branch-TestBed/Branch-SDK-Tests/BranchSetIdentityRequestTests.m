@@ -24,7 +24,7 @@ static NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
     NSDictionary * const expectedParams = @{
         BRANCH_REQUEST_KEY_DEVELOPER_IDENTITY: IDENTITY_TEST_USER_ID,
         BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN: preferenceHelper.randomizedDeviceToken,
         BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID
     };
 

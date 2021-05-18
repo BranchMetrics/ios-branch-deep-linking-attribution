@@ -22,9 +22,11 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (strong, nonatomic) NSString *lastRunBranchKey;
 @property (strong, nonatomic) NSDate   *lastStrongMatchDate;
 @property (strong, nonatomic) NSString *appVersion;
-@property (strong, nonatomic) NSString *deviceFingerprintID;
-@property (strong, nonatomic) NSString *sessionID;
+
+@property (strong, nonatomic) NSString *randomizedDeviceToken;
 @property (strong, nonatomic) NSString *identityID;
+
+@property (strong, nonatomic) NSString *sessionID;
 @property (strong, nonatomic) NSString *linkClickIdentifier;
 @property (strong, nonatomic) NSString *spotlightIdentifier;
 @property (strong, atomic)    NSString *universalLinkUrl;

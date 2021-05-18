@@ -62,7 +62,7 @@
 
     preferenceHelper.isDebug = [IS_DEBUG boolValue];
     preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
-    preferenceHelper.deviceFingerprintID = nil;
+    preferenceHelper.randomizedDeviceToken = nil;
     preferenceHelper.identityID = IDENTITY_ID;
 
     NSTimeInterval kOneDayAgo = -1.0*24.0*60.0*60.0;
@@ -142,7 +142,7 @@
 
     preferenceHelper.isDebug = [IS_DEBUG boolValue];
     preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
-    preferenceHelper.deviceFingerprintID = DEVICE_TOKEN;
+    preferenceHelper.randomizedDeviceToken = DEVICE_TOKEN;
     preferenceHelper.identityID = IDENTITY_ID;
 
     NSTimeInterval kOneDayAgo = -1.0*24.0*60.0*60.0;
@@ -222,7 +222,7 @@
     
     [self awaitExpectations];
     
-    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, DEVICE_TOKEN);
+    XCTAssertEqualObjects(preferenceHelper.randomizedDeviceToken, DEVICE_TOKEN);
     XCTAssertEqualObjects(preferenceHelper.userUrl, USER_URL);
     XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
     XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
@@ -265,7 +265,7 @@
     
     [self awaitExpectations];
     
-    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, DEVICE_TOKEN);
+    XCTAssertEqualObjects(preferenceHelper.randomizedDeviceToken, DEVICE_TOKEN);
     XCTAssertEqualObjects(preferenceHelper.userUrl, USER_URL);
     XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
     XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
@@ -306,7 +306,7 @@
     
     [self awaitExpectations];
     
-    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, DEVICE_TOKEN);
+    XCTAssertEqualObjects(preferenceHelper.randomizedDeviceToken, DEVICE_TOKEN);
     XCTAssertEqualObjects(preferenceHelper.userUrl, USER_URL);
     XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
     XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
@@ -347,7 +347,7 @@
     
     [self awaitExpectations];
     
-    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, DEVICE_TOKEN);
+    XCTAssertEqualObjects(preferenceHelper.randomizedDeviceToken, DEVICE_TOKEN);
     XCTAssertEqualObjects(preferenceHelper.userUrl, USER_URL);
     XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
     XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
@@ -386,7 +386,7 @@
     
     [self awaitExpectations];
     
-    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, DEVICE_TOKEN);
+    XCTAssertEqualObjects(preferenceHelper.randomizedDeviceToken, DEVICE_TOKEN);
     XCTAssertEqualObjects(preferenceHelper.userUrl, USER_URL);
     XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
     XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);

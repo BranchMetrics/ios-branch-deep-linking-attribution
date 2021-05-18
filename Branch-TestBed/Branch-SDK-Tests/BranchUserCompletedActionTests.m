@@ -25,7 +25,7 @@
     NSMutableDictionary *expectedParams = NSMutableDictionary.new;
     expectedParams[BRANCH_REQUEST_KEY_ACTION] = USER_ACTION_TEST_ACTION;
     expectedParams[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
-    expectedParams[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+    expectedParams[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = preferenceHelper.randomizedDeviceToken;
     expectedParams[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
 
     BranchUserCompletedActionRequest *request = [[BranchUserCompletedActionRequest alloc] initWithAction:USER_ACTION_TEST_ACTION state:nil];
@@ -46,7 +46,7 @@
     expectedParams[BRANCH_REQUEST_KEY_ACTION] = USER_ACTION_TEST_ACTION;
     expectedParams[BRANCH_REQUEST_KEY_STATE] = USER_ACTION_TEST_STATE;
     expectedParams[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
-    expectedParams[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+    expectedParams[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = preferenceHelper.randomizedDeviceToken;
     expectedParams[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
     
     BranchUserCompletedActionRequest *request = [[BranchUserCompletedActionRequest alloc] initWithAction:USER_ACTION_TEST_ACTION state:USER_ACTION_TEST_STATE];

@@ -24,7 +24,7 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSMutableDictionary * const expectedParams = NSMutableDictionary.new;
     expectedParams[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
-    expectedParams[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+    expectedParams[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = preferenceHelper.randomizedDeviceToken;
     expectedParams[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
     expectedParams[BRANCH_REQUEST_KEY_STARTING_TRANSACTION_ID] = CREDIT_TRANSACTION_ID;
     expectedParams[BRANCH_REQUEST_KEY_BUCKET] = BUCKET;
@@ -46,7 +46,7 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSMutableDictionary * const expectedParams = NSMutableDictionary.new;
     expectedParams[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
-    expectedParams[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+    expectedParams[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = preferenceHelper.randomizedDeviceToken;
     expectedParams[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
     expectedParams[BRANCH_REQUEST_KEY_LENGTH] = @(LENGTH);
     expectedParams[BRANCH_REQUEST_KEY_DIRECTION] = @"asc";

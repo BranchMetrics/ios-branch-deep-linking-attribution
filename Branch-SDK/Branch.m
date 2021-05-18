@@ -1630,7 +1630,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                 BNCLogWarning(@"The Branch Key has changed, clearing relevant items.");
 
                 preferenceHelper.appVersion = nil;
-                preferenceHelper.deviceFingerprintID = nil;
+                preferenceHelper.randomizedDeviceToken = nil;
                 preferenceHelper.sessionID = nil;
                 preferenceHelper.identityID = nil;
                 preferenceHelper.userUrl = nil;
@@ -1643,7 +1643,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             if (self.enableFingerprintIDInCrashlyticsReports) {
                 BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
                 // may be nil
-                [crashlytics setObjectValue:preferenceHelper.deviceFingerprintID forKey:BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY];
+                [crashlytics setObjectValue:preferenceHelper.randomizedDeviceToken forKey:BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY];
             }
 
             preferenceHelper.lastRunBranchKey = key;
@@ -2059,7 +2059,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                     return;
 
                 } else if (![req isKindOfClass:[BranchOpenRequest class]] &&
-                    (!self.preferenceHelper.deviceFingerprintID || !self.preferenceHelper.sessionID)) {
+                    (!self.preferenceHelper.randomizedDeviceToken || !self.preferenceHelper.sessionID)) {
                     BNCLogError(@"Missing session items!");
                     BNCPerformBlockOnMainThreadSync(^{
                         [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];

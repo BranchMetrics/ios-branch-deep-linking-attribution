@@ -27,7 +27,7 @@
     expectedParams[BRANCH_REQUEST_KEY_BUCKET] = BUCKET;
     expectedParams[BRANCH_REQUEST_KEY_AMOUNT] = @(AMOUNT);
     expectedParams[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
-    expectedParams[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+    expectedParams[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = preferenceHelper.randomizedDeviceToken;
     expectedParams[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
     
     BranchRedeemRewardsRequest *request = [[BranchRedeemRewardsRequest alloc] initWithAmount:AMOUNT bucket:BUCKET callback:NULL];

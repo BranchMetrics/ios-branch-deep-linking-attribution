@@ -68,7 +68,7 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 @synthesize
             lastRunBranchKey = _lastRunBranchKey,
             appVersion = _appVersion,
-            deviceFingerprintID = _deviceFingerprintID,
+            randomizedDeviceToken = _randomizedDeviceToken,
             sessionID = _sessionID,
             spotlightIdentifier = _spotlightIdentifier,
             identityID = _identityID,
@@ -216,18 +216,18 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     }
 }
 
-- (NSString *)deviceFingerprintID {
-    if (!_deviceFingerprintID) {
-        _deviceFingerprintID = [self readStringFromDefaults:BRANCH_PREFS_KEY_DEVICE_FINGERPRINT_ID];
+- (NSString *)randomizedDeviceToken {
+    if (!_randomizedDeviceToken) {
+        _randomizedDeviceToken = [self readStringFromDefaults:BRANCH_PREFS_KEY_DEVICE_FINGERPRINT_ID];
     }
     
-    return _deviceFingerprintID;
+    return _randomizedDeviceToken;
 }
 
-- (void)setDeviceFingerprintID:(NSString *)deviceFingerprintID {
-    if (deviceFingerprintID == nil || ![_deviceFingerprintID isEqualToString:deviceFingerprintID]) {
-        _deviceFingerprintID = deviceFingerprintID;
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_DEVICE_FINGERPRINT_ID value:deviceFingerprintID];
+- (void)setRandomizedDeviceToken:(NSString *)randomizedDeviceToken {
+    if (randomizedDeviceToken == nil || ![_randomizedDeviceToken isEqualToString:randomizedDeviceToken]) {
+        _randomizedDeviceToken = randomizedDeviceToken;
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_DEVICE_FINGERPRINT_ID value:randomizedDeviceToken];
     }
 }
 
@@ -652,11 +652,12 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 
 - (void) clearTrackingInformation {
     @synchronized(self) {
-        /* Don't clear these:
-        self.deviceFingerprintID = nil;
-        self.userIdentity = nil;
-        self.identityID = nil;
-        */
+        /*
+         // Don't clear these
+         self.randomizedDeviceToken = nil;
+         self.identityID = nil;
+         self.userIdentity = nil;
+         */
         self.sessionID = nil;
         self.linkClickIdentifier = nil;
         self.spotlightIdentifier = nil;

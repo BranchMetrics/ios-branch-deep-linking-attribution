@@ -39,7 +39,7 @@
     }
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    [self safeSetValue:preferenceHelper.deviceFingerprintID forKey:BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID onDict:data];
+    [self safeSetValue:preferenceHelper.randomizedDeviceToken forKey:BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN onDict:data];
     [self safeSetValue:preferenceHelper.identityID forKey:BRANCH_REQUEST_KEY_BRANCH_IDENTITY onDict:data];
     [self safeSetValue:preferenceHelper.sessionID forKey:BRANCH_REQUEST_KEY_SESSION_ID onDict:data];
     [self safeSetValue:@(preferenceHelper.isDebug) forKey:BRANCH_REQUEST_KEY_DEBUG onDict:data];
