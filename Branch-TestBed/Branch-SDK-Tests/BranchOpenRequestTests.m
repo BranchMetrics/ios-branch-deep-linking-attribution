@@ -32,7 +32,7 @@
     [preferenceHelper synchronize];
 }
 
-- (void)testRequestBodyWithNoFingerprintID {
+- (void)testRequestBodyWithNoDeviceToken {
     NSString * const HARDWARE_ID = @"foo-hardware-id";
     NSNumber * const AD_TRACKING_SAFE = @YES;
     NSNumber * const IS_DEBUG = @YES;
@@ -113,7 +113,7 @@
     [serverInterfaceMock verify];
 }
 
-- (void)testRequestBodyWithFingerprintID {
+- (void)testRequestBodyWithDeviceToken {
     NSString * const HARDWARE_ID = @"foo-hardware-id";
     NSNumber * const AD_TRACKING_SAFE = @YES;
     NSNumber * const IS_DEBUG = @YES;
@@ -123,7 +123,7 @@
     NSString * const OS_VERSION = @"foo-os-version";
     NSString * const URI_SCHEME = @"foo-uri-scheme";
     NSString * const LINK_IDENTIFIER = @"foo-link-id";
-    NSString * const DEVICE_TOKEN = @"foo-fingerprint";
+    NSString * const DEVICE_TOKEN = @"foo-token";
     NSString * const IDENTITY_ID = @"foo-identity";
     NSString * hardwareType = nil;
 
@@ -192,7 +192,7 @@
 }
 
 - (void)testSuccessWithAllKeysAndIsReferrable {
-    NSString * const DEVICE_TOKEN = @"foo-fingerprint";
+    NSString * const DEVICE_TOKEN = @"foo-token";
     NSString * const USER_URL = @"http://foo";
     NSString * const DEVELOPER_ID = @"foo";
     NSString * const SESSION_ID = @"foo-session";
@@ -233,7 +233,7 @@
 }
 
 - (void)testSuccessWithAllKeysAndIsNotReferrable {
-    NSString * const DEVICE_TOKEN = @"foo-fingerprint";
+    NSString * const DEVICE_TOKEN = @"foo-token";
     NSString * const USER_URL = @"http://foo";
     NSString * const DEVELOPER_ID = @"foo";
     NSString * const SESSION_ID = @"foo-session";
@@ -276,7 +276,7 @@
 }
 
 - (void)testSuccessWithNoSessionParamsAndIsNotReferrable {
-    NSString * const DEVICE_TOKEN = @"foo-fingerprint";
+    NSString * const DEVICE_TOKEN = @"foo-token";
     NSString * const USER_URL = @"http://foo";
     NSString * const DEVELOPER_ID = @"foo";
     NSString * const SESSION_ID = @"foo-session";
@@ -317,7 +317,7 @@
 }
 
 - (void)testSuccessWithNoSessionParamsAndIsReferrableAndAllowToBeClearIsNotSet {
-    NSString * const DEVICE_TOKEN = @"foo-fingerprint";
+    NSString * const DEVICE_TOKEN = @"foo-token";
     NSString * const USER_URL = @"http://foo";
     NSString * const DEVELOPER_ID = @"foo";
     NSString * const SESSION_ID = @"foo-session";
@@ -358,7 +358,7 @@
 }
 
 - (void)testSuccessWithNoSessionParamsAndIsReferrableAndAllowToBeClearIsSet {
-    NSString * const DEVICE_TOKEN = @"foo-fingerprint";
+    NSString * const DEVICE_TOKEN = @"foo-token";
     NSString * const USER_URL = @"http://foo";
     NSString * const DEVELOPER_ID = @"foo";
     NSString * const SESSION_ID = @"foo-session";

@@ -119,7 +119,7 @@
 }
 
 - (void)testSuccessWithAllKeysAndIsReferrable {
-    NSString * const DEVICE_TOKEN = @"foo-fingerprint";
+    NSString * const DEVICE_TOKEN = @"foo-token";
     NSString * const USER_URL = @"http://foo";
     NSString * const DEVELOPER_ID = @"foo";
     NSString * const SESSION_ID = @"foo-session";
@@ -159,7 +159,7 @@
 }
 
 - (void)testSuccessWithAllKeysAndIsNotReferrable {
-    NSString * const DEVICE_TOKEN = @"foo-fingerprint";
+    NSString * const DEVICE_TOKEN = @"foo-token";
     NSString * const USER_URL = @"http://foo";
     NSString * const DEVELOPER_ID = @"foo";
     NSString * const SESSION_ID = @"foo-session";
@@ -203,7 +203,7 @@
 }
 
 - (void)testSuccessWithNoSessionParamsAndIsNotReferrable {
-    NSString * const DEVICE_TOKEN = @"foo-fingerprint";
+    NSString * const DEVICE_TOKEN = @"foo-token";
     NSString * const USER_URL = @"http://foo";
     NSString * const DEVELOPER_ID = @"foo";
     NSString * const SESSION_ID = @"foo-session";
@@ -244,7 +244,7 @@
 }
 
 - (void)testSuccessWithNoSessionParamsAndIsReferrableAndAllowToBeClearIsNotSet {
-    NSString * const DEVICE_TOKEN = @"foo-fingerprint";
+    NSString * const DEVICE_TOKEN = @"foo-token";
     NSString * const USER_URL = @"http://foo";
     NSString * const DEVELOPER_ID = @"foo";
     NSString * const SESSION_ID = @"foo-session";
@@ -285,7 +285,7 @@
 }
 
 - (void)testSuccessWithNoSessionParamsAndIsReferrableAndAllowToBeClearIsSet {
-    NSString * const DEVICE_TOKEN = @"foo-fingerprint";
+    NSString * const DEVICE_TOKEN = @"foo-token";
     NSString * const USER_URL = @"http://foo";
     NSString * const DEVELOPER_ID = @"foo";
     NSString * const SESSION_ID = @"foo-session";

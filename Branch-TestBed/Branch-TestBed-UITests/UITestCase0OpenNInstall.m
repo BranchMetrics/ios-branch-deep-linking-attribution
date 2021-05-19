@@ -80,8 +80,8 @@
     XCTAssertTrue([newID isEqualToNumber:identity_id]);
     
     XCTAssertNotNil([json valueForKey:@"randomized_device_token"]);
-    NSNumber *newFPID = [NSNumber numberWithInteger: [[json objectForKey:@"randomized_device_token"] integerValue]] ;
-    XCTAssertTrue([newFPID isEqualToNumber:randomized_device_token]);
+    NSNumber *newToken = [NSNumber numberWithInteger: [[json objectForKey:@"randomized_device_token"] integerValue]] ;
+    XCTAssertTrue([newToken isEqualToNumber:randomized_device_token]);
     XCTAssertTrue([status containsString:@"200"]);
 }
 

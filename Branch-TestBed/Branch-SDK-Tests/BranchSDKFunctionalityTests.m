@@ -10,8 +10,7 @@
 #import "Branch.h"
 
 NSString * const TEST_BRANCH_KEY = @"key_live_78801a996de4287481fe73708cc95da2";
-NSString * const TEST_DEVICE_FINGERPRINT_ID = @"94938498586381084";
-NSString * const TEST_BROWSER_FINGERPRINT_ID = @"69198153995256641";
+NSString * const TEST_RANDOMIZED_DEVICE_TOKEN = @"94938498586381084";
 NSString * const TEST_IDENTITY_ID = @"95765863201768032";
 NSString * const TEST_SESSION_ID = @"97141055400444225";
 NSString * const TEST_IDENTITY_LINK = @"https://bnc.lt/i/3N-xr0E-_M";
@@ -44,8 +43,7 @@ NSInteger const  TEST_CREDITS = 30;
     
     BNCServerResponse *openInstallResponse = [[BNCServerResponse alloc] init];
     openInstallResponse.data = @{
-        @"browser_fingerprint_id": TEST_BROWSER_FINGERPRINT_ID,
-        @"randomized_device_token": TEST_DEVICE_FINGERPRINT_ID,
+        @"randomized_device_token": TEST_RANDOMIZED_DEVICE_TOKEN,
         @"identity_id": TEST_IDENTITY_ID,
         @"link": TEST_IDENTITY_LINK,
         @"session_id": TEST_SESSION_ID
@@ -384,8 +382,7 @@ NSInteger const  TEST_CREDITS = 30;
     openInstallResponse.data = @{
         @"session_id": TEST_SESSION_ID,
         @"identity_id": TEST_IDENTITY_ID,
-        @"randomized_device_token": TEST_DEVICE_FINGERPRINT_ID,
-        @"browser_fingerprint_id": TEST_BROWSER_FINGERPRINT_ID,
+        @"randomized_device_token": TEST_RANDOMIZED_DEVICE_TOKEN,
         @"link": TEST_IDENTITY_LINK,
         @"new_identity_id": TEST_NEW_IDENTITY_ID
     };

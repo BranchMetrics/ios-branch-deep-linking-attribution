@@ -174,12 +174,6 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
             [[BNCSKAdNetwork sharedInstance] registerAppForAdNetworkAttribution];
         }
     }
-    
-    if (Branch.enableFingerprintIDInCrashlyticsReports) {
-        BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
-        [crashlytics setObjectValue:preferenceHelper.randomizedDeviceToken
-            forKey:BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY];
-    }
 
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
     if (sessionData == nil || [sessionData isKindOfClass:[NSString class]]) {

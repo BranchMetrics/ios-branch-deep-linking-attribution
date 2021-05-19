@@ -305,7 +305,6 @@ static Class bnc_networkServiceClass = NULL;
 
 static BOOL bnc_useTestBranchKey = NO;
 static NSString *bnc_branchKey = nil;
-static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 + (void)resetBranchKey {
     bnc_branchKey = nil;
@@ -413,18 +412,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 + (BOOL)branchKeyIsSet {
     @synchronized (self) {
         return (bnc_branchKey.length) ? YES : NO;
-    }
-}
-
-+ (void)setEnableFingerprintIDInCrashlyticsReports:(BOOL)enabled {
-    @synchronized(self) {
-        bnc_enableFingerprintIDInCrashlyticsReports = enabled;
-    }
-}
-
-+ (BOOL)enableFingerprintIDInCrashlyticsReports {
-    @synchronized (self) {
-        return bnc_enableFingerprintIDInCrashlyticsReports;
     }
 }
 
@@ -1638,12 +1625,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                 preferenceHelper.sessionParams = nil;
 
                 [[BNCServerRequestQueue getInstance] clearQueue];
-            }
-
-            if (self.enableFingerprintIDInCrashlyticsReports) {
-                BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
-                // may be nil
-                [crashlytics setObjectValue:preferenceHelper.randomizedDeviceToken forKey:BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY];
             }
 
             preferenceHelper.lastRunBranchKey = key;
