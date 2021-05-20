@@ -71,7 +71,7 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
             randomizedDeviceToken = _randomizedDeviceToken,
             sessionID = _sessionID,
             spotlightIdentifier = _spotlightIdentifier,
-            identityID = _identityID,
+            randomizedBundleToken = _randomizedBundleToken,
             linkClickIdentifier = _linkClickIdentifier,
             userUrl = _userUrl,
             userIdentity = _userIdentity,
@@ -246,12 +246,12 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     }
 }
 
-- (NSString *)identityID {
+- (NSString *)randomizedBundleToken {
     return [self readStringFromDefaults:BRANCH_PREFS_KEY_IDENTITY_ID];
 }
 
-- (void)setIdentityID:(NSString *)identityID {
-    [self writeObjectToDefaults:BRANCH_PREFS_KEY_IDENTITY_ID value:identityID];
+- (void)setRandomizedBundleToken:(NSString *)randomizedBundleToken {
+    [self writeObjectToDefaults:BRANCH_PREFS_KEY_IDENTITY_ID value:randomizedBundleToken];
 }
 
 - (NSString *)userIdentity {
@@ -457,7 +457,7 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 - (NSMutableString*) sanitizedMutableBaseURL:(NSString*)baseUrl_ {
     NSMutableString *baseUrl = [baseUrl_ mutableCopy];
     if (self.trackingDisabled) {
-        NSString *id_string = [NSString stringWithFormat:@"%%24identity_id=%@", self.identityID];
+        NSString *id_string = [NSString stringWithFormat:@"%%24randomized_bundle_token=%@", self.randomizedBundleToken];
         NSRange range = [baseUrl rangeOfString:id_string];
         if (range.location != NSNotFound) [baseUrl replaceCharactersInRange:range withString:@""];
     } else
@@ -655,7 +655,7 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
         /*
          // Don't clear these
          self.randomizedDeviceToken = nil;
-         self.identityID = nil;
+         self.randomizedBundleToken = nil;
          self.userIdentity = nil;
          */
         self.sessionID = nil;

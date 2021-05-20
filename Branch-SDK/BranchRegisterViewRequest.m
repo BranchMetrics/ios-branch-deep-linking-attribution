@@ -40,7 +40,7 @@
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     [self safeSetValue:preferenceHelper.randomizedDeviceToken forKey:BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN onDict:data];
-    [self safeSetValue:preferenceHelper.identityID forKey:BRANCH_REQUEST_KEY_BRANCH_IDENTITY onDict:data];
+    [self safeSetValue:preferenceHelper.randomizedBundleToken forKey:BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN onDict:data];
     [self safeSetValue:preferenceHelper.sessionID forKey:BRANCH_REQUEST_KEY_SESSION_ID onDict:data];
     [self safeSetValue:@(preferenceHelper.isDebug) forKey:BRANCH_REQUEST_KEY_DEBUG onDict:data];
     [self safeSetValue:@([BNCSystemObserver isSimulator]) forKey:BRANCH_REQUEST_KEY_IS_SIMULATOR onDict:data];

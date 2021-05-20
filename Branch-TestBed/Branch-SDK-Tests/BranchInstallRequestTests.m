@@ -26,7 +26,7 @@
     [super setUp];
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     preferenceHelper.installParams = nil;
-    preferenceHelper.identityID = nil;
+    preferenceHelper.randomizedBundleToken = nil;
     preferenceHelper.checkedAppleSearchAdAttribution = NO;
     [preferenceHelper saveContentAnalyticsManifest:nil];
     [preferenceHelper synchronize];
@@ -47,7 +47,7 @@
     NSNumber * const SCREEN_HEIGHT = @2;
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.identityID = nil;
+    preferenceHelper.randomizedBundleToken = nil;
     preferenceHelper.isDebug = YES;
     preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
     
@@ -133,7 +133,7 @@
         BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY: DEVELOPER_ID,
         BRANCH_RESPONSE_KEY_SESSION_ID: SESSION_ID,
         BRANCH_RESPONSE_KEY_SESSION_DATA: SESSION_PARAMS,
-        BRANCH_RESPONSE_KEY_BRANCH_IDENTITY: IDENTITY
+        BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: IDENTITY
     };
 
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
@@ -154,7 +154,7 @@
     XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
     XCTAssertEqualObjects(preferenceHelper.sessionParams, SESSION_PARAMS);
     XCTAssertEqualObjects(preferenceHelper.installParams, SESSION_PARAMS);
-    XCTAssertEqualObjects(preferenceHelper.identityID, IDENTITY);
+    XCTAssertEqualObjects(preferenceHelper.randomizedBundleToken, IDENTITY);
     XCTAssertNil(preferenceHelper.linkClickIdentifier);
 }
 
@@ -174,7 +174,7 @@
         BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY: DEVELOPER_ID,
         BRANCH_RESPONSE_KEY_SESSION_ID: SESSION_ID,
         BRANCH_RESPONSE_KEY_SESSION_DATA: SESSION_PARAMS,
-        BRANCH_RESPONSE_KEY_BRANCH_IDENTITY: IDENTITY
+        BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: IDENTITY
     };
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
@@ -198,7 +198,7 @@
     XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
     XCTAssertEqualObjects(preferenceHelper.sessionParams, SESSION_PARAMS);
     XCTAssertEqualObjects(preferenceHelper.installParams, INSTALL_PARAMS);
-    XCTAssertEqualObjects(preferenceHelper.identityID, IDENTITY);
+    XCTAssertEqualObjects(preferenceHelper.randomizedBundleToken, IDENTITY);
     XCTAssertNil(preferenceHelper.linkClickIdentifier);
 }
 
@@ -216,7 +216,7 @@
         BRANCH_RESPONSE_KEY_USER_URL: USER_URL,
         BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY: DEVELOPER_ID,
         BRANCH_RESPONSE_KEY_SESSION_ID: SESSION_ID,
-        BRANCH_RESPONSE_KEY_BRANCH_IDENTITY: IDENTITY
+        BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: IDENTITY
     };
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
@@ -238,7 +238,7 @@
     XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
     XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
     XCTAssertEqualObjects(preferenceHelper.installParams, INSTALL_PARAMS);
-    XCTAssertEqualObjects(preferenceHelper.identityID, IDENTITY);
+    XCTAssertEqualObjects(preferenceHelper.randomizedBundleToken, IDENTITY);
     XCTAssertNil(preferenceHelper.sessionParams);
     XCTAssertNil(preferenceHelper.linkClickIdentifier);
 }
@@ -257,7 +257,7 @@
         BRANCH_RESPONSE_KEY_USER_URL: USER_URL,
         BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY: DEVELOPER_ID,
         BRANCH_RESPONSE_KEY_SESSION_ID: SESSION_ID,
-        BRANCH_RESPONSE_KEY_BRANCH_IDENTITY: IDENTITY
+        BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: IDENTITY
     };
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
@@ -279,7 +279,7 @@
     XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
     XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
     XCTAssertEqualObjects(preferenceHelper.installParams, INSTALL_PARAMS);
-    XCTAssertEqualObjects(preferenceHelper.identityID, IDENTITY);
+    XCTAssertEqualObjects(preferenceHelper.randomizedBundleToken, IDENTITY);
     XCTAssertNil(preferenceHelper.sessionParams);
     XCTAssertNil(preferenceHelper.linkClickIdentifier);
 }
@@ -297,7 +297,7 @@
         BRANCH_RESPONSE_KEY_USER_URL: USER_URL,
         BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY: DEVELOPER_ID,
         BRANCH_RESPONSE_KEY_SESSION_ID: SESSION_ID,
-        BRANCH_RESPONSE_KEY_BRANCH_IDENTITY: IDENTITY
+        BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: IDENTITY
     };
 
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
@@ -316,7 +316,7 @@
     XCTAssertEqualObjects(preferenceHelper.userUrl, USER_URL);
     XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
     XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
-    XCTAssertEqualObjects(preferenceHelper.identityID, IDENTITY);
+    XCTAssertEqualObjects(preferenceHelper.randomizedBundleToken, IDENTITY);
     XCTAssertNil(preferenceHelper.sessionParams);
     XCTAssertNil(preferenceHelper.linkClickIdentifier);
     XCTAssertNil(preferenceHelper.installParams);

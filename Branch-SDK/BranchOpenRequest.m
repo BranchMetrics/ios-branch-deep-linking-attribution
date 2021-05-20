@@ -50,7 +50,7 @@
         params[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = preferenceHelper.randomizedDeviceToken;
     }
 
-    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+    params[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = preferenceHelper.randomizedBundleToken;
     params[BRANCH_REQUEST_KEY_DEBUG] = @(preferenceHelper.isDebug);
 
     [self safeSetValue:[BNCSystemObserver getBundleID] forKey:BRANCH_REQUEST_KEY_BUNDLE_ID onDict:params];
@@ -252,8 +252,8 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     preferenceHelper.referringURL = referringURL;
     preferenceHelper.dropURLOpen = NO;
 
-    NSString *string = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]);
-    if (string) preferenceHelper.identityID = string;
+    NSString *string = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN]);
+    if (string) preferenceHelper.randomizedBundleToken = string;
 
     [BranchOpenRequest releaseOpenResponseLock];
 

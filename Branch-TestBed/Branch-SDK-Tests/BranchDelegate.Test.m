@@ -59,10 +59,10 @@
 
     BNCServerResponse *openInstallResponse = [[BNCServerResponse alloc] init];
     openInstallResponse.data = @{
-        @"data": @"{\"$og_title\":\"Content Title\",\"$identity_id\":\"423237095633725879\",\"~feature\":\"Sharing Feature\",\"$desktop_url\":\"http://branch.io\",\"$canonical_identifier\":\"item/12345\",\"~id\":423243086454504450,\"~campaign\":\"some campaign\",\"+is_first_session\":false,\"~channel\":\"Distribution Channel\",\"$ios_url\":\"https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/\",\"$exp_date\":0,\"$currency\":\"$\",\"$publicly_indexable\":1,\"$content_type\":\"some type\",\"~creation_source\":3,\"$amount\":1000,\"$og_description\":\"My Content Description\",\"+click_timestamp\":1506983962,\"$og_image_url\":\"https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png\",\"+match_guaranteed\":true,\"+clicked_branch_link\":true,\"deeplink_text\":\"This text was embedded as data in a Branch link with the following characteristics:\\n\\ncanonicalUrl: https://dev.branch.io/getting-started/deep-link-routing/guide/ios/\\n  title: Content Title\\n  contentDescription: My Content Description\\n  imageUrl: https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png\\n\",\"$one_time_use\":false,\"$canonical_url\":\"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/\",\"~referring_link\":\"https://bnctestbed.app.link/izPBY2xCqF\"}",
+        @"data": @"{\"$og_title\":\"Content Title\",\"$randomized_bundle_token\":\"423237095633725879\",\"~feature\":\"Sharing Feature\",\"$desktop_url\":\"http://branch.io\",\"$canonical_identifier\":\"item/12345\",\"~id\":423243086454504450,\"~campaign\":\"some campaign\",\"+is_first_session\":false,\"~channel\":\"Distribution Channel\",\"$ios_url\":\"https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/\",\"$exp_date\":0,\"$currency\":\"$\",\"$publicly_indexable\":1,\"$content_type\":\"some type\",\"~creation_source\":3,\"$amount\":1000,\"$og_description\":\"My Content Description\",\"+click_timestamp\":1506983962,\"$og_image_url\":\"https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png\",\"+match_guaranteed\":true,\"+clicked_branch_link\":true,\"deeplink_text\":\"This text was embedded as data in a Branch link with the following characteristics:\\n\\ncanonicalUrl: https://dev.branch.io/getting-started/deep-link-routing/guide/ios/\\n  title: Content Title\\n  contentDescription: My Content Description\\n  imageUrl: https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png\\n\",\"$one_time_use\":false,\"$canonical_url\":\"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/\",\"~referring_link\":\"https://bnctestbed.app.link/izPBY2xCqF\"}",
         @"randomized_device_token": @"439892172783867901",
-        @"identity_id": @"439892172804841307",
-        @"link": @"https://bnctestbed.app.link?%24identity_id=439892172804841307",
+        @"randomized_bundle_token": @"439892172804841307",
+        @"link": @"https://bnctestbed.app.link?%24randomized_bundle_token=439892172804841307",
         @"session_id": @"443529761084512316",
     };
 
@@ -282,7 +282,7 @@ failedToStartSessionWithURL:(NSURL*)url
             @"$currency": @"$",
             @"$desktop_url": @"http://branch.io",
             @"$exp_date": @0,
-            @"$identity_id": @"423237095633725879",
+            @"$randomized_bundle_token": @"423237095633725879",
             @"$ios_url": @"https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/",
             @"$og_description": @"My Content Description",
             @"$og_image_url": @"https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png",

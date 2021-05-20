@@ -23,7 +23,7 @@ static NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary * const expectedParams = @{
         BRANCH_REQUEST_KEY_DEVELOPER_IDENTITY: IDENTITY_TEST_USER_ID,
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN: preferenceHelper.randomizedBundleToken,
         BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN: preferenceHelper.randomizedDeviceToken,
         BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID
     };
@@ -51,13 +51,13 @@ static NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     preferenceHelper.userIdentity = PRE_RESPONSE_USER_IDENTITY;
-    preferenceHelper.identityID = PRE_RESPONSE_IDENTITY;
+    preferenceHelper.randomizedBundleToken = PRE_RESPONSE_IDENTITY;
     preferenceHelper.userUrl = PRE_RESPONSE_USER_URL;
     preferenceHelper.installParams = PRE_RESPONSE_INSTALL_PARAMS;
     
     BNCServerResponse * const goodResponse = [[BNCServerResponse alloc] init];
     goodResponse.data = @{
-        BRANCH_RESPONSE_KEY_BRANCH_IDENTITY: RESPONSE_IDENTITY,
+        BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: RESPONSE_IDENTITY,
         BRANCH_RESPONSE_KEY_USER_URL: RESPONSE_USER_URL,
         BRANCH_RESPONSE_KEY_INSTALL_PARAMS: RESPONSE_INSTALL_PARAMS
     };
@@ -72,7 +72,7 @@ static NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
     
     XCTAssertEqual(callbackCount, 1);
     XCTAssertEqualObjects(preferenceHelper.userIdentity, IDENTITY_TEST_USER_ID);
-    XCTAssertEqualObjects(preferenceHelper.identityID, RESPONSE_IDENTITY);
+    XCTAssertEqualObjects(preferenceHelper.randomizedBundleToken, RESPONSE_IDENTITY);
     XCTAssertEqualObjects(preferenceHelper.userUrl, RESPONSE_USER_URL);
     XCTAssertEqualObjects(preferenceHelper.installParams, RESPONSE_INSTALL_PARAMS);
 }
@@ -126,13 +126,13 @@ static NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     preferenceHelper.userIdentity = PRE_RESPONSE_USER_IDENTITY;
-    preferenceHelper.identityID = PRE_RESPONSE_IDENTITY;
+    preferenceHelper.randomizedBundleToken = PRE_RESPONSE_IDENTITY;
     preferenceHelper.userUrl = PRE_RESPONSE_USER_URL;
     preferenceHelper.installParams = PRE_RESPONSE_INSTALL_PARAMS;
 
     BNCServerResponse * const goodResponse = [[BNCServerResponse alloc] init];
     goodResponse.data = @{
-        BRANCH_RESPONSE_KEY_BRANCH_IDENTITY: RESPONSE_IDENTITY,
+        BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: RESPONSE_IDENTITY,
         BRANCH_RESPONSE_KEY_USER_URL: RESPONSE_USER_URL,
         BRANCH_RESPONSE_KEY_INSTALL_PARAMS: RESPONSE_INSTALL_PARAMS
     };
@@ -151,7 +151,7 @@ static NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
     
     XCTAssertEqual(callbackCount, 1); // callback should have only been called once, but preferences should be updated
     XCTAssertEqualObjects(preferenceHelper.userIdentity, IDENTITY_TEST_USER_ID);
-    XCTAssertEqualObjects(preferenceHelper.identityID, RESPONSE_IDENTITY);
+    XCTAssertEqualObjects(preferenceHelper.randomizedBundleToken, RESPONSE_IDENTITY);
     XCTAssertEqualObjects(preferenceHelper.userUrl, RESPONSE_USER_URL);
     XCTAssertEqualObjects(preferenceHelper.installParams, RESPONSE_INSTALL_PARAMS);
 }

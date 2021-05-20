@@ -24,7 +24,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (strong, nonatomic) NSString *appVersion;
 
 @property (strong, nonatomic) NSString *randomizedDeviceToken;
-@property (strong, nonatomic) NSString *identityID;
+@property (strong, nonatomic) NSString *randomizedBundleToken;
 
 @property (strong, nonatomic) NSString *sessionID;
 @property (strong, nonatomic) NSString *linkClickIdentifier;

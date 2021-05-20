@@ -395,10 +395,8 @@
         preparedParams[@"hardware_id"] = nil;
         preparedParams[@"hardware_id_type"] = nil;
         preparedParams[@"is_hardware_id_real"] = nil;
-        
         preparedParams[@"randomized_device_token"] = nil;
-        
-        preparedParams[@"identity_id"] = nil;
+        preparedParams[@"randomized_bundle_token"] = nil;
         preparedParams[@"identity"] = nil;
         preparedParams[@"update"] = nil;
     }

@@ -112,18 +112,18 @@ BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex) {
     return [UIDevice currentDevice].systemVersion.floatValue;
 }
 
-static NSString* savedIdentityID = nil;
+static NSString* savedRandomizedBundleToken = nil;
 
 + (void) initialize {
     if (self != [BNCTestCase self]) return;
     BNCLogSetDisplayLevel(BNCLogLevelAll);
 
-    savedIdentityID = [BNCPreferenceHelper preferenceHelper].identityID;
+    savedRandomizedBundleToken = [BNCPreferenceHelper preferenceHelper].randomizedBundleToken;
     [Branch clearAll];
 }
 
 + (void)tearDown {
-    [BNCPreferenceHelper preferenceHelper].identityID = savedIdentityID;
+    [BNCPreferenceHelper preferenceHelper].randomizedBundleToken = savedRandomizedBundleToken;
 }
 
 + (void) clearAllBranchSettings {

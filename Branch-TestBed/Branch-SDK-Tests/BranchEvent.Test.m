@@ -32,7 +32,7 @@
 @implementation BranchEventTest
 
 - (void) setUp {
-    [BNCPreferenceHelper preferenceHelper].identityID = @"575759106028389737";
+    [BNCPreferenceHelper preferenceHelper].randomizedBundleToken = @"575759106028389737";
     [[BNCPreferenceHelper preferenceHelper] clearInstrumentationDictionary];
 }
 

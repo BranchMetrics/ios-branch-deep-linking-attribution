@@ -154,7 +154,7 @@ NSInteger const  TEST_CREDITS = 30;
     __block BNCServerCallback loadCreditsCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         loadCreditsCallback(loadCreditsResponse, nil);
-    }] getRequest:[OCMArg any] url:[preferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"credits", preferenceHelper.identityID]] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] getRequest:[OCMArg any] url:[preferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"credits", preferenceHelper.randomizedBundleToken]] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         loadCreditsCallback = callback;
         return YES;
     }]];
@@ -196,7 +196,7 @@ NSInteger const  TEST_CREDITS = 30;
         }]
         getRequest:[OCMArg any]
         url:[preferenceHelper
-        getAPIURL:[NSString stringWithFormat:@"%@/%@", @"credits", preferenceHelper.identityID]]
+        getAPIURL:[NSString stringWithFormat:@"%@/%@", @"credits", preferenceHelper.randomizedBundleToken]]
         key:[OCMArg any]
         callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
             loadRewardsCallback = callback;
@@ -383,8 +383,6 @@ NSInteger const  TEST_CREDITS = 30;
         @"session_id": TEST_SESSION_ID,
         @"identity_id": TEST_IDENTITY_ID,
         @"randomized_device_token": TEST_RANDOMIZED_DEVICE_TOKEN,
-        @"link": TEST_IDENTITY_LINK,
-        @"new_identity_id": TEST_NEW_IDENTITY_ID
     };
     
     // Stub open / install

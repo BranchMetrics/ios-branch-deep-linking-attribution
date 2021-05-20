@@ -20,7 +20,7 @@
 - (void)testRequestBody {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary * const expectedParams = @{
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN: preferenceHelper.randomizedBundleToken,
         BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN: preferenceHelper.randomizedDeviceToken,
         BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID
     };
@@ -47,7 +47,7 @@
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     preferenceHelper.sessionID = PRE_RESPONSE_SESSION_ID;
-    preferenceHelper.identityID = PRE_RESPONSE_IDENTITY;
+    preferenceHelper.randomizedBundleToken = PRE_RESPONSE_IDENTITY;
     preferenceHelper.userUrl = PRE_RESPONSE_USER_URL;
     preferenceHelper.userIdentity = PRE_RESPONSE_USER_IDENTITY;
     preferenceHelper.installParams = PRE_RESPONSE_INSTALL_PARAMS;
@@ -58,14 +58,14 @@
     goodResponse.data = @{
         BRANCH_RESPONSE_KEY_SESSION_ID: RESPONSE_SESSION_ID,
         BRANCH_RESPONSE_KEY_USER_URL: RESPONSE_USER_URL,
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: RESPONSE_IDENTITY
+        BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN: RESPONSE_IDENTITY
     };
     
     BranchLogoutRequest *request = [[BranchLogoutRequest alloc] init];
     
     [request processResponse:goodResponse error:nil];
     
-    XCTAssertEqualObjects(preferenceHelper.identityID, RESPONSE_IDENTITY);
+    XCTAssertEqualObjects(preferenceHelper.randomizedBundleToken, RESPONSE_IDENTITY);
     XCTAssertEqualObjects(preferenceHelper.userUrl, RESPONSE_USER_URL);
     XCTAssertEqualObjects(preferenceHelper.sessionID, RESPONSE_SESSION_ID);
     XCTAssertNil(preferenceHelper.userIdentity);
@@ -85,7 +85,7 @@
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     preferenceHelper.sessionID = PRE_RESPONSE_SESSION_ID;
-    preferenceHelper.identityID = PRE_RESPONSE_IDENTITY;
+    preferenceHelper.randomizedBundleToken = PRE_RESPONSE_IDENTITY;
     preferenceHelper.userUrl = PRE_RESPONSE_USER_URL;
     preferenceHelper.userIdentity = PRE_RESPONSE_USER_IDENTITY;
     preferenceHelper.installParams = PRE_RESPONSE_INSTALL_PARAMS;
@@ -97,7 +97,7 @@
     
     [request processResponse:nil error:requestError];
     
-    XCTAssertEqualObjects(preferenceHelper.identityID, PRE_RESPONSE_IDENTITY);
+    XCTAssertEqualObjects(preferenceHelper.randomizedBundleToken, PRE_RESPONSE_IDENTITY);
     XCTAssertEqualObjects(preferenceHelper.userUrl, PRE_RESPONSE_USER_URL);
     XCTAssertEqualObjects(preferenceHelper.sessionID, PRE_RESPONSE_SESSION_ID);
     XCTAssertEqualObjects(preferenceHelper.userIdentity, PRE_RESPONSE_USER_IDENTITY);

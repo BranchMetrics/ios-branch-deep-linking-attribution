@@ -1619,7 +1619,7 @@ static NSString *bnc_branchKey = nil;
                 preferenceHelper.appVersion = nil;
                 preferenceHelper.randomizedDeviceToken = nil;
                 preferenceHelper.sessionID = nil;
-                preferenceHelper.identityID = nil;
+                preferenceHelper.randomizedBundleToken = nil;
                 preferenceHelper.userUrl = nil;
                 preferenceHelper.installParams = nil;
                 preferenceHelper.sessionParams = nil;
@@ -2032,7 +2032,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
             // If tracking is disabled, then do not check for install event.  It won't exist.
             if (!Branch.trackingDisabled) {
-                if (![req isKindOfClass:[BranchInstallRequest class]] && !self.preferenceHelper.identityID) {
+                if (![req isKindOfClass:[BranchInstallRequest class]] && !self.preferenceHelper.randomizedBundleToken) {
                     BNCLogError(@"User session has not been initialized!");
                     BNCPerformBlockOnMainThreadSync(^{
                         [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
@@ -2129,7 +2129,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 // only called from initUserSessionAndCallCallback!
 - (void)initializeSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
 	Class clazz = [BranchInstallRequest class];
-	if (self.preferenceHelper.identityID) {
+	if (self.preferenceHelper.randomizedBundleToken) {
 		clazz = [BranchOpenRequest class];
 	}
 

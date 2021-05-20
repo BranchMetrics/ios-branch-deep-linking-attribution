@@ -84,7 +84,7 @@
         
         NSString *url = preferenceHelper.referringURL;
         NSString *token = preferenceHelper.randomizedDeviceToken;
-        NSString *bundleToken = preferenceHelper.identityID;
+        NSString *bundleToken = preferenceHelper.randomizedBundleToken;
         
         [self saveObject:url forKey:@"BranchAppClipURL"];
         [self saveObject:token forKey:@"BranchAppClipToken"];
