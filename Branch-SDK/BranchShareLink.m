@@ -172,6 +172,12 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         [_activityItems addObject:item];
     }
 
+    if (@available(iOS 13.0, *)) {
+        if (self.lpMetaData) {
+            [_activityItems addObject:self];
+        }
+    }
+ 
     return _activityItems;
 }
 
@@ -310,5 +316,21 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     }
     return returnURL;
 }
+
+- (id)activityViewControllerPlaceholderItem:(UIActivityViewController *)activityViewController  // called to determine data type. only the class of the return type is consulted. it should match what -itemForActivityType: returns later
+{
+    return @"";
+}
+
+- (nullable LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController API_AVAILABLE(ios(13.0))
+{
+        return self.lpMetaData;
+}
+
+- (nullable id)activityViewController:(UIActivityViewController *)activityViewController itemForActivityType:(nullable UIActivityType)activityType   // called to fetch data after an activity is selected. you can return nil.
+{
+    return nil;
+}
+
 
 @end

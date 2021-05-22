@@ -55,7 +55,7 @@ A delegate on the BranchShareLink can further configure the share experience. Fo
 parameters can be changed depending on the activity that the user selects.
 */
 
-@interface BranchShareLink : NSObject
+@interface BranchShareLink : NSObject <UIActivityItemSource>
 
 /**
 Creates a BranchShareLink object.
@@ -90,6 +90,9 @@ Presents a UIActivityViewController that shares the Branch link.
 // iOS 13+ fetches a preview header icon, text and domain name from this URL.
 // By default, we use the Branch bnc.lt link, but if you wish more control override it here.
 @property (nonatomic, strong, nullable) NSURL *placeholderURL;
+
+// iOS 13+ : LinkPresentation metadata for the preview header.
+@property (nonatomic, strong, nullable) LPLinkMetadata *lpMetaData;
 
 ///Share text for the item.  This is not the text in the iOS 13+ preview header.
 ///This text can be changed later when the `branchShareSheetWillShare:` delegate method is called.
