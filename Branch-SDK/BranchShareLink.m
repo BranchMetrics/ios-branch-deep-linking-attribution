@@ -324,7 +324,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 
 - (nullable LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController API_AVAILABLE(ios(13.0))
 {
-        return self.lpMetaData;
+    return self.lpMetaData;
 }
 
 - (nullable id)activityViewController:(UIActivityViewController *)activityViewController itemForActivityType:(nullable UIActivityType)activityType   // called to fetch data after an activity is selected. you can return nil.
