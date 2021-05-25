@@ -45,7 +45,7 @@
     NSString *dataReturned = app.textViews[@"DeepLinkData"].value;
     XCTAssertTrue([dataReturned containsString:@"Identity set to: ben@emailaddress.io"]);
     
-    // Check for URL, identity, identity_id
+    // Check for URL, identity, randomized_bundle_token
     [app.navigationBars[@"Branch-TestBed"].buttons[@"Branch-TestBed"] tap];
     [tablesQuery/*@START_MENU_TOKEN@*/.staticTexts[@"Load Logs for Last Command"]/*[[".cells",".buttons[@\"Load Logs for Last Command\"].staticTexts[@\"Load Logs for Last Command\"]",".staticTexts[@\"Load Logs for Last Command\"]"],[[[-1,2],[-1,1],[-1,0,1]],[[-1,2],[-1,1]]],[0]]@END_MENU_TOKEN@*/ tap];
     XCUIElement *deeplinkdataTextView = app.textViews[@"DeepLinkData"];
@@ -59,14 +59,14 @@
     XCTAssertTrue([url containsString:@"/v1/profile"]);
 
     NSDictionary *identity = [json objectForKey:@"identity"];
-    NSString *identity_id = [json objectForKey:@"identity_id"];
+    NSString *randomized_bundle_token = [json objectForKey:@"randomized_bundle_token"];
     XCTAssertNotNil(identity);
-    XCTAssertNotNil(identity_id);
+    XCTAssertNotNil(randomized_bundle_token);
 
     [app.navigationBars[@"Branch-TestBed"].buttons[@"Branch-TestBed"] tap];
     
     
-    // Send Event & check if it contains identity & identity_id
+    // Send Event & check if it contains identity & randomized_bundle_token
     setIdentity = TRUE;
     checkIdentity = TRUE;
     [self sendEvent:BranchStandardEventAddToCart];
@@ -76,7 +76,7 @@
     [tablesQuery/*@START_MENU_TOKEN@*/.staticTexts[@"SimulateLogout"]/*[[".cells",".buttons[@\"SimulateLogout\"].staticTexts[@\"SimulateLogout\"]",".staticTexts[@\"SimulateLogout\"]"],[[[-1,2],[-1,1],[-1,0,1]],[[-1,2],[-1,1]]],[0]]@END_MENU_TOKEN@*/ tap];
     [app.alerts[@"Logout succeeded"].scrollViews.otherElements.buttons[@"OK"] tap];
     
-    // Send Event & check if it DOES NOT contains identity & identity_id
+    // Send Event & check if it DOES NOT contains identity & randomized_bundle_token
     setIdentity = FALSE;
     [self sendEvent:BranchStandardEventAddToCart];
     checkIdentity = FALSE;

@@ -42,7 +42,7 @@
     NSString * const OS_VERSION = @"foo-os-version";
     NSString * const URI_SCHEME = @"foo-uri-scheme";
     NSString * const LINK_IDENTIFIER = @"foo-link-id";
-    NSString * const IDENTITY_ID = @"foo-identity";
+    NSString * const RANDOMIZED_BUNDLE_TOKEN = @"foo-bundle-token";
     NSString * hardwareType = nil;
 
     BNCLogSetDisplayLevel(BNCLogLevelAll);
@@ -63,7 +63,7 @@
     preferenceHelper.isDebug = [IS_DEBUG boolValue];
     preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
     preferenceHelper.randomizedDeviceToken = nil;
-    preferenceHelper.randomizedBundleToken = IDENTITY_ID;
+    preferenceHelper.randomizedBundleToken = RANDOMIZED_BUNDLE_TOKEN;
 
     NSTimeInterval kOneDayAgo = -1.0*24.0*60.0*60.0;
     NSDate *installDate = [NSDate dateWithTimeIntervalSinceNow:2.0*kOneDayAgo];
@@ -83,7 +83,7 @@
         },
         @"debug":                       IS_DEBUG,
         @"facebook_app_link_checked":   @0,
-        @"randomized_bundle_token":     IDENTITY_ID,
+        @"randomized_bundle_token":     RANDOMIZED_BUNDLE_TOKEN,
         @"ios_bundle_id":               BUNDLE_ID,
         @"ios_team_id":                 @"R63EM248DP",
         @"link_identifier":             LINK_IDENTIFIER,
@@ -124,7 +124,7 @@
     NSString * const URI_SCHEME = @"foo-uri-scheme";
     NSString * const LINK_IDENTIFIER = @"foo-link-id";
     NSString * const DEVICE_TOKEN = @"foo-token";
-    NSString * const IDENTITY_ID = @"foo-identity";
+    NSString * const RANDOMIZED_BUNDLE_TOKEN = @"foo-bundle-token";
     NSString * hardwareType = nil;
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
@@ -143,7 +143,7 @@
     preferenceHelper.isDebug = [IS_DEBUG boolValue];
     preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
     preferenceHelper.randomizedDeviceToken = DEVICE_TOKEN;
-    preferenceHelper.randomizedBundleToken = IDENTITY_ID;
+    preferenceHelper.randomizedBundleToken = RANDOMIZED_BUNDLE_TOKEN;
 
     NSTimeInterval kOneDayAgo = -1.0*24.0*60.0*60.0;
     NSDate *installDate = [NSDate dateWithTimeIntervalSinceNow:2.0*kOneDayAgo];
@@ -164,7 +164,7 @@
         @"debug":                       IS_DEBUG,
         @"randomized_device_token":     DEVICE_TOKEN,
         @"facebook_app_link_checked":   @0,
-        @"identity_id":                 IDENTITY_ID,
+        @"randomized_bundle_token":     RANDOMIZED_BUNDLE_TOKEN,
         @"ios_bundle_id":               BUNDLE_ID,
         @"ios_team_id":                 @"R63EM248DP",
         @"link_identifier":             LINK_IDENTIFIER,

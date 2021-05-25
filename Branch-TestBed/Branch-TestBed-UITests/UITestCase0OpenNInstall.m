@@ -52,10 +52,10 @@
     XCTAssertNotNil(json);
     XCTAssertTrue([url containsString:@"/v1/install"]);
     
-    // Get and Assert randomized_device_token & identity_id
+    // Get and Assert randomized_device_token & randomized_bundle_token
     NSNumber *randomized_device_token = [dataJson objectForKey:@"randomized_device_token"];
-    NSNumber *identity_id = [dataJson objectForKey:@"identity_id"];
-    XCTAssertNotNil(identity_id);
+    NSNumber *randomized_bundle_token = [dataJson objectForKey:@"randomized_bundle_token"];
+    XCTAssertNotNil(randomized_bundle_token);
     XCTAssertNotNil(randomized_device_token);
     
     //Re-launch App
@@ -66,7 +66,7 @@
     // Load logs and assert -
     // - URL contains /v1/open
     // - randomized_device_token is the same as returned above
-    // - identity_id is the same as returned above
+    // - randomized_bundle_token is the same as returned above
     [tablesQuery/*@START_MENU_TOKEN@*/.staticTexts[@"Load Logs for Last Command"]/*[[".cells",".buttons[@\"Load Logs for Last Command\"].staticTexts[@\"Load Logs for Last Command\"]",".staticTexts[@\"Load Logs for Last Command\"]"],[[[-1,2],[-1,1],[-1,0,1]],[[-1,2],[-1,1]]],[0]]@END_MENU_TOKEN@*/ tap];
     deeplinkdataTextView = app.textViews[@"DeepLinkData"];
     [deeplinkdataTextView tap];
@@ -75,9 +75,9 @@
     
     XCTAssertTrue([url containsString:@"/v1/open"]);
     
-    XCTAssertNotNil([json valueForKey:@"identity_id"]);
-    NSNumber *newID = [NSNumber numberWithInteger: [[json objectForKey:@"identity_id"] integerValue]] ;
-    XCTAssertTrue([newID isEqualToNumber:identity_id]);
+    XCTAssertNotNil([json valueForKey:@"randomized_bundle_token"]);
+    NSNumber *newID = [NSNumber numberWithInteger: [[json objectForKey:@"randomized_bundle_token"] integerValue]] ;
+    XCTAssertTrue([newID isEqualToNumber:randomized_bundle_token]);
     
     XCTAssertNotNil([json valueForKey:@"randomized_device_token"]);
     NSNumber *newToken = [NSNumber numberWithInteger: [[json objectForKey:@"randomized_device_token"] integerValue]] ;
