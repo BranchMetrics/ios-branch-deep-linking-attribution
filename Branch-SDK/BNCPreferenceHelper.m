@@ -48,6 +48,8 @@ static NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_vi
 static NSString * const BRANCH_PREFS_KEY_ANALYTICAL_DATA = @"bnc_branch_analytical_data";
 static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_manifest";
 
+NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
+
 @interface BNCPreferenceHelper () {
     NSOperationQueue *_persistPrefsQueue;
     NSString         *_lastSystemBuildVersion;
