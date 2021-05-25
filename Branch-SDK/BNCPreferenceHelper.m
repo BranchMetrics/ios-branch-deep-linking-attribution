@@ -24,9 +24,8 @@ static NSString * const BRANCH_PREFS_KEY_APP_VERSION = @"bnc_app_version";
 static NSString * const BRANCH_PREFS_KEY_LAST_RUN_BRANCH_KEY = @"bnc_last_run_branch_key";
 static NSString * const BRANCH_PREFS_KEY_LAST_STRONG_MATCH_DATE = @"bnc_strong_match_created_date";
 
-// TODO: can we replace these outdated variable names?
-static NSString * const BRANCH_PREFS_KEY_DEVICE_FINGERPRINT_ID = @"bnc_device_fingerprint_id";
-static NSString * const BRANCH_PREFS_KEY_IDENTITY_ID = @"bnc_identity_id";
+static NSString * const BRANCH_PREFS_KEY_RANDOMIZED_DEVICE_TOKEN = @"bnc_randomized_device_token";
+static NSString * const BRANCH_PREFS_KEY_RANDOMIZED_BUNDLE_TOKEN = @"bnc_randomized_bundle_token";
 
 static NSString * const BRANCH_PREFS_KEY_SESSION_ID = @"bnc_session_id";
 static NSString * const BRANCH_PREFS_KEY_IDENTITY = @"bnc_identity";
@@ -220,7 +219,14 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 - (NSString *)randomizedDeviceToken {
     if (!_randomizedDeviceToken) {
-        _randomizedDeviceToken = [self readStringFromDefaults:BRANCH_PREFS_KEY_DEVICE_FINGERPRINT_ID];
+        NSString *tmp = [self readStringFromDefaults:BRANCH_PREFS_KEY_RANDOMIZED_DEVICE_TOKEN];
+    
+        // check deprecated location
+        if (!tmp) {
+            tmp = [self readStringFromDefaults:@"bnc_device_fingerprint_id"];
+        }
+        
+        _randomizedDeviceToken = tmp;
     }
     
     return _randomizedDeviceToken;
@@ -229,7 +235,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (void)setRandomizedDeviceToken:(NSString *)randomizedDeviceToken {
     if (randomizedDeviceToken == nil || ![_randomizedDeviceToken isEqualToString:randomizedDeviceToken]) {
         _randomizedDeviceToken = randomizedDeviceToken;
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_DEVICE_FINGERPRINT_ID value:randomizedDeviceToken];
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_RANDOMIZED_DEVICE_TOKEN value:randomizedDeviceToken];
     }
 }
 
@@ -249,11 +255,18 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 }
 
 - (NSString *)randomizedBundleToken {
-    return [self readStringFromDefaults:BRANCH_PREFS_KEY_IDENTITY_ID];
+    NSString *tmp = [self readStringFromDefaults:BRANCH_PREFS_KEY_RANDOMIZED_BUNDLE_TOKEN];
+    
+    // check deprecated location
+    if (!tmp) {
+        tmp = [self readStringFromDefaults:@"bnc_identity_id"];
+    }
+    
+    return tmp;
 }
 
 - (void)setRandomizedBundleToken:(NSString *)randomizedBundleToken {
-    [self writeObjectToDefaults:BRANCH_PREFS_KEY_IDENTITY_ID value:randomizedBundleToken];
+    [self writeObjectToDefaults:BRANCH_PREFS_KEY_RANDOMIZED_BUNDLE_TOKEN value:randomizedBundleToken];
 }
 
 - (NSString *)userIdentity {

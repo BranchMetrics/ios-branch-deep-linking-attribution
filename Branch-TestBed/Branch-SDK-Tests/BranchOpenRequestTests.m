@@ -197,7 +197,7 @@
     NSString * const DEVELOPER_ID = @"foo";
     NSString * const SESSION_ID = @"foo-session";
     NSString * const SESSION_PARAMS = @"{\"+clicked_branch_link\":1,\"foo\":\"bar\"}";
-    NSString * const IDENTITY = @"branch-id";
+    NSString * const RANDOMIZED_BUNDLE_TOKEN = @"branch-id";
     
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = @{
@@ -206,7 +206,7 @@
         BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY: DEVELOPER_ID,
         BRANCH_RESPONSE_KEY_SESSION_ID: SESSION_ID,
         BRANCH_RESPONSE_KEY_SESSION_DATA: SESSION_PARAMS,
-        BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: IDENTITY
+        BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: RANDOMIZED_BUNDLE_TOKEN
     };
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
@@ -228,7 +228,7 @@
     XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
     XCTAssertEqualObjects(preferenceHelper.sessionParams, SESSION_PARAMS);
     XCTAssertEqualObjects(preferenceHelper.installParams, SESSION_PARAMS);
-    XCTAssertEqualObjects(preferenceHelper.randomizedBundleToken, IDENTITY);
+    XCTAssertEqualObjects(preferenceHelper.randomizedBundleToken, RANDOMIZED_BUNDLE_TOKEN);
     XCTAssertNil(preferenceHelper.linkClickIdentifier);
 }
 
