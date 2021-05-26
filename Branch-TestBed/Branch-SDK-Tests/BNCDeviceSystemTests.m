@@ -31,12 +31,30 @@
 }
 
 - (void)testMachine_Simulator {
-    XCTAssert([@"x86_64" isEqualToString:self.deviceSystem.machine]);
+    // intel processor
+    bool x86_64 = [@"x86_64" isEqualToString:self.deviceSystem.machine];
+    
+    // apple processor
+    bool arm64 = [@"arm64" isEqualToString:self.deviceSystem.machine];
+    
+    XCTAssert(x86_64 || arm64);
 }
 
 - (void)testCPUType_Simulator {
-    XCTAssert([@(7) isEqualToNumber:self.deviceSystem.cpuType]);
-    XCTAssert([@(8) isEqualToNumber:self.deviceSystem.cpuSubType]);
+    // intel processor
+    bool x86 = [@(7) isEqualToNumber:self.deviceSystem.cpuType];
+    bool x86_sub = [@(8) isEqualToNumber:self.deviceSystem.cpuSubType];
+    
+    // apple processor
+    bool arm = [@(16777228) isEqualToNumber:self.deviceSystem.cpuType];
+    bool arm_sub = [@(2) isEqualToNumber:self.deviceSystem.cpuSubType];
+    
+    XCTAssert(x86 || arm);
+    if (x86) {
+        XCTAssert(x86_sub);
+    } else {
+        XCTAssert(arm_sub);
+    }
 }
 
 @end
