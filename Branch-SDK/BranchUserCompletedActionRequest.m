@@ -78,4 +78,8 @@
     [coder encodeObject:self.state forKey:@"state"];
 }
 
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
 @end

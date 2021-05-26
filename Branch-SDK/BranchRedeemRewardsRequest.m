@@ -75,4 +75,8 @@
     [coder encodeObject:self.bucket forKey:@"bucket"];
 }
 
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
 @end

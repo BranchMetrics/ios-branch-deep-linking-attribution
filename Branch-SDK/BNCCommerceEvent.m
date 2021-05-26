@@ -615,7 +615,7 @@ NSArray<BNCCurrency>* BNCCurrencyAllCurrencies(void) {
     [coder encodeObject:self.metadata forKey:@"metadata"];
 }
 
-+ (BOOL) supportsSecureCoding {
++ (BOOL)supportsSecureCoding {
     return YES;
 }
 

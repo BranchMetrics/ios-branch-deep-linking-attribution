@@ -86,4 +86,8 @@
     [coder encodeObject:self.userId forKey:@"userId"];
 }
 
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
 @end

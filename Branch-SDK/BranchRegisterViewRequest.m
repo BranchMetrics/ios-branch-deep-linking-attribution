@@ -77,4 +77,8 @@
     [coder encodeObject:self.params forKey:@"params"];
 }
 
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
 @end

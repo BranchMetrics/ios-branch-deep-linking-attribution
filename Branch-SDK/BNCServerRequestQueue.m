@@ -323,8 +323,14 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 
 - (NSData *)archiveObject:(NSObject *)object {
     NSData *data = nil;
+    NSError *error = nil;
     if (@available(iOS 12.0, *)) {
-        data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:YES error:NULL];
+        data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:YES error:&error];
+        
+        if (!data && error) {
+            BNCLogWarning([NSString stringWithFormat:@"Failed to archive: %@", error]);
+        }
+        
     } else {
         #if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
         data = [NSKeyedArchiver archivedDataWithRootObject:object];

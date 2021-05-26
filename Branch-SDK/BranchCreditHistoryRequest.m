@@ -97,7 +97,7 @@
     [coder encodeInteger:self.order forKey:@"order"];
 }
 
-+ (BOOL) supportsSecureCoding {
++ (BOOL)supportsSecureCoding {
     return YES;
 }
 
