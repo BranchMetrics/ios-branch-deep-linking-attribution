@@ -93,7 +93,7 @@ Presents a UIActivityViewController that shares the Branch link.
 @property (nonatomic, strong, nullable) NSURL *placeholderURL;
 
 // iOS 13+ : LinkPresentation metadata for the preview header.
-@property (nonatomic, strong, nullable) LPLinkMetadata *lpMetaData;
+@property (nonatomic, strong, nullable) LPLinkMetadata *lpMetaData API_AVAILABLE(ios(13.0));
 
 ///Share text for the item.  This is not the text in the iOS 13+ preview header.
 ///This text can be changed later when the `branchShareSheetWillShare:` delegate method is called.
