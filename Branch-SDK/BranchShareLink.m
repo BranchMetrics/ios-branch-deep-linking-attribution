@@ -101,6 +101,11 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     if (completed && !error) {
         [[BranchEvent customEventWithName:BNCShareCompletedEvent contentItem:self.universalObject] logEvent];
     }
+    if (self.completion)
+        self.completion(self.activityType, completed);
+    else
+        if (self.completionError)
+            self.completionError(self.activityType, completed, error);
 }
 
 - (NSArray<UIActivityItemProvider*>*_Nonnull) activityItems {
@@ -194,6 +199,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 
         shareViewController.completionWithItemsHandler =
             ^ (NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+                self->_activityType = activityType;
                 [self shareDidComplete:completed activityError:activityError];
             };
 
@@ -203,6 +209,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         #pragma clang diagnostic ignored "-Wdeprecated-declarations"
         shareViewController.completionHandler =
             ^ (UIActivityType activityType, BOOL completed) {
+                self->_activityType = activityType;
                 [self shareDidComplete:completed activityError:nil];
             };
         #pragma clang diagnostic pop

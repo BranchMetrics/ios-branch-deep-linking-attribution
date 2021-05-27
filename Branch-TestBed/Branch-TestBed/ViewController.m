@@ -15,6 +15,7 @@
 #import "BranchLinkProperties.h"
 #import "LogOutputViewController.h"
 #import "AppDelegate.h"
+#import <LinkPresentation/LinkPresentation.h>
 
 extern AppDelegate* appDelegate;
 
@@ -338,7 +339,16 @@ static NSString *type = @"some type";
     shareLink.shareText = [NSString stringWithFormat:
         @"Shared from Branch-TestBed at %@.",
         [self.dateFormatter stringFromDate:[NSDate date]]];
-
+    
+    if (@available(iOS 13.0, *)) {
+        LPLinkMetadata *tempLinkMetatData = [[LPLinkMetadata alloc] init];
+        tempLinkMetatData.title = @"Branch URL";
+        UIImage *img = [UIImage imageNamed:@"Brand Assets"];
+        tempLinkMetatData.iconProvider = [[NSItemProvider alloc] initWithObject:img];
+        tempLinkMetatData.imageProvider = [[NSItemProvider alloc] initWithObject:img];
+        shareLink.lpMetaData = tempLinkMetatData;
+    }
+   
     [shareLink presentActivityViewControllerFromViewController:self anchor:sender];
 }
 
