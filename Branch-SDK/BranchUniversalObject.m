@@ -413,26 +413,6 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 #pragma mark - Share Sheets
 #if !TARGET_OS_TV
 
-- (UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(BranchLinkProperties *)linkProperties {
-    if (!self.canonicalIdentifier && !self.canonicalUrl && !self.title) {
-        BNCLogWarning(@"A canonicalIdentifier, canonicalURL, or title are required to uniquely identify content. "
-            "In order to not break the end user experience with sharing, Branch SDK will proceed to create a URL, "
-            "but content analytics may not properly include this URL.");
-    }
-    
-    NSMutableDictionary *params = [[self getParamsForServerRequestWithAddedLinkProperties:linkProperties] mutableCopy];
-    if (linkProperties.matchDuration) {
-        [params setObject:@(linkProperties.matchDuration) forKey:BRANCH_REQUEST_KEY_URL_DURATION];
-    }
-
-    return [Branch getBranchActivityItemWithParams:params
-                                           feature:linkProperties.feature
-                                             stage:linkProperties.stage
-                                          campaign:linkProperties.campaign
-                                              tags:linkProperties.tags
-                                             alias:linkProperties.alias];
-}
-
 - (void)showShareSheetWithShareText:(NSString *)shareText
                          completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed))completion {
     [self showShareSheetWithLinkProperties:nil andShareText:shareText fromViewController:nil completion:completion];
@@ -478,79 +458,12 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
                                   anchor:(nullable id)anchorViewOrButtonItem
                               completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed))completion
                    orCompletionWithError:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed, NSError*_Nullable error))completionError {
-
-    // Log share initiated event
-    [[BranchEvent customEventWithName:BNCShareInitiatedEvent contentItem:self] logEvent];
-    UIActivityItemProvider *itemProvider = [self getBranchActivityItemWithLinkProperties:linkProperties];
-    NSMutableArray *items = [NSMutableArray arrayWithObject:itemProvider];
-    if (shareText) {
-        [items insertObject:shareText atIndex:0];
-    }
-    UIActivityViewController *shareViewController =
-        [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
     
-    if ([shareViewController respondsToSelector:@selector(completionWithItemsHandler)]) {
-        shareViewController.completionWithItemsHandler =
-          ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
-            // Log share completed event
-            if (completed && !activityError) {
-                [[BranchEvent customEventWithName:BNCShareCompletedEvent contentItem:self] logEvent];
-            }
-            if (completion)
-                completion(activityType, completed);
-            else
-            if (completionError)
-                completionError(activityType, completed, activityError);
-        };
-    } else {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        // Deprecated in iOS 8.  Safe to hide deprecation warnings as the new completion handler is checked for above
-        shareViewController.completionHandler = completion;
-        #pragma clang diagnostic pop
-    }
-    
-    UIViewController *presentingViewController = nil;
-    if (viewController && [viewController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
-        presentingViewController = viewController;
-    }
-    else {
-        UIViewController *rootViewController = [UIViewController bnc_currentViewController];
-        if ([rootViewController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
-            presentingViewController = rootViewController;
-        }
-    }
-    
-    if (linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT]) {
-        @try {
-            [shareViewController setValue:linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT] forKey:@"subject"];
-        }
-        @catch (NSException*) {
-            BNCLogWarning(@"Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController.");
-        }
-    }
-    
-    if (presentingViewController) {
-        // Required for iPad/Universal apps on iOS 8+
-        if ([presentingViewController respondsToSelector:@selector(popoverPresentationController)]) {
-            if ([anchorViewOrButtonItem isKindOfClass:UIBarButtonItem.class]) {
-                UIBarButtonItem *anchor = (UIBarButtonItem*) anchorViewOrButtonItem;
-                shareViewController.popoverPresentationController.barButtonItem = anchor;
-            } else
-            if ([anchorViewOrButtonItem isKindOfClass:UIView.class]) {
-                UIView *anchor = (UIView*) anchorViewOrButtonItem;
-                shareViewController.popoverPresentationController.sourceView = anchor;
-                shareViewController.popoverPresentationController.sourceRect = anchor.bounds;
-            } else {
-                shareViewController.popoverPresentationController.sourceView = presentingViewController.view;
-                shareViewController.popoverPresentationController.sourceRect = CGRectMake(0.0, 0.0, 40.0, 40.0);
-            }
-        }
-        [presentingViewController presentViewController:shareViewController animated:YES completion:nil];
-    }
-    else {
-        BNCLogWarning(@"Unable to show the share sheet since no view controller is present.");
-    }
+    BranchShareLink *shareLink = [[BranchShareLink alloc] initWithUniversalObject:self linkProperties:linkProperties];
+    shareLink.shareText = shareText;
+    shareLink.completion = completion;
+    shareLink.completionError = completionError;
+    [shareLink presentActivityViewControllerFromViewController:viewController anchor:anchorViewOrButtonItem];
 }
 
 #pragma mark - Spotlight

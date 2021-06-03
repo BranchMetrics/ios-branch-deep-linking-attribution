@@ -101,6 +101,11 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     if (completed && !error) {
         [[BranchEvent customEventWithName:BNCShareCompletedEvent contentItem:self.universalObject] logEvent];
     }
+    if (self.completion)
+        self.completion(self.activityType, completed);
+    else
+        if (self.completionError)
+            self.completionError(self.activityType, completed, error);
 }
 
 - (NSArray<UIActivityItemProvider*>*_Nonnull) activityItems {
@@ -172,6 +177,12 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         [_activityItems addObject:item];
     }
 
+    if (@available(iOS 13.0, *)) {
+        if (self.lpMetaData) {
+            [_activityItems addObject:self];
+        }
+    }
+ 
     return _activityItems;
 }
 
@@ -188,6 +199,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 
         shareViewController.completionWithItemsHandler =
             ^ (NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+                self->_activityType = activityType;
                 [self shareDidComplete:completed activityError:activityError];
             };
 
@@ -197,6 +209,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         #pragma clang diagnostic ignored "-Wdeprecated-declarations"
         shareViewController.completionHandler =
             ^ (UIActivityType activityType, BOOL completed) {
+                self->_activityType = activityType;
                 [self shareDidComplete:completed activityError:nil];
             };
         #pragma clang diagnostic pop
@@ -310,5 +323,21 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     }
     return returnURL;
 }
+
+- (id)activityViewControllerPlaceholderItem:(UIActivityViewController *)activityViewController  // called to determine data type. only the class of the return type is consulted. it should match what -itemForActivityType: returns later
+{
+    return @"";
+}
+
+- (nullable LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController API_AVAILABLE(ios(13.0))
+{
+    return self.lpMetaData;
+}
+
+- (nullable id)activityViewController:(UIActivityViewController *)activityViewController itemForActivityType:(nullable UIActivityType)activityType   // called to fetch data after an activity is selected. you can return nil.
+{
+    return nil;
+}
+
 
 @end

@@ -194,8 +194,6 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
 /// @name Share Sheet Handling
 #if !TARGET_OS_TV
 
-- (nullable UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(nonnull BranchLinkProperties *)linkProperties;
-
 - (void)showShareSheetWithShareText:(nullable NSString *)shareText
                          completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed))completion;
 
