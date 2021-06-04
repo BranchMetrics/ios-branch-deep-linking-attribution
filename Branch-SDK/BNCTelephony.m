@@ -23,7 +23,23 @@
 // This only works if device has cell service, otherwise all values are nil
 - (void)loadCarrierInformation {
     CTTelephonyNetworkInfo *networkInfo = [CTTelephonyNetworkInfo new];
-    CTCarrier *carrier = [networkInfo subscriberCellularProvider];
+    CTCarrier *carrier;
+    if (@available( iOS 12.0, *))
+    {
+        NSDictionary *carriers = [networkInfo serviceSubscriberCellularProviders];
+        for(id key in carriers.allKeys)
+        {
+            // Get the first carrier info and exit.
+            carrier = carriers[key];
+            break;
+        }
+    }
+    else
+    {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
+        carrier = [networkInfo subscriberCellularProvider];
+#endif
+    }
     
     self.carrierName = carrier.carrierName;
     self.isoCountryCode = carrier.isoCountryCode;
