@@ -21,11 +21,7 @@ module UpdateHelper
     lockfile_path = File.join podfile_folder, 'Podfile.lock'
     manifest_path = File.join podfile_folder, 'Pods', 'Manifest.lock'
 
-    lockfile_readable = File.readable? lockfile_path
-    UI.message "#{lockfile_path} not readable" unless lockfile_readable
-    manifest_readable = File.readable? manifest_path
-    UI.message "#{manifest_path} not readable" unless manifest_readable
-    return true unless lockfile_readable && manifest_readable
+    return true unless File.readable?(lockfile_path) && File.readable?(manifest_path)
 
     begin
       # This validates the Podfile.lock for yaml formatting at least and makes
@@ -36,17 +32,11 @@ module UpdateHelper
       # This is just what is done in the "[CP] Check Pods Manifest.lock" script
       # build phase in a project using CocoaPods. This is a stricter requirement
       # than semantic comparison of the two lockfile hashes.
-      lockfiles_in_sync = File.read(lockfile_path) == File.read(manifest_path)
-      UI.message "Lockfiles out of sync" unless lockfiles_in_sync
-      return true unless lockfiles_in_sync
+      return true unless File.read(lockfile_path) == File.read(manifest_path)
 
       # compare checksum of Podfile with checksum in Podfile.lock in case Podfile
       # updated since last pod install/update.
-      invalid_checksum = lockfile.to_hash["PODFILE CHECKSUM"] != podfile.checksum
-
-      UI.message "Invalid Podfile checksum" if invalid_checksum
-
-      invalid_checksum
+      lockfile.to_hash["PODFILE CHECKSUM"] != podfile.checksum
     rescue StandardError, Pod::PlainInformative => e
       # Any error from Pod::Lockfile.from_file or File.read after verifying a
       # file exists and is readable. pod install will regenerate these files.
