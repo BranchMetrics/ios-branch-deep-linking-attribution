@@ -1,0 +1,4 @@
+workspace 'Branch-TestBed/Branch-TestBed.xcworkspace'
+scheme 'Branch-TestBed' # What would be selected when you press cmd-U
+device 'iPhone 12'
+output_types 'junit'

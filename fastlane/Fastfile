@@ -4,5 +4,13 @@ fastlane_version "2.69.0"
 
 lane :prepare_pods do
   # This helps optimize CI with caching by testing whether a pod install is necessary
-  pod_install_if_required '../Branch-TestBed', verbose: true
+  pod_install_if_required '../Branch-TestBed'
+  # Can also turn on verbose output and disable repo update
+  # pod_install_if_required '../Branch-TestBed', verbose: true, repo_update: false
+end
+
+lane :unit_tests do
+  prepare_pods
+  # Parameters in Scanfile. Can be passed/overriden here too.
+  scan
 end
