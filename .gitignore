@@ -14,7 +14,6 @@ merge-repo-commit
 
 # Pods
 Pods/
-Podfile.lock
 
 # Carthage
 carthage-files/*.zip
