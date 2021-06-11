@@ -1,4 +1,4 @@
-name: Run integration tests
+name: Integration tests (manual)
 
 # Manually triggered
 # $ gh workflow run integration-tests.yml
