@@ -29,3 +29,5 @@ jobs:
         run: |
           bundle config set --local path vendor
           bundle check || bundle install
+      - name: Test Fastlane
+        run: bundle exec fastlane hello
