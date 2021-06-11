@@ -24,13 +24,13 @@ jobs:
         with:
           path: |
             vendor
-          key: ${{ runner.os }}-ruby2.7-${{ hashFiles('Gemfile.lock') }}
+            Branch-TestBed/Pods
+          key: ${{ runner.os }}-${{ hashFiles('Gemfile.lock','Branch-TestBed/Podfile.lock') }}
           restore-keys: |
-            ${{ runner.os }}-ruby2.7-
             ${{ runner.os }}-
       - name: Install Ruby dependencies
         run: |
           bundle config set --local path vendor
           bundle check || bundle install
-      - name: Test Fastlane
-        run: bundle exec fastlane hello
+      - name: Install CocoaPods dependencies
+        run: bundle exec fastlane prepare_pods
