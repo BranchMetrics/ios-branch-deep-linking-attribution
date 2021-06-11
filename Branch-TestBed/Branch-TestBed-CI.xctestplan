@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "B66E37E7-E9DB-4364-A758-69493EBB84FA",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Branch-TestBed.xcodeproj",
+        "identifier" : "7E6B3B501AA42D0E005F45BF",
+        "name" : "Branch-SDK-Tests"
+      }
+    }
+  ],
+  "version" : 1
+}
