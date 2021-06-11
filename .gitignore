@@ -27,5 +27,4 @@ fastlane/screenshots
 fastlane/test_output
 
 # Ruby stuff
-Gemfile.lock
-
+vendor
