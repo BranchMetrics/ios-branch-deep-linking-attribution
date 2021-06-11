@@ -1,0 +1,5 @@
+fastlane_version "2.69.0"
+
+lane :hello do
+  UI.message "Hello"
+end
