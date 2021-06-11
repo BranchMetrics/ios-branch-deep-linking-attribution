@@ -11,12 +11,12 @@ end
 
 lane :unit_tests do
   prepare_pods
-  # Parameters in Scanfile. Can be passed/overriden here too.
-  scan
+  # This testplan only runs unit tests for PR verification.
+  scan scheme: 'Branch-TestBed-CI'
 end
 
 lane :integration_tests do
   prepare_pods
-  # This testplan includes unit tests as well as integration tests
+  # This testplan includes unit tests as well as integration tests.
   scan scheme: 'Branch-TestBed'
 end
