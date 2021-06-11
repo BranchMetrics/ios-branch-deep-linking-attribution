@@ -106,7 +106,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
     [coder encodeObject:self.eventDictionary forKey:@"eventDictionary"];
 }
 
-+ (BOOL) supportsSecureCoding {
++ (BOOL)supportsSecureCoding {
     return YES;
 }
 

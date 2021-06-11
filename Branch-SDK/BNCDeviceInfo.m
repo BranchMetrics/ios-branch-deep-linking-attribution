@@ -220,7 +220,8 @@
         [dictionary bnc_safeSetObject:[self userAgentString] forKey:@"user_agent"];
 
         [dictionary bnc_safeSetObject:[BNCPreferenceHelper preferenceHelper].userIdentity forKey:@"developer_identity"];
-        [dictionary bnc_safeSetObject:[BNCPreferenceHelper preferenceHelper].deviceFingerprintID forKey:@"device_fingerprint_id"];
+        
+        [dictionary bnc_safeSetObject:[BNCPreferenceHelper preferenceHelper].randomizedDeviceToken forKey:@"randomized_device_token"];
 
         [dictionary bnc_safeSetObject:self.applicationVersion forKey:@"app_version"];
 

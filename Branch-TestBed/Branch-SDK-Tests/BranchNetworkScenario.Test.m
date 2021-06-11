@@ -454,7 +454,7 @@
     XCTestExpectation *expecation = [self expectationWithDescription:@"Scenario8 Expectation"];
     [self initSessionExpectingSuccess:branch serverInterface:serverInterfaceMock callback:^{
         preferenceHelper.sessionID = nil;
-        preferenceHelper.deviceFingerprintID = nil;
+        preferenceHelper.randomizedDeviceToken = nil;
         
         [branch getShortURLWithCallback:^(NSString *url, NSError *error) {
             XCTAssertNotNil(error);
@@ -519,7 +519,7 @@
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSString *url = [[preferenceHelper getAPIURL:@"credits/"]
-        stringByAppendingString:preferenceHelper.identityID];
+        stringByAppendingString:preferenceHelper.randomizedBundleToken];
 
     [[[serverInterfaceMock expect]
         andDo:badRequestInvocation]
@@ -550,7 +550,7 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSString *url =
         [[preferenceHelper getAPIURL:@"credits/"]
-            stringByAppendingString:preferenceHelper.identityID];
+            stringByAppendingString:preferenceHelper.randomizedBundleToken];
 
     [[serverInterfaceMock expect]
         getRequest:[OCMArg any]
@@ -617,7 +617,7 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSString *url =
         [[preferenceHelper getAPIURL:@"credits/"]
-            stringByAppendingString:preferenceHelper.identityID];
+            stringByAppendingString:preferenceHelper.randomizedBundleToken];
     [[serverInterfaceMock expect]
         getRequest:[OCMArg any]
         url:url
@@ -675,7 +675,7 @@
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSString *url = [[preferenceHelper getAPIURL:@"credits/"]
-        stringByAppendingString:preferenceHelper.identityID];
+        stringByAppendingString:preferenceHelper.randomizedBundleToken];
 
     [[[serverInterfaceMock expect]
         andDo:goodRequestInvocation]
@@ -721,9 +721,8 @@
     BNCServerResponse *openInstallResponse = [[BNCServerResponse alloc] init];
     openInstallResponse.data = @{
         @"session_id": @"11111",
-        @"identity_id": @"22222",
-        @"device_fingerprint_id": @"ae5adt6lkj08",
-        @"browser_fingerprint_id": @"ae5adt6lkj08",
+        @"randomized_bundle_token": @"22222",
+        @"randomized_device_token": @"ae5adt6lkj08",
         @"link": @"https://bnc.lt/i/11111"
     };
     
@@ -761,11 +760,9 @@
 - (NSData *)openResponseData {
     NSDictionary *openResponseDict = @{
         @"session_id": @"112263020234678596",
-        @"identity_id": @"98687515069776101",
-        @"device_fingerprint_id": @"94938498586381084",
-        @"browser_fingerprint_id": [NSNull null],
+        @"randomized_bundle_token": @"98687515069776101",
+        @"randomized_device_token": @"94938498586381084",
         @"link": @"https://bnc.lt/i/3SawKbU-1Z",
-        @"new_identity_id": @"98687515069776101",
         @"identity": @"test_user_10"
     };
     

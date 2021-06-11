@@ -23,9 +23,11 @@ static NSString * const BRANCH_PREFS_FILE = @"BNCPreferences";
 static NSString * const BRANCH_PREFS_KEY_APP_VERSION = @"bnc_app_version";
 static NSString * const BRANCH_PREFS_KEY_LAST_RUN_BRANCH_KEY = @"bnc_last_run_branch_key";
 static NSString * const BRANCH_PREFS_KEY_LAST_STRONG_MATCH_DATE = @"bnc_strong_match_created_date";
-static NSString * const BRANCH_PREFS_KEY_DEVICE_FINGERPRINT_ID = @"bnc_device_fingerprint_id";
+
+static NSString * const BRANCH_PREFS_KEY_RANDOMIZED_DEVICE_TOKEN = @"bnc_randomized_device_token";
+static NSString * const BRANCH_PREFS_KEY_RANDOMIZED_BUNDLE_TOKEN = @"bnc_randomized_bundle_token";
+
 static NSString * const BRANCH_PREFS_KEY_SESSION_ID = @"bnc_session_id";
-static NSString * const BRANCH_PREFS_KEY_IDENTITY_ID = @"bnc_identity_id";
 static NSString * const BRANCH_PREFS_KEY_IDENTITY = @"bnc_identity";
 static NSString * const BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS = @"bnc_checked_fb_app_links";
 static NSString * const BRANCH_PREFS_KEY_CHECKED_APPLE_SEARCH_ADS = @"bnc_checked_apple_search_ads";
@@ -44,6 +46,8 @@ static NSString * const BRANCH_PREFS_KEY_CREDIT_BASE = @"bnc_credit_base_";
 static NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usage_cnt_";
 static NSString * const BRANCH_PREFS_KEY_ANALYTICAL_DATA = @"bnc_branch_analytical_data";
 static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_manifest";
+
+NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 @interface BNCPreferenceHelper () {
     NSOperationQueue *_persistPrefsQueue;
@@ -65,10 +69,10 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 @synthesize
             lastRunBranchKey = _lastRunBranchKey,
             appVersion = _appVersion,
-            deviceFingerprintID = _deviceFingerprintID,
+            randomizedDeviceToken = _randomizedDeviceToken,
             sessionID = _sessionID,
             spotlightIdentifier = _spotlightIdentifier,
-            identityID = _identityID,
+            randomizedBundleToken = _randomizedBundleToken,
             linkClickIdentifier = _linkClickIdentifier,
             userUrl = _userUrl,
             userIdentity = _userIdentity,
@@ -213,18 +217,25 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     }
 }
 
-- (NSString *)deviceFingerprintID {
-    if (!_deviceFingerprintID) {
-        _deviceFingerprintID = [self readStringFromDefaults:BRANCH_PREFS_KEY_DEVICE_FINGERPRINT_ID];
+- (NSString *)randomizedDeviceToken {
+    if (!_randomizedDeviceToken) {
+        NSString *tmp = [self readStringFromDefaults:BRANCH_PREFS_KEY_RANDOMIZED_DEVICE_TOKEN];
+    
+        // check deprecated location
+        if (!tmp) {
+            tmp = [self readStringFromDefaults:@"bnc_device_fingerprint_id"];
+        }
+        
+        _randomizedDeviceToken = tmp;
     }
     
-    return _deviceFingerprintID;
+    return _randomizedDeviceToken;
 }
 
-- (void)setDeviceFingerprintID:(NSString *)deviceFingerprintID {
-    if (deviceFingerprintID == nil || ![_deviceFingerprintID isEqualToString:deviceFingerprintID]) {
-        _deviceFingerprintID = deviceFingerprintID;
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_DEVICE_FINGERPRINT_ID value:deviceFingerprintID];
+- (void)setRandomizedDeviceToken:(NSString *)randomizedDeviceToken {
+    if (randomizedDeviceToken == nil || ![_randomizedDeviceToken isEqualToString:randomizedDeviceToken]) {
+        _randomizedDeviceToken = randomizedDeviceToken;
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_RANDOMIZED_DEVICE_TOKEN value:randomizedDeviceToken];
     }
 }
 
@@ -243,12 +254,19 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     }
 }
 
-- (NSString *)identityID {
-    return [self readStringFromDefaults:BRANCH_PREFS_KEY_IDENTITY_ID];
+- (NSString *)randomizedBundleToken {
+    NSString *tmp = [self readStringFromDefaults:BRANCH_PREFS_KEY_RANDOMIZED_BUNDLE_TOKEN];
+    
+    // check deprecated location
+    if (!tmp) {
+        tmp = [self readStringFromDefaults:@"bnc_identity_id"];
+    }
+    
+    return tmp;
 }
 
-- (void)setIdentityID:(NSString *)identityID {
-    [self writeObjectToDefaults:BRANCH_PREFS_KEY_IDENTITY_ID value:identityID];
+- (void)setRandomizedBundleToken:(NSString *)randomizedBundleToken {
+    [self writeObjectToDefaults:BRANCH_PREFS_KEY_RANDOMIZED_BUNDLE_TOKEN value:randomizedBundleToken];
 }
 
 - (NSString *)userIdentity {
@@ -454,7 +472,7 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 - (NSMutableString*) sanitizedMutableBaseURL:(NSString*)baseUrl_ {
     NSMutableString *baseUrl = [baseUrl_ mutableCopy];
     if (self.trackingDisabled) {
-        NSString *id_string = [NSString stringWithFormat:@"%%24identity_id=%@", self.identityID];
+        NSString *id_string = [NSString stringWithFormat:@"%%24randomized_bundle_token=%@", self.randomizedBundleToken];
         NSRange range = [baseUrl rangeOfString:id_string];
         if (range.location != NSNotFound) [baseUrl replaceCharactersInRange:range withString:@""];
     } else
@@ -649,11 +667,12 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 
 - (void) clearTrackingInformation {
     @synchronized(self) {
-        /* Don't clear these:
-        self.deviceFingerprintID = nil;
-        self.userIdentity = nil;
-        self.identityID = nil;
-        */
+        /*
+         // Don't clear these
+         self.randomizedDeviceToken = nil;
+         self.randomizedBundleToken = nil;
+         self.userIdentity = nil;
+         */
         self.sessionID = nil;
         self.linkClickIdentifier = nil;
         self.spotlightIdentifier = nil;

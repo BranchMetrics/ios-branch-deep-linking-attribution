@@ -46,11 +46,11 @@
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    if (preferenceHelper.deviceFingerprintID) {
-        params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+    if (preferenceHelper.randomizedDeviceToken) {
+        params[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = preferenceHelper.randomizedDeviceToken;
     }
 
-    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+    params[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = preferenceHelper.randomizedBundleToken;
     params[BRANCH_REQUEST_KEY_DEBUG] = @(preferenceHelper.isDebug);
 
     [self safeSetValue:[BNCSystemObserver getBundleID] forKey:BRANCH_REQUEST_KEY_BUNDLE_ID onDict:params];
@@ -161,7 +161,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
         userIdentity = [userIdentity stringValue];
     }
 
-    preferenceHelper.deviceFingerprintID = data[BRANCH_RESPONSE_KEY_DEVICE_FINGERPRINT_ID];
+    preferenceHelper.randomizedDeviceToken = data[BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN];
     preferenceHelper.userUrl = data[BRANCH_RESPONSE_KEY_USER_URL];
     preferenceHelper.userIdentity = userIdentity;
     preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
@@ -173,12 +173,6 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
         if (invokeRegister.boolValue) {
             [[BNCSKAdNetwork sharedInstance] registerAppForAdNetworkAttribution];
         }
-    }
-    
-    if (Branch.enableFingerprintIDInCrashlyticsReports) {
-        BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
-        [crashlytics setObjectValue:preferenceHelper.deviceFingerprintID
-            forKey:BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY];
     }
 
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
@@ -258,8 +252,8 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     preferenceHelper.referringURL = referringURL;
     preferenceHelper.dropURLOpen = NO;
 
-    NSString *string = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]);
-    if (string) preferenceHelper.identityID = string;
+    NSString *string = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN]);
+    if (string) preferenceHelper.randomizedBundleToken = string;
 
     [BranchOpenRequest releaseOpenResponseLock];
 

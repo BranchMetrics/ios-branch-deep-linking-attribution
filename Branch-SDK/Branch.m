@@ -305,7 +305,6 @@ static Class bnc_networkServiceClass = NULL;
 
 static BOOL bnc_useTestBranchKey = NO;
 static NSString *bnc_branchKey = nil;
-static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 + (void)resetBranchKey {
     bnc_branchKey = nil;
@@ -413,18 +412,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 + (BOOL)branchKeyIsSet {
     @synchronized (self) {
         return (bnc_branchKey.length) ? YES : NO;
-    }
-}
-
-+ (void)setEnableFingerprintIDInCrashlyticsReports:(BOOL)enabled {
-    @synchronized(self) {
-        bnc_enableFingerprintIDInCrashlyticsReports = enabled;
-    }
-}
-
-+ (BOOL)enableFingerprintIDInCrashlyticsReports {
-    @synchronized (self) {
-        return bnc_enableFingerprintIDInCrashlyticsReports;
     }
 }
 
@@ -1630,20 +1617,14 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                 BNCLogWarning(@"The Branch Key has changed, clearing relevant items.");
 
                 preferenceHelper.appVersion = nil;
-                preferenceHelper.deviceFingerprintID = nil;
+                preferenceHelper.randomizedDeviceToken = nil;
                 preferenceHelper.sessionID = nil;
-                preferenceHelper.identityID = nil;
+                preferenceHelper.randomizedBundleToken = nil;
                 preferenceHelper.userUrl = nil;
                 preferenceHelper.installParams = nil;
                 preferenceHelper.sessionParams = nil;
 
                 [[BNCServerRequestQueue getInstance] clearQueue];
-            }
-
-            if (self.enableFingerprintIDInCrashlyticsReports) {
-                BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
-                // may be nil
-                [crashlytics setObjectValue:preferenceHelper.deviceFingerprintID forKey:BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY];
             }
 
             preferenceHelper.lastRunBranchKey = key;
@@ -2051,7 +2032,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
             // If tracking is disabled, then do not check for install event.  It won't exist.
             if (!Branch.trackingDisabled) {
-                if (![req isKindOfClass:[BranchInstallRequest class]] && !self.preferenceHelper.identityID) {
+                if (![req isKindOfClass:[BranchInstallRequest class]] && !self.preferenceHelper.randomizedBundleToken) {
                     BNCLogError(@"User session has not been initialized!");
                     BNCPerformBlockOnMainThreadSync(^{
                         [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
@@ -2059,7 +2040,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                     return;
 
                 } else if (![req isKindOfClass:[BranchOpenRequest class]] &&
-                    (!self.preferenceHelper.deviceFingerprintID || !self.preferenceHelper.sessionID)) {
+                    (!self.preferenceHelper.randomizedDeviceToken || !self.preferenceHelper.sessionID)) {
                     BNCLogError(@"Missing session items!");
                     BNCPerformBlockOnMainThreadSync(^{
                         [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
@@ -2148,7 +2129,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 // only called from initUserSessionAndCallCallback!
 - (void)initializeSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
 	Class clazz = [BranchInstallRequest class];
-	if (self.preferenceHelper.identityID) {
+	if (self.preferenceHelper.randomizedBundleToken) {
 		clazz = [BranchOpenRequest class];
 	}
 

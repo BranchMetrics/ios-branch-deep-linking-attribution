@@ -83,8 +83,8 @@
         BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
         
         NSString *url = preferenceHelper.referringURL;
-        NSString *token = preferenceHelper.deviceFingerprintID;
-        NSString *bundleToken = preferenceHelper.identityID;
+        NSString *token = preferenceHelper.randomizedDeviceToken;
+        NSString *bundleToken = preferenceHelper.randomizedBundleToken;
         
         [self saveObject:url forKey:@"BranchAppClipURL"];
         [self saveObject:token forKey:@"BranchAppClipToken"];

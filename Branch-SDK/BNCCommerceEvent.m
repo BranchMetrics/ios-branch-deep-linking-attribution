@@ -569,8 +569,8 @@ NSArray<BNCCurrency>* BNCCurrencyAllCurrencies(void) {
 
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     params[BRANCH_REQUEST_KEY_ACTION] = @"purchase";
-    params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
-    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+    params[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = preferenceHelper.randomizedDeviceToken;
+    params[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = preferenceHelper.randomizedBundleToken;
     params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
 
 	if (self.metadata)
@@ -615,7 +615,7 @@ NSArray<BNCCurrency>* BNCCurrencyAllCurrencies(void) {
     [coder encodeObject:self.metadata forKey:@"metadata"];
 }
 
-+ (BOOL) supportsSecureCoding {
++ (BOOL)supportsSecureCoding {
     return YES;
 }
 

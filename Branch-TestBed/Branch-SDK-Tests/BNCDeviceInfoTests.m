@@ -33,7 +33,13 @@
 }
 
 - (void)testModelName_Simulator {
-    XCTAssert([@"x86_64" isEqualToString:self.deviceInfo.modelName]);
+    // intel processor
+    bool x86_64 = [@"x86_64" isEqualToString:self.deviceInfo.modelName];
+    
+    // apple processor
+    bool arm64 = [@"arm64" isEqualToString:self.deviceInfo.modelName];
+    
+    XCTAssert(x86_64 || arm64);
 }
 
 //- (void)testModelName_iPhone7 {
@@ -59,14 +65,14 @@
 }
 
 - (void)testCpuType_Simulator {
-    NSString *expected = @"7";
-    XCTAssert([expected isEqualToString:self.deviceInfo.cpuType]);
+    // intel processors
+    bool x86 = [@"7" isEqualToString:self.deviceInfo.cpuType];
+    
+    // apple processors
+    bool arm = [@"16777228" isEqualToString:self.deviceInfo.cpuType];
+    
+    XCTAssert(x86 || arm);
 }
-
-//- (void)testCpuType_iPhone7 {
-//    NSString *expected = @"16777228";
-//    XCTAssert([expected isEqualToString:self.deviceInfo.cpuType]);
-//}
 
 - (void)testScreenWidth {
     XCTAssert(self.deviceInfo.screenWidth.intValue > 320);
