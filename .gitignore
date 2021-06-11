@@ -28,3 +28,4 @@ fastlane/test_output
 
 # Ruby stuff
 vendor
+.bundle
