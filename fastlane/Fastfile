@@ -14,3 +14,9 @@ lane :unit_tests do
   # Parameters in Scanfile. Can be passed/overriden here too.
   scan
 end
+
+lane :integration_tests do
+  prepare_pods
+  # This testplan includes unit tests as well as integration tests
+  scan scheme: 'Branch-TestBed'
+end
