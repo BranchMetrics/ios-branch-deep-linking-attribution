@@ -24,7 +24,7 @@ jobs:
         with:
           path: |
             vendor
-          key: ${{ runner.os }}-${{ hashFiles('Gemfile.lock') }}
+          key: ${{ runner.os }}-ruby2.7-${{ hashFiles('Gemfile.lock') }}
       - name: Install Ruby dependencies
         run: |
           bundle config set --local path vendor
