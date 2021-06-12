@@ -13,8 +13,8 @@
  * XCTExpectFail introduced by Apple in Xcode 12.5 in 2021.
  * To be removed when Xcode 12.4 and earlier are gone.
  */
-#ifndef XCTExpectFail
-#define XCTExpectFail(_) XCTAssertTrue(YES); return;
+#ifndef XCTExpectFailure
+#define XCTExpectFailure(_) XCTAssertTrue(YES); return;
 #endif /* XCTExpectFail */
 
 #endif /* BNCExpectFail_h */
