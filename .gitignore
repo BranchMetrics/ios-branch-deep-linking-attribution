@@ -14,7 +14,6 @@ merge-repo-commit
 
 # Pods
 Pods/
-Podfile.lock
 
 # Carthage
 carthage-files/*.zip
@@ -27,5 +26,5 @@ fastlane/screenshots
 fastlane/test_output
 
 # Ruby stuff
-Gemfile.lock
-
+vendor
+.bundle

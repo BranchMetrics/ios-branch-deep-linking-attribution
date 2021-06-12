@@ -1,0 +1,44 @@
+name: Unit tests
+
+on:
+  pull_request:
+    branches:
+      - master
+      - staging
+
+jobs:
+  verify:
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set up Ruby 2.7
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+      - name: Restore cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            vendor
+            Branch-TestBed/Pods
+          key: ${{ runner.os }}-${{ hashFiles('Gemfile.lock','Branch-TestBed/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-
+      - name: Install Ruby dependencies
+        run: |
+          bundle config set --local path vendor
+          bundle check || bundle install
+      # This happens automatically with the unit_tests lane, but adding it here
+      # makes it easier to keep track of installation time via GHA without
+      # adding execution time to the next step.
+      - name: Install CocoaPods dependencies
+        run: bundle exec fastlane prepare_pods
+      - name: Run unit tests
+        run: bundle exec fastlane unit_tests
+      - name: Upload test results
+        uses: actions/upload-artifact@v2
+        if: always() # even if tests fail
+        with:
+          name: test-results
+          path: fastlane/test_output

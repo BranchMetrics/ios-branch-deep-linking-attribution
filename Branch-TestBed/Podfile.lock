@@ -1,0 +1,32 @@
+PODS:
+  - OCMock (3.7.1)
+  - OHHTTPStubs (9.1.0):
+    - OHHTTPStubs/Default (= 9.1.0)
+  - OHHTTPStubs/Core (9.1.0)
+  - OHHTTPStubs/Default (9.1.0):
+    - OHHTTPStubs/Core
+    - OHHTTPStubs/JSON
+    - OHHTTPStubs/NSURLSession
+    - OHHTTPStubs/OHPathHelpers
+  - OHHTTPStubs/JSON (9.1.0):
+    - OHHTTPStubs/Core
+  - OHHTTPStubs/NSURLSession (9.1.0):
+    - OHHTTPStubs/Core
+  - OHHTTPStubs/OHPathHelpers (9.1.0)
+
+DEPENDENCIES:
+  - OCMock
+  - OHHTTPStubs
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - OCMock
+    - OHHTTPStubs
+
+SPEC CHECKSUMS:
+  OCMock: 75fbeaa46a9b11f8c182bbb1d1f7e9a35ccc9955
+  OHHTTPStubs: 90eac6d8f2c18317baeca36698523dc67c513831
+
+PODFILE CHECKSUM: 829cf437db3e2065c6c17ddea2f24b51cb0aecc0
+
+COCOAPODS: 1.10.1
