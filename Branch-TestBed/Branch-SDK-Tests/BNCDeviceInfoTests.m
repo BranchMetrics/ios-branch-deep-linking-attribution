@@ -58,12 +58,10 @@
     XCTAssert([@"FULL_APP" isEqualToString:self.deviceInfo.environment]);
 }
 
-/* Commenting out until this can be made portable/updated/whatever.
 - (void)testCpuType_Simulator {
     NSString *expected = @"7";
     XCTAssert([expected isEqualToString:self.deviceInfo.cpuType]);
 }
-// */
 
 //- (void)testCpuType_iPhone7 {
 //    NSString *expected = @"16777228";
