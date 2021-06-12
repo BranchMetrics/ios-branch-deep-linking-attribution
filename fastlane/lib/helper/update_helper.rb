@@ -14,7 +14,7 @@ module UpdateHelper
   # the Podfile.lock, including when it's missing. If pod install is run, it
   # may regenerate Pods/Manifest.lock or the entire Pods folder if the cache
   # is out of sync.
-  def pod_install_required?(podfile_folder, ci: false)
+  def pod_install_required?(podfile_folder, ci: true)
     podfile_folder = File.expand_path podfile_folder
     podfile_path = File.join podfile_folder, 'Podfile'
     raise ArgumentError, "No Podfile at #{podfile_folder}" unless File.readable?(podfile_path)
