@@ -4,6 +4,8 @@ name: Tag & Release
 # TODO: Define this workflow.
 # -----
 
+# Manually triggered
+# $ gh workflow run integration-tests.yml
 on: workflow_dispatch
 
 jobs:
