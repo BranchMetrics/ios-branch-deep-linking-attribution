@@ -1,0 +1,48 @@
+name: Tag & Release
+
+# -----
+# TODO: Define this workflow.
+# -----
+
+on: workflow_dispatch
+
+jobs:
+  release:
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set up Ruby 2.7
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+      - name: Restore cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            vendor
+            Branch-TestBed/Pods
+          key: ${{ runner.os }}-${{ hashFiles('Gemfile.lock','Branch-TestBed/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-
+      - name: Install Ruby dependencies
+        run: |
+          bundle config set --local path vendor
+          bundle check || bundle install
+      # This happens automatically with the unit_tests lane, but adding it here
+      # makes it easier to keep track of installation time via GHA without
+      # adding execution time to the next step.
+      - name: Install CocoaPods dependencies
+        run: bundle exec fastlane prepare_pods
+
+      # 1. Publish to CocoaPods.
+      - name: Publish to CocoaPods
+        run: |
+          echo "TODO: This 👆"
+      # 2. Create GitHub release. Also creates a tag.
+      - name: Create GitHub Release
+        uses: actions/github-script@v4
+        with:
+          result-encoding: string
+          script: |
+            console.log('TODO: This 👆');
