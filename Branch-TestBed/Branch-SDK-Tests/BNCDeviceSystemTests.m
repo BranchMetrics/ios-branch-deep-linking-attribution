@@ -34,9 +34,11 @@
     XCTAssert([@"x86_64" isEqualToString:self.deviceSystem.machine]);
 }
 
+/* Commenting out until this can be made more robust/portable/updated/whatever.
 - (void)testCPUType_Simulator {
     XCTAssert([@(7) isEqualToNumber:self.deviceSystem.cpuType]);
     XCTAssert([@(8) isEqualToNumber:self.deviceSystem.cpuSubType]);
 }
+// */
 
 @end
