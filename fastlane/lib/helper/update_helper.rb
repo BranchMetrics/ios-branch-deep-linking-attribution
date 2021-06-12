@@ -4,7 +4,17 @@ require 'pathname'
 module UpdateHelper
   UI = FastlaneCore::UI
 
-  def pod_install_required?(podfile_folder)
+  class UpdateHelperException < RuntimeError; end
+
+  # Following the lead of npm ci (https://docs.npmjs.com/cli/v7/commands/npm-ci)
+  # when ci: true is provided:
+  # The Podfile.lock must exist.
+  # The Podfile and Podfile.lock must be in sync.
+  # A pod install may be required, but it is an error to generate a change to
+  # the Podfile.lock, including when it's missing. If pod install is run, it
+  # may regenerate Pods/Manifest.lock or the entire Pods folder if the cache
+  # is out of sync.
+  def pod_install_required?(podfile_folder, ci: false)
     podfile_folder = File.expand_path podfile_folder
     podfile_path = File.join podfile_folder, 'Podfile'
     raise ArgumentError, "No Podfile at #{podfile_folder}" unless File.readable?(podfile_path)
@@ -21,33 +31,48 @@ module UpdateHelper
     lockfile_path = File.join podfile_folder, 'Podfile.lock'
     manifest_path = File.join podfile_folder, 'Pods', 'Manifest.lock'
 
-    return true unless File.readable?(lockfile_path) && File.readable?(manifest_path)
+    lockfile_readable = File.readable? lockfile_path
+
+    # Don't regenerate the lockfile when ci: true.
+    raise UpdateHelperException, "#{lockfile_path} missing or not readable with ci: true." if ci and not lockfile_readable
+
+    return true unless lockfile_readable && File.readable?(manifest_path)
 
     begin
       # This validates the Podfile.lock for yaml formatting at least and makes
       # the lockfile hash available to check the Podfile checksum later.
       lockfile = Pod::Lockfile.from_file Pathname.new lockfile_path
+      lockfile_contents = File.read lockfile_path
+    rescue => e
+      # Don't regenerate the lockfile when ci: true.
+      raise e if ci
+    end
 
+    begin
       # diff the contents of Podfile.lock and Pods/Manifest.lock
       # This is just what is done in the "[CP] Check Pods Manifest.lock" script
       # build phase in a project using CocoaPods. This is a stricter requirement
       # than semantic comparison of the two lockfile hashes.
-      return true unless File.read(lockfile_path) == File.read(manifest_path)
+      return true unless lockfile_contents == File.read(manifest_path)
 
       # compare checksum of Podfile with checksum in Podfile.lock in case Podfile
       # updated since last pod install/update.
-      lockfile.to_hash["PODFILE CHECKSUM"] != podfile.checksum
+      invalid_checksum = lockfile.to_hash["PODFILE CHECKSUM"] != podfile.checksum
+      return invalid_checksum unless ci and invalid_checksum
     rescue StandardError, Pod::PlainInformative => e
       # Any error from Pod::Lockfile.from_file or File.read after verifying a
       # file exists and is readable. pod install will regenerate these files.
       UI.error e.message
       true
     end
+
+    # Don't regenerate the lockfile when ci: true.
+    raise UpdateHelperException, "Podfile checksum #{podfile.checksum} does not match PODFILE CHECKSUM in Podfile.lock with ci: true."
   end
 
-  def pod_install_if_required(podfile_folder, verbose: false, repo_update: true)
+  def pod_install_if_required(podfile_folder, verbose: false, repo_update: true, ci: true)
     podfile_folder = File.expand_path podfile_folder
-    install_required = pod_install_required? podfile_folder
+    install_required = pod_install_required? podfile_folder, ci: ci
     UI.message "pod install #{install_required ? '' : 'not '}required in #{podfile_folder}"
     return unless install_required
 
