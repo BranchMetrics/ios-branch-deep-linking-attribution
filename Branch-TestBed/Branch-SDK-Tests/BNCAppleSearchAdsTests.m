@@ -9,9 +9,9 @@
 #import <XCTest/XCTest.h>
 #import <UIKit/UIKit.h>
 #import <iAd/iAd.h>
-#import "BNCExpectFail.h"
 #import "BNCAppleSearchAds.h"
 #import "BNCAppleAdClient.h"
+#import "BNCExpectFailure.h"
 
 @interface BNCAppleAdClientMock : NSObject <BNCAppleAdClientProtocol>
 
@@ -195,7 +195,7 @@
     __block XCTestExpectation *expectation = [self expectationWithDescription:@"AppleSearchAds"];
     
     [self.appleSearchAds requestAttributionWithCompletion:^(NSDictionary * _Nullable attributionDetails, NSError * _Nullable error, NSTimeInterval elapsedSeconds) {
-        XCTExpectFailure(@"--- Disabled for GitHub Actions integration.");
+        BNCExpectFailureWithExpectation(@"--- Disabled for GitHub Actions integration.", expectation);
         XCTAssertNil(error);
         XCTAssertTrue(elapsedSeconds > 0);
         
@@ -218,7 +218,7 @@
     __block XCTestExpectation *expectation = [self expectationWithDescription:@"AppleSearchAds"];
     
     [self.appleSearchAds requestAttributionWithMaxAttempts:0 completion:^(NSDictionary * _Nullable attributionDetails, NSError * _Nullable error, NSTimeInterval elapsedSeconds) {
-        XCTExpectFailure(@"--- Disabled for GitHub Actions integration.");
+        BNCExpectFailureWithExpectation(@"--- Disabled for GitHub Actions integration.", expectation);
         XCTAssertNil(error);
         XCTAssertTrue(elapsedSeconds > 0);
         
@@ -241,7 +241,7 @@
     __block XCTestExpectation *expectation = [self expectationWithDescription:@"AppleSearchAds"];
     
     [self.appleSearchAds requestAttributionWithMaxAttempts:1 completion:^(NSDictionary * _Nullable attributionDetails, NSError * _Nullable error, NSTimeInterval elapsedSeconds) {
-        XCTExpectFailure(@"--- Disabled for GitHub Actions integration.");
+        BNCExpectFailureWithExpectation(@"--- Disabled for GitHub Actions integration.", expectation);
         XCTAssertNil(error);
         XCTAssertTrue(elapsedSeconds > 0);
         
@@ -287,16 +287,16 @@
     self.appleSearchAds.adClient = mock;
     
     [self.appleSearchAds requestAttributionWithMaxAttempts:3 completion:^(NSDictionary * _Nullable attributionDetails, NSError * _Nullable error, NSTimeInterval elapsedSeconds) {
-        XCTExpectFailure(@"--- Disabled for GitHub Actions integration.");
+        BNCExpectFailureWithExpectation(@"--- Disabled for GitHub Actions integration.", expectation);
         XCTAssertNil(error);
         XCTAssertTrue(elapsedSeconds > 0);
         
         NSDictionary *tmpDict = [attributionDetails objectForKey:@"Version3.1"];
-        XCTExpectFailure(@"--- Disabled for GitHub Actions integration.");
+        BNCExpectFailureWithExpectation(@"--- Disabled for GitHub Actions integration.", expectation);
         XCTAssertNotNil(tmpDict);
         
         NSNumber *tmpBool = [tmpDict objectForKey:@"iad-attribution"];
-        XCTExpectFailure(@"--- Disabled for GitHub Actions integration.");
+        BNCExpectFailureWithExpectation(@"--- Disabled for GitHub Actions integration.", expectation);
         XCTAssertNotNil(tmpBool);
         
         // verifies things were ignored

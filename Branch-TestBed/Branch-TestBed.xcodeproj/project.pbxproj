@@ -578,7 +578,7 @@
 		63E4C48F1D25E1BC00A45FD8 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		63E4C4911D25E1CA00A45FD8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6589EBA52674270100F2E28B /* Branch-TestBed-CI.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Branch-TestBed-CI.xctestplan"; sourceTree = "<group>"; };
-		6589EBA626743DEE00F2E28B /* BNCExpectFail.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCExpectFail.h; sourceTree = "<group>"; };
+		6589EBAB2674473700F2E28B /* BNCExpectFailure.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCExpectFailure.h; sourceTree = "<group>"; };
 		670016601940F51400A9E103 /* Branch-TestBed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Branch-TestBed.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		670016631940F51400A9E103 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		670016651940F51400A9E103 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -761,7 +761,7 @@
 				5F2035CB240DDE90004FDC3E /* BNCDisableAdNetworkCalloutsTests.m */,
 				5FDB04F324E6156800F2F267 /* BNCSKAdNetworkTests.m */,
 				5FDF91582581CDF4009BE5A3 /* BNCPartnerParametersTests.m */,
-				6589EBA626743DEE00F2E28B /* BNCExpectFail.h */,
+				6589EBAB2674473700F2E28B /* BNCExpectFailure.h */,
 			);
 			path = "Branch-SDK-Tests";
 			sourceTree = "<group>";
