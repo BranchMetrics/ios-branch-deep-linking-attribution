@@ -14,7 +14,7 @@
  * To be removed when Xcode 12.4 and earlier are gone.
  */
 #ifndef XCTExpectFail
-#define XTCExpectFail(_) XCTAssertTrue(YES); return;
+#define XCTExpectFail(_) XCTAssertTrue(YES); return;
 #endif /* XCTExpectFail */
 
 #endif /* BNCExpectFail_h */
