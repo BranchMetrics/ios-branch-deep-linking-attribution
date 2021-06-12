@@ -46,6 +46,8 @@ module UpdateHelper
     rescue => e
       # Don't regenerate the lockfile when ci: true.
       raise e if ci
+      # If ci: false, perform a pod install and regenerate the unreadable lockfile.
+      return true
     end
 
     begin
@@ -63,7 +65,7 @@ module UpdateHelper
       # Any error from Pod::Lockfile.from_file or File.read after verifying a
       # file exists and is readable. pod install will regenerate these files.
       UI.error e.message
-      true
+      return true
     end
 
     # Don't regenerate the lockfile when ci: true.
