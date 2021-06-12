@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import <iAd/iAd.h>
+#import "BNCExpectFail.h"
 #import "BNCAppleAdClient.h"
 
 // expose private property for testing

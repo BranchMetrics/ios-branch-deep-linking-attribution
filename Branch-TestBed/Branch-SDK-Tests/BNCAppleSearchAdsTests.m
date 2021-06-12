@@ -9,6 +9,7 @@
 #import <XCTest/XCTest.h>
 #import <UIKit/UIKit.h>
 #import <iAd/iAd.h>
+#import "BNCExpectFail.h"
 #import "BNCAppleSearchAds.h"
 #import "BNCAppleAdClient.h"
 
