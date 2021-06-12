@@ -40,9 +40,15 @@ jobs:
         run: |
           echo "TODO: This 👆"
       # 2. Create GitHub release. Also creates a tag.
+      # Remember to build and attach binaries.
       - name: Create GitHub Release
         uses: actions/github-script@v4
         with:
-          result-encoding: string
+          script: |
+            console.log('TODO: This 👆');
+      # 3. Trigger import workflow in ios-spm repo.
+      - name: Export to ios-spm repository
+        uses: actions/github-script@v4
+        with:
           script: |
             console.log('TODO: This 👆');
