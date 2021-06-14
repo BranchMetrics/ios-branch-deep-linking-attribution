@@ -1,6 +1,7 @@
 # Contribution Guidelines
 
-Please submit Pull Requests against the staging branch in this repo.
+Please submit Pull Requests against the master branch in this repo.
+There is no more staging branch.
 
 Pull Requests are required to pass unit tests for merge.
 
