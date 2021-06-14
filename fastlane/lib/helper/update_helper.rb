@@ -33,7 +33,7 @@ module UpdateHelper
     # Don't regenerate the lockfile
     raise UpdateHelperException, "#{lockfile_path} missing or not readable." unless File.readable?(lockfile_path)
 
-    return true unless lockfile_readable && File.readable?(manifest_path)
+    return true unless File.readable?(manifest_path)
 
     # This validates the Podfile.lock for yaml formatting at least and makes
     # the lockfile hash available to check the Podfile checksum later.
