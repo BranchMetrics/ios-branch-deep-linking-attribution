@@ -63,9 +63,9 @@ module UpdateHelper
     raise UpdateHelperException, "Podfile checksum #{podfile.checksum} does not match PODFILE CHECKSUM in Podfile.lock."
   end
 
-  def pod_install_if_required(podfile_folder, verbose: false, repo_update: true, ci: true)
+  def pod_install_if_required(podfile_folder, verbose: false, repo_update: true)
     podfile_folder = File.expand_path podfile_folder
-    install_required = pod_install_required? podfile_folder, ci: ci
+    install_required = pod_install_required? podfile_folder
     UI.message "pod install #{install_required ? '' : 'not '}required in #{podfile_folder}"
     return unless install_required
 
