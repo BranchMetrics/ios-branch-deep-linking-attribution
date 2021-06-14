@@ -30,10 +30,8 @@ module UpdateHelper
     lockfile_path = File.join podfile_folder, 'Podfile.lock'
     manifest_path = File.join podfile_folder, 'Pods', 'Manifest.lock'
 
-    lockfile_readable = File.readable? lockfile_path
-
     # Don't regenerate the lockfile
-    raise UpdateHelperException, "#{lockfile_path} missing or not readable." if ci and not lockfile_readable
+    raise UpdateHelperException, "#{lockfile_path} missing or not readable." unless File.readable?(lockfile_path)
 
     return true unless lockfile_readable && File.readable?(manifest_path)
 
