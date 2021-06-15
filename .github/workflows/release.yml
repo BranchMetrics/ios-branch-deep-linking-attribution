@@ -134,7 +134,8 @@ jobs:
 
             console.log(`Got release ${JSON.stringify(data)}`);
 
-            const uploadUrl = data.upload_url;
+            /* TODO: Improve URL handling here. */
+            const uploadUrl = data.upload_url.replace(/\{.*$/, '');
             console.log(`Using upload URL for release assets: ${uploadUrl}.`);
 
             await uploadAsset({
