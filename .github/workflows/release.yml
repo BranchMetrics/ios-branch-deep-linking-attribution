@@ -132,8 +132,6 @@ jobs:
               tag: tagName,
             });
 
-            console.log(`Got release ${JSON.stringify(data)}`);
-
             /* TODO: Improve URL handling here. */
             const uploadUrl = data.upload_url.replace(/\{.*$/, '');
             console.log(`Using upload URL for release assets: ${uploadUrl}.`);

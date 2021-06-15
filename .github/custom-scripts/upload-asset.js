@@ -5,7 +5,7 @@ async function uploadAsset({ github, assetName, path, contentType, uploadUrl }) 
   const contents = fs.readFileSync(path);
 
   const { data } = await github.repos.uploadReleaseAsset({
-    url: uploadUrl,
+    url: uploadUrl + `?name=${encodeURIComponent(assetName)}`,
     headers: {
       'content-type': contentType,
       'content-length': contentLength,
