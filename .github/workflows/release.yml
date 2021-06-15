@@ -168,4 +168,15 @@ jobs:
         uses: actions/github-script@v4
         with:
           script: |
-            console.log('TODO: This 👆');
+            const tag = '${{ github.event.inputs.tag }}';
+            console.log(`Exporting release ${tag} to ios-spm repo.`);
+
+            await github.actions.createWorkflowDispatch({
+              owner: 'BranchMetrics',
+              repo: 'ios-spm',
+              workflow_id: 'import.yml',
+              ref: 'main',
+              inputs: {
+                tag,
+              },
+            });
