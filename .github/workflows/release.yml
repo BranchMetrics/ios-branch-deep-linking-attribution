@@ -117,7 +117,7 @@ jobs:
               context,
               github,
               sha,
-              tagName,
+              version: tagName,
             });
 
             console.log(`Created release ${tagName}:`);
