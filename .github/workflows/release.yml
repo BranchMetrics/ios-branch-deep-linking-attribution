@@ -120,40 +120,39 @@ jobs:
               version: tagName,
             });
 
-            const release = await github.repos.getReleaseByTag({
+            const { uploadUrl } = await github.repos.getReleaseByTag({
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag: tagName,
             });
 
-            const uploadUrl = release.upload_url;
             const uploadAsset = require('./.github/custom-scripts/upload-asset');
             await uploadAsset({
               github,
               assetName: 'Branch.zip',
               path: 'framework/Branch.zip',
-              content-type: 'application/zip',
+              contentType: 'application/zip',
               uploadUrl,
             });
             await uploadAsset({
               github,
               assetName: 'Branch_static.zip',
               path: 'static-framework/Branch.zip',
-              content-type: 'application/zip',
+              contentType: 'application/zip',
               uploadUrl,
             });
             await uploadAsset({
               github,
               assetName: 'checksum.txt',
               path: 'framework/checksum',
-              content-type: 'text/plain',
+              contentType: 'text/plain',
               uploadUrl,
             });
             await uploadAsset({
               github,
               assetName: 'checksum_static.txt',
               path: 'static-framework/checksum_static',
-              content-type: 'text/plain',
+              contentType: 'text/plain',
               uploadUrl,
             });
 
