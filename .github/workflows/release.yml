@@ -43,7 +43,7 @@ jobs:
         run: |
           xcodebuild -scheme Branch-static-xcframework
           cd build
-          zip -rqy Branch-static.zip Branch.xcframework/
+          zip -rqy Branch_static.zip Branch.xcframework/
           echo '#checksum for Branch-static.zip on Github' > checksum.txt
           shasum Branch_static.zip >> checksum_static
       - name: Upload build artifacts
