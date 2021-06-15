@@ -112,7 +112,7 @@ jobs:
             const createRelease = require('./.github/custom-scripts/create-release');
             const tagName = '${{ github.event.inputs.tag }}';
             const sha = '${{ steps.commit-checksums.outputs.sha }}';
-            const release = await createRelease({
+            await createRelease({
               core,
               context,
               github,
@@ -120,8 +120,15 @@ jobs:
               version: tagName,
             });
 
+            const release = await github.repos.getReleaseByTag({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag: tagName,
+            });
+
             console.log(`Created release ${tagName}:`);
             console.log(` ${JSON.stringify(release)}`);
+            console.log(` https://github.com/${{ env.GITHUB_REPOSITORY }}/release/${tagName}`);
       # 4. Trigger import workflow in ios-spm repo.
       - name: Export to ios-spm repository
         uses: actions/github-script@v4

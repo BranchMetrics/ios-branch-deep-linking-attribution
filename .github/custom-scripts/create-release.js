@@ -55,8 +55,8 @@ async function createRelease({ context, core, github, sha, version }) {
     target_commitish: sha,
     name: version,
     body: releaseBody,
-    draft: false,
-    prelease: false,
+    draft: true,
+    prelease: true,
   };
 
   await github.repos.createRelease(release);
