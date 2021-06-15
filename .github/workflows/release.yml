@@ -126,7 +126,7 @@ jobs:
             const uploadAsset = require('./.github/custom-scripts/upload-asset');
             const tagName = '${{ github.event.inputs.tag }}';
 
-            const data = await github.repos.getReleaseByTag({
+            const { data } = await github.repos.getReleaseByTag({
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag: tagName,
