@@ -28,7 +28,7 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: Branch-xcframework
+          name: framework.zip
           path: |
             carthage-files/build/Branch.zip
             carthage-files/build/checksum
@@ -49,7 +49,7 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: Branch-static-xcframework
+          name: static-framework.zip
           path: |
             carthage-files/build/Branch_static.zip
             carthage-files/build/checksum_static
@@ -83,6 +83,15 @@ jobs:
           bundle check || bundle install
       - name: Download build artifacts
         uses: actions/download-artifact@v2
+      - name: Extract build artifacts
+        run: |
+          unzip framework.zip
+          unzip static-framework.zip
+      - name: Relocate checksum artifacts
+        working-directory: carthage-files
+        run: |
+          mv build/checksum .
+          mv build/checksum_static .
       - name: Verify build artifacts
         working-directory: carthage-files
         run: |
@@ -93,7 +102,7 @@ jobs:
         run: |
           git config user.name "Branch SDK Team"
           git config user.email branch-sdks@branch.io
-          git commit carthage-files/build/checksum carthage-files/build/checksum_static -m'Updated checksums'
+          git commit carthage-files/checksum carthage-files/checksum_static -m'Updated checksums'
           echo "::set-output name=sha::$(git rev-parse HEAD)"
       # TODO: Version bump along the way, probably here.
       - name: Push changes
