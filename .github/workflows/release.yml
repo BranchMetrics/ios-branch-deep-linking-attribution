@@ -83,6 +83,10 @@ jobs:
           bundle check || bundle install
       - name: Download build artifacts
         uses: actions/download-artifact@v2
+      - name: Verify build artifacts
+        run: |
+          ls -ld *framework*
+          file *framework*
       - name: Extract build artifacts
         run: |
           unzip framework.zip
@@ -92,10 +96,6 @@ jobs:
         run: |
           mv build/checksum .
           mv build/checksum_static .
-      - name: Verify build artifacts
-        working-directory: carthage-files
-        run: |
-          ls -R carthage-files/build
       # The sha output from this step is the commit to be tagged.
       - name: Commit checksums
         id: commit-checksums
