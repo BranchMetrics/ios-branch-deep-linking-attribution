@@ -132,9 +132,6 @@ jobs:
               tag: tagName,
             });
 
-            console.log(`Got release: ${JSON.stringify(data)}`);
-
-            /* TODO: Improve URL handling here. */
             const releaseId = data.id;
 
             await uploadAsset({
