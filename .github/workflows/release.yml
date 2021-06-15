@@ -1,13 +1,8 @@
 name: Build & Release (manual)
 
 # Manually triggered
-# $ gh workflow run -f tag=1.40.0-test.1 release.yml
-on:
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: The tag to use for this release.
-        required: true
+# $ gh workflow run release.yml
+on: workflow_dispatch
 
 # Builds two frameworks in parallel, then commits checksums, releases
 # with the frameworks and checksums attached to the release.
