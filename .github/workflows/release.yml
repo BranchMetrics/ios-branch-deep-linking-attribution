@@ -134,20 +134,19 @@ jobs:
 
             /* TODO: Improve URL handling here. */
             const uploadUrl = data.upload_url.replace(/\{.*$/, '');
-            console.log(`Using upload URL for release assets: ${uploadUrl}.`);
 
             await uploadAsset({
               github,
               assetName: 'Branch.zip',
               path: 'framework/Branch.zip',
-              contentType: 'application/zip',
+              contentType: 'application/octet-stream',
               uploadUrl,
             });
             await uploadAsset({
               github,
               assetName: 'Branch_static.zip',
               path: 'static-framework/Branch_static.zip',
-              contentType: 'application/zip',
+              contentType: 'application/octet-stream',
               uploadUrl,
             });
             await uploadAsset({
