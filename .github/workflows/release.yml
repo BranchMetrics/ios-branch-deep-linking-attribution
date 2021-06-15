@@ -101,7 +101,7 @@ jobs:
           git push
       - name: Publish to CocoaPods
         run: |
-          # TODO: Authenticate
+          # TODO: Authenticate using repo secret
           # bundle exec pod trunk push Branch.podspec
           echo "TODO: This 👆"
       # 3. Create GitHub release. Also creates a tag.
@@ -146,7 +146,7 @@ jobs:
             await uploadAsset({
               github,
               assetName: 'Branch_static.zip',
-              path: 'static-framework/Branch.zip',
+              path: 'static-framework/Branch_static.zip',
               contentType: 'application/zip',
               uploadUrl,
             });
