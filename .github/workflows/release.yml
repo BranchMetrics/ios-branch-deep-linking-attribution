@@ -173,6 +173,7 @@ jobs:
       - name: Export to ios-spm repository
         uses: actions/github-script@v4
         with:
+          github-token: ${{ secrets.BRANCHLET_ACCESS_TOKEN }}
           script: |
             const tag = '${{ github.event.inputs.tag }}';
             console.log(`Exporting release ${tag} to ios-spm repo.`);
