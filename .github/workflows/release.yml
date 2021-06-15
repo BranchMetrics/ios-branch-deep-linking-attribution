@@ -85,8 +85,8 @@ jobs:
         uses: actions/download-artifact@v2
       - name: Relocate checksum artifacts
         run: |
-          mv framework/checksum carthage-files
-          mv static-framework/checksum_static carthage-files
+          cp framework/checksum carthage-files
+          cp static-framework/checksum_static carthage-files
       # The sha output from this step is the commit to be tagged.
       - name: Commit checksums
         id: commit-checksums
@@ -126,8 +126,38 @@ jobs:
               tag: tagName,
             });
 
+            const uploadUrl = release.upload_url;
+            const uploadAsset = require('./.github/custom-scripts/upload-asset');
+            await uploadAsset({
+              github,
+              assetName: 'Branch.zip',
+              path: 'framework/Branch.zip',
+              content-type: 'application/zip',
+              uploadUrl,
+            });
+            await uploadAsset({
+              github,
+              assetName: 'Branch_static.zip',
+              path: 'static-framework/Branch.zip',
+              content-type: 'application/zip',
+              uploadUrl,
+            });
+            await uploadAsset({
+              github,
+              assetName: 'checksum.txt',
+              path: 'framework/checksum',
+              content-type: 'text/plain',
+              uploadUrl,
+            });
+            await uploadAsset({
+              github,
+              assetName: 'Branch.zip',
+              path: 'static-framework/checksum_static',
+              content-type: 'text/plain',
+              uploadUrl,
+            });
+
             console.log(`Created release ${tagName}:`);
-            console.log(` ${JSON.stringify(release)}`);
             console.log(` https://github.com/${{ env.GITHUB_REPOSITORY }}/release/${tagName}`);
       # 4. Trigger import workflow in ios-spm repo.
       - name: Export to ios-spm repository
