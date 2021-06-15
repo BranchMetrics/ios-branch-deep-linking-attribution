@@ -1,19 +1,16 @@
 const fs = require('fs');
 
-async function uploadAsset({ github, assetName, path, contentType, uploadUrl }) {
-  const contentLength = fs.statSync(path).size;
+async function uploadAsset({ github, context, releaseId, assetName, path }) {
   const contents = fs.readFileSync(path);
 
-  console.log(`Uploading asset ${assetName}, content-length ${contentLength}.`)
+  console.log(`Uploading asset ${assetName}.`)
 
   const { data } = await github.repos.uploadReleaseAsset({
-    url: uploadUrl + `?name=${encodeURIComponent(assetName)}`,
-    headers: {
-      'content-type': contentType,
-      'content-length': contentLength,
-    },
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    releaseId,
     name: assetName,
-    file: contents,
+    data: contents,
   });
 
   return data;

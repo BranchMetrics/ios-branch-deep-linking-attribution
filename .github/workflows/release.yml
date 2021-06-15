@@ -132,36 +132,38 @@ jobs:
               tag: tagName,
             });
 
+            console.log(`Got release: ${JSON.stringify(data)}`);
+
             /* TODO: Improve URL handling here. */
-            const uploadUrl = data.upload_url.replace(/\{.*$/, '');
+            const releaseId = data.id;
 
             await uploadAsset({
               github,
+              context,
+              releaseId,
               assetName: 'Branch.zip',
               path: 'framework/Branch.zip',
-              contentType: 'application/octet-stream',
-              uploadUrl,
             });
             await uploadAsset({
               github,
+              context,
+              releaseId,
               assetName: 'Branch_static.zip',
               path: 'static-framework/Branch_static.zip',
-              contentType: 'application/octet-stream',
-              uploadUrl,
             });
             await uploadAsset({
               github,
+              context,
+              releaseId,
               assetName: 'checksum',
               path: 'framework/checksum',
-              contentType: 'text/plain',
-              uploadUrl,
             });
             await uploadAsset({
               github,
+              context,
+              releaseId,
               assetName: 'checksum_static',
               path: 'static-framework/checksum_static',
-              contentType: 'text/plain',
-              uploadUrl,
             });
       - name: Report Release
         uses: actions/github-script@v4
