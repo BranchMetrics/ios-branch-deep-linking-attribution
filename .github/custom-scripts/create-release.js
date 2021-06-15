@@ -48,6 +48,9 @@ async function createRelease({ context, core, github, sha, version }) {
   const body = await getBody({ github, core, context, target: sha });
   const releaseBody = `${title}\n\n${body}`;
 
+  // TODO: Update ChangeLog.md or perhaps take release body from manual
+  // ChangeLog updates.
+
   const release = {
     owner: context.repo.owner,
     repo: context.repo.repo,
@@ -56,7 +59,7 @@ async function createRelease({ context, core, github, sha, version }) {
     name: version,
     body: releaseBody,
     draft: false,
-    prelease: true,
+    prelease: false,
   };
 
   await github.repos.createRelease(release);
