@@ -23,7 +23,7 @@ jobs:
           xcodebuild -scheme Branch-xcframework
           cd build
           zip -rqy Branch.zip Branch.xcframework/
-          echo '#checksum for Branch.zip on Github' > checksum.txt
+          echo '#checksum for Branch.zip on Github' > checksum
           shasum Branch.zip >> checksum
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
@@ -44,7 +44,7 @@ jobs:
           xcodebuild -scheme Branch-static-xcframework
           cd build
           zip -rqy Branch_static.zip Branch.xcframework/
-          echo '#checksum for Branch-static.zip on Github' > checksum.txt
+          echo '#checksum for Branch-static.zip on Github' > checksum_static
           shasum Branch_static.zip >> checksum_static
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
@@ -119,13 +119,17 @@ jobs:
               sha,
               version: tagName,
             });
-
-            const { uploadUrl } = await github.repos.getReleaseByTag({
+      - name: Upload Release Assets
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const data = await github.repos.getReleaseByTag({
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag: tagName,
             });
 
+            const uploadUrl = data.upload_url;
             console.log(`Using upload URL for release assets: ${uploadUrl}.`);
 
             const uploadAsset = require('./.github/custom-scripts/upload-asset');
@@ -157,9 +161,10 @@ jobs:
               contentType: 'text/plain',
               uploadUrl,
             });
-
-            console.log(`Created release ${tagName}:`);
-            console.log(` https://github.com/${{ env.GITHUB_REPOSITORY }}/release/${tagName}`);
+      - name: Report Release
+        run: |
+          echo "Created release ${{ github.event.inputs.tag }}:"
+          echo " https://github.com/${{ env.GITHUB_REPOSITORY }}/release/${{ github.event.inputs.tag }}"
       # 4. Trigger import workflow in ios-spm repo.
       - name: Export to ios-spm repository
         uses: actions/github-script@v4
