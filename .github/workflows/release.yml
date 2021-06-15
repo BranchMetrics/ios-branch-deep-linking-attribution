@@ -86,7 +86,7 @@ jobs:
       - name: Verify build artifacts
         working-directory: carthage-files
         run: |
-          ls -R
+          ls -R carthage-files/build
       # The sha output from this step is the commit to be tagged.
       - name: Commit checksums
         id: commit-checksums
