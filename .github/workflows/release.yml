@@ -151,7 +151,7 @@ jobs:
             });
             await uploadAsset({
               github,
-              assetName: 'Branch.zip',
+              assetName: 'checksum_static.txt',
               path: 'static-framework/checksum_static',
               content-type: 'text/plain',
               uploadUrl,
