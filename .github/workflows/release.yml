@@ -132,6 +132,8 @@ jobs:
               tag: tagName,
             });
 
+            console.log(`Got release ${JSON.stringify(data)}`);
+
             const uploadUrl = data.upload_url;
             console.log(`Using upload URL for release assets: ${uploadUrl}.`);
 
