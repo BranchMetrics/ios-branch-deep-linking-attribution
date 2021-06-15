@@ -32,3 +32,10 @@ lane :version_bump do |opts|
   next_version = update_sdk_version opts
   sh 'git', 'commit', '-a', '-m', "[release] #{next_version}"
 end
+
+lane :current_version do
+  UI.message 'Generating fastlane/.version with podspec version'
+  File.open('.version', 'w') do |f|
+    f.puts current_pod_version
+  end
+end
