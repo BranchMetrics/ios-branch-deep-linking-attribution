@@ -5,8 +5,8 @@ name: Tag & Release
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: The version number to use for this release.
+      tag:
+        description: The tag to use for this release.
         required: true
 
 # Builds two frameworks in parallel, then commits checksums, releases
@@ -110,7 +110,7 @@ jobs:
         with:
           script: |
             const createRelease = require('./.github/custom-scripts/create-release');
-            const tagName = '${{ github.event.inputs.version }}';
+            const tagName = '${{ github.event.inputs.tag }}';
             const sha = '${{ steps.commit-checksums.outputs.sha }}';
             const release = await createRelease({
               core,
