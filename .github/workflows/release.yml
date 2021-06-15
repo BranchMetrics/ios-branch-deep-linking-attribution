@@ -1,7 +1,7 @@
-name: Tag & Release
+name: Build & Release (manual)
 
 # Manually triggered
-# $ gh workflow run -f version=1.40.0 release.yml
+# $ gh workflow run -f tag=1.40.0-test.1 release.yml
 on:
   workflow_dispatch:
     inputs:
