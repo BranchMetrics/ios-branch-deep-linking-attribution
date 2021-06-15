@@ -1,0 +1,46 @@
+name: Version bump (manual)
+
+# Manually triggered
+# $ gh workflow run -f version=1.40.0 version-bump.yml
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: The version to use for this bump or major, minor or patch.
+        required: false
+        default: patch
+
+jobs:
+  version-bump:
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set up Ruby 2.7
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+      - name: Restore cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            vendor
+            Branch-TestBed/Pods
+          key: ${{ runner.os }}-${{ hashFiles('Gemfile.lock','Branch-TestBed/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-
+      - name: Install Ruby dependencies
+        run: |
+          bundle config set --local path vendor
+          bundle check || bundle install
+      - name: Configure git
+        run: |
+          git config user.name "Branch SDK Team"
+          git config user.email branch-sdks@branch.io
+      # Does not tag
+      - name: Perform version bump & commit
+        run: |
+          bundle exec fastlane version_bump version:${{ github.event.inputs.version }}
+      - name: Push changes
+        run: |
+          git push

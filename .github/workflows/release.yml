@@ -1,16 +1,57 @@
-name: Tag & Release
-
-# -----
-# TODO: Define this workflow.
-# -----
+name: Build & Release (manual)
 
 # Manually triggered
-# $ gh workflow run integration-tests.yml
+# $ gh workflow run release.yml
 on: workflow_dispatch
 
+# Builds two frameworks in parallel, then commits checksums, releases
+# with the frameworks and checksums attached to the release.
 jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Build xcframework
+        working-directory: carthage-files
+        run: |
+          xcodebuild -scheme Branch-xcframework
+          cd build
+          zip -rqy Branch.zip Branch.xcframework/
+          echo '#checksum for Branch.zip on Github' > checksum
+          shasum Branch.zip >> checksum
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: framework
+          path: |
+            carthage-files/build/Branch.zip
+            carthage-files/build/checksum
+
+  build-static:
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Build static xcframework
+        working-directory: carthage-files
+        run: |
+          xcodebuild -scheme Branch-static-xcframework
+          cd build
+          zip -rqy Branch_static.zip Branch.xcframework/
+          echo '#checksum for Branch-static.zip on Github' > checksum_static
+          shasum Branch_static.zip >> checksum_static
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: static-framework
+          path: |
+            carthage-files/build/Branch_static.zip
+            carthage-files/build/checksum_static
+
   release:
     runs-on: macos-latest
+    needs: [build, build-static]
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -18,6 +59,10 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.7'
+      # The CocoaPods dependencies are only used by the
+      # Branch-TestBed.xcworkspace (for unit tests).
+      # Bring in the Ruby deps from the cache for quick availability of
+      # pod command. Not using cached Pods folder.
       - name: Restore cache
         uses: actions/cache@v2
         with:
@@ -31,24 +76,94 @@ jobs:
         run: |
           bundle config set --local path vendor
           bundle check || bundle install
-      # This happens automatically with the unit_tests lane, but adding it here
-      # makes it easier to keep track of installation time via GHA without
-      # adding execution time to the next step.
-      - name: Install CocoaPods dependencies
-        run: bundle exec fastlane prepare_pods
-
-      # 1. Publish to CocoaPods.
+      - name: Download build artifacts
+        uses: actions/download-artifact@v2
+      - name: Relocate checksum artifacts
+        run: |
+          cp framework/checksum carthage-files
+          cp static-framework/checksum_static carthage-files
+      # The sha output from this step is the commit to be tagged.
+      - name: Commit checksums
+        id: commit-checksums
+        run: |
+          git config user.name "Branch SDK Team"
+          git config user.email branch-sdks@branch.io
+          git commit carthage-files/checksum carthage-files/checksum_static -m'Updated checksums'
+          echo "::set-output name=sha::$(git rev-parse HEAD)"
+      # TODO: Version bump along the way, probably here.
+      - name: Push changes
+        run: |
+          git push
       - name: Publish to CocoaPods
         run: |
+          # TODO: Authenticate using repo secret
+          # bundle exec pod trunk push Branch.podspec
           echo "TODO: This 👆"
-      # 2. Create GitHub release. Also creates a tag.
-      # Remember to build and attach binaries.
+      # 3. Create GitHub release. Also creates a tag.
       - name: Create GitHub Release
         uses: actions/github-script@v4
         with:
           script: |
-            console.log('TODO: This 👆');
-      # 3. Trigger import workflow in ios-spm repo.
+            const createRelease = require('./.github/custom-scripts/create-release');
+            const tagName = '${{ github.event.inputs.tag }}';
+            const sha = '${{ steps.commit-checksums.outputs.sha }}';
+            await createRelease({
+              core,
+              context,
+              github,
+              sha,
+              version: tagName,
+            });
+      - name: Upload Release Assets
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const uploadAsset = require('./.github/custom-scripts/upload-asset');
+            const tagName = '${{ github.event.inputs.tag }}';
+
+            const { data } = await github.repos.getReleaseByTag({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag: tagName,
+            });
+
+            const releaseId = data.id;
+
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
+              assetName: 'Branch.zip',
+              path: 'framework/Branch.zip',
+            });
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
+              assetName: 'Branch_static.zip',
+              path: 'static-framework/Branch_static.zip',
+            });
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
+              assetName: 'checksum',
+              path: 'framework/checksum',
+            });
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
+              assetName: 'checksum_static',
+              path: 'static-framework/checksum_static',
+            });
+      - name: Report Release
+        uses: actions/github-script@v4
+        with:
+          script: |
+            console.log('Created release ${{ github.event.inputs.tag }}:');
+            console.log(` https://github.com/${context.repo.owner}/${context.repo.repo}/releases/${{ github.event.inputs.tag }}`);
+      # 4. Trigger import workflow in ios-spm repo.
       - name: Export to ios-spm repository
         uses: actions/github-script@v4
         with:

@@ -1,10 +1,10 @@
 require 'cocoapods'
 require 'pathname'
 
-module UpdateHelper
+module CocoapodsHelper
   UI = FastlaneCore::UI
 
-  class UpdateHelperException < RuntimeError; end
+  class CocoapodsHelperException < RuntimeError; end
 
   # Following the lead of npm ci (https://docs.npmjs.com/cli/v7/commands/npm-ci):
   # The Podfile.lock must exist.
@@ -31,7 +31,7 @@ module UpdateHelper
     manifest_path = File.join podfile_folder, 'Pods', 'Manifest.lock'
 
     # Don't regenerate the lockfile
-    raise UpdateHelperException, "#{lockfile_path} missing or not readable." unless File.readable?(lockfile_path)
+    raise CocoapodsHelperException, "#{lockfile_path} missing or not readable." unless File.readable?(lockfile_path)
 
     return true unless File.readable?(manifest_path)
 
@@ -58,7 +58,7 @@ module UpdateHelper
     end
 
     # Don't regenerate the lockfile.
-    raise UpdateHelperException, "Podfile checksum #{podfile.checksum} does not match PODFILE CHECKSUM in Podfile.lock."
+    raise CocoapodsHelperException, "Podfile checksum #{podfile.checksum} does not match PODFILE CHECKSUM in Podfile.lock."
   end
 
   def pod_install_if_required(podfile_folder, verbose: false, repo_update: true)
@@ -75,4 +75,4 @@ module UpdateHelper
   end
 end
 
-include UpdateHelper
+include CocoapodsHelper
