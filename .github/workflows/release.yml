@@ -126,6 +126,8 @@ jobs:
               tag: tagName,
             });
 
+            console.log(`Using upload URL for release assets: ${uploadUrl}.`);
+
             const uploadAsset = require('./.github/custom-scripts/upload-asset');
             await uploadAsset({
               github,
