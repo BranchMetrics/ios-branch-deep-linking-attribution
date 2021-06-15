@@ -73,6 +73,14 @@ module CocoapodsHelper
 
     Dir.chdir(podfile_folder) { Fastlane::Action.sh(*command) }
   end
+
+  def current_pod_version
+    # Get current version from podspec
+    podspec = File.open('../Branch.podspec', 'r') do |f|
+      eval f.read
+    end
+    podspec.version
+  end
 end
 
 include CocoapodsHelper
