@@ -93,6 +93,7 @@ jobs:
         run: |
           git config user.name "Branch SDK Team"
           git config user.email branch-sdks@branch.io
+          git pull
           git commit carthage-files/checksum carthage-files/checksum_static -m'Updated checksums'
           echo "::set-output name=sha::$(git rev-parse HEAD)"
       # TODO: Version bump along the way, probably here.
