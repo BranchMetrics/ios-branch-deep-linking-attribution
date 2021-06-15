@@ -152,22 +152,25 @@ jobs:
             });
             await uploadAsset({
               github,
-              assetName: 'checksum.txt',
+              assetName: 'checksum',
               path: 'framework/checksum',
               contentType: 'text/plain',
               uploadUrl,
             });
             await uploadAsset({
               github,
-              assetName: 'checksum_static.txt',
+              assetName: 'checksum_static',
               path: 'static-framework/checksum_static',
               contentType: 'text/plain',
               uploadUrl,
             });
       - name: Report Release
         run: |
-          echo "Created release ${{ github.event.inputs.tag }}:"
-          echo " https://github.com/${{ env.GITHUB_REPOSITORY }}/release/${{ github.event.inputs.tag }}"
+        uses: actions/github-script@v4
+        with:
+          script: |
+            console.log('Created release ${{ github.event.inputs.tag }}:');
+            console.log(` https://github.com/${context.repo.owner}/${context.repo.repo}/release/${{ github.event.inputs.tag }}`);
       # 4. Trigger import workflow in ios-spm repo.
       - name: Export to ios-spm repository
         uses: actions/github-script@v4
