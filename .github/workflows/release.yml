@@ -2,11 +2,12 @@ name: Tag & Release
 
 # Manually triggered
 # $ gh workflow run -f version=1.40.0 release.yml
-on: workflow_dispatch
-  inputs:
-    version:
-      description: The version number to use for this release.
-      required: true
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: The version number to use for this release.
+        required: true
 
 # Builds two frameworks in parallel, then commits checksums, releases
 # with the frameworks and checksums attached to the release.
