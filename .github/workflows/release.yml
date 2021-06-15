@@ -167,7 +167,7 @@ jobs:
         with:
           script: |
             console.log('Created release ${{ github.event.inputs.tag }}:');
-            console.log(` https://github.com/${context.repo.owner}/${context.repo.repo}/release/${{ github.event.inputs.tag }}`);
+            console.log(` https://github.com/${context.repo.owner}/${context.repo.repo}/releases/${{ github.event.inputs.tag }}`);
       # 4. Trigger import workflow in ios-spm repo.
       - name: Export to ios-spm repository
         uses: actions/github-script@v4
