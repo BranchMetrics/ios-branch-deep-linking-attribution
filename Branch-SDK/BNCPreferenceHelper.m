@@ -120,17 +120,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     return self;
 }
 
-+ (BNCPreferenceHelper *)getInstance {
-    static BNCPreferenceHelper *preferenceHelper;
-    static dispatch_once_t onceToken;
-    
-    dispatch_once(&onceToken, ^{
-        preferenceHelper = [[BNCPreferenceHelper alloc] init];
-    });
-    
-    return preferenceHelper;
-}
-
 - (void) synchronize {
     [_persistPrefsQueue waitUntilAllOperationsAreFinished];
 }
