@@ -13,7 +13,7 @@
 @implementation BranchCPIDRequest
 
 - (NSString *)serverURL {    
-    return [[BNCPreferenceHelper preferenceHelper] getAPIURL:BRANCH_REQUEST_ENDPOINT_CPID];
+    return [[BNCPreferenceHelper sharedInstance] getAPIURL:BRANCH_REQUEST_ENDPOINT_CPID];
 }
 
 // all required fields for this request is added by BNCServerInterface

@@ -39,13 +39,13 @@
 }
 
 + (void)resetPersistentData {
-    BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferences = [BNCPreferenceHelper sharedInstance];
     preferences.browserUserAgentString = nil;
     preferences.lastSystemBuildVersion = nil;
 }
 
 - (void)testResetPersistentData {
-    BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferences = [BNCPreferenceHelper sharedInstance];
     XCTAssertNil(preferences.browserUserAgentString);
     XCTAssertNil(preferences.lastSystemBuildVersion);
 }

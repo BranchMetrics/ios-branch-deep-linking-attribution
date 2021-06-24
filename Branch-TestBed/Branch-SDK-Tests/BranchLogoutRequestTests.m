@@ -18,7 +18,7 @@
 @implementation BranchLogoutRequestTests
 
 - (void)testRequestBody {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSDictionary * const expectedParams = @{
         BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN: preferenceHelper.randomizedBundleToken,
         BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN: preferenceHelper.randomizedDeviceToken,
@@ -45,7 +45,7 @@
     NSString * const RESPONSE_IDENTITY = @"bar";
     NSString * const RESPONSE_USER_URL = @"http://bar";
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     preferenceHelper.sessionID = PRE_RESPONSE_SESSION_ID;
     preferenceHelper.randomizedBundleToken = PRE_RESPONSE_IDENTITY;
     preferenceHelper.userUrl = PRE_RESPONSE_USER_URL;
@@ -83,7 +83,7 @@
     NSString * const PRE_RESPONSE_SESSION_PARAMS = @"{\"foo\":\"bar\"}";
     NSError * const requestError = [NSError errorWithDomain:@"foo" code:1 userInfo:nil];
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     preferenceHelper.sessionID = PRE_RESPONSE_SESSION_ID;
     preferenceHelper.randomizedBundleToken = PRE_RESPONSE_IDENTITY;
     preferenceHelper.userUrl = PRE_RESPONSE_USER_URL;

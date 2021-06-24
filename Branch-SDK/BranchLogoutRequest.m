@@ -28,7 +28,7 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSMutableDictionary *params = [NSMutableDictionary new];
     params[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = preferenceHelper.randomizedBundleToken;
     params[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = preferenceHelper.randomizedDeviceToken;
@@ -44,7 +44,7 @@
         return;
     }
 
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     preferenceHelper.sessionID = response.data[BRANCH_RESPONSE_KEY_SESSION_ID];
     preferenceHelper.randomizedBundleToken = BNCStringFromWireFormat(response.data[BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN]);
     preferenceHelper.userUrl = response.data[BRANCH_RESPONSE_KEY_USER_URL];

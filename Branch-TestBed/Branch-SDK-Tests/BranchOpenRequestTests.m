@@ -24,7 +24,7 @@
 
 - (void)setUp {
     [super setUp];
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     preferenceHelper.installParams = nil;
     preferenceHelper.randomizedBundleToken = nil;
     preferenceHelper.checkedAppleSearchAdAttribution = NO;
@@ -47,7 +47,7 @@
 
     BNCLogSetDisplayLevel(BNCLogLevelAll);
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     id systemObserverMock = OCMClassMock([BNCSystemObserver class]);
     [[[[systemObserverMock stub] ignoringNonObjectArgs] andReturn:HARDWARE_ID]
         getUniqueHardwareId:0
@@ -127,7 +127,7 @@
     NSString * const RANDOMIZED_BUNDLE_TOKEN = @"foo-bundle-token";
     NSString * hardwareType = nil;
 
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     id systemObserverMock = OCMClassMock([BNCSystemObserver class]);
     [[[[systemObserverMock stub] ignoringNonObjectArgs] andReturn:HARDWARE_ID]
         getUniqueHardwareId:0
@@ -209,7 +209,7 @@
         BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: RANDOMIZED_BUNDLE_TOKEN
     };
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
 
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
     BranchOpenRequest *request = [[BranchOpenRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
@@ -251,7 +251,7 @@
         BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: IDENTITY
     };
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     preferenceHelper.installParams = INSTALL_PARAMS;
     
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
@@ -292,7 +292,7 @@
         BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: IDENTITY
     };
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     preferenceHelper.installParams = INSTALL_PARAMS;
     
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
@@ -333,7 +333,7 @@
         BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: IDENTITY
     };
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     preferenceHelper.installParams = INSTALL_PARAMS;
     
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
@@ -373,7 +373,7 @@
         BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: IDENTITY
     };
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
 
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
     BranchOpenRequest *request = [[BranchOpenRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
@@ -397,7 +397,7 @@
 }
 
 - (void)testOpenWhenReferrableAndNoInstallParamsAndNonNullData {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
 
     NSString * const OPEN_PARAMS = @"{\"+clicked_branch_link\":1,\"foo\":\"bar\"}";
     
@@ -417,7 +417,7 @@
 }
 
 - (void)testOpenWhenReferrableAndNoInstallParamsAndNullData {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Request Expectation"];
     BranchOpenRequest *request = [[BranchOpenRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
@@ -435,7 +435,7 @@
 }
 
 - (void)testOpenWhenReferrableAndNoInstallParamsAndNonLinkClickData {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
 
     NSString * const OPEN_PARAMS = @"{\"+clicked_branch_link\":0}";
     
@@ -455,7 +455,7 @@
 }
 
 - (void)testOpenWhenReferrableAndInstallParams {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
 
     NSString * const INSTALL_PARAMS = @"{\"+clicked_branch_link\":1,\"foo\":\"bar\"}";
     NSString * const OPEN_PARAMS = @"{\"+clicked_branch_link\":1,\"bar\":\"foo\"}";
@@ -481,7 +481,7 @@
     //  'isReferrable' seems to be an empty concept in iOS.
     //  It is in the code but not used. -- Edward.
 
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
 
     NSString * const OPEN_PARAMS = @"{\"+clicked_branch_link\":1,\"foo\":\"bar\"}";
     

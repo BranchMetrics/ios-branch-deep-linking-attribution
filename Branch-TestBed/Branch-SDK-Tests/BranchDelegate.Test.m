@@ -45,7 +45,7 @@
 
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
 
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     Branch.branchKey = @"key_live_foo";
 
     Branch *branch =
@@ -132,7 +132,7 @@
 
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
 
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     Branch.branchKey = @"key_live_foo";
 
     Branch *branch =

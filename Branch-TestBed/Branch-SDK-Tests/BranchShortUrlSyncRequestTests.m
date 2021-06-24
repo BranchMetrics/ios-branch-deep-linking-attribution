@@ -41,7 +41,7 @@
     [LINK_DATA setupMatchDuration:DURATION];
     [LINK_DATA setupParams:PARAMS];
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSMutableDictionary * const expectedParams = NSMutableDictionary.new;
     expectedParams[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
     expectedParams[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = preferenceHelper.randomizedBundleToken;
@@ -88,7 +88,7 @@
     
     [LINK_DATA setupType:LINK_TYPE];
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSMutableDictionary * const expectedParams = NSMutableDictionary.new;
     expectedParams[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
     expectedParams[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = preferenceHelper.randomizedBundleToken;
@@ -172,7 +172,7 @@
              USER_URL, TAG1, TAG2, ALIAS, CHANNEL, FEATURE, STAGE,
              (long)LINK_TYPE, (long)DURATION, URL_ENCODED_PARAMS];
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     preferenceHelper.userUrl = USER_URL;
     
     BranchShortUrlSyncRequest *request =
@@ -209,7 +209,7 @@
     NSString * const CAMPAIGN = @"foo-campaign";
     NSDictionary * const PARAMS = @{ @"foo-param": @"bar-value" };
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     preferenceHelper.userUrl = nil;
     
     BranchShortUrlSyncRequest *request =

@@ -36,7 +36,7 @@
     NSInteger const OLD_REWARD_VALUE = 25;
     NSInteger const NEW_REWARD_VALUE = 100;
 
-    [[BNCPreferenceHelper preferenceHelper] setCreditCount:OLD_REWARD_VALUE forBucket:BUCKET];
+    [[BNCPreferenceHelper sharedInstance] setCreditCount:OLD_REWARD_VALUE forBucket:BUCKET];
 
     XCTestExpectation *requestCallbackExpectation = [self expectationWithDescription:@"Request Callback Expectation"];
     BranchLoadRewardsRequest *request =
@@ -54,7 +54,7 @@
     
     [self awaitExpectations];
     XCTAssertEqual(
-        [[BNCPreferenceHelper preferenceHelper] getCreditCountForBucket:BUCKET],
+        [[BNCPreferenceHelper sharedInstance] getCreditCountForBucket:BUCKET],
         NEW_REWARD_VALUE
     );
 }
@@ -64,7 +64,7 @@
     NSInteger const OLD_REWARD_VALUE = 25;
     NSInteger const NEW_REWARD_VALUE = 25;
 
-    [[BNCPreferenceHelper preferenceHelper] setCreditCount:OLD_REWARD_VALUE forBucket:BUCKET];
+    [[BNCPreferenceHelper sharedInstance] setCreditCount:OLD_REWARD_VALUE forBucket:BUCKET];
 
     XCTestExpectation *requestCallbackExpectation =
         [self expectationWithDescription:@"Request Callback Expectation"];
@@ -83,9 +83,9 @@
     [request processResponse:response error:nil];
 
     [self awaitExpectations];
-    [[BNCPreferenceHelper preferenceHelper] synchronize];
+    [[BNCPreferenceHelper sharedInstance] synchronize];
     XCTAssertEqual(
-        [[BNCPreferenceHelper preferenceHelper] getCreditCountForBucket:BUCKET],
+        [[BNCPreferenceHelper sharedInstance] getCreditCountForBucket:BUCKET],
         NEW_REWARD_VALUE
     );
 }
@@ -95,7 +95,7 @@
     NSInteger const OLD_REWARD_VALUE = 25;
     NSError * const REQUEST_ERROR = [NSError errorWithDomain:@"foo" code:1 userInfo:nil];
     
-    [[BNCPreferenceHelper preferenceHelper] setCreditCount:OLD_REWARD_VALUE forBucket:BUCKET];
+    [[BNCPreferenceHelper sharedInstance] setCreditCount:OLD_REWARD_VALUE forBucket:BUCKET];
     
     XCTestExpectation *requestCallbackExpectation =
         [self expectationWithDescription:@"Request Callback Expectation"];
@@ -112,7 +112,7 @@
     
     [self awaitExpectations];
     XCTAssertEqual(
-        [[BNCPreferenceHelper preferenceHelper] getCreditCountForBucket:BUCKET],
+        [[BNCPreferenceHelper sharedInstance] getCreditCountForBucket:BUCKET],
         OLD_REWARD_VALUE
     );
 }

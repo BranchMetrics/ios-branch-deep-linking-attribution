@@ -22,7 +22,7 @@
     NSString * const BUCKET = @"foo_bucket";
     NSInteger const AMOUNT = 5;
 
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSMutableDictionary * const expectedParams = NSMutableDictionary.new;
     expectedParams[BRANCH_REQUEST_KEY_BUCKET] = BUCKET;
     expectedParams[BRANCH_REQUEST_KEY_AMOUNT] = @(AMOUNT);
@@ -44,7 +44,7 @@
     NSInteger const REDEEM_AMOUNT = 5;
     NSString * const BUCKET = @"foo_bucket";
     
-    [[BNCPreferenceHelper preferenceHelper] setCreditCount:STARTING_AMOUNT forBucket:BUCKET];
+    [[BNCPreferenceHelper sharedInstance] setCreditCount:STARTING_AMOUNT forBucket:BUCKET];
     
     XCTestExpectation *requestExpectation = [self expectationWithDescription:@"Redeem Request Expectation"];
     BranchRedeemRewardsRequest *request = [[BranchRedeemRewardsRequest alloc] initWithAmount:REDEEM_AMOUNT bucket:BUCKET callback:^(BOOL success, NSError *error) {
@@ -57,7 +57,7 @@
     [request processResponse:[[BNCServerResponse alloc] init] error:nil];
     
     [self awaitExpectations];
-    XCTAssertEqual([[BNCPreferenceHelper preferenceHelper] getCreditCountForBucket:BUCKET], STARTING_AMOUNT - REDEEM_AMOUNT);
+    XCTAssertEqual([[BNCPreferenceHelper sharedInstance] getCreditCountForBucket:BUCKET], STARTING_AMOUNT - REDEEM_AMOUNT);
 }
 
 - (void)testBasicFailure {
@@ -66,7 +66,7 @@
     NSString * const BUCKET = @"foo_bucket";
     NSError * REQUEST_ERROR = [NSError errorWithDomain:@"foo" code:1 userInfo:nil];
     
-    [[BNCPreferenceHelper preferenceHelper] setCreditCount:STARTING_AMOUNT forBucket:BUCKET];
+    [[BNCPreferenceHelper sharedInstance] setCreditCount:STARTING_AMOUNT forBucket:BUCKET];
     
     XCTestExpectation *requestExpectation = [self expectationWithDescription:@"Redeem Request Expectation"];
     BranchRedeemRewardsRequest *request = [[BranchRedeemRewardsRequest alloc] initWithAmount:REDEEM_AMOUNT bucket:BUCKET callback:^(BOOL success, NSError *error) {
@@ -79,7 +79,7 @@
     [request processResponse:nil error:REQUEST_ERROR];
     
     [self awaitExpectations];
-    XCTAssertEqual([[BNCPreferenceHelper preferenceHelper] getCreditCountForBucket:BUCKET], STARTING_AMOUNT);
+    XCTAssertEqual([[BNCPreferenceHelper sharedInstance] getCreditCountForBucket:BUCKET], STARTING_AMOUNT);
 }
 
 @end
