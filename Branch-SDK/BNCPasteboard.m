@@ -7,6 +7,7 @@
 //
 
 #import "BNCPasteboard.h"
+#import "Branch.h"
 #import <UIKit/UIKit.h>
 
 @implementation BNCPasteboard
@@ -35,17 +36,12 @@
             
             // triggers the end user toast message
             NSURL *tmp = UIPasteboard.generalPasteboard.URL;
-            if ([self isProbableBranchLink:tmp]) {
+            if ([Branch isBranchLink:tmp.absoluteString]) {
                 return tmp;
             }
         }
     }
     return nil;
-}
-
-- (BOOL)isProbableBranchLink:(NSURL *)url {
-    // TODO: check against info.plist
-    return YES;
 }
 
 @end

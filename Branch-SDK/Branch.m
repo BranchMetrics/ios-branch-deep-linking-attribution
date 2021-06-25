@@ -788,7 +788,7 @@ static NSString *bnc_branchKey = nil;
 
     [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier];
 
-    return [self isBranchLink:urlString];
+    return [Branch isBranchLink:urlString];
 }
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
@@ -816,9 +816,9 @@ static NSString *bnc_branchKey = nil;
     spotlightIdentifier = [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
     NSURL *webURL = userActivity.webpageURL;
 
-    if ([self isBranchLink:userActivity.userInfo[CSSearchableItemActivityIdentifier]]) {
+    if ([Branch isBranchLink:userActivity.userInfo[CSSearchableItemActivityIdentifier]]) {
         return [self handleDeepLink:[NSURL URLWithString:userActivity.userInfo[CSSearchableItemActivityIdentifier]] sceneIdentifier:sceneIdentifier];
-    } else if (webURL != nil && [self isBranchLink:[webURL absoluteString]]) {
+    } else if (webURL != nil && [Branch isBranchLink:[webURL absoluteString]]) {
         return [self handleDeepLink:webURL sceneIdentifier:sceneIdentifier];
     } else if (spotlightIdentifier) {
         self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
@@ -835,10 +835,11 @@ static NSString *bnc_branchKey = nil;
     return spotlightIdentifier != nil;
 }
 
-- (BOOL)isBranchLink:(NSString *)urlString {
+// checks if URL string looks like a branch link
++ (BOOL)isBranchLink:(NSString *)urlString {
     id branchUniversalLinkDomains = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_universal_link_domains"];
     
-    // check list in bundle
+    // check url list in bundle
     if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] && [urlString containsString:branchUniversalLinkDomains]) {
         return YES;
     } else if ([branchUniversalLinkDomains isKindOfClass:[NSArray class]]) {
