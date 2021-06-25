@@ -77,8 +77,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 - (void)clearUserCreditsAndCounts;
 - (void)clearUserCredits;
 
-- (id)getBranchUniversalLinkDomains;
-
 - (void)setCreditCount:(NSInteger)count;
 - (void)setCreditCount:(NSInteger)count forBucket:(NSString *)bucket;
 - (void)removeCreditCountForBucket:(NSString *)bucket;

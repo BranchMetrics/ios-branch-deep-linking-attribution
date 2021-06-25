@@ -275,17 +275,17 @@
     BOOL hasIdentifier = (prefs.linkClickIdentifier.length > 0 ) || (prefs.spotlightIdentifier.length > 0 ) || (prefs.universalLinkUrl.length > 0);
     
     // Allow install to resolve a link.
-    if ([endpoint bnc_containsString:@"/v1/install"] && hasIdentifier) {
+    if ([endpoint containsString:@"/v1/install"] && hasIdentifier) {
         return YES;
     }
     
     // Allow open to resolve a link.
-    if ([endpoint bnc_containsString:@"/v1/open"] && hasIdentifier) {
+    if ([endpoint containsString:@"/v1/open"] && hasIdentifier) {
         return YES;
     }
     
     // Allow short url creation requests
-    if ([endpoint bnc_containsString:@"/v1/url"]) {
+    if ([endpoint containsString:@"/v1/url"]) {
         return YES;
     }
     

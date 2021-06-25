@@ -39,7 +39,6 @@ static NSString * const BRANCH_PREFS_KEY_INITIAL_REFERRER = @"bnc_initial_referr
 static NSString * const BRANCH_PREFS_KEY_SESSION_PARAMS = @"bnc_session_params";
 static NSString * const BRANCH_PREFS_KEY_INSTALL_PARAMS = @"bnc_install_params";
 static NSString * const BRANCH_PREFS_KEY_USER_URL = @"bnc_user_url";
-static NSString * const BRANCH_PREFS_KEY_BRANCH_UNIVERSAL_LINK_DOMAINS = @"branch_universal_link_domains";
 
 static NSString * const BRANCH_PREFS_KEY_CREDITS = @"bnc_credits";
 static NSString * const BRANCH_PREFS_KEY_CREDIT_BASE = @"bnc_credit_base_";
@@ -487,7 +486,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     } else
     if ([baseUrl hasSuffix:@"&"] || [baseUrl hasSuffix:@"?"]) {
     } else
-    if ([baseUrl bnc_containsString:@"?"]) {
+    if ([baseUrl containsString:@"?"]) {
         [baseUrl appendString:@"&"];
     }
     else {
@@ -519,10 +518,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 - (void)clearUserCreditsAndCounts {
     self.creditsDictionary = [[NSMutableDictionary alloc] init];
-}
-
-- (id)getBranchUniversalLinkDomains {
-    return [[[NSBundle mainBundle] infoDictionary] objectForKey:BRANCH_PREFS_KEY_BRANCH_UNIVERSAL_LINK_DOMAINS];
 }
 
 - (NSMutableDictionary *)requestMetadataDictionary {
