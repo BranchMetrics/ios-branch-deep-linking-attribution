@@ -354,7 +354,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         NSString *message = @"Could not generate a URL.";
         NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError localizedMessage:message];
         BNCLogWarning([NSString stringWithFormat:@"%@", error]);
-        if (callback) callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
+        if (callback) callback([BNCPreferenceHelper sharedInstance].userUrl, error);
         return;
     }
     

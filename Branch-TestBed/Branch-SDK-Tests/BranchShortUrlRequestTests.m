@@ -41,7 +41,7 @@
     [LINK_DATA setupMatchDuration:DURATION];
     [LINK_DATA setupParams:PARAMS];
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSMutableDictionary * const expectedParams = NSMutableDictionary.new;
     expectedParams[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
     expectedParams[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = preferenceHelper.randomizedBundleToken;
@@ -89,7 +89,7 @@
     
     [LINK_DATA setupType:LINK_TYPE];
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSMutableDictionary * const expectedParams = NSMutableDictionary.new;
     expectedParams[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
     expectedParams[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = preferenceHelper.randomizedBundleToken;
@@ -177,7 +177,7 @@
         @"%@?tags=%@&tags=%@&alias=%@&channel=%@&feature=%@&stage=%@&type=%ld&duration=%ld&source=ios&data=%@",
         USER_URL, TAG1, TAG2, ALIAS, CHANNEL, FEATURE, STAGE, (long)LINK_TYPE, (long)DURATION, ENCODED_PARAMS];
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     preferenceHelper.userUrl = USER_URL;
     
     XCTestExpectation *requestExpecation = [self expectationWithDescription:@"Get Referral Code Request Expectation"];
@@ -220,7 +220,7 @@
     NSString * const STAGE = @"foo-stage";
     NSDictionary * const PARAMS = @{ @"foo-param": @"bar-value" };
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     preferenceHelper.userUrl = nil;
     
     XCTestExpectation *requestExpecation =

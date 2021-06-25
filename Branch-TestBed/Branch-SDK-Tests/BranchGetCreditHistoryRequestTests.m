@@ -21,7 +21,7 @@
     NSString * const CREDIT_TRANSACTION_ID = @"foo_transaction_id";
     NSInteger const LENGTH = 5;
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSMutableDictionary * const expectedParams = NSMutableDictionary.new;
     expectedParams[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = preferenceHelper.randomizedBundleToken;
     expectedParams[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = preferenceHelper.randomizedDeviceToken;
@@ -43,7 +43,7 @@
 - (void)testRequestBodyWithItemsMissing {
     NSInteger const LENGTH = 5;
 
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSMutableDictionary * const expectedParams = NSMutableDictionary.new;
     expectedParams[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = preferenceHelper.randomizedBundleToken;
     expectedParams[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = preferenceHelper.randomizedDeviceToken;

@@ -21,7 +21,7 @@
 }
 
 - (NSString *)serverURL {
-    return [[BNCPreferenceHelper preferenceHelper] getAPIURL:BRANCH_REQUEST_ENDPOINT_LATD];
+    return [[BNCPreferenceHelper sharedInstance] getAPIURL:BRANCH_REQUEST_ENDPOINT_LATD];
 }
 
 - (NSMutableDictionary *)buildRequestParams {

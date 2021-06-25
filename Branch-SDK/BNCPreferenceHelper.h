@@ -68,7 +68,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, atomic) BOOL trackingDisabled;
 - (void) clearTrackingInformation;
 
-+ (BNCPreferenceHelper *)preferenceHelper;
++ (BNCPreferenceHelper *)sharedInstance;
 
 - (NSString *)getAPIBaseURL;
 - (NSString *)getAPIURL:(NSString *)endpoint;

@@ -29,7 +29,7 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSMutableDictionary *params = [NSMutableDictionary new];
     params[BRANCH_REQUEST_KEY_BUCKET] = self.bucket;
     params[BRANCH_REQUEST_KEY_AMOUNT] = @(self.amount);
@@ -48,7 +48,7 @@
     }
     
     // Update local balance
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSInteger currentAvailableCredits = [preferenceHelper getCreditCountForBucket:self.bucket];
     NSInteger updatedBalance = currentAvailableCredits - self.amount;
     [preferenceHelper setCreditCount:updatedBalance forBucket:self.bucket];

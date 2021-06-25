@@ -21,7 +21,7 @@
 - (void)testRequestBodyWithoutState {
     NSString * const USER_ACTION_TEST_ACTION = @"foo-action";
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSMutableDictionary *expectedParams = NSMutableDictionary.new;
     expectedParams[BRANCH_REQUEST_KEY_ACTION] = USER_ACTION_TEST_ACTION;
     expectedParams[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = preferenceHelper.randomizedBundleToken;
@@ -41,7 +41,7 @@
     NSString * const USER_ACTION_TEST_ACTION = @"foo-action";
     NSDictionary * const USER_ACTION_TEST_STATE = @{ @"foo": @"bar" };
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSMutableDictionary *expectedParams = NSMutableDictionary.new;
     expectedParams[BRANCH_REQUEST_KEY_ACTION] = USER_ACTION_TEST_ACTION;
     expectedParams[BRANCH_REQUEST_KEY_STATE] = USER_ACTION_TEST_STATE;
