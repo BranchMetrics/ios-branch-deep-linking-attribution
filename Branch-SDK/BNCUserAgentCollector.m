@@ -64,7 +64,7 @@
 - (NSString *)loadUserAgentForSystemBuildVersion:(NSString *)systemBuildVersion {
     
     NSString *userAgent = nil;
-    BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferences = [BNCPreferenceHelper sharedInstance];
     NSString *savedUserAgent = [preferences.browserUserAgentString copy];
     NSString *savedSystemBuildVersion = [preferences.lastSystemBuildVersion copy];
     
@@ -78,7 +78,7 @@
 // save user agent to preferences
 - (void)saveUserAgent:(NSString *)userAgent forSystemBuildVersion:(NSString *)systemBuildVersion {
     if (userAgent && systemBuildVersion) {
-        BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
+        BNCPreferenceHelper *preferences = [BNCPreferenceHelper sharedInstance];
         preferences.browserUserAgentString = userAgent;
         preferences.lastSystemBuildVersion = systemBuildVersion;
     }

@@ -92,7 +92,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
             requestMetadataDictionary = _requestMetadataDictionary,
             instrumentationDictionary = _instrumentationDictionary;
 
-+ (BNCPreferenceHelper *)preferenceHelper {
++ (BNCPreferenceHelper *)sharedInstance {
     static BNCPreferenceHelper *preferenceHelper;
     static dispatch_once_t onceToken;
     
@@ -117,17 +117,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         self.disableAdNetworkCallouts = NO;
     }
     return self;
-}
-
-+ (BNCPreferenceHelper *)getInstance {
-    static BNCPreferenceHelper *preferenceHelper;
-    static dispatch_once_t onceToken;
-    
-    dispatch_once(&onceToken, ^{
-        preferenceHelper = [[BNCPreferenceHelper alloc] init];
-    });
-    
-    return preferenceHelper;
 }
 
 - (void) synchronize {

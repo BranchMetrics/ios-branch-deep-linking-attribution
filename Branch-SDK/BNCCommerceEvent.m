@@ -565,7 +565,7 @@ NSArray<BNCCurrency>* BNCCurrencyAllCurrencies(void) {
 - (void)makeRequest:(BNCServerInterface *)serverInterface
 			    key:(NSString *)key callback:(BNCServerCallback)callback {
 
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
 
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     params[BRANCH_REQUEST_KEY_ACTION] = @"purchase";

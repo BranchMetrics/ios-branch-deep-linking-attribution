@@ -32,8 +32,8 @@
 @implementation BranchEventTest
 
 - (void) setUp {
-    [BNCPreferenceHelper preferenceHelper].randomizedBundleToken = @"575759106028389737";
-    [[BNCPreferenceHelper preferenceHelper] clearInstrumentationDictionary];
+    [BNCPreferenceHelper sharedInstance].randomizedBundleToken = @"575759106028389737";
+    [[BNCPreferenceHelper sharedInstance] clearInstrumentationDictionary];
 }
 
 - (void) testDescription {

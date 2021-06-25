@@ -27,7 +27,7 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSString *endpoint = [BRANCH_REQUEST_ENDPOINT_LOAD_REWARDS stringByAppendingPathComponent:preferenceHelper.randomizedBundleToken];
     [serverInterface getRequest:nil url:[preferenceHelper getAPIURL:endpoint] key:key callback:callback];
 }
@@ -41,7 +41,7 @@
     }
 
     BOOL hasUpdated = NO;
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     [preferenceHelper synchronize];
     NSDictionary *currentCreditDictionary = [preferenceHelper getCreditDictionary];
     NSArray *responseKeys = [response.data allKeys];
@@ -57,7 +57,7 @@
                 credits = [response.data[key] integerValue];
             }
 
-            BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+            BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
             if (credits != [preferenceHelper getCreditCountForBucket:key]) {
                 hasUpdated = YES;
             }

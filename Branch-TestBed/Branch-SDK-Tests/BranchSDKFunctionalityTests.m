@@ -24,7 +24,7 @@ NSString * const TEST_NEW_USER_LINK = @"https://bnc.lt/i/2kkbX6k-As";
 - (void)test00OpenOrInstall {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
 
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     Branch.branchKey = @"key_live_foo";
     
     Branch *branch =
@@ -77,7 +77,7 @@ NSString * const TEST_NEW_USER_LINK = @"https://bnc.lt/i/2kkbX6k-As";
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     Branch *branch =
         [[Branch alloc]
             initWithInterface:serverInterfaceMock
@@ -131,7 +131,7 @@ NSString * const TEST_NEW_USER_LINK = @"https://bnc.lt/i/2kkbX6k-As";
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     Branch *branch =
         [[Branch alloc]
             initWithInterface:serverInterfaceMock
@@ -169,7 +169,7 @@ NSString * const TEST_NEW_USER_LINK = @"https://bnc.lt/i/2kkbX6k-As";
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     Branch *branch =
         [[Branch alloc]
             initWithInterface:serverInterfaceMock
@@ -213,7 +213,7 @@ NSString * const TEST_NEW_USER_LINK = @"https://bnc.lt/i/2kkbX6k-As";
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     Branch *branch =
         [[Branch alloc]
             initWithInterface:serverInterfaceMock
@@ -274,7 +274,7 @@ NSString * const TEST_NEW_USER_LINK = @"https://bnc.lt/i/2kkbX6k-As";
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
 
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     Branch *branch =
 		[[Branch alloc]
 			initWithInterface:serverInterfaceMock

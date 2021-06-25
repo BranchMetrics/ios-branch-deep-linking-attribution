@@ -167,7 +167,7 @@
             initWithInterface:serverInterfaceMock
             queue:[[BNCServerRequestQueue alloc] init]
             cache:[[BNCLinkCache alloc] init]
-            preferenceHelper:[BNCPreferenceHelper preferenceHelper]
+            preferenceHelper:[BNCPreferenceHelper sharedInstance]
             key:@"key_live_foo"];
 
     XCTestExpectation *scenario3Expectation1 =
@@ -217,7 +217,7 @@
             initWithInterface:serverInterfaceMock
             queue:[[BNCServerRequestQueue alloc] init]
             cache:[[BNCLinkCache alloc] init]
-            preferenceHelper:[BNCPreferenceHelper preferenceHelper]
+            preferenceHelper:[BNCPreferenceHelper sharedInstance]
             key:@"key_live_foo"];
 
     XCTestExpectation *scenario4Expectation1 =
@@ -278,7 +278,7 @@
             initWithInterface:serverInterfaceMock
             queue:[[BNCServerRequestQueue alloc] init]
             cache:[[BNCLinkCache alloc] init]
-            preferenceHelper:[BNCPreferenceHelper preferenceHelper]
+            preferenceHelper:[BNCPreferenceHelper sharedInstance]
             key:@"key_live"];
 
     XCTestExpectation *scenario5Expectation1 =
@@ -317,7 +317,7 @@
             initWithInterface:serverInterfaceMock
             queue:[[BNCServerRequestQueue alloc] init]
             cache:[[BNCLinkCache alloc] init]
-            preferenceHelper:[BNCPreferenceHelper preferenceHelper]
+            preferenceHelper:[BNCPreferenceHelper sharedInstance]
             key:@"key_live"];
 
     XCTestExpectation *scenario6Expectation1 =
@@ -520,7 +520,7 @@
         badRequestCallback(nil, [NSError errorWithDomain:NSURLErrorDomain code:-1004 userInfo:nil]);
     };
 
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSString *url = [[preferenceHelper getAPIURL:@"credits/"]
         stringByAppendingString:preferenceHelper.randomizedBundleToken];
 
@@ -550,7 +550,7 @@
     }];
 
     // Only one request should make it to the server
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSString *url =
         [[preferenceHelper getAPIURL:@"credits/"]
             stringByAppendingString:preferenceHelper.randomizedBundleToken];
@@ -617,7 +617,7 @@
     }];
 
     // Only one request should make it to the server
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSString *url =
         [[preferenceHelper getAPIURL:@"credits/"]
             stringByAppendingString:preferenceHelper.randomizedBundleToken];
@@ -676,7 +676,7 @@
         goodRequestCallback(goodResponse, nil);
     };
 
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSString *url = [[preferenceHelper getAPIURL:@"credits/"]
         stringByAppendingString:preferenceHelper.randomizedBundleToken];
 
