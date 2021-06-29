@@ -928,7 +928,7 @@ static NSString *bnc_branchKey = nil;
     #endif
 }
 
-- (void)checkPasteboardForBranchLinkOnInstall {
+- (void)checkPasteboardOnInstall {
     [BNCPasteboard sharedInstance].checkOnInstall = YES;
 }
 
