@@ -176,11 +176,11 @@ jobs:
           github-token: ${{ secrets.BRANCHLET_ACCESS_TOKEN }}
           script: |
             const tag = '${{ github.event.inputs.tag }}';
-            console.log(`Exporting release ${tag} to ios-spm repo.`);
+            console.log(`Exporting release ${tag} to ios-branch-sdk-spm repo.`);
 
             await github.actions.createWorkflowDispatch({
               owner: 'BranchMetrics',
-              repo: 'ios-spm',
+              repo: 'ios-branch-sdk-spm',
               workflow_id: 'import.yml',
               ref: 'main',
               inputs: {
