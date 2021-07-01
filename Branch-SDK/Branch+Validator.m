@@ -39,7 +39,7 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
 }
 
 - (void) startValidation {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSString *endpoint =
         [BRANCH_REQUEST_ENDPOINT_APP_LINK_SETTINGS stringByAppendingPathComponent:preferenceHelper.lastRunBranchKey];
     [[[BNCServerInterface alloc] init]

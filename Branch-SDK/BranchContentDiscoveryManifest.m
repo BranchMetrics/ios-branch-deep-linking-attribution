@@ -23,7 +23,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        NSDictionary *savedManifest = [[BNCPreferenceHelper preferenceHelper] getContentAnalyticsManifest];
+        NSDictionary *savedManifest = [[BNCPreferenceHelper sharedInstance] getContentAnalyticsManifest];
         if (savedManifest) {
             _cdManifest = [savedManifest mutableCopy];
         } else {
@@ -71,7 +71,7 @@
             _maxPktSize = [[cdManifestDict objectForKey:BRANCH_MAX_PACKET_SIZE_KEY] integerValue];
         }
         
-        [[BNCPreferenceHelper preferenceHelper] saveContentAnalyticsManifest:_cdManifest];
+        [[BNCPreferenceHelper sharedInstance] saveContentAnalyticsManifest:_cdManifest];
     } else {
         _isCDEnabled = NO;
     }

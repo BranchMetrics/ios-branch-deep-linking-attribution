@@ -38,7 +38,7 @@
         data[BRANCH_REQUEST_KEY_URL_DATA] = [self.params copy];
     }
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     [self safeSetValue:preferenceHelper.randomizedDeviceToken forKey:BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN onDict:data];
     [self safeSetValue:preferenceHelper.randomizedBundleToken forKey:BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN onDict:data];
     [self safeSetValue:preferenceHelper.sessionID forKey:BRANCH_REQUEST_KEY_SESSION_ID onDict:data];

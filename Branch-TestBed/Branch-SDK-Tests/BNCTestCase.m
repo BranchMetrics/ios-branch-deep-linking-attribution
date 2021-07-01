@@ -118,12 +118,12 @@ static NSString* savedRandomizedBundleToken = nil;
     if (self != [BNCTestCase self]) return;
     BNCLogSetDisplayLevel(BNCLogLevelAll);
 
-    savedRandomizedBundleToken = [BNCPreferenceHelper preferenceHelper].randomizedBundleToken;
+    savedRandomizedBundleToken = [BNCPreferenceHelper sharedInstance].randomizedBundleToken;
     [Branch clearAll];
 }
 
 + (void)tearDown {
-    [BNCPreferenceHelper preferenceHelper].randomizedBundleToken = savedRandomizedBundleToken;
+    [BNCPreferenceHelper sharedInstance].randomizedBundleToken = savedRandomizedBundleToken;
 }
 
 + (void) clearAllBranchSettings {

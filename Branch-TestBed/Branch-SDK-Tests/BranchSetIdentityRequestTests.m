@@ -20,7 +20,7 @@ static NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
 @implementation BranchSetIdentityRequestTests
 
 - (void)testRequestBody {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSDictionary * const expectedParams = @{
         BRANCH_REQUEST_KEY_DEVELOPER_IDENTITY: IDENTITY_TEST_USER_ID,
         BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN: preferenceHelper.randomizedBundleToken,
@@ -49,7 +49,7 @@ static NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
     __block NSInteger callbackCount = 0;
     
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     preferenceHelper.userIdentity = PRE_RESPONSE_USER_IDENTITY;
     preferenceHelper.randomizedBundleToken = PRE_RESPONSE_IDENTITY;
     preferenceHelper.userUrl = PRE_RESPONSE_USER_URL;
@@ -124,7 +124,7 @@ static NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
     NSString * const RESPONSE_INSTALL_PARAMS = @"{\"bar\":\"foo\"}";
     __block NSInteger callbackCount = 0;
     
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     preferenceHelper.userIdentity = PRE_RESPONSE_USER_IDENTITY;
     preferenceHelper.randomizedBundleToken = PRE_RESPONSE_IDENTITY;
     preferenceHelper.userUrl = PRE_RESPONSE_USER_URL;

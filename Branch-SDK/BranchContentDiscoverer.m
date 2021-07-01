@@ -123,7 +123,7 @@
                     [contentEventObj setObject:contentDataArray forKey:BRANCH_CONTENT_DATA_KEY];
                 }
                 
-                [[BNCPreferenceHelper preferenceHelper] saveBranchAnalyticsData:contentEventObj];
+                [[BNCPreferenceHelper sharedInstance] saveBranchAnalyticsData:contentEventObj];
             }
         }
     }

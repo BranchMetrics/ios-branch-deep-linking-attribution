@@ -498,7 +498,7 @@ static NSString *bnc_branchKey = nil;
 
 + (BOOL)trackingDisabled {
     @synchronized(self) {
-        return [BNCPreferenceHelper preferenceHelper].trackingDisabled;
+        return [BNCPreferenceHelper sharedInstance].trackingDisabled;
     }
 }
 
@@ -509,7 +509,7 @@ static NSString *bnc_branchKey = nil;
             return;
         if (disabled) {
             // Set the flag (which also clears the settings):
-            [BNCPreferenceHelper preferenceHelper].trackingDisabled = YES;
+            [BNCPreferenceHelper sharedInstance].trackingDisabled = YES;
             Branch *branch = Branch.getInstance;
             [branch clearNetworkQueue];
             branch.initializationStatus = BNCInitStatusUninitialized;
@@ -518,7 +518,7 @@ static NSString *bnc_branchKey = nil;
             [BranchOpenRequest releaseOpenResponseLock];
         } else {
             // Set the flag:
-            [BNCPreferenceHelper preferenceHelper].trackingDisabled = NO;
+            [BNCPreferenceHelper sharedInstance].trackingDisabled = NO;
             // Initialize a Branch session:
             [Branch.getInstance initUserSessionAndCallCallback:NO sceneIdentifier:nil];
         }
@@ -640,8 +640,8 @@ static NSString *bnc_branchKey = nil;
 
 - (void)checkAttributionStatusAndInitialize {
     dispatch_async(self.isolationQueue, ^(){
-        if ([BNCPreferenceHelper preferenceHelper].faceBookAppLink) {
-            [self handleDeepLink:[BNCPreferenceHelper preferenceHelper].faceBookAppLink sceneIdentifier:nil];
+        if ([BNCPreferenceHelper sharedInstance].faceBookAppLink) {
+            [self handleDeepLink:[BNCPreferenceHelper sharedInstance].faceBookAppLink sceneIdentifier:nil];
         } else {
             [self initUserSessionAndCallCallback:YES sceneIdentifier:nil];
         }
@@ -816,6 +816,12 @@ static NSString *bnc_branchKey = nil;
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier {
     BNCLogDebugSDK(@"continueUserActivity:");
 
+    if (@available(iOS 11.0, *)) {
+        if (userActivity.referrerURL) {
+            self.preferenceHelper.initialReferrer = userActivity.referrerURL.absoluteString;
+        }
+    }
+    
     // Check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
         return [self handleDeepLink:userActivity.webpageURL sceneIdentifier:sceneIdentifier];
@@ -945,7 +951,7 @@ static NSString *bnc_branchKey = nil;
 
     dispatch_async(self.isolationQueue, ^(){
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-        [[BNCAppleSearchAds sharedInstance] checkAppleSearchAdsSaveTo:[BNCPreferenceHelper preferenceHelper] installDate:[BNCApplication currentApplication].currentInstallDate completion:^{
+        [[BNCAppleSearchAds sharedInstance] checkAppleSearchAdsSaveTo:[BNCPreferenceHelper sharedInstance] installDate:[BNCApplication currentApplication].currentInstallDate completion:^{
             dispatch_semaphore_signal(semaphore);
         }];
         dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
@@ -959,10 +965,10 @@ static NSString *bnc_branchKey = nil;
 
 - (void)handleATTAuthorizationStatus:(NSUInteger)status {
     // limits impact if the client fails to check that status = notDetermined before calling
-    if ([BNCPreferenceHelper preferenceHelper].hasCalledHandleATTAuthorizationStatus) {
+    if ([BNCPreferenceHelper sharedInstance].hasCalledHandleATTAuthorizationStatus) {
         return;
     } else {
-        [BNCPreferenceHelper preferenceHelper].hasCalledHandleATTAuthorizationStatus = YES;
+        [BNCPreferenceHelper sharedInstance].hasCalledHandleATTAuthorizationStatus = YES;
     }
     
     BranchEvent *event;
@@ -1014,7 +1020,7 @@ static NSString *bnc_branchKey = nil;
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
         [[BNCFacebookAppLinks sharedInstance] fetchFacebookAppLinkWithCompletion:^(NSURL * _Nullable appLink, NSError * _Nullable error) {
             if (appLink && !error) {
-                [BNCPreferenceHelper preferenceHelper].faceBookAppLink = appLink;
+                [BNCPreferenceHelper sharedInstance].faceBookAppLink = appLink;
             }
             dispatch_semaphore_signal(semaphore);
         }];
@@ -1609,7 +1615,7 @@ static NSString *bnc_branchKey = nil;
     @synchronized (self) {
         static dispatch_once_t onceToken = 0;
         dispatch_once(&onceToken, ^{
-            BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+            BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
 
             // If there was stored key and it isn't the same as the currently used (or doesn't exist), we need to clean up
             // Note: Link Click Identifier is not cleared because of the potential for that to mess up a deep link
@@ -1888,7 +1894,7 @@ static NSString *bnc_branchKey = nil;
         BranchContentDiscoverer *contentDiscoverer = [BranchContentDiscoverer getInstance];
         if (contentDiscoverer) [contentDiscoverer stopDiscoveryTask];
 
-        BOOL sendCloseRequests = [[BNCPreferenceHelper preferenceHelper] sendCloseRequests];
+        BOOL sendCloseRequests = [[BNCPreferenceHelper sharedInstance] sendCloseRequests];
         if (sendCloseRequests && self.preferenceHelper.sessionID && ![self.requestQueue containsClose]) {
             BranchCloseRequest *req = [[BranchCloseRequest alloc] init];
             [self.requestQueue enqueue:req];

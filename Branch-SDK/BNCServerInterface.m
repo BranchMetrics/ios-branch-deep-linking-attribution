@@ -247,7 +247,7 @@
         
         // if endpoint is not linking related, fail it.
         if (![self isLinkingRelatedRequest:endpoint]) {
-            [[BNCPreferenceHelper preferenceHelper] clearTrackingInformation];
+            [[BNCPreferenceHelper sharedInstance] clearTrackingInformation];
             NSError *error = [NSError branchErrorWithCode:BNCTrackingDisabledError];
             BNCLogWarning([NSString stringWithFormat:@"Dropping Request %@: - %@", endpoint, error]);
             if (callback) {
@@ -271,7 +271,7 @@
 }
 
 - (BOOL)isLinkingRelatedRequest:(NSString *)endpoint {
-    BNCPreferenceHelper *prefs = [BNCPreferenceHelper preferenceHelper];
+    BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
     BOOL hasIdentifier = (prefs.linkClickIdentifier.length > 0 ) || (prefs.spotlightIdentifier.length > 0 ) || (prefs.universalLinkUrl.length > 0);
     
     // Allow install to resolve a link.
@@ -462,7 +462,7 @@
 
     NSString *sendCloseRequests = httpResponse.allHeaderFields[@"X-Branch-Send-Close-Request"];
     if (sendCloseRequests != nil) {
-        [[BNCPreferenceHelper preferenceHelper] setSendCloseRequests:sendCloseRequests.boolValue];
+        [[BNCPreferenceHelper sharedInstance] setSendCloseRequests:sendCloseRequests.boolValue];
     }
     
     if (!error) {
@@ -532,7 +532,7 @@
         
         if ([self installDateIsRecent] && [deviceInfo isFirstOptIn]) {
             [self safeSetValue:@(deviceInfo.isFirstOptIn) forKey:BRANCH_REQUEST_KEY_FIRST_OPT_IN onDict:dict];
-            [BNCPreferenceHelper preferenceHelper].hasOptedInBefore = YES;
+            [BNCPreferenceHelper sharedInstance].hasOptedInBefore = YES;
         }
         
         [self safeSetValue:@(deviceInfo.isAdTrackingEnabled) forKey:BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED onDict:dict];

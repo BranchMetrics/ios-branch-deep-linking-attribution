@@ -39,10 +39,10 @@
     ];
     self.listVersion = -1; // First time always refresh the list version, version 0.
 
-    NSArray *storedList = [BNCPreferenceHelper preferenceHelper].savedURLPatternList;
+    NSArray *storedList = [BNCPreferenceHelper sharedInstance].savedURLPatternList;
     if (storedList.count > 0) {
         self.patternList = storedList;
-        self.listVersion = [BNCPreferenceHelper preferenceHelper].savedURLPatternListVersion;
+        self.listVersion = [BNCPreferenceHelper sharedInstance].savedURLPatternListVersion;
     }
 
     NSError *error = nil;
@@ -123,7 +123,7 @@
     self.error = nil;
     NSString *urlString = [self.jsonURL absoluteString];
     if (!urlString) {
-        urlString = [NSString stringWithFormat:@"%@/sdk/uriskiplist_v%ld.json", [BNCPreferenceHelper preferenceHelper].patternListURL, (long) self.listVersion+1];
+        urlString = [NSString stringWithFormat:@"%@/sdk/uriskiplist_v%ld.json", [BNCPreferenceHelper sharedInstance].patternListURL, (long) self.listVersion+1];
     }
     NSMutableURLRequest *request =
         [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]
@@ -174,8 +174,8 @@
 
     self.patternList = urls;
     self.listVersion = [version longValue];
-    [BNCPreferenceHelper preferenceHelper].savedURLPatternList = self.patternList;
-    [BNCPreferenceHelper preferenceHelper].savedURLPatternListVersion = self.listVersion;
+    [BNCPreferenceHelper sharedInstance].savedURLPatternList = self.patternList;
+    [BNCPreferenceHelper sharedInstance].savedURLPatternListVersion = self.listVersion;
 }
 
 @end
