@@ -2486,14 +2486,14 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         queue:NSOperationQueue.mainQueue
         usingBlock:^(NSNotification *notification) {
             BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
-            [crashlytics setBoolValue:YES forKey:BRANCH_CRASHLYTICS_LOW_MEMORY_KEY];
+            [crashlytics setCustomValue:@YES forKey:BRANCH_CRASHLYTICS_LOW_MEMORY_KEY];
         }
     ];
 }
 
 + (void)addBranchSDKVersionToCrashlyticsReport {
     BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
-    [crashlytics setObjectValue:BNC_SDK_VERSION forKey:BRANCH_CRASHLYTICS_SDK_VERSION_KEY];
+    [crashlytics setCustomValue:BNC_SDK_VERSION forKey:BRANCH_CRASHLYTICS_SDK_VERSION_KEY];
 }
 
 + (void) clearAll {
