@@ -677,6 +677,14 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)ignoreAppleSearchAdsTestData;
 
 /**
+ Checks the pasteboard for a Branch Link.
+ This copied Branch Link in the install request and can provide deeplink data.
+ 
+ Note, this will display a toast message to the end user.
+ */
+- (void)checkPasteboardForBranchLinkOnInstall;
+
+/**
  Set the AppGroup used to share data between the App Clip and the Full App.
  
  This must be set before initSession is called.
