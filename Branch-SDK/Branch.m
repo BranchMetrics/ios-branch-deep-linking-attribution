@@ -811,6 +811,12 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier {
     BNCLogDebugSDK(@"continueUserActivity:");
 
+    if (@available(iOS 11.0, *)) {
+        if (userActivity.referrerURL) {
+            self.preferenceHelper.initialReferrer = userActivity.referrerURL.absoluteString;
+        }
+    }
+    
     // Check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
         return [self handleDeepLink:userActivity.webpageURL sceneIdentifier:sceneIdentifier];
