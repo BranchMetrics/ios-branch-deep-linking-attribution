@@ -226,6 +226,10 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     
     BranchJsonConfig *config = BranchJsonConfig.instance;
     
+    if (config.checkPasteboardOnInstall) {
+        [self checkPasteboardOnInstall];
+    }
+    
     if (config.delayInitToCheckForSearchAds) {
         [self delayInitToCheckForSearchAds];
     }
