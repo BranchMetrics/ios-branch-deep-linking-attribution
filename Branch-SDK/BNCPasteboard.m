@@ -6,8 +6,10 @@
 //  Copyright © 2021 Branch, Inc. All rights reserved.
 //
 
-#import "BNCPasteboard.h"
 #import <UIKit/UIKit.h>
+#if !TARGET_OS_TV
+#import "BNCPasteboard.h"
+#endif
 
 @implementation BNCPasteboard
 
@@ -29,7 +31,8 @@
 }
 
 - (nullable NSURL *)checkForBranchLink {
-    // consider limiting this check to iOS 15+
+    
+#if !TARGET_OS_TV
     if (@available(iOS 10.0, *)) {
         if ([UIPasteboard.generalPasteboard hasURLs]) {
             
@@ -40,6 +43,7 @@
             }
         }
     }
+#endif
     return nil;
 }
 
