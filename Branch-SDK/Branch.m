@@ -944,7 +944,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     #endif
 }
 
-- (void)checkPasteboardForBranchLinkOnInstall {
+- (void)checkPasteboardOnInstall {
     [BNCPasteboard sharedInstance].checkOnInstall = YES;
 }
 
