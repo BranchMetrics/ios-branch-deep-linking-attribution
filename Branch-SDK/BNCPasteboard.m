@@ -10,8 +10,6 @@
 #import <UIKit/UIKit.h>
 #import "Branch.h"
 
-#endif
-
 @implementation BNCPasteboard
 
 + (BNCPasteboard *)sharedInstance {
