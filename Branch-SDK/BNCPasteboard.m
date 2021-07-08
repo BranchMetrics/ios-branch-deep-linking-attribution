@@ -30,7 +30,8 @@
 }
 
 - (nullable NSURL *)checkForBranchLink {
-    // consider limiting this check to iOS 15+
+
+    #if !TARGET_OS_TV
     if (@available(iOS 10.0, *)) {
         if ([UIPasteboard.generalPasteboard hasURLs]) {
             
@@ -41,6 +42,7 @@
             }
         }
     }
+    #endif
     return nil;
 }
 
