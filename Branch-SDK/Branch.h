@@ -783,6 +783,15 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)registerPluginName:(NSString *)name version:(NSString *)version;
 
 /**
+ Checks if a url string is a probable Branch link.
+ 
+ Checks against the Info.plist and the standard Branch list.
+ 
+ @param urlString URL as an NSString
+ */
++ (BOOL)isBranchLink:(NSString *)urlString;
+
+/**
  Key-value pairs to be included in the metadata on every request.
 
  @param key String to be included in request metadata

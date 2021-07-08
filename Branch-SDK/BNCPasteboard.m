@@ -6,9 +6,10 @@
 //  Copyright © 2021 Branch, Inc. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#if !TARGET_OS_TV
 #import "BNCPasteboard.h"
+#import <UIKit/UIKit.h>
+#import "Branch.h"
+
 #endif
 
 @implementation BNCPasteboard
@@ -38,18 +39,13 @@
             
             // triggers the end user toast message
             NSURL *tmp = UIPasteboard.generalPasteboard.URL;
-            if ([self isProbableBranchLink:tmp]) {
+            if ([Branch isBranchLink:tmp.absoluteString]) {
                 return tmp;
             }
         }
     }
 #endif
     return nil;
-}
-
-- (BOOL)isProbableBranchLink:(NSURL *)url {
-    // TODO: check against info.plist
-    return YES;
 }
 
 @end
