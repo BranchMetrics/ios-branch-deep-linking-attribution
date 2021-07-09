@@ -29,20 +29,26 @@
     return self;
 }
 
-- (nullable NSURL *)checkForBranchLink {
-
-    #if !TARGET_OS_TV
+- (BOOL)isUrlOnPasteboard {
+#if !TARGET_OS_TV
     if (@available(iOS 10.0, *)) {
         if ([UIPasteboard.generalPasteboard hasURLs]) {
-            
-            // triggers the end user toast message
-            NSURL *tmp = UIPasteboard.generalPasteboard.URL;
-            if ([Branch isBranchLink:tmp.absoluteString]) {
-                return tmp;
-            }
+            return YES;
         }
     }
-    #endif
+#endif
+    return NO;
+}
+
+- (nullable NSURL *)checkForBranchLink {
+    if ([self isUrlOnPasteboard]) {
+        // triggers the end user toast message
+        NSURL *tmp = UIPasteboard.generalPasteboard.URL;
+        if ([Branch isBranchLink:tmp.absoluteString]) {
+            self.branchLink = tmp;
+            return tmp;
+        }
+    }
     return nil;
 }
 

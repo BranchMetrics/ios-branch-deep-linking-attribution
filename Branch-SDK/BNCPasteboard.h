@@ -12,8 +12,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BNCPasteboard : NSObject
 
-// For v1, we only allow check on install requests
+// For v1, we only allow check on install requests. By default, this is NO
 @property (nonatomic,assign) BOOL checkOnInstall;
+
+@property (nonatomic, assign, nullable) NSURL *branchLink;
+
+- (BOOL)isUrlOnPasteboard;
 
 - (nullable NSURL *)checkForBranchLink;
 
