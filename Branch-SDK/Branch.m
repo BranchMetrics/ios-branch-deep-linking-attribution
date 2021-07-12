@@ -949,6 +949,15 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [BNCPasteboard sharedInstance].checkOnInstall = YES;
 }
 
+- (BOOL)willShowPasteboardToast {
+    if (!self.preferenceHelper.identityID &&
+        [BNCPasteboard sharedInstance].checkOnInstall &&
+        [BNCPasteboard sharedInstance].isUrlOnPasteboard) {
+        return YES;
+    }
+    return NO;
+}
+
 - (void)checkAppleSearchAdsAttribution {
     #if !TARGET_OS_TV
     if (![BNCAppleSearchAds sharedInstance].enableAppleSearchAdsCheck) {

@@ -685,6 +685,16 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)checkPasteboardOnInstall;
 
 /**
+ Let's client know if the Branch SDK will trigger a pasteboard toast to the end user.
+ All of the following conditions must be true.
+ 
+ 1. Developer called checkPastboardOnInstall before initSession
+ 2. A URL is on the pasteboard
+ 3. First time app is run with Branch SDK
+ */
+- (BOOL)willShowPasteboardToast;
+
+/**
  Set the AppGroup used to share data between the App Clip and the Full App.
  
  This must be set before initSession is called.
