@@ -46,20 +46,29 @@ This test fails on iOS 10 simulators.  Some iPad simulators never respond.  Some
     
     BNCAppleAdClient *adClient = [BNCAppleAdClient new];
     [adClient requestAttributionDetailsWithBlock:^(NSDictionary<NSString *,NSObject *> * _Nonnull attributionDetails, NSError * _Nonnull error) {
-        XCTAssertNil(error);
-        
-        id tmp = [attributionDetails objectForKey:@"Version3.1"];
-        if ([tmp isKindOfClass:NSDictionary.class]) {
-            NSDictionary *tmpDict = (NSDictionary *)tmp;
-            XCTAssertNotNil(tmpDict);
-                   
-            NSNumber *tmpBool = [tmpDict objectForKey:@"iad-attribution"];
-            XCTAssertNotNil(tmpBool);
+    
+        if (@available(iOS 14.5, *)) {
+            // Need ATT permission to use get old Apple Search Ads info
+            XCTAssertNotNil(error);
+            XCTAssert([@"The app is not authorized for ad tracking" isEqualToString:error.localizedDescription]);
+            [expectation fulfill];
+            
         } else {
-            XCTFail(@"Did not find Search Ads attribution");
+            XCTAssertNil(error);
+            
+            id tmp = [attributionDetails objectForKey:@"Version3.1"];
+            if ([tmp isKindOfClass:NSDictionary.class]) {
+                NSDictionary *tmpDict = (NSDictionary *)tmp;
+                XCTAssertNotNil(tmpDict);
+                       
+                NSNumber *tmpBool = [tmpDict objectForKey:@"iad-attribution"];
+                XCTAssertNotNil(tmpBool);
+            } else {
+                XCTFail(@"Did not find Search Ads attribution");
+            }
+            
+            [expectation fulfill];
         }
-        
-        [expectation fulfill];
     }];
     
     [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
