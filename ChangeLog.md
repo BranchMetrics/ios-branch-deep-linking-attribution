@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+v1.39.4
+CORE-2088 Add support for deferred deeplinks via pasteboard. This is not enabled by default.
+CORE-1950 Record install referrer
+
 v1.39.3
 CORE-1893 Add timeout to Apple attribution token. Some users are reporting the call can hang.
 

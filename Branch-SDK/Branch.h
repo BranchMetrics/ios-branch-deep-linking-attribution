@@ -677,6 +677,24 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)ignoreAppleSearchAdsTestData;
 
 /**
+ Checks the pasteboard (clipboard) for a Branch Link on App Install.
+ If found, the Branch Link is used to provide deferred deeplink data.
+ 
+ Note, this may display a toast message to the end user.
+ */
+- (void)checkPasteboardOnInstall;
+
+/**
+ Let's client know if the Branch SDK will trigger a pasteboard toast to the end user.
+ All of the following conditions must be true.
+ 
+ 1. Developer called checkPastboardOnInstall before initSession
+ 2. A URL is on the pasteboard
+ 3. First time app is run with Branch SDK
+ */
+- (BOOL)willShowPasteboardToast;
+
+/**
  Set the AppGroup used to share data between the App Clip and the Full App.
  
  This must be set before initSession is called.
@@ -773,6 +791,15 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param version Plugin version
  */
 - (void)registerPluginName:(NSString *)name version:(NSString *)version;
+
+/**
+ Checks if a url string is a probable Branch link.
+ 
+ Checks against the Info.plist and the standard Branch list.
+ 
+ @param urlString URL as an NSString
+ */
++ (BOOL)isBranchLink:(NSString *)urlString;
 
 /**
  Key-value pairs to be included in the metadata on every request.

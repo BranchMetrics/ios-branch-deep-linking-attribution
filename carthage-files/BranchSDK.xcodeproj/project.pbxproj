@@ -147,6 +147,12 @@
 		5F3802DC24DCE90400E6FAFD /* BranchSpotlightUrlRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F38024424DCE72D00E6FAFD /* BranchSpotlightUrlRequest.m */; };
 		5F3802DE24DCE90800E6FAFD /* BranchUserCompletedActionRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F38024E24DCE72E00E6FAFD /* BranchUserCompletedActionRequest.m */; };
 		5F3802E024DCE90B00E6FAFD /* BranchUserCompletedActionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F38025A24DCE73000E6FAFD /* BranchUserCompletedActionRequest.h */; };
+		5F41023526976F69003699AD /* BNCPasteboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F41023326976F69003699AD /* BNCPasteboard.m */; };
+		5F41023626976F69003699AD /* BNCPasteboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F41023326976F69003699AD /* BNCPasteboard.m */; };
+		5F41023726976F69003699AD /* BNCPasteboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F41023326976F69003699AD /* BNCPasteboard.m */; };
+		5F41023826976F69003699AD /* BNCPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F41023426976F69003699AD /* BNCPasteboard.h */; };
+		5F41023926976F69003699AD /* BNCPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F41023426976F69003699AD /* BNCPasteboard.h */; };
+		5F41023A26976F69003699AD /* BNCPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F41023426976F69003699AD /* BNCPasteboard.h */; };
 		5F7DB5FB237C95C30077A95F /* BNCAppleAdClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F7DB5F9237C95C30077A95F /* BNCAppleAdClient.h */; platformFilter = ios; };
 		5F7DB5FC237C95C30077A95F /* BNCAppleAdClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F7DB5FA237C95C30077A95F /* BNCAppleAdClient.m */; platformFilter = ios; };
 		5F85110425B11E1000D544A1 /* BNCURLFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F85110025B11E0F00D544A1 /* BNCURLFilter.m */; };
@@ -558,6 +564,8 @@
 		5F38026324DCE73100E6FAFD /* BNCServerRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCServerRequest.h; sourceTree = "<group>"; };
 		5F38026424DCE73100E6FAFD /* BranchLogoutRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLogoutRequest.m; sourceTree = "<group>"; };
 		5F38026524DCE73100E6FAFD /* BNCServerRequestQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCServerRequestQueue.h; sourceTree = "<group>"; };
+		5F41023326976F69003699AD /* BNCPasteboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCPasteboard.m; sourceTree = "<group>"; };
+		5F41023426976F69003699AD /* BNCPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCPasteboard.h; sourceTree = "<group>"; };
 		5F7DB5F9237C95C30077A95F /* BNCAppleAdClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCAppleAdClient.h; sourceTree = "<group>"; };
 		5F7DB5FA237C95C30077A95F /* BNCAppleAdClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCAppleAdClient.m; sourceTree = "<group>"; };
 		5F85110025B11E0F00D544A1 /* BNCURLFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCURLFilter.m; sourceTree = "<group>"; };
@@ -701,6 +709,8 @@
 		E230A1141D03DB9E006181D8 /* Branch-SDK */ = {
 			isa = PBXGroup;
 			children = (
+				5F41023426976F69003699AD /* BNCPasteboard.h */,
+				5F41023326976F69003699AD /* BNCPasteboard.m */,
 				5F85110325B11E1000D544A1 /* BNCPartnerParameters.h */,
 				5F85110225B11E1000D544A1 /* BNCPartnerParameters.m */,
 				5F85110125B11E1000D544A1 /* BNCURLFilter.h */,
@@ -911,6 +921,7 @@
 				5FC4D062248614830001E701 /* BNCThreads.h in Headers */,
 				5FC4D09C248614850001E701 /* BranchContentPathProperties.h in Headers */,
 				5FC4D0A5248614860001E701 /* BNCCallbackMap.h in Headers */,
+				5F41023926976F69003699AD /* BNCPasteboard.h in Headers */,
 				5F3802B624DCE80F00E6FAFD /* BranchLATDRequest.h in Headers */,
 				5FC4D07B248614840001E701 /* BNCEncodingUtils.h in Headers */,
 				5FC4D0192486145F0001E701 /* UIViewController+Branch.h in Headers */,
@@ -989,6 +1000,7 @@
 				5FD0FA5225CE46BD008200EE /* BNCLinkData.h in Headers */,
 				5FD0FA5325CE46BD008200EE /* BNCServerRequestQueue.h in Headers */,
 				5FD0FA5425CE46BD008200EE /* BNCPreferenceHelper.h in Headers */,
+				5F41023A26976F69003699AD /* BNCPasteboard.h in Headers */,
 				5FD0FA5525CE46BD008200EE /* NSError+Branch.h in Headers */,
 				5FD0FA5625CE46BD008200EE /* BNCServerInterface.h in Headers */,
 				5FD0FA5725CE46BD008200EE /* BNCSpotlightService.h in Headers */,
@@ -1076,6 +1088,7 @@
 				E230A1771D03DB9E006181D8 /* BNCLinkData.h in Headers */,
 				5F38028E24DCE73100E6FAFD /* BNCServerRequestQueue.h in Headers */,
 				E230A1791D03DB9E006181D8 /* BNCPreferenceHelper.h in Headers */,
+				5F41023826976F69003699AD /* BNCPasteboard.h in Headers */,
 				5FED519C236B9E12008ECAFD /* NSError+Branch.h in Headers */,
 				5F38026924DCE73100E6FAFD /* BNCServerInterface.h in Headers */,
 				4D1ED2811FB3A472007390A8 /* BNCSpotlightService.h in Headers */,
@@ -1353,6 +1366,7 @@
 				5FC4D0AC248614860001E701 /* BranchUniversalObject.m in Sources */,
 				5FC4D083248614840001E701 /* BNCLinkData.m in Sources */,
 				5FB38D6B2526789600E9A85A /* BranchJsonConfig.m in Sources */,
+				5F41023626976F69003699AD /* BNCPasteboard.m in Sources */,
 				5F3802C024DCE82200E6FAFD /* BranchLogoutRequest.m in Sources */,
 				5FC4D07F248614840001E701 /* BNCKeyChain.m in Sources */,
 				5FC4D04D248614830001E701 /* BNCNetworkInterface.m in Sources */,
@@ -1396,6 +1410,7 @@
 				5FD0FA9D25CE46BD008200EE /* BranchCreditHistoryRequest.m in Sources */,
 				5FD0FA9E25CE46BD008200EE /* BNCDeviceSystem.m in Sources */,
 				5FD0FA9F25CE46BD008200EE /* BNCAvailability.m in Sources */,
+				5F41023726976F69003699AD /* BNCPasteboard.m in Sources */,
 				5FD0FAA025CE46BD008200EE /* BNCLocale.m in Sources */,
 				5FD0FAA125CE46BD008200EE /* BranchRedeemRewardsRequest.m in Sources */,
 				5FD0FAA225CE46BD008200EE /* BNCAppleReceipt.m in Sources */,
@@ -1479,6 +1494,7 @@
 				5F38028924DCE73100E6FAFD /* BranchCreditHistoryRequest.m in Sources */,
 				5F92B24E2387703700CA909B /* BNCDeviceSystem.m in Sources */,
 				4D1ED27D1FB3A43A007390A8 /* BNCAvailability.m in Sources */,
+				5F41023526976F69003699AD /* BNCPasteboard.m in Sources */,
 				5F92B24D2387703700CA909B /* BNCLocale.m in Sources */,
 				5F38028024DCE73100E6FAFD /* BranchRedeemRewardsRequest.m in Sources */,
 				5FB6D3D923219B48006C5094 /* BNCAppleReceipt.m in Sources */,
@@ -1589,7 +1605,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.39.3;
+				MARKETING_VERSION = 1.39.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1629,7 +1645,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.39.3;
+				MARKETING_VERSION = 1.39.4;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.Branch;
@@ -1665,7 +1681,7 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 1.39.3;
+				MARKETING_VERSION = 1.39.4;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.Branch;
@@ -1698,7 +1714,7 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 1.39.3;
+				MARKETING_VERSION = 1.39.4;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.Branch;
@@ -1857,7 +1873,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 1.39.3;
+				MARKETING_VERSION = 1.39.4;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.Branch;
@@ -1888,7 +1904,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 1.39.3;
+				MARKETING_VERSION = 1.39.4;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.Branch;
