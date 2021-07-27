@@ -129,8 +129,7 @@
     NSURL *tmp = [[BNCPasteboard sharedInstance] checkForBranchLink];
     XCTAssert([self.testBranchURL.absoluteString isEqualToString:tmp.absoluteString]);
     
-    // confirms Branch link is deleted after use
-    XCTAssertFalse([[BNCPasteboard sharedInstance] isUrlOnPasteboard]);
+    [self clearPasteboard];
 }
 
 - (void)testCheckForBranchLink_nonBranchLink {
@@ -140,12 +139,7 @@
     NSURL *tmp = [[BNCPasteboard sharedInstance] checkForBranchLink];
     XCTAssertNil(tmp);
     
-    // confirms non-Branch link is still on the pasteboard
-    XCTAssertTrue([[BNCPasteboard sharedInstance] isUrlOnPasteboard]);
-    
-    // deletes non-Branch link from pasteboard
     [self clearPasteboard];
-    XCTAssertFalse([[BNCPasteboard sharedInstance] isUrlOnPasteboard]);
 }
 
 - (void)testCheckForBranchLink_noLink {
