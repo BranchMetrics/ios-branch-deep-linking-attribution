@@ -897,7 +897,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
  @param callback The callback that is called once the request has completed.
  */
-- (void)loadRewardsWithCallback:(nullable callbackWithStatus)callback;
+- (void)loadRewardsWithCallback:(nullable callbackWithStatus)callback DEPRECATED_ATTRIBUTE;
 
 /**
  Redeem credits from the default bucket.
@@ -909,7 +909,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param count The number of credits to redeem.
  @warning You must `loadRewardsWithCallback:` before calling `redeemRewards`.
  */
-- (void)redeemRewards:(NSInteger)count;
+- (void)redeemRewards:(NSInteger)count DEPRECATED_ATTRIBUTE;
 
 /**
  Redeem credits from the default bucket.
@@ -922,7 +922,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param callback The callback that is called once the request has completed.
  @warning You must `loadRewardsWithCallback:` before calling `redeemRewards`.
  */
-- (void)redeemRewards:(NSInteger)count callback:(nullable callbackWithStatus)callback;
+- (void)redeemRewards:(NSInteger)count callback:(nullable callbackWithStatus)callback DEPRECATED_ATTRIBUTE;
 
 /**
  Redeem credits from the specified bucket.
@@ -935,7 +935,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param bucket The bucket to redeem credits from.
  @warning You must `loadRewardsWithCallback:` before calling `redeemRewards`.
  */
-- (void)redeemRewards:(NSInteger)count forBucket:(nullable NSString *)bucket;
+- (void)redeemRewards:(NSInteger)count forBucket:(nullable NSString *)bucket DEPRECATED_ATTRIBUTE;
 
 /**
  Redeem credits from the specified bucket.
@@ -949,14 +949,14 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param callback The callback that is called once the request has completed.
  @warning You must `loadRewardsWithCallback:` before calling `redeemRewards`.
  */
-- (void)redeemRewards:(NSInteger)count forBucket:(nullable NSString *)bucket callback:(nullable callbackWithStatus)callback;
+- (void)redeemRewards:(NSInteger)count forBucket:(nullable NSString *)bucket callback:(nullable callbackWithStatus)callback DEPRECATED_ATTRIBUTE;
 
 /**
  Get the local credit balance for the default bucket.
 
  @warning You must `loadRewardsWithCallback:` before calling `getCredits`. This method does not make a request for the balance.
  */
-- (NSInteger)getCredits;
+- (NSInteger)getCredits DEPRECATED_ATTRIBUTE;
 
 /**
  Get the local credit balance for the specified bucket.
@@ -964,7 +964,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param bucket The bucket to get credits balance from.
  @warning You must `loadRewardsWithCallback:` before calling `getCredits`. This method does not make a request for the balance.
  */
-- (NSInteger)getCreditsForBucket:(NSString *)bucket;
+- (NSInteger)getCreditsForBucket:(NSString *)bucket DEPRECATED_ATTRIBUTE;
 
 /**
  Loads the last 100 credit transaction history items for the default bucket.
@@ -975,7 +975,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  
  @param callback The callback to call with the list of transactions.
  */
-- (void)getCreditHistoryWithCallback:(nullable callbackWithList)callback;
+- (void)getCreditHistoryWithCallback:(nullable callbackWithList)callback DEPRECATED_ATTRIBUTE;
 
 /**
  Loads the last 100 credit transaction history items for the specified bucket.
@@ -987,7 +987,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param bucket The bucket to get transaction history for.
  @param callback The callback to call with the list of transactions.
  */
-- (void)getCreditHistoryForBucket:(nullable NSString *)bucket andCallback:(nullable callbackWithList)callback;
+- (void)getCreditHistoryForBucket:(nullable NSString *)bucket andCallback:(nullable callbackWithList)callback DEPRECATED_ATTRIBUTE;
 
 /**
  Loads the last n credit transaction history items after the specified transaction ID for the default.
@@ -1001,7 +1001,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param order The direction to order transactions in the callback list. Least recent first means oldest items will be in the front of the response array, most recent means newest items will be front.
  @param callback The callback to call with the list of transactions.
  */
-- (void)getCreditHistoryAfter:(nullable NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(nullable callbackWithList)callback;
+- (void)getCreditHistoryAfter:(nullable NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(nullable callbackWithList)callback DEPRECATED_ATTRIBUTE;
 
 /**
  Loads the last n credit transaction history items after the specified transaction ID for the specified bucket.
@@ -1016,7 +1016,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param order The direction to order transactions in the callback list. Least recent first means oldest items will be in the front of the response array, most recent means newest items will be front.
  @param callback The callback to call with the list of transactions.
  */
-- (void)getCreditHistoryForBucket:(nullable NSString *)bucket after:(nullable NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(nullable callbackWithList)callback;
+- (void)getCreditHistoryForBucket:(nullable NSString *)bucket after:(nullable NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(nullable callbackWithList)callback DEPRECATED_ATTRIBUTE;
 
 #pragma mark - Action methods
 
