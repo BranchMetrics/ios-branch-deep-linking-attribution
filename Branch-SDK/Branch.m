@@ -1155,82 +1155,47 @@ static NSString *bnc_branchKey = nil;
 #pragma mark - Credit methods
 
 - (void)loadRewardsWithCallback:(callbackWithStatus)callback {
-    [self initSafetyCheck];
-    dispatch_async(self.isolationQueue, ^(){
-        BranchLoadRewardsRequest *req = [[BranchLoadRewardsRequest alloc] initWithCallback:callback];
-        [self.requestQueue enqueue:req];
-        [self processNextQueueItem];
-    });
+    return;
 }
 
 - (NSInteger)getCredits {
-    return [self.preferenceHelper getCreditCount];
+    return nil;
 }
 
 - (void)redeemRewards:(NSInteger)count {
-    [self redeemRewards:count forBucket:@"default" callback:NULL];
+    return;
 }
 
 - (void)redeemRewards:(NSInteger)count callback:(callbackWithStatus)callback {
-    [self redeemRewards:count forBucket:@"default" callback:callback];
+    return;
 }
 
 - (NSInteger)getCreditsForBucket:(NSString *)bucket {
-    return [self.preferenceHelper getCreditCountForBucket:bucket];
+    return nil;
 }
 
 - (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket {
-    [self redeemRewards:count forBucket:bucket callback:NULL];
+    return;
 }
 
 - (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket callback:(callbackWithStatus)callback {
-    if (count == 0) {
-        if (callback) {
-            callback(false, [NSError branchErrorWithCode:BNCRedeemZeroCreditsError]);
-        }
-        else {
-            BNCLogWarning(@"Cannot redeem zero credits.");
-        }
-        return;
-    }
-
-    NSInteger totalAvailableCredits = [self.preferenceHelper getCreditCountForBucket:bucket];
-    if (count > totalAvailableCredits) {
-        if (callback) {
-            callback(false, [NSError branchErrorWithCode:BNCRedeemCreditsError]);
-        }
-        else {
-            BNCLogWarning(@"You're trying to redeem more credits than are available. Have you loaded rewards?");
-        }
-        return;
-    }
-    [self initSafetyCheck];
-    dispatch_async(self.isolationQueue, ^(){
-        BranchRedeemRewardsRequest *req = [[BranchRedeemRewardsRequest alloc] initWithAmount:count bucket:bucket callback:callback];
-        [self.requestQueue enqueue:req];
-        [self processNextQueueItem];
-    });
+    return;
 }
 
 - (void)getCreditHistoryWithCallback:(callbackWithList)callback {
-    [self getCreditHistoryForBucket:nil after:nil number:100 order:BranchMostRecentFirst andCallback:callback];
+    return;
 }
 
 - (void)getCreditHistoryForBucket:(NSString *)bucket andCallback:(callbackWithList)callback {
-    [self getCreditHistoryForBucket:bucket after:nil number:100 order:BranchMostRecentFirst andCallback:callback];
+    return;
 }
 
 - (void)getCreditHistoryAfter:(NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(callbackWithList)callback {
-    [self getCreditHistoryForBucket:nil after:creditTransactionId number:length order:order andCallback:callback];
+    return;
 }
 
 - (void)getCreditHistoryForBucket:(NSString *)bucket after:(NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(callbackWithList)callback {
-    [self initSafetyCheck];
-    dispatch_async(self.isolationQueue, ^(){
-        BranchCreditHistoryRequest *req = [[BranchCreditHistoryRequest alloc] initWithBucket:bucket creditTransactionId:creditTransactionId length:length order:order callback:callback];
-        [self.requestQueue enqueue:req];
-        [self processNextQueueItem];
-    });
+    return;
 }
 
 - (BranchUniversalObject *)getFirstReferringBranchUniversalObject {
