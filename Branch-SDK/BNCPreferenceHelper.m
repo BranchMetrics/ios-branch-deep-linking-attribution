@@ -41,9 +41,6 @@ static NSString * const BRANCH_PREFS_KEY_INSTALL_PARAMS = @"bnc_install_params";
 static NSString * const BRANCH_PREFS_KEY_USER_URL = @"bnc_user_url";
 static NSString * const BRANCH_PREFS_KEY_BRANCH_UNIVERSAL_LINK_DOMAINS = @"branch_universal_link_domains";
 
-static NSString * const BRANCH_PREFS_KEY_CREDITS = @"bnc_credits";
-static NSString * const BRANCH_PREFS_KEY_CREDIT_BASE = @"bnc_credit_base_";
-
 static NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usage_cnt_";
 static NSString * const BRANCH_PREFS_KEY_ANALYTICAL_DATA = @"bnc_branch_analytical_data";
 static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_manifest";
@@ -59,7 +56,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 }
 
 @property (strong, nonatomic) NSMutableDictionary *persistenceDict;
-@property (strong, nonatomic) NSMutableDictionary *creditsDictionary;
 @property (strong, nonatomic) NSMutableDictionary *requestMetadataDictionary;
 @property (strong, nonatomic) NSMutableDictionary *instrumentationDictionary;
 
@@ -506,10 +502,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     [self writeBoolToDefaults:BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS value:checked];
 }
 
-- (void)clearUserCreditsAndCounts {
-    self.creditsDictionary = [[NSMutableDictionary alloc] init];
-}
-
 - (id)getBranchUniversalLinkDomains {
     return [[[NSBundle mainBundle] infoDictionary] objectForKey:BRANCH_PREFS_KEY_BRANCH_UNIVERSAL_LINK_DOMAINS];
 }
@@ -687,60 +679,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         self.requestMetadataDictionary = nil;
         self.lastStrongMatchDate = nil;
     }
-}
-
-#pragma mark - Credit Storage
-
-- (NSMutableDictionary *)creditsDictionary {
-    if (!_creditsDictionary) {
-        _creditsDictionary = [[self readObjectFromDefaults:BRANCH_PREFS_KEY_CREDITS] mutableCopy];
-        
-        if (!_creditsDictionary) {
-            _creditsDictionary = [[NSMutableDictionary alloc] init];
-        }
-    }
-    
-    return _creditsDictionary;
-}
-
-- (void)setCreditCount:(NSInteger)count {
-    [self setCreditCount:count forBucket:@"default"];
-}
-
-- (void)setCreditCount:(NSInteger)count forBucket:(NSString *)bucket {
-    self.creditsDictionary[[BRANCH_PREFS_KEY_CREDIT_BASE stringByAppendingString:bucket]] = @(count);
-
-    [self writeObjectToDefaults:BRANCH_PREFS_KEY_CREDITS value:self.creditsDictionary];
-}
-
-- (void)removeCreditCountForBucket:(NSString *)bucket {
-    NSMutableDictionary *dictToWrite = self.creditsDictionary;
-    [dictToWrite removeObjectForKey:[BRANCH_PREFS_KEY_CREDIT_BASE stringByAppendingString:bucket]];
-
-    [self writeObjectToDefaults:BRANCH_PREFS_KEY_CREDITS value:self.creditsDictionary];
-}
-
-- (NSDictionary *)getCreditDictionary {
-    NSMutableDictionary *returnDictionary = [[NSMutableDictionary alloc] init];
-    for(NSString *key in self.creditsDictionary) {
-        NSString *cleanKey = [key stringByReplacingOccurrencesOfString:BRANCH_PREFS_KEY_CREDIT_BASE
-                                                                                     withString:@""];
-        returnDictionary[cleanKey] = self.creditsDictionary[key];
-    }
-    return returnDictionary;
-}
-
-- (NSInteger)getCreditCount {
-    return [self getCreditCountForBucket:@"default"];
-}
-
-- (NSInteger)getCreditCountForBucket:(NSString *)bucket {
-    return [self.creditsDictionary[[BRANCH_PREFS_KEY_CREDIT_BASE stringByAppendingString:bucket]] integerValue];
-}
-
-- (void)clearUserCredits {
-    self.creditsDictionary = [[NSMutableDictionary alloc] init];
-    [self writeObjectToDefaults:BRANCH_PREFS_KEY_CREDITS value:self.creditsDictionary];
 }
 
 #pragma mark - Count Storage

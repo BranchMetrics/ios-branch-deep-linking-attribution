@@ -52,7 +52,6 @@
     preferenceHelper.userIdentity = PRE_RESPONSE_USER_IDENTITY;
     preferenceHelper.installParams = PRE_RESPONSE_INSTALL_PARAMS;
     preferenceHelper.sessionParams = PRE_RESPONSE_SESSION_PARAMS;
-    [preferenceHelper setCreditCount:5 forBucket:@"foo"];
     
     BNCServerResponse * const goodResponse = [[BNCServerResponse alloc] init];
     goodResponse.data = @{
@@ -71,7 +70,6 @@
     XCTAssertNil(preferenceHelper.userIdentity);
     XCTAssertNil(preferenceHelper.installParams);
     XCTAssertNil(preferenceHelper.sessionParams);
-    XCTAssertEqual([preferenceHelper getCreditCountForBucket:@"foo"], 0);
 }
 
 - (void)testFailureSuccess {
@@ -90,7 +88,6 @@
     preferenceHelper.userIdentity = PRE_RESPONSE_USER_IDENTITY;
     preferenceHelper.installParams = PRE_RESPONSE_INSTALL_PARAMS;
     preferenceHelper.sessionParams = PRE_RESPONSE_SESSION_PARAMS;
-    [preferenceHelper setCreditCount:5 forBucket:@"foo"];
     
     
     BranchLogoutRequest *request = [[BranchLogoutRequest alloc] init];
@@ -103,7 +100,6 @@
     XCTAssertEqualObjects(preferenceHelper.userIdentity, PRE_RESPONSE_USER_IDENTITY);
     XCTAssertEqualObjects(preferenceHelper.installParams, PRE_RESPONSE_INSTALL_PARAMS);
     XCTAssertEqualObjects(preferenceHelper.sessionParams, PRE_RESPONSE_SESSION_PARAMS);
-    XCTAssertEqual([preferenceHelper getCreditCountForBucket:@"foo"], 5);
 }
 
 @end
