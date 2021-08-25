@@ -1156,7 +1156,7 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (NSInteger)getCredits {
-    return nil;
+    return 0;
 }
 
 - (void)redeemRewards:(NSInteger)count {
@@ -1168,7 +1168,7 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (NSInteger)getCreditsForBucket:(NSString *)bucket {
-    return nil;
+    return 0;
 }
 
 - (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket {
