@@ -51,7 +51,6 @@
     preferenceHelper.userIdentity = nil;
     preferenceHelper.installParams = nil;
     preferenceHelper.sessionParams = nil;
-    [preferenceHelper clearUserCreditsAndCounts];
     
     if (self.callback) {
         self.callback(YES, nil);
