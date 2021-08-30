@@ -8,33 +8,36 @@
 
 #import "BNCCrashlyticsWrapper.h"
 #import "BNCTestCase.h"
-#import <OCMock/OCMock.h>
 
 #pragma mark Crashlytics SDK Stand-In
 
-@interface Crashlytics : NSObject
-+ (Crashlytics *)sharedInstance;
-- (void)setObjectValue:(id)value forKey:(NSString *)key;
-- (void)setIntValue:(int)value forKey:(NSString *)key;
-- (void)setFloatValue:(float)value forKey:(NSString *)key;
-- (void)setBoolValue:(BOOL)value forKey:(NSString *)key;
+@interface FIRCrashlytics : NSObject
++ (FIRCrashlytics *)crashlytics;
+@property NSMutableDictionary *values;
+- (void)setCustomValue:(id)value forKey:(NSString *)key;
+-(id)getCustomValueForKey:(NSString *)key;
 @end
 
-@implementation Crashlytics
+@implementation FIRCrashlytics
 
-+ (Crashlytics *)sharedInstance {
++ (FIRCrashlytics *)crashlytics {
     @synchronized (self) {
-        static Crashlytics * sharedCrashlytics = nil;
+        static FIRCrashlytics * sharedCrashlytics = nil;
         if (!sharedCrashlytics) sharedCrashlytics = [[self alloc] init];
         return sharedCrashlytics;
     }
 }
 
-- (void)setObjectValue:(id)value forKey:(NSString *)key     {}
-- (void)setIntValue:(int)value forKey:(NSString *)key       {}
-- (void)setFloatValue:(float)value forKey:(NSString *)key   {}
-- (void)setBoolValue:(BOOL)value forKey:(NSString *)key     {}
+- (void)setCustomValue:(id)value forKey:(NSString *)key {
+    if (!_values) {
+        _values = [[NSMutableDictionary alloc] init];
+    }
+    [_values setObject:value forKey:key];
+}
 
+-(id)getCustomValueForKey:(NSString *)key {
+    return [_values valueForKey:key];
+}
 @end
 
 #pragma mark - BNCCrashlyticsWrapperTest
@@ -44,33 +47,15 @@
 
 @implementation BNCCrashlyticsWrapperTest
 
-- (void)testInitialization {
-    id classMock = OCMClassMock(Crashlytics.class);
-    Crashlytics *expected = [[Crashlytics alloc] init];
-
-    OCMStub([classMock sharedInstance]).andReturn(expected);
-
-    BNCCrashlyticsWrapper *wrapper = [BNCCrashlyticsWrapper wrapper];
-    Crashlytics *actual = wrapper.crashlytics;
-
-    // The crashlytics property is whatever sharedInstance returns
-    XCTAssertEqual(expected, actual);
-}
-
 - (void) testSetValue {
-    id classMock = OCMClassMock(Crashlytics.class);
-    OCMStub([classMock setObjectValue:[OCMArg any] forKey:[OCMArg any]]);
-    OCMStub([classMock setIntValue:0 forKey:[OCMArg any]]);
-    OCMStub([classMock setFloatValue:0.0 forKey:[OCMArg any]]);
-    OCMStub([classMock setBoolValue:YES forKey:[OCMArg any]]);
 
     BNCCrashlyticsWrapper *wrapper = [BNCCrashlyticsWrapper wrapper];
-    [wrapper setObjectValue:@"stringValue" forKey:@"stringKey"];
-    [wrapper setIntValue:0 forKey:@"intKey"];
-    [wrapper setFloatValue:0.0 forKey:@"floatKey"];
-    [wrapper setIntValue:YES forKey:@"boolKey"];
-
-    [classMock verify];
+    NSString *value = @"TestString";
+    NSString *key = @"TestKey";
+    
+    [wrapper setCustomValue:value forKey:key];
+    
+    XCTAssertEqual([[FIRCrashlytics crashlytics] getCustomValueForKey:key], value);
 }
 
 @end

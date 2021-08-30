@@ -74,15 +74,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 - (NSString *)getAPIURL:(NSString *)endpoint;
 - (NSString *)getEndpointFromURL:(NSString *)url;
 
-- (void)clearUserCreditsAndCounts;
-- (void)clearUserCredits;
-
-- (void)setCreditCount:(NSInteger)count;
-- (void)setCreditCount:(NSInteger)count forBucket:(NSString *)bucket;
-- (void)removeCreditCountForBucket:(NSString *)bucket;
-- (NSDictionary *)getCreditDictionary;
-- (NSInteger)getCreditCount;
-- (NSInteger)getCreditCountForBucket:(NSString *)bucket;
+- (id)getBranchUniversalLinkDomains;
 
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value;
 - (NSMutableDictionary *)requestMetadataDictionary;

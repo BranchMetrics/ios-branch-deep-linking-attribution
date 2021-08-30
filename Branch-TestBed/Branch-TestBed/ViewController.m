@@ -8,7 +8,6 @@
 
 #import "Branch.h"
 #import "ViewController.h"
-#import "CreditHistoryViewController.h"
 #import "LogOutputViewController.h"
 #import "ArrayPickerView.h"
 #import "BranchUniversalObject.h"
@@ -45,7 +44,6 @@ static NSString *type = @"some type";
 }
 
 @property (weak, nonatomic) IBOutlet UITextField *branchLinkTextField;
-@property (weak, nonatomic) IBOutlet UILabel *pointsLabel;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
 @property (strong, nonatomic) BranchUniversalObject *branchUniversalObject;
@@ -131,26 +129,6 @@ static NSString *type = @"some type";
     }];
 }
 
-
-- (IBAction)redeemFivePointsButtonTouchUpInside:(id)sender {
-    self.pointsLabel.hidden = YES;
-    [self.activityIndicator startAnimating];
-    
-    Branch *branch = [Branch getInstance];
-    [branch redeemRewards:5 callback:^(BOOL changed, NSError *error) {
-        if (error || !changed) {
-            NSLog(@"Branch TestBed: Didn't redeem anything: %@", error);
-            [self showAlert:@"Redemption Unsuccessful" withDescription:error.localizedDescription];
-        } else {
-            NSLog(@"Branch TestBed: Five Points Redeemed!");
-            [self.pointsLabel setText:[NSString stringWithFormat:@"%ld", (long)[branch getCredits]]];
-        }
-        self.pointsLabel.hidden = NO;
-        [self.activityIndicator stopAnimating];
-    }];
-}
-
-
 - (IBAction)setUserIDButtonTouchUpInside:(id)sender {
     Branch *branch = [Branch getInstance];
     [appDelegate setLogFile:@"SetUserID"];
@@ -171,11 +149,6 @@ static NSString *type = @"some type";
 }
 
 
-- (IBAction)refreshRewardsButtonTouchUpInside:(id)sender {
-    [self refreshRewardPoints];
-}
-
-
 - (IBAction)logoutWithCallback {
     Branch *branch = [Branch getInstance];
     [branch logoutWithCallback:^(BOOL changed, NSError *error) {
@@ -185,7 +158,6 @@ static NSString *type = @"some type";
         } else {
             NSLog(@"Branch TestBed: Logout");
             [self showAlert:@"Logout succeeded" withDescription:@""];
-            [self refreshRewardPoints];
         }
     }];
     
@@ -195,7 +167,6 @@ static NSString *type = @"some type";
 - (IBAction)sendButtonEventButtonTouchUpInside:(id)sender {
     Branch *branch = [Branch getInstance];
     [branch userCompletedAction:@"button_press" withState:@{ @"name": @"button1", @"action": @"alert" }];
-    [self refreshRewardPoints];
     [self showAlert:@"'button_press' event dispatched" withDescription:@""];
 }
 
@@ -206,20 +177,6 @@ static NSString *type = @"some type";
     Branch *branch = [Branch getInstance];
     [branch userCompletedAction:@"complex_event" withState:eventDetails];
     [self performSegueWithIdentifier:@"ShowLogOutput" sender:[NSString stringWithFormat:@"Custom Event Details:\n\n%@", eventDetails.description]];
-    [self refreshRewardPoints];
-}
-
-
-- (IBAction)getCreditHistoryButtonTouchUpInside:(id)sender {
-    Branch *branch = [Branch getInstance];
-    [branch getCreditHistoryWithCallback:^(NSArray *creditHistory, NSError *error) {
-        if (!error) {
-            [self performSegueWithIdentifier:@"ShowCreditHistory" sender:creditHistory];
-        } else {
-            NSLog(@"Branch TestBed: Error retrieving credit history: %@", error.localizedDescription);
-            [self showAlert:@"Error retrieving credit history" withDescription:error.localizedDescription];
-        }
-    }];
 }
 
 - (IBAction)viewFirstReferringParamsButtonTouchUpInside:(id)sender {
@@ -641,9 +598,7 @@ static NSString *type = @"some type";
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"ShowCreditHistory"]) {
-        ((CreditHistoryViewController *)segue.destinationViewController).creditTransactions = sender;
-    } else if ([segue.identifier isEqualToString:@"ShowLogOutput"]) {
+    if ([segue.identifier isEqualToString:@"ShowLogOutput"]) {
         ((LogOutputViewController *)segue.destinationViewController).logOutput = sender;
     }
 }
@@ -668,21 +623,6 @@ static NSString *type = @"some type";
         [self.branchLinkTextField resignFirstResponder];
     }
     [super touchesBegan:touches withEvent:event];
-}
-
-- (void)refreshRewardPoints {
-    self.pointsLabel.hidden = YES;
-    [self.activityIndicator startAnimating];
-    __weak __typeof(self) weakSelf = self;
-    Branch *branch = [Branch getInstance];
-    [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
-        __strong __typeof(self) strongSelf = weakSelf;
-        if (!error) {
-            [strongSelf.pointsLabel setText:[NSString stringWithFormat:@"%ld", (long)[branch getCredits]]];
-        }
-        [strongSelf.activityIndicator stopAnimating];
-        strongSelf.pointsLabel.hidden = NO;
-    }];
 }
 
 static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
