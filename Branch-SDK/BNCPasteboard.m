@@ -7,8 +7,8 @@
 //
 
 #import "BNCPasteboard.h"
-#import "Branch.h"
 #import <UIKit/UIKit.h>
+#import "Branch.h"
 
 @implementation BNCPasteboard
 
@@ -30,24 +30,25 @@
 }
 
 - (BOOL)isUrlOnPasteboard {
-#if !TARGET_OS_TV
+    #if !TARGET_OS_TV
     if (@available(iOS 10.0, *)) {
         if ([UIPasteboard.generalPasteboard hasURLs]) {
             return YES;
         }
     }
-#endif
+    #endif
     return NO;
 }
 
 - (nullable NSURL *)checkForBranchLink {
     if ([self isUrlOnPasteboard]) {
+        #if !TARGET_OS_TV
         // triggers the end user toast message
         NSURL *tmp = UIPasteboard.generalPasteboard.URL;
         if ([Branch isBranchLink:tmp.absoluteString]) {
-            self.branchLink = tmp;
             return tmp;
         }
+        #endif
     }
     return nil;
 }

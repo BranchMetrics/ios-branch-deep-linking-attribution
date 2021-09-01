@@ -12,10 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BNCPasteboard : NSObject
 
-// For v1, we only allow check on install requests. By default, this is NO
-@property (nonatomic,assign) BOOL checkOnInstall;
-
-@property (nonatomic, assign, nullable) NSURL *branchLink;
+/*
+ Indicates if the client wishes to check for Branch links on install. By default, this is NO.
+ 
+ Set via Branch.checkPasteboardOnInstall
+ Checked by BranchInstallRequest.makeRequest before checking the pasteboard for a Branch link.
+ */
+@property (nonatomic, assign) BOOL checkOnInstall;
 
 - (BOOL)isUrlOnPasteboard;
 

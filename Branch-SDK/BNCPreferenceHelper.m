@@ -501,10 +501,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     [self writeBoolToDefaults:BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS value:checked];
 }
 
-- (id)getBranchUniversalLinkDomains {
-    return [[[NSBundle mainBundle] infoDictionary] objectForKey:BRANCH_PREFS_KEY_BRANCH_UNIVERSAL_LINK_DOMAINS];
-}
-
 - (NSMutableDictionary *)requestMetadataDictionary {
     if (!_requestMetadataDictionary) {
         _requestMetadataDictionary = [NSMutableDictionary dictionary];
