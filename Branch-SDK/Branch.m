@@ -765,14 +765,13 @@ static NSString *bnc_branchKey = nil;
 
     NSString *source = nil;
     NSString *annotation = nil;
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wpartial-availability"
-    if (UIApplicationOpenURLOptionsSourceApplicationKey &&
-        UIApplicationOpenURLOptionsAnnotationKey) {
-        source = options[UIApplicationOpenURLOptionsSourceApplicationKey];
-        annotation = options[UIApplicationOpenURLOptionsAnnotationKey];
+    if (@available(iOS 9.0, *)) {
+        if (UIApplicationOpenURLOptionsSourceApplicationKey &&
+            UIApplicationOpenURLOptionsAnnotationKey) {
+            source = options[UIApplicationOpenURLOptionsSourceApplicationKey];
+            annotation = options[UIApplicationOpenURLOptionsAnnotationKey];
+        }
     }
-    #pragma clang diagnostic pop
     return [self application:application openURL:url sourceApplication:source annotation:annotation];
 }
 
