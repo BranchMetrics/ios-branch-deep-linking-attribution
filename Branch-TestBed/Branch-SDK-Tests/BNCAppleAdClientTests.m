@@ -41,7 +41,6 @@ Expected payload varies by simulator or test device.  In general, there is a pay
 
 This test fails on iOS 10 simulators.  Some iPad simulators never respond.  Some iPhone simulators return an error.
 */
-/* Commenting out until this can be fixed
 - (void)testRequestAttribution {
     __block XCTestExpectation *expectation = [self expectationWithDescription:@"BNCAppleAdClient"];
     
@@ -76,7 +75,6 @@ This test fails on iOS 10 simulators.  Some iPad simulators never respond.  Some
         NSLog(@"%@", error);
     }];
 }
-// */
 
 - (void)testRequestAttribution_Error {
     

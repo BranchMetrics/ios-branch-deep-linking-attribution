@@ -21,7 +21,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL checkOnInstall;
 
 - (BOOL)isUrlOnPasteboard;
-
 - (nullable NSURL *)checkForBranchLink;
 
 + (BNCPasteboard *)sharedInstance;
