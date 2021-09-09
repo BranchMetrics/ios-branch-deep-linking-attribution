@@ -190,6 +190,7 @@
  
  This test fails on iOS 10 simulators.  Some iPad simulators never respond.  Some iPhone simulators return an error.
  */
+/*
 - (void)testRequestAppleSearchAds {
     __block XCTestExpectation *expectation = [self expectationWithDescription:@"AppleSearchAds"];
     
@@ -341,5 +342,6 @@
         NSLog(@"%@", error);
     }];
 }
+ */
 
 @end

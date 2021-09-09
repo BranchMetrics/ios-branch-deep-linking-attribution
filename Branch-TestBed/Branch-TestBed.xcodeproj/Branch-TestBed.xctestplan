@@ -30,6 +30,7 @@
         "resolvedPath" : "..\/Simulate-FirstRun.xcappdata"
       },
       "skippedTests" : [
+        "BNCAppleAdClientTests",
         "BNCAppleSearchAdsTests"
       ],
       "target" : {
