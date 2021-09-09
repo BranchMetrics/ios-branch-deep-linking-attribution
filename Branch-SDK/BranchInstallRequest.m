@@ -15,6 +15,7 @@
 #import "BNCAppleReceipt.h"
 #import "BNCAppGroupsData.h"
 #import "BNCPartnerParameters.h"
+#import "BNCPasteboard.h"
 
 @implementation BranchInstallRequest
 
@@ -65,6 +66,13 @@
         [self safeSetValue:encodedSearchData
                     forKey:BRANCH_REQUEST_KEY_SEARCH_AD
                     onDict:params];
+    }
+    
+    if ([BNCPasteboard sharedInstance].checkOnInstall) {
+        NSURL *pasteboardURL = [[BNCPasteboard sharedInstance] checkForBranchLink];
+        if (pasteboardURL) {
+            [self safeSetValue:pasteboardURL.absoluteString forKey:BRANCH_REQUEST_KEY_LOCAL_URL onDict:params];
+        }
     }
     
     NSString *appleAttributionToken = [BNCSystemObserver appleAttributionToken];

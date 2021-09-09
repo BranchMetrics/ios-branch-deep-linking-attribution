@@ -74,8 +74,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 - (NSString *)getAPIURL:(NSString *)endpoint;
 - (NSString *)getEndpointFromURL:(NSString *)url;
 
-- (id)getBranchUniversalLinkDomains;
-
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value;
 - (NSMutableDictionary *)requestMetadataDictionary;
 

@@ -156,7 +156,7 @@
             [expectation fulfill];
         }
         else
-        if ([url bnc_containsString:@"install"]) {
+        if ([url containsString:@"install"]) {
             [expectation fulfill];
         }
     });
@@ -196,7 +196,7 @@
             [expectation fulfill];
         }
         else
-        if ([URL bnc_containsString:@"install"]) {
+        if ([URL containsString:@"install"]) {
             [expectation fulfill];
         }
     });

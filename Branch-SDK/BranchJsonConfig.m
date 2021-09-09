@@ -18,6 +18,7 @@ NSString * _Nonnull const BranchJsonConfigDelayInitToCheckForSearchAdsOption = @
 NSString * _Nonnull const BranchJsonConfigAppleSearchAdsDebugModeOption = @"appleSearchAdsDebugMode";
 NSString * _Nonnull const BranchJsonConfigDeferInitializationForJSLoadOption = @"deferInitializationForJSLoad";
 NSString * _Nonnull const BranchJsonConfigEnableFacebookLinkCheck = @"enableFacebookLinkCheck";
+NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPasteboardOnInstall";
 
 @interface BranchJsonConfig()
 @property (nonatomic) NSDictionary *configuration;
@@ -145,6 +146,12 @@ NSString * _Nonnull const BranchJsonConfigEnableFacebookLinkCheck = @"enableFace
 - (BOOL)enableFacebookLinkCheck
 {
     NSNumber *number = self[BranchJsonConfigEnableFacebookLinkCheck];
+    return number.boolValue;
+}
+
+- (BOOL)checkPasteboardOnInstall
+{
+    NSNumber *number = self[BranchJsonConfigCheckPasteboardOnInstall];
     return number.boolValue;
 }
 

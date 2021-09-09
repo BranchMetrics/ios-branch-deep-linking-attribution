@@ -29,17 +29,4 @@ __attribute__((constructor)) void BNCForceNSStringCategoryToLoad() {
     return YES;
 }
 
-- (NSString*_Nonnull) bnc_stringTruncatedAtNull {
-    NSRange range = [self rangeOfString:@"\0"];
-    if (range.location == NSNotFound)
-        return self;
-    range.length = range.location;
-    range.location = 0;
-    return [self substringWithRange:range];
-}
-
-- (BOOL) bnc_containsString:(NSString*_Nullable)string {
-    return (string && [self rangeOfString:(NSString*_Nonnull)string].location != NSNotFound);
-}
-
 @end

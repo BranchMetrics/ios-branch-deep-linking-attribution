@@ -42,6 +42,7 @@
 #import "BNCAppGroupsData.h"
 #import "BNCPartnerParameters.h"
 #import "BranchEvent.h"
+#import "BNCPasteboard.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
@@ -221,6 +222,10 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     [self loadUserAgent];
     
     BranchJsonConfig *config = BranchJsonConfig.instance;
+    
+    if (config.checkPasteboardOnInstall) {
+        [self checkPasteboardOnInstall];
+    }
     
     if (config.delayInitToCheckForSearchAds) {
         [self delayInitToCheckForSearchAds];
@@ -783,26 +788,7 @@ static NSString *bnc_branchKey = nil;
 
     [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier];
 
-    id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
-    if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] && [urlString bnc_containsString:branchUniversalLinkDomains]) {
-        return YES;
-    } else if ([branchUniversalLinkDomains isKindOfClass:[NSArray class]]) {
-        for (id oneDomain in branchUniversalLinkDomains) {
-            if ([oneDomain isKindOfClass:[NSString class]] && [urlString bnc_containsString:oneDomain]) {
-                return YES;
-            }
-        }
-    }
-
-    NSString *userActivityURL = urlString;
-    NSArray *branchDomains = [NSArray arrayWithObjects:@"bnc.lt", @"app.link", @"test-app.link", nil];
-    for (NSString* domain in branchDomains) {
-        if ([userActivityURL bnc_containsString:domain]) {
-            return YES;
-        }
-    }
-
-    return NO;
+    return [Branch isBranchLink:urlString];
 }
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
@@ -812,7 +798,7 @@ static NSString *bnc_branchKey = nil;
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier {
     BNCLogDebugSDK(@"continueUserActivity:");
 
-    if (@available(iOS 11.0, *)) {
+    if (@available(iOS 11.0, tvOS 11.0, *)) {
         if (userActivity.referrerURL) {
             self.preferenceHelper.initialReferrer = userActivity.referrerURL.absoluteString;
         }
@@ -830,9 +816,9 @@ static NSString *bnc_branchKey = nil;
     spotlightIdentifier = [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
     NSURL *webURL = userActivity.webpageURL;
 
-    if ([self isBranchLink:userActivity.userInfo[CSSearchableItemActivityIdentifier]]) {
+    if ([Branch isBranchLink:userActivity.userInfo[CSSearchableItemActivityIdentifier]]) {
         return [self handleDeepLink:[NSURL URLWithString:userActivity.userInfo[CSSearchableItemActivityIdentifier]] sceneIdentifier:sceneIdentifier];
-    } else if (webURL != nil && [self isBranchLink:[webURL absoluteString]]) {
+    } else if (webURL != nil && [Branch isBranchLink:[webURL absoluteString]]) {
         return [self handleDeepLink:webURL sceneIdentifier:sceneIdentifier];
     } else if (spotlightIdentifier) {
         self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
@@ -849,13 +835,14 @@ static NSString *bnc_branchKey = nil;
     return spotlightIdentifier != nil;
 }
 
-- (BOOL)isBranchLink:(NSString*)urlString {
-    id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
-    if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] &&
-        [urlString containsString:branchUniversalLinkDomains]) {
+// checks if URL string looks like a branch link
++ (BOOL)isBranchLink:(NSString *)urlString {
+    id branchUniversalLinkDomains = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_universal_link_domains"];
+    
+    // check url list in bundle
+    if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] && [urlString containsString:branchUniversalLinkDomains]) {
         return YES;
-    }
-    else if ([branchUniversalLinkDomains isKindOfClass:[NSArray class]]) {
+    } else if ([branchUniversalLinkDomains isKindOfClass:[NSArray class]]) {
         for (id oneDomain in branchUniversalLinkDomains) {
             if ([oneDomain isKindOfClass:[NSString class]] && [urlString containsString:oneDomain]) {
                 return YES;
@@ -863,11 +850,13 @@ static NSString *bnc_branchKey = nil;
         }
     }
 
+    // check default urls
     NSString *userActivityURL = urlString;
     NSArray *branchDomains = [NSArray arrayWithObjects:@"bnc.lt", @"app.link", @"test-app.link", nil];
     for (NSString* domain in branchDomains) {
-        if ([userActivityURL containsString:domain])
+        if ([userActivityURL containsString:domain]) {
             return YES;
+        }
     }
     return NO;
 }
@@ -937,6 +926,19 @@ static NSString *bnc_branchKey = nil;
     #if !TARGET_OS_TV
     [BNCAppleSearchAds sharedInstance].ignoreAppleTestData = YES;
     #endif
+}
+
+- (void)checkPasteboardOnInstall {
+    [BNCPasteboard sharedInstance].checkOnInstall = YES;
+}
+
+- (BOOL)willShowPasteboardToast {
+    if (!self.preferenceHelper.randomizedBundleToken &&
+        [BNCPasteboard sharedInstance].checkOnInstall &&
+        [BNCPasteboard sharedInstance].isUrlOnPasteboard) {
+        return YES;
+    }
+    return NO;
 }
 
 - (void)checkAppleSearchAdsAttribution {

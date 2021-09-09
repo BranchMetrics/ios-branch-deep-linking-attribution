@@ -106,7 +106,7 @@
             return YES;
         }]
 		url:[OCMArg checkWithBlock:^BOOL(id value) {
-            if (![((NSString*)value) bnc_containsString:BRANCH_REQUEST_ENDPOINT_INSTALL]) {
+            if (![((NSString*)value) containsString:BRANCH_REQUEST_ENDPOINT_INSTALL]) {
                 XCTAssertEqualObjects(value, BRANCH_REQUEST_ENDPOINT_INSTALL);
             }
             return YES;
