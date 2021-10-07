@@ -10,6 +10,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCLog.h"
 #import <CommonCrypto/CommonDigest.h>
+#import <Branch/Branch-Swift.h>
 
 #pragma mark BNCWireFormat
 
@@ -112,17 +113,25 @@ NSString* BNCWireFormatFromString(NSString *string) {
         return @"";
     }
     
-    const char *cStr = [input UTF8String];
-    unsigned char digest[CC_SHA256_DIGEST_LENGTH];
-    CC_SHA256(cStr, (CC_LONG)strlen(cStr), digest);
+    if (@available(iOS 13.0, *)) {
+        BranchCryptoKit *branchCryptoKit = [BranchCryptoKit new];
+        NSMutableString *output = [branchCryptoKit getSHA256: input];
+        return output;
+        
+    } else {
+        const char *cStr = [input UTF8String];
+        unsigned char digest[CC_SHA256_DIGEST_LENGTH];
+        
+        CC_SHA256(cStr, (CC_LONG)strlen(cStr), digest);
 
-    NSMutableString *output = [NSMutableString stringWithCapacity:CC_SHA256_DIGEST_LENGTH * 2];
-    
-    for (int i = 0; i < CC_SHA256_DIGEST_LENGTH; i++) {
-        [output appendFormat:@"%02x", digest[i]];
+        NSMutableString *output = [NSMutableString stringWithCapacity:CC_SHA256_DIGEST_LENGTH * 2];
+        
+        for (int i = 0; i < CC_SHA256_DIGEST_LENGTH; i++) {
+            [output appendFormat:@"%02x", digest[i]];
+        }
+
+        return output;
     }
-
-    return  output;
 }
 
 

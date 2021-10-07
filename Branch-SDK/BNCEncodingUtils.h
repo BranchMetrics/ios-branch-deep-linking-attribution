@@ -12,6 +12,8 @@
 #import <Foundation/Foundation.h>
 #endif
 
+@class BranchCryptoKit;
+
 #pragma mark BNCWireFormat
 
 extern NSDate*   BNCDateFromWireFormat(id object);

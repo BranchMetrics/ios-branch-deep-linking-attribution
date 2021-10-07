@@ -465,6 +465,9 @@
 		7DA3BF221D889CE500CA8AE0 /* BranchContentPathProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA3BF1C1D889CE500CA8AE0 /* BranchContentPathProperties.m */; };
 		9A149C6720336601002135DC /* Branch+Validator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A149C6520336600002135DC /* Branch+Validator.h */; };
 		9A149C6820336601002135DC /* Branch+Validator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A149C6620336600002135DC /* Branch+Validator.m */; };
+		C1995353270E747B00BA2F7F /* BranchCryptoKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1995352270E747B00BA2F7F /* BranchCryptoKit.swift */; };
+		C1995354270E747B00BA2F7F /* BranchCryptoKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1995352270E747B00BA2F7F /* BranchCryptoKit.swift */; };
+		C1995355270E747B00BA2F7F /* BranchCryptoKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1995352270E747B00BA2F7F /* BranchCryptoKit.swift */; };
 		E230A16C1D03DB9E006181D8 /* BNCConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A1151D03DB9E006181D8 /* BNCConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E230A16D1D03DB9E006181D8 /* BNCContentDiscoveryManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A1161D03DB9E006181D8 /* BNCContentDiscoveryManager.h */; };
 		E230A16E1D03DB9E006181D8 /* BNCContentDiscoveryManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E230A1171D03DB9E006181D8 /* BNCContentDiscoveryManager.m */; };
@@ -624,6 +627,7 @@
 		7DA3BF1C1D889CE500CA8AE0 /* BranchContentPathProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchContentPathProperties.m; sourceTree = "<group>"; };
 		9A149C6520336600002135DC /* Branch+Validator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Branch+Validator.h"; sourceTree = "<group>"; };
 		9A149C6620336600002135DC /* Branch+Validator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Branch+Validator.m"; sourceTree = "<group>"; };
+		C1995352270E747B00BA2F7F /* BranchCryptoKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchCryptoKit.swift; sourceTree = "<group>"; };
 		E230A1151D03DB9E006181D8 /* BNCConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCConfig.h; sourceTree = "<group>"; };
 		E230A1161D03DB9E006181D8 /* BNCContentDiscoveryManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCContentDiscoveryManager.h; sourceTree = "<group>"; };
 		E230A1171D03DB9E006181D8 /* BNCContentDiscoveryManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCContentDiscoveryManager.m; sourceTree = "<group>"; };
@@ -810,6 +814,7 @@
 				E230A1191D03DB9E006181D8 /* BNCDeviceInfo.m */,
 				E230A11A1D03DB9E006181D8 /* BNCEncodingUtils.h */,
 				E230A11B1D03DB9E006181D8 /* BNCEncodingUtils.m */,
+				C1995352270E747B00BA2F7F /* BranchCryptoKit.swift */,
 				4DB328021FA10C6200ACF9B0 /* BNCFieldDefines.h */,
 				4D1851C52019127700E48994 /* BNCKeyChain.h */,
 				4D1851C62019127700E48994 /* BNCKeyChain.m */,
@@ -1218,7 +1223,11 @@
 					};
 					5FC4CF9E2486123F0001E701 = {
 						CreatedOnToolsVersion = 11.5;
+						LastSwiftMigration = 1300;
 						ProvisioningStyle = Manual;
+					};
+					5FD0FA3E25CE46BD008200EE = {
+						LastSwiftMigration = 1300;
 					};
 					5FD0FB0E25CE4B8A008200EE = {
 						CreatedOnToolsVersion = 12.4;
@@ -1227,6 +1236,7 @@
 					};
 					E298D0511C73D1B800589D22 = {
 						CreatedOnToolsVersion = 7.2.1;
+						LastSwiftMigration = 1300;
 					};
 				};
 			};
@@ -1373,6 +1383,7 @@
 				5FC4D078248614840001E701 /* BNCDeepLinkViewControllerInstance.m in Sources */,
 				5FC4D089248614850001E701 /* BNCPreferenceHelper.m in Sources */,
 				5FC4D0162486145E0001E701 /* NSMutableDictionary+Branch.m in Sources */,
+				C1995354270E747B00BA2F7F /* BranchCryptoKit.swift in Sources */,
 				5F38029A24DCE7C400E6FAFD /* BNCNetworkService.m in Sources */,
 				5FC4D061248614830001E701 /* BranchLastAttributedTouchData.m in Sources */,
 				5FC4D08D248614850001E701 /* BNCSystemObserver.m in Sources */,
@@ -1472,6 +1483,7 @@
 				5FD0FABE25CE46BD008200EE /* BNCLinkCache.m in Sources */,
 				5FD0FABF25CE46BD008200EE /* BNCNetworkService.m in Sources */,
 				5FD0FAC025CE46BD008200EE /* BranchContentDiscoverer.m in Sources */,
+				C1995355270E747B00BA2F7F /* BranchCryptoKit.swift in Sources */,
 				5FD0FAC125CE46BD008200EE /* BranchOpenRequest.m in Sources */,
 				5FD0FAC225CE46BD008200EE /* BranchCPIDRequest.m in Sources */,
 				5FD0FAC325CE46BD008200EE /* NSMutableDictionary+Branch.m in Sources */,
@@ -1553,6 +1565,7 @@
 				E230A1761D03DB9E006181D8 /* BNCLinkCache.m in Sources */,
 				5F38027824DCE73100E6FAFD /* BNCNetworkService.m in Sources */,
 				7DA3BF1D1D889CE500CA8AE0 /* BranchContentDiscoverer.m in Sources */,
+				C1995353270E747B00BA2F7F /* BranchCryptoKit.swift in Sources */,
 				5F38027024DCE73100E6FAFD /* BranchOpenRequest.m in Sources */,
 				5F38028B24DCE73100E6FAFD /* BranchCPIDRequest.m in Sources */,
 				4D291AAC1E322ECC007ED118 /* NSMutableDictionary+Branch.m in Sources */,
@@ -1648,6 +1661,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
@@ -1672,6 +1686,8 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
@@ -1684,6 +1700,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
@@ -1707,6 +1724,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
@@ -1717,6 +1735,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -1738,6 +1757,8 @@
 				PRODUCT_NAME = Branch;
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -1746,6 +1767,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -1767,6 +1789,7 @@
 				PRODUCT_NAME = Branch;
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -1820,6 +1843,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1878,6 +1902,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1901,8 +1926,10 @@
 		E298D05B1C73D1B800589D22 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -1922,14 +1949,18 @@
 				PRODUCT_NAME = Branch;
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
 		E298D05C1C73D1B800589D22 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -1949,6 +1980,7 @@
 				PRODUCT_NAME = Branch;
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
