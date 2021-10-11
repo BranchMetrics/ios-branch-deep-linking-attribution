@@ -1,5 +1,33 @@
 Branch iOS SDK Change Log
 
+v.1.40.0
+
+CORE-1589
+Add support for LPLinkMetadata on share sheets. 
+
+```objective-c
+    // LPLinkMetadata example
+    if (@available(iOS 13.0, *)) {
+        LPLinkMetadata *tempLinkMetatData = [[LPLinkMetadata alloc] init];
+        tempLinkMetatData.title = @"Branch URL";
+        UIImage *img = [UIImage imageNamed:@"Brand Assets"];
+        tempLinkMetatData.iconProvider = [[NSItemProvider alloc] initWithObject:img];
+        tempLinkMetatData.imageProvider = [[NSItemProvider alloc] initWithObject:img];
+        shareLink.lpMetaData = tempLinkMetatData;
+    }
+```
+See https://developer.apple.com/documentation/linkpresentation/lplinkmetadata?language=objc
+
+
+CORE-1577 and CORE-1946
+Use NSKeyedUnarchiver secureCoding on iOS 12+
+
+CORE-1628
+Update Crashlytics to FIRCrashlytics
+
+CORE-1258
+Rename device_fingerprint_id and identity_id to better reflect function. Fingerprinting was removed long ago.
+
 v1.39.4
 CORE-2088 Add support for deferred deeplinks via pasteboard. This is not enabled by default.
 CORE-1950 Record install referrer
