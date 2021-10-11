@@ -1,137 +1,125 @@
 Branch iOS SDK Change Log
 
+v.1.40.0
+
+- CORE-1589 Add support for LPLinkMetadata on share sheets. 
+
+```objective-c
+    // LPLinkMetadata example
+    if (@available(iOS 13.0, *)) {
+        LPLinkMetadata *tempLinkMetatData = [[LPLinkMetadata alloc] init];
+        tempLinkMetatData.title = @"Branch URL";
+        UIImage *img = [UIImage imageNamed:@"Brand Assets"];
+        tempLinkMetatData.iconProvider = [[NSItemProvider alloc] initWithObject:img];
+        tempLinkMetatData.imageProvider = [[NSItemProvider alloc] initWithObject:img];
+        shareLink.lpMetaData = tempLinkMetatData;
+    }
+```
+See https://developer.apple.com/documentation/linkpresentation/lplinkmetadata?language=objc
+
+- CORE-1577 and CORE-1946. Use NSKeyedUnarchiver secureCoding on iOS 12+
+
+- CORE-1628 Update Crashlytics to FIRCrashlytics
+
+- CORE-1258 Rename device_fingerprint_id and identity_id to better reflect function. Fingerprinting was removed long ago.
+
 v1.39.4
-CORE-2088 Add support for deferred deeplinks via pasteboard. This is not enabled by default.
-CORE-1950 Record install referrer
+- CORE-2088 Add support for deferred deeplinks via pasteboard. This is not enabled by default.
+- CORE-1950 Record install referrer
 
 v1.39.3
-CORE-1893 Add timeout to Apple attribution token. Some users are reporting the call can hang.
+- CORE-1893 Add timeout to Apple attribution token. Some users are reporting the call can hang.
 
 v1.39.2
-CORE-1768 Add 'handleATTAuthorizationStatus' method to monitor ATT prompt performance.
+- CORE-1768 Add 'handleATTAuthorizationStatus' method to monitor ATT prompt performance.
 
 Pass the AppTrackingTransparency authorization status from the callback of ATTrackingManager.requestTrackingAuthorization.
 Before prompting the user, check that ATTrackingManager.trackingAuthorizationStatus is notDetermined.
 
 v1.39.1
-CORE-1769 
-Fix podspec AdServices.framework issue. This addresses a crash on launch for older iOS versions.
+- CORE-1769 Fix podspec AdServices.framework issue. This addresses a crash on launch for older iOS versions.
 
-CORE-1766
-First time opt in indicator. Reduces load on the server.
+- CORE-1766 First time opt in indicator. Reduces load on the server.
 
-v1.39.0
-March 4, 2021
+v1.39.0 - March 4, 2021
 
-CORE-1715
-Check AppTrackingTransparency status. The Branch SDK does not prompt the user, however it does check what the current ATT authorization status is. This provides more clarity into why IDFA is not authorized.
+- CORE-1715 Check AppTrackingTransparency status. The Branch SDK does not prompt the user, however it does check what the current ATT authorization status is. This provides more clarity into why IDFA is not authorized.
 
-CORE-1575
-Add support for AdServices.framework and the Apple Attribution Token. For cocoapods, AdServices.framework is included by default. For other integration options, you should include the AdServices.framework.
+- CORE-1575 Add support for AdServices.framework and the Apple Attribution Token. For cocoapods, AdServices.framework is included by default. For other integration options, you should include the AdServices.framework.
 
-CORE-1711
-Reduce default SKAN timeout per FB request.
+- CORE-1711 Reduce default SKAN timeout per FB request.
 
-CORE-1753
-Remove a debug log message to address security scanner false alarm.
+- CORE-1753 Remove a debug log message to address security scanner false alarm.
 
-v1.38.0
-Feb. 10, 2021
+v1.38.0 - Feb. 10, 2021
 
-CORE-1608
-Switch to semantic versioning.
+- CORE-1608 Switch to semantic versioning.
 
-CORE-1677
-Add a static xcframework.
-The pre-built static xcframework is Branch_static.zip attached to the github release page. Note that tvOS does not support static frameworks.
+- CORE-1677 Add a static xcframework. The pre-built static xcframework is Branch_static.zip attached to the github release page. Note that tvOS does not support static frameworks.
 
-CORE-1626
-Remove some non-inclusive terms.
-The method 'addWhiteListedScheme' is now named 'addAllowedScheme'
-The method 'setWhiteListedSchemes' is now named 'setAllowedSchemes'
+- CORE-1626 Remove some non-inclusive terms.
+  * The method 'addWhiteListedScheme' is now named 'addAllowedScheme'
+  * The method 'setWhiteListedSchemes' is now named 'setAllowedSchemes'
 
-SDK-1111
-The method to obtain last attributed touch data now includes an NSError in the completion block.
+- SDK-1111 The method to obtain last attributed touch data now includes an NSError in the completion block.
 
+```objective-c
 - (void)lastAttributedTouchDataWithAttributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData * _Nullable latd, NSError * _Nullable error))completion;
+```
 
-SDK-1106
-Remove old data transfer code. Addresses a potential crash.
+- SDK-1106 Remove old data transfer code. Addresses a potential crash.
 
-v0.37.0
-January 20, 2021
+v0.37.0 - January 20, 2021
 
-CORE-1198
-Remove some non-inclusive terms.
-The method 'blackListURLRegex' is now named 'urlPatternsToIgnore'.
+- CORE-1198 Remove some non-inclusive terms.
+  * The method 'blackListURLRegex' is now named 'urlPatternsToIgnore'.
 
-CORE-1521
-Add API to attach Facebook partner parameters to Branch install, opens and events.
-See Facebook's documentation on advanced matching for details on valid parameters.
+- CORE-1521 Add API to attach Facebook partner parameters to Branch install, opens and events. See Facebook's documentation on advanced matching for details on valid parameters.
 
-CORE-1316
-Add support for xcframework.
-Branch.xcframework has replaced Branch.framework. iOS and tvOS are both included in the same xcframework. 
-The pre-built xcframework is Branch.zip attached to the github release page.
-Carthage integrations require the '--use-xcframeworks' flag. This feature is not yet in the general carthage release, you will need to install carthage from source.
+- CORE-1316 Add support for xcframework.
+  * Branch.xcframework has replaced Branch.framework. iOS and tvOS are both included in the same xcframework. 
+  * The pre-built xcframework is Branch.zip attached to the github release page.
+  * Carthage integrations require the '--use-xcframeworks' flag. This feature is not yet in the general carthage release, you will need to install carthage from source.
 
-Thread safety improvement to server performance metrics. Thanks benski!
+- Thread safety improvement to server performance metrics. Thanks benski!
 
-v0.36.0
-November 11, 2020
+v0.36.0 - November 11, 2020
 
-CORE-1185 
-Enable an App Clip to share data with the Full App
-This optional feature requires the client to setup an app group and provide the app group id to the Branch SDK. 
-Full documentation for this feature will be available on the Branch docs site next week.
+- CORE-1185 Enable an App Clip to share data with the Full App
+  * This optional feature requires the client to setup an app group and provide the app group id to the Branch SDK. 
+  * Full documentation for this feature will be available on the Branch docs site next week.
 
-CORE-1184
-Address security scanner warnings by removing variadic log methods, log to file and programmatic breakpoints.
-If you are directly using these Branch debug and log features, you will need to update your code.
+- CORE-1184 Address security scanner warnings by removing variadic log methods, log to file and programmatic breakpoints. If you are directly using these Branch debug and log features, you will need to update your code.
 
-SDK-953
-Support SDK configuration via json file.  This improves support for platforms such as React Native and Cordova.
+- SDK-953 Support SDK configuration via json file.  This improves support for platforms such as React Native and Cordova.
 
-CORE-1354
-Reduce SDK network traffic by omitting close calls by default.
+- CORE-1354 Reduce SDK network traffic by omitting close calls by default.
 
-SDK-1076
-Log the server request id to help debug request issues.
+- SDK-1076 Log the server request id to help debug request issues.
 
-v0.35.1
-October 6, 2020
+v0.35.1 - October 6, 2020
 
-INTENG-11208
-Bug fix.  It is possible to block all network calls if the user never opts in.  This leads to link resolution reliability issues.
+- INTENG-11208 Bug fix.  It is possible to block all network calls if the user never opts in.  This leads to link resolution reliability issues.
 
-v0.35.0
-August 24, 2020
+v0.35.0 - August 24, 2020
 
-With iOS 14, IDFA is only available if the app requests permission from the end user via the AppTrackingTransparency framework.  
-The Branch SDK will not ask for it.
+- With iOS 14, IDFA is only available if the app requests permission from the end user via the AppTrackingTransparency framework. The Branch SDK will not ask for it.
 
-AdSupport is no longer included by default with Cocoapods.  This fixes an app submission issue for apps that cannot contain IDFA.
+- AdSupport is no longer included by default with Cocoapods.  This fixes an app submission issue for apps that cannot contain IDFA.
 
-INTENG-10312 
-iOS 14 introduces an API that conflicts with a Branch API.  Refactor BranchCSSearchableItemAttributeSet init.
+- INTENG-10312 iOS 14 introduces an API that conflicts with a Branch API.  Refactor BranchCSSearchableItemAttributeSet init.
 
-CORE-1146 
-Build dynamic, static and tvOS frameworks.  Previously we only built the dynamic framework for Carthage.
-These prebuilt frameworks can be found in 'carthage-files/output/'
+- CORE-1146 Build dynamic, static and tvOS frameworks.  Previously we only built the dynamic framework for Carthage. These prebuilt frameworks can be found in 'carthage-files/output/'
 
-CORE-1166
-Add nullability to BranchCSSearchableItemAttributeSet
+- CORE-1166 Add nullability to BranchCSSearchableItemAttributeSet
 
-SDK-449
-Add support for Swift Package Manager
+- SDK-449 Add support for Swift Package Manager
 
-CORE-1209
-Add optional SKAdNetwork support
-If configured on the Branch Dashboard, the SDK can call SKAdNetwork on installs, opens and events.
+- CORE-1209 Add optional SKAdNetwork support. If configured on the Branch Dashboard, the SDK can call SKAdNetwork on installs, opens and events.
 
-Known issues:
-Framework import warnings in Xcode 12.  We need to refactor our unit test host app.
-SPM does not support tvOS.  We need to refactor some classes.
+- Known issues:
+  * Framework import warnings in Xcode 12.  We need to refactor our unit test host app.
+  * SPM does not support tvOS.  We need to refactor some classes.
 
 - v0.34.0
 * _*Master Release*_ - June 1, 2020
