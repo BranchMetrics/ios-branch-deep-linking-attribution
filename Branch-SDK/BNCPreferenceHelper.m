@@ -744,7 +744,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         if (!self.persistenceDict) return;
         NSData *data = nil;
         @try {
-            if (@available( iOS 12.0, *)) {
+            if (@available(iOS 11.0, tvOS 11.0, *)) {
                 data = [NSKeyedArchiver archivedDataWithRootObject:self.persistenceDict requiringSecureCoding:YES error:NULL];
             } else {
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
@@ -787,7 +787,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
                 NSError *error = nil;
                 NSData *data = [NSData dataWithContentsOfURL:self.class.URLForPrefsFile options:0 error:&error];
                 if (!error && data) {
-                    if (@available(iOS 12.0, *)) {
+                    if (@available(iOS 11.0, tvOS 11.0, *)) {
                         persistenceDict = [NSKeyedUnarchiver unarchivedObjectOfClass:[BNCServerRequest class] fromData:data error:NULL];
                     } else {
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000

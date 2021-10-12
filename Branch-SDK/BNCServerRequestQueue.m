@@ -324,7 +324,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 - (NSData *)archiveObject:(NSObject *)object {
     NSData *data = nil;
     NSError *error = nil;
-    if (@available(iOS 12.0, *)) {
+    if (@available(iOS 11.0, tvOS 11.0, *)) {
         data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:YES error:&error];
         
         if (!data && error) {
@@ -381,7 +381,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 
 - (id)unarchiveObjectFromData:(NSData *)data {
     id object = nil;
-    if (@available(iOS 12.0, *)) {
+    if (@available(iOS 11.0, tvOS 11.0, *)) {
         object = [NSKeyedUnarchiver unarchivedObjectOfClasses:[BNCServerRequestQueue encodableClasses] fromData:data error:nil];
 
     } else {
