@@ -163,6 +163,11 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     }
 
     preferenceHelper.randomizedDeviceToken = data[BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN];
+    if (!preferenceHelper.randomizedDeviceToken) {
+        // fallback to deprecated name. Fingerprinting was removed long ago, hence the name change.
+        preferenceHelper.randomizedDeviceToken = data[@"device_fingerprint_id"];
+    }
+    
     preferenceHelper.userUrl = data[BRANCH_RESPONSE_KEY_USER_URL];
     preferenceHelper.userIdentity = userIdentity;
     preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
@@ -253,9 +258,17 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     preferenceHelper.referringURL = referringURL;
     preferenceHelper.dropURLOpen = NO;
 
+    
     NSString *string = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN]);
-    if (string) preferenceHelper.randomizedBundleToken = string;
-
+    if (!string) {
+        // fallback to deprecated name. The old name was easily confused with the setIdentity, hence the name change.
+        string = BNCStringFromWireFormat(data[@"identity_id"]);
+    }
+    
+    if (string) {
+        preferenceHelper.randomizedBundleToken = string;
+    }
+    
     [BranchOpenRequest releaseOpenResponseLock];
 
     BranchContentDiscoveryManifest *cdManifest = [BranchContentDiscoveryManifest getInstance];
