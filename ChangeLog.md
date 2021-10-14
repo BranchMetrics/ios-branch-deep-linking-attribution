@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.1.40.1
+- CORE-2463 workaround server side issue with inconsisent response payload.
+
 v.1.40.0
 
 - CORE-1589 Add support for LPLinkMetadata on share sheets. 
@@ -22,6 +25,8 @@ See https://developer.apple.com/documentation/linkpresentation/lplinkmetadata?la
 - CORE-1628 Update Crashlytics to FIRCrashlytics
 
 - CORE-1258 Rename device_fingerprint_id and identity_id to better reflect function. Fingerprinting was removed long ago.
+
+- CORE-2206 Remove credit related methods. The feature has been deprecated and the supporting services will be decommissioned.
 
 v1.39.4
 - CORE-2088 Add support for deferred deeplinks via pasteboard. This is not enabled by default.
