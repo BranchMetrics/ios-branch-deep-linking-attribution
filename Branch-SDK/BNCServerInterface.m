@@ -275,7 +275,7 @@
     BOOL hasIdentifier = (prefs.linkClickIdentifier.length > 0 ) || (prefs.spotlightIdentifier.length > 0 ) || (prefs.universalLinkUrl.length > 0);
     
     // Allow install to resolve a link.
-    if ([endpoint containsString:@"/v1/install"] && hasIdentifier) {
+    if ([endpoint containsString:@"/v1/install"]) {
         return YES;
     }
     
