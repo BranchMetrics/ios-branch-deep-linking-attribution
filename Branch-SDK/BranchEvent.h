@@ -73,16 +73,16 @@ typedef NS_ENUM(NSInteger, BranchEventAdType) {
 - (instancetype _Nonnull) init __attribute((unavailable));
 + (instancetype _Nonnull) new __attribute((unavailable));
 
-@property (nonatomic, strong) NSString*_Nullable                alias;
-@property (nonatomic, strong) NSString*_Nullable                transactionID;
+@property (nonatomic, strong, copy) NSString*_Nullable                alias;
+@property (nonatomic, strong, copy) NSString*_Nullable                transactionID;
 @property (nonatomic, strong) BNCCurrency _Nullable             currency;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable         revenue;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable         shipping;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable         tax;
-@property (nonatomic, strong) NSString*_Nullable                coupon;
-@property (nonatomic, strong) NSString*_Nullable                affiliation;
-@property (nonatomic, strong) NSString*_Nullable                eventDescription;
-@property (nonatomic, strong) NSString*_Nullable                searchQuery;
+@property (nonatomic, strong, copy) NSString*_Nullable                coupon;
+@property (nonatomic, strong, copy) NSString*_Nullable                affiliation;
+@property (nonatomic, strong, copy) NSString*_Nullable                eventDescription;
+@property (nonatomic, strong, copy) NSString*_Nullable                searchQuery;
 
 @property (nonatomic, assign) BranchEventAdType                 adType;
 

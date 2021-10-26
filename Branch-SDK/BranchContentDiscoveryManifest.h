@@ -11,7 +11,7 @@
 @interface BranchContentDiscoveryManifest : NSObject
 
 @property (strong, nonatomic) NSMutableDictionary *cdManifest;
-@property (strong, nonatomic) NSString *referredLink;
+@property (strong, nonatomic, copy) NSString *referredLink;
 @property (nonatomic) NSInteger maxTextLen;
 @property (nonatomic) NSInteger maxViewHistoryLength;
 @property (nonatomic) NSInteger maxPktSize;
