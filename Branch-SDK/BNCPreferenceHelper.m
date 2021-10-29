@@ -787,13 +787,13 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
                 NSError *error = nil;
                 NSData *data = [NSData dataWithContentsOfURL:self.class.URLForPrefsFile options:0 error:&error];
                 if (!error && data) {
-                    if (@available(iOS 11.0, tvOS 11.0, *)) {
-                        persistenceDict = [NSKeyedUnarchiver unarchivedObjectOfClass:[BNCServerRequest class] fromData:data error:NULL];
-                    } else {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
+//                    if (@available(iOS 11.0, tvOS 11.0, *)) {
+//                        persistenceDict = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSMutableDictionary class] fromData:data error:NULL];
+//                    } else {
+//#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
                         persistenceDict = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-#endif
-                    }
+//#endif
+//                    }
                 }
             }
             @catch (NSException*) {
