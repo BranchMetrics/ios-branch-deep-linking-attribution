@@ -10,5 +10,5 @@
 
 @interface BNCDeepLinkViewControllerInstance : NSObject
 @property (strong, nonatomic)UIViewController<BranchDeepLinkingController>* viewController;
-@property (assign)BNCViewControllerPresentationOption option;
+@property (nonatomic, assign)BNCViewControllerPresentationOption option;
 @end
