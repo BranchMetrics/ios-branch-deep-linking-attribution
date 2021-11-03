@@ -40,5 +40,5 @@
 - (BNCNetworkOperation*) networkOperationWithURLRequest:(NSMutableURLRequest*)request
                 completion:(void (^)(id<BNCNetworkOperationProtocol>operation))completion;
 
-@property (strong) NSDictionary *userInfo;
+@property (strong, nonatomic) NSDictionary *userInfo;
 @end

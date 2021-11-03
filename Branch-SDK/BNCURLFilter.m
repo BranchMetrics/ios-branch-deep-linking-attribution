@@ -14,12 +14,12 @@
 @interface BNCURLFilter () {
     NSArray<NSString*>*_patternList;
 }
-@property (strong) NSArray<NSRegularExpression*> *ignoredURLRegex;
-@property (assign) NSInteger listVersion;
-@property (strong) id<BNCNetworkServiceProtocol> networkService;
-@property (assign) BOOL hasUpdatedPatternList;
-@property (strong) NSError *error;
-@property (strong) NSURL *jsonURL;
+@property (strong, nonatomic) NSArray<NSRegularExpression*> *ignoredURLRegex;
+@property (assign, nonatomic) NSInteger listVersion;
+@property (strong, nonatomic) id<BNCNetworkServiceProtocol> networkService;
+@property (assign, nonatomic) BOOL hasUpdatedPatternList;
+@property (strong, nonatomic) NSError *error;
+@property (strong, nonatomic) NSURL *jsonURL;
 @end
 
 @implementation BNCURLFilter

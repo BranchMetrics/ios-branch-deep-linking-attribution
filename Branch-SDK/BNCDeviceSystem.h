@@ -23,8 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 // CPU type information
 // See mach/machine.h for details
-@property (nonatomic, copy, readwrite) NSNumber *cpuType;
-@property (nonatomic, copy, readwrite) NSNumber *cpuSubType;
+@property (nonatomic, strong, readwrite) NSNumber *cpuType;
+@property (nonatomic, strong, readwrite) NSNumber *cpuSubType;
 
 @end
 

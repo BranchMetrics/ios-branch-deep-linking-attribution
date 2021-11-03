@@ -11,7 +11,7 @@
 
 @interface BranchOpenRequest : BNCServerRequest
 
-@property (copy) callbackWithStatus callback;
+@property (nonatomic, copy) callbackWithStatus callback;
 
 + (void) waitForOpenResponseLock;
 + (void) releaseOpenResponseLock;

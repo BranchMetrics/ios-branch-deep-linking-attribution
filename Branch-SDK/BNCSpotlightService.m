@@ -33,7 +33,7 @@ static NSString* const kDomainIdentifier = @"io.branch.sdk.spotlight";
     dispatch_queue_t    _workQueue;
 }
 @property (strong, nonatomic) NSMutableDictionary *userInfo;
-@property (strong, readonly) dispatch_queue_t workQueue;
+@property (strong, readonly, nonatomic) dispatch_queue_t workQueue;
 @end
 
 #pragma mark - BNCSpotlightService

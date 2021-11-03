@@ -17,7 +17,7 @@
 @interface BranchContentPathProperties : NSObject
 
 @property (strong, nonatomic) NSDictionary *pathInfo;
-@property (nonatomic) BOOL isClearText;
+@property (assign, nonatomic) BOOL isClearText;
 
 - (instancetype)init:(NSDictionary *)pathInfo;
 - (NSArray *)getFilteredElements;

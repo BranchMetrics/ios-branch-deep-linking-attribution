@@ -131,7 +131,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (strong, nonatomic) BNCServerInterface *serverInterface;
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
-@property (assign, atomic)    NSInteger networkCount;
+@property (assign, nonatomic)    NSInteger networkCount;
 @property (assign, nonatomic) BNCInitStatus initializationStatus;
 @property (assign, nonatomic) BOOL shouldAutomaticallyDeepLink;
 @property (strong, nonatomic) BNCLinkCache *linkCache;

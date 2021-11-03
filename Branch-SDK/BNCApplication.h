@@ -37,16 +37,16 @@
 @property (nonatomic, readonly, copy) NSString*_Nullable versionString;
 
 /// The creation date of the current executable.
-@property (nonatomic, readonly, copy) NSDate*_Nullable currentBuildDate;
+@property (nonatomic, readonly, strong) NSDate*_Nullable currentBuildDate;
 
 /// The creating date of the exectuble the first time it was recorded by Branch.
-@property (nonatomic, readonly, copy) NSDate*_Nullable firstInstallBuildDate;
+@property (nonatomic, readonly, strong) NSDate*_Nullable firstInstallBuildDate;
 
 /// The date this app was installed on this device.
-@property (nonatomic, readonly, copy) NSDate*_Nullable currentInstallDate;
+@property (nonatomic, readonly, strong) NSDate*_Nullable currentInstallDate;
 
 /// The date this app was first installed on this device.
-@property (nonatomic, readonly, copy) NSDate*_Nullable firstInstallDate;
+@property (nonatomic, readonly, strong) NSDate*_Nullable firstInstallDate;
 
 /// The team identifier for the app.
 @property (nonatomic, readonly, copy) NSString*_Nullable teamID;

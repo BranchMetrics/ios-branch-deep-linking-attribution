@@ -19,22 +19,22 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 
 @interface BNCPreferenceHelper : NSObject
 
-@property (strong, nonatomic) NSString *lastRunBranchKey;
+@property (copy, nonatomic) NSString *lastRunBranchKey;
 @property (strong, nonatomic) NSDate   *lastStrongMatchDate;
-@property (strong, nonatomic) NSString *appVersion;
+@property (copy, nonatomic) NSString *appVersion;
 
-@property (strong, nonatomic) NSString *randomizedDeviceToken;
-@property (strong, nonatomic) NSString *randomizedBundleToken;
+@property (copy, nonatomic) NSString *randomizedDeviceToken;
+@property (copy, nonatomic) NSString *randomizedBundleToken;
 
-@property (strong, nonatomic) NSString *sessionID;
-@property (strong, nonatomic) NSString *linkClickIdentifier;
-@property (strong, nonatomic) NSString *spotlightIdentifier;
-@property (strong, atomic)    NSString *universalLinkUrl;
-@property (strong, atomic)    NSString *initialReferrer;
-@property (strong, nonatomic) NSString *userUrl;
-@property (strong, nonatomic) NSString *userIdentity;
-@property (strong, nonatomic) NSString *sessionParams;
-@property (strong, nonatomic) NSString *installParams;
+@property (copy, nonatomic) NSString *sessionID;
+@property (copy, nonatomic) NSString *linkClickIdentifier;
+@property (copy, nonatomic) NSString *spotlightIdentifier;
+@property (copy, nonatomic)    NSString *universalLinkUrl;
+@property (copy, nonatomic)    NSString *initialReferrer;
+@property (copy, nonatomic) NSString *userUrl;
+@property (copy, nonatomic) NSString *userIdentity;
+@property (copy, nonatomic) NSString *sessionParams;
+@property (copy, nonatomic) NSString *installParams;
 @property (assign, nonatomic) BOOL isDebug;
 @property (assign, nonatomic) BOOL checkedFacebookAppLinks;
 @property (assign, nonatomic) BOOL checkedAppleSearchAdAttribution;
@@ -44,28 +44,28 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) NSInteger retryCount;
 @property (assign, nonatomic) NSTimeInterval retryInterval;
 @property (assign, nonatomic) NSTimeInterval timeout;
-@property (strong, atomic)    NSString *externalIntentURI;
+@property (copy, nonatomic)    NSString *externalIntentURI;
 @property (strong, nonatomic) NSMutableDictionary *savedAnalyticsData;
 @property (strong, nonatomic) NSDictionary *appleSearchAdDetails;
 @property (assign, nonatomic) BOOL          appleSearchAdNeedsSend;
-@property (strong, nonatomic) NSString *lastSystemBuildVersion;
-@property (strong, nonatomic) NSString *browserUserAgentString;
-@property (strong, atomic) NSString *referringURL;
-@property (strong, atomic) NSString *branchAPIURL;
-@property (assign, atomic) BOOL      limitFacebookTracking;
-@property (strong, atomic) NSDate   *previousAppBuildDate;
+@property (copy, nonatomic) NSString *lastSystemBuildVersion;
+@property (copy, nonatomic) NSString *browserUserAgentString;
+@property (copy, nonatomic) NSString *referringURL;
+@property (copy, nonatomic) NSString *branchAPIURL;
+@property (assign, nonatomic) BOOL      limitFacebookTracking;
+@property (strong, nonatomic) NSDate   *previousAppBuildDate;
 @property (assign, nonatomic, readwrite) BOOL disableAdNetworkCallouts;
 
 @property (strong, nonatomic, readwrite) NSURL *faceBookAppLink;
 
-@property (nonatomic, strong, readwrite) NSString *patternListURL;
-@property (strong, atomic) NSArray<NSString*> *savedURLPatternList;
-@property (assign, atomic) NSInteger savedURLPatternListVersion;
-@property (assign, atomic) BOOL dropURLOpen;
+@property (nonatomic, copy, readwrite) NSString *patternListURL;
+@property (strong, nonatomic) NSArray<NSString*> *savedURLPatternList;
+@property (assign, nonatomic) NSInteger savedURLPatternListVersion;
+@property (assign, nonatomic) BOOL dropURLOpen;
 
 @property (assign, nonatomic) BOOL sendCloseRequests;
 
-@property (assign, atomic) BOOL trackingDisabled;
+@property (assign, nonatomic) BOOL trackingDisabled;
 - (void) clearTrackingInformation;
 
 + (BNCPreferenceHelper *)sharedInstance;

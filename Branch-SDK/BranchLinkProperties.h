@@ -15,12 +15,12 @@
 @interface BranchLinkProperties : NSObject
 
 @property (nonatomic, strong) NSArray *tags;
-@property (nonatomic, strong, copy) NSString *feature;
-@property (nonatomic, strong, copy) NSString *alias;
-@property (nonatomic, strong, copy) NSString *channel;
-@property (nonatomic, strong, copy) NSString *stage;
-@property (nonatomic, strong, copy) NSString *campaign;
-@property (nonatomic) NSUInteger matchDuration;
+@property (nonatomic, copy) NSString *feature;
+@property (nonatomic, copy) NSString *alias;
+@property (nonatomic, copy) NSString *channel;
+@property (nonatomic, copy) NSString *stage;
+@property (nonatomic, copy) NSString *campaign;
+@property (nonatomic, assign) NSUInteger matchDuration;
 @property (nonatomic, strong) NSDictionary *controlParams;
 
 - (void)addControlParam:(NSString *)controlParam withValue:(NSString *)value;

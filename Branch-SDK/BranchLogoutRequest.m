@@ -13,7 +13,7 @@
 #import "BNCEncodingUtils.h"
 
 @interface BranchLogoutRequest ()
-@property (copy) callbackWithStatus callback;
+@property (nonatomic, copy) callbackWithStatus callback;
 @end
 
 

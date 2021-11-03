@@ -239,13 +239,13 @@ NSArray<BNCCurrency>*_Nonnull BNCCurrencyAllCurrencies(void);
 #pragma mark - BNCProduct
 
 @interface BNCProduct : NSObject
-@property (nonatomic, strong, copy) NSString*_Nullable            sku;
-@property (nonatomic, strong, copy) NSString*_Nullable            name;
+@property (nonatomic, copy) NSString*_Nullable            sku;
+@property (nonatomic, copy) NSString*_Nullable            name;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable     price;
 @property (nonatomic, strong) NSNumber*_Nullable            quantity;
-@property (nonatomic, strong, copy) NSString*_Nullable            brand;
+@property (nonatomic, copy) NSString*_Nullable            brand;
 @property (nonatomic, strong) BNCProductCategory _Nullable  category;
-@property (nonatomic, strong, copy) NSString*_Nullable            variant;
+@property (nonatomic, copy) NSString*_Nullable            variant;
 @end
 
 #pragma mark - BNCCommerceEvent
@@ -254,11 +254,11 @@ NSArray<BNCCurrency>*_Nonnull BNCCurrencyAllCurrencies(void);
 @interface BNCCommerceEvent : NSObject
 @property (nonatomic, strong) NSDecimalNumber*_Nullable     revenue;
 @property (nonatomic, strong) BNCCurrency _Nullable         currency;
-@property (nonatomic, strong, copy) NSString*_Nullable            transactionID;
+@property (nonatomic, copy) NSString*_Nullable            transactionID;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable     shipping;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable     tax;
-@property (nonatomic, strong, copy) NSString*_Nullable            coupon;
-@property (nonatomic, strong, copy) NSString*_Nullable            affiliation;
+@property (nonatomic, copy) NSString*_Nullable            coupon;
+@property (nonatomic, copy) NSString*_Nullable            affiliation;
 @property (nonatomic, strong) NSArray<BNCProduct*>*_Nullable products;
 @end
 

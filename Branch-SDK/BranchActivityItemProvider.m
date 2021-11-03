@@ -19,11 +19,11 @@
 
 @property (strong, nonatomic) NSDictionary *params;
 @property (strong, nonatomic) NSArray *tags;
-@property (strong, nonatomic) NSString *feature;
-@property (strong, nonatomic) NSString *stage;
-@property (strong, nonatomic) NSString *campaign;
-@property (strong, nonatomic) NSString *alias;
-@property (strong, nonatomic) NSString *userAgentString;
+@property (copy, nonatomic) NSString *feature;
+@property (copy, nonatomic) NSString *stage;
+@property (copy, nonatomic) NSString *campaign;
+@property (copy, nonatomic) NSString *alias;
+@property (copy, nonatomic) NSString *userAgentString;
 @property (weak, nonatomic) id <BranchActivityItemProviderDelegate> delegate;
 
 @end

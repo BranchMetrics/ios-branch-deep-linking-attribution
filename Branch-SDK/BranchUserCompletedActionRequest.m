@@ -14,7 +14,7 @@
 
 @interface BranchUserCompletedActionRequest ()
 
-@property (strong, nonatomic) NSString *action;
+@property (copy, nonatomic) NSString *action;
 @property (strong, nonatomic) NSDictionary *state;
 
 @end
