@@ -4,8 +4,8 @@ name: Build & Release (manual)
 # $ gh workflow run release.yml
 on: workflow_dispatch
 
-# Builds two frameworks in parallel, then commits checksums, releases
-# with the frameworks and checksums attached to the release.
+# Builds four frameworks in parallel, then commits checksums
+# releases with the frameworks and checksums attached to the release.
 jobs:
   build:
     runs-on: macos-latest
@@ -28,6 +28,27 @@ jobs:
             carthage-files/build/Branch.zip
             carthage-files/build/checksum
 
+  build-noidfa:
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Build xcframework
+        working-directory: carthage-files
+        run: |
+          xcodebuild -scheme Branch-xcframework-noidfa
+          cd build
+          zip -rqy Branch_noidfa.zip Branch.xcframework/
+          echo '#checksum for Branch_noidfa.zip on Github' > checksum_noidfa
+          shasum Branch_noidfa.zip >> checksum_noidfa
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: framework-noidfa
+          path: |
+            carthage-files/build/Branch_noidfa.zip
+            carthage-files/build/checksum_noidfa
+
   build-static:
     runs-on: macos-latest
     steps:
@@ -39,7 +60,7 @@ jobs:
           xcodebuild -scheme Branch-static-xcframework
           cd build
           zip -rqy Branch_static.zip Branch.xcframework/
-          echo '#checksum for Branch-static.zip on Github' > checksum_static
+          echo '#checksum for Branch_static.zip on Github' > checksum_static
           shasum Branch_static.zip >> checksum_static
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
@@ -48,6 +69,27 @@ jobs:
           path: |
             carthage-files/build/Branch_static.zip
             carthage-files/build/checksum_static
+
+  build-static-noidfa:
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Build static xcframework
+        working-directory: carthage-files
+        run: |
+          xcodebuild -scheme Branch-static-xcframework-noidfa
+          cd build
+          zip -rqy Branch_static_noidfa.zip Branch.xcframework/
+          echo '#checksum for Branch_static_noidfa.zip on Github' > checksum_static_noidfa
+          shasum Branch_static_noidfa.zip >> checksum_static_noidfa
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: static-framework-noidfa
+          path: |
+            carthage-files/build/Branch_static_noidfa.zip
+            carthage-files/build/checksum_static_noidfa
 
   release:
     runs-on: macos-latest
@@ -81,14 +123,16 @@ jobs:
       - name: Relocate checksum artifacts
         run: |
           cp framework/checksum carthage-files
+          cp framework-noidfa/checksum_noidfa carthage-files
           cp static-framework/checksum_static carthage-files
+          cp static-framework-noidfa/checksum_static_noidfa carthage-files
       # The sha output from this step is the commit to be tagged.
       - name: Commit checksums
         id: commit-checksums
         run: |
           git config user.name "Branch SDK Team"
           git config user.email branch-sdks@branch.io
-          git commit carthage-files/checksum carthage-files/checksum_static -m'Updated checksums'
+          git commit carthage-files/checksum carthage-files/checksum_noidfa carthage-files/checksum_static carthage-files/checksum_static_noidfa -m'Updated checksums'
           echo "::set-output name=sha::$(git rev-parse HEAD)"
       # TODO: Version bump along the way, probably here.
       - name: Push changes
@@ -146,8 +190,22 @@ jobs:
               github,
               context,
               releaseId,
+              assetName: 'Branch_noidfa.zip',
+              path: 'framework-noidfa/Branch_noidfa.zip',
+            });
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
               assetName: 'Branch_static.zip',
               path: 'static-framework/Branch_static.zip',
+            });
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
+              assetName: 'Branch_static_noidfa.zip',
+              path: 'static-framework-noidfa/Branch_static_noidfa.zip',
             });
             await uploadAsset({
               github,
@@ -160,8 +218,22 @@ jobs:
               github,
               context,
               releaseId,
+              assetName: 'checksum_noidfa',
+              path: 'framework-noidfa/checksum_noidfa',
+            });
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
               assetName: 'checksum_static',
               path: 'static-framework/checksum_static',
+            });
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
+              assetName: 'checksum_static_noidfa',
+              path: 'static-framework-noidfa/checksum_static_noidfa',
             });
       - name: Report Release
         uses: actions/github-script@v4
