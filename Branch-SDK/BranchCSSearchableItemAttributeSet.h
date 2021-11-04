@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, nullable) NSDictionary *params;
 @property (nonatomic, strong, nullable) NSSet *keywords;
-@property (nonatomic) BOOL publiclyIndexable; //!< Defaults to YES
+@property (nonatomic, assign) BOOL publiclyIndexable; //!< Defaults to YES
 
 @end
 

@@ -16,13 +16,13 @@
 @interface BranchShortUrlSyncRequest ()
 
 @property (strong, nonatomic) NSArray *tags;
-@property (strong, nonatomic) NSString *alias;
+@property (copy, nonatomic) NSString *alias;
 @property (assign, nonatomic) BranchLinkType type;
 @property (assign, nonatomic) NSInteger matchDuration;
-@property (strong, nonatomic) NSString *channel;
-@property (strong, nonatomic) NSString *feature;
-@property (strong, nonatomic) NSString *stage;
-@property (strong, nonatomic) NSString *campaign;
+@property (copy, nonatomic) NSString *channel;
+@property (copy, nonatomic) NSString *feature;
+@property (copy, nonatomic) NSString *stage;
+@property (copy, nonatomic) NSString *campaign;
 @property (strong, nonatomic) NSDictionary *params;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) BNCLinkData *linkData;

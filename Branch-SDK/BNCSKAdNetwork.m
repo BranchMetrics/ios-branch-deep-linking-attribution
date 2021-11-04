@@ -11,7 +11,7 @@
 
 @interface BNCSKAdNetwork()
 
-@property (nonatomic, copy, readwrite) NSDate *installDate;
+@property (nonatomic, strong, readwrite) NSDate *installDate;
 
 @property (nonatomic, strong, readwrite) Class skAdNetworkClass;
 @property (nonatomic, assign, readwrite) SEL skAdNetworkRegisterAppForAdNetworkAttribution;

@@ -23,16 +23,16 @@ extern NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall;
 
 @property (class, readonly, nonnull) BranchJsonConfig *instance;
 @property (nonatomic, readonly, nullable) NSURL *configFileURL;
-@property (nonatomic, readonly) BOOL debugMode;
-@property (nonatomic, readonly, nullable) NSString *branchKey;
-@property (nonatomic, readonly, nullable) NSString *liveKey;
-@property (nonatomic, readonly, nullable) NSString *testKey;
-@property (nonatomic, readonly) BOOL useTestInstance;
-@property (nonatomic, readonly) BOOL delayInitToCheckForSearchAds;
-@property (nonatomic, readonly) BOOL appleSearchAdsDebugMode;
-@property (nonatomic, readonly) BOOL deferInitializationForJSLoad;
-@property (nonatomic, readonly) BOOL enableFacebookLinkCheck;
-@property (nonatomic, readonly) BOOL checkPasteboardOnInstall;
+@property (nonatomic, readonly, assign) BOOL debugMode;
+@property (nonatomic, readonly, nullable, copy) NSString *branchKey;
+@property (nonatomic, readonly, nullable, copy) NSString *liveKey;
+@property (nonatomic, readonly, nullable, copy) NSString *testKey;
+@property (nonatomic, readonly, assign) BOOL useTestInstance;
+@property (nonatomic, readonly, assign) BOOL delayInitToCheckForSearchAds;
+@property (nonatomic, readonly, assign) BOOL appleSearchAdsDebugMode;
+@property (nonatomic, readonly, assign) BOOL deferInitializationForJSLoad;
+@property (nonatomic, readonly, assign) BOOL enableFacebookLinkCheck;
+@property (nonatomic, readonly, assign) BOOL checkPasteboardOnInstall;
 
 - (nullable id)objectForKey:(NSString * _Nonnull)key;
 - (nullable id)objectForKeyedSubscript:(NSString * _Nonnull)key;

@@ -239,13 +239,13 @@ NSArray<BNCCurrency>*_Nonnull BNCCurrencyAllCurrencies(void);
 #pragma mark - BNCProduct
 
 @interface BNCProduct : NSObject
-@property (nonatomic, strong) NSString*_Nullable            sku;
-@property (nonatomic, strong) NSString*_Nullable            name;
+@property (nonatomic, copy) NSString*_Nullable            sku;
+@property (nonatomic, copy) NSString*_Nullable            name;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable     price;
 @property (nonatomic, strong) NSNumber*_Nullable            quantity;
-@property (nonatomic, strong) NSString*_Nullable            brand;
-@property (nonatomic, strong) BNCProductCategory _Nullable  category;
-@property (nonatomic, strong) NSString*_Nullable            variant;
+@property (nonatomic, copy) NSString*_Nullable            brand;
+@property (nonatomic, copy) BNCProductCategory _Nullable  category;
+@property (nonatomic, copy) NSString*_Nullable            variant;
 @end
 
 #pragma mark - BNCCommerceEvent
@@ -253,12 +253,12 @@ NSArray<BNCCurrency>*_Nonnull BNCCurrencyAllCurrencies(void);
 //__attribute__((deprecated(("Please use BranchEvent to track commerce events."))))
 @interface BNCCommerceEvent : NSObject
 @property (nonatomic, strong) NSDecimalNumber*_Nullable     revenue;
-@property (nonatomic, strong) BNCCurrency _Nullable         currency;
-@property (nonatomic, strong) NSString*_Nullable            transactionID;
+@property (nonatomic, copy) BNCCurrency _Nullable         currency;
+@property (nonatomic, copy) NSString*_Nullable            transactionID;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable     shipping;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable     tax;
-@property (nonatomic, strong) NSString*_Nullable            coupon;
-@property (nonatomic, strong) NSString*_Nullable            affiliation;
+@property (nonatomic, copy) NSString*_Nullable            coupon;
+@property (nonatomic, copy) NSString*_Nullable            affiliation;
 @property (nonatomic, strong) NSArray<BNCProduct*>*_Nullable products;
 @end
 

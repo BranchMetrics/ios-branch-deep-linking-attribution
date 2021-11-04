@@ -19,8 +19,8 @@
 #import "BNCApplication.h"
 
 @interface BNCServerInterface ()
-@property (strong) NSString *requestEndpoint;
-@property (strong) id<BNCNetworkServiceProtocol> networkService;
+@property (copy, nonatomic) NSString *requestEndpoint;
+@property (strong, nonatomic) id<BNCNetworkServiceProtocol> networkService;
 @end
 
 @implementation BNCServerInterface

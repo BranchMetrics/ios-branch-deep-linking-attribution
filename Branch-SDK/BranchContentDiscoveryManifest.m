@@ -14,7 +14,7 @@
 
 
 @interface BranchContentDiscoveryManifest ()
-@property (nonatomic, strong) NSString *manifestVersion;
+@property (nonatomic, copy) NSString *manifestVersion;
 @end
 
 

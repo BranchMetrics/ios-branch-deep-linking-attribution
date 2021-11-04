@@ -14,13 +14,13 @@
 
 @interface BNCLinkData ()
 @property (strong, nonatomic) NSArray *tags;
-@property (strong, nonatomic) NSString *alias;
-@property (strong, nonatomic) NSString *channel;
-@property (strong, nonatomic) NSString *feature;
-@property (strong, nonatomic) NSString *stage;
-@property (strong, nonatomic) NSString *campaign;
+@property (copy, nonatomic) NSString *alias;
+@property (copy, nonatomic) NSString *channel;
+@property (copy, nonatomic) NSString *feature;
+@property (copy, nonatomic) NSString *stage;
+@property (copy, nonatomic) NSString *campaign;
 @property (strong, nonatomic) NSDictionary *params;
-@property (strong, nonatomic) NSString *ignoreUAString;
+@property (copy, nonatomic) NSString *ignoreUAString;
 @property (assign, nonatomic) BranchLinkType type;
 @property (assign, nonatomic) NSUInteger duration;
 @end

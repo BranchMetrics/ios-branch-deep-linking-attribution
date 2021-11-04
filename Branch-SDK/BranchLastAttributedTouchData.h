@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 // free-form JSON
 @property (nonatomic, strong, readonly) NSDictionary *lastAttributedTouchJSON;
 
-@property (nonatomic, copy, readonly) NSNumber *attributionWindow;
+@property (nonatomic, strong, readonly) NSNumber *attributionWindow;
 
 + (nullable BranchLastAttributedTouchData *)buildFromJSON:(NSDictionary *)json;
 

@@ -36,6 +36,6 @@
 - (void) updatePatternListWithCompletion:(void (^_Nullable) (NSError*_Nullable error, NSArray*_Nullable list))completion;
 
 /// Is YES if the listed has already been updated from the server.
-@property (assign, readonly) BOOL hasUpdatedPatternList;
-@property (strong) NSArray<NSString*>*_Nullable patternList;
+@property (assign, readonly, nonatomic) BOOL hasUpdatedPatternList;
+@property (strong, nonatomic) NSArray<NSString*>*_Nullable patternList;
 @end

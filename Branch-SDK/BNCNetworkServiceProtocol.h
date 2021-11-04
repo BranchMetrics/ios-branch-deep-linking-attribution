@@ -46,34 +46,34 @@
 
 /// The initial NSMutableURLRequest.
 @required
-@property (readonly, copy) NSURLRequest *request;
+@property (nonatomic, readonly, copy) NSURLRequest *request;
 
 /// The response from the server.
 @required
-@property (readonly, copy) NSHTTPURLResponse *response;
+@property (nonatomic, readonly, copy) NSHTTPURLResponse *response;
 
 /// The data from the server.
 @required
-@property (readonly, strong) NSData *responseData;
+@property (nonatomic, readonly, strong) NSData *responseData;
 
 /// Any errors that occurred during the request.
 @required
-@property (readonly, copy) NSError *error;
+@property (nonatomic, readonly, copy) NSError *error;
 
 /// The original start date of the operation. This should be set by the network service provider
 /// when the operation is started.
 @required
-@property (readonly, copy) NSDate *startDate;
+@property (nonatomic, readonly, copy) NSDate *startDate;
 
 /// The timeout date for the operation.  This is calculated and set by the underlying network service
 /// provider by taking the original start date and adding the timeout interval of the URL request.
 /// It should be set once (and not recalculated for each retry) by the network service.
 @required
-@property (readonly, copy) NSDate *timeoutDate;
+@property (nonatomic, readonly, copy) NSDate *timeoutDate;
 
 /// A dictionary for the Branch SDK to store operation user info.
 @required
-@property (strong) NSDictionary *userInfo;
+@property (nonatomic, strong) NSDictionary *userInfo;
 
 /// Starts the network operation.
 @required
@@ -109,7 +109,7 @@
 
 /// A dictionary for the Branch SDK to store operation user info.
 @required
-@property (strong) NSDictionary *userInfo;
+@property (nonatomic, strong) NSDictionary *userInfo;
 
 /// Pins the session to the array of public keys.
 @optional

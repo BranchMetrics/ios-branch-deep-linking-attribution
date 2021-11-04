@@ -18,13 +18,13 @@
 #pragma mark BNCNetworkOperation
 
 @interface BNCNetworkOperation : NSObject <BNCNetworkOperationProtocol>
-@property (readonly, copy)   NSURLRequest       *request;
-@property (readonly, copy)   NSHTTPURLResponse  *response;
-@property (readonly, strong) NSData             *responseData;
-@property (readonly, copy)   NSError            *error;
-@property (readonly, copy)   NSDate             *startDate;
-@property (readonly, copy)   NSDate             *timeoutDate;
-@property (strong)           NSDictionary       *userInfo;
+@property (nonatomic, readonly, copy)   NSURLRequest       *request;
+@property (nonatomic, readonly, copy)   NSHTTPURLResponse  *response;
+@property (nonatomic, readonly, strong) NSData             *responseData;
+@property (nonatomic, readonly, copy)   NSError            *error;
+@property (nonatomic, readonly, copy)   NSDate             *startDate;
+@property (nonatomic, readonly, copy)   NSDate             *timeoutDate;
+@property (nonatomic, strong)           NSDictionary       *userInfo;
 
 - (void) start;
 - (void) cancel;
@@ -40,5 +40,5 @@
 - (BNCNetworkOperation*) networkOperationWithURLRequest:(NSMutableURLRequest*)request
                 completion:(void (^)(id<BNCNetworkOperationProtocol>operation))completion;
 
-@property (strong) NSDictionary *userInfo;
+@property (strong, nonatomic) NSDictionary *userInfo;
 @end

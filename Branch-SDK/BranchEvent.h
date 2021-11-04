@@ -73,22 +73,22 @@ typedef NS_ENUM(NSInteger, BranchEventAdType) {
 - (instancetype _Nonnull) init __attribute((unavailable));
 + (instancetype _Nonnull) new __attribute((unavailable));
 
-@property (nonatomic, strong) NSString*_Nullable                alias;
-@property (nonatomic, strong) NSString*_Nullable                transactionID;
-@property (nonatomic, strong) BNCCurrency _Nullable             currency;
+@property (nonatomic, copy) NSString*_Nullable                alias;
+@property (nonatomic, copy) NSString*_Nullable                transactionID;
+@property (nonatomic, copy) BNCCurrency _Nullable             currency;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable         revenue;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable         shipping;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable         tax;
-@property (nonatomic, strong) NSString*_Nullable                coupon;
-@property (nonatomic, strong) NSString*_Nullable                affiliation;
-@property (nonatomic, strong) NSString*_Nullable                eventDescription;
-@property (nonatomic, strong) NSString*_Nullable                searchQuery;
+@property (nonatomic, copy) NSString*_Nullable                coupon;
+@property (nonatomic, copy) NSString*_Nullable                affiliation;
+@property (nonatomic, copy) NSString*_Nullable                eventDescription;
+@property (nonatomic, copy) NSString*_Nullable                searchQuery;
 
 @property (nonatomic, assign) BranchEventAdType                 adType;
 
 
-@property (nonatomic, copy) NSArray<BranchUniversalObject*>*_Nonnull       contentItems;
-@property (nonatomic, copy) NSDictionary<NSString*, NSString*> *_Nonnull   customData;
+@property (nonatomic, strong) NSArray<BranchUniversalObject*>*_Nonnull       contentItems;
+@property (nonatomic, strong) NSDictionary<NSString*, NSString*> *_Nonnull   customData;
 
 /**
  Logs the event on the Branch server.
@@ -122,7 +122,7 @@ typedef NS_ENUM(NSInteger, BranchEventAdType) {
                    eventDictionary:(NSDictionary*_Nullable)eventDictionary
                         completion:(void (^_Nullable)(NSDictionary*_Nullable response, NSError*_Nullable error))completion;
 
-@property (strong) NSDictionary*_Nullable eventDictionary;
-@property (strong) NSURL*_Nullable serverURL;
-@property (copy)   void (^_Nullable completion)(NSDictionary*_Nullable response, NSError*_Nullable error);
+@property (nonatomic, strong) NSDictionary*_Nullable eventDictionary;
+@property (nonatomic, strong) NSURL*_Nullable serverURL;
+@property (nonatomic, copy)   void (^_Nullable completion)(NSDictionary*_Nullable response, NSError*_Nullable error);
 @end

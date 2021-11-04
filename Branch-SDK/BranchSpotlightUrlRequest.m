@@ -9,7 +9,7 @@
 #import "BranchSpotlightUrlRequest.h"
 
 @interface BranchSpotlightUrlRequest ()
-@property (strong, nonatomic) callbackWithParams spotlightCallback;
+@property (copy, nonatomic) callbackWithParams spotlightCallback;
 @end
 
 @implementation BranchSpotlightUrlRequest

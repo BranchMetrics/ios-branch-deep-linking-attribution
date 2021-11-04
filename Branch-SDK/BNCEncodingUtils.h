@@ -28,8 +28,8 @@ extern NSString* BNCWireFormatFromString(NSString *string);
 + (BNCKeyValue*) key:(NSString*)key value:(NSString*)value;
 - (NSString*) description;
 
-@property (nonatomic, strong) NSString* key;
-@property (nonatomic, strong) NSString* value;
+@property (nonatomic, copy) NSString* key;
+@property (nonatomic, copy) NSString* value;
 
 @end
 

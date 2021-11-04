@@ -85,7 +85,7 @@ Presents a UIActivityViewController that shares the Branch link.
                                                   anchor:(id _Nullable)anchorViewOrButtonItem;
 
 ///The title for the share sheet.
-@property (nonatomic, strong) NSString*_Nullable title;
+@property (nonatomic, copy) NSString*_Nullable title;
 
 // Override the default placeholder URL
 // iOS 13+ fetches a preview header icon, text and domain name from this URL.
@@ -97,7 +97,7 @@ Presents a UIActivityViewController that shares the Branch link.
 
 ///Share text for the item.  This is not the text in the iOS 13+ preview header.
 ///This text can be changed later when the `branchShareSheetWillShare:` delegate method is called.
-@property (nonatomic, strong) NSString*_Nullable shareText;
+@property (nonatomic, copy) NSString*_Nullable shareText;
 
 ///An additional, user defined, non-typed, object to be shared.
 ///This object can be changed later when the `branchShareSheetWillShare:` delegate method is called.
@@ -105,13 +105,13 @@ Presents a UIActivityViewController that shares the Branch link.
 
 ///Sets an email subject line for the share activity. If the Branch link property already has an
 ///email subject, that attribute takes precedence over this field.
-@property (nonatomic, strong) NSString*_Nullable emailSubject;
+@property (nonatomic, copy) NSString*_Nullable emailSubject;
 
 ///The resulting Branch URL that was shared.
 @property (nonatomic, strong, readonly) NSURL*_Nullable shareURL;
 
 ///The activity type that the user chose.
-@property (nonatomic, strong, readonly) NSString*_Nullable activityType;
+@property (nonatomic, readonly, copy) NSString*_Nullable activityType;
 
 ///Extra server parameters that should be included with the link data.
 @property (nonatomic, strong) NSMutableDictionary*_Nullable serverParameters;

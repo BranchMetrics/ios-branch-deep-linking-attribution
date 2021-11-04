@@ -115,7 +115,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
 #pragma mark - BranchEvent
 
 @interface BranchEvent ()
-@property (nonatomic, strong) NSString*  eventName;
+@property (nonatomic, copy) NSString*  eventName;
 @end
 
 @implementation BranchEvent : NSObject

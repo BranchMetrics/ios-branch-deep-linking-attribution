@@ -21,9 +21,9 @@ NSString * _Nonnull const BranchJsonConfigEnableFacebookLinkCheck = @"enableFace
 NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPasteboardOnInstall";
 
 @interface BranchJsonConfig()
-@property (nonatomic) NSDictionary *configuration;
-@property (nonatomic, readonly) NSData *configFileContents;
-@property (nonatomic) NSURL *configFileURL;
+@property (nonatomic, strong) NSDictionary *configuration;
+@property (nonatomic, readonly, strong) NSData *configFileContents;
+@property (nonatomic, strong) NSURL *configFileURL;
 @end
 
 @implementation BranchJsonConfig

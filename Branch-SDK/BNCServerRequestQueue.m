@@ -33,9 +33,9 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 
 
 @interface BNCServerRequestQueue()
-@property (strong) NSMutableArray<BNCServerRequest *> *queue;
-@property (strong) dispatch_queue_t asyncQueue;
-@property (strong) dispatch_source_t persistTimer;
+@property (strong, nonatomic) NSMutableArray<BNCServerRequest *> *queue;
+@property (strong, nonatomic) dispatch_queue_t asyncQueue;
+@property (strong, nonatomic) dispatch_source_t persistTimer;
 @end
 
 

@@ -11,11 +11,11 @@
 @interface BranchContentDiscoveryManifest : NSObject
 
 @property (strong, nonatomic) NSMutableDictionary *cdManifest;
-@property (strong, nonatomic) NSString *referredLink;
-@property (nonatomic) NSInteger maxTextLen;
-@property (nonatomic) NSInteger maxViewHistoryLength;
-@property (nonatomic) NSInteger maxPktSize;
-@property (nonatomic) BOOL isCDEnabled;
+@property (nonatomic, copy) NSString *referredLink;
+@property (nonatomic, assign) NSInteger maxTextLen;
+@property (nonatomic, assign) NSInteger maxViewHistoryLength;
+@property (nonatomic, assign) NSInteger maxPktSize;
+@property (nonatomic, assign) BOOL isCDEnabled;
 @property (strong, nonatomic) NSMutableArray *contentPaths;
 
 + (BranchContentDiscoveryManifest *)getInstance;

@@ -22,33 +22,33 @@
 + (BNCApplication*_Nonnull) currentApplication;
 
 /// The bundle identifier of the current
-@property (atomic, readonly) NSString*_Nullable bundleID;
+@property (nonatomic, readonly, copy) NSString*_Nullable bundleID;
 
 /// The bundle display name from the info plist.
-@property (atomic, readonly) NSString*_Nullable displayName;
+@property (nonatomic, readonly, copy) NSString*_Nullable displayName;
 
 /// The bundle short display name from the info plist.
-@property (atomic, readonly) NSString*_Nullable shortDisplayName;
+@property (nonatomic, readonly, copy) NSString*_Nullable shortDisplayName;
 
 /// The short version ID as is typically shown to the user, like in iTunes or the app store.
-@property (atomic, readonly) NSString*_Nullable displayVersionString;
+@property (nonatomic, readonly, copy) NSString*_Nullable displayVersionString;
 
 /// The version ID for developers use.
-@property (atomic, readonly) NSString*_Nullable versionString;
+@property (nonatomic, readonly, copy) NSString*_Nullable versionString;
 
 /// The creation date of the current executable.
-@property (atomic, readonly) NSDate*_Nullable currentBuildDate;
+@property (nonatomic, readonly, strong) NSDate*_Nullable currentBuildDate;
 
 /// The creating date of the exectuble the first time it was recorded by Branch.
-@property (atomic, readonly) NSDate*_Nullable firstInstallBuildDate;
+@property (nonatomic, readonly, strong) NSDate*_Nullable firstInstallBuildDate;
 
 /// The date this app was installed on this device.
-@property (atomic, readonly) NSDate*_Nullable currentInstallDate;
+@property (nonatomic, readonly, strong) NSDate*_Nullable currentInstallDate;
 
 /// The date this app was first installed on this device.
-@property (atomic, readonly) NSDate*_Nullable firstInstallDate;
+@property (nonatomic, readonly, strong) NSDate*_Nullable firstInstallDate;
 
 /// The team identifier for the app.
-@property (atomic, readonly) NSString*_Nullable teamID;
+@property (nonatomic, readonly, copy) NSString*_Nullable teamID;
 
 @end
