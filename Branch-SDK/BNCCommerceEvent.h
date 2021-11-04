@@ -244,7 +244,7 @@ NSArray<BNCCurrency>*_Nonnull BNCCurrencyAllCurrencies(void);
 @property (nonatomic, strong) NSDecimalNumber*_Nullable     price;
 @property (nonatomic, strong) NSNumber*_Nullable            quantity;
 @property (nonatomic, copy) NSString*_Nullable            brand;
-@property (nonatomic, strong) BNCProductCategory _Nullable  category;
+@property (nonatomic, copy) BNCProductCategory _Nullable  category;
 @property (nonatomic, copy) NSString*_Nullable            variant;
 @end
 
@@ -253,7 +253,7 @@ NSArray<BNCCurrency>*_Nonnull BNCCurrencyAllCurrencies(void);
 //__attribute__((deprecated(("Please use BranchEvent to track commerce events."))))
 @interface BNCCommerceEvent : NSObject
 @property (nonatomic, strong) NSDecimalNumber*_Nullable     revenue;
-@property (nonatomic, strong) BNCCurrency _Nullable         currency;
+@property (nonatomic, copy) BNCCurrency _Nullable         currency;
 @property (nonatomic, copy) NSString*_Nullable            transactionID;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable     shipping;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable     tax;

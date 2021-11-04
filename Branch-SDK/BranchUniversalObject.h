@@ -70,16 +70,16 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
 
 @interface BranchContentMetadata : NSObject
 
-@property (nonatomic, strong, nullable) BranchContentSchema contentSchema;
+@property (nonatomic, copy, nullable) BranchContentSchema contentSchema;
 @property (nonatomic, assign)           double          quantity;
 @property (nonatomic, strong, nullable) NSDecimalNumber *price;
-@property (nonatomic, strong, nullable) BNCCurrency     currency;
+@property (nonatomic, copy, nullable) BNCCurrency     currency;
 @property (nonatomic, nullable, copy) NSString        *sku;
 @property (nonatomic, nullable, copy) NSString        *productName;
 @property (nonatomic, nullable, copy) NSString        *productBrand;
-@property (nonatomic, strong, nullable) BNCProductCategory productCategory;
+@property (nonatomic, copy, nullable) BNCProductCategory productCategory;
 @property (nonatomic, nullable, copy) NSString        *productVariant;
-@property (nonatomic, strong, nullable) BranchCondition condition;
+@property (nonatomic, copy, nullable) BranchCondition condition;
 @property (nonatomic, assign)           double          ratingAverage;
 @property (nonatomic, assign)           NSInteger       ratingCount;
 @property (nonatomic, assign)           double          ratingMax;

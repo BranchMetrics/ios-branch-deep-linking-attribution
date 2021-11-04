@@ -75,7 +75,7 @@ typedef NS_ENUM(NSInteger, BranchEventAdType) {
 
 @property (nonatomic, copy) NSString*_Nullable                alias;
 @property (nonatomic, copy) NSString*_Nullable                transactionID;
-@property (nonatomic, strong) BNCCurrency _Nullable             currency;
+@property (nonatomic, copy) BNCCurrency _Nullable             currency;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable         revenue;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable         shipping;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable         tax;
