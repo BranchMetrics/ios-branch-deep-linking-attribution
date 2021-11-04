@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.1.40.2
+- CORE-2502 Fix serialization issue
+
 v.1.40.1
 - CORE-2463 workaround server side issue with inconsisent response payload.
 
