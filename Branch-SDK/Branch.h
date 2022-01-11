@@ -33,6 +33,7 @@
 #import "BNCInitSessionResponse.h"
 #import "UIViewController+Branch.h"
 #import "BranchScene.h"
+#import "BranchPluginSupport.h"
 
 #if !TARGET_OS_TV
 // tvOS does not support these features
