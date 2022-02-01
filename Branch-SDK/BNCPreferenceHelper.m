@@ -742,24 +742,10 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (void)persistPrefsToDisk {
     @synchronized (self) {
         if (!self.persistenceDict) return;
-        NSData *data = nil;
-        @try {
-            if (@available(iOS 11.0, tvOS 11.0, *)) {
-                data = [NSKeyedArchiver archivedDataWithRootObject:self.persistenceDict requiringSecureCoding:YES error:NULL];
-            } else {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
-                data = [NSKeyedArchiver archivedDataWithRootObject:self.persistenceDict];
-#endif
-            }
-        }
-        @catch (id exception) {
-            data = nil;
-            BNCLogWarning([NSString stringWithFormat:@"Exception creating preferences data: %@.", exception]);
-        }
-        if (!data) {
-            BNCLogWarning(@"Can't create preferences data.");
-            return;
-        }
+
+        NSData *data = [self serializePrefDict:self.persistenceDict];
+        if (!data) return;
+        
         NSURL *prefsURL = [self.class.URLForPrefsFile copy];
         NSBlockOperation *newPersistOp = [NSBlockOperation blockOperationWithBlock:^ {
             NSError *error = nil;
@@ -772,6 +758,24 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
 }
 
+- (NSData *)serializePrefDict:(NSMutableDictionary *)dict {
+    if (dict == nil) return nil;
+    
+    NSData *data = nil;
+    @try {
+        if (@available(iOS 11.0, tvOS 11.0, *)) {
+            data = [NSKeyedArchiver archivedDataWithRootObject:dict requiringSecureCoding:YES error:NULL];
+        } else {
+            #if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
+            data = [NSKeyedArchiver archivedDataWithRootObject:dict];
+            #endif
+        }
+    } @catch (id exception) {
+        BNCLogWarning([NSString stringWithFormat:@"Exception serializing preferences dict: %@.", exception]);
+    }
+    return data;
+}
+
 + (void) clearAll {
     NSURL *prefsURL = [self.URLForPrefsFile copy];
     if (prefsURL) [[NSFileManager defaultManager] removeItemAtURL:prefsURL error:nil];
@@ -782,31 +786,50 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (NSMutableDictionary *)persistenceDict {
     @synchronized(self) {
         if (!_persistenceDict) {
-            NSDictionary *persistenceDict = nil;
-            @try {
-                NSError *error = nil;
-                NSData *data = [NSData dataWithContentsOfURL:self.class.URLForPrefsFile options:0 error:&error];
-                if (!error && data) {
-//                    if (@available(iOS 11.0, tvOS 11.0, *)) {
-//                        persistenceDict = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSMutableDictionary class] fromData:data error:NULL];
-//                    } else {
-//#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
-                        persistenceDict = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-//#endif
-//                    }
-                }
-            }
-            @catch (NSException*) {
+            _persistenceDict = [self deserializePrefDictFromData:[self loadPrefData]];
+        }
+        return _persistenceDict;
+    }
+}
+
+- (NSData *)loadPrefData {
+    NSData *data = nil;
+    @try {
+        NSError *error = nil;
+        data = [NSData dataWithContentsOfURL:self.class.URLForPrefsFile options:0 error:&error];
+        if (error || !data) {
+            BNCLogWarning(@"Failed to load preferences from storage.");
+        }
+    } @catch (NSException *) {
+        BNCLogWarning(@"Failed to load preferences from storage.");
+    }
+    return data;
+}
+
+- (NSMutableDictionary *)deserializePrefDictFromData:(NSData *)data {
+    NSDictionary *dict = nil;
+    if (data) {
+        if (@available(iOS 11.0, tvOS 11.0, *)) {
+            NSError *error = nil;
+            NSSet *classes = [[NSMutableSet alloc] initWithArray:@[ NSString.class, NSDate.class, NSDictionary.class ]];
+
+            dict = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes fromData:data error:&error];
+            if (error) {
                 BNCLogWarning(@"Failed to load preferences from storage.");
             }
 
-            if ([persistenceDict isKindOfClass:[NSDictionary class]]) {
-                _persistenceDict = [persistenceDict mutableCopy];
-            } else {
-                _persistenceDict = [[NSMutableDictionary alloc] init];
-            }
+        } else {
+        #if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
+            dict = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        #endif
         }
-        return _persistenceDict;
+    }
+    
+    // NSKeyedUnarchiver returns an NSDictionary, convert to NSMutableDictionary
+    if (dict && [dict isKindOfClass:[NSDictionary class]]) {
+        return [dict mutableCopy];
+    } else {
+        return [[NSMutableDictionary alloc] init];
     }
 }
 
