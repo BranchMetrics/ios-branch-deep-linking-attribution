@@ -220,13 +220,13 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     if (sessionData.length) {
         NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
         BOOL dataIsFromALinkClick = [sessionDataDict[BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK] isEqual:@1];
-        BOOL storedParamsAreEmpty = YES;
+        //BOOL storedParamsAreEmpty = YES;
 
-        if ([preferenceHelper.installParams isKindOfClass:[NSString class]]) {
-            storedParamsAreEmpty = !preferenceHelper.installParams.length;
-        }
+//        if ([preferenceHelper.installParams isKindOfClass:[NSString class]]) {
+//            storedParamsAreEmpty = !preferenceHelper.installParams.length;
+//        }
 
-        if (dataIsFromALinkClick && (self.isInstall || storedParamsAreEmpty)) {
+        if (dataIsFromALinkClick && self.isInstall) { // || storedParamsAreEmpty)) {
             preferenceHelper.installParams = sessionData;
         }
     }
