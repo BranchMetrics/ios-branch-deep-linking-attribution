@@ -46,9 +46,9 @@
     [dictionary bnc_safeSetObject:deviceInfo.brandName forKey:@"brand"];
     [dictionary bnc_safeSetObject:deviceInfo.applicationVersion forKey:@"app_version"];
     [dictionary bnc_safeSetObject:deviceInfo.modelName forKey:@"model"];
-    [dictionary bnc_safeSetObject:deviceInfo.screenScale forKey:@"screen_dpi"];
-    [dictionary bnc_safeSetObject:deviceInfo.screenHeight forKey:@"screen_height"];
-    [dictionary bnc_safeSetObject:deviceInfo.screenWidth forKey:@"screen_width"];
+    [dictionary bnc_safeSetObject:deviceInfo.screenScale.stringValue forKey:@"screen_dpi"];
+    [dictionary bnc_safeSetObject:deviceInfo.screenHeight.stringValue forKey:@"screen_height"];
+    [dictionary bnc_safeSetObject:deviceInfo.screenWidth.stringValue forKey:@"screen_width"];
     
     return dictionary;
 }
