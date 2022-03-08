@@ -91,6 +91,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 
     _universalObject = universalObject;
     _linkProperties = linkProperties;
+    
     return self;
 }
 
@@ -148,10 +149,8 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         self.shareURL = self.placeholderURL;
     } else {
         
-        // use short link as the placeholder url
-        NSString *URLString = [[Branch getInstance] getShortURLWithParams:self.serverParameters andTags:self.linkProperties.tags andChannel:self.linkProperties.channel andFeature:self.linkProperties.feature andStage:self.linkProperties.stage andAlias:self.linkProperties.alias];
-        
-        self.shareURL = [[NSURL alloc] initWithString:URLString];
+        // use short link as the placeholder url. This is just used for the preview and will be thrown away.
+        self.shareURL = [self createShortLink];
     }
     
     if (self.returnURL) {
@@ -275,9 +274,39 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 
     // Else activityItem.itemType == BranchShareActivityItemTypeURL
 
+    return [self createShortLink];
+}
+
+- (BOOL) returnURL {
+    BOOL returnURL = YES;
+    if ([UIDevice currentDevice].systemVersion.doubleValue >= 11.0 &&
+        [UIDevice currentDevice].systemVersion.doubleValue  < 11.2 &&
+        [self.activityType isEqualToString:UIActivityTypeCopyToPasteboard]) {
+        returnURL = NO;
+    }
+    return returnURL;
+}
+
+- (id)activityViewControllerPlaceholderItem:(UIActivityViewController *)activityViewController  // called to determine data type. only the class of the return type is consulted. it should match what -itemForActivityType: returns later
+{
+    return @"";
+}
+
+- (nullable LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController API_AVAILABLE(ios(13.0))
+{
+    return self.lpMetaData;
+}
+
+- (nullable id)activityViewController:(UIActivityViewController *)activityViewController itemForActivityType:(nullable UIActivityType)activityType   // called to fetch data after an activity is selected. you can return nil.
+{
+    return nil;
+}
+
+- (id) createShortLink {
+    
     // Because Facebook et al immediately scrape URLs, we add an additional parameter to the
     // existing list, telling the backend to ignore the first click.
-
+    
     NSSet*scrapers = [NSSet setWithArray:@[
         @"Facebook",
         @"Twitter",
@@ -306,31 +335,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
             forceLinkCreation:YES];
     self.shareURL = [NSURL URLWithString:URLString];
     return (self.returnURL) ? self.shareURL :self.shareURL.absoluteString;
-}
-
-- (BOOL) returnURL {
-    BOOL returnURL = YES;
-    if ([UIDevice currentDevice].systemVersion.doubleValue >= 11.0 &&
-        [UIDevice currentDevice].systemVersion.doubleValue  < 11.2 &&
-        [self.activityType isEqualToString:UIActivityTypeCopyToPasteboard]) {
-        returnURL = NO;
-    }
-    return returnURL;
-}
-
-- (id)activityViewControllerPlaceholderItem:(UIActivityViewController *)activityViewController  // called to determine data type. only the class of the return type is consulted. it should match what -itemForActivityType: returns later
-{
-    return @"";
-}
-
-- (nullable LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController API_AVAILABLE(ios(13.0))
-{
-    return self.lpMetaData;
-}
-
-- (nullable id)activityViewController:(UIActivityViewController *)activityViewController itemForActivityType:(nullable UIActivityType)activityType   // called to fetch data after an activity is selected. you can return nil.
-{
-    return nil;
+    
 }
 
 
