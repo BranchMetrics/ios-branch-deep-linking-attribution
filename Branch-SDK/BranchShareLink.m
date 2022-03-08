@@ -148,15 +148,9 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         self.shareURL = self.placeholderURL;
     } else {
         
-        // use long link as the placeholder url
-        NSString *URLString =
-            [[Branch getInstance]
-                getLongURLWithParams:self.serverParameters
-                andChannel:self.linkProperties.channel
-                andTags:self.linkProperties.tags
-                andFeature:self.linkProperties.feature
-                andStage:self.linkProperties.stage
-                andAlias:self.linkProperties.alias];
+        // use short link as the placeholder url
+        NSString *URLString = [[Branch getInstance] getShortURLWithParams:self.serverParameters andTags:self.linkProperties.tags andChannel:self.linkProperties.channel andFeature:self.linkProperties.feature andStage:self.linkProperties.stage andAlias:self.linkProperties.alias];
+        
         self.shareURL = [[NSURL alloc] initWithString:URLString];
     }
     
