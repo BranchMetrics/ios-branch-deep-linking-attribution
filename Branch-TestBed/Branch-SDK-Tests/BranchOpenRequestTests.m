@@ -216,7 +216,7 @@
         XCTAssertNil(error);
         XCTAssertTrue(success);
         [self safelyFulfillExpectation:openExpectation];
-    }];
+    } isInstall:TRUE];
 
     [request processResponse:response error:nil];
     
@@ -407,7 +407,7 @@
         XCTAssertEqualObjects(preferenceHelper.installParams, OPEN_PARAMS);
         
         [self safelyFulfillExpectation:expectation];
-    }];
+    } isInstall:TRUE];
     
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = @{ BRANCH_RESPONSE_KEY_SESSION_DATA: OPEN_PARAMS };
@@ -490,7 +490,7 @@
         XCTAssertNil(error);
         XCTAssert([preferenceHelper.installParams isEqualToString:OPEN_PARAMS]);
         [self safelyFulfillExpectation:expectation];
-    }];
+    } isInstall:TRUE];
     
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = @{ BRANCH_RESPONSE_KEY_SESSION_DATA: OPEN_PARAMS };
