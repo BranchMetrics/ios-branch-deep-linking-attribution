@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.1.41.0
+- SDK-1189 Added API for plugin support
+
 v.1.40.2
 - CORE-2502 Fix serialization issue
 
