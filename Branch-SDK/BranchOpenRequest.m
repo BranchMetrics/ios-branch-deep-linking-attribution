@@ -216,17 +216,11 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     // Otherwise,
     // * On Install: set.
     // * On Open and installParams set: don't set.
-    // * On Open and stored installParams are empty: set.
     if (sessionData.length) {
         NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
         BOOL dataIsFromALinkClick = [sessionDataDict[BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK] isEqual:@1];
-        BOOL storedParamsAreEmpty = YES;
 
-        if ([preferenceHelper.installParams isKindOfClass:[NSString class]]) {
-            storedParamsAreEmpty = !preferenceHelper.installParams.length;
-        }
-
-        if (dataIsFromALinkClick && (self.isInstall || storedParamsAreEmpty)) {
+        if (dataIsFromALinkClick && self.isInstall) {
             preferenceHelper.installParams = sessionData;
         }
     }
