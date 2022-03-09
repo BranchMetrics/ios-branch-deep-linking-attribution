@@ -9,9 +9,16 @@
 #import <XCTest/XCTest.h>
 #import "BNCPreferenceHelper.h"
 #import "BNCEncodingUtils.h"
-#import "BNCTestCase.h"
 
-@interface BNCPreferenceHelperTests : BNCTestCase
+@interface BNCPreferenceHelper()
+
+// expose private methods for testing
+- (NSMutableDictionary *)deserializePrefDictFromData:(NSData *)data;
+- (NSData *)serializePrefDict:(NSMutableDictionary *)dict;
+
+@end
+
+@interface BNCPreferenceHelperTests : XCTestCase
 @property (nonatomic, strong, readwrite) BNCPreferenceHelper *prefHelper;
 @end
 
@@ -59,6 +66,151 @@
     
     // restore to default
     [self.prefHelper setSendCloseRequests:NO];
+}
+
+- (void)testSerializeDict_Nil {
+    NSMutableDictionary *dict = nil;
+    NSData *data = [self.prefHelper serializePrefDict:dict];    
+    XCTAssert(data == nil);
+}
+
+- (void)testSerializeDict_Empty {
+    NSMutableDictionary *dict = [NSMutableDictionary new];
+    NSData *data = [self.prefHelper serializePrefDict:dict];
+    NSMutableDictionary *tmp = [self.prefHelper deserializePrefDictFromData:data];
+    
+    XCTAssert(tmp != nil);
+    XCTAssert([tmp isKindOfClass:NSMutableDictionary.class]);
+    XCTAssert(tmp.count == 0);
+}
+
+- (void)testSerializeDict_String {
+    NSMutableDictionary *dict = [NSMutableDictionary new];
+    NSString *value = @"the quick brown fox jumps over the lazy dog";
+    NSString *key = @"test";
+    [dict setObject:value forKey:key];
+    
+    NSData *data = [self.prefHelper serializePrefDict:dict];
+    NSMutableDictionary *tmp = [self.prefHelper deserializePrefDictFromData:data];
+    
+    XCTAssert(tmp != nil);
+    XCTAssert([tmp isKindOfClass:NSMutableDictionary.class]);
+    XCTAssert(tmp.count == 1);
+    
+    XCTAssert([[tmp objectForKey:key] isEqualToString:value]);
+}
+
+- (void)testSerializeDict_Date {
+    NSMutableDictionary *dict = [NSMutableDictionary new];
+    NSDate *value = [NSDate date];
+    NSString *key = @"test";
+    [dict setObject:value forKey:key];
+    
+    NSData *data = [self.prefHelper serializePrefDict:dict];
+    NSMutableDictionary *tmp = [self.prefHelper deserializePrefDictFromData:data];
+    
+    XCTAssert(tmp != nil);
+    XCTAssert([tmp isKindOfClass:NSMutableDictionary.class]);
+    XCTAssert(tmp.count == 1);
+    
+    XCTAssert([[tmp objectForKey:key] isEqual:value]);
+}
+
+- (void)testSerializeDict_Bool {
+    NSMutableDictionary *dict = [NSMutableDictionary new];
+    bool value = YES;
+    NSString *key = @"test";
+    [dict setObject:@(value) forKey:key];
+    
+    NSData *data = [self.prefHelper serializePrefDict:dict];
+    NSMutableDictionary *tmp = [self.prefHelper deserializePrefDictFromData:data];
+    
+    XCTAssert(tmp != nil);
+    XCTAssert([tmp isKindOfClass:NSMutableDictionary.class]);
+    XCTAssert(tmp.count == 1);
+    
+    XCTAssert([[tmp objectForKey:key] isEqual:@(value)]);
+}
+
+- (void)testSerializeDict_Integer {
+    NSMutableDictionary *dict = [NSMutableDictionary new];
+    NSInteger value = 1234;
+    NSString *key = @"test";
+    [dict setObject:@(value) forKey:key];
+    
+    NSData *data = [self.prefHelper serializePrefDict:dict];
+    NSMutableDictionary *tmp = [self.prefHelper deserializePrefDictFromData:data];
+    
+    XCTAssert(tmp != nil);
+    XCTAssert([tmp isKindOfClass:NSMutableDictionary.class]);
+    XCTAssert(tmp.count == 1);
+    
+    XCTAssert([[tmp objectForKey:key] isEqual:@(value)]);
+}
+
+- (void)testSerializeDict_All {
+    NSMutableDictionary *dict = [NSMutableDictionary new];
+
+    NSString *value1 = @"the quick brown fox jumps over the lazy dog";
+    NSString *key1 = @"test1";
+    [dict setObject:value1 forKey:key1];
+    
+    NSDate *value2 = [NSDate date];
+    NSString *key2 = @"test2";
+    [dict setObject:value2 forKey:key2];
+    
+    bool value3 = YES;
+    NSString *key3 = @"test3";
+    [dict setObject:@(value3) forKey:key3];
+    
+    NSInteger value4 = 1234;
+    NSString *key4 = @"test4";
+    [dict setObject:@(value4) forKey:key4];
+
+    NSData *data = [self.prefHelper serializePrefDict:dict];
+    NSMutableDictionary *tmp = [self.prefHelper deserializePrefDictFromData:data];
+    
+    XCTAssert(tmp != nil);
+    XCTAssert([tmp isKindOfClass:NSMutableDictionary.class]);
+    XCTAssert(tmp.count == 4);
+    
+    XCTAssert([[tmp objectForKey:key1] isEqualToString:value1]);
+    XCTAssert([[tmp objectForKey:key2] isEqual:value2]);
+    XCTAssert([[tmp objectForKey:key3] isEqual:@(value3)]);
+    XCTAssert([[tmp objectForKey:key4] isEqual:@(value4)]);
+}
+
+// The legacy Apple Search Ads dictionary
+- (void)testSerializeDict_ASA {
+    NSMutableDictionary *dict = [NSMutableDictionary new];
+    
+    NSString *key = @"bnc_apple_search_ads_info";
+    NSDictionary *value = @{
+        @"Version3.1": @{
+            @"iad-attribution": @"true",
+            @"iad-campaign-id": @"1234567890",
+            @"iad-campaign-name": @"CampaignName",
+            @"iad-click-date": @"2022-02-01T01:22:37Z",
+            @"iad-conversion-date": @"2022-02-01T01:22:37Z",
+            @"iad-lineitem-id": @"1234567890",
+            @"iad-lineitem-name": @"LineName",
+            @"iad-org-name": @"OrgName",
+            @"iad-purchase-date": @"2022-02-01T01:22:37Z"
+        }
+    };
+    [dict setObject:value forKey:key];
+    NSData *data = [self.prefHelper serializePrefDict:dict];
+    
+    NSMutableDictionary *tmp = [self.prefHelper deserializePrefDictFromData:data];
+    
+    XCTAssert(tmp != nil);
+    XCTAssert([tmp isKindOfClass:NSMutableDictionary.class]);
+    
+    NSDictionary *asa = [tmp objectForKey:key];
+    
+    NSString *asaDesc = asa.description;
+    NSString *valueDesc = value.description;
+    XCTAssert([asaDesc isEqualToString:valueDesc]);
 }
 
 @end
