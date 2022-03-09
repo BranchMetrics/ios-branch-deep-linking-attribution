@@ -76,7 +76,7 @@
     NSString *keyB = @"testKeyB";
     
     NSDate *dateA = [NSDate date];
-    NSDate *dateB = [NSDate date];
+    NSDate *dateB = [NSDate dateWithTimeIntervalSinceNow:1];
     XCTAssertFalse([dateA isEqualToDate:dateB]);
     
     [BNCKeyChain storeDate:dateA forService:self.serviceName key:keyA cloudAccessGroup:nil];
