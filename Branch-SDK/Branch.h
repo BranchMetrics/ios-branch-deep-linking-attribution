@@ -1292,6 +1292,19 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (NSString *)getLongURLWithParams:(nullable NSDictionary *)params andChannel:(nullable NSString *)channel andTags:(nullable NSArray *)tags andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andAlias:(nullable NSString *)alias;
 
+/**
+ Get a long app.link url with specified params, tags, feature, stage, and alias. The usage type will default to unlimited.
+
+ @param params Dictionary of parameters to include in the link.
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param tags An array of tags to associate with this link, useful for tracking.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
+ @param alias The alias for a link.
+ @warning This can fail if the alias is already taken.
+ */
+- (NSString *)getLongAppLinkURLWithParams:(NSDictionary *)params andChannel:(nullable NSString *)channel andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
+
 #pragma mark - Short Url Async methods
 
 ///----------------------------------------
