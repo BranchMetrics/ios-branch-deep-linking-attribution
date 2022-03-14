@@ -131,7 +131,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (strong, nonatomic) BNCServerInterface *serverInterface;
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
-@property (assign, nonatomic)    NSInteger networkCount;
+@property (assign, nonatomic) NSInteger networkCount;
 @property (assign, nonatomic) BNCInitStatus initializationStatus;
 @property (assign, nonatomic) BOOL shouldAutomaticallyDeepLink;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
@@ -1423,6 +1423,10 @@ static NSString *bnc_branchKey = nil;
     return [self generateLongURLWithParams:params andChannel:nil andTags:nil andFeature:feature andStage:stage andAlias:alias];
 }
 
+- (NSString *)getLongAppLinkURLWithParams:(NSDictionary *)params andChannel:(nullable NSString *)channel andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
+    return [self generateLongAppLinkURLWithParams:params andChannel:channel andTags:tags andFeature:feature andStage:stage andAlias:alias];
+}
+
 #pragma mark - Discoverable content methods
 #if !TARGET_OS_TV
 
@@ -1740,6 +1744,27 @@ static NSString *bnc_branchKey = nil;
     NSString *baseLongUrl = [NSString stringWithFormat:@"%@/a/%@", BNC_LINK_URL, self.class.branchKey];
 
     return [self longUrlWithBaseUrl:baseLongUrl params:params tags:tags feature:feature
+        channel:nil stage:stage alias:alias duration:0 type:BranchLinkTypeUnlimitedUse];
+}
+
+- (NSString *)generateLongAppLinkURLWithParams:(NSDictionary *)params
+                                    andChannel:(NSString *)channel
+                                       andTags:(NSArray *)tags
+                                    andFeature:(NSString *)feature
+                                      andStage:(NSString *)stage
+                                      andAlias:(NSString *)alias {
+    
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    NSString *baseUrl;
+    
+    if (preferenceHelper.userUrl) {
+        NSString *fullUserUrl = [preferenceHelper sanitizedMutableBaseURL:preferenceHelper.userUrl];
+        baseUrl = [fullUserUrl componentsSeparatedByString:@"?"].firstObject;
+    } else {
+        baseUrl = [[NSMutableString alloc] initWithFormat:@"%@/a/%@?", BNC_LINK_URL, self.class.branchKey];
+    }
+    
+    return [self longUrlWithBaseUrl:baseUrl params:params tags:tags feature:feature
         channel:nil stage:stage alias:alias duration:0 type:BranchLinkTypeUnlimitedUse];
 }
 
