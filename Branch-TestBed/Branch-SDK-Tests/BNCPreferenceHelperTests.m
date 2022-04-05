@@ -213,4 +213,31 @@
     XCTAssert([asaDesc isEqualToString:valueDesc]);
 }
 
+- (void)testURLSkipList {
+    NSMutableDictionary *dict = [NSMutableDictionary new];
+    NSString *key = @"test";
+    NSArray<NSString *> *value = @[
+        @"^fb\\d+:",
+        @"^li\\d+:",
+        @"^pdk\\d+:",
+        @"^twitterkit-.*:",
+        @"^com\\.googleusercontent\\.apps\\.\\d+-.*:\\/oauth",
+        @"^(?i)(?!(http|https):).*(:|:.*\\b)(password|o?auth|o?auth.?token|access|access.?token)\\b",
+        @"^(?i)((http|https):\\/\\/).*[\\/|?|#].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b",
+    ];
+    [dict setObject:value forKey:key];
+    NSData *data = [self.prefHelper serializePrefDict:dict];
+    
+    NSMutableDictionary *tmp = [self.prefHelper deserializePrefDictFromData:data];
+    
+    XCTAssert(tmp != nil);
+    XCTAssert([tmp isKindOfClass:NSMutableDictionary.class]);
+    
+    NSArray *filter = [tmp objectForKey:key];
+    
+    NSString *filterDesc = filter.description;
+    NSString *valueDesc = value.description;
+    XCTAssert([filterDesc isEqualToString:valueDesc]);
+}
+
 @end
