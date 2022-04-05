@@ -811,7 +811,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     if (data) {
         if (@available(iOS 11.0, tvOS 11.0, *)) {
             NSError *error = nil;
-            NSSet *classes = [[NSMutableSet alloc] initWithArray:@[ NSString.class, NSDate.class, NSDictionary.class ]];
+            NSSet *classes = [[NSMutableSet alloc] initWithArray:@[ NSString.class, NSDate.class, NSArray.class, NSDictionary.class ]];
 
             dict = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes fromData:data error:&error];
             if (error) {
