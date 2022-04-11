@@ -341,4 +341,36 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     return nil;
 }
 
+- (void) addLPLinkMetadata:(NSString *)title iconURL:(NSURL *)icon API_AVAILABLE(ios(13.0)) {
+
+    LPLinkMetadata *metadata = [LPLinkMetadata new];
+
+    metadata.title = title;
+    
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    NSString *userURL = preferenceHelper.userUrl;
+    metadata.URL = [NSURL URLWithString: userURL];
+    
+    NSData *data = [NSData dataWithContentsOfURL:icon];
+    UIImage *image = [UIImage imageWithData:data];
+    metadata.iconProvider = [[NSItemProvider new] initWithObject:image];
+
+    self.lpMetaData = metadata;
+}
+
+- (void) addLPLinkMetadata:(NSString *)title icon:(NSURL *)icon API_AVAILABLE(ios(13.0)) {
+
+    LPLinkMetadata *metadata = [LPLinkMetadata new];
+
+    metadata.title = title;
+    
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    NSString *userURL = preferenceHelper.userUrl;
+    metadata.URL = [NSURL URLWithString: userURL];
+    
+    metadata.iconProvider = [[NSItemProvider new] initWithObject:icon];
+
+    self.lpMetaData = metadata;
+}
+
 @end
