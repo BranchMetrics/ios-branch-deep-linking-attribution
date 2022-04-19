@@ -19,17 +19,17 @@ typedef NS_ENUM(NSInteger, BranchQRCodeImageType){
 
 @interface BranchQRCode : NSObject
 
-//Primary color of the generated QR code itself.
+/// Primary color of the generated QR code itself.
 @property (nonatomic, copy, readwrite) UIColor *codeColor;
-//Secondary color used as the QR Code background.
+/// Secondary color used as the QR Code background.
 @property (nonatomic, copy, readwrite) UIColor *backgroundColor;
-//A URL of an image that will be added to the center of the QR code. Must be a PNG or JPEG.
+/// A URL of an image that will be added to the center of the QR code. Must be a PNG or JPEG.
 @property (nonatomic, copy, readwrite) NSString *centerLogo;
-//Output size of QR Code image. Min 500px. Max 2000px.
+/// Output size of QR Code image. Min 500px. Max 2000px.
 @property (nonatomic, readwrite) NSNumber *width;
-//The number of pixels you want for the margin. Min 0px. Max 20px.
+/// The number of pixels for the QR code's border.  Min 0px. Max 20px.
 @property (nonatomic, readwrite) NSNumber *margin;
-//Format of the returned QR code. Can be a JPEG or PNG.
+/// Format of the returned QR code. Can be a JPEG or PNG.
 @property (nonatomic, assign, readwrite) BranchQRCodeImageType imageType;
 
 /**

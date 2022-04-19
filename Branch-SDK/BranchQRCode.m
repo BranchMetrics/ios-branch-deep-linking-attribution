@@ -42,7 +42,6 @@
     
     if (self.codeColor) { settings[@"code_color"] = [self hexStringForColor:self.codeColor]; }
     if (self.backgroundColor) { settings[@"background_color"] = [self hexStringForColor:self.backgroundColor]; }
-    if (self.centerLogo) { settings[@"center_logo_url"] = self.centerLogo; }
     if (self.margin) { settings[@"margin"] = self.margin; }
     if (self.width) { settings[@"width"] = self.width; }
 
@@ -50,6 +49,19 @@
         settings[@"image_format"] = @"jpeg";
     } else {
         settings[@"image_format"] = @"png";
+    }
+
+    if (self.centerLogo) {
+        NSData *data=[NSData dataWithContentsOfURL:[NSURL URLWithString: self.centerLogo]];
+        UIImage *image=[UIImage imageWithData:data];
+        if (image == nil) {
+            //yourImageURL is not valid
+            BNCLogWarning(@"QR code center logo was an invalid URL string.");
+        } else{
+            
+            settings[@"center_logo_url"] = self.centerLogo;
+            BNCLogWarning(@"Valid QR code center logo.");
+        }
     }
     
     NSMutableDictionary *parameters = [NSMutableDictionary new];
@@ -92,7 +104,7 @@
     NSURLSessionDataTask *postDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         
         if (error) {
-            NSLog(@"QR Code Post Request Error: %@", [error localizedDescription]);
+            BNCLogError([NSString stringWithFormat:@"QR Code Post Request Error: %@", [error localizedDescription]]);
             completion(nil, error);
             return;
         }
@@ -101,14 +113,12 @@
         
         if(httpResponse.statusCode == 200)
         {
-            NSDictionary *responseDictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-            NSLog(@"The response is - %@",responseDictionary);
             UIImage *qrCode = [UIImage imageWithData:data scale:1];
             completion(qrCode, nil);
         } else {
             
             NSDictionary *responseDictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-            NSLog(@"Error with response and Status Code %ld: %@", (long)httpResponse.statusCode, responseDictionary);
+            BNCLogError([NSString stringWithFormat:@"Error with response and Status Code %ld: %@", (long)httpResponse.statusCode, responseDictionary]);
             error = [NSError branchErrorWithCode: BNCBadRequestError localizedMessage: responseDictionary[@"message"]];
             
             completion(nil, error);
@@ -116,6 +126,11 @@
     }];
     
     [postDataTask resume];
+}
+
+- (BOOL)isValidUrl:(NSString *)urlString{
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlString]];
+    return [NSURLConnection canHandleRequest:request];
 }
 
 - (NSString *)hexStringForColor:(UIColor *)color {

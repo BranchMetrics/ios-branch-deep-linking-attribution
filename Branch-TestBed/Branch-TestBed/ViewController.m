@@ -702,5 +702,32 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     }
 }
 
+- (IBAction)createQRCode:(id)sender {
+    BranchQRCode *qrCode = [BranchQRCode new];
+    
+    BranchUniversalObject *buo = [BranchUniversalObject new];
+    BranchLinkProperties *lp = [BranchLinkProperties new];
+    
+    [qrCode getQRCode:buo linkProperties:lp completion:^(UIImage * _Nonnull qrCode, NSError * _Nonnull error) {
+        NSLog(@"Received QR Code Image: %@", qrCode);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            
+            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 200, 282)];
+            imageView.contentMode = UIViewContentModeScaleAspectFit;
+            [imageView setImage:qrCode];
+            UIAlertView *alertView = [[UIAlertView alloc]  initWithTitle:@"Your QR Code"
+                                                                 message:@""
+                                                                delegate:self
+                                                       cancelButtonTitle:@"Dismiss"
+                                                       otherButtonTitles:nil];
+            [alertView setValue:imageView forKey:@"accessoryView"];
+            
+            [alertView show];
+        });
+    }];
+}
+
 
 @end
