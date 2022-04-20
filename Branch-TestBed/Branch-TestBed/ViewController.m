@@ -712,8 +712,7 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
         NSLog(@"Received QR Code Image: %@", qrCode);
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            
-            
+
             UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 200, 282)];
             imageView.contentMode = UIViewContentModeScaleAspectFit;
             [imageView setImage:qrCode];
@@ -722,8 +721,8 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
                                                                 delegate:self
                                                        cancelButtonTitle:@"Dismiss"
                                                        otherButtonTitles:nil];
-            [alertView setValue:imageView forKey:@"accessoryView"];
             
+            [alertView setValue:imageView forKey:@"accessoryView"];
             [alertView show];
         });
     }];

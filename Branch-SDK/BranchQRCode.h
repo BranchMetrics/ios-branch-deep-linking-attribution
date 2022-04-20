@@ -44,6 +44,19 @@ Creates a Branch QR Code image.
     linkProperties:(BranchLinkProperties*_Nullable)lp
         completion:(void(^)(UIImage *qrCode, NSError *error))completion;
 
+/**
+Creates a Branch QR Code image and displays it in a share sheet.
+
+@param buo  The Branch Universal Object the will be shared.
+@param lp   The link properties that the link will have.
+@param completion   Completion handler containing any potential error.
+ 
+ */
+- (void) showShareSheetWithQRCodeFromViewController:(UIViewController*_Nullable)viewController
+                                    universalObject:(BranchUniversalObject*_Nullable)buo
+                                     linkProperties:(BranchLinkProperties*_Nullable)lp
+                                         completion:(void(^)(NSError *error))completion;
+
 @end
 
 NS_ASSUME_NONNULL_END

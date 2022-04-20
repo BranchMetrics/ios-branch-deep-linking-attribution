@@ -5,10 +5,14 @@
 //  Created by Nipun Singh on 3/22/22.
 //
 
+#import <LinkPresentation/LPLinkMetadata.h>
 #import "BranchQRCode.h"
 #import "Branch.h"
 
 @implementation BranchQRCode
+
+NSString *buoTitle;
+UIImage *qrCodeImage;
 
 - (void) setMargin:(NSNumber *)margin {
     if (margin.intValue > 20) {
@@ -40,27 +44,23 @@
 
     NSMutableDictionary *settings = [NSMutableDictionary new];
     
-    if (self.codeColor) { settings[@"code_color"] = [self hexStringForColor:self.codeColor]; }
-    if (self.backgroundColor) { settings[@"background_color"] = [self hexStringForColor:self.backgroundColor]; }
+    //if (self.codeColor) { settings[@"code_color"] = [self hexStringForColor:self.codeColor]; }
+    //if (self.backgroundColor) { settings[@"background_color"] = [self hexStringForColor:self.backgroundColor]; }
+    
+    settings[@"code_color"] = @"#FF2B00";
+    settings[@"background_color"] = @"#FFFFFF";
     if (self.margin) { settings[@"margin"] = self.margin; }
     if (self.width) { settings[@"width"] = self.width; }
-
-    if (self.imageType == BranchQRCodeImageTypeJPEG) {
-        settings[@"image_format"] = @"jpeg";
-    } else {
-        settings[@"image_format"] = @"png";
-    }
-
+    
+    settings[@"image_format"] = (self.imageType == BranchQRCodeImageTypeJPEG) ? @"JPEG" : @"PNG";
+    
     if (self.centerLogo) {
         NSData *data=[NSData dataWithContentsOfURL:[NSURL URLWithString: self.centerLogo]];
         UIImage *image=[UIImage imageWithData:data];
         if (image == nil) {
-            //yourImageURL is not valid
             BNCLogWarning(@"QR code center logo was an invalid URL string.");
-        } else{
-            
+        } else {
             settings[@"center_logo_url"] = self.centerLogo;
-            BNCLogWarning(@"Valid QR code center logo.");
         }
     }
     
@@ -113,7 +113,8 @@
         
         if(httpResponse.statusCode == 200)
         {
-            UIImage *qrCode = [UIImage imageWithData:data scale:1];
+            UIImage *qrCode =  [UIImage imageWithData:data];
+            
             completion(qrCode, nil);
         } else {
             
@@ -126,6 +127,49 @@
     }];
     
     [postDataTask resume];
+}
+
+- (void)showShareSheetWithQRCodeFromViewController:(UIViewController *)viewController
+                                   universalObject:(BranchUniversalObject *)buo
+                                    linkProperties:(BranchLinkProperties *)lp
+                                        completion:(void (^)(NSError * _Nonnull))completion {
+    
+    [self getQRCode:buo linkProperties:lp completion:^(UIImage * _Nonnull qrCode, NSError * _Nonnull error) {
+        
+        if (qrCode) {
+            dispatch_async(dispatch_get_main_queue(), ^(void) {
+                
+                buoTitle = buo.title;
+                qrCodeImage = qrCode;
+                
+                NSArray *items = @[qrCode, self];
+                UIActivityViewController *activityVC = [[UIActivityViewController new] initWithActivityItems:items applicationActivities:nil];
+                [viewController presentViewController:activityVC animated:YES completion:nil];
+                
+                completion(error);
+            });
+        } else {
+            completion(error);
+        }
+    }];
+}
+
+// Helper Functions
+
+- (LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController API_AVAILABLE(ios(13.0)) {
+    LPLinkMetadata * metaData = [[LPLinkMetadata alloc] init];
+    metaData.title = buoTitle;
+    
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    NSString *userURL = preferenceHelper.userUrl;
+    metaData.originalURL = [NSURL URLWithString:userURL];
+    metaData.URL = [NSURL URLWithString:userURL];
+    
+    NSItemProvider * imageProvider = [[NSItemProvider alloc] initWithObject:qrCodeImage];
+    metaData.iconProvider = imageProvider;
+    metaData.imageProvider = imageProvider;
+    
+    return metaData;
 }
 
 - (BOOL)isValidUrl:(NSString *)urlString{
