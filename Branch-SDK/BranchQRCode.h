@@ -33,16 +33,28 @@ typedef NS_ENUM(NSInteger, BranchQRCodeImageType){
 @property (nonatomic, assign, readwrite) BranchQRCodeImageType imageType;
 
 /**
-Creates a Branch QR Code image.
+Creates a Branch QR Code image. Returns the QR code as a UIImage.
 
 @param buo  The Branch Universal Object the will be shared.
 @param lp   The link properties that the link will have.
 @param completion   Completion handler containing the QR code image and error.
 
 */
-- (void) getQRCode:(BranchUniversalObject*_Nullable)buo
+- (void) getQRCodeAsImage:(BranchUniversalObject*_Nullable)buo
     linkProperties:(BranchLinkProperties*_Nullable)lp
-        completion:(void(^)(UIImage *qrCode, NSError *error))completion;
+        completion:(void(^)(UIImage * _Nullable qrCode, NSError * _Nullable error))completion;
+
+/**
+Creates a Branch QR Code image. Returns the QR code as NSData.
+
+@param buo  The Branch Universal Object the will be shared.
+@param lp   The link properties that the link will have.
+@param completion   Completion handler containing the QR code image and error.
+
+*/
+- (void) getQRCodeAsData:(BranchUniversalObject*_Nullable)buo
+    linkProperties:(BranchLinkProperties*_Nullable)lp
+        completion:(void(^)(NSData * _Nullable qrCode, NSError * _Nullable error))completion;
 
 /**
 Creates a Branch QR Code image and displays it in a share sheet.
@@ -53,9 +65,10 @@ Creates a Branch QR Code image and displays it in a share sheet.
  
  */
 - (void) showShareSheetWithQRCodeFromViewController:(UIViewController*_Nullable)viewController
+                                             anchor:(id _Nullable)anchorViewOrButtonItem
                                     universalObject:(BranchUniversalObject*_Nullable)buo
                                      linkProperties:(BranchLinkProperties*_Nullable)lp
-                                         completion:(void(^)(NSError *error))completion;
+                                         completion:(void(^)(NSError * _Nullable error))completion;
 
 @end
 

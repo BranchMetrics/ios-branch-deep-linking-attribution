@@ -38,17 +38,14 @@ UIImage *qrCodeImage;
     _width = width;
 }
 
-- (void) getQRCode:(BranchUniversalObject*_Nullable)buo
-    linkProperties:(BranchLinkProperties*_Nullable)lp
-        completion:(void(^)(UIImage *qrCode, NSError *error))completion {
-
+- (void) getQRCodeAsData:(BranchUniversalObject*_Nullable)buo
+          linkProperties:(BranchLinkProperties*_Nullable)lp
+              completion:(void(^)(NSData * _Nullable qrCode, NSError * _Nullable error))completion {
+    
     NSMutableDictionary *settings = [NSMutableDictionary new];
     
-    //if (self.codeColor) { settings[@"code_color"] = [self hexStringForColor:self.codeColor]; }
-    //if (self.backgroundColor) { settings[@"background_color"] = [self hexStringForColor:self.backgroundColor]; }
-    
-    settings[@"code_color"] = @"#FF2B00";
-    settings[@"background_color"] = @"#FFFFFF";
+    if (self.codeColor) { settings[@"code_color"] = [self hexStringForColor:self.codeColor]; }
+    if (self.backgroundColor) { settings[@"background_color"] = [self hexStringForColor:self.backgroundColor]; }
     if (self.margin) { settings[@"margin"] = self.margin; }
     if (self.width) { settings[@"width"] = self.width; }
     
@@ -65,7 +62,7 @@ UIImage *qrCodeImage;
     }
     
     NSMutableDictionary *parameters = [NSMutableDictionary new];
-
+    
     if (lp.channel) { parameters[@"channel"] = lp.channel; }
     if (lp.feature) { parameters[@"feature"] = lp.feature; }
     if (lp.campaign) { parameters[@"campaign"] = lp.campaign; }
@@ -76,15 +73,30 @@ UIImage *qrCodeImage;
     parameters[@"data"] = [buo dictionary];
     parameters[@"branch_key"] = [Branch branchKey];
     
-     [self callQRCodeAPI:parameters completion:^(UIImage * _Nonnull qrCode, NSError * _Nonnull error){
-         if (completion != nil) {
-             completion(qrCode, error);
-         }
+    [self callQRCodeAPI:parameters completion:^(NSData * _Nonnull qrCode, NSError * _Nonnull error){
+        if (completion != nil) {
+            completion(qrCode, error);
+        }
+    }];
+}
+
+- (void)getQRCodeAsImage:(BranchUniversalObject *)buo linkProperties:(BranchLinkProperties *)lp completion:(void (^)(UIImage * _Nonnull, NSError * _Nonnull))completion {
+    
+    [self getQRCodeAsData:buo linkProperties:lp completion:^(NSData * _Nonnull qrCode, NSError * _Nonnull error) {
+        if (completion != nil) {
+            if (error) {
+                UIImage *img = [UIImage new];
+                completion(img, error);
+            } else {
+                UIImage *qrCodeImage =  [UIImage imageWithData:qrCode];
+                completion(qrCodeImage, error);
+            }
+        }
     }];
 }
 
 - (void) callQRCodeAPI:(NSDictionary*_Nullable)params
-            completion:(void(^)(UIImage *qrCode, NSError *error))completion {
+            completion:(void(^)(NSData * _Nullable qrCode, NSError * _Nullable error))completion {
     
     NSError *error;
     
@@ -111,11 +123,8 @@ UIImage *qrCodeImage;
         
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
         
-        if(httpResponse.statusCode == 200)
-        {
-            UIImage *qrCode =  [UIImage imageWithData:data];
-            
-            completion(qrCode, nil);
+        if (httpResponse.statusCode == 200) {
+            completion(data, nil);
         } else {
             
             NSDictionary *responseDictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
@@ -130,26 +139,59 @@ UIImage *qrCodeImage;
 }
 
 - (void)showShareSheetWithQRCodeFromViewController:(UIViewController *)viewController
+                                            anchor:(id _Nullable)anchorViewOrButtonItem
                                    universalObject:(BranchUniversalObject *)buo
                                     linkProperties:(BranchLinkProperties *)lp
                                         completion:(void (^)(NSError * _Nonnull))completion {
     
-    [self getQRCode:buo linkProperties:lp completion:^(UIImage * _Nonnull qrCode, NSError * _Nonnull error) {
-        
-        if (qrCode) {
-            dispatch_async(dispatch_get_main_queue(), ^(void) {
-                
-                buoTitle = buo.title;
-                qrCodeImage = qrCode;
-                
-                NSArray *items = @[qrCode, self];
-                UIActivityViewController *activityVC = [[UIActivityViewController new] initWithActivityItems:items applicationActivities:nil];
-                [viewController presentViewController:activityVC animated:YES completion:nil];
-                
+    [self getQRCodeAsImage:buo linkProperties:lp completion:^(UIImage * _Nonnull qrCode, NSError * _Nonnull error) {
+        if (completion != nil) {
+            if (qrCode) {
+                dispatch_async(dispatch_get_main_queue(), ^(void) {
+                    
+                    buoTitle = buo.title;
+                    qrCodeImage = qrCode;
+                    
+                    NSArray *items = @[qrCode, self];
+                    UIActivityViewController *activityViewController = [[UIActivityViewController new] initWithActivityItems:items applicationActivities:nil];
+                    
+                    UIViewController *presentingViewController = nil;
+                    if ([viewController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
+                        presentingViewController = viewController;
+                    } else {
+                        UIViewController *rootController = [UIViewController bnc_currentViewController];
+                        if ([rootController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
+                            presentingViewController = rootController;
+                        }
+                    }
+
+                    if (!presentingViewController) {
+                        BNCLogError(@"No view controller is present to show the share sheet. Not showing sheet.");
+                        return;
+                    }
+
+                    // Required for iPad/Universal apps on iOS 8+
+                    if ([presentingViewController respondsToSelector:@selector(popoverPresentationController)]) {
+                        if ([anchorViewOrButtonItem isKindOfClass:UIBarButtonItem.class]) {
+                            UIBarButtonItem *anchor = (UIBarButtonItem*) anchorViewOrButtonItem;
+                            activityViewController.popoverPresentationController.barButtonItem = anchor;
+                        } else
+                        if ([anchorViewOrButtonItem isKindOfClass:UIView.class]) {
+                            UIView *anchor = (UIView*) anchorViewOrButtonItem;
+                            activityViewController.popoverPresentationController.sourceView = anchor;
+                            activityViewController.popoverPresentationController.sourceRect = anchor.bounds;
+                        } else {
+                            activityViewController.popoverPresentationController.sourceView = presentingViewController.view;
+                            activityViewController.popoverPresentationController.sourceRect = CGRectMake(0.0, 0.0, 40.0, 40.0);
+                        }
+                    }
+                    [presentingViewController presentViewController:activityViewController animated:YES completion:nil];
+                    
+                    completion(error);
+                });
+            } else {
                 completion(error);
-            });
-        } else {
-            completion(error);
+            }
         }
     }];
 }
@@ -178,27 +220,27 @@ UIImage *qrCodeImage;
 }
 
 - (NSString *)hexStringForColor:(UIColor *)color {
-        CGColorSpaceModel colorSpace = CGColorSpaceGetModel(CGColorGetColorSpace(color.CGColor));
-        const CGFloat *components = CGColorGetComponents(color.CGColor);
-
-        CGFloat r, g, b;
-
-        if (colorSpace == kCGColorSpaceModelMonochrome) {
-            r = components[0];
-            g = components[0];
-            b = components[0];
-        }
-        else {
-            r = components[0];
-            g = components[1];
-            b = components[2];
-        }
-
-        return [NSString stringWithFormat:@"#%02lX%02lX%02lX",
-                lroundf(r * 255),
-                lroundf(g * 255),
-                lroundf(b * 255)
-        ];
+    CGColorSpaceModel colorSpace = CGColorSpaceGetModel(CGColorGetColorSpace(color.CGColor));
+    const CGFloat *components = CGColorGetComponents(color.CGColor);
+    
+    CGFloat r, g, b;
+    
+    if (colorSpace == kCGColorSpaceModelMonochrome) {
+        r = components[0];
+        g = components[0];
+        b = components[0];
     }
+    else {
+        r = components[0];
+        g = components[1];
+        b = components[2];
+    }
+    
+    return [NSString stringWithFormat:@"#%02lX%02lX%02lX",
+            lroundf(r * 255),
+            lroundf(g * 255),
+            lroundf(b * 255)
+    ];
+}
 
 @end
