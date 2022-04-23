@@ -49,7 +49,7 @@ UIImage *qrCodeImage;
     if (self.margin) { settings[@"margin"] = self.margin; }
     if (self.width) { settings[@"width"] = self.width; }
     
-    settings[@"image_format"] = (self.imageType == BranchQRCodeImageTypeJPEG) ? @"JPEG" : @"PNG";
+    settings[@"image_format"] = (self.imageFormat == BranchQRCodeImageFormatJPEG) ? @"JPEG" : @"PNG";
     
     if (self.centerLogo) {
         NSData *data=[NSData dataWithContentsOfURL:[NSURL URLWithString: self.centerLogo]];

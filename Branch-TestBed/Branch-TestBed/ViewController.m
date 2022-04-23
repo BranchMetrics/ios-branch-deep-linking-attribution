@@ -708,7 +708,7 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     BranchUniversalObject *buo = [BranchUniversalObject new];
     BranchLinkProperties *lp = [BranchLinkProperties new];
     
-    [qrCode getQRCode:buo linkProperties:lp completion:^(UIImage * _Nonnull qrCode, NSError * _Nonnull error) {
+    [qrCode getQRCodeAsImage:buo linkProperties:lp completion:^(UIImage * _Nonnull qrCode, NSError * _Nonnull error) {
         NSLog(@"Received QR Code Image: %@", qrCode);
         
         dispatch_async(dispatch_get_main_queue(), ^{

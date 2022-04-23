@@ -6,15 +6,14 @@
 //  Copyright © 2022 Branch, Inc. All rights reserved.
 //
 
-//#import <Foundation/Foundation.h>
 #import "BranchUniversalObject.h"
 #import "BranchLinkProperties.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSInteger, BranchQRCodeImageType){
-    BranchQRCodeImageTypePNG,
-    BranchQRCodeImageTypeJPEG
+typedef NS_ENUM(NSInteger, BranchQRCodeImageFormat){
+    BranchQRCodeImageFormatPNG,
+    BranchQRCodeImageFormatJPEG
 };
 
 @interface BranchQRCode : NSObject
@@ -30,7 +29,7 @@ typedef NS_ENUM(NSInteger, BranchQRCodeImageType){
 /// The number of pixels for the QR code's border.  Min 0px. Max 20px.
 @property (nonatomic, readwrite) NSNumber *margin;
 /// Format of the returned QR code. Can be a JPEG or PNG.
-@property (nonatomic, assign, readwrite) BranchQRCodeImageType imageType;
+@property (nonatomic, assign, readwrite) BranchQRCodeImageFormat imageFormat;
 
 /**
 Creates a Branch QR Code image. Returns the QR code as a UIImage.

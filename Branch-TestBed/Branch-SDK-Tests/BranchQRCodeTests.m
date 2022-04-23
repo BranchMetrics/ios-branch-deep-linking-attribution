@@ -15,31 +15,31 @@
 
 @implementation BranchQRCodeTests
 
-- (void)testNormalQRCodeWithAllSettings {
+- (void)testNormalQRCodeDataWithAllSettings {
     BranchQRCode *qrCode = [BranchQRCode new];
     qrCode.width = @(1000);
     qrCode.margin = @(1);
     qrCode.codeColor = [UIColor blueColor];
     qrCode.backgroundColor = [UIColor whiteColor];
     qrCode.centerLogo = @"https://en.wikipedia.org/wiki/File:Example.jpg";
-    qrCode.imageType = BranchQRCodeImageTypeJPEG;
+    qrCode.imageFormat = BranchQRCodeImageFormatPNG;
     
     BranchUniversalObject *buo = [BranchUniversalObject new];
     BranchLinkProperties *lp = [BranchLinkProperties new];
     
-    [qrCode getQRCode:buo linkProperties:lp completion:^(UIImage * _Nonnull qrCode, NSError * _Nonnull error) {
+    [qrCode getQRCodeAsData:buo linkProperties:lp completion:^(NSData * _Nonnull qrCode, NSError * _Nonnull error) {
         XCTAssertNil(error);
         XCTAssertNotNil(qrCode);
     }];
 }
 
-- (void)testNormalQRCodeWithNoSettings {
+- (void)testNormalQRCodeAsDataWithNoSettings {
     BranchQRCode *qrCode = [BranchQRCode new];
     
     BranchUniversalObject *buo = [BranchUniversalObject new];
     BranchLinkProperties *lp = [BranchLinkProperties new];
     
-    [qrCode getQRCode:buo linkProperties:lp completion:^(UIImage * _Nonnull qrCode, NSError * _Nonnull error) {
+    [qrCode getQRCodeAsData:buo linkProperties:lp completion:^(NSData * _Nonnull qrCode, NSError * _Nonnull error) {
         XCTAssertNil(error);
         XCTAssertNotNil(qrCode);
     }];
@@ -52,7 +52,19 @@
     BranchUniversalObject *buo = [BranchUniversalObject new];
     BranchLinkProperties *lp = [BranchLinkProperties new];
     
-    [qrCode getQRCode:buo linkProperties:lp completion:^(UIImage * _Nonnull qrCode, NSError * _Nonnull error) {
+    [qrCode getQRCodeAsData:buo linkProperties:lp completion:^(NSData * _Nonnull qrCode, NSError * _Nonnull error) {
+        XCTAssertNil(error);
+        XCTAssertNotNil(qrCode);
+    }];
+}
+
+- (void)testNormalQRCodeAsImage {
+    BranchQRCode *qrCode = [BranchQRCode new];
+    
+    BranchUniversalObject *buo = [BranchUniversalObject new];
+    BranchLinkProperties *lp = [BranchLinkProperties new];
+    
+    [qrCode getQRCodeAsImage:buo linkProperties:lp completion:^(UIImage * _Nonnull qrCode, NSError * _Nonnull error) {
         XCTAssertNil(error);
         XCTAssertNotNil(qrCode);
     }];
