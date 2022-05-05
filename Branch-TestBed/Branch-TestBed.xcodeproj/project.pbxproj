@@ -266,6 +266,7 @@
 		7D58823A1CA1DF2700FF6358 /* BNCDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5882391CA1DF2700FF6358 /* BNCDeviceInfo.m */; };
 		9A2B7DD51FEC3BAF00CD188B /* Branch+Validator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A2B7DD31FEC3BAE00CD188B /* Branch+Validator.h */; };
 		9A2B7DD61FEC3BAF00CD188B /* Branch+Validator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A2B7DD41FEC3BAE00CD188B /* Branch+Validator.m */; };
+		C10C61AA282481FB00761D7E /* BranchShareLinkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10C61A9282481FB00761D7E /* BranchShareLinkTests.m */; };
 		C10F393A27A0872800BF5D36 /* BranchPluginSupportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10F393927A0872800BF5D36 /* BranchPluginSupportTests.m */; };
 		C10F394127A08C2400BF5D36 /* BranchPluginSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = C10F393F27A08C2400BF5D36 /* BranchPluginSupport.h */; };
 		C10F394227A08C2400BF5D36 /* BranchPluginSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = C10F394027A08C2400BF5D36 /* BranchPluginSupport.m */; };
@@ -604,6 +605,7 @@
 		9A2B7DD31FEC3BAE00CD188B /* Branch+Validator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Branch+Validator.h"; sourceTree = "<group>"; };
 		9A2B7DD41FEC3BAE00CD188B /* Branch+Validator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Branch+Validator.m"; sourceTree = "<group>"; };
 		BD84AC94725CA0D8C816E00F /* Pods-Branch-SDK-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-SDK-Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-SDK-Tests/Pods-Branch-SDK-Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		C10C61A9282481FB00761D7E /* BranchShareLinkTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchShareLinkTests.m; sourceTree = "<group>"; };
 		C10F393927A0872800BF5D36 /* BranchPluginSupportTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchPluginSupportTests.m; sourceTree = "<group>"; };
 		C10F393F27A08C2400BF5D36 /* BranchPluginSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchPluginSupport.h; sourceTree = "<group>"; };
 		C10F394027A08C2400BF5D36 /* BranchPluginSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchPluginSupport.m; sourceTree = "<group>"; };
@@ -691,6 +693,7 @@
 		4D16837A2098C901008819E3 /* Branch-SDK-Tests */ = {
 			isa = PBXGroup;
 			children = (
+				C10C61A9282481FB00761D7E /* BranchShareLinkTests.m */,
 				C10F393927A0872800BF5D36 /* BranchPluginSupportTests.m */,
 				5FD1786D26DEE49C009696E3 /* BNCPasteboardTests.m */,
 				5F92B23B2384744A00CA909B /* BNCLocaleTests.m */,
@@ -1552,6 +1555,7 @@
 				4D1683A62098C902008819E3 /* BranchSetIdentityRequestTests.m in Sources */,
 				4D1683BC2098C902008819E3 /* BranchDelegate.Test.m in Sources */,
 				4D1683B62098C902008819E3 /* BNCURLFilterTests.m in Sources */,
+				C10C61AA282481FB00761D7E /* BranchShareLinkTests.m in Sources */,
 				5F892EBB2360F0290023AEC1 /* BNCAppleSearchAdsTests.m in Sources */,
 				5F437E40237E1A560052064B /* BNCDeviceSystemTests.m in Sources */,
 				4D1683AC2098C902008819E3 /* BranchInstallRequestTests.m in Sources */,

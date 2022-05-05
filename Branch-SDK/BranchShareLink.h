@@ -129,15 +129,15 @@ Presents a UIActivityViewController that shares the Branch link.
 @property void (^ _Nullable completionError)(NSString * _Nullable activityType, BOOL completed, NSError*_Nullable error);
 
 /**
-Creates and attaches an LPLinkMetadata using the provided title and icon.
+Creates and attaches an LPLinkMetadata using the provided title and icon. This method is only available on iOS 13.0 or greater.
 
 @param title           The string that will appear in the share sheet preview,
 @param icon             The image URL or UIImage of the share sheet preview icon.
 */
-- (void) addLPLinkMetadata:(NSString*_Nullable)title
-                      iconURL:(NSURL*_Nullable)icon;
+- (void) addLPLinkMetadata:(NSString *_Nullable)title
+                   iconURL:(NSURL *_Nullable)icon API_AVAILABLE(ios(13.0));
 
-- (void) addLPLinkMetadata:(NSString*_Nullable)title
-                      icon:(UIImage*_Nullable)icon;
+- (void) addLPLinkMetadata:(NSString *_Nullable)title
+                      icon:(NSURL *_Nullable)icon API_AVAILABLE(ios(13.0));
 
 @end
