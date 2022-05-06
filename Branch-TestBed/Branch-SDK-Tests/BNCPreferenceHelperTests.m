@@ -248,7 +248,7 @@
     XCTAssertEqual(self.prefHelper.referrerGBRAIDValidityWindow, DEFAULT_REFERRER_GBRAID_WINDOW);
     
     NSTimeInterval randomNumber = 9000;
-    [Branch setReferrerGbraidValidityWindow:randomNumber];
+    self.prefHelper.referrerGBRAIDValidityWindow = randomNumber;
     XCTAssertEqual(self.prefHelper.referrerGBRAIDValidityWindow, randomNumber);
     
     NSString *gbraidValue = @"CjwKCAiA3L6PBhBvEiwAINlJ9Chixm216y8kYYJ1K94dm4FEkOgFfhIdKQdjWsYB7FqE7rf_zkGNEhoCuIEQAvD_BwE";
