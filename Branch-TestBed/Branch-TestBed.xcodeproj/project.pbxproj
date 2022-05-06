@@ -266,6 +266,8 @@
 		7D58823A1CA1DF2700FF6358 /* BNCDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5882391CA1DF2700FF6358 /* BNCDeviceInfo.m */; };
 		9A2B7DD51FEC3BAF00CD188B /* Branch+Validator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A2B7DD31FEC3BAE00CD188B /* Branch+Validator.h */; };
 		9A2B7DD61FEC3BAF00CD188B /* Branch+Validator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A2B7DD41FEC3BAE00CD188B /* Branch+Validator.m */; };
+		C10C61AD28248E5A00761D7E /* BNCQRCodeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = C10C61AB28248E5A00761D7E /* BNCQRCodeCache.h */; };
+		C10C61AE28248E5A00761D7E /* BNCQRCodeCache.m in Sources */ = {isa = PBXBuildFile; fileRef = C10C61AC28248E5A00761D7E /* BNCQRCodeCache.m */; };
 		C10F393A27A0872800BF5D36 /* BranchPluginSupportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10F393927A0872800BF5D36 /* BranchPluginSupportTests.m */; };
 		C10F394127A08C2400BF5D36 /* BranchPluginSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = C10F393F27A08C2400BF5D36 /* BranchPluginSupport.h */; };
 		C10F394227A08C2400BF5D36 /* BranchPluginSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = C10F394027A08C2400BF5D36 /* BranchPluginSupport.m */; };
@@ -608,6 +610,8 @@
 		9A2B7DD31FEC3BAE00CD188B /* Branch+Validator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Branch+Validator.h"; sourceTree = "<group>"; };
 		9A2B7DD41FEC3BAE00CD188B /* Branch+Validator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Branch+Validator.m"; sourceTree = "<group>"; };
 		BD84AC94725CA0D8C816E00F /* Pods-Branch-SDK-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-SDK-Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-SDK-Tests/Pods-Branch-SDK-Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		C10C61AB28248E5A00761D7E /* BNCQRCodeCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCQRCodeCache.h; sourceTree = "<group>"; };
+		C10C61AC28248E5A00761D7E /* BNCQRCodeCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCQRCodeCache.m; sourceTree = "<group>"; };
 		C10F393927A0872800BF5D36 /* BranchPluginSupportTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchPluginSupportTests.m; sourceTree = "<group>"; };
 		C10F393F27A08C2400BF5D36 /* BranchPluginSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchPluginSupport.h; sourceTree = "<group>"; };
 		C10F394027A08C2400BF5D36 /* BranchPluginSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchPluginSupport.m; sourceTree = "<group>"; };
@@ -1056,6 +1060,8 @@
 				3A78D575251EB5BF002A25CF /* BranchJsonConfig.m */,
 				5FDF914325818280009BE5A3 /* BNCPartnerParameters.h */,
 				5FDF914425818280009BE5A3 /* BNCPartnerParameters.m */,
+				C10C61AB28248E5A00761D7E /* BNCQRCodeCache.h */,
+				C10C61AC28248E5A00761D7E /* BNCQRCodeCache.m */,
 			);
 			name = "Branch-SDK";
 			path = "../Branch-SDK";
@@ -1125,6 +1131,7 @@
 				4DCAC8061F426F7C00405D1D /* BNCEncodingUtils.h in Headers */,
 				5F92B23123834AFD00CA909B /* BNCReachability.h in Headers */,
 				4DCAC80E1F426F7C00405D1D /* BNCSystemObserver.h in Headers */,
+				C10C61AD28248E5A00761D7E /* BNCQRCodeCache.h in Headers */,
 				5FE693F72405E91500E3AEE2 /* BNCCallbackMap.h in Headers */,
 				5F92B2392383703700CA909B /* BNCLocale.h in Headers */,
 				5F38021F24DCC2E800E6FAFD /* BNCServerResponse.h in Headers */,
@@ -1447,6 +1454,7 @@
 				F1D359211ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m in Sources */,
 				466B585F1B17779C00A69EDE /* BNCSystemObserver.m in Sources */,
 				4DB567341E79F46000A8A324 /* BranchShareLink.m in Sources */,
+				C10C61AE28248E5A00761D7E /* BNCQRCodeCache.m in Sources */,
 				5FB38C812521234F00E9A85A /* BNCAppGroupsData.m in Sources */,
 				5F38023624DCC2E800E6FAFD /* BNCServerInterface.m in Sources */,
 				5F38022B24DCC2E800E6FAFD /* BNCServerResponse.m in Sources */,

@@ -8,6 +8,7 @@
 #import <LinkPresentation/LPLinkMetadata.h>
 #import "BranchQRCode.h"
 #import "Branch.h"
+#import "BNCQRCodeCache.h"
 
 @implementation BranchQRCode
 
@@ -41,7 +42,7 @@ UIImage *qrCodeImage;
 - (void) getQRCodeAsData:(BranchUniversalObject*_Nullable)buo
           linkProperties:(BranchLinkProperties*_Nullable)lp
               completion:(void(^)(NSData * _Nullable qrCode, NSError * _Nullable error))completion {
-    
+
     NSMutableDictionary *settings = [NSMutableDictionary new];
     
     if (self.codeColor) { settings[@"code_color"] = [self hexStringForColor:self.codeColor]; }
@@ -73,8 +74,17 @@ UIImage *qrCodeImage;
     parameters[@"data"] = [buo dictionary];
     parameters[@"branch_key"] = [Branch branchKey];
     
+    NSData *cachedQRCode = [[BNCQRCodeCache sharedInstance] checkQRCodeCache:parameters];
+    if (cachedQRCode) {
+        completion(cachedQRCode, nil);
+        return;
+    }
+    
     [self callQRCodeAPI:parameters completion:^(NSData * _Nonnull qrCode, NSError * _Nonnull error){
         if (completion != nil) {
+            if (qrCode != nil) {
+                [[BNCQRCodeCache sharedInstance] addQRCodeToCache:qrCode withParams:parameters];
+            }
             completion(qrCode, error);
         }
     }];
