@@ -702,5 +702,20 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     }
 }
 
+- (IBAction)shareLinkWithMetadata:(id)sender {
+    
+    NSURL *iconURL = [NSURL URLWithString:@"https://cdn.branch.io/branch-assets/1598575682753-og_image.png"];
+    BranchUniversalObject *buo = [BranchUniversalObject new];
+    BranchLinkProperties *lp = [BranchLinkProperties new];
+
+    BranchShareLink *bsl = [[BranchShareLink alloc] initWithUniversalObject:buo linkProperties:lp];
+    
+    if (@available(iOS 13.0, *)) {
+        [bsl addLPLinkMetadata:@"LPLinkMetadata Link" iconURL:iconURL];
+        [bsl presentActivityViewControllerFromViewController:self anchor:nil];
+    }
+}
+
+
 
 @end
