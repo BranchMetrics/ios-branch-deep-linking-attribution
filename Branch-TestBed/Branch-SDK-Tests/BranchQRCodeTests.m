@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "Branch.h"
+#import "BNCQRCodeCache.h"
 
 @interface BranchQRCodeTests : XCTestCase
 
@@ -68,6 +69,28 @@
         XCTAssertNil(error);
         XCTAssertNotNil(qrCode);
     }];
+}
+
+- (void)testQRCodeCache {
+    
+    BranchQRCode *myQRCode = [BranchQRCode new];
+    BranchUniversalObject *buo = [BranchUniversalObject new];
+    BranchLinkProperties *lp = [BranchLinkProperties new];
+    
+    [myQRCode getQRCodeAsData:buo linkProperties:lp completion:^(NSData * _Nonnull qrCode, NSError * _Nonnull error) {
+        
+        NSMutableDictionary *parameters = [NSMutableDictionary new];
+        NSMutableDictionary *settings = [NSMutableDictionary new];
+        
+        settings[@"image_format"] = @"PNG";
+        
+        parameters[@"qr_code_settings"] = settings;
+        parameters[@"data"] = [NSMutableDictionary new];
+        parameters[@"branch_key"] = [Branch branchKey];
+        
+        NSData *cachedQRCode = [[BNCQRCodeCache sharedInstance] checkQRCodeCache:parameters];
+        XCTAssertEqualObjects(cachedQRCode, qrCode);        
+    }];    
 }
 
 

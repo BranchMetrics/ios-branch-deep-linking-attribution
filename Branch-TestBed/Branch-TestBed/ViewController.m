@@ -704,6 +704,9 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
 
 - (IBAction)createQRCode:(id)sender {
     BranchQRCode *qrCode = [BranchQRCode new];
+    qrCode.centerLogo = @"https://cdn.branch.io/branch-assets/1598575682753-og_image.png";
+    qrCode.codeColor = [[UIColor new] initWithRed:0.1 green:0.8392 blue:0.8667 alpha:1.0];
+    qrCode.width = @700;
     
     BranchUniversalObject *buo = [BranchUniversalObject new];
     BranchLinkProperties *lp = [BranchLinkProperties new];
@@ -727,6 +730,23 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
         });
     }];
 }
+
+- (IBAction)shareQRCode:(id)sender {
+    
+    BranchQRCode *qrCode = [BranchQRCode new];
+    qrCode.centerLogo = @"https://cdn.branch.io/branch-assets/1598575682753-og_image.png";
+    qrCode.codeColor = [[UIColor new] initWithRed:0.1 green:0.8392 blue:0.8667 alpha:1.0];
+    qrCode.width = @700;
+    
+    BranchUniversalObject *buo = [BranchUniversalObject new];
+    buo.title = @"My QR Code";
+    BranchLinkProperties *lp = [BranchLinkProperties new];
+    
+    [qrCode showShareSheetWithQRCodeFromViewController:self anchor:nil universalObject:buo linkProperties:lp completion:^(NSError * _Nullable error) {
+        NSLog(@"Showing QR Code.");
+    }];
+}
+
 
 
 @end

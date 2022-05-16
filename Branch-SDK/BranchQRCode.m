@@ -20,7 +20,7 @@ UIImage *qrCodeImage;
         margin = @(20);
         BNCLogWarning(@"Margin was reduced to the maximum of 20.");
     }
-    if (margin.intValue < 0) {
+    if (margin.intValue < 1) {
         margin = @(0);
         BNCLogWarning(@"Margin was increased to the minimum of 0.");
     }
@@ -32,7 +32,7 @@ UIImage *qrCodeImage;
         width = @(2000);
         BNCLogWarning(@"Width was reduced to the maximum of 2000.");
     }
-    if (width.intValue < 500) {
+    if (width.intValue < 300) {
         width = @(500);
         BNCLogWarning(@"Width was increased to the minimum of 500.");
     }
@@ -90,7 +90,9 @@ UIImage *qrCodeImage;
     }];
 }
 
-- (void)getQRCodeAsImage:(BranchUniversalObject *)buo linkProperties:(BranchLinkProperties *)lp completion:(void (^)(UIImage * _Nonnull, NSError * _Nonnull))completion {
+- (void)getQRCodeAsImage:(BranchUniversalObject *)buo
+          linkProperties:(BranchLinkProperties *)lp
+              completion:(void (^)(UIImage * _Nonnull, NSError * _Nonnull))completion {
     
     [self getQRCodeAsData:buo linkProperties:lp completion:^(NSData * _Nonnull qrCode, NSError * _Nonnull error) {
         if (completion != nil) {
@@ -109,11 +111,9 @@ UIImage *qrCodeImage;
             completion:(void(^)(NSData * _Nullable qrCode, NSError * _Nullable error))completion {
     
     NSError *error;
-    
     NSString *branchAPIURL = [BNC_API_BASE_URL copy];
     NSString *urlString = [NSString stringWithFormat: @"%@/v1/qr-code", branchAPIURL];
     NSURL *url = [NSURL URLWithString: urlString];
-    
     NSURLSession *session = [NSURLSession sharedSession];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
@@ -207,7 +207,6 @@ UIImage *qrCodeImage;
 }
 
 // Helper Functions
-
 - (LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController API_AVAILABLE(ios(13.0)) {
     LPLinkMetadata * metaData = [[LPLinkMetadata alloc] init];
     metaData.title = buoTitle;
