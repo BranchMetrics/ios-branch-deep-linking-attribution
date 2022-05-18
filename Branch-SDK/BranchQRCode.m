@@ -119,7 +119,7 @@ UIImage *qrCodeImage;
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     [request setHTTPMethod:@"POST"];
-    
+
     NSData *postData = [NSJSONSerialization dataWithJSONObject:params options:0 error:&error];
     [request setHTTPBody:postData];
     

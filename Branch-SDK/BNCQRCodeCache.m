@@ -34,14 +34,18 @@
 - (void)addQRCodeToCache:(NSData *)qrCodeData withParams:(NSMutableDictionary *)parameters {
     @synchronized (self) {
         [self.cache removeAllObjects];
-        self.cache[parameters] = qrCodeData;
+        NSMutableDictionary *tempParams = [parameters mutableCopy];
+        [tempParams[@"data"] removeObjectForKey:@"$creation_timestamp"];
+        self.cache[tempParams] = qrCodeData;
     }
 }
 
 - (NSData *)checkQRCodeCache:(NSMutableDictionary *)parameters {
     NSData *qrCode;
     @synchronized (self) {
-        qrCode = self.cache[parameters];
+        NSMutableDictionary *tempParams = [parameters mutableCopy];
+        [tempParams[@"data"] removeObjectForKey:@"$creation_timestamp"];
+        qrCode = self.cache[tempParams];
     }
     return qrCode;
 }
