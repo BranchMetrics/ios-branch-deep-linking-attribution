@@ -341,4 +341,19 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     return nil;
 }
 
+- (void) addLPLinkMetadata:(NSString *)title icon:(UIImage *)icon API_AVAILABLE(ios(13.0)) {
+
+    LPLinkMetadata *metadata = [LPLinkMetadata new];
+
+    metadata.title = title;
+    
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    NSString *userURL = preferenceHelper.userUrl;
+    metadata.URL = [NSURL URLWithString: userURL];
+    
+    metadata.iconProvider = [[NSItemProvider new] initWithObject:icon];
+
+    self.lpMetaData = metadata;
+}
+
 @end
