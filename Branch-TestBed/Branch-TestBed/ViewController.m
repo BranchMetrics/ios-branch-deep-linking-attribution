@@ -713,10 +713,12 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
 
     BranchShareLink *bsl = [[BranchShareLink alloc] initWithUniversalObject:buo linkProperties:lp];
     
-    if (@available(iOS 13.0, *)) {
-        [bsl addLPLinkMetadata:@"LPLinkMetadata Link" icon:iconImg];
-        [bsl presentActivityViewControllerFromViewController:self anchor:nil];
-    }
+//    if (@available(iOS 13.0, *)) {
+//    }
+    [bsl addLPLinkMetadata:@"LPLinkMetadata Link" icon:iconImg];
+
+    [bsl presentActivityViewControllerFromViewController:self anchor:nil];
+
 }
 
 
