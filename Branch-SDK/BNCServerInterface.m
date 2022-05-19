@@ -456,6 +456,22 @@
             fullParamDict[BRANCH_REQUEST_KEY_INSTRUMENTATION] = instrumentationDictionary;
         }
     }
+    // For DOWNSTREAM EVENTS v1/open & v2/events, include referrer_gbraid in request if available
+    if(([self.requestEndpoint containsString:@"/v1/open"]) || ([self.requestEndpoint containsString:@"/v2/event"])){
+        NSString *ref_gbraid = self.preferenceHelper.referrerGBRAID;
+        if ((ref_gbraid != nil) && (ref_gbraid.length > 0))  {
+            // Check if its valid or expired
+            NSTimeInterval validityWindow = self.preferenceHelper.referrerGBRAIDValidityWindow;
+            if (validityWindow) {
+                NSDate *initDate = self.preferenceHelper.referrerGBRAIDInitDate ;
+                NSDate *expirationDate = [initDate dateByAddingTimeInterval:validityWindow];
+                NSDate *now = [NSDate date];
+                if ([now compare:expirationDate] == NSOrderedAscending) {
+                    fullParamDict[BRANCH_REQUEST_KEY_REFERRER_GBRAID] = ref_gbraid;
+                }
+            }
+        }
+    }
     return fullParamDict;
 }
 

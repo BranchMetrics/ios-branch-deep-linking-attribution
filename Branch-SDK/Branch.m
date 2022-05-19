@@ -527,6 +527,12 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
++ (void)setReferrerGbraidValidityWindow:(NSTimeInterval)validityWindow{
+    @synchronized(self) {
+        [BNCPreferenceHelper sharedInstance].referrerGBRAIDValidityWindow = validityWindow;
+    }
+}
+
 #pragma mark - InitSession Permutation methods
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options {
@@ -691,6 +697,18 @@ static NSString *bnc_branchKey = nil;
     // this allows foreground links to callback
     self.initializationStatus = BNCInitStatusUninitialized;
 
+    //check the referring url/uri for query parameter gbraid
+    NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
+    NSString *gbraidValue = nil;
+    for(NSURLQueryItem *item in components.queryItems){
+        if([item.name isEqualToString:@"gbraid"])
+            gbraidValue = item.value;
+    }
+    
+    if (gbraidValue) {
+        self.preferenceHelper.referrerGBRAID = gbraidValue;
+    }
+    
     NSString *pattern = nil;
     pattern = [self.urlFilter patternMatchingURL:url];
     if (!pattern) {

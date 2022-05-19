@@ -825,6 +825,18 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 ///Returns the current tracking state.
 + (BOOL) trackingDisabled;
 
+/*
+ 
+ Sets the time window for which referrer_graid is valid starting from now.
+ After validity window is over, its cleared from settings and will not be sent
+ with requests anymore.
+ 
+ Default time interval is 30 days (2,592,000 seconds).
+ 
+ @param validityWindow -(NSTimeInterval) number of seconds for which referrer_gbraid will be valid starting from now.
+ */
++ (void) setReferrerGbraidValidityWindow:(NSTimeInterval) validityWindow;
+
 #pragma mark - Session Item methods
 
 ///--------------------
