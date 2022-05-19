@@ -74,6 +74,8 @@ NSString * const BRANCH_REQUEST_KEY_APP_CLIP_RANDOMIZED_BUNDLE_TOKEN = @"app_cli
 
 NSString * const BRANCH_REQUEST_KEY_PARTNER_PARAMETERS = @"partner_data";
 
+NSString * const BRANCH_REQUEST_KEY_REFERRER_GBRAID = @"referrer_gbraid";
+
 NSString * const BRANCH_REQUEST_ENDPOINT_SET_IDENTITY = @"profile";
 NSString * const BRANCH_REQUEST_ENDPOINT_APP_LINK_SETTINGS = @"app-link-settings";
 NSString * const BRANCH_REQUEST_ENDPOINT_LOGOUT = @"logout";
@@ -154,3 +156,5 @@ NSString * const BRANCH_CRASHLYTICS_SDK_VERSION_KEY = @"io.branch.sdk.version";
 NSString * const BRANCH_CRASHLYTICS_LOW_MEMORY_KEY = @"io.branch.device.lowmemory";
 
 NSString * const BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI = @"external_intent_uri";
+
+NSString * const BRANCH_URL_QUERY_PARAM_GBRAID = @"gbraid";
