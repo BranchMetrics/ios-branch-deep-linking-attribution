@@ -9,6 +9,7 @@
 #import <XCTest/XCTest.h>
 #import "BNCPreferenceHelper.h"
 #import "BNCEncodingUtils.h"
+#import "Branch.h"
 
 @interface BNCPreferenceHelper()
 
@@ -211,6 +212,53 @@
     NSString *asaDesc = asa.description;
     NSString *valueDesc = value.description;
     XCTAssert([asaDesc isEqualToString:valueDesc]);
+}
+
+- (void)testURLSkipList {
+    NSMutableDictionary *dict = [NSMutableDictionary new];
+    NSString *key = @"test";
+    NSArray<NSString *> *value = @[
+        @"^fb\\d+:",
+        @"^li\\d+:",
+        @"^pdk\\d+:",
+        @"^twitterkit-.*:",
+        @"^com\\.googleusercontent\\.apps\\.\\d+-.*:\\/oauth",
+        @"^(?i)(?!(http|https):).*(:|:.*\\b)(password|o?auth|o?auth.?token|access|access.?token)\\b",
+        @"^(?i)((http|https):\\/\\/).*[\\/|?|#].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b",
+    ];
+    [dict setObject:value forKey:key];
+    NSData *data = [self.prefHelper serializePrefDict:dict];
+    
+    NSMutableDictionary *tmp = [self.prefHelper deserializePrefDictFromData:data];
+    
+    XCTAssert(tmp != nil);
+    XCTAssert([tmp isKindOfClass:NSMutableDictionary.class]);
+    
+    NSArray *filter = [tmp objectForKey:key];
+    
+    NSString *filterDesc = filter.description;
+    NSString *valueDesc = value.description;
+    XCTAssert([filterDesc isEqualToString:valueDesc]);
+}
+
+- (void)testReferrerGBRAIDValidityWindow {
+    
+    NSTimeInterval DEFAULT_REFERRER_GBRAID_WINDOW = 2592000;
+    
+    XCTAssertEqual(self.prefHelper.referrerGBRAIDValidityWindow, DEFAULT_REFERRER_GBRAID_WINDOW);
+    
+    NSTimeInterval randomNumber = 9000;
+    self.prefHelper.referrerGBRAIDValidityWindow = randomNumber;
+    XCTAssertEqual(self.prefHelper.referrerGBRAIDValidityWindow, randomNumber);
+    
+    NSString *gbraidValue = @"CjwKCAiA3L6PBhBvEiwAINlJ9Chixm216y8kYYJ1K94dm4FEkOgFfhIdKQdjWsYB7FqE7rf_zkGNEhoCuIEQAvD_BwE";
+    self.prefHelper.referrerGBRAID = gbraidValue;
+    XCTAssertTrue([self.prefHelper.referrerGBRAID isEqualToString:gbraidValue]);
+    
+    NSDate *now = [NSDate date];
+    self.prefHelper.referrerGBRAIDInitDate = now;
+    XCTAssertEqual(self.prefHelper.referrerGBRAIDInitDate, now);
+
 }
 
 @end
