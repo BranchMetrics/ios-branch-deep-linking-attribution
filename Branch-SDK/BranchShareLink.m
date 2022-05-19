@@ -358,7 +358,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     self.lpMetaData = metadata;
 }
 
-- (void) addLPLinkMetadata:(NSString *)title icon:(NSURL *)icon API_AVAILABLE(ios(13.0)) {
+- (void) addLPLinkMetadata:(NSString *)title icon:(UIImage *)icon API_AVAILABLE(ios(13.0)) {
 
     LPLinkMetadata *metadata = [LPLinkMetadata new];
 

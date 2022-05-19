@@ -17,7 +17,7 @@
 
 @implementation BranchShareLinkTests
 
-- (void)testAddLPLinkMetadata {
+- (void)testAddLPLinkMetadataWithURL {
     BranchUniversalObject *buo = [[BranchUniversalObject alloc] initWithCanonicalIdentifier:@"test/001"];
     BranchLinkProperties *lp = [[BranchLinkProperties alloc] init];
     
@@ -25,16 +25,30 @@
     
     if (@available(iOS 13.0, *)) {
         NSURL *imageURL = [NSURL URLWithString:@"https://cdn.branch.io/branch-assets/1598575682753-og_image.png"];
+    
         [bsl addLPLinkMetadata:@"Test Preview Title" iconURL:imageURL];
         XCTAssertNotNil([bsl lpMetaData]);
     } else {
-        // Fallback on earlier versions
         XCTAssertTrue(true);
     }
+}
+
+- (void)testAddLPLinkMetadataWithImage {
+    BranchUniversalObject *buo = [[BranchUniversalObject alloc] initWithCanonicalIdentifier:@"test/001"];
+    BranchLinkProperties *lp = [[BranchLinkProperties alloc] init];
     
+    BranchShareLink *bsl = [[BranchShareLink alloc] initWithUniversalObject:buo linkProperties:lp];
     
-    
-    
+    if (@available(iOS 13.0, *)) {
+        NSURL *imageURL = [NSURL URLWithString:@"https://cdn.branch.io/branch-assets/1598575682753-og_image.png"];
+        NSData *imageData = [NSData dataWithContentsOfURL:imageURL];
+        UIImage *iconImage = [UIImage imageWithData:imageData];
+        
+        [bsl addLPLinkMetadata:@"Test Preview Title" icon:iconImage];
+        XCTAssertNotNil([bsl lpMetaData]);
+    } else {
+        XCTAssertTrue(true);
+    }
 }
 
 @end

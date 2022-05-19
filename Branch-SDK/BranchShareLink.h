@@ -138,6 +138,6 @@ Creates and attaches an LPLinkMetadata using the provided title and icon. This m
                    iconURL:(NSURL *_Nullable)icon API_AVAILABLE(ios(13.0));
 
 - (void) addLPLinkMetadata:(NSString *_Nullable)title
-                      icon:(NSURL *_Nullable)icon API_AVAILABLE(ios(13.0));
+                      icon:(UIImage *_Nullable)icon API_AVAILABLE(ios(13.0));
 
 @end
