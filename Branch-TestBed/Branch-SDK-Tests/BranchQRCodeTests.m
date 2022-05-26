@@ -24,7 +24,7 @@
     qrCode.margin = @(1);
     qrCode.codeColor = [UIColor blueColor];
     qrCode.backgroundColor = [UIColor whiteColor];
-    qrCode.centerLogo = @"https://en.wikipedia.org/wiki/File:Example.jpg";
+    qrCode.centerLogo = @"https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg";
     qrCode.imageFormat = BranchQRCodeImageFormatPNG;
     
     BranchUniversalObject *buo = [BranchUniversalObject new];
@@ -119,6 +119,9 @@
     BranchLinkProperties *lp = [BranchLinkProperties new];
     
     [myQRCode getQRCodeAsData:buo linkProperties:lp completion:^(NSData * _Nonnull qrCode, NSError * _Nonnull error) {
+        
+        XCTAssertNil(error);
+        XCTAssertNotNil(qrCode);
         
         NSMutableDictionary *parameters = [NSMutableDictionary new];
         NSMutableDictionary *settings = [NSMutableDictionary new];

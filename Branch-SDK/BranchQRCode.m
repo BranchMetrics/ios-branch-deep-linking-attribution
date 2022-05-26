@@ -123,6 +123,10 @@ UIImage *qrCodeImage;
     NSData *postData = [NSJSONSerialization dataWithJSONObject:params options:0 error:&error];
     [request setHTTPBody:postData];
     
+    BNCLogDebug([NSString stringWithFormat:@"Network start operation %@.", request.URL.absoluteString]);
+
+    NSDate *startDate = [NSDate date];
+    
     NSURLSessionDataTask *postDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         
         if (error) {
@@ -134,11 +138,25 @@ UIImage *qrCodeImage;
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
         
         if (httpResponse.statusCode == 200) {
+            
+            BNCLogDebug([NSString stringWithFormat:@"Network finish operation %@ %1.3fs. Status %ld.",
+                request.URL.absoluteString,
+                [[NSDate date] timeIntervalSinceDate:startDate],
+                (long)httpResponse.statusCode]);
+            
             completion(data, nil);
         } else {
             
             NSDictionary *responseDictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-            BNCLogError([NSString stringWithFormat:@"Error with response and Status Code %ld: %@", (long)httpResponse.statusCode, responseDictionary]);
+            
+            BNCLogError([NSString stringWithFormat:@"Network finish operation %@ %1.3fs. Status %ld error %@.\n%@.",
+                         request.URL.absoluteString,
+                         [[NSDate date] timeIntervalSinceDate:startDate],
+                         (long)httpResponse.statusCode,
+                         error,
+                         responseDictionary]);
+            
+            //BNCLogError([NSString stringWithFormat:@"Error with response and Status Code %ld: %@", (long)httpResponse.statusCode, responseDictionary]);
             error = [NSError branchErrorWithCode: BNCBadRequestError localizedMessage: responseDictionary[@"message"]];
             
             completion(nil, error);
