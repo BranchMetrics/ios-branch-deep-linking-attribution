@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+v.1.42.0
+- SDK-1168 Fixed bnc.lt from showing in the share sheet
+- SDK-1383 Added helper method for adding LPLinkMetadata to share sheets 
+
 v.1.41.0
 - SDK-1189 Added API for plugin support
 
