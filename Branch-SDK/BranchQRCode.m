@@ -156,7 +156,6 @@ UIImage *qrCodeImage;
                          error,
                          responseDictionary]);
             
-            //BNCLogError([NSString stringWithFormat:@"Error with response and Status Code %ld: %@", (long)httpResponse.statusCode, responseDictionary]);
             error = [NSError branchErrorWithCode: BNCBadRequestError localizedMessage: responseDictionary[@"message"]];
             
             completion(nil, error);
@@ -179,9 +178,9 @@ UIImage *qrCodeImage;
                     
                     buoTitle = buo.title;
                     qrCodeImage = qrCode;
-                    
+
                     NSArray *items = @[qrCode, self];
-                    UIActivityViewController *activityViewController = [[UIActivityViewController new] initWithActivityItems:items applicationActivities:nil];
+                    UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
                     
                     UIViewController *presentingViewController = nil;
                     if ([viewController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
@@ -225,6 +224,7 @@ UIImage *qrCodeImage;
 }
 
 // Helper Functions
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 13000
 - (LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController API_AVAILABLE(ios(13.0)) {
     LPLinkMetadata * metaData = [[LPLinkMetadata alloc] init];
     metaData.title = buoTitle;
@@ -240,6 +240,7 @@ UIImage *qrCodeImage;
     
     return metaData;
 }
+#endif
 
 - (BOOL)isValidUrl:(NSString *)urlString{
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlString]];
