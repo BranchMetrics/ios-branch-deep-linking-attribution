@@ -190,12 +190,12 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
          "https://<yourapp>.app.link/NdJ6nFzRbK\n\n"
          "click on:\n"
          "https://<yourapp>.app.link/NdJ6nFzRbK?bnc_validate=true";
-    NSLog(
-        @"\n----------------------------------------------------------------------------"
-         "\nBranch Integration Next Steps\n"
-         "\n"
-         "%@"
-         "\n----------------------------------------------------------------------------", message);
+    
+    NSLog(@"----------------------------------------------------------------------------");
+    NSLog(@"Branch Integration Next Steps:");
+    NSLog(@"%@", message);
+    NSLog(@"----------------------------------------------------------------------------");
+
     [self showAlertWithTitle:@"Next Step" message:message];
 }
 
