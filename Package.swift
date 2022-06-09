@@ -25,10 +25,7 @@ let package = Package(
                 .linkedFramework("CoreTelephony", .when(platforms: [.iOS])),
                 .linkedFramework("WebKit", .when(platforms: [.iOS])),
                 .linkedFramework("CoreSpotlight", .when(platforms: [.iOS])),
-                // Optional frameworks
-                .linkedFramework("AdServices", .when(platforms: [.iOS])),
-                .linkedFramework("iAd", .when(platforms: [.iOS])),
-                .linkedFramework("AdSupport")
+                .linkedFramework("AdServices", .when(platforms: [.iOS]))
             ]
         ),
     ]
