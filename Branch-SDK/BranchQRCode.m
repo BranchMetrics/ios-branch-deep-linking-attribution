@@ -10,10 +10,21 @@
 #import "Branch.h"
 #import "BNCQRCodeCache.h"
 
+@interface BranchQRCode()
+@property (nonatomic, copy, readwrite) NSString *buoTitle;
+@property (nonatomic, strong, readwrite) UIImage *qrCodeImage;
+@end
+
 @implementation BranchQRCode
 
-NSString *buoTitle;
-UIImage *qrCodeImage;
+- (instancetype) init {
+    self = [super init];
+    if (self) {
+        self.margin = @(1);
+        self.width = @(512);
+    }
+    return self;
+}
 
 - (void) setMargin:(NSNumber *)margin {
     if (margin.intValue > 20) {
@@ -39,9 +50,9 @@ UIImage *qrCodeImage;
     _width = width;
 }
 
-- (void) getQRCodeAsData:(BranchUniversalObject*_Nullable)buo
-          linkProperties:(BranchLinkProperties*_Nullable)lp
-              completion:(void(^)(NSData * _Nullable qrCode, NSError * _Nullable error))completion {
+- (void)getQRCodeAsData:(nullable BranchUniversalObject *)buo
+         linkProperties:(nullable BranchLinkProperties *)lp
+             completion:(void(^)(NSData * _Nullable qrCode, NSError * _Nullable error))completion {
 
     NSMutableDictionary *settings = [NSMutableDictionary new];
     
@@ -80,7 +91,7 @@ UIImage *qrCodeImage;
         return;
     }
     
-    [self callQRCodeAPI:parameters completion:^(NSData * _Nonnull qrCode, NSError * _Nonnull error){
+    [self callQRCodeAPI:parameters completion:^(NSData * _Nullable qrCode, NSError * _Nullable error){
         if (completion != nil) {
             if (qrCode != nil) {
                 [[BNCQRCodeCache sharedInstance] addQRCodeToCache:qrCode withParams:parameters];
@@ -90,25 +101,23 @@ UIImage *qrCodeImage;
     }];
 }
 
-- (void)getQRCodeAsImage:(BranchUniversalObject *)buo
-          linkProperties:(BranchLinkProperties *)lp
-              completion:(void (^)(UIImage * _Nonnull, NSError * _Nonnull))completion {
+- (void)getQRCodeAsImage:(nullable BranchUniversalObject *)buo
+          linkProperties:(nullable BranchLinkProperties *)lp
+              completion:(void(^)(UIImage * _Nullable qrCode, NSError * _Nullable error))completion {
     
-    [self getQRCodeAsData:buo linkProperties:lp completion:^(NSData * _Nonnull qrCode, NSError * _Nonnull error) {
+    [self getQRCodeAsData:buo linkProperties:lp completion:^(NSData * _Nullable qrCode, NSError * _Nullable error) {
         if (completion != nil) {
-            if (error) {
-                UIImage *img = [UIImage new];
-                completion(img, error);
-            } else {
-                UIImage *qrCodeImage =  [UIImage imageWithData:qrCode];
-                completion(qrCodeImage, error);
+            UIImage *qrCodeImage = nil;
+            if (qrCode && !error) {
+                qrCodeImage =  [UIImage imageWithData:qrCode];
             }
+            completion(qrCodeImage, error);
         }
     }];
 }
 
-- (void) callQRCodeAPI:(NSDictionary*_Nullable)params
-            completion:(void(^)(NSData * _Nullable qrCode, NSError * _Nullable error))completion {
+- (void)callQRCodeAPI:(nullable NSDictionary *)params
+           completion:(void(^)(NSData * _Nullable qrCode, NSError * _Nullable error))completion {
     
     NSError *error;
     NSString *branchAPIURL = [BNC_API_BASE_URL copy];
@@ -165,19 +174,19 @@ UIImage *qrCodeImage;
     [postDataTask resume];
 }
 
-- (void)showShareSheetWithQRCodeFromViewController:(UIViewController *)viewController
-                                            anchor:(id _Nullable)anchorViewOrButtonItem
-                                   universalObject:(BranchUniversalObject *)buo
-                                    linkProperties:(BranchLinkProperties *)lp
-                                        completion:(void (^)(NSError * _Nonnull))completion {
+- (void)showShareSheetWithQRCodeFromViewController:(nullable UIViewController *)viewController
+                                            anchor:(nullable id)anchorViewOrButtonItem
+                                   universalObject:(nullable BranchUniversalObject *)buo
+                                    linkProperties:(nullable BranchLinkProperties *)lp
+                                        completion:(void (^)(NSError * _Nullable))completion {
     
-    [self getQRCodeAsImage:buo linkProperties:lp completion:^(UIImage * _Nonnull qrCode, NSError * _Nonnull error) {
+    [self getQRCodeAsImage:buo linkProperties:lp completion:^(UIImage * _Nullable qrCode, NSError * _Nullable error) {
         if (completion != nil) {
             if (qrCode) {
                 dispatch_async(dispatch_get_main_queue(), ^(void) {
                     
-                    buoTitle = buo.title;
-                    qrCodeImage = qrCode;
+                    self.buoTitle = buo.title;
+                    self.qrCodeImage = qrCode;
 
                     NSArray *items = @[qrCode, self];
                     UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
@@ -224,17 +233,17 @@ UIImage *qrCodeImage;
 }
 
 // Helper Functions
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 13000
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 13000
 - (LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController API_AVAILABLE(ios(13.0)) {
     LPLinkMetadata * metaData = [[LPLinkMetadata alloc] init];
-    metaData.title = buoTitle;
+    metaData.title = self.buoTitle;
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSString *userURL = preferenceHelper.userUrl;
     metaData.originalURL = [NSURL URLWithString:userURL];
     metaData.URL = [NSURL URLWithString:userURL];
     
-    NSItemProvider * imageProvider = [[NSItemProvider alloc] initWithObject:qrCodeImage];
+    NSItemProvider * imageProvider = [[NSItemProvider alloc] initWithObject:self.qrCodeImage];
     metaData.iconProvider = imageProvider;
     metaData.imageProvider = imageProvider;
     

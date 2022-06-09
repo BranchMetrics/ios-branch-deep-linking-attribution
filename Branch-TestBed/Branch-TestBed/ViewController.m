@@ -747,6 +747,4 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     }];
 }
 
-
-
 @end
