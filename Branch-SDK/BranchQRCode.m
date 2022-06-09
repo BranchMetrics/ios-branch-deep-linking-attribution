@@ -75,11 +75,11 @@
     
     NSMutableDictionary *parameters = [NSMutableDictionary new];
     
-    if (lp.channel) { parameters[@"channel"] = lp.channel; }
-    if (lp.feature) { parameters[@"feature"] = lp.feature; }
-    if (lp.campaign) { parameters[@"campaign"] = lp.campaign; }
-    if (lp.stage) { parameters[@"stage"] = lp.stage; }
-    if (lp.tags) { parameters[@"tags"] = lp.tags; }
+    if (lp.channel) { parameters[BRANCH_REQUEST_KEY_URL_CHANNEL] = lp.channel; }
+    if (lp.feature) { parameters[BRANCH_REQUEST_KEY_URL_FEATURE] = lp.feature; }
+    if (lp.campaign) { parameters[BRANCH_REQUEST_KEY_URL_CAMPAIGN] = lp.campaign; }
+    if (lp.stage) { parameters[BRANCH_REQUEST_KEY_URL_STAGE] = lp.stage; }
+    if (lp.tags) { parameters[BRANCH_REQUEST_KEY_URL_TAGS] = lp.tags; }
     
     parameters[@"qr_code_settings"] = settings;
     parameters[@"data"] = [buo dictionary];
