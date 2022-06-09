@@ -52,8 +52,11 @@
     }
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
-    preferenceHelper.randomizedBundleToken = BNCStringFromWireFormat(response.data[BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN]);
-    preferenceHelper.userUrl = response.data[BRANCH_RESPONSE_KEY_USER_URL];
+    if (response.data[BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN])
+        preferenceHelper.randomizedBundleToken = BNCStringFromWireFormat(response.data[BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN]);
+    if (response.data[BRANCH_RESPONSE_KEY_USER_URL]) {
+        preferenceHelper.userUrl = response.data[BRANCH_RESPONSE_KEY_USER_URL];
+    }
     preferenceHelper.userIdentity = self.userId;
     if (response.data[BRANCH_RESPONSE_KEY_SESSION_ID]) {
         preferenceHelper.sessionID = response.data[BRANCH_RESPONSE_KEY_SESSION_ID];
