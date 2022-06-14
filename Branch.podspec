@@ -32,5 +32,6 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
 	"Branch-SDK/BranchShareLink.{h,m}"
 
   s.frameworks = 'CoreServices', 'SystemConfiguration'
+  s.weak_framework = 'LinkPresentation'
   s.ios.frameworks = 'WebKit', 'iAd', 'CoreTelephony'
 end
