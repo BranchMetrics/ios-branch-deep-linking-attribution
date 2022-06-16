@@ -826,6 +826,18 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 ///Returns the current tracking state.
 + (BOOL) trackingDisabled;
 
+/*
+ 
+ Sets the time window for which referrer_graid is valid starting from now.
+ After validity window is over, its cleared from settings and will not be sent
+ with requests anymore.
+ 
+ Default time interval is 30 days (2,592,000 seconds).
+ 
+ @param validityWindow -(NSTimeInterval) number of seconds for which referrer_gbraid will be valid starting from now.
+ */
++ (void) setReferrerGbraidValidityWindow:(NSTimeInterval) validityWindow;
+
 #pragma mark - Session Item methods
 
 ///--------------------
@@ -1292,6 +1304,19 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @warning This can fail if the alias is already taken.
  */
 - (NSString *)getLongURLWithParams:(nullable NSDictionary *)params andChannel:(nullable NSString *)channel andTags:(nullable NSArray *)tags andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andAlias:(nullable NSString *)alias;
+
+/**
+ Get a long app.link url with specified params, tags, feature, stage, and alias. The usage type will default to unlimited.
+
+ @param params Dictionary of parameters to include in the link.
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param tags An array of tags to associate with this link, useful for tracking.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
+ @param alias The alias for a link.
+ @warning This can fail if the alias is already taken.
+ */
+- (NSString *)getLongAppLinkURLWithParams:(NSDictionary *)params andChannel:(nullable NSString *)channel andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
 
 #pragma mark - Short Url Async methods
 

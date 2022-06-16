@@ -268,11 +268,10 @@
 		9A2B7DD61FEC3BAF00CD188B /* Branch+Validator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A2B7DD41FEC3BAE00CD188B /* Branch+Validator.m */; };
 		C10C61AD28248E5A00761D7E /* BNCQRCodeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = C10C61AB28248E5A00761D7E /* BNCQRCodeCache.h */; };
 		C10C61AE28248E5A00761D7E /* BNCQRCodeCache.m in Sources */ = {isa = PBXBuildFile; fileRef = C10C61AC28248E5A00761D7E /* BNCQRCodeCache.m */; };
+		C10C61AA282481FB00761D7E /* BranchShareLinkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10C61A9282481FB00761D7E /* BranchShareLinkTests.m */; };
 		C10F393A27A0872800BF5D36 /* BranchPluginSupportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10F393927A0872800BF5D36 /* BranchPluginSupportTests.m */; };
 		C10F394127A08C2400BF5D36 /* BranchPluginSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = C10F393F27A08C2400BF5D36 /* BranchPluginSupport.h */; };
 		C10F394227A08C2400BF5D36 /* BranchPluginSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = C10F394027A08C2400BF5D36 /* BranchPluginSupport.m */; };
-		C10F394327A08C2400BF5D36 /* BranchPluginSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = C10F394027A08C2400BF5D36 /* BranchPluginSupport.m */; };
-		C10F394427A08C2400BF5D36 /* BranchPluginSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = C10F394027A08C2400BF5D36 /* BranchPluginSupport.m */; };
 		C12320B52808DB90007771C0 /* BranchQRCodeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C12320B42808DB90007771C0 /* BranchQRCodeTests.m */; };
 		C12320B7280E2060007771C0 /* BranchQRCode.h in Headers */ = {isa = PBXBuildFile; fileRef = C12320B6280E2060007771C0 /* BranchQRCode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C12320B9280E2091007771C0 /* BranchQRCode.m in Sources */ = {isa = PBXBuildFile; fileRef = C12320B8280E2091007771C0 /* BranchQRCode.m */; };
@@ -620,6 +619,7 @@
 		C12320B6280E2060007771C0 /* BranchQRCode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchQRCode.h; sourceTree = "<group>"; };
 		C12320B8280E2091007771C0 /* BranchQRCode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchQRCode.m; sourceTree = "<group>"; };
 		C1799A2E284169F700DCB00C /* LinkPresentation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LinkPresentation.framework; path = System/Library/Frameworks/LinkPresentation.framework; sourceTree = SDKROOT; };
+		C10C61A9282481FB00761D7E /* BranchShareLinkTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchShareLinkTests.m; sourceTree = "<group>"; };
 		D258D2C41A794D64004A1C90 /* BranchActivityItemProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchActivityItemProvider.h; sourceTree = "<group>"; };
 		D258D2C51A794D64004A1C90 /* BranchActivityItemProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchActivityItemProvider.m; sourceTree = "<group>"; };
 		E2B947491D15D73900F2270D /* BNCCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCCallbacks.h; sourceTree = "<group>"; };
@@ -659,7 +659,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C1799A2F284169F700DCB00C /* LinkPresentation.framework in Frameworks */,
+				C1EEB3252836F98E00ACF749 /* LinkPresentation.framework in Frameworks */,
 				5F205D062318659500C776D1 /* WebKit.framework in Frameworks */,
 				46DC406E1B2A328900D2D203 /* AdSupport.framework in Frameworks */,
 				670016661940F51400A9E103 /* CoreGraphics.framework in Frameworks */,
@@ -706,6 +706,7 @@
 			isa = PBXGroup;
 			children = (
 				C12320B42808DB90007771C0 /* BranchQRCodeTests.m */,
+				C10C61A9282481FB00761D7E /* BranchShareLinkTests.m */,
 				C10F393927A0872800BF5D36 /* BranchPluginSupportTests.m */,
 				5FD1786D26DEE49C009696E3 /* BNCPasteboardTests.m */,
 				5F92B23B2384744A00CA909B /* BNCLocaleTests.m */,
@@ -851,7 +852,7 @@
 		670016621940F51400A9E103 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C1799A2E284169F700DCB00C /* LinkPresentation.framework */,
+				C1EEB3242836F98E00ACF749 /* LinkPresentation.framework */,
 				5F42763225DB3694005B9BBC /* AdServices.framework */,
 				5FDB04EF24E4D27000F2F267 /* StoreKit.framework */,
 				5F92B2352383644C00CA909B /* SystemConfiguration.framework */,
@@ -1578,6 +1579,7 @@
 				4D1683A62098C902008819E3 /* BranchSetIdentityRequestTests.m in Sources */,
 				4D1683BC2098C902008819E3 /* BranchDelegate.Test.m in Sources */,
 				4D1683B62098C902008819E3 /* BNCURLFilterTests.m in Sources */,
+				C10C61AA282481FB00761D7E /* BranchShareLinkTests.m in Sources */,
 				5F892EBB2360F0290023AEC1 /* BNCAppleSearchAdsTests.m in Sources */,
 				5F437E40237E1A560052064B /* BNCDeviceSystemTests.m in Sources */,
 				4D1683AC2098C902008819E3 /* BranchInstallRequestTests.m in Sources */,
