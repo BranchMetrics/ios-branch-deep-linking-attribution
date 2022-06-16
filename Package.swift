@@ -18,7 +18,15 @@ let package = Package(
         .target(
             name: "Branch",
             path: "Branch-SDK",
-            publicHeadersPath: "."
+            publicHeadersPath: ".",
+            linkerSettings: [
+                .linkedFramework("CoreServices"),
+                .linkedFramework("SystemConfiguration"),
+                .linkedFramework("CoreTelephony", .when(platforms: [.iOS])),
+                .linkedFramework("WebKit", .when(platforms: [.iOS])),
+                .linkedFramework("CoreSpotlight", .when(platforms: [.iOS])),
+                .linkedFramework("AdServices", .when(platforms: [.iOS]))
+            ]
         ),
     ]
 )
