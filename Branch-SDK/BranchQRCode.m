@@ -21,7 +21,7 @@
     self = [super init];
     if (self) {
         self.margin = @(1);
-        self.width = @(512);
+        self.width = @(300);
     }
     return self;
 }
@@ -32,8 +32,8 @@
         BNCLogWarning(@"Margin was reduced to the maximum of 20.");
     }
     if (margin.intValue < 1) {
-        margin = @(0);
-        BNCLogWarning(@"Margin was increased to the minimum of 0.");
+        margin = @(1);
+        BNCLogWarning(@"Margin was increased to the minimum of 1.");
     }
     _margin = margin;
 }
@@ -44,7 +44,7 @@
         BNCLogWarning(@"Width was reduced to the maximum of 2000.");
     }
     if (width.intValue < 300) {
-        width = @(500);
+        width = @(300);
         BNCLogWarning(@"Width was increased to the minimum of 500.");
     }
     _width = width;
@@ -266,8 +266,7 @@
         r = components[0];
         g = components[0];
         b = components[0];
-    }
-    else {
+    } else {
         r = components[0];
         g = components[1];
         b = components[2];
