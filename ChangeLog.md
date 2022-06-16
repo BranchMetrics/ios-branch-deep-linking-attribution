@@ -1,5 +1,13 @@
 Branch iOS SDK Change Log
 
+v.1.43.0
+- SDK-1382 Added new methods to create Branch QR codes
+   * getQRCodeAsData()
+   * getQRCodeAsImage()
+   * showShareSheetWithQRCodeFromViewController()
+- SDK-1348 Support for new SKAN API
+   * updatePostbackConversionValue()
+
 v.1.42.0
 - SDK-1168 Fixed bnc.lt from showing in the share sheet
 - SDK-1383 Added helper method for adding LPLinkMetadata to share sheets 
