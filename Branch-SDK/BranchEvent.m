@@ -80,7 +80,14 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
     if (dictionary && [dictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE] isKindOfClass:NSNumber.class]) {
         NSNumber *conversionValue = (NSNumber *)dictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
         if (conversionValue) {
-            [[BNCSKAdNetwork sharedInstance] updateConversionValue:conversionValue.integerValue];
+            if (@available(iOS 15.4, *)) {
+                [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:conversionValue.intValue completionHandler: ^(NSError *error){
+                    self.completion(nil, error);
+                    return;
+                }];
+            } else {
+                [[BNCSKAdNetwork sharedInstance] updateConversionValue:conversionValue.integerValue];
+            }
         }
     }
     
@@ -270,7 +277,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
     ([self.class.standardEvents containsObject:self.eventName])
     ? [NSString stringWithFormat:@"%@/%@", preferenceHelper.branchAPIURL, @"v2/event/standard"]
     : [NSString stringWithFormat:@"%@/%@", preferenceHelper.branchAPIURL, @"v2/event/custom"];
-    
+    //ND - add here for testing purpose
     BranchEventRequest *request =
     [[BranchEventRequest alloc]
      initWithServerURL:[NSURL URLWithString:serverURL]
