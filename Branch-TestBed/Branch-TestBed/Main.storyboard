@@ -593,33 +593,95 @@
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" red="0.14117647059999999" green="0.14117647059999999" blue="0.14117647059999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="Udn-nu-DvR">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="KIA-JR-e51">
                                         <rect key="frame" x="0.0" y="836.5" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Udn-nu-DvR" id="xnB-Nw-FcG">
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KIA-JR-e51" id="Uxd-9y-s8D">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TC9-S0-5Rr">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mUN-NU-xns">
                                                     <rect key="frame" x="92.5" y="11" width="190" height="27"/>
                                                     <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <accessibility key="accessibilityConfiguration" identifier="tracking"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="190" id="ZUf-kU-VAp"/>
-                                                        <constraint firstAttribute="height" constant="27" id="k6A-J5-5RI"/>
+                                                        <constraint firstAttribute="height" constant="27" id="Ger-Li-JdZ"/>
+                                                        <constraint firstAttribute="width" constant="190" id="Kcd-Il-mHi"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                                    <state key="normal" title="Share Link with LPLinkMetadata">
+                                                    <state key="normal" title="Create QR Code">
                                                         <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     </state>
                                                     <connections>
-                                                        <action selector="shareLinkWithMetadata:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="cVH-Xd-5Rc"/>
+                                                        <action selector="createQRCode:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="W0y-zG-ePc"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="TC9-S0-5Rr" firstAttribute="top" secondItem="xnB-Nw-FcG" secondAttribute="topMargin" id="HqE-nL-Fnh"/>
-                                                <constraint firstItem="TC9-S0-5Rr" firstAttribute="centerX" secondItem="xnB-Nw-FcG" secondAttribute="centerX" id="XjA-15-a4d"/>
+                                                <constraint firstItem="mUN-NU-xns" firstAttribute="centerX" secondItem="Uxd-9y-s8D" secondAttribute="centerX" id="6oR-Bh-OJc"/>
+                                                <constraint firstItem="mUN-NU-xns" firstAttribute="top" secondItem="Uxd-9y-s8D" secondAttribute="topMargin" id="c7X-mp-YbX"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" red="0.14117647059999999" green="0.14117647059999999" blue="0.14117647059999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="Ild-4A-QM2">
+                                        <rect key="frame" x="0.0" y="880.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ild-4A-QM2" id="aAR-qf-eP1">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eDw-ps-FwX">
+                                                    <rect key="frame" x="92.5" y="11" width="190" height="27"/>
+                                                    <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="tracking"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="190" id="ZPl-Gg-1P6"/>
+                                                        <constraint firstAttribute="height" constant="27" id="ovY-W4-giF"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <state key="normal" title="Share QR Code">
+                                                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="shareQRCode:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="JfT-Tg-iIK"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="eDw-ps-FwX" firstAttribute="centerX" secondItem="aAR-qf-eP1" secondAttribute="centerX" id="BtQ-ac-JoY"/>
+                                                <constraint firstItem="eDw-ps-FwX" firstAttribute="top" secondItem="aAR-qf-eP1" secondAttribute="topMargin" id="opg-d7-EIm"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" red="0.14117647059999999" green="0.14117647059999999" blue="0.14117647059999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="sjq-HL-l4t">
+                                        <rect key="frame" x="0.0" y="924.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="sjq-HL-l4t" id="V0i-aN-ZoO">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oES-ex-qri">
+                                                    <rect key="frame" x="92.5" y="11" width="190" height="27"/>
+                                                    <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="tracking"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="27" id="FWl-Wt-6fM"/>
+                                                        <constraint firstAttribute="width" constant="190" id="a9c-RT-17V"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <state key="normal" title="Share Link w/ Metadata">
+                                                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="shareLinkWithMetadata:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="p3o-ig-rHp"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="oES-ex-qri" firstAttribute="centerX" secondItem="V0i-aN-ZoO" secondAttribute="centerX" id="Ouc-jG-F4r"/>
+                                                <constraint firstItem="oES-ex-qri" firstAttribute="top" secondItem="V0i-aN-ZoO" secondAttribute="topMargin" id="sau-Eh-ene"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" red="0.14117647059999999" green="0.14117647059999999" blue="0.14117647059999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

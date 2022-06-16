@@ -702,6 +702,51 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     }
 }
 
+- (IBAction)createQRCode:(id)sender {
+    BranchQRCode *qrCode = [BranchQRCode new];
+    qrCode.centerLogo = @"https://cdn.branch.io/branch-assets/1598575682753-og_image.png";
+    qrCode.codeColor = [[UIColor new] initWithRed:0.1 green:0.8392 blue:0.8667 alpha:1.0];
+    qrCode.width = @700;
+    
+    BranchUniversalObject *buo = [BranchUniversalObject new];
+    BranchLinkProperties *lp = [BranchLinkProperties new];
+    
+    [qrCode getQRCodeAsImage:buo linkProperties:lp completion:^(UIImage * _Nonnull qrCode, NSError * _Nonnull error) {
+        NSLog(@"Received QR Code Image: %@", qrCode);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+
+            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 200, 282)];
+            imageView.contentMode = UIViewContentModeScaleAspectFit;
+            [imageView setImage:qrCode];
+            UIAlertView *alertView = [[UIAlertView alloc]  initWithTitle:@"Your QR Code"
+                                                                 message:@""
+                                                                delegate:self
+                                                       cancelButtonTitle:@"Dismiss"
+                                                       otherButtonTitles:nil];
+            
+            [alertView setValue:imageView forKey:@"accessoryView"];
+            [alertView show];
+        });
+    }];
+}
+
+- (IBAction)shareQRCode:(id)sender {
+    
+    BranchQRCode *qrCode = [BranchQRCode new];
+    qrCode.centerLogo = @"https://cdn.branch.io/branch-assets/1598575682753-og_image.png";
+    qrCode.codeColor = [[UIColor new] initWithRed:0.1 green:0.8392 blue:0.8667 alpha:1.0];
+    qrCode.width = @700;
+    
+    BranchUniversalObject *buo = [BranchUniversalObject new];
+    buo.title = @"My QR Code";
+    BranchLinkProperties *lp = [BranchLinkProperties new];
+    
+    [qrCode showShareSheetWithQRCodeFromViewController:self anchor:nil universalObject:buo linkProperties:lp completion:^(NSError * _Nullable error) {
+        NSLog(@"Showing QR Code.");
+    }];
+}
+
 - (IBAction)shareLinkWithMetadata:(id)sender {
     
     NSURL *iconURL = [NSURL URLWithString:@"https://cdn.branch.io/branch-assets/1598575682753-og_image.png"];
@@ -712,15 +757,11 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     BranchLinkProperties *lp = [BranchLinkProperties new];
 
     BranchShareLink *bsl = [[BranchShareLink alloc] initWithUniversalObject:buo linkProperties:lp];
-    
-//    if (@available(iOS 13.0, *)) {
-//    }
+
     [bsl addLPLinkMetadata:@"LPLinkMetadata Link" icon:iconImg];
 
     [bsl presentActivityViewControllerFromViewController:self anchor:nil];
 
 }
-
-
 
 @end
