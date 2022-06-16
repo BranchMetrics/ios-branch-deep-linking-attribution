@@ -82,9 +82,17 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
         if (conversionValue) {
             if (@available(iOS 15.4, *)) {
                 [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:conversionValue.intValue completionHandler: ^(NSError *error){
-                    self.completion(nil, error);
+                    if (self.completion) {
+                        self.completion(nil, error);
+                    }
+                    if (error) {
+                        BNCLogError([NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]]);
+                    } else {
+                        BNCLogDebug([NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue]);
+                    }
                     return;
                 }];
+                return;
             } else {
                 [[BNCSKAdNetwork sharedInstance] updateConversionValue:conversionValue.integerValue];
             }
