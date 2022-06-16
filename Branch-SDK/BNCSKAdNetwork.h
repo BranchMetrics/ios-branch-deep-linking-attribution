@@ -20,6 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)updateConversionValue:(NSInteger)conversionValue;
 
+- (void)updatePostbackConversionValue:(NSInteger)conversionValue
+                    completionHandler:(void (^)(NSError *error))completion;
+
 @end
 
 NS_ASSUME_NONNULL_END
