@@ -127,7 +127,7 @@
         NSMutableDictionary *settings = [NSMutableDictionary new];
         
         settings[@"image_format"] = @"PNG";
-        settings[@"width"] = @(512);
+        settings[@"width"] = @(300);
         settings[@"margin"] = @(1);
 
         parameters[@"qr_code_settings"] = settings;
