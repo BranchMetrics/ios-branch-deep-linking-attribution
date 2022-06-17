@@ -1,2 +1,2 @@
 #checksum for Branch on Github
-9fbadf18654c4d81cee55aaf2f77e3e333a0712b  Branch_static_noidfa.zip
+6e9301eebba168a9500111a022ed0ebd6a92fc45  Branch_static_noidfa.zip

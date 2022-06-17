@@ -471,9 +471,9 @@
 		C10F39262787B52800BF5D36 /* BranchPluginSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = C10F39222787B52800BF5D36 /* BranchPluginSupport.m */; };
 		C10F39272787B52800BF5D36 /* BranchPluginSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = C10F39222787B52800BF5D36 /* BranchPluginSupport.m */; };
 		C10F39282787B52800BF5D36 /* BranchPluginSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = C10F39222787B52800BF5D36 /* BranchPluginSupport.m */; };
-		C1C44510285C039900BEC2BE /* BranchQRCode.h in Headers */ = {isa = PBXBuildFile; fileRef = C1C4450C285C039900BEC2BE /* BranchQRCode.h */; };
-		C1C44511285C039900BEC2BE /* BranchQRCode.h in Headers */ = {isa = PBXBuildFile; fileRef = C1C4450C285C039900BEC2BE /* BranchQRCode.h */; };
-		C1C44512285C039900BEC2BE /* BranchQRCode.h in Headers */ = {isa = PBXBuildFile; fileRef = C1C4450C285C039900BEC2BE /* BranchQRCode.h */; };
+		C1C44510285C039900BEC2BE /* BranchQRCode.h in Headers */ = {isa = PBXBuildFile; fileRef = C1C4450C285C039900BEC2BE /* BranchQRCode.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C1C44511285C039900BEC2BE /* BranchQRCode.h in Headers */ = {isa = PBXBuildFile; fileRef = C1C4450C285C039900BEC2BE /* BranchQRCode.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C1C44512285C039900BEC2BE /* BranchQRCode.h in Headers */ = {isa = PBXBuildFile; fileRef = C1C4450C285C039900BEC2BE /* BranchQRCode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C1C44513285C039900BEC2BE /* BNCQRCodeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = C1C4450D285C039900BEC2BE /* BNCQRCodeCache.h */; };
 		C1C44514285C039900BEC2BE /* BNCQRCodeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = C1C4450D285C039900BEC2BE /* BNCQRCodeCache.h */; };
 		C1C44515285C039900BEC2BE /* BNCQRCodeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = C1C4450D285C039900BEC2BE /* BNCQRCodeCache.h */; };
@@ -923,6 +923,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C1C44511285C039900BEC2BE /* BranchQRCode.h in Headers */,
 				5F38029024DCE78600E6FAFD /* BNCNetworkServiceProtocol.h in Headers */,
 				5FC4D07D248614840001E701 /* BNCFieldDefines.h in Headers */,
 				5FC4D0A1248614850001E701 /* BranchDelegate.h in Headers */,
@@ -979,7 +980,6 @@
 				5FC4D080248614840001E701 /* BNCLinkCache.h in Headers */,
 				5FC4D04E248614830001E701 /* BNCReachability.h in Headers */,
 				5FC4D0AB248614860001E701 /* BranchUniversalObject.h in Headers */,
-				C1C44511285C039900BEC2BE /* BranchQRCode.h in Headers */,
 				5FC4D098248614850001E701 /* BranchContentDiscoverer.h in Headers */,
 				5FC4D0A3248614860001E701 /* BranchEvent.h in Headers */,
 				5FC4D07E248614840001E701 /* BNCKeyChain.h in Headers */,
@@ -1002,9 +1002,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C1C44512285C039900BEC2BE /* BranchQRCode.h in Headers */,
 				5FD0FA4025CE46BD008200EE /* BranchJsonConfig.h in Headers */,
 				5FD0FA4125CE46BD008200EE /* BNCAppGroupsData.h in Headers */,
-				C1C44512285C039900BEC2BE /* BranchQRCode.h in Headers */,
 				5FD0FA4225CE46BD008200EE /* BranchShortUrlSyncRequest.h in Headers */,
 				5FD0FA4325CE46BD008200EE /* BNCThreads.h in Headers */,
 				5FD0FA4425CE46BD008200EE /* BNCAvailability.h in Headers */,
@@ -1121,6 +1121,7 @@
 				E230A1861D03DB9E006181D8 /* Branch.h in Headers */,
 				5F38028724DCE73100E6FAFD /* BranchRegisterViewRequest.h in Headers */,
 				5F38026624DCE73100E6FAFD /* BranchCPIDRequest.h in Headers */,
+				C1C44510285C039900BEC2BE /* BranchQRCode.h in Headers */,
 				5F3D122B26E2E9290026E592 /* BNCPasteboard.h in Headers */,
 				5FD5EBE7243FB95000961CAF /* BranchScene.h in Headers */,
 				E230A1881D03DB9E006181D8 /* BranchActivityItemProvider.h in Headers */,
@@ -1140,7 +1141,6 @@
 				4DB5673A1E79FDAF00A8A324 /* BranchShareLink.h in Headers */,
 				4D9607F91FBF9634008AB3C2 /* UIViewController+Branch.h in Headers */,
 				4D510D721F0D6014003D720B /* BNCDeepLinkViewControllerInstance.h in Headers */,
-				C1C44510285C039900BEC2BE /* BranchQRCode.h in Headers */,
 				5F38028524DCE73100E6FAFD /* BranchOpenRequest.h in Headers */,
 				5F8FC23C236BB18A00B8474A /* BNCFacebookAppLinks.h in Headers */,
 				5F9071C3233D5FD5003AACAD /* BranchLastAttributedTouchData.h in Headers */,
