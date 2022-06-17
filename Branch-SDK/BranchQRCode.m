@@ -173,7 +173,7 @@
     
     [postDataTask resume];
 }
-
+#if !TARGET_OS_TV
 - (void)showShareSheetWithQRCodeFromViewController:(nullable UIViewController *)viewController
                                             anchor:(nullable id)anchorViewOrButtonItem
                                    universalObject:(nullable BranchUniversalObject *)buo
@@ -249,6 +249,7 @@
     
     return metaData;
 }
+#endif
 #endif
 
 - (BOOL)isValidUrl:(NSString *)urlString{
