@@ -64,11 +64,13 @@ Creates a Branch QR Code image and displays it in a share sheet.
 @param completion   Completion handler containing any potential error.
  
  */
+#if !TARGET_OS_TV
 - (void)showShareSheetWithQRCodeFromViewController:(nullable UIViewController *)viewController
                                             anchor:(nullable id)anchorViewOrButtonItem
                                    universalObject:(nullable BranchUniversalObject *)buo
                                     linkProperties:(nullable BranchLinkProperties *)lp
                                         completion:(void(^)(NSError * _Nullable error))completion;
+#endif
 
 @end
 
