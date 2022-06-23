@@ -156,4 +156,26 @@ static NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
     XCTAssertEqualObjects(preferenceHelper.installParams, RESPONSE_INSTALL_PARAMS);
 }
 
+
+- (void)testEmptyResponseFieldsAfterSetIdentity {
+    
+    BNCServerResponse *response = [[BNCServerResponse alloc] init];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    
+    __block NSInteger callbackCount = 0;
+    
+    BranchSetIdentityRequest *request = [[BranchSetIdentityRequest alloc] initWithUserId:IDENTITY_TEST_USER_ID callback:^(NSDictionary *params, NSError *error) {
+        callbackCount++;
+        XCTAssertNil(error);
+    }];
+    
+    response.data = @{};
+    [request processResponse:response error:nil];
+    
+    XCTAssertNotNil(preferenceHelper.randomizedDeviceToken);
+    XCTAssertNotNil(preferenceHelper.userUrl);
+    XCTAssertNotNil(preferenceHelper.sessionID);
+    XCTAssertNotNil(preferenceHelper.randomizedBundleToken);
+}
+
 @end
