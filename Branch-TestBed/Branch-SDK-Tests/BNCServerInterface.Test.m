@@ -432,10 +432,6 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     serverInterface.preferenceHelper.retryCount = 3;
     serverInterface.requestEndpoint = @"/v2/event/standard";
     
-    //Check - gbraid should not be present
-    NSMutableDictionary *result = [serverInterface prepareParamDict:NULL key:@"1234567890" retryNumber:3 requestType:@"POST"];
-    XCTAssertNil([result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID]);
-    
     [BNCPreferenceHelper sharedInstance].randomizedBundleToken = @"575759106028389737";
  
     // Set referrerGBRAID and referrerGBRAIDInitDate
@@ -445,7 +441,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     [BNCPreferenceHelper sharedInstance].referrerGBRAIDInitDate = now;
     
     //Check - gbraid should be present
-    result = [serverInterface prepareParamDict:NULL key:@"1234567890" retryNumber:3 requestType:@"POST"];
+    NSMutableDictionary *result = [serverInterface prepareParamDict:NULL key:@"1234567890" retryNumber:3 requestType:@"POST"];
     XCTAssertNotNil([result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID]);
     XCTAssertTrue([[result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID] isEqualToString:gbraidValue]);
     
@@ -466,6 +462,8 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     result = [serverInterface prepareParamDict:NULL key:@"1234567890" retryNumber:3 requestType:@"POST"];
     XCTAssertNotNil([result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID]);
     XCTAssertTrue([[result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID] isEqualToString:gbraidValue]);
+    
+    [BNCPreferenceHelper sharedInstance].referrerGBRAID = nil;
   
 }
 
