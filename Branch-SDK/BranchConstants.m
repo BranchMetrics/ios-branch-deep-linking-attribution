@@ -75,7 +75,7 @@ NSString * const BRANCH_REQUEST_KEY_APP_CLIP_RANDOMIZED_BUNDLE_TOKEN = @"app_cli
 NSString * const BRANCH_REQUEST_KEY_PARTNER_PARAMETERS = @"partner_data";
 
 NSString * const BRANCH_REQUEST_METADATA_KEY_SCANTIME_WINDOW = @"skan_time_window";
-NSString * const BRANCH_REQUEST_KEY_REFERRER_GBRAID = @"referrer_gbraid";
+NSString * const BRANCH_REQUEST_KEY_REFERRER_GBRAID = @"gbraid";
 
 NSString * const BRANCH_REQUEST_ENDPOINT_SET_IDENTITY = @"profile";
 NSString * const BRANCH_REQUEST_ENDPOINT_APP_LINK_SETTINGS = @"app-link-settings";

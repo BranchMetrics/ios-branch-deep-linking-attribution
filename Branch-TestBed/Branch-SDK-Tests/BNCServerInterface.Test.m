@@ -10,11 +10,24 @@
 #import "BNCTestCase.h"
 #import "BNCServerInterface.h"
 #import "BNCPreferenceHelper.h"
+#import "BranchConstants.h"
 #import <OCMock/OCMock.h>
 #import <OHHTTPStubs/HTTPStubs.h>
 #import <OHHTTPStubs/HTTPStubsResponse+JSON.h>
 
 typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
+
+@interface BNCServerInterface()
+
+// private BNCServerInterface method/properties to prepare dictionary for requests
+@property (copy, nonatomic) NSString *requestEndpoint;
+- (NSMutableDictionary *)prepareParamDict:(NSDictionary *)params
+                               key:(NSString *)key
+                       retryNumber:(NSInteger)retryNumber
+                              requestType:(NSString *)reqType;
+@end
+
+
 
 @interface BNCServerInterfaceTests : BNCTestCase
 @end
@@ -408,6 +421,52 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     }];
 
     [self waitForExpectationsWithTimeout:1.0 handler:nil];
+}
+
+- (void) testServerInterfaceDictionaryPrepForGbraid {
+    
+    [HTTPStubs removeAllStubs];
+    
+    BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
+    serverInterface.preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    serverInterface.preferenceHelper.retryCount = 3;
+    serverInterface.requestEndpoint = @"/v2/event/standard";
+    
+    //Check - gbraid should not be present
+    NSMutableDictionary *result = [serverInterface prepareParamDict:NULL key:@"1234567890" retryNumber:3 requestType:@"POST"];
+    XCTAssertNil([result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID]);
+    
+    [BNCPreferenceHelper sharedInstance].randomizedBundleToken = @"575759106028389737";
+ 
+    // Set referrerGBRAID and referrerGBRAIDInitDate
+    NSString *gbraidValue = @"CjwKCAiA3L6PBhBvEiwAINlJ9Chixm216y8kYYJ1K94dm4FEkOgFfhIdKQdjWsYB7FqE7rf_zkGNEhoCuIEQAvD_BwE";
+    [BNCPreferenceHelper sharedInstance].referrerGBRAID = gbraidValue;
+    NSDate *now = [NSDate date];
+    [BNCPreferenceHelper sharedInstance].referrerGBRAIDInitDate = now;
+    
+    //Check - gbraid should be present
+    result = [serverInterface prepareParamDict:NULL key:@"1234567890" retryNumber:3 requestType:@"POST"];
+    XCTAssertNotNil([result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID]);
+    XCTAssertTrue([[result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID] isEqualToString:gbraidValue]);
+    
+    //Check - gbraid should not be present - endpoint is open
+    serverInterface.requestEndpoint = @"/v1/open";
+    result = [serverInterface prepareParamDict:NULL key:@"1234567890" retryNumber:3 requestType:@"POST"];
+    XCTAssertNil([result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID]);
+    
+    //Check - gbraid should not be present - validity is expired
+    NSDate *pastDate = [[NSDate date] dateByAddingTimeInterval:-2592001];
+    [BNCPreferenceHelper sharedInstance].referrerGBRAIDInitDate = pastDate;
+    serverInterface.requestEndpoint = @"/v2/event/standard";
+    result = [serverInterface prepareParamDict:NULL key:@"1234567890" retryNumber:3 requestType:@"POST"];
+    XCTAssertNil([result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID]);
+    
+    //Check - gbraid should be present. Date is reset
+    [BNCPreferenceHelper sharedInstance].referrerGBRAIDInitDate = now;
+    result = [serverInterface prepareParamDict:NULL key:@"1234567890" retryNumber:3 requestType:@"POST"];
+    XCTAssertNotNil([result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID]);
+    XCTAssertTrue([[result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID] isEqualToString:gbraidValue]);
+  
 }
 
 @end
