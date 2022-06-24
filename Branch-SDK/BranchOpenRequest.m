@@ -161,16 +161,22 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     if ([userIdentity isKindOfClass:[NSNumber class]]) {
         userIdentity = [userIdentity stringValue];
     }
-
-    preferenceHelper.randomizedDeviceToken = data[BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN];
-    if (!preferenceHelper.randomizedDeviceToken) {
-        // fallback to deprecated name. Fingerprinting was removed long ago, hence the name change.
-        preferenceHelper.randomizedDeviceToken = data[@"device_fingerprint_id"];
-    }
     
-    preferenceHelper.userUrl = data[BRANCH_RESPONSE_KEY_USER_URL];
+    
+    if ([data objectForKey:BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN]) {
+        preferenceHelper.randomizedDeviceToken = data[BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN];
+        if (!preferenceHelper.randomizedDeviceToken) {
+            // fallback to deprecated name. Fingerprinting was removed long ago, hence the name change.
+            preferenceHelper.randomizedDeviceToken = data[@"device_fingerprint_id"];
+        }
+    }
+   
+    if (data[BRANCH_RESPONSE_KEY_USER_URL]) {
+        preferenceHelper.userUrl = data[BRANCH_RESPONSE_KEY_USER_URL];
+    }
     preferenceHelper.userIdentity = userIdentity;
-    preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
+    if ([data objectForKey:BRANCH_RESPONSE_KEY_SESSION_ID])
+        preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
     preferenceHelper.previousAppBuildDate = [BNCApplication currentApplication].currentBuildDate;
 
     

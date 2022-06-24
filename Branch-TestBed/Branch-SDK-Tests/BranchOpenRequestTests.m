@@ -499,4 +499,52 @@
     [self awaitExpectations];
 }
 
+- (void)testEmptyResponseFields {
+    NSString *  DEVICE_TOKEN = @"foo-token";
+    NSString *  USER_URL = @"http://foo";
+    NSString *  DEVELOPER_ID = @"foo";
+    NSString *  SESSION_ID = @"foo-session";
+    NSString *  IDENTITY = @"branch-id";
+    
+    BNCServerResponse *response = [[BNCServerResponse alloc] init];
+    response.data = @{
+        BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN: DEVICE_TOKEN,
+        BRANCH_RESPONSE_KEY_USER_URL: USER_URL,
+        BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY: DEVELOPER_ID,
+        BRANCH_RESPONSE_KEY_SESSION_ID: SESSION_ID,
+        BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: IDENTITY
+    };
+    
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+
+    XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
+    BranchOpenRequest *request = [[BranchOpenRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
+        XCTAssertNil(error);
+        XCTAssertTrue(success);
+        [self safelyFulfillExpectation:openExpectation];
+    } isInstall:NO];
+    
+    [request processResponse:response error:nil];
+    
+    [self awaitExpectations];
+    
+    XCTAssertEqualObjects(preferenceHelper.randomizedDeviceToken, DEVICE_TOKEN);
+    XCTAssertEqualObjects(preferenceHelper.userUrl, USER_URL);
+    XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
+    XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
+    XCTAssertEqualObjects(preferenceHelper.randomizedBundleToken, IDENTITY);
+    XCTAssertNil(preferenceHelper.sessionParams);
+    XCTAssertNil(preferenceHelper.linkClickIdentifier);
+    XCTAssertNil(preferenceHelper.installParams);
+    
+    // Now call processResponse with empty fields again.
+    response.data = @{};
+    [request processResponse:response error:nil];
+    
+    XCTAssertNotNil(preferenceHelper.randomizedDeviceToken);
+    XCTAssertNotNil(preferenceHelper.userUrl);
+    XCTAssertNotNil(preferenceHelper.sessionID);
+    XCTAssertNotNil(preferenceHelper.randomizedBundleToken);
+}
+
 @end
