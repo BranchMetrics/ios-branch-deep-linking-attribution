@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+v.1.43.1
+- SDK-1461 Updates to GBRAID handling
+- Updated podspec to include LinkPresentation.framework
+
 v.1.43.0
 - SDK-1382 Added new methods to create Branch QR codes
    * getQRCodeAsData()
