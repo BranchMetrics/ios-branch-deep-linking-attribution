@@ -7,7 +7,7 @@ jobs:
     steps:
     - uses: actions/github-script@v6
       with:
-        github-token: ${{ secrets.BRANCHLET_ACCESS_TOKEN  }}
+        github-token: ${{ secrets.BRANCHLET_ACCESS_TOKEN_PUBLIC  }}
         script: |
           await github.rest.actions.createWorkflowDispatch({
             owner: 'BranchMetrics',
