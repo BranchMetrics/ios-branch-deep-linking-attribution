@@ -400,7 +400,6 @@
         preparedParams[@"randomized_bundle_token"] = nil;
         preparedParams[@"identity"] = nil;
         preparedParams[@"update"] = nil;
-        preparedParams[@"developer_identity"] = nil;
     }
     NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:preparedParams];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
@@ -475,7 +474,7 @@
     }
     
     if ([self.requestEndpoint containsString:@"/v1/open"]) {
-        [fullParamDict bnc_safeSetObject:[BNCPreferenceHelper sharedInstance].userIdentity forKey:@"developer_identity"];
+        [fullParamDict bnc_safeSetObject:[BNCPreferenceHelper sharedInstance].userIdentity forKey:@"identity"];
     }
     
     return fullParamDict;
