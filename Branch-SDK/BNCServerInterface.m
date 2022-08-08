@@ -472,6 +472,11 @@
             }
         }
     }
+    
+    if ([self.requestEndpoint containsString:@"/v1/open"]) {
+        [fullParamDict bnc_safeSetObject:[BNCPreferenceHelper sharedInstance].userIdentity forKey:@"identity"];
+    }
+    
     return fullParamDict;
 }
 

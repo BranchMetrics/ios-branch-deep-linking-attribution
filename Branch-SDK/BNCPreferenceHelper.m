@@ -709,7 +709,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
          // Don't clear these
          self.randomizedDeviceToken = nil;
          self.randomizedBundleToken = nil;
-         self.userIdentity = nil;
          */
         self.sessionID = nil;
         self.linkClickIdentifier = nil;
@@ -726,6 +725,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         self.previousAppBuildDate = nil;
         self.requestMetadataDictionary = nil;
         self.lastStrongMatchDate = nil;
+        self.userIdentity = nil;
     }
 }
 
