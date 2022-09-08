@@ -41,6 +41,15 @@ body:
       required: true
   - 
     attributes: 
+      description: "What version of Xcode are you using?"
+      label: "XCode Version"
+      placeholder: "13.4.1"
+    id: xcode-version
+    type: input
+    validations: 
+      required: true
+  - 
+    attributes: 
       description: "What devices or emulators are you seeing this bug on?"
       label: Device
       placeholder: "iPhone 13"
