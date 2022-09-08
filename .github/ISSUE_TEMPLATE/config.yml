@@ -1,0 +1,9 @@
+---
+blank_issues_enabled: false
+contact_links:
+  - name: "📕 Documentation Issue"
+    url: https://help.branch.io/developers-hub/docs/ios-sdk-overview
+    about: Report an issue in the Branch iOS SDK Reference documentation by clicking "Suggest edits" button on the documentation page.
+  - name: "Branch Support"
+    url: https://help.branch.io/using-branch/page/submit-a-ticket
+    about: If you are having general trouble with Branch iOS SDK integration, please submit a ticket to Branch Support.
