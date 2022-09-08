@@ -12,7 +12,7 @@ body:
       required: true
   - 
     attributes: 
-      description: "Please provide as much step-by-step detail as possible including logs, stacktraces, and uncaught exceptions."
+      description: "Please provide as much step-by-step detail as possible including logs, stack traces, and uncaught exceptions."
       label: "Steps to reproduce"
       value: |
           1.
