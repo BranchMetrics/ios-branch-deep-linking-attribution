@@ -42,7 +42,7 @@ body:
   - 
     attributes: 
       description: "What devices or emulators are you seeing this bug on?"
-      label: Environment
+      label: Device
       placeholder: "iPhone 13"
     id: device
     type: input
@@ -51,7 +51,7 @@ body:
   - 
     attributes: 
       description: "What is the version of iOS?"
-      label: Environment
+      label: OS
       placeholder: "15.6.1"
     id: os
     type: input
