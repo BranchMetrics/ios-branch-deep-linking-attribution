@@ -1,0 +1,83 @@
+--- 
+assignees: []
+body: 
+  - 
+    attributes: 
+      description: "What is the problem? A clear and concise description of what the bug is."
+      label: "Describe the bug"
+      placeholder: "Tell us what you see!"
+    id: description
+    type: textarea
+    validations: 
+      required: true
+  - 
+    attributes: 
+      description: "Please provide as much step-by-step detail as possible including logs, stack traces, and uncaught exceptions."
+      label: "Steps to reproduce"
+      value: |
+          1.
+          2.
+          3.
+    id: steps
+    type: textarea
+    validations: 
+      required: true
+  - 
+    attributes: 
+      description: "What did you expect to happen?"
+      label: "Expected behavior"
+    id: expected
+    type: textarea
+    validations: 
+      required: true
+  - 
+    attributes: 
+      description: "What version of sdk are you seeing this issue on?"
+      label: "SDK Version"
+      placeholder: "1.43.1"
+    id: sdk-version
+    type: input
+    validations: 
+      required: true
+  - 
+    attributes: 
+      description: "What version of Xcode are you using?"
+      label: "XCode Version"
+      placeholder: "13.4.1"
+    id: xcode-version
+    type: input
+    validations: 
+      required: true
+  - 
+    attributes: 
+      description: "What devices or emulators are you seeing this bug on?"
+      label: Device
+      placeholder: "iPhone 13"
+    id: device
+    type: input
+    validations: 
+      required: true
+  - 
+    attributes: 
+      description: "What is the version of iOS?"
+      label: OS
+      placeholder: "15.6.1"
+    id: os
+    type: input
+    validations: 
+      required: true
+  - 
+    attributes: 
+      description: "Anything else that might be relevant for troubleshooting this bug. Any screenshots or videos that show the issue are very helpful."
+      label: "Additional Information/Context"
+    id: context
+    type: textarea
+    validations: 
+      required: false
+  
+description: "Found a bug in the Branch iOS SDK? File it here."
+labels: 
+  - bug
+  - needs-triage
+name: "🐞 Bug report"
+title: "(short issue description)"
