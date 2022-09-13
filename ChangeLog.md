@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+v.1.43.2
+- SDK-1625 Fix rare crash when used with Adobe Launch
+- Update developer id handling logic
+
 v.1.43.1
 - SDK-1461 Updates to GBRAID handling
 - Updated podspec to include LinkPresentation.framework
