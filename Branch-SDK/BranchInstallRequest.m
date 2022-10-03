@@ -69,7 +69,18 @@
     }
     
     if ([BNCPasteboard sharedInstance].checkOnInstall) {
-        NSURL *pasteboardURL = [[BNCPasteboard sharedInstance] checkForBranchLink];
+        NSURL *pasteboardURL = nil;
+        if (@available(iOS 16.0, *)) {
+            NSString *localURLString = [[BNCPreferenceHelper sharedInstance] localUrl];
+            if(localURLString){
+                pasteboardURL = [[NSURL alloc] initWithString:localURLString];
+            } else {
+                pasteboardURL = [[BNCPasteboard sharedInstance] checkForBranchLink];
+            }
+        } else {
+            pasteboardURL = [[BNCPasteboard sharedInstance] checkForBranchLink];
+        }
+        
         if (pasteboardURL) {
             [self safeSetValue:pasteboardURL.absoluteString forKey:BRANCH_REQUEST_KEY_LOCAL_URL onDict:params];
         }

@@ -36,6 +36,7 @@ static NSString * const BRANCH_PREFS_KEY_APPLE_SEARCH_ADS_INFO = @"bnc_apple_sea
 static NSString * const BRANCH_PREFS_KEY_LINK_CLICK_IDENTIFIER = @"bnc_link_click_identifier";
 static NSString * const BRANCH_PREFS_KEY_SPOTLIGHT_IDENTIFIER = @"bnc_spotlight_identifier";
 static NSString * const BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL = @"bnc_universal_link_url";
+static NSString * const BRANCH_PREFS_KEY_LOCAL_URL = @"bnc_local_url";
 static NSString * const BRANCH_PREFS_KEY_INITIAL_REFERRER = @"bnc_initial_referrer";
 static NSString * const BRANCH_PREFS_KEY_SESSION_PARAMS = @"bnc_session_params";
 static NSString * const BRANCH_PREFS_KEY_INSTALL_PARAMS = @"bnc_install_params";
@@ -80,6 +81,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
             installParams = _installParams,
             universalLinkUrl = _universalLinkUrl,
             initialReferrer = _initialReferrer,
+            localUrl = _localUrl,
             externalIntentURI = _externalIntentURI,
             isDebug = _isDebug,
             retryCount = _retryCount,
@@ -323,6 +325,14 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 - (void)setUniversalLinkUrl:(NSString *)universalLinkUrl {
     [self writeObjectToDefaults:BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL value:universalLinkUrl];
+}
+
+- (NSString *)localUrl {
+    return [self readStringFromDefaults:BRANCH_PREFS_KEY_LOCAL_URL];
+}
+
+- (void)setLocalUrl:(NSString *)localURL {
+    [self writeObjectToDefaults:BRANCH_PREFS_KEY_LOCAL_URL value:localURL];
 }
 
 - (NSString *)initialReferrer {

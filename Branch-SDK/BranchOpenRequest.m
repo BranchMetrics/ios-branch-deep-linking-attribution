@@ -100,6 +100,16 @@
     if (partnerParameters.count > 0) {
         [self safeSetValue:partnerParameters forKey:BRANCH_REQUEST_KEY_PARTNER_PARAMETERS onDict:params];
     }
+        
+    if (@available(iOS 16.0, *)) {
+        NSString *localURLString = [[BNCPreferenceHelper sharedInstance] localUrl];
+        if(localURLString){
+            NSURL *localURL = [[NSURL alloc] initWithString:localURLString];
+            if (localURL) {
+                [self safeSetValue:localURL.absoluteString forKey:BRANCH_REQUEST_KEY_LOCAL_URL onDict:params];
+            }
+        }
+    }
 
     BNCApplication *application = [BNCApplication currentApplication];
     params[@"lastest_update_time"] = BNCWireFormatFromDate(application.currentBuildDate);
