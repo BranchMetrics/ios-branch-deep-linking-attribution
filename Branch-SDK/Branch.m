@@ -1607,8 +1607,7 @@ static NSString *bnc_branchKey = nil;
                 else if ([Branch isBranchLink:url.absoluteString]) {
                     [self.preferenceHelper setLocalUrl:[url absoluteString]];
                     // 3. Send Open Event
-                    [self resetUserSession];
-                    [self initUserSessionAndCallCallback:YES sceneIdentifier:nil];
+                    [[Branch getInstance] handleDeepLink:url];
                 }
             }];
         }

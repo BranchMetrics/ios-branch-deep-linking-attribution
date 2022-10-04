@@ -75,22 +75,8 @@
                                     <constraint firstAttribute="trailing" secondItem="k6T-ec-bv2" secondAttribute="trailing" constant="44" id="o9w-8k-QmK"/>
                                 </constraints>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4hG-wh-R72">
-                                <rect key="frame" x="16" y="258" width="168" height="27"/>
-                                <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="168" id="yPR-Di-CtM"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                <state key="normal" title="Send Open Event">
-                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                </state>
-                                <connections>
-                                    <action selector="sendOpenEvent:" destination="nU2-HM-nNx" eventType="touchUpInside" id="Os1-0K-f88"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g5q-Nq-dCK">
-                                <rect key="frame" x="198" y="258" width="161" height="27"/>
+                                <rect key="frame" x="107" y="259" width="161" height="27"/>
                                 <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="161" id="ISI-jR-svB"/>
@@ -106,17 +92,13 @@
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="4hG-wh-R72" firstAttribute="top" secondItem="BRw-ws-ocH" secondAttribute="bottom" constant="33" id="26F-mK-mGa"/>
-                            <constraint firstItem="g5q-Nq-dCK" firstAttribute="top" secondItem="BRw-ws-ocH" secondAttribute="bottom" constant="33" id="8cF-eF-DzS"/>
-                            <constraint firstItem="4hG-wh-R72" firstAttribute="leading" secondItem="cgu-eS-wJN" secondAttribute="leadingMargin" id="9Um-xl-FfW"/>
+                            <constraint firstItem="g5q-Nq-dCK" firstAttribute="top" secondItem="BRw-ws-ocH" secondAttribute="bottom" constant="34" id="8cF-eF-DzS"/>
                             <constraint firstItem="BRw-ws-ocH" firstAttribute="top" secondItem="YUK-Md-9s5" secondAttribute="bottom" constant="21" id="Hpk-0d-U93"/>
                             <constraint firstItem="YUK-Md-9s5" firstAttribute="leading" secondItem="cgu-eS-wJN" secondAttribute="leadingMargin" id="LHf-KH-bB4"/>
                             <constraint firstItem="YUK-Md-9s5" firstAttribute="top" secondItem="eAa-K9-ELs" secondAttribute="bottom" constant="28" id="MCL-RZ-jdG"/>
-                            <constraint firstItem="g5q-Nq-dCK" firstAttribute="trailing" secondItem="cgu-eS-wJN" secondAttribute="trailingMargin" id="OFw-az-uoT"/>
+                            <constraint firstItem="g5q-Nq-dCK" firstAttribute="trailing" secondItem="cgu-eS-wJN" secondAttribute="trailingMargin" constant="-91" id="OFw-az-uoT"/>
                             <constraint firstItem="BRw-ws-ocH" firstAttribute="leading" secondItem="cgu-eS-wJN" secondAttribute="leadingMargin" id="OMb-ag-xsi"/>
                             <constraint firstItem="BRw-ws-ocH" firstAttribute="top" secondItem="YUK-Md-9s5" secondAttribute="bottom" constant="21" id="iSz-Hk-c2S"/>
-                            <constraint firstItem="g5q-Nq-dCK" firstAttribute="leading" secondItem="4hG-wh-R72" secondAttribute="trailing" constant="14" id="s8P-1f-Y1E"/>
-                            <constraint firstItem="4hG-wh-R72" firstAttribute="top" secondItem="BRw-ws-ocH" secondAttribute="bottom" constant="33" id="sZe-vL-Pl7"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="lB1-2H-wEs"/>
@@ -631,7 +613,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zqE-EK-YAG" userLabel="Clear FB Param">
+                                                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zqE-EK-YAG" userLabel="Clear FB Param">
                                                     <rect key="frame" x="92.5" y="11" width="190" height="27"/>
                                                     <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <constraints>
@@ -661,7 +643,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Uky-kj-Mxl">
+                                                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Uky-kj-Mxl">
                                                     <rect key="frame" x="92.5" y="11" width="190" height="27"/>
                                                     <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <constraints>
@@ -728,7 +710,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mUN-NU-xns">
+                                                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mUN-NU-xns">
                                                     <rect key="frame" x="92.5" y="11" width="190" height="27"/>
                                                     <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <accessibility key="accessibilityConfiguration" identifier="tracking"/>
@@ -759,7 +741,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eDw-ps-FwX">
+                                                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eDw-ps-FwX">
                                                     <rect key="frame" x="92.5" y="11" width="190" height="27"/>
                                                     <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <accessibility key="accessibilityConfiguration" identifier="tracking"/>
@@ -790,7 +772,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oES-ex-qri">
+                                                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oES-ex-qri">
                                                     <rect key="frame" x="92.5" y="11" width="190" height="27"/>
                                                     <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <accessibility key="accessibilityConfiguration" identifier="tracking"/>
