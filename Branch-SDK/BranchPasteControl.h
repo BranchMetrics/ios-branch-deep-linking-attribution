@@ -10,6 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 160000
 API_AVAILABLE(ios(16.0))
 @interface BranchPasteControl : UIView <UIPasteConfigurationSupporting>
 
@@ -20,5 +21,5 @@ API_AVAILABLE(ios(16.0))
 - (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
 
 @end
-
+#endif
 NS_ASSUME_NONNULL_END

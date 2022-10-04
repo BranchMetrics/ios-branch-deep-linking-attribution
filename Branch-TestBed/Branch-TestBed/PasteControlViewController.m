@@ -25,6 +25,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 160000
     if (@available(iOS 16.0, *)) {
         
         CGRect rectPC = CGRectMake(0, 0, _applePasteControlView.frame.size.width, _applePasteControlView.frame.size.height);
@@ -38,6 +39,7 @@
         
         pasteConfiguration = [[UIPasteConfiguration alloc] initWithAcceptableTypeIdentifiers:@[UTTypeURL.identifier]];
     }
+#endif
 }
 
 - (void)pasteItemProviders:(NSArray<NSItemProvider *> *)itemProviders {

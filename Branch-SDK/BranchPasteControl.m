@@ -9,6 +9,8 @@
 #import "BranchPasteControl.h"
 #import "Branch.h"
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 160000
+
 @implementation BranchPasteControl
 
 @synthesize pasteConfiguration;
@@ -50,3 +52,4 @@
 }
 
 @end
+#endif
