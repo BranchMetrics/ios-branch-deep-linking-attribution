@@ -405,36 +405,11 @@ static NSString *type = @"some type";
 }
 
 - (IBAction) sendV2EventAction:(id)sender {
-    NSArray<NSString*> *eventNames = @[
-
-         BranchStandardEventAddToCart
-        ,BranchStandardEventAddToWishlist
-        ,BranchStandardEventViewCart
-        ,BranchStandardEventInitiatePurchase
-        ,BranchStandardEventAddPaymentInfo
-        ,BranchStandardEventPurchase
-        ,BranchStandardEventSpendCredits
-
-        ,BranchStandardEventSearch
-        ,BranchStandardEventViewItem
-        ,BranchStandardEventViewItems
-        ,BranchStandardEventRate
-        ,BranchStandardEventShare
-
-        ,BranchStandardEventCompleteRegistration
-        ,BranchStandardEventCompleteTutorial
-        ,BranchStandardEventAchieveLevel
-        ,BranchStandardEventUnlockAchievement
-        ,BranchStandardEventInvite
-        ,BranchStandardEventLogin
-        ,BranchStandardEventReserve
-        ,BranchStandardEventSubscribe
-        ,BranchStandardEventStartTrial
-        ,BranchStandardEventClickAd
-        ,BranchStandardEventViewAd
-        ,@"iOS-CustomEvent"
-
-    ];
+    NSMutableArray<NSString*> *eventNames = [NSMutableArray arrayWithArray:BranchEvent.standardEvents];
+    [eventNames sortUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        return [(NSString *)obj1 compare:(NSString *)obj2 options:NSNumericSearch];
+    }];
+    [eventNames addObject:@"iOS-CustomEvent"];
 
     __weak __typeof(self) weakSelf = self;
     ArrayPickerView *picker = [[ArrayPickerView alloc] initWithArray:eventNames];
