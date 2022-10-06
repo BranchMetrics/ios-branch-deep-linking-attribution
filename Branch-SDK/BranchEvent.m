@@ -36,6 +36,8 @@ BranchStandardEvent BranchStandardEventViewItem           = @"VIEW_ITEM";
 BranchStandardEvent BranchStandardEventViewItems          = @"VIEW_ITEMS";
 BranchStandardEvent BranchStandardEventRate               = @"RATE";
 BranchStandardEvent BranchStandardEventShare              = @"SHARE";
+BranchStandardEvent BranchStandardEventInitiateStream     = @"INITIATE_STREAM";
+BranchStandardEvent BranchStandardEventCompleteStream     = @"COMPLETE_STREAM";
 
 // User Lifecycle Events
 
