@@ -685,6 +685,51 @@
     XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
 }
 
+
+- (void)testStandardInitiateStreamEvent {
+    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventInitiateStream];
+    
+    NSDictionary *eventDictionary = [event buildEventDictionary];
+    XCTAssertNotNil(eventDictionary);
+    XCTAssert([eventDictionary[@"name"] isEqualToString:@"INITIATE_STREAM"]);
+    
+    BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
+    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
+}
+
+- (void)testCustomInitiateStreamEvent {
+    BranchEvent *event = [BranchEvent customEventWithName:@"INITIATE_STREAM"];
+    
+    NSDictionary *eventDictionary = [event buildEventDictionary];
+    XCTAssertNotNil(eventDictionary);
+    XCTAssert([eventDictionary[@"name"] isEqualToString:@"INITIATE_STREAM"]);
+    
+    BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
+    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
+}
+
+- (void)testStandardCompleteStreamEvent {
+    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventCompleteStream];
+    
+    NSDictionary *eventDictionary = [event buildEventDictionary];
+    XCTAssertNotNil(eventDictionary);
+    XCTAssert([eventDictionary[@"name"] isEqualToString:@"COMPLETE_STREAM"]);
+    
+    BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
+    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
+}
+
+- (void)testCustomCompleteStreamEvent {
+    BranchEvent *event = [BranchEvent customEventWithName:@"COMPLETE_STREAM"];
+    
+    NSDictionary *eventDictionary = [event buildEventDictionary];
+    XCTAssertNotNil(eventDictionary);
+    XCTAssert([eventDictionary[@"name"] isEqualToString:@"COMPLETE_STREAM"]);
+    
+    BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
+    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
+}
+
 - (void)testJsonStringForAdTypeNone {
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventViewAd];
     XCTAssertNil([event jsonStringForAdType:BranchEventAdTypeNone]);
