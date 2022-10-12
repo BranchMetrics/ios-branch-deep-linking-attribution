@@ -35,6 +35,9 @@ FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventViewItem;
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventViewItems;
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventRate;
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventShare;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventInitiateStream;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventCompleteStream;
+
 
 ///@name User Lifecycle Events
 
