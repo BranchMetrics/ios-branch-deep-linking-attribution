@@ -13,6 +13,6 @@ jobs:
           await github.rest.actions.createWorkflowDispatch({
             owner: 'BranchMetrics',
             repo: 'qentelli-saas-sdk-testing-automation',
-            workflow_id: 'maven.yml',
+            workflow_id: 'ios-maven.yml',
             ref: 'master'
           })
