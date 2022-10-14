@@ -43,6 +43,7 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
+    self.clearLocalURL = FALSE;
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
@@ -107,6 +108,7 @@
             NSURL *localURL = [[NSURL alloc] initWithString:localURLString];
             if (localURL) {
                 [self safeSetValue:localURL.absoluteString forKey:BRANCH_REQUEST_KEY_LOCAL_URL onDict:params];
+                self.clearLocalURL = TRUE;
             }
         }
     }
@@ -277,6 +279,10 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     
     if (string) {
         preferenceHelper.randomizedBundleToken = string;
+    }
+    
+    if (self.clearLocalURL) {
+        preferenceHelper.localUrl = nil;
     }
     
     [BranchOpenRequest releaseOpenResponseLock];

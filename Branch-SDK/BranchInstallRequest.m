@@ -26,6 +26,7 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    super.clearLocalURL = FALSE;
     
     [self safeSetValue:[BNCSystemObserver getBundleID] forKey:BRANCH_REQUEST_KEY_BUNDLE_ID onDict:params];
     [self safeSetValue:[BNCSystemObserver getTeamIdentifier] forKey:BRANCH_REQUEST_KEY_TEAM_ID onDict:params];
@@ -74,6 +75,7 @@
             NSString *localURLString = [[BNCPreferenceHelper sharedInstance] localUrl];
             if(localURLString){
                 pasteboardURL = [[NSURL alloc] initWithString:localURLString];
+                super.clearLocalURL = TRUE;
             } else {
                 pasteboardURL = [[BNCPasteboard sharedInstance] checkForBranchLink];
             }
