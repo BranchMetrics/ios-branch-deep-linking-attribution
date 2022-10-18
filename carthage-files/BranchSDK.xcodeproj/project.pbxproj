@@ -184,6 +184,10 @@
 		5F9071C6233D5FD5003AACAD /* BranchCrossPlatformID.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F9071C2233D5FD5003AACAD /* BranchCrossPlatformID.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F9071D1233D6034003AACAD /* BNCJSONUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F9071CF233D6033003AACAD /* BNCJSONUtility.h */; };
 		5F9071D2233D6034003AACAD /* BNCJSONUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F9071D0233D6034003AACAD /* BNCJSONUtility.m */; };
+		5F91E51528FF1BBA00FA4D24 /* BranchPasteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F91E51328FF1BBA00FA4D24 /* BranchPasteControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5F91E51628FF1BBA00FA4D24 /* BranchPasteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F91E51328FF1BBA00FA4D24 /* BranchPasteControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5F91E51728FF1BBA00FA4D24 /* BranchPasteControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F91E51428FF1BBA00FA4D24 /* BranchPasteControl.m */; };
+		5F91E51828FF1BBA00FA4D24 /* BranchPasteControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F91E51428FF1BBA00FA4D24 /* BranchPasteControl.m */; };
 		5F92B24D2387703700CA909B /* BNCLocale.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F92B2432387703500CA909B /* BNCLocale.m */; };
 		5F92B24E2387703700CA909B /* BNCDeviceSystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F92B2442387703600CA909B /* BNCDeviceSystem.m */; };
 		5F92B24F2387703700CA909B /* BNCReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F92B2452387703600CA909B /* BNCReachability.m */; };
@@ -599,6 +603,8 @@
 		5F9071C2233D5FD5003AACAD /* BranchCrossPlatformID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchCrossPlatformID.h; sourceTree = "<group>"; };
 		5F9071CF233D6033003AACAD /* BNCJSONUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCJSONUtility.h; sourceTree = "<group>"; };
 		5F9071D0233D6034003AACAD /* BNCJSONUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCJSONUtility.m; sourceTree = "<group>"; };
+		5F91E51328FF1BBA00FA4D24 /* BranchPasteControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchPasteControl.h; sourceTree = "<group>"; };
+		5F91E51428FF1BBA00FA4D24 /* BranchPasteControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchPasteControl.m; sourceTree = "<group>"; };
 		5F92B2432387703500CA909B /* BNCLocale.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLocale.m; sourceTree = "<group>"; };
 		5F92B2442387703600CA909B /* BNCDeviceSystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDeviceSystem.m; sourceTree = "<group>"; };
 		5F92B2452387703600CA909B /* BNCReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCReachability.m; sourceTree = "<group>"; };
@@ -732,6 +738,8 @@
 		E230A1141D03DB9E006181D8 /* Branch-SDK */ = {
 			isa = PBXGroup;
 			children = (
+				5F91E51328FF1BBA00FA4D24 /* BranchPasteControl.h */,
+				5F91E51428FF1BBA00FA4D24 /* BranchPasteControl.m */,
 				5F3D122226E2E8FD0026E592 /* BNCPasteboard.h */,
 				5F3D122326E2E8FD0026E592 /* BNCPasteboard.m */,
 				5F85110325B11E1000D544A1 /* BNCPartnerParameters.h */,
@@ -1024,6 +1032,7 @@
 				5FD0FA5225CE46BD008200EE /* BNCLinkData.h in Headers */,
 				5FD0FA5325CE46BD008200EE /* BNCServerRequestQueue.h in Headers */,
 				5FD0FA5425CE46BD008200EE /* BNCPreferenceHelper.h in Headers */,
+				5F91E51628FF1BBA00FA4D24 /* BranchPasteControl.h in Headers */,
 				5FD0FA5525CE46BD008200EE /* NSError+Branch.h in Headers */,
 				5FD0FA5625CE46BD008200EE /* BNCServerInterface.h in Headers */,
 				5FD0FA5725CE46BD008200EE /* BNCSpotlightService.h in Headers */,
@@ -1097,6 +1106,7 @@
 				5F38027C24DCE73100E6FAFD /* BranchShortUrlSyncRequest.h in Headers */,
 				5FB6D3DD23219C46006C5094 /* BNCThreads.h in Headers */,
 				4D1ED27E1FB3A43A007390A8 /* BNCAvailability.h in Headers */,
+				5F91E51528FF1BBA00FA4D24 /* BranchPasteControl.h in Headers */,
 				E2B9477B1D15E31700F2270D /* BNCCallbacks.h in Headers */,
 				4D3922BD1E1F0C85004FB7C8 /* BNCCommerceEvent.h in Headers */,
 				5F7DB5FB237C95C30077A95F /* BNCAppleAdClient.h in Headers */,
@@ -1497,6 +1507,7 @@
 				5FD0FAAE25CE46BD008200EE /* BNCLinkData.m in Sources */,
 				5FD0FAAF25CE46BD008200EE /* BNCEncodingUtils.m in Sources */,
 				5FD0FAB025CE46BD008200EE /* BranchScene.m in Sources */,
+				5F91E51828FF1BBA00FA4D24 /* BranchPasteControl.m in Sources */,
 				5FD0FAB125CE46BD008200EE /* BranchActivityItemProvider.m in Sources */,
 				5FD0FAB225CE46BD008200EE /* BNCServerRequest.m in Sources */,
 				5FD0FAB325CE46BD008200EE /* BNCTelephony.m in Sources */,
@@ -1581,6 +1592,7 @@
 				E230A1781D03DB9E006181D8 /* BNCLinkData.m in Sources */,
 				E230A1721D03DB9E006181D8 /* BNCEncodingUtils.m in Sources */,
 				5FD5EBE6243FB95000961CAF /* BranchScene.m in Sources */,
+				5F91E51728FF1BBA00FA4D24 /* BranchPasteControl.m in Sources */,
 				E230A1891D03DB9E006181D8 /* BranchActivityItemProvider.m in Sources */,
 				5F38027F24DCE73100E6FAFD /* BNCServerRequest.m in Sources */,
 				5F92B2562387703700CA909B /* BNCTelephony.m in Sources */,
@@ -1722,7 +1734,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 11.0;
 			};
 			name = Debug;
 		};
@@ -1758,7 +1770,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 11.0;
 			};
 			name = Release;
 		};
@@ -1775,7 +1787,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Branch/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_DYLIB_INSTALL_NAME = "@rpath/Branch.framework/Branch";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
@@ -1804,7 +1816,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Branch/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_DYLIB_INSTALL_NAME = "@rpath/Branch.framework/Branch";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
@@ -1961,7 +1973,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Branch/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MARKETING_VERSION = 1.43.2;
@@ -1988,7 +2000,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Branch/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MARKETING_VERSION = 1.43.2;
