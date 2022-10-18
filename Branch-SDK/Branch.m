@@ -1592,6 +1592,7 @@ static NSString *bnc_branchKey = nil;
 }
 #endif
 
+#if !TARGET_OS_TV
 #pragma mark - UIPasteControl Support methods
 
 - (void)passPasteItemProviders:(NSArray<NSItemProvider *> *)itemProviders {
@@ -1613,7 +1614,7 @@ static NSString *bnc_branchKey = nil;
         }
     }
 }
-
+#endif
 
 #pragma mark - Private methods
 

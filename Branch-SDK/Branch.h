@@ -1840,6 +1840,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 @property (strong, readonly) BNCServerInterface* serverInterface;
 - (void) clearNetworkQueue;
 
+#if !TARGET_OS_TV
 #pragma mark - UIPasteControl Support
 /**
  This method is used to pass paste board items to Branch SDK when user implements UIPasteControl at their end. SDK retrives URL from these item providers if any to support native link functionality.
@@ -1847,7 +1848,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @warning This function works with  iOS 16 or above.
  */
 - (void)passPasteItemProviders:(NSArray<NSItemProvider *> *)itemProviders API_AVAILABLE(ios(16));
-
+#endif
 @end
 
 NS_ASSUME_NONNULL_END
