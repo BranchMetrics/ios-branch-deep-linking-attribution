@@ -43,6 +43,7 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
+    self.clearLocalURL = FALSE;
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
@@ -99,6 +100,17 @@
     NSDictionary *partnerParameters = [[BNCPartnerParameters shared] parameterJson];
     if (partnerParameters.count > 0) {
         [self safeSetValue:partnerParameters forKey:BRANCH_REQUEST_KEY_PARTNER_PARAMETERS onDict:params];
+    }
+        
+    if (@available(iOS 16.0, *)) {
+        NSString *localURLString = [[BNCPreferenceHelper sharedInstance] localUrl];
+        if(localURLString){
+            NSURL *localURL = [[NSURL alloc] initWithString:localURLString];
+            if (localURL) {
+                [self safeSetValue:localURL.absoluteString forKey:BRANCH_REQUEST_KEY_LOCAL_URL onDict:params];
+                self.clearLocalURL = TRUE;
+            }
+        }
     }
 
     BNCApplication *application = [BNCApplication currentApplication];
@@ -267,6 +279,11 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     
     if (string) {
         preferenceHelper.randomizedBundleToken = string;
+    }
+    
+    if (self.clearLocalURL) {
+        preferenceHelper.localUrl = nil;
+        UIPasteboard.generalPasteboard.URL = nil;
     }
     
     [BranchOpenRequest releaseOpenResponseLock];

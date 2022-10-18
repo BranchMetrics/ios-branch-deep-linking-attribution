@@ -26,6 +26,7 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    super.clearLocalURL = FALSE;
     
     [self safeSetValue:[BNCSystemObserver getBundleID] forKey:BRANCH_REQUEST_KEY_BUNDLE_ID onDict:params];
     [self safeSetValue:[BNCSystemObserver getTeamIdentifier] forKey:BRANCH_REQUEST_KEY_TEAM_ID onDict:params];
@@ -69,7 +70,19 @@
     }
     
     if ([BNCPasteboard sharedInstance].checkOnInstall) {
-        NSURL *pasteboardURL = [[BNCPasteboard sharedInstance] checkForBranchLink];
+        NSURL *pasteboardURL = nil;
+        if (@available(iOS 16.0, *)) {
+            NSString *localURLString = [[BNCPreferenceHelper sharedInstance] localUrl];
+            if(localURLString){
+                pasteboardURL = [[NSURL alloc] initWithString:localURLString];
+                super.clearLocalURL = TRUE;
+            } else {
+                pasteboardURL = [[BNCPasteboard sharedInstance] checkForBranchLink];
+            }
+        } else {
+            pasteboardURL = [[BNCPasteboard sharedInstance] checkForBranchLink];
+        }
+        
         if (pasteboardURL) {
             [self safeSetValue:pasteboardURL.absoluteString forKey:BRANCH_REQUEST_KEY_LOCAL_URL onDict:params];
         }

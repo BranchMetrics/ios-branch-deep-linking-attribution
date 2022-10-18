@@ -10,6 +10,7 @@
 @import Foundation;
 #else
 #import <Foundation/Foundation.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #endif
 
 #import "BNCCallbacks.h"
@@ -1838,6 +1839,15 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 // Read-only property exposed for unit testing.
 @property (strong, readonly) BNCServerInterface* serverInterface;
 - (void) clearNetworkQueue;
+
+#pragma mark - UIPasteControl Support
+/**
+ This method is used to pass paste board items to Branch SDK when user implements UIPasteControl at their end. SDK retrives URL from these item providers if any to support native link functionality.
+ @param itemProviders - an array of item providers collected from pasteboard.
+ @warning This function works with  iOS 16 or above.
+ */
+- (void)passPasteItemProviders:(NSArray<NSItemProvider *> *)itemProviders API_AVAILABLE(ios(16));
+
 @end
 
 NS_ASSUME_NONNULL_END

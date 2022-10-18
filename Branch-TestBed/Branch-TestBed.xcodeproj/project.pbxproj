@@ -278,6 +278,9 @@
 		C1614D5C285BD4AF0098946B /* BranchPluginSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = C1614D5A285BD4AF0098946B /* BranchPluginSupport.h */; };
 		C1614D5D285BD4AF0098946B /* BranchPluginSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = C1614D5B285BD4AF0098946B /* BranchPluginSupport.m */; };
 		E2B9474A1D15D75000F2270D /* BNCCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = E2B947491D15D73900F2270D /* BNCCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E72489D228E40D0200DCD8FD /* PasteControlViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E72489D128E40D0200DCD8FD /* PasteControlViewController.m */; };
+		E729974D28E2BBFA007D91B2 /* BranchPasteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = E729974B28E2BBFA007D91B2 /* BranchPasteControl.h */; };
+		E729974E28E2BBFA007D91B2 /* BranchPasteControl.m in Sources */ = {isa = PBXBuildFile; fileRef = E729974C28E2BBFA007D91B2 /* BranchPasteControl.m */; };
 		F185BAAA1F3D30D70056300C /* BNCSpotlightService.h in Headers */ = {isa = PBXBuildFile; fileRef = F185BAA81F3D30D70056300C /* BNCSpotlightService.h */; };
 		F185BAAB1F3D30D70056300C /* BNCSpotlightService.m in Sources */ = {isa = PBXBuildFile; fileRef = F185BAA91F3D30D70056300C /* BNCSpotlightService.m */; };
 		F1CF14111F4CC79F00BB2694 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; settings = {ATTRIBUTES = (Required, ); }; };
@@ -623,6 +626,10 @@
 		D258D2C41A794D64004A1C90 /* BranchActivityItemProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchActivityItemProvider.h; sourceTree = "<group>"; };
 		D258D2C51A794D64004A1C90 /* BranchActivityItemProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchActivityItemProvider.m; sourceTree = "<group>"; };
 		E2B947491D15D73900F2270D /* BNCCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCCallbacks.h; sourceTree = "<group>"; };
+		E72489D028E40D0200DCD8FD /* PasteControlViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasteControlViewController.h; sourceTree = "<group>"; };
+		E72489D128E40D0200DCD8FD /* PasteControlViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PasteControlViewController.m; sourceTree = "<group>"; };
+		E729974B28E2BBFA007D91B2 /* BranchPasteControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchPasteControl.h; sourceTree = "<group>"; };
+		E729974C28E2BBFA007D91B2 /* BranchPasteControl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchPasteControl.m; sourceTree = "<group>"; };
 		F185BAA81F3D30D70056300C /* BNCSpotlightService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCSpotlightService.h; sourceTree = "<group>"; };
 		F185BAA91F3D30D70056300C /* BNCSpotlightService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSpotlightService.m; sourceTree = "<group>"; };
 		F1D3591E1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDeepLinkViewControllerInstance.h; sourceTree = "<group>"; };
@@ -886,6 +893,8 @@
 				63E4C4861D25E16A00A45FD8 /* LogOutputViewController.h */,
 				63E4C4871D25E16A00A45FD8 /* LogOutputViewController.m */,
 				4DBEFFFB1FB12A1000F7C41B /* Main.storyboard */,
+				E72489D028E40D0200DCD8FD /* PasteControlViewController.h */,
+				E72489D128E40D0200DCD8FD /* PasteControlViewController.m */,
 				63E4C4891D25E17B00A45FD8 /* NavigationController.h */,
 				63E4C48A1D25E17B00A45FD8 /* NavigationController.m */,
 				6700166A1940F51400A9E103 /* Supporting Files */,
@@ -995,6 +1004,8 @@
 				5F92B2382383703700CA909B /* BNCLocale.m */,
 				5F4101F326851DC7003699AD /* BNCPasteboard.h */,
 				5F4101F426851DC7003699AD /* BNCPasteboard.m */,
+				E729974B28E2BBFA007D91B2 /* BranchPasteControl.h */,
+				E729974C28E2BBFA007D91B2 /* BranchPasteControl.m */,
 				5FB0AA69231875B400A0F9EA /* BNCUserAgentCollector.h */,
 				5FB0AA6A231875B500A0F9EA /* BNCUserAgentCollector.m */,
 				464EA3991ACB38EC000E4094 /* BNCEncodingUtils.h */,
@@ -1101,6 +1112,7 @@
 				4DCAC80A1F426F7C00405D1D /* BNCLinkData.h in Headers */,
 				5F38021824DCC2E800E6FAFD /* BranchUserCompletedActionRequest.h in Headers */,
 				5F73FC7E23313F7A000EBD32 /* BNCJSONUtility.h in Headers */,
+				E729974D28E2BBFA007D91B2 /* BranchPasteControl.h in Headers */,
 				4DCAC80B1F426F7C00405D1D /* BNCLog.h in Headers */,
 				4DCAC80C1F426F7C00405D1D /* BNCPreferenceHelper.h in Headers */,
 				4DCAC8101F426F7C00405D1D /* Branch.h in Headers */,
@@ -1450,6 +1462,7 @@
 				5F38021924DCC2E800E6FAFD /* BranchUserCompletedActionRequest.m in Sources */,
 				4DB328001FA10B9000ACF9B0 /* BranchDelegate.m in Sources */,
 				5F38022F24DCC2E800E6FAFD /* BranchSpotlightUrlRequest.m in Sources */,
+				E729974E28E2BBFA007D91B2 /* BranchPasteControl.m in Sources */,
 				5F892EB82360EFE90023AEC1 /* BNCAppleSearchAds.m in Sources */,
 				466B58591B17779C00A69EDE /* BNCPreferenceHelper.m in Sources */,
 				4D8999ED1DC108FF00F7EE0A /* BNCAvailability.m in Sources */,
@@ -1520,6 +1533,7 @@
 				63E4C4881D25E16A00A45FD8 /* LogOutputViewController.m in Sources */,
 				6700167A1940F51400A9E103 /* ViewController.m in Sources */,
 				4DBEFFF61FB114F900F7C41B /* ArrayPickerView.m in Sources */,
+				E72489D228E40D0200DCD8FD /* PasteControlViewController.m in Sources */,
 				4683F0761B20A73F00A432E7 /* AppDelegate.m in Sources */,
 				670016701940F51400A9E103 /* main.m in Sources */,
 				63E4C48B1D25E17B00A45FD8 /* NavigationController.m in Sources */,
