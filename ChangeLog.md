@@ -5,6 +5,8 @@ v.1.44.0
 - SDK-1480 [iOS 16] UIPaste Support for NativeLink Flow 
     * Added API 'passPasteItemProviders'
     * Added class 'BranchPasteControl'
+- Requires Xcode 14+
+
 - Known Issues:
     * Integration with Carthage fails for tvOS.
 
