@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
     name: "Branch",
     platforms: [
-        .iOS(.v9),
-        .tvOS(.v9),
+        .iOS(.v11),
+        .tvOS(.v11),
     ],
     products: [
         .library(
