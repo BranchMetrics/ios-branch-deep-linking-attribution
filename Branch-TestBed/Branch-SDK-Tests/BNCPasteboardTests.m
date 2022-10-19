@@ -155,7 +155,7 @@
 
 
 - (void) testPassPasteControl {
-    
+#if !TARGET_OS_TV
     if (@available(iOS 16.0, *)) {
         
         long long timeStamp = ([[NSDate date] timeIntervalSince1970] - 5*60)*1000; // 5 minute earlier timestamp
@@ -167,19 +167,14 @@
 
         [[Branch getInstance] initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
             [openExpectation fulfill];
+            XCTAssertNil(error);
         }];
         
         [[Branch getInstance] passPasteItemProviders:itemProviders];
         [self waitForExpectationsWithTimeout:5.0 handler:NULL];
        
-        NSDictionary *params = [[Branch getInstance]  getLatestReferringParams];
-        
-        NSString *urlReturnedFromServer = [params objectForKey:@"~referring_link"];
-        NSNumber *macthed = [params objectForKey:@"+match_guaranteed"];
-        
-        XCTAssertTrue([urlReturnedFromServer isEqualToString:[testURL absoluteString]]);
-        XCTAssertEqual([macthed integerValue], 1);
     }
+#endif
 }
 
 @end

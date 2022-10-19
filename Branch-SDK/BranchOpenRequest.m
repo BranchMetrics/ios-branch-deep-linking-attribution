@@ -283,7 +283,9 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     
     if (self.clearLocalURL) {
         preferenceHelper.localUrl = nil;
+#if !TARGET_OS_TV
         UIPasteboard.generalPasteboard.URL = nil;
+#endif
     }
     
     [BranchOpenRequest releaseOpenResponseLock];
