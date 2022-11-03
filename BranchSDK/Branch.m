@@ -1596,6 +1596,30 @@ static NSString *bnc_branchKey = nil;
 }
 #endif
 
+#if !TARGET_OS_TV
+#pragma mark - UIPasteControl Support methods
+
+- (void)passPasteItemProviders:(NSArray<NSItemProvider *> *)itemProviders {
+    
+   // 1. Extract URL from NSItemProvider arrary
+    for (NSItemProvider* item in itemProviders){
+        if ( [item hasItemConformingToTypeIdentifier: UTTypeURL.identifier] ) {
+            // 2. Check if URL is branch URL and if yes -> store it.
+            [item loadItemForTypeIdentifier:UTTypeURL.identifier options:NULL completionHandler:^(NSURL *url, NSError * _Null_unspecified error) {
+                if (error) {
+                    BNCLogError([NSString stringWithFormat:@"%@", error]);
+                }
+                else if ([Branch isBranchLink:url.absoluteString]) {
+                    [self.preferenceHelper setLocalUrl:[url absoluteString]];
+                    // 3. Send Open Event
+                    [[Branch getInstance] handleDeepLink:url];
+                }
+            }];
+        }
+    }
+}
+#endif
+
 #pragma mark - Private methods
 
 + (Branch *)getInstanceInternal:(NSString *)key {
@@ -2130,7 +2154,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
             // callback on main, this is generally what the client expects and maintains our previous behavior
             dispatch_async(dispatch_get_main_queue(), ^ {
-
                 if (self.sceneSessionInitWithCallback) {
                     BNCInitSessionResponse *response = [BNCInitSessionResponse new];
                     response.params = [self getLatestReferringParams];

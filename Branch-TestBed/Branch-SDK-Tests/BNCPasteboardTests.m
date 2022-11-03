@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "BNCPasteboard.h"
+#import "Branch.h"
 
 @interface BNCPasteboardTests : XCTestCase
 
@@ -150,6 +151,30 @@
     XCTAssertNil(tmp);
     
     [self clearPasteboard];
+}
+
+
+- (void) testPassPasteControl {
+#if !TARGET_OS_TV
+    if (@available(iOS 16.0, *)) {
+        
+        long long timeStamp = ([[NSDate date] timeIntervalSince1970] - 5*60)*1000; // 5 minute earlier timestamp
+        NSString *urlString = [NSString stringWithFormat:@"https://bnctestbed-alternate.app.link/9R7MbTmnRtb?__branch_flow_type=viewapp&__branch_flow_id=1105940563590163783&__branch_mobile_deepview_type=1&nl_opt_in=1&_cpts=%lld", timeStamp];
+        NSURL *testURL = [[NSURL alloc] initWithString:urlString];
+            
+        NSArray<NSItemProvider *> *itemProviders = @[[[NSItemProvider alloc] initWithItem:testURL typeIdentifier:UTTypeURL.identifier]];
+        XCTestExpectation *openExpectation = [self expectationWithDescription:@"Test open"];
+
+        [[Branch getInstance] initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+            [openExpectation fulfill];
+            XCTAssertNil(error);
+        }];
+        
+        [[Branch getInstance] passPasteItemProviders:itemProviders];
+        [self waitForExpectationsWithTimeout:5.0 handler:NULL];
+       
+    }
+#endif
 }
 
 @end

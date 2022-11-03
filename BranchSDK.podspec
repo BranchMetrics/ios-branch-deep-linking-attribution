@@ -30,6 +30,7 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
 	"BranchSDK/BranchActivityItemProvider.{h,m}",
 	"BranchSDK/BranchCSSearchableItemAttributeSet.{h,m}",
 	"BranchSDK/BranchShareLink.{h,m}"
+	"BranchSDK/BranchPasteControl.{h,m}"
 
   s.frameworks = 'CoreServices', 'SystemConfiguration'
   s.weak_framework = 'LinkPresentation'

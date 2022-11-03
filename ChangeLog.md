@@ -1,5 +1,15 @@
 Branch iOS SDK Change Log
 
+v.1.44.0
+- SDK-1658 Add Support for VIEW_AD, INITIATE_STREAM, COMPLETE_STREAM and all V2 Events as Standard events
+- SDK-1480 [iOS 16] UIPaste Support for NativeLink Flow 
+    * Added API 'passPasteItemProviders'
+    * Added class 'BranchPasteControl'
+- Requires Xcode 14+
+
+- Known Issues:
+    * Integration with Carthage fails for tvOS.
+
 v.1.43.2
 - SDK-1625 Fix rare crash when used with Adobe Launch
 - Update developer id handling logic
