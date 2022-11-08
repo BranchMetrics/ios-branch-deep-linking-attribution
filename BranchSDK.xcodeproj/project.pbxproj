@@ -54,6 +54,10 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		5F1B240929148CBD003BEEC7 /* BranchPasteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F1B240729148CBD003BEEC7 /* BranchPasteControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5F1B240A29148CBD003BEEC7 /* BranchPasteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F1B240729148CBD003BEEC7 /* BranchPasteControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5F1B240B29148CBD003BEEC7 /* BranchPasteControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F1B240829148CBD003BEEC7 /* BranchPasteControl.m */; };
+		5F1B240C29148CBD003BEEC7 /* BranchPasteControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F1B240829148CBD003BEEC7 /* BranchPasteControl.m */; };
 		5F2210C52894A34000C5B190 /* BranchShortUrlSyncRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210272894A33E00C5B190 /* BranchShortUrlSyncRequest.h */; };
 		5F2210C62894A34000C5B190 /* BNCDeviceSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210282894A33E00C5B190 /* BNCDeviceSystem.h */; };
 		5F2210C72894A34000C5B190 /* BNCURLFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210292894A33E00C5B190 /* BNCURLFilter.m */; };
@@ -555,6 +559,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5F1B240729148CBD003BEEC7 /* BranchPasteControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchPasteControl.h; sourceTree = "<group>"; };
+		5F1B240829148CBD003BEEC7 /* BranchPasteControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchPasteControl.m; sourceTree = "<group>"; };
 		5F22101D2894A0DB00C5B190 /* BranchSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BranchSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F2210272894A33E00C5B190 /* BranchShortUrlSyncRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchShortUrlSyncRequest.h; sourceTree = "<group>"; };
 		5F2210282894A33E00C5B190 /* BNCDeviceSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDeviceSystem.h; sourceTree = "<group>"; };
@@ -941,6 +947,8 @@
 				5F22106A2894A33F00C5B190 /* BranchLogoutRequest.m */,
 				5F2210512894A33F00C5B190 /* BranchOpenRequest.h */,
 				5F2210342894A33E00C5B190 /* BranchOpenRequest.m */,
+				5F1B240729148CBD003BEEC7 /* BranchPasteControl.h */,
+				5F1B240829148CBD003BEEC7 /* BranchPasteControl.m */,
 				5F2210542894A33F00C5B190 /* BranchPluginSupport.h */,
 				5F2210772894A33F00C5B190 /* BranchPluginSupport.m */,
 				5F2210982894A34000C5B190 /* BranchQRCode.h */,
@@ -1042,6 +1050,7 @@
 				5F2211162894A34000C5B190 /* BNCInitSessionResponse.h in Headers */,
 				5F2210F32894A34000C5B190 /* BNCLinkCache.h in Headers */,
 				5F2210F12894A34000C5B190 /* BNCLinkData.h in Headers */,
+				5F1B240929148CBD003BEEC7 /* BranchPasteControl.h in Headers */,
 				5F2210DE2894A34000C5B190 /* BNCPreferenceHelper.h in Headers */,
 				5F22112D2894A34000C5B190 /* BNCServerInterface.h in Headers */,
 				5F22113B2894A34000C5B190 /* BNCServerRequest.h in Headers */,
@@ -1130,6 +1139,7 @@
 				5FF9DE9A28EE797300D62DE1 /* BNCAppleSearchAds.h in Headers */,
 				5FF9DE9B28EE797300D62DE1 /* BNCApplication.h in Headers */,
 				5FF9DE9C28EE797300D62DE1 /* BNCCallbackMap.h in Headers */,
+				5F1B240A29148CBD003BEEC7 /* BranchPasteControl.h in Headers */,
 				5FF9DE9D28EE797300D62DE1 /* BNCCallbacks.h in Headers */,
 				5FF9DE9E28EE797300D62DE1 /* BNCCommerceEvent.h in Headers */,
 				5FF9DE9F28EE797300D62DE1 /* BNCConfig.h in Headers */,
@@ -1533,7 +1543,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nscripts/xcode/build_xcframework.sh\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nScripts/build_xcframework.sh\n";
 		};
 		5FF9DEF828EE801400D62DE1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1551,7 +1561,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nscripts/xcode/build_xcframework_noidfa.sh\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nScripts/build_xcframework_noidfa.sh\n";
 		};
 		5FF9DEF928EE804900D62DE1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1569,7 +1579,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nscripts/xcode/build_static_xcframework.sh\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nScripts/build_static_xcframework.sh\n";
 		};
 		5FF9DEFA28EE805C00D62DE1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1587,7 +1597,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nscripts/xcode/build_static_xcframework_noidfa.sh\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nScripts/build_static_xcframework_noidfa.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1616,6 +1626,7 @@
 				5F2211212894A34000C5B190 /* BranchLastAttributedTouchData.m in Sources */,
 				5F2210DD2894A34000C5B190 /* BranchSpotlightUrlRequest.m in Sources */,
 				5F2210F92894A34000C5B190 /* BNCConfig.m in Sources */,
+				5F1B240B29148CBD003BEEC7 /* BranchPasteControl.m in Sources */,
 				5F2210CB2894A34000C5B190 /* BNCAppleSearchAds.m in Sources */,
 				5F2211382894A34000C5B190 /* BNCCrashlyticsWrapper.m in Sources */,
 				5F22110B2894A34000C5B190 /* BNCServerInterface.m in Sources */,
@@ -1727,6 +1738,7 @@
 				5FF9DE1F28EE78A700D62DE1 /* BNCKeyChain.m in Sources */,
 				5FF9DE2128EE78A700D62DE1 /* BNCLinkCache.m in Sources */,
 				5FF9DE2328EE78A700D62DE1 /* BNCLinkData.m in Sources */,
+				5F1B240C29148CBD003BEEC7 /* BranchPasteControl.m in Sources */,
 				5FF9DE2528EE78A700D62DE1 /* BNCLocale.m in Sources */,
 				5FF9DE2728EE78A800D62DE1 /* BNCLog.m in Sources */,
 				5FF9DE2928EE78A800D62DE1 /* BNCNetworkInterface.m in Sources */,
@@ -2380,6 +2392,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R63EM248DP;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -2389,6 +2402,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R63EM248DP;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -2398,6 +2412,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R63EM248DP;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -2407,6 +2422,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R63EM248DP;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -2416,6 +2432,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R63EM248DP;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -2425,6 +2442,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R63EM248DP;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

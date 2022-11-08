@@ -1,4 +1,5 @@
 #!/bin/sh
+# BranchSDK.xcodeproj static-xcframework-noidfa target runs this script
 
 # config
 IOS_PATH="./build/ios/ios.xcarchive"
@@ -49,5 +50,5 @@ LIBRARY_PATH="./build/BranchSDK.a"
 lipo -output "${TEMP_LIB_PATH}" -remove arm64 "${XCFRAMEWORK_PATH}/ios-arm64_x86_64-simulator/BranchSDK.framework/BranchSDK"
 
 # create a fat static library
-lipo "${XCFRAMEWORK_PATH}/ios-arm64_armv7/BranchSDK.framework/BranchSDK" "${TEMP_LIB_PATH}" -create -output "${LIBRARY_PATH}"
+lipo "${XCFRAMEWORK_PATH}/ios-arm64/BranchSDK.framework/BranchSDK" "${TEMP_LIB_PATH}" -create -output "${LIBRARY_PATH}"
     

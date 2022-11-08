@@ -26,7 +26,7 @@ version=$(./scripts/version.sh)
 echo ""
 echo "Before continuing:"
 echo "- Make sure that the release version number is already updated."
-echo "- Make sure that the ChangeLog.md has been updated, spell checked, and is coherent."
+echo "- Make sure that the ChangeLog.md has been updated."
 echo "- Unit tests pass in Xcode"
 echo ""
 if ! ./scripts/askYN.sh "Build Branch release candidate version ${version}?"; then
@@ -42,14 +42,14 @@ fi
 
 # Pre-release CocoaPod lint
 echo ">>> Linting release candidate..." 1>&2
-pod lib lint Branch.podspec --verbose --allow-warnings
+pod lib lint BranchSDK.podspec --verbose --allow-warnings
 
 # Build the frameworks
 echo ">>> Building the frameworks..." 1>&2
-./scripts/build_framework.sh
-./scripts/build_static_framework.sh
-./scripts/build_framework_noidfa.sh
-./scripts/build_static_framework_noidfa.sh
+./scripts/prep_xcframework.sh
+./scripts/prep_static_xcframework.sh
+./scripts/prep_xcframework_noidfa.sh
+./scripts/prep_static_xcframework_noidfa.sh
 
 echo ""
 echo "SDK release candidate is ready for testing"

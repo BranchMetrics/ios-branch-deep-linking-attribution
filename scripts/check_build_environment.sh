@@ -51,15 +51,6 @@ checkTool pod
 # Check Carthage
 checkTool carthage
 
-# Check Github
-if ! git push --dry-run &> /dev/null; then
-    echo ">>> Error: Not able to push to github." 1>&2
-    wasError=1
-fi
-
-# Check Google login
-#open 'https://groups.google.com/forum/#!newtopic/branch-sdk-releases'
-
 if [[ $wasError != 0 ]]; then
     echo ">>> Error: deploy-preflight failed." 1>&2
     exit 1

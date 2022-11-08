@@ -1,4 +1,5 @@
 #!/bin/sh
+# BranchSDK.xcodeproj xcframework-noidfa target runs this script
 
 # config
 IOS_PATH="./build/ios/ios.xcarchive"
@@ -16,35 +17,40 @@ xcodebuild archive \
     -scheme BranchSDK \
     -archivePath "${IOS_PATH}" \
     -sdk iphoneos \
-    SKIP_INSTALL=NO
+    SKIP_INSTALL=NO \
+    GCC_PREPROCESSOR_DEFINITIONS='${inherited} BRANCH_EXCLUDE_IDFA_CODE=1'
 
 # build iOS simulator framework
 xcodebuild archive \
     -scheme BranchSDK \
     -archivePath "${IOS_SIM_PATH}" \
     -sdk iphonesimulator \
-    SKIP_INSTALL=NO
+    SKIP_INSTALL=NO \
+    GCC_PREPROCESSOR_DEFINITIONS='${inherited} BRANCH_EXCLUDE_IDFA_CODE=1'
 
  # build tvOS framework
  xcodebuild archive \
      -scheme BranchSDK-tvOS \
      -archivePath "${TVOS_PATH}" \
      -sdk appletvos \
-     SKIP_INSTALL=NO
+     SKIP_INSTALL=NO \
+    GCC_PREPROCESSOR_DEFINITIONS='${inherited} BRANCH_EXCLUDE_IDFA_CODE=1'
 
  # build tvOS simulator framework
  xcodebuild archive \
      -scheme BranchSDK-tvOS \
      -archivePath "${TVOS_SIM_PATH}" \
      -sdk appletvsimulator \
-     SKIP_INSTALL=NO
+     SKIP_INSTALL=NO \
+    GCC_PREPROCESSOR_DEFINITIONS='${inherited} BRANCH_EXCLUDE_IDFA_CODE=1'
     
 # build Catalyst framework
  xcodebuild archive \
      -scheme BranchSDK \
      -archivePath "${CATALYST_PATH}" \
      -destination 'platform=macOS,arch=x86_64,variant=Mac Catalyst' \
-     SKIP_INSTALL=NO
+     SKIP_INSTALL=NO \
+    GCC_PREPROCESSOR_DEFINITIONS='${inherited} BRANCH_EXCLUDE_IDFA_CODE=1'
 
 # package frameworks
 xcodebuild -create-xcframework \

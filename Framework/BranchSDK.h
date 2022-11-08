@@ -24,6 +24,7 @@ FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 #import <BranchSDK/BranchLinkProperties.h>
 #import <BranchSDK/BranchUniversalObject.h>
 #import <BranchSDK/BranchQRCode.h>
+#import <BranchSDK/BranchPasteControl.h>
 
 #import <BranchSDK/BranchCrossPlatformID.h>
 #import <BranchSDK/BranchLastAttributedTouchData.h>
