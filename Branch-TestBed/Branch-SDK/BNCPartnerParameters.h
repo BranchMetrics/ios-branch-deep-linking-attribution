@@ -1,0 +1,1 @@
+../../BranchSDK/BNCPartnerParameters.h

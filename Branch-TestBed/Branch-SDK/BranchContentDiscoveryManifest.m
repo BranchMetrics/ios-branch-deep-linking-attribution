@@ -1,0 +1,1 @@
+../../BranchSDK/BranchContentDiscoveryManifest.m

@@ -1,0 +1,1 @@
+../../BranchSDK/BNCEncodingUtils.m

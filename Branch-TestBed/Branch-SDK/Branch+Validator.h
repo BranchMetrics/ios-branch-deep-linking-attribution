@@ -1,0 +1,1 @@
+../../BranchSDK/Branch+Validator.h

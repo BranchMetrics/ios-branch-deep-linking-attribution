@@ -11,6 +11,7 @@
 #import "BNCTestCase.h"
 #import "BNCURLFilter.h"
 #import "Branch.h"
+#import "BNCLog.h"
 
 @interface BNCURLFilter ()
 @property (readwrite) NSURL *jsonURL;

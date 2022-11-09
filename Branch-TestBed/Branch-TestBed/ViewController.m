@@ -7,6 +7,10 @@
 //
 
 #import "Branch.h"
+#import "BranchEvent.h"
+#import "BranchQRCode.h"
+#import "BranchConstants.h"
+#import "BNCConfig.h"
 #import "ViewController.h"
 #import "LogOutputViewController.h"
 #import "ArrayPickerView.h"
