@@ -134,7 +134,7 @@
 - (NSString *) getCoarseConversionValueFromDataResponse:(NSDictionary *) dataResponseDictionary{
     
     NSString *coarseConversionValue = dataResponseDictionary[BRANCH_RESPONSE_KEY_COARSE_KEY] ;
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 160000
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 160100
     if ([coarseConversionValue isEqualToString:@"high"]) {
         return SKAdNetworkCoarseConversionValueHigh;
     } else if ([coarseConversionValue isEqualToString:@"medium"]) {
