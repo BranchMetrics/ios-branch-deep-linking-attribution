@@ -83,7 +83,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
         NSNumber *conversionValue = (NSNumber *)dictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
         if (conversionValue) {
             if (@available(iOS 16.1, *)){
-                SKAdNetworkCoarseConversionValue coarseConversionValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:dictionary] ;
+                NSString * coarseConversionValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:dictionary] ;
                 BOOL lockWin = [[BNCSKAdNetwork sharedInstance] getLockedStatusFromDataResponse:dictionary];
                 BOOL shouldCallUpdatePostback = [[BNCSKAdNetwork sharedInstance] shouldCallPostbackForDataResponse:dictionary];
             

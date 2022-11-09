@@ -195,7 +195,8 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
         NSNumber *invokeRegister = (NSNumber *)data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP];
         if (invokeRegister.boolValue) {
             if (@available(iOS 16.1, *)){
-                [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:0 coarseValue:SKAdNetworkCoarseConversionValueLow
+                NSString *defaultCoarseConValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:@{}];
+                [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:0 coarseValue:defaultCoarseConValue
                     lockWindow:NO completionHandler:^(NSError * _Nullable error) {
                     if (error) {
                         BNCLogError([NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]]);
@@ -214,7 +215,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
         NSNumber *conversionValue = (NSNumber *)data[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
         if (conversionValue) {
             if (@available(iOS 16.1, *)){
-                SKAdNetworkCoarseConversionValue coarseConversionValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:data] ;
+                NSString* coarseConversionValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:data] ;
                 BOOL lockWin = [[BNCSKAdNetwork sharedInstance] getLockedStatusFromDataResponse:data];
                 BOOL shouldCallUpdatePostback = [[BNCSKAdNetwork sharedInstance] shouldCallPostbackForDataResponse:data];
                 

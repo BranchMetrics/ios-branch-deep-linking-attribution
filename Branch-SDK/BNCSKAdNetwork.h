@@ -25,13 +25,13 @@ NS_ASSUME_NONNULL_BEGIN
                     completionHandler:(void (^)(NSError *error))completion;
 
 - (void)updatePostbackConversionValue:(NSInteger)fineValue
-                          coarseValue:(SKAdNetworkCoarseConversionValue) coarseValue
+                          coarseValue:(NSString *) coarseValue
                            lockWindow:(BOOL)lockWindow
                     completionHandler:(void (^)(NSError *error))completion API_AVAILABLE(ios(16.1));
 
 - (int) calculateSKANWindowForTime:(NSDate *) currentTime;
 
-- (SKAdNetworkCoarseConversionValue) getCoarseConversionValueFromDataResponse:(NSDictionary *) dataResponseDictionary API_AVAILABLE(ios(16.1));
+- (NSString *) getCoarseConversionValueFromDataResponse:(NSDictionary *) dataResponseDictionary API_AVAILABLE(ios(16.1));
 
 - (BOOL) getLockedStatusFromDataResponse:(NSDictionary *) dataResponseDictionary;
 
