@@ -48,6 +48,8 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID = @"bnc_referrer_gbraid";
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID_WINDOW = @"bnc_referrer_gbraid_window";
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID_INIT_DATE = @"bnc_referrer_gbraid_init_date";
+static NSString * const BRANCH_PREFS_KEY_SKAN_CURRENT_WINDOW = @"bnc_skan_current_window";
+static NSString * const BRANCH_PREFS_KEY_SKAN_HIGHEST_CONV_VALUE_SENT = @"bnc_skan_send_highest_conv_value";
 
 NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
@@ -94,7 +96,9 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
             requestMetadataDictionary = _requestMetadataDictionary,
             instrumentationDictionary = _instrumentationDictionary,
             referrerGBRAID = _referrerGBRAID,
-            referrerGBRAIDValidityWindow = _referrerGBRAIDValidityWindow;
+            referrerGBRAIDValidityWindow = _referrerGBRAIDValidityWindow,
+            skanCurrentWindow = _skanCurrentWindow,
+            highestConversionValueSent = _highestConversionValueSent;
 
 + (BNCPreferenceHelper *)sharedInstance {
     static BNCPreferenceHelper *preferenceHelper;
@@ -712,6 +716,38 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_REFERRER_GBRAID_INIT_DATE value:initDate];
     }
 }
+
+- (NSInteger) skanCurrentWindow {
+    @synchronized (self) {
+        _skanCurrentWindow = [self readIntegerFromDefaults:BRANCH_PREFS_KEY_SKAN_CURRENT_WINDOW];
+        if(_skanCurrentWindow == NSNotFound)
+            return 0;
+        return _skanCurrentWindow;
+    }
+}
+
+- (void) setSkanCurrentWindow:(NSInteger) window {
+    @synchronized (self) {
+        [self writeIntegerToDefaults:BRANCH_PREFS_KEY_SKAN_CURRENT_WINDOW value:window];
+    }
+}
+
+- (NSInteger) highestConversionValueSent {
+    @synchronized (self) {
+        _highestConversionValueSent = [self readIntegerFromDefaults:BRANCH_PREFS_KEY_SKAN_HIGHEST_CONV_VALUE_SENT];
+        if(_highestConversionValueSent == NSNotFound)
+            return 0;
+        return _highestConversionValueSent;
+    }
+}
+
+- (void) setHighestConversionValueSent:(NSInteger)value {
+    @synchronized (self) {
+        [self writeIntegerToDefaults:BRANCH_PREFS_KEY_SKAN_HIGHEST_CONV_VALUE_SENT value:value];
+    }
+}
+
+
 
 - (void) clearTrackingInformation {
     @synchronized(self) {

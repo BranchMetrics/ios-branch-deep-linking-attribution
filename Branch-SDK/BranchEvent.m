@@ -82,7 +82,28 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
     if (dictionary && [dictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE] isKindOfClass:NSNumber.class]) {
         NSNumber *conversionValue = (NSNumber *)dictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
         if (conversionValue) {
-            if (@available(iOS 15.4, *)) {
+            if (@available(iOS 16.1, *)){
+                SKAdNetworkCoarseConversionValue coarseConversionValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:dictionary] ;
+                BOOL lockWin = [[BNCSKAdNetwork sharedInstance] getLockedStatusFromDataResponse:dictionary];
+                BOOL shouldCallUpdatePostback = [[BNCSKAdNetwork sharedInstance] shouldCallPostbackForDataResponse:dictionary];
+            
+                BNCLogDebug([NSString stringWithFormat:@"SKAN 4.0 params - conversionValue:%@ coarseValue:%@, locked:%d, shouldCallPostback:%d", conversionValue, coarseConversionValue, lockWin, shouldCallUpdatePostback]);
+                
+                if(shouldCallUpdatePostback){
+                    [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue: conversionValue.longValue coarseValue:coarseConversionValue lockWindow:lockWin completionHandler:^(NSError * _Nullable error) {
+                        if (self.completion) {
+                            self.completion(nil, error);
+                        }
+                        if (error) {
+                            BNCLogError([NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]]);
+                        } else {
+                            BNCLogDebug([NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue]);
+                        }
+                        return;
+                    }];
+                }
+                
+            } else if (@available(iOS 15.4, *)) {
                 [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:conversionValue.intValue completionHandler: ^(NSError *error){
                     if (self.completion) {
                         self.completion(nil, error);

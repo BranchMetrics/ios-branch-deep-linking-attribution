@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <StoreKit/StoreKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -22,6 +23,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)updatePostbackConversionValue:(NSInteger)conversionValue
                     completionHandler:(void (^)(NSError *error))completion;
+
+- (void)updatePostbackConversionValue:(NSInteger)fineValue
+                          coarseValue:(SKAdNetworkCoarseConversionValue) coarseValue
+                           lockWindow:(BOOL)lockWindow
+                    completionHandler:(void (^)(NSError *error))completion API_AVAILABLE(ios(16.1));
+
+- (int) calculateSKANWindowForTime:(NSDate *) currentTime;
+
+- (SKAdNetworkCoarseConversionValue) getCoarseConversionValueFromDataResponse:(NSDictionary *) dataResponseDictionary API_AVAILABLE(ios(16.1));
+
+- (BOOL) getLockedStatusFromDataResponse:(NSDictionary *) dataResponseDictionary;
+
+- (BOOL) getEnforceHighestConversionValueFromDataResponse:(NSDictionary *) dataResponseDictionary;
+
+- (BOOL) shouldCallPostbackForDataResponse:(NSDictionary *) dataResponseDictionary;
 
 @end
 

@@ -174,7 +174,6 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
         userIdentity = [userIdentity stringValue];
     }
     
-    
     if ([data objectForKey:BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN]) {
         preferenceHelper.randomizedDeviceToken = data[BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN];
         if (!preferenceHelper.randomizedDeviceToken) {
@@ -195,7 +194,54 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     if ([data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP] isKindOfClass:NSNumber.class]) {
         NSNumber *invokeRegister = (NSNumber *)data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP];
         if (invokeRegister.boolValue) {
-            [[BNCSKAdNetwork sharedInstance] registerAppForAdNetworkAttribution];
+            if (@available(iOS 16.1, *)){
+                [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:0 coarseValue:SKAdNetworkCoarseConversionValueLow
+                    lockWindow:NO completionHandler:^(NSError * _Nullable error) {
+                    if (error) {
+                        BNCLogError([NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]]);
+                    } else {
+                        BNCLogDebug([NSString stringWithFormat:@"Update conversion value was successful for INSTALL Event"]);
+                    }
+                }];
+            } else {
+                [[BNCSKAdNetwork sharedInstance] registerAppForAdNetworkAttribution];
+            }
+        }
+    }
+    
+ 
+    if (data && [data[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE] isKindOfClass:NSNumber.class]) {
+        NSNumber *conversionValue = (NSNumber *)data[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
+        if (conversionValue) {
+            if (@available(iOS 16.1, *)){
+                SKAdNetworkCoarseConversionValue coarseConversionValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:data] ;
+                BOOL lockWin = [[BNCSKAdNetwork sharedInstance] getLockedStatusFromDataResponse:data];
+                BOOL shouldCallUpdatePostback = [[BNCSKAdNetwork sharedInstance] shouldCallPostbackForDataResponse:data];
+                
+                BNCLogDebug([NSString stringWithFormat:@"SKAN 4.0 params - conversionValue:%@ coarseValue:%@, locked:%d, shouldCallPostback:%d", conversionValue, coarseConversionValue, lockWin, shouldCallUpdatePostback]);
+                
+                if(shouldCallUpdatePostback){
+                    [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue: conversionValue.longValue coarseValue:coarseConversionValue lockWindow:lockWin completionHandler:^(NSError * _Nullable error) {
+                        if (error) {
+                            BNCLogError([NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]]);
+                        } else {
+                            BNCLogDebug([NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue]);
+                        }
+                    }];
+                }
+            } else if (@available(iOS 15.4, *)) {
+                [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:conversionValue.intValue completionHandler: ^(NSError *error){
+                    if (error) {
+                        BNCLogError([NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]]);
+                    } else {
+                        BNCLogDebug([NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue]);
+                    }
+                    return;
+                }];
+                return;
+            } else {
+                [[BNCSKAdNetwork sharedInstance] updateConversionValue:conversionValue.integerValue];
+            }
         }
     }
 
