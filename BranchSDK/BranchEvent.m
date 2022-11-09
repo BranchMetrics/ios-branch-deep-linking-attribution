@@ -236,6 +236,8 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
         BranchStandardEventViewItems,
         BranchStandardEventRate,
         BranchStandardEventShare,
+        BranchStandardEventInitiateStream,
+        BranchStandardEventCompleteStream,
         BranchStandardEventCompleteRegistration,
         BranchStandardEventCompleteTutorial,
         BranchStandardEventAchieveLevel,
