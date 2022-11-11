@@ -38,8 +38,8 @@
     self = [super init];
     if (self) {
         if (@available(iOS 16.1, *)){
-            // Can send postbacks upto 35 days
-            self.maxTimeSinceInstall = 3600.0 * 24.0 * 35;
+            // For SKAN 4.0, its 60 days = 3600.0 * 24.0 * 60 seconds
+            self.maxTimeSinceInstall = 3600.0 * 24.0 * 60;
         } else {
             // by default, we send updates to SKAdNetwork for up a day after install
             self.maxTimeSinceInstall = 3600.0 * 24.0;
@@ -119,7 +119,7 @@
     int secondWindowDuration = 7 * 24 * 3600;
     int thirdWindowDuration = 35 * 24 * 3600;
     
-    NSTimeInterval timeDiff = [currentTime timeIntervalSinceDate:self.installDate];
+    NSTimeInterval timeDiff = [currentTime timeIntervalSinceDate:[BNCPreferenceHelper sharedInstance].firstAppLaunchTime];
     
     if (timeDiff <= firstWindowDuration) {
         return 1;
@@ -134,22 +134,12 @@
 - (NSString *) getCoarseConversionValueFromDataResponse:(NSDictionary *) dataResponseDictionary{
     
     NSString *coarseConversionValue = dataResponseDictionary[BRANCH_RESPONSE_KEY_COARSE_KEY] ;
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 160100
-    if ([coarseConversionValue isEqualToString:@"high"]) {
-        return SKAdNetworkCoarseConversionValueHigh;
-    } else if ([coarseConversionValue isEqualToString:@"medium"]) {
-        return SKAdNetworkCoarseConversionValueMedium;
-    } else {
-        return SKAdNetworkCoarseConversionValueLow;
-    }
-#else
-    if (!coarseConversionValue) {
+ 
+    if (!coarseConversionValue) 
         return @"low";
-    } else {
-        return coarseConversionValue;
-    }
-#endif
-    
+        
+    return coarseConversionValue;
+  
 }
 
 - (BOOL) getLockedStatusFromDataResponse:(NSDictionary *) dataResponseDictionary {
@@ -160,11 +150,11 @@
     return lockWin;
 }
 
-- (BOOL) getEnforceHighestConversionValueFromDataResponse:(NSDictionary *) dataResponseDictionary {
+- (BOOL) getAscendingOnlyFromDataResponse:(NSDictionary *) dataResponseDictionary {
 
     BOOL ascendingOnly = YES;
-    if(  [dataResponseDictionary[BRANCH_RESPONSE_KEY_ENFORCE_HIGHEST_CONVERSION_VALUE] isKindOfClass:NSNumber.class])
-        ascendingOnly = ((NSNumber *)dataResponseDictionary[BRANCH_RESPONSE_KEY_ENFORCE_HIGHEST_CONVERSION_VALUE]).boolValue;
+    if([dataResponseDictionary[BRANCH_RESPONSE_KEY_ASCENDING_ONLY] isKindOfClass:NSNumber.class])
+        ascendingOnly = ((NSNumber *)dataResponseDictionary[BRANCH_RESPONSE_KEY_ASCENDING_ONLY]).boolValue;
     return ascendingOnly;
 }
 
@@ -174,6 +164,10 @@
     NSNumber *conversionValue = (NSNumber *)dataResponseDictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
 
     int currentWindow = [self calculateSKANWindowForTime:[NSDate date]];
+    
+    if(currentWindow == 0)
+        return NO;
+    
     if ( [BNCPreferenceHelper sharedInstance].skanCurrentWindow < currentWindow) {
         [BNCPreferenceHelper sharedInstance].highestConversionValueSent = 0;
         [BNCPreferenceHelper sharedInstance].skanCurrentWindow = currentWindow;
@@ -181,7 +175,7 @@
     
     int highestConversionValue = (int)[BNCPreferenceHelper sharedInstance].highestConversionValueSent;
     if( conversionValue.intValue <= highestConversionValue ){
-        BOOL ascendingOnly = [self getEnforceHighestConversionValueFromDataResponse:dataResponseDictionary];
+        BOOL ascendingOnly = [self getAscendingOnlyFromDataResponse:dataResponseDictionary];
         if (ascendingOnly)
             shouldCallUpdatePostback = NO;
     } else {

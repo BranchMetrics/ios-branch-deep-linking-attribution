@@ -79,6 +79,8 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
 	NSDictionary *dictionary = ([response.data isKindOfClass:[NSDictionary class]])
 		? (NSDictionary*) response.data : nil;
     
+    BOOL callCompletionHandler = YES;
+    
     if (dictionary && [dictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE] isKindOfClass:NSNumber.class]) {
         NSNumber *conversionValue = (NSNumber *)dictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
         if (conversionValue) {
@@ -90,9 +92,10 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
                 BNCLogDebug([NSString stringWithFormat:@"SKAN 4.0 params - conversionValue:%@ coarseValue:%@, locked:%d, shouldCallPostback:%d", conversionValue, coarseConversionValue, lockWin, shouldCallUpdatePostback]);
                 
                 if(shouldCallUpdatePostback){
+                    callCompletionHandler = NO;
                     [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue: conversionValue.longValue coarseValue:coarseConversionValue lockWindow:lockWin completionHandler:^(NSError * _Nullable error) {
                         if (self.completion) {
-                            self.completion(nil, error);
+                            self.completion(dictionary, error);
                         }
                         if (error) {
                             BNCLogError([NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]]);
@@ -104,9 +107,10 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
                 }
                 
             } else if (@available(iOS 15.4, *)) {
+                callCompletionHandler = NO;
                 [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:conversionValue.intValue completionHandler: ^(NSError *error){
                     if (self.completion) {
-                        self.completion(nil, error);
+                        self.completion(dictionary, error);
                     }
                     if (error) {
                         BNCLogError([NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]]);
@@ -122,7 +126,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
         }
     }
     
-    if (self.completion) {
+    if (self.completion && callCompletionHandler) {
 		self.completion(dictionary, error);
     }
 }

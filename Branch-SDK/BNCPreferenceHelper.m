@@ -49,6 +49,7 @@ static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID = @"bnc_referrer_gbraid
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID_WINDOW = @"bnc_referrer_gbraid_window";
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID_INIT_DATE = @"bnc_referrer_gbraid_init_date";
 static NSString * const BRANCH_PREFS_KEY_SKAN_CURRENT_WINDOW = @"bnc_skan_current_window";
+static NSString * const BRANCH_PREFS_KEY_FIRST_APP_LAUNCH_TIME = @"bnc_first_app_launch_time";
 static NSString * const BRANCH_PREFS_KEY_SKAN_HIGHEST_CONV_VALUE_SENT = @"bnc_skan_send_highest_conv_value";
 
 NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
@@ -98,6 +99,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
             referrerGBRAID = _referrerGBRAID,
             referrerGBRAIDValidityWindow = _referrerGBRAIDValidityWindow,
             skanCurrentWindow = _skanCurrentWindow,
+            firstAppLaunchTime = _firstAppLaunchTime,
             highestConversionValueSent = _highestConversionValueSent;
 
 + (BNCPreferenceHelper *)sharedInstance {
@@ -729,6 +731,23 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (void) setSkanCurrentWindow:(NSInteger) window {
     @synchronized (self) {
         [self writeIntegerToDefaults:BRANCH_PREFS_KEY_SKAN_CURRENT_WINDOW value:window];
+    }
+}
+
+
+- (NSDate *) firstAppLaunchTime {
+    @synchronized (self) {
+        if(!_firstAppLaunchTime) {
+            _firstAppLaunchTime = (NSDate *)[self readObjectFromDefaults:BRANCH_PREFS_KEY_FIRST_APP_LAUNCH_TIME];
+        }
+        return _firstAppLaunchTime;
+    }
+}
+
+- (void) setFirstAppLaunchTime:(NSDate *) launchTime {
+    @synchronized (self) {
+        _firstAppLaunchTime = launchTime;
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_FIRST_APP_LAUNCH_TIME value:launchTime];
     }
 }
 

@@ -1642,6 +1642,10 @@ static NSString *bnc_branchKey = nil;
                 [[BNCServerRequestQueue getInstance] clearQueue];
             }
 
+            if(!preferenceHelper.firstAppLaunchTime){
+                preferenceHelper.firstAppLaunchTime = [NSDate date];
+            }
+            
             preferenceHelper.lastRunBranchKey = key;
             branch =
                 [[Branch alloc] initWithInterface:[[BNCServerInterface alloc] init]

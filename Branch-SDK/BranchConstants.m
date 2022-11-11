@@ -107,7 +107,7 @@ NSString * const BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP = @"invoke_register_app
 NSString * const BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE = @"update_conversion_value";
 NSString * const BRANCH_RESPONSE_KEY_COARSE_KEY = @"coarse_key";
 NSString * const BRANCH_RESPONSE_KEY_UPDATE_IS_LOCKED = @"is_locked";
-NSString * const BRANCH_RESPONSE_KEY_ENFORCE_HIGHEST_CONVERSION_VALUE = @"enforce_highest_conversion_value";
+NSString * const BRANCH_RESPONSE_KEY_ASCENDING_ONLY = @"ascending_only";
 
 NSString * const BRANCH_LINK_DATA_KEY_OG_TITLE = @"$og_title";
 NSString * const BRANCH_LINK_DATA_KEY_OG_DESCRIPTION = @"$og_description";

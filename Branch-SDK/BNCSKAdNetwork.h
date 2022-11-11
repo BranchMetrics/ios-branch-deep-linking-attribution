@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <StoreKit/StoreKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -31,11 +30,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (int) calculateSKANWindowForTime:(NSDate *) currentTime;
 
-- (NSString *) getCoarseConversionValueFromDataResponse:(NSDictionary *) dataResponseDictionary API_AVAILABLE(ios(16.1));
+- (NSString *) getCoarseConversionValueFromDataResponse:(NSDictionary *) dataResponseDictionary;
 
 - (BOOL) getLockedStatusFromDataResponse:(NSDictionary *) dataResponseDictionary;
 
-- (BOOL) getEnforceHighestConversionValueFromDataResponse:(NSDictionary *) dataResponseDictionary;
+- (BOOL) getAscendingOnlyFromDataResponse:(NSDictionary *) dataResponseDictionary;
 
 - (BOOL) shouldCallPostbackForDataResponse:(NSDictionary *) dataResponseDictionary;
 
