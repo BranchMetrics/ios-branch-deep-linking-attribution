@@ -1,14 +1,3 @@
-#### How to build?
-1. Install Xcode
-2. Install cocoapods - https://cocoapods.org/ or <code>brew install cocoapods</code>
-3. Checkout https://github.com/BranchMetrics/ios-branch-deep-linking-attribution. Make sure you switch to the latest release tag.                     
-4. Change into the Branch-TestBed directory          
-5. Remove Podfile.lock
-6. Run <code>pod update</code>
-7. open Branch-TestBed.xcworkspace to run the test app.
-
-
-
 # Security Policy
 
 ## Reporting a Vulnerability
