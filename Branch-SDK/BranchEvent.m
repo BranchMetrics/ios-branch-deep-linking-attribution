@@ -89,7 +89,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
                 BOOL lockWin = [[BNCSKAdNetwork sharedInstance] getLockedStatusFromDataResponse:dictionary];
                 BOOL shouldCallUpdatePostback = [[BNCSKAdNetwork sharedInstance] shouldCallPostbackForDataResponse:dictionary];
             
-                BNCLogDebug([NSString stringWithFormat:@"SKAN 4.0 params - conversionValue:%@ coarseValue:%@, locked:%d, shouldCallPostback:%d", conversionValue, coarseConversionValue, lockWin, shouldCallUpdatePostback]);
+                BNCLogDebug([NSString stringWithFormat:@"SKAN 4.0 params - conversionValue:%@ coarseValue:%@, locked:%d, shouldCallPostback:%d, currentWindow:%d", conversionValue, coarseConversionValue, lockWin, shouldCallUpdatePostback, (int)[BNCPreferenceHelper sharedInstance].skanCurrentWindow]);
                 
                 if(shouldCallUpdatePostback){
                     callCompletionHandler = NO;

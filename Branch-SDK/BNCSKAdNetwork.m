@@ -122,13 +122,13 @@
     NSTimeInterval timeDiff = [currentTime timeIntervalSinceDate:[BNCPreferenceHelper sharedInstance].firstAppLaunchTime];
     
     if (timeDiff <= firstWindowDuration) {
-        return 1;
+        return BranchSkanWindowFirst;
     } else if (timeDiff <= secondWindowDuration) {
-        return 2;
+        return BranchSkanWindowSecond;
     }else if (timeDiff <= thirdWindowDuration) {
-        return 3;
+        return BranchSkanWindowThird;
     }
-    return 0;
+    return BranchSkanWindowInvalid;
 }
 
 - (NSString *) getCoarseConversionValueFromDataResponse:(NSDictionary *) dataResponseDictionary{
@@ -160,13 +160,13 @@
 
 - (BOOL) shouldCallPostbackForDataResponse:(NSDictionary *) dataResponseDictionary {
     
-    BOOL shouldCallUpdatePostback = YES;
+    BOOL shouldCallUpdatePostback = NO;
     NSNumber *conversionValue = (NSNumber *)dataResponseDictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
 
     int currentWindow = [self calculateSKANWindowForTime:[NSDate date]];
     
-    if(currentWindow == 0)
-        return NO;
+    if(currentWindow == BranchSkanWindowInvalid)
+        return shouldCallUpdatePostback;
     
     if ( [BNCPreferenceHelper sharedInstance].skanCurrentWindow < currentWindow) {
         [BNCPreferenceHelper sharedInstance].highestConversionValueSent = 0;
@@ -176,10 +176,11 @@
     int highestConversionValue = (int)[BNCPreferenceHelper sharedInstance].highestConversionValueSent;
     if( conversionValue.intValue <= highestConversionValue ){
         BOOL ascendingOnly = [self getAscendingOnlyFromDataResponse:dataResponseDictionary];
-        if (ascendingOnly)
-            shouldCallUpdatePostback = NO;
+        if (!ascendingOnly)
+            shouldCallUpdatePostback = YES;
     } else {
         [BNCPreferenceHelper sharedInstance].highestConversionValueSent = conversionValue.intValue;
+        shouldCallUpdatePostback = YES;
     }
     
     return shouldCallUpdatePostback;

@@ -13,6 +13,7 @@
 #import "BNCLog.h"
 #import "BranchConstants.h"
 #import "NSString+Branch.h"
+#import "BNCSKAdNetwork.h"
 
 static const NSTimeInterval DEFAULT_TIMEOUT = 5.5;
 static const NSTimeInterval DEFAULT_RETRY_INTERVAL = 0;
@@ -723,7 +724,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     @synchronized (self) {
         _skanCurrentWindow = [self readIntegerFromDefaults:BRANCH_PREFS_KEY_SKAN_CURRENT_WINDOW];
         if(_skanCurrentWindow == NSNotFound)
-            return 0;
+            return BranchSkanWindowInvalid;
         return _skanCurrentWindow;
     }
 }

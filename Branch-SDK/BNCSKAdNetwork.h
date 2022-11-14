@@ -10,6 +10,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSInteger, BranchSkanWindow) {
+    BranchSkanWindowInvalid = 0,
+    BranchSkanWindowFirst = 1,
+    BranchSkanWindowSecond = 2,
+    BranchSkanWindowThird = 3
+};
+
 @interface BNCSKAdNetwork : NSObject
 
 @property (nonatomic, assign, readwrite) NSTimeInterval maxTimeSinceInstall;
