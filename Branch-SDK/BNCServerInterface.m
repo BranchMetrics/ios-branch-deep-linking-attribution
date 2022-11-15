@@ -578,7 +578,14 @@
 // we do not need to send first_opt_in, if the install is older than 30 days
 - (BOOL)installDateIsRecent {
     //NSTimeInterval maxTimeSinceInstall = 60.0;
-    NSTimeInterval maxTimeSinceInstall = 3600.0 * 24.0 * 30;
+    NSTimeInterval maxTimeSinceInstall = 0;
+    
+    if (@available(iOS 16.1, *)) {
+        maxTimeSinceInstall = 3600.0 * 24.0 * 60; // For SKAN 4.0, The user has 60 days to launch the app.
+    } else {
+        maxTimeSinceInstall = 3600.0 * 24.0 * 30;
+    }
+        
     NSDate *now = [NSDate date];
     NSDate *maxDate = [[BNCApplication currentApplication].currentInstallDate dateByAddingTimeInterval:maxTimeSinceInstall];
     

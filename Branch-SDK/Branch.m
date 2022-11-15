@@ -1006,7 +1006,11 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)setSKAdNetworkCalloutMaxTimeSinceInstall:(NSTimeInterval)maxTimeInterval {
-    [BNCSKAdNetwork sharedInstance].maxTimeSinceInstall = maxTimeInterval;
+    if (@available(iOS 16.1, *)) {
+        BNCLogDebug(@"This is no longer supported for iOS 16.1+ - SKAN4.0");
+    } else {
+        [BNCSKAdNetwork sharedInstance].maxTimeSinceInstall = maxTimeInterval;
+    }
 }
 
 #pragma mark - Partner Parameters
