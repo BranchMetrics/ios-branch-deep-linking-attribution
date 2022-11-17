@@ -161,6 +161,10 @@
 - (BOOL) shouldCallPostbackForDataResponse:(NSDictionary *) dataResponseDictionary {
     
     BOOL shouldCallUpdatePostback = NO;
+    
+    if(![BNCPreferenceHelper sharedInstance].invokeRegisterApp)
+        return shouldCallUpdatePostback;
+    
     NSNumber *conversionValue = (NSNumber *)dataResponseDictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
 
     int currentWindow = [self calculateSKANWindowForTime:[NSDate date]];

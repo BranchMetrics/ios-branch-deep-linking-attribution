@@ -110,7 +110,7 @@
     
     if (@available(iOS 16.1, *)) {
         
-        NSDictionary *response = @{@"update_conversion_value": @16, @"coarse_key": @"high", @"is_locked": @YES, @"ascending_only":@NO };
+        NSDictionary *response = @{@"update_conversion_value": @16, @"coarse_key": @"high", @"locked": @YES, @"ascending_only":@NO };
         BNCSKAdNetwork *adNetwork = [BNCSKAdNetwork sharedInstance];
         
         NSString *coarseValue = [adNetwork getCoarseConversionValueFromDataResponse:response];
@@ -157,6 +157,7 @@
     prefs.highestConversionValueSent = 0;
     prefs.skanCurrentWindow = 0;
     NSDate *currentDateAndTime = [NSDate date];
+    prefs.invokeRegisterApp = YES;
     
     prefs.firstAppLaunchTime = [currentDateAndTime dateByAddingTimeInterval:-30 ];
     [adNetwork shouldCallPostbackForDataResponse:@{}];
@@ -182,7 +183,7 @@
     prefs.firstAppLaunchTime = nil;
     [prefs synchronize];
     
-    NSDictionary *response = @{@"update_conversion_value": @16, @"coarse_key": @"high", @"is_locked": @YES, @"ascending_only":@NO };
+    NSDictionary *response = @{@"update_conversion_value": @16, @"coarse_key": @"high", @"locked": @YES, @"ascending_only":@NO };
     
     BOOL shouldCall = [adNetwork shouldCallPostbackForDataResponse:response];
     XCTAssertFalse(shouldCall);
@@ -194,13 +195,14 @@
     BNCSKAdNetwork *adNetwork = [BNCSKAdNetwork sharedInstance];
     BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
     
+    prefs.invokeRegisterApp = YES;
     prefs.highestConversionValueSent = 0;
     prefs.firstAppLaunchTime = [NSDate date];
     prefs.skanCurrentWindow = 0;
     [prefs synchronize];
     
     NSMutableDictionary *response = [[NSMutableDictionary alloc] initWithDictionary:
-    @{@"update_conversion_value": @16, @"coarse_key": @"high", @"is_locked": @YES, @"ascending_only":@YES }];
+    @{@"update_conversion_value": @16, @"coarse_key": @"high", @"locked": @YES, @"ascending_only":@YES }];
     
     BOOL shouldCall = [adNetwork shouldCallPostbackForDataResponse:response];
     XCTAssertTrue(shouldCall);
@@ -230,12 +232,13 @@
     BNCSKAdNetwork *adNetwork = [BNCSKAdNetwork sharedInstance];
     BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
     
+    prefs.invokeRegisterApp = YES;
     prefs.highestConversionValueSent = 0;
     prefs.firstAppLaunchTime = [NSDate date];
     [prefs synchronize];
     
     NSMutableDictionary *response = [[NSMutableDictionary alloc] initWithDictionary:
-    @{@"update_conversion_value": @16, @"coarse_key": @"high", @"is_locked": @YES, @"ascending_only":@NO }];
+    @{@"update_conversion_value": @16, @"coarse_key": @"high", @"locked": @YES, @"ascending_only":@NO }];
     
     BOOL shouldCall = [adNetwork shouldCallPostbackForDataResponse:response];
     XCTAssertTrue(shouldCall);

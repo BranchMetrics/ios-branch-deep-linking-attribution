@@ -295,6 +295,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     
     if ([data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP] isKindOfClass:NSNumber.class]) {
         NSNumber *invokeRegister = (NSNumber *)data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP];
+        preferenceHelper.invokeRegisterApp = invokeRegister.boolValue;
         if (invokeRegister.boolValue) {
             if (@available(iOS 16.1, *)){
                 callCalback = NO;
@@ -316,6 +317,8 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
                 [[BNCSKAdNetwork sharedInstance] registerAppForAdNetworkAttribution];
             }
         }
+    } else {
+        preferenceHelper.invokeRegisterApp = NO;
     }
     
  
@@ -327,7 +330,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
                 BOOL lockWin = [[BNCSKAdNetwork sharedInstance] getLockedStatusFromDataResponse:data];
                 BOOL shouldCallUpdatePostback = [[BNCSKAdNetwork sharedInstance] shouldCallPostbackForDataResponse:data];
                 
-                BNCLogDebug([NSString stringWithFormat:@"SKAN 4.0 params - conversionValue:%@ coarseValue:%@, locked:%d, shouldCallPostback:%d, currentWindow:%d", conversionValue, coarseConversionValue, lockWin, shouldCallUpdatePostback, (int)preferenceHelper.skanCurrentWindow]);
+                BNCLogDebug([NSString stringWithFormat:@"SKAN 4.0 params - conversionValue:%@ coarseValue:%@, locked:%d, shouldCallPostback:%d, currentWindow:%d, firstAppLaunchTime: %@", conversionValue, coarseConversionValue, lockWin, shouldCallUpdatePostback, (int)preferenceHelper.skanCurrentWindow, preferenceHelper.firstAppLaunchTime]);
                 
                 if(shouldCallUpdatePostback){
                     callCalback = NO;
