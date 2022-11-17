@@ -296,7 +296,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     if ([data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP] isKindOfClass:NSNumber.class]) {
         NSNumber *invokeRegister = (NSNumber *)data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP];
         preferenceHelper.invokeRegisterApp = invokeRegister.boolValue;
-        if (invokeRegister.boolValue) {
+        if (invokeRegister.boolValue && self.isInstall) {
             if (@available(iOS 16.1, *)){
                 callCalback = NO;
                 NSString *defaultCoarseConValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:@{}];
