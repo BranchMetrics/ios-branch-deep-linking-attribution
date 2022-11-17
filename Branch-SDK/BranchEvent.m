@@ -12,6 +12,7 @@
 #import "BNCReachability.h"
 #import "BNCSKAdNetwork.h"
 #import "BNCPartnerParameters.h"
+#import "BNCPreferenceHelper.h"
 
 #pragma mark BranchStandardEvents
 
@@ -83,7 +84,8 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
     
     if (dictionary && [dictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE] isKindOfClass:NSNumber.class]) {
         NSNumber *conversionValue = (NSNumber *)dictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
-        if (conversionValue) {
+        // Regardless of SKAN opted-in in dashboard, we always get conversionValue, so adding check to find out if install/open response had "invoke_register_app" true
+        if (conversionValue && [BNCPreferenceHelper sharedInstance].invokeRegisterApp) {
             if (@available(iOS 16.1, *)){
                 NSString * coarseConversionValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:dictionary] ;
                 BOOL lockWin = [[BNCSKAdNetwork sharedInstance] getLockedStatusFromDataResponse:dictionary];

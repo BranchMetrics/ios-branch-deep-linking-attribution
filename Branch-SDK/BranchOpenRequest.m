@@ -313,7 +313,21 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
                         BNCLogDebug([NSString stringWithFormat:@"Update conversion value was successful for INSTALL Event"]);
                     }
                 }];
-            } else {
+            } else if (@available(iOS 15.4, *)){
+                callCalback = NO;
+                [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:0 completionHandler:^(NSError * _Nullable error) {
+                    if(self.callback){
+                        self.callback(YES, error);
+                    }
+                    
+                    if (error) {
+                        BNCLogError([NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]]);
+                    } else {
+                        BNCLogDebug([NSString stringWithFormat:@"Update conversion value was successful for INSTALL Event"]);
+                    }
+                }];
+            }
+            else {
                 [[BNCSKAdNetwork sharedInstance] registerAppForAdNetworkAttribution];
             }
         }
@@ -324,7 +338,8 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
  
     if (data && [data[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE] isKindOfClass:NSNumber.class] && !self.isInstall) {
         NSNumber *conversionValue = (NSNumber *)data[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
-        if (conversionValue) {
+        // Regardless of SKAN opted-in in dashboard, we always get conversionValue, so adding check to find out if install/open response had "invoke_register_app" true
+        if (conversionValue && preferenceHelper.invokeRegisterApp ) {
             if (@available(iOS 16.1, *)){
                 NSString* coarseConversionValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:data] ;
                 BOOL lockWin = [[BNCSKAdNetwork sharedInstance] getLockedStatusFromDataResponse:data];
