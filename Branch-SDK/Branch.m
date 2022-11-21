@@ -1006,7 +1006,11 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)setSKAdNetworkCalloutMaxTimeSinceInstall:(NSTimeInterval)maxTimeInterval {
-    [BNCSKAdNetwork sharedInstance].maxTimeSinceInstall = maxTimeInterval;
+    if (@available(iOS 16.1, *)) {
+        BNCLogDebug(@"This is no longer supported for iOS 16.1+ - SKAN4.0");
+    } else {
+        [BNCSKAdNetwork sharedInstance].maxTimeSinceInstall = maxTimeInterval;
+    }
 }
 
 #pragma mark - Partner Parameters
@@ -1642,6 +1646,10 @@ static NSString *bnc_branchKey = nil;
                 [[BNCServerRequestQueue getInstance] clearQueue];
             }
 
+            if(!preferenceHelper.firstAppLaunchTime){
+                preferenceHelper.firstAppLaunchTime = [NSDate date];
+            }
+            
             preferenceHelper.lastRunBranchKey = key;
             branch =
                 [[Branch alloc] initWithInterface:[[BNCServerInterface alloc] init]

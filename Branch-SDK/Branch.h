@@ -701,7 +701,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  
  Note: Branch does not automatically call SKAdNetwork unless configured on the dashboard.
  */
-- (void)setSKAdNetworkCalloutMaxTimeSinceInstall:(NSTimeInterval)maxTimeInterval;
+- (void)setSKAdNetworkCalloutMaxTimeSinceInstall:(NSTimeInterval)maxTimeInterval __attribute__((deprecated(("This is no longer supported for iOS 16.1+ - SKAN4.0"))));
 
 /*
  Add a Partner Parameter for Facebook.
