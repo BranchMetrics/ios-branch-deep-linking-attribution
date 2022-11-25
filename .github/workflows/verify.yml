@@ -10,13 +10,13 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Set up Ruby 2.7
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.7'
       - name: Restore cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             vendor
@@ -36,7 +36,7 @@ jobs:
       - name: Run unit tests
         run: bundle exec fastlane unit_tests
       - name: Upload test results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: always() # even if tests fail
         with:
           name: test-results
