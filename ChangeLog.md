@@ -4,6 +4,7 @@ v.1.45.0
 - SDK-1659 SKAN 4.0 Support 
     * Support for coarse-grained conversion value
     * Support for multiple conversion window
+    * Support for locking conversions in SKAN windows
     * Added calls to updatePostbackConversionValue on Branch Open events 
 
 v.1.44.0
