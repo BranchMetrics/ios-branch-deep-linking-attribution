@@ -72,6 +72,11 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) NSTimeInterval referrerGBRAIDValidityWindow;
 @property (strong, nonatomic) NSDate *referrerGBRAIDInitDate;
 
+@property (assign, nonatomic) NSInteger skanCurrentWindow;
+@property (assign, nonatomic) NSInteger highestConversionValueSent;
+@property (strong, nonatomic) NSDate   *firstAppLaunchTime;
+@property (assign, nonatomic) BOOL invokeRegisterApp;
+
 - (void) clearTrackingInformation;
 
 + (BNCPreferenceHelper *)sharedInstance;

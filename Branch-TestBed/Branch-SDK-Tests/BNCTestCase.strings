@@ -136,7 +136,7 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
 {
     \"name\": \"PURCHASE\",
     \"metadata\" : {
-        \"skan_time_window\": \"86400.000000\"
+        \"skan_time_window\": \"5184000.000000\"
     },
     \"custom_data\": {
         \"Custom_Event_Property_Key1\": \"Custom_Event_Property_val1\",

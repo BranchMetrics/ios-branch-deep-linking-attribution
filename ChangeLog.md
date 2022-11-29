@@ -1,12 +1,18 @@
 Branch iOS SDK Change Log
 
+v.1.45.0
+- SDK-1659 SKAN 4.0 Support 
+    * Support for coarse-grained conversion value
+    * Support for multiple conversion window
+    * Support for locking conversions in SKAN windows
+    * Added calls to updatePostbackConversionValue on Branch Open events 
+
 v.1.44.0
 - SDK-1658 Add Support for VIEW_AD, INITIATE_STREAM, COMPLETE_STREAM and all V2 Events as Standard events
 - SDK-1480 [iOS 16] UIPaste Support for NativeLink Flow 
     * Added API 'passPasteItemProviders'
     * Added class 'BranchPasteControl'
 - Requires Xcode 14+
-
 - Known Issues:
     * Integration with Carthage fails for tvOS.
 
