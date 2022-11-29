@@ -30,8 +30,7 @@
         "resolvedPath" : "..\/Simulate-FirstRun.xcappdata"
       },
       "skippedTests" : [
-        "BNCAppleAdClientTests",
-        "BNCAppleSearchAdsTests"
+        "BNCServerInterfaceTests"
       ],
       "target" : {
         "containerPath" : "container:Branch-TestBed.xcodeproj",
