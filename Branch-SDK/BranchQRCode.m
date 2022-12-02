@@ -50,6 +50,18 @@
     _width = width;
 }
 
+- (void) setBackgroundImageOpacity:(NSNumber *)backgroundImageOpacity {
+    if (backgroundImageOpacity.intValue > 99) {
+        backgroundImageOpacity = @(99);
+        BNCLogWarning(@"Background image opacity was reduced to the maximum of 99.");
+    }
+    if (backgroundImageOpacity.intValue < 1) {
+        backgroundImageOpacity = @(1);
+        BNCLogWarning(@"Background image opacity was increased to the minimum of 1.");
+    }
+    _backgroundImageOpacity = backgroundImageOpacity;
+}
+
 - (void)getQRCodeAsData:(nullable BranchUniversalObject *)buo
          linkProperties:(nullable BranchLinkProperties *)lp
              completion:(void(^)(NSData * _Nullable qrCode, NSError * _Nullable error))completion {
@@ -60,18 +72,16 @@
     if (self.backgroundColor) { settings[@"background_color"] = [self hexStringForColor:self.backgroundColor]; }
     if (self.margin) { settings[@"margin"] = self.margin; }
     if (self.width) { settings[@"width"] = self.width; }
-    
+    if (self.centerLogo) { settings[@"center_logo_url"] = self.centerLogo; }
+    if (self.pattern) { settings[@"code_pattern"] = [[NSNumber alloc] initWithInt:(int)self.pattern]; }
+    if (self.finderPattern) { settings[@"finder_pattern"] = [[NSNumber alloc] initWithInt:(int)self.finderPattern]; }
+    if (self.finderPatternColor) { settings[@"finder_pattern_color"] = [self hexStringForColor:self.finderPatternColor]; }
+    if (self.backgroundImage) { settings[@"background_image_url"] = self.backgroundImage; }
+    if (self.patternImage) { settings[@"code_pattern_url"] = self.patternImage; }
+    if (self.backgroundImageOpacity) { settings[@"background_image_opacity"] = self.backgroundImageOpacity; }
+    if (self.finderEyeColor) { settings[@"finder_eye_color"] = [self hexStringForColor:self.finderEyeColor]; }
+
     settings[@"image_format"] = (self.imageFormat == BranchQRCodeImageFormatJPEG) ? @"JPEG" : @"PNG";
-    
-    if (self.centerLogo) {
-        NSData *data=[NSData dataWithContentsOfURL:[NSURL URLWithString: self.centerLogo]];
-        UIImage *image=[UIImage imageWithData:data];
-        if (image == nil) {
-            BNCLogWarning(@"QR code center logo was an invalid URL string.");
-        } else {
-            settings[@"center_logo_url"] = self.centerLogo;
-        }
-    }
     
     NSMutableDictionary *parameters = [NSMutableDictionary new];
     
@@ -121,7 +131,7 @@
     
     NSError *error;
     NSString *branchAPIURL = [BNC_API_BASE_URL copy];
-    NSString *urlString = [NSString stringWithFormat: @"%@/v1/qr-code", branchAPIURL];
+    NSString *urlString = [NSString stringWithFormat: @"%@/v2/qr-code", branchAPIURL];
     NSURL *url = [NSURL URLWithString: urlString];
     NSURLSession *session = [NSURLSession sharedSession];
     
@@ -251,11 +261,6 @@
 }
 #endif
 #endif
-
-- (BOOL)isValidUrl:(NSString *)urlString{
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlString]];
-    return [NSURLConnection canHandleRequest:request];
-}
 
 - (NSString *)hexStringForColor:(UIColor *)color {
     CGColorSpaceModel colorSpace = CGColorSpaceGetModel(CGColorGetColorSpace(color.CGColor));

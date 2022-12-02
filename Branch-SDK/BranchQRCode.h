@@ -16,6 +16,22 @@ typedef NS_ENUM(NSInteger, BranchQRCodeImageFormat){
     BranchQRCodeImageFormatJPEG
 };
 
+typedef NS_ENUM(NSInteger, BranchQRCodePattern){
+    BranchQRCodePatternStandard = 1,
+    BranchQRCodePatternSquares = 2,
+    BranchQRCodePatternCircles = 3,
+    BranchQRCodePatternTriangles = 4,
+    BranchQRCodePatternDiamonds = 5,
+    BranchQRCodePatternHexagons = 6,
+    BranchQRCodePatternOctagons = 7,
+};
+
+typedef NS_ENUM(NSInteger, BranchQRCodeFinderPattern){
+    BranchQRCodeFinderPatternSquare = 1,
+    BranchQRCodeFinderPatternRoundedRectangle = 2,
+    BranchQRCodeFinderPatternCircle = 3,
+};
+
 @interface BranchQRCode : NSObject
 
 /// Primary color of the generated QR code itself.
@@ -30,6 +46,20 @@ typedef NS_ENUM(NSInteger, BranchQRCodeImageFormat){
 @property (nonatomic, copy, readwrite) NSNumber *margin;
 /// Format of the returned QR code. Can be a JPEG or PNG.
 @property (nonatomic, assign, readwrite) BranchQRCodeImageFormat imageFormat;
+/// The style of code pattern used to generate the QR code.
+@property (nonatomic, assign, readwrite) BranchQRCodePattern pattern;
+/// The style of finder pattern used to generate the QR code.
+@property (nonatomic, assign, readwrite) BranchQRCodeFinderPattern finderPattern;
+/// Color of the QR code's finder pattern.
+@property (nonatomic, strong, readwrite) UIColor *finderPatternColor;
+/// A URL of an image that will be added to the background of the QR code. Must be a PNG or JPEG.
+@property (nonatomic, copy, readwrite) NSString *backgroundImage;
+/// Adjusts the opacity of the background image from 1-99.
+@property (nonatomic, copy, readwrite) NSNumber *backgroundImageOpacity;
+/// A URL of an image to be used as the code-pattern itself on the QR Code.. Must be a PNG or JPEG.
+@property (nonatomic, copy, readwrite) NSString *patternImage;
+/// Color of the  interior part of a QR code’s finder pattern.
+@property (nonatomic, strong, readwrite) UIColor *finderEyeColor;
 
 /**
 Creates a Branch QR Code image. Returns the QR code as NSData.
