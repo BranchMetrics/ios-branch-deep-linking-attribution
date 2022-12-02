@@ -27,6 +27,14 @@
     qrCode.centerLogo = @"https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg";
     qrCode.imageFormat = BranchQRCodeImageFormatPNG;
     
+    qrCode.pattern = BranchQRCodePatternCircles;
+    qrCode.finderPattern = BranchQRCodeFinderPatternCircle;
+    qrCode.finderPatternColor = UIColor.redColor;
+    qrCode.backgroundImage = @"https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg";
+    qrCode.backgroundImageOpacity = @20;
+    qrCode.patternImage = @"https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg";
+    qrCode.finderEyeColor = UIColor.orangeColor;
+    
     BranchUniversalObject *buo = [BranchUniversalObject new];
     BranchLinkProperties *lp = [BranchLinkProperties new];
     
@@ -38,7 +46,7 @@
     
     [self waitForExpectationsWithTimeout:10 handler:^(NSError *error) {
         if (error) {
-            NSLog(@"Error Testing QR Code Cache: %@", error);
+            NSLog(@"Error Testing Normal QR Code Data With All Settings: %@", error);
             XCTFail();
         }
     }];
@@ -48,7 +56,6 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"Fetching QR Code"];
 
     BranchQRCode *qrCode = [BranchQRCode new];
-    
     BranchUniversalObject *buo = [BranchUniversalObject new];
     BranchLinkProperties *lp = [BranchLinkProperties new];
     
@@ -60,7 +67,7 @@
     
     [self waitForExpectationsWithTimeout:10 handler:^(NSError *error) {
         if (error) {
-            NSLog(@"Error Testing QR Code Cache: %@", error);
+            NSLog(@"Error Testing Normal QR Code As Data With No Settings: %@", error);
             XCTFail();
         }
     }];
@@ -76,14 +83,13 @@
     BranchLinkProperties *lp = [BranchLinkProperties new];
     
     [qrCode getQRCodeAsData:buo linkProperties:lp completion:^(NSData * _Nonnull qrCode, NSError * _Nonnull error) {
-        XCTAssertNil(error);
-        XCTAssertNotNil(qrCode);
+        XCTAssertTrue([error.localizedFailureReason  isEqual: @"Unable to retrieve the image from the provided URL."]);
         [expectation fulfill];
     }];
     
     [self waitForExpectationsWithTimeout:10 handler:^(NSError *error) {
         if (error) {
-            NSLog(@"Error Testing QR Code Cache: %@", error);
+            NSLog(@"Error Testing Normal QR Code With Invalid Logo URL: %@", error);
             XCTFail();
         }
     }];
@@ -105,7 +111,7 @@
     
     [self waitForExpectationsWithTimeout:10 handler:^(NSError *error) {
         if (error) {
-            NSLog(@"Error Testing QR Code Cache: %@", error);
+            NSLog(@"Error Testing Normal QR Code As Image: %@", error);
             XCTFail();
         }
     }];
@@ -133,7 +139,6 @@
         parameters[@"qr_code_settings"] = settings;
         parameters[@"data"] = [NSMutableDictionary new];
         parameters[@"branch_key"] = [Branch branchKey];
-        
         
         NSData *cachedQRCode = [[BNCQRCodeCache sharedInstance] checkQRCodeCache:parameters];
         
