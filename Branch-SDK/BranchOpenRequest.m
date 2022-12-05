@@ -291,22 +291,14 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
         [[BNCAppGroupsData shared] saveAppClipData];
     }
     
-    BOOL callCalback = YES;
-    
     if ([data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP] isKindOfClass:NSNumber.class]) {
         NSNumber *invokeRegister = (NSNumber *)data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP];
         preferenceHelper.invokeRegisterApp = invokeRegister.boolValue;
         if (invokeRegister.boolValue && self.isInstall) {
             if (@available(iOS 16.1, *)){
-                callCalback = NO;
                 NSString *defaultCoarseConValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:@{}];
                 [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:0 coarseValue:defaultCoarseConValue
                     lockWindow:NO completionHandler:^(NSError * _Nullable error) {
-                    
-                    if(self.callback){
-                        self.callback(YES, error);
-                    }
-                    
                     if (error) {
                         BNCLogError([NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]]);
                     } else {
@@ -314,12 +306,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
                     }
                 }];
             } else if (@available(iOS 15.4, *)){
-                callCalback = NO;
                 [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:0 completionHandler:^(NSError * _Nullable error) {
-                    if(self.callback){
-                        self.callback(YES, error);
-                    }
-                    
                     if (error) {
                         BNCLogError([NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]]);
                     } else {
@@ -348,12 +335,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
                 BNCLogDebug([NSString stringWithFormat:@"SKAN 4.0 params - conversionValue:%@ coarseValue:%@, locked:%d, shouldCallPostback:%d, currentWindow:%d, firstAppLaunchTime: %@", conversionValue, coarseConversionValue, lockWin, shouldCallUpdatePostback, (int)preferenceHelper.skanCurrentWindow, preferenceHelper.firstAppLaunchTime]);
                 
                 if(shouldCallUpdatePostback){
-                    callCalback = NO;
                     [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue: conversionValue.longValue coarseValue:coarseConversionValue lockWindow:lockWin completionHandler:^(NSError * _Nullable error) {
-                        
-                        if(self.callback){
-                            self.callback(YES, error);
-                        }
                         
                         if (error) {
                             BNCLogError([NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]]);
@@ -363,12 +345,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
                     }];
                 }
             } else if (@available(iOS 15.4, *)) {
-                callCalback = NO;
                 [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:conversionValue.intValue completionHandler: ^(NSError *error){
-                    
-                    if(self.callback){
-                        self.callback(YES, error);
-                    }
                     
                     if (error) {
                         BNCLogError([NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]]);
@@ -385,7 +362,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     }
 
     
-    if (self.callback && callCalback) {
+    if (self.callback) {
         self.callback(YES, nil);
     }
 }
