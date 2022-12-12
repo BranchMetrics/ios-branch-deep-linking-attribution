@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.1.45.1
+- SDK-1724 Branch SDK returns an error "SKANErrorDomain Code=10" in initSession function - Fix
+
 v.1.45.0
 - SDK-1659 SKAN 4.0 Support 
     * Support for coarse-grained conversion value
