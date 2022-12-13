@@ -1138,6 +1138,9 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state {
+    
+    NSLog(@"'userCompletedAction' method has been deprecated. Please use BranchEvent for your event tracking use cases. You can refer to https://help.branch.io/developers-hub/docs/tracking-commerce-content-lifecycle-and-custom-events for additional information.");
+    
     if (!action) {
         return;
     }
@@ -1168,6 +1171,7 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)sendCommerceEvent:(BNCCommerceEvent *)commerceEvent metadata:(NSDictionary*)metadata withCompletion:(void (^)(NSDictionary *, NSError *))completion {
+    NSLog(@"'sendCommerceEvent' method has been deprecated. Please use BranchEvent for your event tracking use cases. You can refer to https://help.branch.io/developers-hub/docs/tracking-commerce-content-lifecycle-and-custom-events for additional information.");
     [self initSafetyCheck];
     dispatch_async(self.isolationQueue, ^(){
         BranchCommerceEventRequest *request = [[BranchCommerceEventRequest alloc] initWithCommerceEvent:commerceEvent metadata:metadata completion:completion];
