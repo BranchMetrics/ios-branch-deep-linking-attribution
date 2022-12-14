@@ -11,7 +11,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Build xcframework
         working-directory: carthage-files
         run: |
@@ -21,7 +21,7 @@ jobs:
           echo '#checksum for Branch.zip on Github' > checksum
           shasum Branch.zip >> checksum
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: framework
           path: |
@@ -32,7 +32,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Build xcframework
         working-directory: carthage-files
         run: |
@@ -42,7 +42,7 @@ jobs:
           echo '#checksum for Branch_noidfa.zip on Github' > checksum_noidfa
           shasum Branch_noidfa.zip >> checksum_noidfa
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: framework-noidfa
           path: |
@@ -53,7 +53,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Build static xcframework
         working-directory: carthage-files
         run: |
@@ -63,7 +63,7 @@ jobs:
           echo '#checksum for Branch_static.zip on Github' > checksum_static
           shasum Branch_static.zip >> checksum_static
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: static-framework
           path: |
@@ -74,7 +74,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Build static xcframework
         working-directory: carthage-files
         run: |
@@ -84,7 +84,7 @@ jobs:
           echo '#checksum for Branch_static_noidfa.zip on Github' > checksum_static_noidfa
           shasum Branch_static_noidfa.zip >> checksum_static_noidfa
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: static-framework-noidfa
           path: |
@@ -96,7 +96,7 @@ jobs:
     needs: [build, build-static]
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Set up Ruby 2.7
         uses: ruby/setup-ruby@v1
         with:
@@ -106,7 +106,7 @@ jobs:
       # Bring in the Ruby deps from the cache for quick availability of
       # pod command. Not using cached Pods folder.
       - name: Restore cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             vendor
@@ -133,7 +133,7 @@ jobs:
           git config user.name "Branch SDK Team"
           git config user.email branch-sdks@branch.io
           git commit carthage-files/checksum carthage-files/checksum_noidfa carthage-files/checksum_static carthage-files/checksum_static_noidfa -m'Updated checksums'
-          echo "::set-output name=sha::$(git rev-parse HEAD)"
+          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
       # TODO: Version bump along the way, probably here.
       - name: Push changes
         run: |
@@ -149,7 +149,7 @@ jobs:
         run: |
           bundle exec fastlane current_version
           echo "Current version is $(cat fastlane/.version)."
-          echo "::set-output name=version::$(cat fastlane/.version)"
+          echo "version=$(cat fastlane/.version)" >> $GITHUB_OUTPUT
       - name: Create GitHub Release
         uses: actions/github-script@v4
         with:
