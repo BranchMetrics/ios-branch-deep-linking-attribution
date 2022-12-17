@@ -98,7 +98,6 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
                         } else {
                             BNCLogDebug([NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue]);
                         }
-                        return;
                     }];
                 }
                 
@@ -109,9 +108,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
                     } else {
                         BNCLogDebug([NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue]);
                     }
-                    return;
                 }];
-                return;
             } else {
                 [[BNCSKAdNetwork sharedInstance] updateConversionValue:conversionValue.integerValue];
             }
