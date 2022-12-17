@@ -31,7 +31,7 @@ Options:
 USAGE
 }
 
-version=1.45.1
+version=1.45.2
 
 if (( $# == 0 )); then
     echo $version

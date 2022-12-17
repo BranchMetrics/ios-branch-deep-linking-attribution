@@ -336,7 +336,6 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
                 
                 if(shouldCallUpdatePostback){
                     [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue: conversionValue.longValue coarseValue:coarseConversionValue lockWindow:lockWin completionHandler:^(NSError * _Nullable error) {
-                        
                         if (error) {
                             BNCLogError([NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]]);
                         } else {
@@ -346,15 +345,12 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
                 }
             } else if (@available(iOS 15.4, *)) {
                 [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:conversionValue.intValue completionHandler: ^(NSError *error){
-                    
                     if (error) {
                         BNCLogError([NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]]);
                     } else {
                         BNCLogDebug([NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue]);
                     }
-                    return;
                 }];
-                return;
             } else {
                 [[BNCSKAdNetwork sharedInstance] updateConversionValue:conversionValue.integerValue];
             }
