@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.1.45.2
+- SDK-1741 Fix SKAN error handling on iOS 15.4
+
 v.1.45.1
 - SDK-1724 Branch SDK returns an error "SKANErrorDomain Code=10" in initSession function - Fix
 
