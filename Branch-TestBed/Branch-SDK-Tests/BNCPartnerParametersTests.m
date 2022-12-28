@@ -160,9 +160,24 @@
     XCTAssertTrue([@"{\"snap\":{\"hashed_phone_number\":\"b90598b67534f00b1e3e68e8006631a40d24fba37a3a34e2b84922f1f0b3b29b\",\"hashed_email_address\":\"11234e56af071e9c79927651156bd7a10bca8ac34672aba121056e2698ee7088\"}}" isEqualToString:jsonString]);
 }
 
-- (void)testJsonFBParameterClear {
+
+- (void)testJsonMultipleParameterExample {
     [self.partnerParams addFacebookParameterWithName:@"em" value:@"11234e56af071e9c79927651156bd7a10bca8ac34672aba121056e2698ee7088"];
     [self.partnerParams addFacebookParameterWithName:@"ph" value:@"b90598b67534f00b1e3e68e8006631a40d24fba37a3a34e2b84922f1f0b3b29b"];
+    [self.partnerParams addSnapParameterWithName:@"hashed_email_address" value:@"11234e56af071e9c79927651156bd7a10bca8ac34672aba121056e2698ee7088"];
+    [self.partnerParams addSnapParameterWithName:@"hashed_phone_number" value:@"b90598b67534f00b1e3e68e8006631a40d24fba37a3a34e2b84922f1f0b3b29b"];
+    NSString *jsonString = [self jsonStringFromDictionary:[self.partnerParams parameterJson]];
+    
+    NSString *expectedJsonString = @"{\"snap\":{\"hashed_phone_number\":\"b90598b67534f00b1e3e68e8006631a40d24fba37a3a34e2b84922f1f0b3b29b\",\"hashed_email_address\":\"11234e56af071e9c79927651156bd7a10bca8ac34672aba121056e2698ee7088\"},\"fb\":{\"ph\":\"b90598b67534f00b1e3e68e8006631a40d24fba37a3a34e2b84922f1f0b3b29b\",\"em\":\"11234e56af071e9c79927651156bd7a10bca8ac34672aba121056e2698ee7088\"}}";
+    
+    XCTAssertTrue([expectedJsonString isEqualToString:jsonString]);
+}
+
+- (void)testParameterClear {
+    [self.partnerParams addFacebookParameterWithName:@"em" value:@"11234e56af071e9c79927651156bd7a10bca8ac34672aba121056e2698ee7088"];
+    [self.partnerParams addFacebookParameterWithName:@"ph" value:@"b90598b67534f00b1e3e68e8006631a40d24fba37a3a34e2b84922f1f0b3b29b"];
+    [self.partnerParams addSnapParameterWithName:@"hashed_email_address" value:@"11234e56af071e9c79927651156bd7a10bca8ac34672aba121056e2698ee7088"];
+    [self.partnerParams addSnapParameterWithName:@"hashed_phone_number" value:@"b90598b67534f00b1e3e68e8006631a40d24fba37a3a34e2b84922f1f0b3b29b"];
     [self.partnerParams clearAllParameters];
     
     NSString *jsonString = [self jsonStringFromDictionary:[self.partnerParams parameterJson]];
@@ -187,6 +202,8 @@
     XCTAssertTrue([@"{\"fb\":{\"ph\":\"b90598b67534f00b1e3e68e8006631a40d24fba37a3a34e2b84922f1f0b3b29b\",\"em\":\"11234e56af071e9c79927651156bd7a10bca8ac34672aba121056e2698ee7088\"}}" isEqualToString:jsonString]);
 }
 
+// There is an assumption that this code always results in the same string for the same json data.
+// This appears to be true, but I haven't found documentation to confirm it.
 - (NSString *)jsonStringFromDictionary:(NSDictionary *)dictionary {
     NSError *error;
     NSData *json = [NSJSONSerialization dataWithJSONObject:dictionary options:0 error:&error];
