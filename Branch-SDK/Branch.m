@@ -1020,7 +1020,11 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)addFacebookPartnerParameterWithName:(NSString *)name value:(NSString *)value {
-    [[BNCPartnerParameters shared] addFaceBookParameterWithName:name value:value];
+    [[BNCPartnerParameters shared] addFacebookParameterWithName:name value:value];
+}
+
+- (void)addSnapPartnerParameterWithName:(NSString *)name value:(NSString *)value {
+    [[BNCPartnerParameters shared] addSnapParameterWithName:name value:value];
 }
 
 #pragma mark - Pre-initialization support

@@ -49,9 +49,17 @@
     [parametersForPartner setObject:value forKey:name];
 }
 
-- (void)addFaceBookParameterWithName:(NSString *)name value:(NSString *)value {
+- (void)addFacebookParameterWithName:(NSString *)name value:(NSString *)value {
     if ([self sha256HashSanityCheckValue:value]) {
         [self addParameterWithName:name value:value partnerName:@"fb"];
+    } else {
+        // TODO: log a warning that the parameter looks invalid and will be ignored. Do not log the value as it may be PII that was inadvertently passed in.
+    }
+}
+
+- (void)addSnapParameterWithName:(NSString *)name value:(NSString *)value {
+    if ([self sha256HashSanityCheckValue:value]) {
+        [self addParameterWithName:name value:value partnerName:@"snap"];
     } else {
         // TODO: log a warning that the parameter looks invalid and will be ignored. Do not log the value as it may be PII that was inadvertently passed in.
     }
