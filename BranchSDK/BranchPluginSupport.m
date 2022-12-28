@@ -32,9 +32,6 @@
     BNCDeviceInfo *deviceInfo = [BNCDeviceInfo getInstance];
     @synchronized (deviceInfo) {
         [deviceInfo checkAdvertisingIdentifier];
-    
-        NSMutableDictionary<NSString *, NSString *> *dictionary = [NSMutableDictionary new];
-        
         [dictionary bnc_safeSetObject:deviceInfo.osName forKey:@"os"];
         [dictionary bnc_safeSetObject:deviceInfo.osVersion forKey:@"os_version"];
         [dictionary bnc_safeSetObject:deviceInfo.environment forKey:@"environment"];
