@@ -445,10 +445,15 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     XCTAssertNotNil([result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID]);
     XCTAssertTrue([[result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID] isEqualToString:gbraidValue]);
     
-    //Check - gbraid should not be present - endpoint is open
+    // Check for gbraid timestamp
+    XCTAssertNotNil([result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID_TIMESTAMP]);
+    NSString *tsInMs = [NSString stringWithFormat:@"%lld", (long long)[now timeIntervalSince1970]*1000];
+    XCTAssertTrue([[result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID] isEqualToString:tsInMs]);
+
+    //Check - gbraid should  be present - endpoint is open
     serverInterface.requestEndpoint = @"/v1/open";
     result = [serverInterface prepareParamDict:NULL key:@"1234567890" retryNumber:3 requestType:@"POST"];
-    XCTAssertNil([result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID]);
+    XCTAssertNotNil([result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID]);
     
     //Check - gbraid should not be present - validity is expired
     NSDate *pastDate = [[NSDate date] dateByAddingTimeInterval:-2592001];
