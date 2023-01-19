@@ -447,8 +447,8 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     
     // Check for gbraid timestamp
     XCTAssertNotNil([result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID_TIMESTAMP]);
-    NSString *tsInMs = [NSString stringWithFormat:@"%lld", (long long)[now timeIntervalSince1970]*1000];
-    XCTAssertTrue([[result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID] isEqualToString:tsInMs]);
+    NSString *tsInMs = [NSString stringWithFormat:@"%lld", (long long)([now timeIntervalSince1970]*1000)];
+    XCTAssertTrue([[result objectForKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID_TIMESTAMP] isEqualToString:tsInMs]);
 
     //Check - gbraid should  be present - endpoint is open
     serverInterface.requestEndpoint = @"/v1/open";
