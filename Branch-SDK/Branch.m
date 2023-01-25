@@ -510,6 +510,8 @@ static NSString *bnc_branchKey = nil;
         if (!!currentSetting == !!disabled)
             return;
         if (disabled) {
+            [[BNCPartnerParameters shared] clearAllParameters];
+            
             // Set the flag (which also clears the settings):
             [BNCPreferenceHelper sharedInstance].trackingDisabled = YES;
             Branch *branch = Branch.getInstance;
@@ -1020,11 +1022,15 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)addFacebookPartnerParameterWithName:(NSString *)name value:(NSString *)value {
-    [[BNCPartnerParameters shared] addFacebookParameterWithName:name value:value];
+    if (![Branch trackingDisabled]) {
+        [[BNCPartnerParameters shared] addFacebookParameterWithName:name value:value];
+    }
 }
 
 - (void)addSnapPartnerParameterWithName:(NSString *)name value:(NSString *)value {
-    [[BNCPartnerParameters shared] addSnapParameterWithName:name value:value];
+    if (![Branch trackingDisabled]) {
+        [[BNCPartnerParameters shared] addSnapParameterWithName:name value:value];
+    }
 }
 
 #pragma mark - Pre-initialization support
