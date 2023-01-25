@@ -827,7 +827,7 @@
 				6589EBA52674270100F2E28B /* Branch-TestBed-CI.xctestplan */,
 				033FC71025AC1E5800D8319E /* Branch-TestBed.xctestplan */,
 				4D93D8592098CC4400CFABA6 /* README.md */,
-				670016BB1946309100A9E103 /* Branch-SDK */,
+				670016BB1946309100A9E103 /* BranchSDK */,
 				4D16837A2098C901008819E3 /* Branch-SDK-Tests */,
 				5F8B7B3C21B5F5CD009CE0A6 /* Branch-SDK-Unhosted-Tests */,
 				670016691940F51400A9E103 /* Branch-TestBed */,
@@ -910,7 +910,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		670016BB1946309100A9E103 /* Branch-SDK */ = {
+		670016BB1946309100A9E103 /* BranchSDK */ = {
 			isa = PBXGroup;
 			children = (
 				C12320B8280E2091007771C0 /* BranchQRCode.m */,
@@ -1072,7 +1072,8 @@
 				C10C61AB28248E5A00761D7E /* BNCQRCodeCache.h */,
 				C10C61AC28248E5A00761D7E /* BNCQRCodeCache.m */,
 			);
-			path = "Branch-SDK";
+			name = BranchSDK;
+			path = ../BranchSDK;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

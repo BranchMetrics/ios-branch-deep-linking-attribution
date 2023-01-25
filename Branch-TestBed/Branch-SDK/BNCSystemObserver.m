@@ -1,1 +1,0 @@
-../../BranchSDK/BNCSystemObserver.m

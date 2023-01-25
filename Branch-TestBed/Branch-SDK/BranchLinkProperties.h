@@ -1,1 +1,0 @@
-../../BranchSDK/BranchLinkProperties.h

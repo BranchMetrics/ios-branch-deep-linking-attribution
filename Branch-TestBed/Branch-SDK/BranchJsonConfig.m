@@ -1,1 +1,0 @@
-../../BranchSDK/BranchJsonConfig.m
