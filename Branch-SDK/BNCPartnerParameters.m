@@ -7,6 +7,7 @@
 //
 
 #import "BNCPartnerParameters.h"
+#import "BNCLog.h"
 
 @interface BNCPartnerParameters()
 @property (nonatomic, strong, readwrite) NSMutableDictionary<NSString *, NSMutableDictionary<NSString *, NSString *> *> *parameters;
@@ -49,11 +50,19 @@
     [parametersForPartner setObject:value forKey:name];
 }
 
-- (void)addFaceBookParameterWithName:(NSString *)name value:(NSString *)value {
+- (void)addFacebookParameterWithName:(NSString *)name value:(NSString *)value {
     if ([self sha256HashSanityCheckValue:value]) {
         [self addParameterWithName:name value:value partnerName:@"fb"];
     } else {
-        // TODO: log a warning that the parameter looks invalid and will be ignored. Do not log the value as it may be PII that was inadvertently passed in.
+        BNCLogWarning(@"Partner parameter does not appear to be SHA256 hashed. Dropping the parameter.");
+    }
+}
+
+- (void)addSnapParameterWithName:(NSString *)name value:(NSString *)value {
+    if ([self sha256HashSanityCheckValue:value]) {
+        [self addParameterWithName:name value:value partnerName:@"snap"];
+    } else {
+        BNCLogWarning(@"Partner parameter does not appear to be SHA256 hashed. Dropping the parameter.");
     }
 }
 
