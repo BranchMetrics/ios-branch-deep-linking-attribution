@@ -147,8 +147,9 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
 
 #pragma mark - BranchEvent
 
-@interface BranchEvent ()
+@interface BranchEvent ()<SKRequestDelegate, SKProductsRequestDelegate>
 @property (nonatomic, copy) NSString*  eventName;
+@property (strong, nonatomic) SKProductsRequest *request;
 @end
 
 @implementation BranchEvent : NSObject
@@ -363,6 +364,77 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
         (long) self.contentItems.count,
         self.customData
     ];
+}
+
+#pragma mark - IAP Methods
+
++ (instancetype) eventFromInAppPurchase:(SKProduct *)product
+                                    transaction:(SKPaymentTransaction*)transaction {
+
+    BranchUniversalObject *buo = [BranchUniversalObject new];
+    buo.canonicalIdentifier = product.productIdentifier;
+    buo.title = product.localizedTitle;
+    
+    buo.contentMetadata.quantity = transaction.payment.quantity;
+    buo.contentMetadata.price = product.price;
+    buo.contentMetadata.currency = product.priceLocale.currencyCode;
+    buo.contentMetadata.productName = product.localizedTitle;
+    
+    BranchEvent *event;
+    if (product.subscriptionGroupIdentifier == nil) {
+        event = [BranchEvent standardEvent:BranchStandardEventPurchase withContentItem:buo];
+    } else {
+        event = [BranchEvent standardEvent:BranchStandardEventSubscribe withContentItem:buo];
+
+    }
+    event.transactionID = transaction.transactionIdentifier;
+    event.currency = product.priceLocale.currencyCode;
+    NSDecimalNumber *quantity = [NSDecimalNumber numberWithInteger:transaction.payment.quantity];
+    event.revenue = [quantity decimalNumberByMultiplyingBy:product.price];
+
+    event.eventDescription = product.localizedDescription;
+    event.customData = (NSMutableDictionary*) @{
+        @"product_identifier": product.productIdentifier,
+        @"transaction_identifier": transaction.transactionIdentifier
+    };
+    
+    return event;
+}
+
+- (void) createAndLogEventFromTransaction:(SKPaymentTransaction*)transaction {
+    NSLog(@"Branch: LogEventWithTransaction() called");
+    BranchEvent *event;
+    BranchUniversalObject *buo = [BranchUniversalObject new];
+    NSString *productId = transaction.payment.productIdentifier;
+    
+    SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithObject:productId]];
+    
+    _request = productsRequest;
+    productsRequest.delegate = self;
+    [productsRequest start];
+
+    
+    
+}
+
+
+- (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
+    NSLog(@"Branch: didReceiveResponse() called");
+
+    for (NSString *invalidIdentifier in response.invalidProductIdentifiers) {
+        // Handle any invalid product identifiers.
+        NSLog(@"Invalid Product Identifier: %@", invalidIdentifier);
+    }
+    
+    NSLog(@"Got products from App Store. %@", response.products);
+    for (SKProduct *product in response.products) {
+        //Turn product into BUO and then add them to a BranchEvent as contentItems. Then log the event.
+        NSLog(@"Valid Product: %@", product);
+    }
+}
+
+- (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
+    NSLog(@"Branch: didFailWithError() called. Product Request Failed: %@", error);
 }
 
 @end
