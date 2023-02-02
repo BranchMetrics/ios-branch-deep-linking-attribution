@@ -719,6 +719,14 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (void)addFacebookPartnerParameterWithName:(NSString *)name value:(NSString *)value;
 
+/*
+ Add a Partner Parameter for Snap.
+ Once set, this parameter is attached to install, opens and events until cleared or the app restarts.
+ 
+ See Snap's documentation for details on valid parameters
+ */
+- (void)addSnapPartnerParameterWithName:(NSString *)name value:(NSString *)value;
+
 /**
  Clears all Partner Parameters
  */

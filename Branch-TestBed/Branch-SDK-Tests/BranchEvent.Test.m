@@ -130,6 +130,22 @@
         [self mutableDictionaryFromBundleJSONWithKey:@"V2EventJSON"];
     expectedRequest[@"branch_key"] = Branch.branchKey;
     expectedRequest[@"user_data"] = [[BNCDeviceInfo getInstance] v2dictionary];
+    
+    // Add params for Gbraid
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    if(preferenceHelper.referrerGBRAID){
+        NSTimeInterval validityWindow = preferenceHelper.referrerGBRAIDValidityWindow;
+        if (validityWindow) {
+            NSDate *initDate = preferenceHelper.referrerGBRAIDInitDate ;
+            NSDate *expirationDate = [initDate dateByAddingTimeInterval:validityWindow];
+            NSDate *now = [NSDate date];
+            if ([now compare:expirationDate] == NSOrderedAscending) {
+                expectedRequest[BRANCH_REQUEST_KEY_REFERRER_GBRAID] = preferenceHelper.referrerGBRAID;
+                long long timestampInMilliSec = (long long)([initDate timeIntervalSince1970] * 1000.0);
+                expectedRequest[BRANCH_REQUEST_KEY_REFERRER_GBRAID_TIMESTAMP] = [NSString stringWithFormat:@"%lld", timestampInMilliSec];
+            }
+        }
+    }
 
     Branch *branch = [Branch getInstance:@"key_live_foo"];
     XCTestExpectation *expectation = [self expectationWithDescription:@"v2-event"];
@@ -180,6 +196,22 @@
     expectedRequest[@"event_data"] = nil;
     expectedRequest[@"custom_data"] = nil;
     expectedRequest[@"customer_event_alias"] = nil;
+    
+    // Add params for Gbraid 
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    if(preferenceHelper.referrerGBRAID){
+        NSTimeInterval validityWindow = preferenceHelper.referrerGBRAIDValidityWindow;
+        if (validityWindow) {
+            NSDate *initDate = preferenceHelper.referrerGBRAIDInitDate ;
+            NSDate *expirationDate = [initDate dateByAddingTimeInterval:validityWindow];
+            NSDate *now = [NSDate date];
+            if ([now compare:expirationDate] == NSOrderedAscending) {
+                expectedRequest[BRANCH_REQUEST_KEY_REFERRER_GBRAID] = preferenceHelper.referrerGBRAID;
+                long long timestampInMilliSec = (long long)([initDate timeIntervalSince1970] * 1000.0);
+                expectedRequest[BRANCH_REQUEST_KEY_REFERRER_GBRAID_TIMESTAMP] = [NSString stringWithFormat:@"%lld", timestampInMilliSec];
+            }
+        }
+    }
 
     Branch *branch = [Branch getInstance:@"key_live_foo"];
     XCTestExpectation *expectation = [self expectationWithDescription:@"v2-event-user-action"];
