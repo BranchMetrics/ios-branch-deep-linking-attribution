@@ -8,16 +8,15 @@
 #import <Foundation/Foundation.h>
 #import "BranchEvent.h"
 
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface BNCEventUtils : NSObject
 
 + (instancetype)shared;
 
-- (void)storeEvent:(BranchEvent *)event withCompletion:(void (^_Nullable)(BOOL success, NSError * _Nullable error))completion;
+- (void)storeEvent:(BranchEvent *)event;
 
-- (void)removeEvent:(BranchEvent *)event withCompletion:(void (^_Nullable)(BOOL success, NSError * _Nullable error))completion;
+- (void)removeEvent:(BranchEvent *)event;
 
 @end
 

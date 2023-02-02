@@ -26,17 +26,16 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.events = [NSMutableSet alloc];
+        self.events = [NSMutableSet set];
     }
     return self;
 }
 
-- (void)storeEvent:(BranchEvent *)event withCompletion:(void (^_Nullable)(BOOL success, NSError * _Nullable error))completion {
-    
+- (void)storeEvent:(BranchEvent *)event {
     [self.events addObject:event];
 }
 
-- (void)removeEvent:(BranchEvent *)event withCompletion:(void (^_Nullable)(BOOL success, NSError * _Nullable error))completion {
+- (void)removeEvent:(BranchEvent *)event {
     [self.events removeObject:event];
 }
 

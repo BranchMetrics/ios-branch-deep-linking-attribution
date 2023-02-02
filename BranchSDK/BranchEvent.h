@@ -76,10 +76,6 @@ typedef NS_ENUM(NSInteger, BranchEventAdType) {
 - (instancetype _Nonnull) init __attribute((unavailable));
 + (instancetype _Nonnull) new __attribute((unavailable));
 
-+ (instancetype _Nonnull) eventFromInAppPurchase:(SKProduct *_Nonnull)product
-                                    transaction:(SKPaymentTransaction*_Nullable)transaction;
-
-
 @property (nonatomic, copy) NSString*_Nullable                alias;
 @property (nonatomic, copy) NSString*_Nullable                transactionID;
 @property (nonatomic, copy) BNCCurrency _Nullable             currency;
@@ -119,7 +115,7 @@ typedef NS_ENUM(NSInteger, BranchEventAdType) {
 - (NSDictionary*_Nonnull) dictionary;   //!< Returns a dictionary representation of the event.
 - (NSString* _Nonnull) description;     //!< Returns a string description of the event.
 
-- (void) createAndLogEventFromTransaction:(SKPaymentTransaction*_Nonnull)transaction;
+- (void) logEventWithTransaction:(SKPaymentTransaction*_Nonnull)transaction;
 
 @end
 
