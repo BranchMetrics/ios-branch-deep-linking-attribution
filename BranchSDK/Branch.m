@@ -46,6 +46,7 @@
 #import "NSError+Branch.h"
 #import "BNCLog.h"
 #import "UIViewController+Branch.h"
+#import <StoreKit/StoreKit.h>
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
@@ -124,7 +125,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     BNCInitStatusInitialized
 };
 
-@interface Branch() <BranchDeepLinkingControllerCompletionDelegate> {
+@interface Branch() <BranchDeepLinkingControllerCompletionDelegate, SKPaymentTransactionObserver> {
     NSInteger _networkCount;
     BNCURLFilter *_userURLFilter;
 }
@@ -1665,6 +1666,8 @@ static NSString *bnc_branchKey = nil;
                     cache:[[BNCLinkCache alloc] init]
                     preferenceHelper:preferenceHelper
                     key:key];
+            
+            [[SKPaymentQueue defaultQueue] addTransactionObserver:branch];
         });
         return branch;
     }
@@ -2547,6 +2550,24 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [[BNCServerRequestQueue getInstance] clearQueue];
     [BranchOpenRequest releaseOpenResponseLock];
     [BNCPreferenceHelper clearAll];
+}
+
+#pragma mark - SKPaymentTransactionObserver Methods
+- (void)autoLogInAppPurchasesAsBranchEvents {
+    [self.preferenceHelper setAutoLogInAppPurchasesAsBranchEvents:true];
+}
+
+//Logs incoming in-app purchases as events
+- (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray<SKPaymentTransaction *> *)transactions {
+    for (SKPaymentTransaction *transaction in transactions) {
+        if (transaction.transactionState == SKPaymentTransactionStatePurchased) {
+            if ([BNCPreferenceHelper sharedInstance].autoLogInAppPurchasesAsBranchEvents) {
+                NSLog(@"Branch: Transaction state updated to purchased. Logging event");
+                BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventPurchase];
+                [event logEventWithTransaction:transaction];
+            }
+        }
+    }
 }
 
 @end

@@ -382,11 +382,12 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
 }
 
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
+    [[BNCEventUtils shared] removeEvent:self];
 
     if (response.products.count > 0) {
         SKProduct *product = response.products.firstObject;
         
-        BranchUniversalObject *buo = [BranchUniversalObject new];//[self productToBranchUniversalObject:product];
+        BranchUniversalObject *buo = [BranchUniversalObject new];
         buo.canonicalIdentifier = product.productIdentifier;
         buo.title = product.localizedTitle;
         buo.contentMetadata.price = product.price;
@@ -399,6 +400,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
         self.eventDescription = product.localizedDescription;
 
         [self logEvent];
+        
         NSLog(@"Created and logged event from transaction: %@", self);
     } else {
         NSLog(@"Unable to log event. No products were found with the product ID.");
@@ -408,18 +410,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
     NSLog(@"Product Request Failed: %@", error);
-}
-
-- (BranchUniversalObject *) productToBranchUniversalObject:(SKProduct *)product {
-    BranchUniversalObject *buo = [BranchUniversalObject new];
-    buo.canonicalIdentifier = product.productIdentifier;
-    buo.title = product.localizedTitle;
-    
-    buo.contentMetadata.price = product.price;
-    buo.contentMetadata.currency = product.priceLocale.currencyCode;
-    buo.contentMetadata.productName = product.localizedTitle;
-    
-    return buo;
+    [[BNCEventUtils shared] removeEvent:self];
 }
 
 @end

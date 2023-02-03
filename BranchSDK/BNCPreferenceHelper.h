@@ -76,6 +76,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) NSInteger highestConversionValueSent;
 @property (strong, nonatomic) NSDate   *firstAppLaunchTime;
 @property (assign, nonatomic) BOOL invokeRegisterApp;
+@property (assign, nonatomic) BOOL autoLogInAppPurchasesAsBranchEvents;
 
 - (void) clearTrackingInformation;
 
