@@ -53,7 +53,7 @@ BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex) {
     [[BNCUserAgentCollector instance] loadUserAgentWithCompletion:^(NSString * _Nullable userAgent) {
         [expectation fulfill];
     }];
-    [self waitForExpectationsWithTimeout:2.0 handler:^(NSError * _Nullable error) { }];
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError * _Nullable error) { }];
 }
 
 - (void)resetExpectations {
