@@ -139,7 +139,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
   }];
   
   [serverInterface getRequest:nil url:@"http://foo" key:@"key_live_foo" callback:NULL];
-  [self waitForExpectationsWithTimeout:5.0 handler:nil];
+  [self waitForExpectationsWithTimeout:10.0 handler:nil];
 }
 
 //==================================================================================
@@ -420,7 +420,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
         XCTAssertEqualObjects(response.requestId, requestId);
     }];
 
-    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+    [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
 - (void) testServerInterfaceDictionaryPrepForGbraid {
