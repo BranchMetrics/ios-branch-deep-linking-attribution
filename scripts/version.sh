@@ -106,14 +106,15 @@ if [[ $update ]]; then
     # Update the Podspec version:
     sed -i '' -e "/^[[:space:]]*s\.version/ {s/\".*\"/\"$version\"/; }" ../Branch.podspec
 
+    # TODO: Fix this, it's broken with the rename
     # Update the Carthage version:
-    plutil -replace CFBundleVersion -string "$version"  ../Branch-TestBed/Framework-Info.plist
-    plutil -replace CFBundleShortVersionString -string "$version"  ../Branch-TestBed/Framework-Info.plist
+    #plutil -replace CFBundleVersion -string "$version"  ../Branch-TestBed/Framework-Info.plist
+    #plutil -replace CFBundleShortVersionString -string "$version"  ../Branch-TestBed/Framework-Info.plist
 
 fi
 
 
 if [[ $increment ]]; then
     # Update our version (Do this last. Updating a running bash script has undefined results.)
-    sed -i '' -e "s/^version=.*$/version=$version/" "$scriptfile"; exit 0
+    sed -i '' -e "s/^version=.*$/version=$version/" "$scriptfile"; exit 0ß
 fi

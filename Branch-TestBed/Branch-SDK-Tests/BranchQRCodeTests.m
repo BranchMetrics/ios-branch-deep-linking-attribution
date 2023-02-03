@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "Branch.h"
+#import "BranchQRCode.h"
 #import "BNCQRCodeCache.h"
 
 @interface BranchQRCodeTests : XCTestCase

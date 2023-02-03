@@ -1,24 +1,23 @@
 // swift-tools-version:5.2
 // The swift-tools-version declares the minimum version of Swift required to build this package.
-
 import PackageDescription
 
 let package = Package(
-    name: "Branch",
+    name: "BranchSDK",
     platforms: [
         .iOS(.v11),
         .tvOS(.v11),
     ],
     products: [
         .library(
-            name: "Branch",
-            targets: ["Branch"]),
+            name: "BranchSDK",
+            targets: ["BranchSDK"]),
     ],
     targets: [
         .target(
-            name: "Branch",
-            path: "Branch-SDK",
-            publicHeadersPath: ".",
+            name: "BranchSDK",
+            path: "BranchSDK",
+            publicHeadersPath: "",
             linkerSettings: [
                 .linkedFramework("CoreServices"),
                 .linkedFramework("SystemConfiguration"),

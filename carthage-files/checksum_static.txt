@@ -1,2 +1,0 @@
-#checksum for Branch on Github
-9a32433146b817c35836e2c52052307ee6d0dab6  Branch_static.zip

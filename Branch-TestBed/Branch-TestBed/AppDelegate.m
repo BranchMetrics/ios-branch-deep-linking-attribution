@@ -12,6 +12,7 @@
 #import "ViewController.h"
 #import "Branch.h"
 #import "BNCEncodingUtils.h"
+#import "BNCLog.h"
 
 AppDelegate* appDelegate = nil;
 void APPLogHookFunction(NSDate*_Nonnull timestamp, BNCLogLevel level, NSString*_Nullable message);
