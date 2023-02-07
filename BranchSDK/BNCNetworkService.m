@@ -124,7 +124,8 @@
         self.sessionQueue = [NSOperationQueue new];
         self.sessionQueue.name = @"io.branch.sdk.network.queue";
         self.sessionQueue.maxConcurrentOperationCount = self.maximumConcurrentOperations;
-        self.sessionQueue.qualityOfService = NSQualityOfServiceBackground;
+        // Most calls could be NSQualityOfServiceBackground, BUO showShareSheet needs NSQualityOfServiceUserInteractive to avoid priority inversion.
+        self.sessionQueue.qualityOfService = NSQualityOfServiceUserInteractive;
 
         _session =
             [NSURLSession sessionWithConfiguration:configuration
