@@ -1,5 +1,15 @@
 Branch iOS SDK Change Log
 
+v.2.0.0
+Branch iOS SDK 2.0.0 fixes longstanding issues with the umbrella header and project layout.
+Although the code is largely unchanged, this changes the SDK name from Branch to BranchSDK.
+
+Clients will need to update all import statements from `import Branch` to `import BranchSDK`.
+
+- SDK-1329 - SDK umbrella header fix
+- SDK-1758 - Add gbraid timestamps to calls
+- SDK-1663 - Revert thread queue priority to avoid a potential priority inversion
+
 v.1.45.2
 - SDK-1741 Fix SKAN error handling on iOS 15.4
 
