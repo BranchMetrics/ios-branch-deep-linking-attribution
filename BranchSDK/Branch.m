@@ -2553,16 +2553,27 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 #pragma mark - SKPaymentTransactionObserver Methods
-- (void)autoLogInAppPurchasesAsBranchEvents {
-    [self.preferenceHelper setAutoLogInAppPurchasesAsBranchEvents:true];
++ (void)setLogInAppPurchasesAsEventsEnabled:(BOOL)enabled {
+    @synchronized(self) {
+        if (enabled) {
+            [BNCPreferenceHelper sharedInstance].logInAppPurchasesAsBranchEvents = YES;
+        } else {
+            [BNCPreferenceHelper sharedInstance].logInAppPurchasesAsBranchEvents = NO;
+        }
+    }
+}
+
++ (BOOL)logInAppPurchasesBranchEventsEnabled {
+    @synchronized(self) {
+        return [BNCPreferenceHelper sharedInstance].logInAppPurchasesAsBranchEvents;
+    }
 }
 
 //Logs incoming in-app purchases as events
 - (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray<SKPaymentTransaction *> *)transactions {
     for (SKPaymentTransaction *transaction in transactions) {
         if (transaction.transactionState == SKPaymentTransactionStatePurchased) {
-            if ([BNCPreferenceHelper sharedInstance].autoLogInAppPurchasesAsBranchEvents) {
-                NSLog(@"Branch: Transaction state updated to purchased. Logging event");
+            if ([BNCPreferenceHelper sharedInstance].logInAppPurchasesAsBranchEvents) {
                 BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventPurchase];
                 [event logEventWithTransaction:transaction];
             }

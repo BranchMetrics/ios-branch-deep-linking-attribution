@@ -783,15 +783,15 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
 }
 
-- (BOOL) autoLogInAppPurchasesAsBranchEvents {
+- (BOOL) logInAppPurchasesAsBranchEvents {
     @synchronized (self) {
-        return [self readBoolFromDefaults:@"_autoLogInAppPurchasesAsBranchEvents"];
+        return [self readBoolFromDefaults:@"_logInAppPurchasesAsBranchEvents"];
     }
 }
 
-- (void) setAutoLogInAppPurchasesAsBranchEvents:(BOOL)autoLogInAppPurchasesAsBranchEvents {
+- (void) setLogInAppPurchasesAsBranchEvents:(BOOL)logInAppPurchasesAsBranchEvents {
     @synchronized (self) {
-        [self writeBoolToDefaults:@"_autoLogInAppPurchasesAsBranchEvents" value:autoLogInAppPurchasesAsBranchEvents];
+        [self writeBoolToDefaults:@"_logInAppPurchasesAsBranchEvents" value:logInAppPurchasesAsBranchEvents];
     }
 }
 
