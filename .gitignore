@@ -8,6 +8,7 @@
 *.xcuserdatad
 # *.xcscmblueprint # We should probably check this in.
 *.o
+DerivedData
 
 # merge-repo commit/discard file
 merge-repo-commit

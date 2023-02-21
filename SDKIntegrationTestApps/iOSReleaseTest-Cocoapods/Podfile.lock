@@ -1,0 +1,16 @@
+PODS:
+  - Branch (1.45.2)
+
+DEPENDENCIES:
+  - Branch (from `./../../`)
+
+EXTERNAL SOURCES:
+  Branch:
+    :path: "./../../"
+
+SPEC CHECKSUMS:
+  Branch: 1fc81857f63403d4682305088b11270719dca8db
+
+PODFILE CHECKSUM: 4555e870752a372c1b17f723548adfb9d74da4cc
+
+COCOAPODS: 1.11.2

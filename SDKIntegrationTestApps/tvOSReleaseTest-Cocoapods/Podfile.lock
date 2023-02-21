@@ -1,0 +1,16 @@
+PODS:
+  - Branch (1.45.2)
+
+DEPENDENCIES:
+  - Branch (from `~/Documents/GitHub/ios-branch-deep-linking-attribution/`)
+
+EXTERNAL SOURCES:
+  Branch:
+    :path: "~/Documents/GitHub/ios-branch-deep-linking-attribution/"
+
+SPEC CHECKSUMS:
+  Branch: 1fc81857f63403d4682305088b11270719dca8db
+
+PODFILE CHECKSUM: 8707e4491b8476dbe0dfad7cbf74e04fc70e883f
+
+COCOAPODS: 1.11.2
