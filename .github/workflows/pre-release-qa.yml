@@ -83,5 +83,5 @@ jobs:
       - name: build xcframework, then build project and run tests
         run: |
             xcodebuild -scheme xcframework
-            cd  DKIntegrationTestApps/tvOSReleaseTest-Manual/
+            cd  SDKIntegrationTestApps/tvOSReleaseTest-Manual/
             xcodebuild test -scheme tvOSReleaseTest -project tvOSReleaseTest.xcodeproj -destination 'platform=tvOS Simulator,name=Apple TV,OS=latest' | xcpretty && exit ${PIPESTATUS[0]}
