@@ -226,6 +226,11 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     [self loadUserAgent];
     
     BranchJsonConfig *config = BranchJsonConfig.instance;
+    
+    if (config.enableLogging) {
+        [self enableLogging];
+    }
+    
     if (config.checkPasteboardOnInstall) {
         [self checkPasteboardOnInstall];
     }
