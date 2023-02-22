@@ -6,7 +6,7 @@
 //
 
 import XCTest
-import Branch
+import BranchSDK
 
 final class iOSReleaseTestTests: XCTestCase {
 

@@ -1,16 +1,16 @@
 PODS:
-  - Branch (1.45.2)
+  - BranchSDK (2.0.0)
 
 DEPENDENCIES:
-  - Branch (from `~/Documents/GitHub/ios-branch-deep-linking-attribution/`)
+  - BranchSDK (from `./../../`)
 
 EXTERNAL SOURCES:
-  Branch:
-    :path: "~/Documents/GitHub/ios-branch-deep-linking-attribution/"
+  BranchSDK:
+    :path: "./../../"
 
 SPEC CHECKSUMS:
-  Branch: 1fc81857f63403d4682305088b11270719dca8db
+  BranchSDK: dbecf9d1da931c2cf57393b233347b3587d11acb
 
-PODFILE CHECKSUM: 8707e4491b8476dbe0dfad7cbf74e04fc70e883f
+PODFILE CHECKSUM: 03b123b37ef62488cc2febccc7e8d47e6a8d0768
 
 COCOAPODS: 1.11.2

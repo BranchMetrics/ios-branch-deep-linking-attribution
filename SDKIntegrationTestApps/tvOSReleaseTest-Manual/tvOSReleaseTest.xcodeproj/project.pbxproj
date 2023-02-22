@@ -14,8 +14,8 @@
 		E7A0C2D72988F7650024497D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E7A0C2D52988F7650024497D /* LaunchScreen.storyboard */; };
 		E7A0C2E12988F7660024497D /* tvOSReleaseTestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A0C2E02988F7660024497D /* tvOSReleaseTestTests.swift */; };
 		E7A0C3092989B0320024497D /* BranchSDKTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A0C3082989B0320024497D /* BranchSDKTest.swift */; };
-		E7A0C30C2989B2590024497D /* Branch.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7A0C30B2989B2590024497D /* Branch.xcframework */; };
-		E7A0C30D2989B2590024497D /* Branch.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E7A0C30B2989B2590024497D /* Branch.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E7A0C30C2989B2590024497D /* BranchSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7A0C30B2989B2590024497D /* BranchSDK.xcframework */; };
+		E7A0C30D2989B2590024497D /* BranchSDK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E7A0C30B2989B2590024497D /* BranchSDK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,7 +35,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				E7A0C30D2989B2590024497D /* Branch.xcframework in Embed Frameworks */,
+				E7A0C30D2989B2590024497D /* BranchSDK.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -52,7 +52,7 @@
 		E7A0C2DC2988F7660024497D /* tvOSReleaseTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = tvOSReleaseTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7A0C2E02988F7660024497D /* tvOSReleaseTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSReleaseTestTests.swift; sourceTree = "<group>"; };
 		E7A0C3082989B0320024497D /* BranchSDKTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchSDKTest.swift; sourceTree = "<group>"; };
-		E7A0C30B2989B2590024497D /* Branch.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Branch.xcframework; path = "../../carthage-files/build/Branch.xcframework"; sourceTree = "<group>"; };
+		E7A0C30B2989B2590024497D /* BranchSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = BranchSDK.xcframework; path = ../../build/BranchSDK.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,7 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E7A0C30C2989B2590024497D /* Branch.xcframework in Frameworks */,
+				E7A0C30C2989B2590024497D /* BranchSDK.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -117,7 +117,7 @@
 		E7A0C30A2989B2590024497D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E7A0C30B2989B2590024497D /* Branch.xcframework */,
+				E7A0C30B2989B2590024497D /* BranchSDK.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

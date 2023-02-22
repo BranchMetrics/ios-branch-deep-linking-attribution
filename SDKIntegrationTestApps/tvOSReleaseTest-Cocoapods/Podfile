@@ -2,7 +2,7 @@ target 'tvOSReleaseTest' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
-  pod 'Branch', :path => './../../'
+  pod 'BranchSDK', :path => './../../'
 
 end
 
@@ -10,6 +10,6 @@ target 'tvOSReleaseTestTests' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
-  pod 'Branch', :path => './../../'
+  pod 'BranchSDK', :path => './../../'
 
 end

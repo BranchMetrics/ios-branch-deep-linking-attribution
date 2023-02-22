@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Branch
+import BranchSDK
 
 class BranchSDKTest {
     

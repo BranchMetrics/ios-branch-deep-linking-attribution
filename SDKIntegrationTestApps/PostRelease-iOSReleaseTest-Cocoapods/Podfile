@@ -6,7 +6,7 @@ target 'iOSReleaseTest' do
   use_frameworks!
 
   # Pods for iOSReleaseTest
-  pod 'Branch'
+  pod 'BranchSDK'
 
 end
 
@@ -15,6 +15,6 @@ target 'iOSReleaseTestTests' do
   use_frameworks!
 
   # Pods for iOSReleaseTestTests
-  pod 'Branch'
+  pod 'BranchSDK'
 
 end

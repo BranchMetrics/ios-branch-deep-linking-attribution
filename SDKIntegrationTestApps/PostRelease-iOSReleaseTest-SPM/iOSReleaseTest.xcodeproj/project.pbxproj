@@ -14,7 +14,8 @@
 		C119B02127ADC85E00E8C7BF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C119B02027ADC85E00E8C7BF /* Assets.xcassets */; };
 		C119B02427ADC85E00E8C7BF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C119B02227ADC85E00E8C7BF /* LaunchScreen.storyboard */; };
 		C119B02C27ADC92A00E8C7BF /* iOSReleaseTest.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = C119B02B27ADC8FB00E8C7BF /* iOSReleaseTest.entitlements */; };
-		E71F6C352990DA4300D54F17 /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E71F6C342990DA4300D54F17 /* BranchSDK */; };
+		E71D372129A589AA00A0FDEF /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E71D372029A589AA00A0FDEF /* BranchSDK */; };
+		E71D372329A589C400A0FDEF /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E71D372229A589C400A0FDEF /* BranchSDK */; };
 		E7939C0429749D3C00B90B82 /* iOSReleaseTestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */; };
 		E7A0C3052989AB200024497D /* BranchSDKTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A0C3042989AB200024497D /* BranchSDKTest.swift */; };
 /* End PBXBuildFile section */
@@ -49,7 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E71F6C352990DA4300D54F17 /* BranchSDK in Frameworks */,
+				E71D372129A589AA00A0FDEF /* BranchSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E71D372329A589C400A0FDEF /* BranchSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,7 +132,7 @@
 			);
 			name = iOSReleaseTest;
 			packageProductDependencies = (
-				E71F6C342990DA4300D54F17 /* BranchSDK */,
+				E71D372029A589AA00A0FDEF /* BranchSDK */,
 			);
 			productName = iOSReleaseTest;
 			productReference = C119B01427ADC85C00E8C7BF /* iOSReleaseTest.app */;
@@ -151,6 +153,7 @@
 			);
 			name = iOSReleaseTestTests;
 			packageProductDependencies = (
+				E71D372229A589C400A0FDEF /* BranchSDK */,
 			);
 			productName = iOSReleaseTestTests;
 			productReference = E7939C0129749D3C00B90B82 /* iOSReleaseTestTests.xctest */;
@@ -528,7 +531,12 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E71F6C342990DA4300D54F17 /* BranchSDK */ = {
+		E71D372029A589AA00A0FDEF /* BranchSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E71F6C332990DA4300D54F17 /* XCRemoteSwiftPackageReference "ios-branch-deep-linking-attribution" */;
+			productName = BranchSDK;
+		};
+		E71D372229A589C400A0FDEF /* BranchSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E71F6C332990DA4300D54F17 /* XCRemoteSwiftPackageReference "ios-branch-deep-linking-attribution" */;
 			productName = BranchSDK;

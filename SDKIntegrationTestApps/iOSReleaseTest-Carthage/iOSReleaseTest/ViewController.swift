@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import Branch
+import BranchSDK
 
 class ViewController: UIViewController {
 

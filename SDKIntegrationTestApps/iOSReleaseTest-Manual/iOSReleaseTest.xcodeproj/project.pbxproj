@@ -16,8 +16,8 @@
 		C119B02C27ADC92A00E8C7BF /* iOSReleaseTest.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = C119B02B27ADC8FB00E8C7BF /* iOSReleaseTest.entitlements */; };
 		E7939C0429749D3C00B90B82 /* iOSReleaseTestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */; };
 		E7A0C2FA29898E4B0024497D /* BranchSDKTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A0C2F929898E4B0024497D /* BranchSDKTest.swift */; };
-		E7A0C2FD2989914A0024497D /* Branch.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7A0C2FC2989914A0024497D /* Branch.xcframework */; };
-		E7A0C2FE2989914A0024497D /* Branch.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E7A0C2FC2989914A0024497D /* Branch.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E7A0C2FD2989914A0024497D /* BranchSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7A0C2FC2989914A0024497D /* BranchSDK.xcframework */; };
+		E7A0C2FE2989914A0024497D /* BranchSDK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E7A0C2FC2989914A0024497D /* BranchSDK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,7 +37,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				E7A0C2FE2989914A0024497D /* Branch.xcframework in Embed Frameworks */,
+				E7A0C2FE2989914A0024497D /* BranchSDK.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -57,7 +57,7 @@
 		E7939C0129749D3C00B90B82 /* iOSReleaseTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSReleaseTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSReleaseTestTests.swift; sourceTree = "<group>"; };
 		E7A0C2F929898E4B0024497D /* BranchSDKTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchSDKTest.swift; sourceTree = "<group>"; };
-		E7A0C2FC2989914A0024497D /* Branch.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Branch.xcframework; path = "../../carthage-files/build/Branch.xcframework"; sourceTree = "<group>"; };
+		E7A0C2FC2989914A0024497D /* BranchSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = BranchSDK.xcframework; path = ../../build/BranchSDK.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,7 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E7A0C2FD2989914A0024497D /* Branch.xcframework in Frameworks */,
+				E7A0C2FD2989914A0024497D /* BranchSDK.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,7 +125,7 @@
 		E7A0C2FB2989914A0024497D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E7A0C2FC2989914A0024497D /* Branch.xcframework */,
+				E7A0C2FC2989914A0024497D /* BranchSDK.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
