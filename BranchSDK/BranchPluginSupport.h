@@ -13,7 +13,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BranchPluginSupport : NSObject
 
 + (BranchPluginSupport *)instance;
+
 - (NSDictionary<NSString *, NSString *> *)deviceDescription;
+
+- (BOOL)deferInitForPlugin;
 
 @end
 

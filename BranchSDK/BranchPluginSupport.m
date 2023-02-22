@@ -10,6 +10,7 @@
 #import "NSMutableDictionary+Branch.h"
 #import "BNCDeviceInfo.h"
 #import "BNCPreferenceHelper.h"
+#import "BranchJsonConfig.h"
 
 @interface BranchPluginSupport()
 
@@ -51,6 +52,14 @@
     }
     
     return dictionary;
+}
+
+- (BOOL)deferInitForPlugin {
+    BranchJsonConfig *config = BranchJsonConfig.instance;
+    if (config.deferInitForPlugin) {
+        return YES;
+    }
+    return NO;
 }
 
 @end
