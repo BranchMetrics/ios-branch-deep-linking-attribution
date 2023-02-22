@@ -226,13 +226,8 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     [self loadUserAgent];
     
     BranchJsonConfig *config = BranchJsonConfig.instance;
-    
     if (config.checkPasteboardOnInstall) {
         [self checkPasteboardOnInstall];
-    }
-    
-    if (config.delayInitToCheckForSearchAds) {
-        [self delayInitToCheckForSearchAds];
     }
 
     if (config.enableFacebookLinkCheck) {

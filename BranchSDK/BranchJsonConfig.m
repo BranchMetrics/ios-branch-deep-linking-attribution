@@ -14,8 +14,6 @@ NSString * _Nonnull const BranchJsonConfigBranchKeyOption = @"branchKey";
 NSString * _Nonnull const BranchJsonConfigLiveKeyOption = @"liveKey";
 NSString * _Nonnull const BranchJsonConfigTestKeyOption = @"testKey";
 NSString * _Nonnull const BranchJsonConfigUseTestInstanceOption = @"useTestInstance";
-NSString * _Nonnull const BranchJsonConfigDelayInitToCheckForSearchAdsOption = @"delayInitToCheckForSearchAds";
-NSString * _Nonnull const BranchJsonConfigAppleSearchAdsDebugModeOption = @"appleSearchAdsDebugMode";
 NSString * _Nonnull const BranchJsonConfigDeferInitializationForJSLoadOption = @"deferInitializationForJSLoad";
 NSString * _Nonnull const BranchJsonConfigEnableFacebookLinkCheck = @"enableFacebookLinkCheck";
 NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPasteboardOnInstall";
@@ -122,18 +120,6 @@ NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPast
 - (BOOL)useTestInstance
 {
     NSNumber *number = self[BranchJsonConfigUseTestInstanceOption];
-    return number.boolValue;
-}
-
-- (BOOL)delayInitToCheckForSearchAds
-{
-    NSNumber *number = self[BranchJsonConfigDelayInitToCheckForSearchAdsOption];
-    return number.boolValue;
-}
-
-- (BOOL)appleSearchAdsDebugMode
-{
-    NSNumber *number = self[BranchJsonConfigAppleSearchAdsDebugModeOption];
     return number.boolValue;
 }
 
