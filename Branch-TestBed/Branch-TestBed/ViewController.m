@@ -19,6 +19,7 @@
 #import "LogOutputViewController.h"
 #import "AppDelegate.h"
 #import <LinkPresentation/LinkPresentation.h>
+#import <StoreKit/StoreKit.h>
 
 extern AppDelegate* appDelegate;
 
@@ -43,7 +44,7 @@ static NSString *type = @"some type";
 + (NSArray<BranchStandardEvent>*) standardEvents;
 @end
 
-@interface ViewController () <BranchShareLinkDelegate> {
+@interface ViewController () <BranchShareLinkDelegate, SKProductsRequestDelegate> {
     NSDateFormatter *_dateFormatter;
 }
 
@@ -61,6 +62,9 @@ UIActivityIndicatorView *activityIndicator;
 bool hasSetPartnerParams = false;
 
 - (void)viewDidLoad {
+    Branch *branch = [Branch getInstance];
+    [Branch setLogInAppPurchasesAsEventsEnabled:true];
+    
     [self.branchLinkTextField
      addTarget:self
      action:@selector(textFieldFinished:)
@@ -685,6 +689,75 @@ bool hasSetPartnerParams = false;
     }]];
     
     [self presentViewController:actionSheet animated:YES completion:nil];
+}
+
+- (IBAction)inAppPurchaseEvent:(id)sender {
+    NSString *creditsProductId = @"io.branch.testbed.testCredits";
+        
+    if ([SKPaymentQueue canMakePayments]) {
+        NSLog(@"Making purchase");
+        NSSet *productID = [NSSet setWithObject:creditsProductId];
+        SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:productID];
+        productsRequest.delegate = self;
+        [productsRequest start];
+    } else {
+        NSLog(@"Can't make purchases");
+    }
+}
+
+- (IBAction)inAppSubscriptionEvent:(id)sender {
+    NSString *proProductId = @"io.branch.testbed.testSub";
+    
+    if ([SKPaymentQueue canMakePayments]) {
+        NSSet *productID = [NSSet setWithObject:proProductId];
+        SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:productID];
+        productsRequest.delegate = self;
+        [productsRequest start];
+    } else {
+        NSLog(@"Can't make purchases");
+    }
+}
+
+- (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
+    NSInteger count = response.products.count;
+    if (count > 0) {
+        SKProduct *validProduct = response.products[0];
+        SKPayment *payment = [SKPayment paymentWithProduct:validProduct];
+        [[SKPaymentQueue defaultQueue] addPayment:payment];
+    }
+    else {
+        NSLog(@"No products");
+    }
+}
+
+- (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
+    for (id transaction in transactions) {
+        if ([transaction isKindOfClass:[SKPaymentTransaction class]]) {
+            SKPaymentTransaction *trans = (SKPaymentTransaction *)transaction;
+            switch (trans.transactionState) {
+                case SKPaymentTransactionStatePurchased: {
+                    [[SKPaymentQueue defaultQueue] finishTransaction:(SKPaymentTransaction *)transaction];
+
+                    BranchEvent *event = [[BranchEvent alloc] initWithName:@""];
+                    [event logEventWithTransaction:(SKPaymentTransaction *)transaction];
+
+                    break;
+                }
+                case SKPaymentTransactionStateFailed: {
+                    [[SKPaymentQueue defaultQueue] finishTransaction:(SKPaymentTransaction *)transaction];
+                    break;
+                }
+                case SKPaymentTransactionStateRestored: {
+                    [[SKPaymentQueue defaultQueue] finishTransaction:(SKPaymentTransaction *)transaction];
+                    break;
+                }
+                default:
+                    break;
+            }
+
+
+        }
+    }
 }
 
 //- (IBAction) sendV2EventAction:(id)sender {
