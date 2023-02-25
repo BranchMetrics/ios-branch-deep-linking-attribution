@@ -62,7 +62,6 @@ UIActivityIndicatorView *activityIndicator;
 bool hasSetPartnerParams = false;
 
 - (void)viewDidLoad {
-    Branch *branch = [Branch getInstance];
     [Branch setLogInAppPurchasesAsEventsEnabled:true];
     
     [self.branchLinkTextField
