@@ -152,6 +152,11 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 
 @property (nonatomic, copy, nullable) void (^sceneSessionInitWithCallback)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error);
 
+// Support for deferred SDK initialization. Used to support slow plugin runtime startup.
+// This is enabled by setting deferInitForPlugin to true in branch.json
+@property (nonatomic, assign, readwrite) BOOL deferInitForPlugin;
+@property (nonatomic, copy, nullable) void (^cachedInitBlock)(void);
+
 @end
 
 @implementation Branch
@@ -226,6 +231,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     [self loadUserAgent];
     
     BranchJsonConfig *config = BranchJsonConfig.instance;
+    self.deferInitForPlugin = config.deferInitForPlugin;
     
     if (config.enableLogging) {
         [self enableLogging];
@@ -613,8 +619,10 @@ static NSString *bnc_branchKey = nil;
 
 - (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
                   registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback {
-    self.sceneSessionInitWithCallback = callback;
-    [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
+    [self deferInitBlock:^{
+        self.sceneSessionInitWithCallback = callback;
+        [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
+    }];
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options
@@ -2135,6 +2143,34 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 #pragma mark - Session Initialization
+
+// Defers block until notifyNativeToInit is called. Also blocks autoinitialization by initSafetyCheck.
+- (BOOL)deferInitBlock:(void (^)(void))block {
+    BOOL deferred = NO;
+    @synchronized (self) {
+        if (self.deferInitForPlugin) {
+            self.cachedInitBlock = block;
+            deferred = YES;
+        }
+    }
+    
+    if (!deferred && block) {
+        block();
+    }
+    return deferred;
+}
+
+// Releases deferred init block
+- (void)notifyNativeToInit {
+    @synchronized (self) {
+        self.deferInitForPlugin = NO;
+    }
+    
+    if (self.cachedInitBlock) {
+        self.cachedInitBlock();
+    }
+    self.cachedInitBlock = nil;
+}
 
 // SDK-631 Workaround to maintain existing error handling behavior.
 // Some methods require init before they are called.  Instead of returning an error, we try to fix the situation by calling init ourselves.

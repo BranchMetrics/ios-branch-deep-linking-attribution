@@ -528,6 +528,16 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (void)dispatchToIsolationQueue:(dispatch_block_t)initBlock;
 
+/**
+ DO NOT USE unless you are implementing deferred initialization for plugins.
+ 
+ Platforms such as React Native and Unity, have slow runtime startups. This results in early lifecycle events before client code can run.
+ When `deferInitForPlugin` is true in `branch.json` initSession with cache itself until this method is called.
+ 
+ Note that while init is deferred, other calls to the Branch SDK may result in errors. For that reason, do not use this feature for general SDK init deferral.
+ */
+- (void)notifyNativeToInit;
+
 #pragma mark - Push Notification support
 
 /**

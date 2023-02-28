@@ -11,14 +11,6 @@
 #import "BNCDeviceInfo.h"
 #import "BNCPreferenceHelper.h"
 #import "Branch.h"
-#import "BranchJsonConfig.h"
-
-@interface BranchPluginSupport()
-
-@property (nonatomic, assign, readwrite) BOOL deferInitForPlugin;
-@property (nonatomic, copy, nullable) void (^cachedBlock)(void);
-
-@end
 
 @implementation BranchPluginSupport
 
@@ -29,66 +21,6 @@
         pluginSupport = [BranchPluginSupport new];
     });
     return pluginSupport;
-}
-
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        self.deferInitForPlugin = [BranchJsonConfig instance].deferInitForPlugin;
-    }
-    return self;
-}
-
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options registerDeepLinkHandler:(void (^)(NSDictionary * _Nullable params, NSError * _Nullable error))callback {
-    [self deferBlock:^{
-        [[Branch getInstance] initSessionWithLaunchOptions:options andRegisterDeepLinkHandler:callback];
-    }];
-}
-
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options registerDeepLinkHandlerUsingBranchUniversalObject:(void (^)(BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error))callback {
-    [self deferBlock:^{
-        [[Branch getInstance] initSessionWithLaunchOptions:options andRegisterDeepLinkHandlerUsingBranchUniversalObject:callback];
-    }];
-}
-
-- (BOOL)handleDeepLink:(nullable NSURL *)url {
-    [self deferBlock:^{
-        [[Branch getInstance] handleDeepLink:url sceneIdentifier:nil];
-    }];
-    return YES;
-}
-
-- (BOOL)continueUserActivity:(nullable NSUserActivity *)userActivity {
-    [self deferBlock:^{
-        [[Branch getInstance] continueUserActivity:userActivity sceneIdentifier:nil];
-    }];
-    return YES;
-}
-
-- (BOOL)deferBlock:(void (^)(void))block {
-    BOOL deferred = NO;
-    @synchronized (self) {
-        if (self.deferInitForPlugin) {
-            self.cachedBlock = block;
-            deferred = YES;
-        }
-    }
-    
-    if (!deferred && block) {
-        block();
-    }
-    return deferred;
-}
-
-- (void)notifyNativeToInit {
-    @synchronized (self) {
-        self.deferInitForPlugin = NO;
-    }
-    
-    if (self.cachedBlock) {
-        self.cachedBlock();
-    }
-    self.cachedBlock = nil;
 }
 
 - (NSDictionary<NSString *, NSString *> *)deviceDescription {
