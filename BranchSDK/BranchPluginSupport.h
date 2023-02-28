@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "BranchUniversalObject.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -14,9 +15,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (BranchPluginSupport *)instance;
 
-- (NSDictionary<NSString *, NSString *> *)deviceDescription;
+#pragma mark - SDK entry points
 
-- (BOOL)deferInitForPlugin;
+- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options registerDeepLinkHandler:(void (^)(NSDictionary * _Nullable params, NSError * _Nullable error))callback;
+
+- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options registerDeepLinkHandlerUsingBranchUniversalObject:(void (^)(BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error))callback;
+
+- (BOOL)handleDeepLink:(nullable NSURL *)url;
+
+- (BOOL)continueUserActivity:(nullable NSUserActivity *)userActivity;
+
+- (void)notifyNativeToInit;
+
+#pragma mark - Utility methods
+
+- (NSDictionary<NSString *, NSString *> *)deviceDescription;
 
 @end
 
