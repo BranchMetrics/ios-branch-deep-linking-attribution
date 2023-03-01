@@ -82,6 +82,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
 	NSDictionary *dictionary = ([response.data isKindOfClass:[NSDictionary class]])
 		? (NSDictionary*) response.data : nil;
     
+#if !TARGET_OS_TV
     if (dictionary && [dictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE] isKindOfClass:NSNumber.class]) {
         NSNumber *conversionValue = (NSNumber *)dictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
         // Regardless of SKAN opted-in in dashboard, we always get conversionValue, so adding check to find out if install/open response had "invoke_register_app" true
@@ -116,6 +117,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
             }
         }
     }
+#endif
     
     if (self.completion) {
 		self.completion(dictionary, error);

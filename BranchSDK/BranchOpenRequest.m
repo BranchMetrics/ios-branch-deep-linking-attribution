@@ -299,6 +299,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
         [[BNCAppGroupsData shared] saveAppClipData];
     }
     
+#if !TARGET_OS_TV
     if ([data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP] isKindOfClass:NSNumber.class]) {
         NSNumber *invokeRegister = (NSNumber *)data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP];
         preferenceHelper.invokeRegisterApp = invokeRegister.boolValue;
@@ -364,7 +365,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
             }
         }
     }
-
+#endif
     
     if (self.callback) {
         self.callback(YES, nil);
