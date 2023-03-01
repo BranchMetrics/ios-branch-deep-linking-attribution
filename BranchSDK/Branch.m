@@ -2144,7 +2144,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 #pragma mark - Session Initialization
 
-// Defers block until notifyNativeToInit is called. Also blocks autoinitialization by initSafetyCheck.
+// Defers block until notifyNativeToInit is called.
 - (BOOL)deferInitBlock:(void (^)(void))block {
     BOOL deferred = NO;
     @synchronized (self) {
@@ -2174,7 +2174,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 // SDK-631 Workaround to maintain existing error handling behavior.
 // Some methods require init before they are called.  Instead of returning an error, we try to fix the situation by calling init ourselves.
-// There is a follow up ticket to improve this.  SDK-633
 - (void)initSafetyCheck {
     if (self.initializationStatus == BNCInitStatusUninitialized) {
         BNCLogDebug(@"Branch avoided an error by preemptively initializing.");
