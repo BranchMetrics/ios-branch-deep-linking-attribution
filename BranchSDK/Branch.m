@@ -153,8 +153,8 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (nonatomic, copy, nullable) void (^sceneSessionInitWithCallback)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error);
 
 // Support for deferred SDK initialization. Used to support slow plugin runtime startup.
-// This is enabled by setting deferInitForPlugin to true in branch.json
-@property (nonatomic, assign, readwrite) BOOL deferInitForPlugin;
+// This is enabled by setting deferInitForPluginRuntime to true in branch.json
+@property (nonatomic, assign, readwrite) BOOL deferInitForPluginRuntime;
 @property (nonatomic, copy, nullable) void (^cachedInitBlock)(void);
 
 @end
@@ -231,7 +231,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     [self loadUserAgent];
     
     BranchJsonConfig *config = BranchJsonConfig.instance;
-    self.deferInitForPlugin = config.deferInitForPlugin;
+    self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
     
     if (config.enableLogging) {
         [self enableLogging];
@@ -2148,7 +2148,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 - (BOOL)deferInitBlock:(void (^)(void))block {
     BOOL deferred = NO;
     @synchronized (self) {
-        if (self.deferInitForPlugin) {
+        if (self.deferInitForPluginRuntime) {
             self.cachedInitBlock = block;
             deferred = YES;
         }
@@ -2163,7 +2163,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 // Releases deferred init block
 - (void)notifyNativeToInit {
     @synchronized (self) {
-        self.deferInitForPlugin = NO;
+        self.deferInitForPluginRuntime = NO;
     }
     
     if (self.cachedInitBlock) {

@@ -14,7 +14,7 @@ NSString * _Nonnull const BranchJsonConfigBranchKeyOption = @"branchKey";
 NSString * _Nonnull const BranchJsonConfigLiveKeyOption = @"liveKey";
 NSString * _Nonnull const BranchJsonConfigTestKeyOption = @"testKey";
 NSString * _Nonnull const BranchJsonConfigUseTestInstanceOption = @"useTestInstance";
-NSString * _Nonnull const BranchJsonConfigDeferInitForPluginOption = @"deferInitForPlugin";
+NSString * _Nonnull const BranchJsonConfigDeferInitForPluginRuntimeOption = @"deferInitForPluginRuntime";
 NSString * _Nonnull const BranchJsonConfigEnableLogging = @"enableLogging";
 NSString * _Nonnull const BranchJsonConfigEnableFacebookLinkCheck = @"enableFacebookLinkCheck";
 NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPasteboardOnInstall";
@@ -124,9 +124,9 @@ NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPast
     return number.boolValue;
 }
 
-- (BOOL)deferInitForPlugin
+- (BOOL)deferInitForPluginRuntime
 {
-    NSNumber *number = self[BranchJsonConfigDeferInitForPluginOption];
+    NSNumber *number = self[BranchJsonConfigDeferInitForPluginRuntimeOption];
     return number.boolValue;
 }
 
