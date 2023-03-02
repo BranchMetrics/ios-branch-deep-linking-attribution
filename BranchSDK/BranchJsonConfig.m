@@ -72,7 +72,7 @@ NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPast
 - (NSData *)configFileContents
 {
     if (!self.configFileURL) return nil;
-    BNCLog([NSString stringWithFormat:@"Loading %@", self.configFileURL.pathComponents.lastObject]);
+    BNCLogDebug([NSString stringWithFormat:@"Loading %@", self.configFileURL.pathComponents.lastObject]);
 
     NSError *error;
     NSData *data = [NSData dataWithContentsOfURL:self.configFileURL options:0 error:&error];
@@ -98,8 +98,6 @@ NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPast
       @"branch.ios",
       @"branch"
       ];
-
-    NSLog( @"Bundle path: %@" , [[NSBundle mainBundle] bundlePath] );
     
     [filesToCheck enumerateObjectsUsingBlock:^(NSString *  _Nonnull file, NSUInteger idx, BOOL * _Nonnull stop) {
         configFileURL = [mainBundle URLForResource:file withExtension:@"json"];
