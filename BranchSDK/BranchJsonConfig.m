@@ -99,11 +99,18 @@ NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPast
       @"branch"
       ];
 
+    NSLog( @"Bundle path: %@" , [[NSBundle mainBundle] bundlePath] );
+    
     [filesToCheck enumerateObjectsUsingBlock:^(NSString *  _Nonnull file, NSUInteger idx, BOOL * _Nonnull stop) {
         configFileURL = [mainBundle URLForResource:file withExtension:@"json"];
         *stop = (configFileURL != nil);
     }];
-
+    
+    // Unity places the config at [[NSBundle mainBundle] bundlePath] + /Data/Raw/branch.json
+    if (!configFileURL) {
+        configFileURL = [mainBundle URLForResource:@"branch" withExtension:@"json" subdirectory:@"Data/Raw"];
+    }
+    
     if (!configFileURL) {
         BNCLogDebug(@"No branch.json in app bundle.");
         return;
