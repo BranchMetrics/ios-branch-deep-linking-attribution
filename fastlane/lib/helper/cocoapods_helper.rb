@@ -76,7 +76,7 @@ module CocoapodsHelper
 
   def current_pod_version
     # Get current version from podspec
-    podspec = File.open('../Branch.podspec', 'r') do |f|
+    podspec = File.open('../BranchSDK.podspec', 'r') do |f|
       eval f.read
     end
     podspec.version
