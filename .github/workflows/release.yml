@@ -42,8 +42,8 @@ jobs:
             else
                 echo "Invalid option"
             fi
-            git config user.name "nidhi18apr"
-            git config user.email "nidhi18apr@gmail.com"
+            git config user.name "Branch SDK Team"
+            git config user.email branch-sdks@branch.io
             git add BranchSDK.xcodeproj/project.pbxproj BranchSDK/BNCConfig.m BranchSDK.podspec Branch-TestBed/Framework-Info.plist ./scripts/version.sh
             git commit BranchSDK.xcodeproj/project.pbxproj BranchSDK/BNCConfig.m BranchSDK.podspec Branch-TestBed/Framework-Info.plist ./scripts/version.sh -m'Updated version'
             echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
@@ -245,7 +245,7 @@ jobs:
             });
       - name: Trigger workflow in iOS Branch SDK spm repo for updating code and creating release
         run: |
-            curl -X POST https://api.github.com/repos/nidhi18apr/ios-branch-sdk-spm/dispatches -H 'Accept: application/vnd.github.everest-preview+json' -u "nidhi18apr:${{ secrets.TEST_ACTION_SECRET}}" --data '{"event_type": "Trigger Workflow", "client_payload":
+            curl -X POST https://api.github.com/repos/BranchMetrics/ios-branch-sdk-spm/dispatches -H 'Accept: application/vnd.github.everest-preview+json' -u "Branch SDK Team:${{ secrets.TEST_ACTION_SECRET}}" --data '{"event_type": "Trigger Workflow", "client_payload":
                    { "tag":"${{steps.get-version.outputs.version}}"}}'
     
   
