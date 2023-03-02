@@ -2182,6 +2182,13 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 - (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
+    // Ignore lifecycle calls while init is deferred to a plugin runtime.
+    if (self.deferInitForPluginRuntime) {
+        //NSString *debug = [NSString stringWithFormat:@"Init is deferred, ignoring call: %@", NSThread.callStackSymbols];
+        //BNCLogDebug(debug);
+        return;
+    }
+    
     dispatch_async(self.isolationQueue, ^(){
         NSString *urlstring = nil;
         if (self.preferenceHelper.universalLinkUrl.length) {
