@@ -151,7 +151,7 @@ jobs:
           echo "Current version is $(cat fastlane/.version)."
           echo "version=$(cat fastlane/.version)" >> $GITHUB_OUTPUT
       - name: Create GitHub Release
-        uses: actions/github-script@v4
+        uses: actions/github-script@v6
         with:
           script: |
             const createRelease = require('./.github/custom-scripts/create-release');
@@ -165,7 +165,7 @@ jobs:
               version: tagName,
             });
       - name: Upload Release Assets
-        uses: actions/github-script@v4
+        uses: actions/github-script@v6
         with:
           script: |
             const uploadAsset = require('./.github/custom-scripts/upload-asset');
@@ -236,14 +236,14 @@ jobs:
               path: 'static-framework-noidfa/checksum_static_noidfa',
             });
       - name: Report Release
-        uses: actions/github-script@v4
+        uses: actions/github-script@v6
         with:
           script: |
             console.log('Created release ${{ steps.get-version.outputs.version }}:');
             console.log(` https://github.com/${context.repo.owner}/${context.repo.repo}/releases/${{ steps.get-version.outputs.version }}`);
       # 4. Trigger import workflow in ios-spm repo.
       - name: Export to ios-spm repository
-        uses: actions/github-script@v4
+        uses: actions/github-script@v6
         with:
           script: |
             console.log('TODO: This 👆');
