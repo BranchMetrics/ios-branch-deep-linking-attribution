@@ -13,9 +13,8 @@ extern NSString * _Nonnull const BranchJsonConfigBranchKeyOption;
 extern NSString * _Nonnull const BranchJsonConfigLiveKeyOption;
 extern NSString * _Nonnull const BranchJsonConfigTestKeyOption;
 extern NSString * _Nonnull const BranchJsonConfigUseTestInstanceOption;
-extern NSString * _Nonnull const BranchJsonConfigDelayInitToCheckForSearchAdsOption;
-extern NSString * _Nonnull const BranchJsonConfigAppleSearchAdsDebugModeOption;
-extern NSString * _Nonnull const BranchJsonConfigDeferInitializationForJSLoadOption;
+extern NSString * _Nonnull const BranchJsonConfigDeferInitForPluginRuntimeOption;
+extern NSString * _Nonnull const BranchJsonConfigEnableLogging;
 extern NSString * _Nonnull const BranchJsonConfigEnableFacebookLinkCheck;
 extern NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall;
 
@@ -28,9 +27,8 @@ extern NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall;
 @property (nonatomic, readonly, nullable, copy) NSString *liveKey;
 @property (nonatomic, readonly, nullable, copy) NSString *testKey;
 @property (nonatomic, readonly, assign) BOOL useTestInstance;
-@property (nonatomic, readonly, assign) BOOL delayInitToCheckForSearchAds;
-@property (nonatomic, readonly, assign) BOOL appleSearchAdsDebugMode;
-@property (nonatomic, readonly, assign) BOOL deferInitializationForJSLoad;
+@property (nonatomic, readonly, assign) BOOL deferInitForPluginRuntime;
+@property (nonatomic, readonly, assign) BOOL enableLogging;
 @property (nonatomic, readonly, assign) BOOL enableFacebookLinkCheck;
 @property (nonatomic, readonly, assign) BOOL checkPasteboardOnInstall;
 
