@@ -245,7 +245,7 @@ jobs:
             });
       - name: Trigger workflow in iOS Branch SDK spm repo for updating code and creating release
         run: |
-            curl -X POST https://api.github.com/repos/BranchMetrics/ios-branch-sdk-spm/dispatches -H 'Accept: application/vnd.github.everest-preview+json' -u "Branch SDK Team:${{ secrets.TEST_ACTION_SECRET}}" --data '{"event_type": "Trigger Workflow", "client_payload":
+            curl -X POST https://api.github.com/repos/BranchMetrics/ios-branch-sdk-spm/dispatches -H 'Accept: application/vnd.github.everest-preview+json' -u "branch-sdks:${{ secrets.BRANCHLET_ACCESS_TOKEN_PUBLIC}}" --data '{"event_type": "Trigger Workflow", "client_payload":
                    { "tag":"${{steps.get-version.outputs.version}}"}}'
     
   
