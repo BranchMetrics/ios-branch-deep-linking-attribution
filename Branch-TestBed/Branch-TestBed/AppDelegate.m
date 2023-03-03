@@ -60,6 +60,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     [self setLogFile:@"OpenNInstall"];
     // [branch setIdentity:@"Bobby Branch"];
+    
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandlerUsingBranchUniversalObject:
         ^ (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) {
