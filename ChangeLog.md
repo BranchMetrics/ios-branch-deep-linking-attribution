@@ -1,5 +1,16 @@
 Branch iOS SDK Change Log
 
+v.2.1.0
+
+Branch iOS SDK 2.1.0 contains improvements to testing and plugin support (Unity, RN, etc). Most clients will see no change. 
+
+- SDK-1831 - Improved branch.json support
+    * Support for logging via `enableLogging`.
+    * Removed old Apple Search Ads support.
+    * Support for deferred SDK initialization. This allows improved plugin lifecycle support.
+- SDK-1802 - Fix tvOS warnings.
+- SDK-1774 - Update Branch TestBed UI.
+
 v.2.0.0
 
 Branch iOS SDK 2.0.0 fixes longstanding issues with the umbrella header and project layout.
