@@ -152,6 +152,11 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 
 @property (nonatomic, copy, nullable) void (^sceneSessionInitWithCallback)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error);
 
+// Support for deferred SDK initialization. Used to support slow plugin runtime startup.
+// This is enabled by setting deferInitForPluginRuntime to true in branch.json
+@property (nonatomic, assign, readwrite) BOOL deferInitForPluginRuntime;
+@property (nonatomic, copy, nullable) void (^cachedInitBlock)(void);
+
 @end
 
 @implementation Branch
@@ -226,13 +231,14 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     [self loadUserAgent];
     
     BranchJsonConfig *config = BranchJsonConfig.instance;
+    self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
+    
+    if (config.enableLogging) {
+        [self enableLogging];
+    }
     
     if (config.checkPasteboardOnInstall) {
         [self checkPasteboardOnInstall];
-    }
-    
-    if (config.delayInitToCheckForSearchAds) {
-        [self delayInitToCheckForSearchAds];
     }
 
     if (config.enableFacebookLinkCheck) {
@@ -613,8 +619,10 @@ static NSString *bnc_branchKey = nil;
 
 - (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
                   registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback {
-    self.sceneSessionInitWithCallback = callback;
-    [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
+    [self deferInitBlock:^{
+        self.sceneSessionInitWithCallback = callback;
+        [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
+    }];
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options
@@ -2136,9 +2144,36 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 #pragma mark - Session Initialization
 
+// Defers block until notifyNativeToInit is called.
+- (BOOL)deferInitBlock:(void (^)(void))block {
+    BOOL deferred = NO;
+    @synchronized (self) {
+        if (self.deferInitForPluginRuntime) {
+            self.cachedInitBlock = block;
+            deferred = YES;
+        }
+    }
+    
+    if (!deferred && block) {
+        block();
+    }
+    return deferred;
+}
+
+// Releases deferred init block
+- (void)notifyNativeToInit {
+    @synchronized (self) {
+        self.deferInitForPluginRuntime = NO;
+    }
+    
+    if (self.cachedInitBlock) {
+        self.cachedInitBlock();
+    }
+    self.cachedInitBlock = nil;
+}
+
 // SDK-631 Workaround to maintain existing error handling behavior.
 // Some methods require init before they are called.  Instead of returning an error, we try to fix the situation by calling init ourselves.
-// There is a follow up ticket to improve this.  SDK-633
 - (void)initSafetyCheck {
     if (self.initializationStatus == BNCInitStatusUninitialized) {
         BNCLogDebug(@"Branch avoided an error by preemptively initializing.");
@@ -2147,6 +2182,16 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 - (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
+    
+    // ignore lifecycle calls while waiting for a plugin runtime.
+    @synchronized (self) {
+        if (self.deferInitForPluginRuntime) {
+            //NSString *debug = [NSString stringWithFormat:@"Init is deferred, ignoring call: %@", NSThread.callStackSymbols];
+            //BNCLogDebug(debug);
+            return;
+        }
+    }
+    
     dispatch_async(self.isolationQueue, ^(){
         NSString *urlstring = nil;
         if (self.preferenceHelper.universalLinkUrl.length) {
