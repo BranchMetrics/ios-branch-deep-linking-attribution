@@ -24,7 +24,6 @@ FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 #import <BranchSDK/BranchLinkProperties.h>
 #import <BranchSDK/BranchUniversalObject.h>
 #import <BranchSDK/BranchQRCode.h>
-#import <BranchSDK/BranchPasteControl.h>
 
 #import <BranchSDK/BranchCrossPlatformID.h>
 #import <BranchSDK/BranchLastAttributedTouchData.h>
@@ -36,6 +35,8 @@ FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 #import <BranchSDK/BranchShareLink.h>
 #import <BranchSDK/BranchCSSearchableItemAttributeSet.h>
 #import <BranchSDK/BranchActivityItemProvider.h>
+
+#import <BranchSDK/BranchPasteControl.h>
 #endif
 
 // Used by Branch.h for debug and testing APIs. Need to move these.

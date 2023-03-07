@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "BranchSDK"
-  s.version          = "1.45.2"
+  s.version          = "2.1.0"
   s.summary          = "Create an HTTP URL for any piece of content in your app"
   s.description      = <<-DESC
 - Want the highest possible conversions on your sharing feature?
@@ -34,5 +34,5 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
 
   s.frameworks = 'CoreServices', 'SystemConfiguration'
   s.weak_framework = 'LinkPresentation'
-  s.ios.frameworks = 'WebKit', 'iAd', 'CoreTelephony'
+  s.ios.frameworks = 'WebKit', 'CoreTelephony'
 end
