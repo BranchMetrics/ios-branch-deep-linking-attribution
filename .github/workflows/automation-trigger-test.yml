@@ -6,13 +6,39 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/github-script@v6
+
+    - uses: convictional/trigger-workflow-and-wait@v1.6.1
       with:
-        github-token: ${{ secrets.BRANCHLET_ACCESS_TOKEN_PUBLIC  }}
-        script: |
-          await github.rest.actions.createWorkflowDispatch({
-            owner: 'BranchMetrics',
-            repo: 'qentelli-saas-sdk-testing-automation',
-            workflow_id: 'ios-maven.yml',
-            ref: 'master'
-          })
+          owner: BranchMetrics
+          repo: qentelli-saas-sdk-testing-automation
+          github_token: ${{ secrets.BRANCHLET_ACCESS_TOKEN_PUBLIC }}
+          workflow_file_name: ios-maven.yml
+          ref: 'development'
+          wait_interval: 10
+          client_payload: '{}'
+          propagate_failure: true
+          trigger_workflow: true
+          wait_workflow: true
+    - name: Fetching test report from automation suite
+      uses: dawidd6/action-download-artifact@v2
+      with:
+       github_token: ${{ secrets.BRANCHLET_ACCESS_TOKEN_PUBLIC }}
+       repo: BranchMetrics/qentelli-saas-sdk-testing-automation
+       workflow: ios-maven.yml
+       branch: development
+       name: test-results
+       check_artifacts:  true
+       search_artifacts:  true
+       skip_unpack: false
+       
+    - name: Display S3 url
+#       run: grep -C2 'Test report file link' output.txt
+      run: grep 'Test report file link' output.txt
+    
+#     - name: Publishing test report to artifact
+#       uses: actions/upload-artifact@v3
+#       with:
+#         name: test-results
+#         path: ./*
+        
+        
