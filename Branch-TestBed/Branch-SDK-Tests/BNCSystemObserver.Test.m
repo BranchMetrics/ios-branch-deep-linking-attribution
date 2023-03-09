@@ -39,7 +39,7 @@
         andReturn:@[ @{ @"CFBundleURLSchemes": @[ SINGLE_CHARACTER_SCEHEME ] } ]]
             objectForInfoDictionaryKey:[OCMArg any]];
 
-    NSString *uriScheme = [BNCSystemObserver getDefaultUriScheme];
+    NSString *uriScheme = [BNCSystemObserver defaultURIScheme];
     
     XCTAssertEqualObjects(SINGLE_CHARACTER_SCEHEME, uriScheme);
     

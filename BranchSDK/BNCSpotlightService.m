@@ -47,7 +47,7 @@ static NSString* const kDomainIdentifier = @"io.branch.sdk.spotlight";
                               callback:(void (^_Nullable)(BranchUniversalObject * _Nullable universalObject,
                                                           NSString* _Nullable url,
                                                           NSError * _Nullable error))completion {
-    if ([BNCSystemObserver getOSVersion].floatValue < 9.0) {
+    if ([BNCSystemObserver osVersion].floatValue < 9.0) {
         NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError];
         if (completion) {
             completion(universalObject,nil,error);

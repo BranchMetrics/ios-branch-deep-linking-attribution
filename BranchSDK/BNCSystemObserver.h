@@ -14,22 +14,19 @@
 
 @interface BNCSystemObserver : NSObject
 
-+ (NSString *)getUniqueHardwareId:(BOOL *)isReal
-                          isDebug:(BOOL)debug
-                          andType:(NSString *__autoreleasing*)type;
-+ (NSString *)getDefaultUriScheme;
-+ (NSString *)getAppVersion;
-+ (NSString *)getBundleID;
-+ (NSString *)getTeamIdentifier;
-+ (NSString *)getBrand;
-+ (NSString *)getModel;
-+ (NSString *)getOS;
-+ (NSString *)getOSVersion;
-+ (NSNumber *)getScreenWidth;
-+ (NSNumber *)getScreenHeight;
++ (NSString *)defaultURIScheme;
++ (NSString *)appVersion;
++ (NSString *)bundleIdentifier;
++ (NSString *)teamIdentifier;
++ (NSString *)brand;
++ (NSString *)model;
++ (NSString *)osName;
++ (NSString *)osVersion;
++ (NSNumber *)screenWidth;
++ (NSNumber *)screenHeight;
 + (BOOL)isSimulator;
-+ (BOOL)adTrackingSafe;
-+ (NSString *)getAdId;
++ (BOOL)adTrackingEnabled;
++ (NSString *)advertiserIdentifier;
 + (NSString *)attOptedInStatus;
 + (NSString *)appleAttributionToken;
 

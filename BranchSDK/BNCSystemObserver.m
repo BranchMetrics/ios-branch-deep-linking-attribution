@@ -29,31 +29,6 @@
 
 @implementation BNCSystemObserver
 
-+ (NSString *)getUniqueHardwareId:(BOOL *)isReal
-                          isDebug:(BOOL)debug
-                          andType:(NSString *__autoreleasing*)type {
-    NSString *uid = nil;
-    *isReal = YES;
-
-    if (!debug) {
-        uid = [self getAdId];
-        *type = @"idfa";
-    }
-
-    if (!uid && NSClassFromString(@"UIDevice") && !debug) {
-        uid = [[UIDevice currentDevice].identifierForVendor UUIDString];
-        *type = @"vendor_id";
-    }
-
-    if (!uid) {
-        uid = [[NSUUID UUID] UUIDString];
-        *type = @"random";
-        *isReal = NO;
-    }
-
-    return uid;
-}
-
 + (NSString *)appleAttributionToken {
     // token is not available on simulator
     if ([self isSimulator]) {
@@ -90,7 +65,7 @@
     return token;
 }
 
-+ (NSString *)getAdId {
++ (NSString *)advertiserIdentifier {
     #ifdef BRANCH_EXCLUDE_IDFA_CODE
     return nil;
     
@@ -152,7 +127,7 @@
 }
 
 // this value is deprecated on iOS 14+
-+ (BOOL)adTrackingSafe {
++ (BOOL)adTrackingEnabled {
     #ifdef BRANCH_EXCLUDE_IDFA_CODE
     return NO;
     
@@ -169,7 +144,7 @@
     #endif
 }
 
-+ (NSString *)getDefaultUriScheme {
++ (NSString *)defaultURIScheme {
     NSArray *urlTypes = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"];
 
     for (NSDictionary *urlType in urlTypes) {
@@ -189,15 +164,15 @@
     return nil;
 }
 
-+ (NSString *)getAppVersion {
++ (NSString *)appVersion {
     return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
 }
 
-+ (NSString *)getBundleID {
++ (NSString *)bundleIdentifier {
     return [[NSBundle mainBundle] bundleIdentifier];
 }
 
-+ (NSString *)getTeamIdentifier {
++ (NSString *)teamIdentifier {
     NSString *teamWithDot = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"AppIdentifierPrefix"];
     if (teamWithDot.length) {
         return [teamWithDot substringToIndex:([teamWithDot length] - 1)];
@@ -205,11 +180,11 @@
     return nil;
 }
 
-+ (NSString *)getBrand {
++ (NSString *)brand {
     return @"Apple";
 }
 
-+ (NSString *)getModel {
++ (NSString *)model {
     struct utsname systemInfo;
     uname(&systemInfo);
 
@@ -224,7 +199,7 @@
     #endif
 }
 
-+ (NSString *)getOS {
++ (NSString *)osName {
     #if TARGET_OS_TV
     return @"tv_OS";
     #else
@@ -232,19 +207,19 @@
     #endif
 }
 
-+ (NSString *)getOSVersion {
++ (NSString *)osVersion {
     UIDevice *device = [UIDevice currentDevice];
     return [device systemVersion];
 }
 
-+ (NSNumber *)getScreenWidth {
++ (NSNumber *)screenWidth {
     UIScreen *mainScreen = [UIScreen mainScreen];
     CGFloat scaleFactor = mainScreen.scale;
     CGFloat width = mainScreen.bounds.size.width * scaleFactor;
     return [NSNumber numberWithInteger:(NSInteger)width];
 }
 
-+ (NSNumber *)getScreenHeight {
++ (NSNumber *)screenHeight {
     UIScreen *mainScreen = [UIScreen mainScreen];
     CGFloat scaleFactor = mainScreen.scale;
     CGFloat height = mainScreen.bounds.size.height * scaleFactor;

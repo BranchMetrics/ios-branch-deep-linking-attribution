@@ -72,18 +72,18 @@
     self.vendorId = [[UIDevice currentDevice].identifierForVendor UUIDString];
     [self checkAdvertisingIdentifier];
 
-    self.brandName = [BNCSystemObserver getBrand];
-    self.modelName = [BNCSystemObserver getModel];
-    self.osName = [BNCSystemObserver getOS];
-    self.osVersion = [BNCSystemObserver getOSVersion];
+    self.brandName = [BNCSystemObserver brand];
+    self.modelName = [BNCSystemObserver model];
+    self.osName = [BNCSystemObserver osName];
+    self.osVersion = [BNCSystemObserver osVersion];
     self.osBuildVersion = deviceSystem.systemBuildVersion;
 
     if (deviceSystem.cpuType) {
         self.cpuType = [deviceSystem.cpuType stringValue];
     }
 
-    self.screenWidth = [BNCSystemObserver getScreenWidth];
-    self.screenHeight = [BNCSystemObserver getScreenHeight];
+    self.screenWidth = [BNCSystemObserver screenWidth];
+    self.screenHeight = [BNCSystemObserver screenHeight];
     self.screenScale = @([UIScreen mainScreen].scale);
 
     #if !TARGET_OS_TV
@@ -154,8 +154,8 @@
         self.isFirstOptIn = NO;
     }
     
-    self.isAdTrackingEnabled = [BNCSystemObserver adTrackingSafe];
-    self.advertiserId = [BNCSystemObserver getAdId];
+    self.isAdTrackingEnabled = [BNCSystemObserver adTrackingEnabled];
+    self.advertiserId = [BNCSystemObserver advertiserIdentifier];
     BOOL ignoreIdfa = [BNCPreferenceHelper sharedInstance].isDebug;
 
     if (self.advertiserId && !ignoreIdfa) {
