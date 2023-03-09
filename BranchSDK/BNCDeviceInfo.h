@@ -1,6 +1,8 @@
 //
 //  BNCDeviceInfo.h
-//  Branch-TestBed
+//  BranchSDK
+//
+//  Class responsible for collating device information.
 //
 //  Created by Sojan P.R. on 3/22/16.
 //  Copyright © 2016 Branch Metrics. All rights reserved.

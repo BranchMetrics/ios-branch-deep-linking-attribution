@@ -1,10 +1,11 @@
 //
 //  BNCDeviceInfo.m
-//  Branch-TestBed
+//  BranchSDK
 //
 //  Created by Sojan P.R. on 3/22/16.
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
+
 #import "BNCDeviceInfo.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
@@ -31,9 +32,7 @@
 #pragma mark - BNCDeviceInfo
 
 @interface BNCDeviceInfo()
-
 @property (nonatomic, copy, readwrite) NSString *randomId;
-
 @end
 
 @implementation BNCDeviceInfo

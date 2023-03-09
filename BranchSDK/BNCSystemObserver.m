@@ -1,12 +1,11 @@
 //
 //  BNCSystemObserver.m
-//  Branch-SDK
+//  BranchSDK
 //
 //  Created by Alex Austin on 6/5/14.
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-#import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BNCLog.h"
 #if __has_feature(modules)
