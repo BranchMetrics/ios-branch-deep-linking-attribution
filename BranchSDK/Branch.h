@@ -169,11 +169,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 #pragma mark - Branch
 
-@class BranchEvent;
-
 @interface Branch : NSObject
-
-@property (strong, nonatomic) BranchEvent *testEvent;
 
 #pragma mark Global Instance Accessors
 

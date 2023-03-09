@@ -1685,7 +1685,9 @@ static NSString *bnc_branchKey = nil;
                     preferenceHelper:preferenceHelper
                     key:key];
             
-            [[SKPaymentQueue defaultQueue] addTransactionObserver:branch];
+            if ([BNCPreferenceHelper sharedInstance].logInAppPurchasesAsBranchEvents == YES) {
+                [[SKPaymentQueue defaultQueue] addTransactionObserver:branch];
+            }
         });
         return branch;
     }
@@ -2627,11 +2629,29 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 //Logs incoming in-app purchases as events
 - (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray<SKPaymentTransaction *> *)transactions {
     for (SKPaymentTransaction *transaction in transactions) {
-        if (transaction.transactionState == SKPaymentTransactionStatePurchased) {
-            if ([BNCPreferenceHelper sharedInstance].logInAppPurchasesAsBranchEvents) {
-                BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventPurchase];
-                [event logEventWithTransaction:transaction];
+        switch (transaction.transactionState) {
+            case SKPaymentTransactionStatePurchased: {
+                
+                [[SKPaymentQueue defaultQueue] finishTransaction:(SKPaymentTransaction *)transaction];
+                
+                if ([BNCPreferenceHelper sharedInstance].logInAppPurchasesAsBranchEvents == YES) {
+                    BNCLogDebug([NSString stringWithFormat:@"Automatically logging transaction as Branch event."]);
+                    
+                    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventPurchase];
+                    [event logEventWithTransaction:transaction];
+                }
+                break;
             }
+            case SKPaymentTransactionStateFailed: {
+                [[SKPaymentQueue defaultQueue] finishTransaction:(SKPaymentTransaction *)transaction];
+                break;
+            }
+            case SKPaymentTransactionStateRestored: {
+                [[SKPaymentQueue defaultQueue] finishTransaction:(SKPaymentTransaction *)transaction];
+                break;
+            }
+            default:
+                break;
         }
     }
 }

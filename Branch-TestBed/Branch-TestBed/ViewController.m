@@ -62,7 +62,6 @@ UIActivityIndicatorView *activityIndicator;
 bool hasSetPartnerParams = false;
 
 - (void)viewDidLoad {
-    [Branch setLogInAppPurchasesAsEventsEnabled:true];
     
     [self.branchLinkTextField
      addTarget:self
@@ -328,38 +327,7 @@ bool hasSetPartnerParams = false;
 
 #pragma mark - Share a Branch Link
 
-//- (IBAction)oldShareLinkButtonTouchUpInside:(id)sender {
-//    // This method uses the old way of sharing Branch links.
-//    [activityIndicator startAnimating];
-//
-//    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
-//    linkProperties.feature = feature;
-//    linkProperties.campaign = @"sharing campaign";
-//    [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
-//    [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
-//
-//#pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-//
-//    [self.branchUniversalObject showShareSheetWithLinkProperties:linkProperties
-//                                                    andShareText:shareText
-//                                              fromViewController:self.parentViewController
-//                                                      completion:^(NSString *activityType, BOOL completed) {
-//        [activityIndicator stopAnimating];
-//
-//        if (completed) {
-//            NSLog(@"Branch TestBed: Completed sharing to %@", activityType);
-//        } else {
-//            NSLog(@"Branch TestBed: Sharing failed");
-//        }
-//    }
-//    ];
-//
-//#pragma clang diagnostic pop
-//}
-
 - (IBAction)shareLinkButtonTouchUpInside:(id)sender {
-    // The new hotness.
     [activityIndicator startAnimating];
     
     BranchUniversalObject *buo = [BranchUniversalObject new];
@@ -431,40 +399,6 @@ bool hasSetPartnerParams = false;
     [shareLink presentActivityViewControllerFromViewController:self anchor:sender];
     [activityIndicator stopAnimating];
 }
-
-//- (IBAction)shareLinkAsActivityItem:(id)sender {
-//    // Share as an activity item. Doesn't receive all share started / completed events.
-//    [activityIndicator startAnimating];
-//
-//    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
-//    linkProperties.feature = feature;
-//    linkProperties.campaign = @"sharing campaign";
-//    [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
-//    [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
-//    [linkProperties addControlParam:@"$android_deeplink_path" withValue:@"custom/path/*"];
-//
-//    BranchShareLink *shareLink =
-//    [[BranchShareLink alloc]
-//     initWithUniversalObject:self.branchUniversalObject
-//     linkProperties:linkProperties];
-//
-//    shareLink.title = @"Share your test link!";
-//    shareLink.delegate = self;
-//    shareLink.shareText = [NSString stringWithFormat:
-//                           @"Shared from Branch's Branch-TestBed at %@.",
-//                           [self.dateFormatter stringFromDate:[NSDate date]]];
-//
-//    UIActivityViewController *activityController =
-//    [[UIActivityViewController alloc]
-//     initWithActivityItems:shareLink.activityItems
-//     applicationActivities:nil];
-//
-//    if (activityController) {
-//        [self presentViewController:activityController animated:YES completion:nil];
-//        [activityIndicator stopAnimating];
-//
-//    }
-//}
 
 - (void) branchShareLinkWillShare:(BranchShareLink*)shareLink {
     // This delegate example shows changing the share text.
@@ -735,8 +669,10 @@ bool hasSetPartnerParams = false;
             SKPaymentTransaction *trans = (SKPaymentTransaction *)transaction;
             switch (trans.transactionState) {
                 case SKPaymentTransactionStatePurchased: {
-                    [[SKPaymentQueue defaultQueue] finishTransaction:(SKPaymentTransaction *)transaction];
+                    NSLog(@"Transaction succesfully purchased");
 
+                    [[SKPaymentQueue defaultQueue] finishTransaction:(SKPaymentTransaction *)transaction];
+                        
                     BranchEvent *event = [[BranchEvent alloc] initWithName:@""];
                     [event logEventWithTransaction:(SKPaymentTransaction *)transaction];
 
@@ -758,162 +694,6 @@ bool hasSetPartnerParams = false;
         }
     }
 }
-
-//- (IBAction) sendV2EventAction:(id)sender {
-//    NSMutableArray<NSString*> *eventNames = [NSMutableArray arrayWithArray:BranchEvent.standardEvents];
-//    [eventNames sortUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-//        return [(NSString *)obj1 compare:(NSString *)obj2 options:NSNumericSearch];
-//    }];
-//    [eventNames addObject:@"iOS-CustomEvent"];
-//
-//    __weak __typeof(self) weakSelf = self;
-//    ArrayPickerView *picker = [[ArrayPickerView alloc] initWithArray:eventNames];
-//    picker.doneButtonTitle = @"Send";
-//    [picker presentFromViewController:self withCompletion:^ (NSString*pickedString) {
-//        if (pickedString) {
-//            __strong __typeof(self) strongSelf = weakSelf;
-//            [strongSelf sendV2EventWithName:pickedString];
-//        }
-//    }];
-//}
-//
-//- (void)sendV2EventWithName:(NSString *)eventName {
-//
-//    [appDelegate setLogFile:eventName];
-//    // standard events with data requirements
-//    if ([eventName isEqualToString:BranchStandardEventInvite]) {
-//        [self sendInviteEvent];
-//    } else if ([eventName isEqualToString:BranchStandardEventLogin]) {
-//        [self sendLoginEvent];
-//    } else if ([eventName isEqualToString:BranchStandardEventSubscribe]) {
-//        [self sendSubscribeEvent];
-//    } else if ([eventName isEqualToString:BranchStandardEventStartTrial]) {
-//        [self sendStartTrialEvent];
-//    } else if ([eventName isEqualToString:BranchStandardEventClickAd]) {
-//        [self sendClickAdEvent];
-//    } else if ([eventName isEqualToString:BranchStandardEventViewAd]) {
-//        [self sendViewAdEvent];
-//
-//        // other standard events
-//    } else if ([[BranchEvent standardEvents] containsObject:eventName]) {
-//        [self sendStandardV2Event:eventName];
-//
-//        // custom events
-//    } else {
-//        [self sendCustomV2Event:eventName];
-//    }
-//}
-//
-//- (void)sendInviteEvent {
-//    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventInvite];
-//    [event logEventWithCompletion:self.completionBlock];
-//}
-//
-//- (void)sendLoginEvent {
-//    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventLogin];
-//    [event logEventWithCompletion:self.completionBlock];
-//}
-//
-//- (void)sendSubscribeEvent {
-//    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventSubscribe];
-//    event.currency = BNCCurrencyUSD;
-//    event.revenue = [NSDecimalNumber decimalNumberWithString:@"1.0"];
-//    [event logEventWithCompletion:self.completionBlock];
-//}
-//
-//- (void)sendStartTrialEvent {
-//    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventStartTrial];
-//    event.currency = BNCCurrencyUSD;
-//    event.revenue = [NSDecimalNumber decimalNumberWithString:@"1.0"];
-//    [event logEventWithCompletion:self.completionBlock];
-//
-//}
-//
-//- (void)sendClickAdEvent {
-//    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventClickAd];
-//    event.adType = BranchEventAdTypeBanner;
-//    [event logEventWithCompletion:self.completionBlock];
-//}
-//
-//- (void)sendViewAdEvent {
-//    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventClickAd];
-//    event.adType = BranchEventAdTypeBanner;
-//    [event logEventWithCompletion:self.completionBlock];
-//}
-//
-//- (void)sendStandardV2Event:(BranchStandardEvent)event {
-//    [self sendGenericV2EventWithName:event isStandardEvent:YES];
-//}
-//
-//- (void)sendCustomV2Event:(NSString *)eventName {
-//    [self sendGenericV2EventWithName:eventName isStandardEvent:NO];
-//}
-//
-//- (void) sendGenericV2EventWithName:(NSString*)eventName isStandardEvent:(BOOL)isStandardEvent {
-//    BranchUniversalObject *buo = [BranchUniversalObject new];
-//
-//    buo.contentMetadata.contentSchema    = BranchContentSchemaCommerceProduct;
-//    buo.contentMetadata.quantity         = 2;
-//    buo.contentMetadata.price            = [NSDecimalNumber decimalNumberWithString:@"23.20"];
-//    buo.contentMetadata.currency         = BNCCurrencyUSD;
-//    buo.contentMetadata.sku              = @"1994320302";
-//    buo.contentMetadata.productName      = @"my_product_name1";
-//    buo.contentMetadata.productBrand     = @"my_prod_Brand1";
-//    buo.contentMetadata.productCategory  = BNCProductCategoryBabyToddler;
-//    buo.contentMetadata.productVariant   = @"3T";
-//    buo.contentMetadata.condition        = BranchConditionFair;
-//
-//    buo.contentMetadata.ratingAverage    = 5;
-//    buo.contentMetadata.ratingCount      = 5;
-//    buo.contentMetadata.ratingMax        = 7;
-//    buo.contentMetadata.rating           = 6;
-//    buo.contentMetadata.addressStreet    = @"Street_name1";
-//    buo.contentMetadata.addressCity      = @"city1";
-//    buo.contentMetadata.addressRegion    = @"Region1";
-//    buo.contentMetadata.addressCountry   = @"Country1";
-//    buo.contentMetadata.addressPostalCode= @"postal_code";
-//    buo.contentMetadata.latitude         = 12.07;
-//    buo.contentMetadata.longitude        = -97.5;
-//    buo.contentMetadata.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
-//    buo.contentMetadata.customMetadata   = (id) @{
-//        @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1",
-//        @"Custom_Content_metadata_key2": @"Custom_Content_metadata_val2",
-//        @"~campaign": @"Parul's campaign"
-//    };
-//    buo.title                       = @"Parul Title";
-//    buo.canonicalIdentifier         = @"item/12345";
-//    buo.canonicalUrl                = @"https://branch.io/deepviews";
-//    buo.keywords                    = @[@"My_Keyword1", @"My_Keyword2"];
-//    buo.contentDescription          = @"my_product_description1";
-//    buo.imageUrl                    = @"https://test_img_url";
-//    buo.expirationDate              = [NSDate dateWithTimeIntervalSinceNow:24*60*60];
-//    buo.publiclyIndex               = NO;
-//    buo.locallyIndex                = YES;
-//    buo.creationDate                = [NSDate date];
-//
-//    BranchEvent *event;
-//    if (isStandardEvent) {
-//        event = [BranchEvent standardEvent:eventName];
-//    } else {
-//        event = [BranchEvent customEventWithName:eventName];
-//    }
-//    event.transactionID   = @"12344555";
-//    event.currency        = BNCCurrencyUSD;
-//    event.revenue         = [NSDecimalNumber decimalNumberWithString:@"1.5"];
-//    event.shipping        = [NSDecimalNumber decimalNumberWithString:@"10.2"];
-//    event.tax             = [NSDecimalNumber decimalNumberWithString:@"12.3"];
-//    event.coupon          = @"test_coupon";
-//    event.affiliation     = @"test_affiliation";
-//    event.eventDescription= @"Event _description";
-//    event.customData      = (NSMutableDictionary*) @{
-//        @"Custom_Event_Property_Key1": @"Custom_Event_Property_val1",
-//        @"Custom_Event_Property_Key2": @"Custom_Event_Property_val2"
-//    };
-//    event.contentItems = (id) @[ buo ];
-//    event.alias = @"event alias";
-//
-//    [event logEventWithCompletion:self.completionBlock];
-//}
 
 #pragma mark - Spotlight
 
@@ -1096,24 +876,6 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     }];
 }
 
-//- (IBAction)shareQRCode:(id)sender {
-//    [activityIndicator startAnimating];
-//
-//    BranchQRCode *qrCode = [BranchQRCode new];
-//    qrCode.centerLogo = @"https://cdn.branch.io/branch-assets/1598575682753-og_image.png";
-//    qrCode.codeColor = [[UIColor new] initWithRed:0.1 green:0.8392 blue:0.8667 alpha:1.0];
-//    qrCode.width = @700;
-//
-//    BranchUniversalObject *buo = [BranchUniversalObject new];
-//    buo.title = @"My QR Code";
-//    BranchLinkProperties *lp = [BranchLinkProperties new];
-//
-//    [qrCode showShareSheetWithQRCodeFromViewController:self anchor:nil universalObject:buo linkProperties:lp completion:^(NSError * _Nullable error) {
-//        NSLog(@"Showing QR Code.");
-//        [activityIndicator stopAnimating];
-//    }];
-//}
-
 - (IBAction)shareLinkWithMetadata:(id)sender {
     
     NSURL *iconURL = [NSURL URLWithString:@"https://cdn.branch.io/branch-assets/1598575682753-og_image.png"];
@@ -1125,12 +887,12 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     
     BranchShareLink *bsl = [[BranchShareLink alloc] initWithUniversalObject:buo linkProperties:lp];
     
-    [bsl addLPLinkMetadata:@"LPLinkMetadata Link" icon:iconImg];
+    if (@available(iOS 13.0, *)) {
+        [bsl addLPLinkMetadata:@"LPLinkMetadata Link" icon:iconImg];
+    }
     
     [bsl presentActivityViewControllerFromViewController:self anchor:nil];
-    
 }
-
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 50;
