@@ -13,7 +13,7 @@ jobs:
           repo: qentelli-saas-sdk-testing-automation
           github_token: ${{ secrets.BRANCHLET_ACCESS_TOKEN_PUBLIC }}
           workflow_file_name: ios-maven.yml
-          ref: 'development'
+          ref: 'test-trigger-from-iOSSDKRepo'
           wait_interval: 10
           client_payload: '{}'
           propagate_failure: true
