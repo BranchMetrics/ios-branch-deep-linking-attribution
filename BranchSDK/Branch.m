@@ -711,6 +711,8 @@ static NSString *bnc_branchKey = nil;
     // this allows foreground links to callback
     self.initializationStatus = BNCInitStatusUninitialized;
 
+    //ParseURL
+    
     //check the referring url/uri for query parameter gbraid
     NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
     NSString *gbraidValue = nil;

@@ -49,10 +49,13 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID = @"bnc_referrer_gbraid";
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID_WINDOW = @"bnc_referrer_gbraid_window";
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID_INIT_DATE = @"bnc_referrer_gbraid_init_date";
+static NSString * const BRANCH_PREFS_KEY_REFERRER_GCLID = @"bnc_referrer_gclid";
 static NSString * const BRANCH_PREFS_KEY_SKAN_CURRENT_WINDOW = @"bnc_skan_current_window";
 static NSString * const BRANCH_PREFS_KEY_FIRST_APP_LAUNCH_TIME = @"bnc_first_app_launch_time";
 static NSString * const BRANCH_PREFS_KEY_SKAN_HIGHEST_CONV_VALUE_SENT = @"bnc_skan_send_highest_conv_value";
 static NSString * const BRANCH_PREFS_KEY_SKAN_INVOKE_REGISTER_APP = @"bnc_invoke_register_app";
+                                                                
+static NSString * const BRANCH_PREFS_KEY_REFFERING_URL_QUERY_PARAMETERS = @"bnc_referring_url_query_parameters";
 
 NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
@@ -102,7 +105,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
             referrerGBRAIDValidityWindow = _referrerGBRAIDValidityWindow,
             skanCurrentWindow = _skanCurrentWindow,
             firstAppLaunchTime = _firstAppLaunchTime,
-            highestConversionValueSent = _highestConversionValueSent;
+            highestConversionValueSent = _highestConversionValueSent,
+            referringURLQueryParameters = _referringURLQueryParameters;
 
 + (BNCPreferenceHelper *)sharedInstance {
     static BNCPreferenceHelper *preferenceHelper;
@@ -672,6 +676,14 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     @synchronized(self) {
         [self writeObjectToDefaults:@"sendCloseRequests" value:@(disabled)];
     }
+}
+
+- (void)setReferringURLQueryParameters:(NSMutableDictionary *)parameter {
+
+}
+
+- (NSMutableDictionary *)referringURLQueryParameters {
+    return (NSMutableDictionary *)[self readObjectFromDefaults:BRANCH_PREFS_KEY_REFFERING_URL_QUERY_PARAMETERS];
 }
 
 - (NSString *) referrerGBRAID {
