@@ -39,7 +39,6 @@
 @property (nonatomic, copy, readwrite) NSString *optedInStatus;
 @property (nonatomic, assign, readwrite) BOOL isFirstOptIn;
 @property (nonatomic, assign, readwrite) BOOL isAdTrackingEnabled;
-@property (nonatomic, assign, readwrite) BOOL unidentifiedDevice;
 - (NSString *)localIPAddress;
 - (NSString *)connectionType;
 
@@ -63,7 +62,5 @@
 @property (nonatomic, copy, readwrite) NSString *pluginName;
 @property (nonatomic, copy, readwrite) NSString *pluginVersion;
 @property (nonatomic, copy, readwrite) NSString *branchSDKVersion;
-
-- (BOOL)isAppClip;
 
 @end

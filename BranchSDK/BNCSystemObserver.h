@@ -31,5 +31,8 @@
 + (NSString *)advertiserIdentifier;
 + (NSString *)attOptedInStatus;
 + (NSString *)appleAttributionToken;
++ (NSString *)applicationVersion;
++ (NSString *)environment;
++ (BOOL)isAppClip;
 
 @end

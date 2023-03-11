@@ -88,41 +88,14 @@
     #if !TARGET_OS_TV
     BNCTelephony *telephony = [BNCTelephony new];
     self.carrierName = telephony.carrierName;
-    #endif
+    #endif 
 
     self.locale = [NSLocale currentLocale].localeIdentifier;
     self.country = [locale country];
     self.language = [locale language];
-    self.environment = [self environment];
+    self.environment = [BNCSystemObserver environment];
     self.branchSDKVersion = [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION];
-    self.applicationVersion = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
-    if (!self.applicationVersion.length) {
-        self.applicationVersion = [NSBundle mainBundle].infoDictionary[@"CFBundleVersionKey"];
-    }
-}
-
-// App Clips have a zero'd out IDFV
-- (BOOL)isAppClip {
-    if ([@"00000000-0000-0000-0000-000000000000" isEqualToString:[[UIDevice currentDevice].identifierForVendor UUIDString]]) {
-        return YES;
-    }
-    return NO;
-}
-
-- (NSString *)environment {
-    NSString *result = @"FULL_APP";
-    
-    if ([self isAppClip]) {
-        result = @"APP_CLIP";
-    }
-    
-    // iMessage has an extension id set in the Bundle
-    NSString *extensionType = [NSBundle mainBundle].infoDictionary[@"NSExtension"][@"NSExtensionPointIdentifier"];
-    if ([extensionType isEqualToString:@"com.apple.identitylookup.message-filter"]) {
-        result = @"IMESSAGE_APP";
-    }
-    
-    return result;
+    self.applicationVersion = [BNCSystemObserver applicationVersion];
 }
 
 - (NSString *)localIPAddress {

@@ -179,6 +179,38 @@
     return nil;
 }
 
++ (BOOL)isAppClip {
+    // App Clips have a zero'd out IDFV
+    if ([@"00000000-0000-0000-0000-000000000000" isEqualToString:[[UIDevice currentDevice].identifierForVendor UUIDString]]) {
+        return YES;
+    }
+    return NO;
+}
+
++ (NSString *)applicationVersion {
+    NSString *version = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
+    if (!version.length) {
+        version = [NSBundle mainBundle].infoDictionary[@"CFBundleVersionKey"];
+    }
+    return version;
+}
+
++ (NSString *)environment {
+    NSString *result = @"FULL_APP";
+    
+    if ([self isAppClip]) {
+        result = @"APP_CLIP";
+    }
+    
+    // iMessage has an extension id set in the Bundle
+    NSString *extensionType = [NSBundle mainBundle].infoDictionary[@"NSExtension"][@"NSExtensionPointIdentifier"];
+    if ([extensionType isEqualToString:@"com.apple.identitylookup.message-filter"]) {
+        result = @"IMESSAGE_APP";
+    }
+    
+    return result;
+}
+
 + (NSString *)brand {
     return @"Apple";
 }

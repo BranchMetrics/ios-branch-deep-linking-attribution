@@ -9,9 +9,9 @@
 #import "BNCAppGroupsData.h"
 
 #import "BNCLog.h"
-#import "BNCDeviceInfo.h"
 #import "BNCApplication.h"
 #import "BNCPreferenceHelper.h"
+#import "BNCSystemObserver.h"
 
 @interface BNCAppGroupsData()
 @property (nonatomic, strong, readwrite) NSUserDefaults *groupDefaults;
@@ -67,8 +67,7 @@
 }
 
 - (void)saveAppClipData {
-    BNCDeviceInfo *deviceInfo = [BNCDeviceInfo getInstance];
-    if ([deviceInfo isAppClip]) {
+    if ([BNCSystemObserver isAppClip]) {
         
         BNCApplication *application = [BNCApplication currentApplication];
         
@@ -93,8 +92,7 @@
 }
 
 - (BOOL)loadAppClipData {
-    BNCDeviceInfo *deviceInfo = [BNCDeviceInfo getInstance];
-    if (![deviceInfo isAppClip]) {
+    if (![BNCSystemObserver isAppClip]) {
         
         self.bundleID = [self getStringForKey:@"BranchAppClipBundleId"];
         self.installDate = [self getDateForKey:@"BranchAppClipFirstInstallDate"];
