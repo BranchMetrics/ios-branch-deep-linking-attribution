@@ -40,7 +40,6 @@
     XCTAssert(x86_64 || arm64);
 }
 
-/* Commenting out until this can be made more robust/portable/updated/whatever.
 - (void)testCPUType_Simulator {
     // intel processor
     bool x86 = [@(7) isEqualToNumber:self.deviceSystem.cpuType];
@@ -57,6 +56,5 @@
         XCTAssert(arm_sub);
     }
 }
-// */
 
 @end

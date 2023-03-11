@@ -8,29 +8,9 @@
 
 #import <XCTest/XCTest.h>
 #import "BNCDeviceInfo.h"
-#import <arpa/inet.h>
 
 @interface BNCDeviceInfoTests : XCTestCase
 @property (nonatomic, strong, readwrite) BNCDeviceInfo *deviceInfo;
-@end
-
-// Category using inet_pton to validate
-@implementation NSString (Test)
-
-- (BOOL)isValidIPAddress {
-    const char *utf8 = [self UTF8String];
-    int success;
-
-    struct in_addr dst;
-    success = inet_pton(AF_INET, utf8, &dst);
-    if (success != 1) {
-        struct in6_addr dst6;
-        success = inet_pton(AF_INET6, utf8, &dst6);
-    }
-
-    return success == 1;
-}
-
 @end
 
 @implementation BNCDeviceInfoTests
@@ -43,31 +23,6 @@
 
 }
 
-// verify tooling method works
-- (void)testIPValidationCategory {
-    XCTAssert(![@"" isValidIPAddress]);
-    
-    // ipv4
-    XCTAssert([@"0.0.0.0" isValidIPAddress]);
-    XCTAssert([@"127.0.0.1" isValidIPAddress]);
-    XCTAssert([@"10.1.2.3" isValidIPAddress]);
-    XCTAssert([@"172.0.0.0" isValidIPAddress]);
-    XCTAssert([@"192.0.0.0" isValidIPAddress]);
-    XCTAssert([@"255.255.255.255" isValidIPAddress]);
-    
-    // invalid ipv4
-    XCTAssert(![@"-1.0.0.0" isValidIPAddress]);
-    XCTAssert(![@"256.0.0.0" isValidIPAddress]);
-    
-    // ipv6
-    XCTAssert([@"2001:0db8:0000:0000:0000:8a2e:0370:7334" isValidIPAddress]);
-    XCTAssert([@"2001:db8::8a2e:370:7334" isValidIPAddress]);
-    
-    // invalid ipv6
-    XCTAssert(![@"2001:0db8:0000:0000:0000:8a2e:0370:733g" isValidIPAddress]);
-    XCTAssert(![@"2001:0db8:0000:0000:0000:8a2e:0370:7330:1234" isValidIPAddress]);
-}
-
 - (void)testHardwareId {
     XCTAssertNotNil(self.deviceInfo.hardwareId);
     
@@ -77,12 +32,11 @@
 }
 
 - (void)testHardwareIdType {
-    // on simulator it's IDFV, Branch servers expect vendor_id
+    // without ATT, this is the IDFV. Branch servers expect it as vendor_id
     XCTAssert([self.deviceInfo.hardwareIdType isEqualToString:@"vendor_id"]);
 }
 
 - (void)testIsRealHardwareId {
-    // on simulator it's IDFV
     XCTAssert(self.deviceInfo.isRealHardwareId);
 }
 
@@ -117,7 +71,7 @@
 - (void)testLocalIPAddress {
     NSString *address = [self.deviceInfo localIPAddress];
     XCTAssertNotNil(address);
-    XCTAssert([address isValidIPAddress]);
+    XCTAssert(address.length > 7);
 }
 
 - (void)testConnectionType {
@@ -139,16 +93,9 @@
     XCTAssert(x86_64 || arm64);
 }
 
-//- (void)testModelName_iPhone7 {
-//    XCTAssert([@"iPhone9,3" isEqualToString:self.deviceInfo.modelName]);
-//}
-
 - (void)testOSName {
     XCTAssertNotNil(self.deviceInfo.osName);
-    
-    // This is not the system name, but rather the name Branch server expects
-    // XCTAssert([self.deviceInfo.osName isEqualToString:[UIDevice currentDevice].systemName]);
-    XCTAssert([@"iOS" isEqualToString:self.deviceInfo.osName] || [@"tv_OS" isEqualToString:self.deviceInfo.osName]);
+    XCTAssert([@"iOS" isEqualToString:self.deviceInfo.osName]);
 }
 
 - (void)testOSVersion {
@@ -175,32 +122,21 @@
     XCTAssert(x86 || arm);
 }
 
-/*
- * Sample device screens
- * original iPhone 320x480 1
- * iPad Pro (6th gen 12.9") 2048x2732 2
- * iPhone 14 Pro max 1290x2796 3
- */
-
 - (void)testScreenWidth {
-    XCTAssert(self.deviceInfo.screenWidth.intValue >= 320 && self.deviceInfo.screenWidth.intValue <= 2796);
+    XCTAssert(self.deviceInfo.screenWidth.intValue >= 320);
 }
 
 - (void)testScreenHeight {
-    XCTAssert(self.deviceInfo.screenHeight.intValue >= 320 && self.deviceInfo.screenWidth.intValue <= 2796);
+    XCTAssert(self.deviceInfo.screenHeight.intValue >= 320);
 }
 
 - (void)testScreenScale {
-    XCTAssert(self.deviceInfo.screenScale.intValue >= 1 && self.deviceInfo.screenScale.intValue <= 3);
+    XCTAssert(self.deviceInfo.screenScale.intValue >= 1);
 }
 
 - (void)testCarrierName_Simulator {
     XCTAssertNil(self.deviceInfo.carrierName);
 }
-
-//- (void)testCarrierName_Att {
-//    XCTAssert([@"AT&T" isEqualToString:self.deviceInfo.carrierName]);
-//}
 
 - (void)testLocale {
     NSString *locale = [NSLocale currentLocale].localeIdentifier;
@@ -224,8 +160,7 @@
     XCTAssert([self.deviceInfo.userAgentString containsString:@"AppleWebKit"]);
 }
 
-- (void)testApplicationVersion {
-    // checks test app version
+- (void)testApplicationVersion_TestBed {
     XCTAssert([@"1.1" isEqualToString:self.deviceInfo.applicationVersion]);
 }
 

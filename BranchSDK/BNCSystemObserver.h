@@ -17,7 +17,7 @@
 @interface BNCSystemObserver : NSObject
 
 + (NSString *)defaultURIScheme;
-+ (NSString *)appVersion;
++ (NSString *)applicationVersion;
 + (NSString *)bundleIdentifier;
 + (NSString *)teamIdentifier;
 + (NSString *)brand;
@@ -26,12 +26,12 @@
 + (NSString *)osVersion;
 + (NSNumber *)screenWidth;
 + (NSNumber *)screenHeight;
++ (NSNumber *)screenScale;
 + (BOOL)isSimulator;
 + (BOOL)adTrackingEnabled;
 + (NSString *)advertiserIdentifier;
 + (NSString *)attOptedInStatus;
 + (NSString *)appleAttributionToken;
-+ (NSString *)applicationVersion;
 + (NSString *)environment;
 + (BOOL)isAppClip;
 

@@ -83,7 +83,7 @@
 
     self.screenWidth = [BNCSystemObserver screenWidth];
     self.screenHeight = [BNCSystemObserver screenHeight];
-    self.screenScale = @([UIScreen mainScreen].scale);
+    self.screenScale = [BNCSystemObserver screenScale];
 
     #if !TARGET_OS_TV
     BNCTelephony *telephony = [BNCTelephony new];

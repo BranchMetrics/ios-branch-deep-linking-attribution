@@ -163,10 +163,6 @@
     return nil;
 }
 
-+ (NSString *)appVersion {
-    return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
-}
-
 + (NSString *)bundleIdentifier {
     return [[NSBundle mainBundle] bundleIdentifier];
 }
@@ -255,6 +251,10 @@
     CGFloat scaleFactor = mainScreen.scale;
     CGFloat height = mainScreen.bounds.size.height * scaleFactor;
     return [NSNumber numberWithInteger:(NSInteger)height];
+}
+
++ (NSNumber *)screenScale {
+    return @([UIScreen mainScreen].scale);
 }
 
 @end
