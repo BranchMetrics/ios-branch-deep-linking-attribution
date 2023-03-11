@@ -72,37 +72,39 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 @implementation BNCPreferenceHelper
 
+// since we override both setter and getter, these properties do not auto synthesize
 @synthesize
-            lastRunBranchKey = _lastRunBranchKey,
-            appVersion = _appVersion,
-            randomizedDeviceToken = _randomizedDeviceToken,
-            sessionID = _sessionID,
-            spotlightIdentifier = _spotlightIdentifier,
-            randomizedBundleToken = _randomizedBundleToken,
-            linkClickIdentifier = _linkClickIdentifier,
-            userUrl = _userUrl,
-            userIdentity = _userIdentity,
-            sessionParams = _sessionParams,
-            installParams = _installParams,
-            universalLinkUrl = _universalLinkUrl,
-            initialReferrer = _initialReferrer,
-            localUrl = _localUrl,
-            externalIntentURI = _externalIntentURI,
-            isDebug = _isDebug,
-            retryCount = _retryCount,
-            retryInterval = _retryInterval,
-            timeout = _timeout,
-            lastStrongMatchDate = _lastStrongMatchDate,
-            checkedFacebookAppLinks = _checkedFacebookAppLinks,
-            checkedAppleSearchAdAttribution = _checkedAppleSearchAdAttribution,
-            appleSearchAdDetails = _appleSearchAdDetails,
-            requestMetadataDictionary = _requestMetadataDictionary,
-            instrumentationDictionary = _instrumentationDictionary,
-            referrerGBRAID = _referrerGBRAID,
-            referrerGBRAIDValidityWindow = _referrerGBRAIDValidityWindow,
-            skanCurrentWindow = _skanCurrentWindow,
-            firstAppLaunchTime = _firstAppLaunchTime,
-            highestConversionValueSent = _highestConversionValueSent;
+    lastRunBranchKey = _lastRunBranchKey,
+    appVersion = _appVersion,
+    randomizedDeviceToken = _randomizedDeviceToken,
+    sessionID = _sessionID,
+    spotlightIdentifier = _spotlightIdentifier,
+    randomizedBundleToken = _randomizedBundleToken,
+    linkClickIdentifier = _linkClickIdentifier,
+    userUrl = _userUrl,
+    userIdentity = _userIdentity,
+    sessionParams = _sessionParams,
+    installParams = _installParams,
+    universalLinkUrl = _universalLinkUrl,
+    initialReferrer = _initialReferrer,
+    localUrl = _localUrl,
+    externalIntentURI = _externalIntentURI,
+    isDebug = _isDebug,
+    retryCount = _retryCount,
+    retryInterval = _retryInterval,
+    timeout = _timeout,
+    lastStrongMatchDate = _lastStrongMatchDate,
+    checkedFacebookAppLinks = _checkedFacebookAppLinks,
+    checkedAppleSearchAdAttribution = _checkedAppleSearchAdAttribution,
+    appleSearchAdDetails = _appleSearchAdDetails,
+    requestMetadataDictionary = _requestMetadataDictionary,
+    instrumentationDictionary = _instrumentationDictionary,
+    referrerGBRAID = _referrerGBRAID,
+    referrerGBRAIDValidityWindow = _referrerGBRAIDValidityWindow,
+    skanCurrentWindow = _skanCurrentWindow,
+    firstAppLaunchTime = _firstAppLaunchTime,
+    highestConversionValueSent = _highestConversionValueSent,
+    anonID = _anonID;
 
 + (BNCPreferenceHelper *)sharedInstance {
     static BNCPreferenceHelper *preferenceHelper;
@@ -238,6 +240,20 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     if (randomizedDeviceToken == nil || ![_randomizedDeviceToken isEqualToString:randomizedDeviceToken]) {
         _randomizedDeviceToken = randomizedDeviceToken;
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_RANDOMIZED_DEVICE_TOKEN value:randomizedDeviceToken];
+    }
+}
+
+- (NSString *)anonID {
+    if (!_anonID) {
+        _anonID = [self readStringFromDefaults:@"bnc_anon_id"];
+    }
+    return _anonID;
+}
+
+- (void)setAnonID:(NSString *)anonID {
+    if (![_anonID isEqualToString:anonID]) {
+        _anonID = anonID;
+        [self writeObjectToDefaults:@"bnc_anon_id" value:anonID];
     }
 }
 
@@ -807,6 +823,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         self.requestMetadataDictionary = nil;
         self.lastStrongMatchDate = nil;
         self.userIdentity = nil;
+        self.anonID = nil;
     }
 }
 

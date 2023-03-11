@@ -537,6 +537,7 @@
         [self safeSetValue:deviceInfo.vendorId forKey:BRANCH_REQUEST_KEY_IOS_VENDOR_ID onDict:dict];
         // idfa is only in the hardware id field
         // [self safeSetValue:deviceInfo.advertiserId forKey:@"idfa" onDict:dict];
+        [self safeSetValue:deviceInfo.anonId forKey:@"anon_id" onDict:dict];
         
         [self safeSetValue:deviceInfo.osName forKey:BRANCH_REQUEST_KEY_OS onDict:dict];
         [self safeSetValue:deviceInfo.osVersion forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:dict];

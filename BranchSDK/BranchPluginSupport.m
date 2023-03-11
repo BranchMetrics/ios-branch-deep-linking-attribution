@@ -23,6 +23,7 @@
     return pluginSupport;
 }
 
+// Provides a subset of BNCDeviceInfo.v2dictionary for Adobe Launch
 - (NSDictionary<NSString *, NSString *> *)deviceDescription {
     NSMutableDictionary<NSString *, NSString *> *dictionary = [NSMutableDictionary new];
     BNCDeviceInfo *deviceInfo = [BNCDeviceInfo getInstance];

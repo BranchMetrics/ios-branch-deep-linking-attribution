@@ -53,6 +53,14 @@
     XCTAssertNotNil(vendorId);
 }
 
+- (void)testAnonId {
+    XCTAssertNotNil(self.deviceInfo.anonId);
+    
+    // verify anonId is a valid UUID
+    NSUUID *anonId = [[NSUUID alloc] initWithUUIDString:self.deviceInfo.anonId];
+    XCTAssertNotNil(anonId);
+}
+
 - (void)testOptedInStatus {
     // the testbed does not show the ATT prompt.
     XCTAssert([self.deviceInfo.optedInStatus isEqualToString:@"not_determined"]);

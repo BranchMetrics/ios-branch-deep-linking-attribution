@@ -34,6 +34,7 @@
 @property (nonatomic, copy, readwrite) NSString *hardwareIdType;
 @property (nonatomic, assign, readwrite) BOOL isRealHardwareId;
 
+@property (nonatomic, copy, readwrite) NSString *anonId;
 @property (nonatomic, copy, readwrite) NSString *advertiserId;
 @property (nonatomic, copy, readwrite) NSString *vendorId;
 @property (nonatomic, copy, readwrite) NSString *optedInStatus;

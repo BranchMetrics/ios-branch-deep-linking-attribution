@@ -61,6 +61,15 @@
     }
 }
 
+- (NSString *)loadAnonID {
+    NSString *tmp = [BNCPreferenceHelper sharedInstance].anonID;
+    if (!tmp) {
+        tmp = [NSUUID UUID].UUIDString;
+        [BNCPreferenceHelper sharedInstance].anonID = tmp;
+    }
+    return tmp;
+}
+
 - (void)loadDeviceInfo {
 
     BNCLocale *locale = [BNCLocale new];
@@ -69,6 +78,7 @@
     // The random id is regenerated per app launch.  This maintains existing behavior.
     self.randomId = [[NSUUID UUID] UUIDString];
     self.vendorId = [[UIDevice currentDevice].identifierForVendor UUIDString];
+    self.anonId = [self loadAnonID];
     [self checkAdvertisingIdentifier];
 
     self.brandName = [BNCSystemObserver brand];
@@ -163,6 +173,7 @@
             [dictionary bnc_safeSetObject:self.vendorId forKey:@"idfv"];
             [dictionary bnc_safeSetObject:self.advertiserId forKey:@"idfa"];
         }
+        [dictionary bnc_safeSetObject:[self anonId] forKey:@"anon_id"];
         [dictionary bnc_safeSetObject:[self localIPAddress] forKey:@"local_ip"];
 
         [dictionary bnc_safeSetObject:[self optedInStatus] forKey:@"opted_in_status"];
