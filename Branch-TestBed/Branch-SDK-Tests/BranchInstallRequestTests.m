@@ -54,7 +54,7 @@
     id systemObserverMock = OCMClassMock([BNCSystemObserver class]);
     [[[systemObserverMock stub] andReturnValue:AD_TRACKING_SAFE] adTrackingEnabled];
     [[[systemObserverMock stub] andReturn:BUNDLE_ID] bundleIdentifier];
-    [[[systemObserverMock stub] andReturn:APP_VERSION] appVersion];
+    [[[systemObserverMock stub] andReturn:APP_VERSION] applicationVersion];
     [[[systemObserverMock stub] andReturn:OS] osName];
     [[[systemObserverMock stub] andReturn:OS_VERSION] osVersion];
     [[[systemObserverMock stub] andReturn:URI_SCHEME] defaultURIScheme];
