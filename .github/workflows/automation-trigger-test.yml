@@ -31,6 +31,8 @@ jobs:
         uses: actions/download-artifact@v3
       - name : Unzip and copy folder
         run: |
+            ls -la ./
+            echo pwd
             ls -la release_framework/
             ls -la release_framework/Branch.zip
             mkdir ./Framework
