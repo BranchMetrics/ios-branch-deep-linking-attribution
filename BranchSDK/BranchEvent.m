@@ -385,83 +385,85 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
 }
 
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
-    [[BNCEventUtils shared] removeEvent:self];
-
-    if (response.products.count > 0) {
-        SKProduct *product = response.products.firstObject;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
-        BranchUniversalObject *buo = [BranchUniversalObject new];
-        buo.canonicalIdentifier = product.productIdentifier;
-        buo.title = product.localizedTitle;
-        buo.contentMetadata.price = product.price;
-        buo.contentMetadata.currency = product.priceLocale.currencyCode;
-        buo.contentMetadata.productName = product.localizedTitle;
-        buo.contentDescription = product.localizedDescription;
-        buo.contentMetadata.quantity = 1;
-        buo.contentMetadata.customMetadata =  (NSMutableDictionary*) @{
-            @"content_version": product.contentVersion,
-            @"is_downloadable": @(product.isDownloadable),
-        };
-
-        if (@available(iOS 14.0, *)) {
-            [buo.contentMetadata.customMetadata setObject:[@(product.isFamilyShareable) stringValue] forKey:@"is_family_shareable"];
-        }
+        [[BNCEventUtils shared] removeEvent:self];
         
-        if (@available(iOS 11.2, *)) {
-            if (product.subscriptionPeriod != nil) {
-                NSString *unitString;
-                switch (product.subscriptionPeriod.unit) {
-                    case SKProductPeriodUnitDay:
-                        unitString = @"day";
-                        break;
-                    case SKProductPeriodUnitWeek:
-                        unitString = @"week";
-                        break;
-                    case SKProductPeriodUnitMonth:
-                        unitString = @"month";
-                        break;
-                    case SKProductPeriodUnitYear:
-                        unitString = @"year";
-                        break;
-                    default:
-                        unitString = @"unknown";
-                        break;
+        if (response.products.count > 0) {
+            SKProduct *product = response.products.firstObject;
+            
+            BranchUniversalObject *buo = [BranchUniversalObject new];
+            buo.canonicalIdentifier = product.productIdentifier;
+            buo.title = product.localizedTitle;
+            buo.contentMetadata.price = product.price;
+            buo.contentMetadata.currency = product.priceLocale.currencyCode;
+            buo.contentMetadata.productName = product.localizedTitle;
+            buo.contentDescription = product.localizedDescription;
+            buo.contentMetadata.quantity = 1;
+            buo.contentMetadata.customMetadata =  (NSMutableDictionary*) @{
+                @"content_version": product.contentVersion,
+                @"is_downloadable": @(product.isDownloadable),
+            };
+            
+            if (@available(iOS 14.0, *)) {
+                [buo.contentMetadata.customMetadata setObject:[@(product.isFamilyShareable) stringValue] forKey:@"is_family_shareable"];
+            }
+            
+            if (@available(iOS 11.2, *)) {
+                if (product.subscriptionPeriod != nil) {
+                    NSString *unitString;
+                    switch (product.subscriptionPeriod.unit) {
+                        case SKProductPeriodUnitDay:
+                            unitString = @"day";
+                            break;
+                        case SKProductPeriodUnitWeek:
+                            unitString = @"week";
+                            break;
+                        case SKProductPeriodUnitMonth:
+                            unitString = @"month";
+                            break;
+                        case SKProductPeriodUnitYear:
+                            unitString = @"year";
+                            break;
+                        default:
+                            unitString = @"unknown";
+                            break;
+                    }
+                    NSString *subscriptionPeriodString = [NSString stringWithFormat:@"%ld %@", (long)product.subscriptionPeriod.numberOfUnits, unitString];
+                    [buo.contentMetadata.customMetadata setObject:subscriptionPeriodString forKey:@"subscription_period"];
                 }
-                NSString *subscriptionPeriodString = [NSString stringWithFormat:@"%ld %@", (long)product.subscriptionPeriod.numberOfUnits, unitString];
-                [buo.contentMetadata.customMetadata setObject:subscriptionPeriodString forKey:@"subscription_period"];
             }
-        }
-        
-        if (@available(iOS 12.0, *)) {
-            if (product.subscriptionGroupIdentifier != nil) {
-                [buo.contentMetadata.customMetadata setObject:product.subscriptionGroupIdentifier forKey:@"subscription_group_identifier"];
+            
+            if (@available(iOS 12.0, *)) {
+                if (product.subscriptionGroupIdentifier != nil) {
+                    [buo.contentMetadata.customMetadata setObject:product.subscriptionGroupIdentifier forKey:@"subscription_group_identifier"];
+                }
             }
-        }
-        
-        self.contentItems = [NSArray arrayWithObject:buo];
-        self.eventName = BranchStandardEventPurchase;
-        self.eventDescription = _transactionID;
-        self.currency = product.priceLocale.currencyCode;
-        self.revenue = product.price;
-        self.customData = (NSMutableDictionary*) @{
-            @"transaction_identifier": _transactionID,
-            @"logged_from_IAP": @true
-        };
-
-        if (@available(iOS 11.2, *)) {
-            if (product.subscriptionPeriod != nil) {
-                self.alias = @"Subscription";
-            } else {
-                self.alias = @"IAP";
+            
+            self.contentItems = [NSArray arrayWithObject:buo];
+            self.eventName = BranchStandardEventPurchase;
+            self.eventDescription = self.transactionID;
+            self.currency = product.priceLocale.currencyCode;
+            self.revenue = product.price;
+            self.customData = (NSMutableDictionary*) @{
+                @"transaction_identifier": self.transactionID,
+                @"logged_from_IAP": @true
+            };
+            
+            if (@available(iOS 11.2, *)) {
+                if (product.subscriptionPeriod != nil) {
+                    self.alias = @"Subscription";
+                } else {
+                    self.alias = @"IAP";
+                }
             }
+            
+            [self logEvent];
+            BNCLogDebug([NSString stringWithFormat:@"Created and logged event from transaction: %@", self.description]);
+        } else {
+            BNCLogError([NSString stringWithFormat:@"Unable to log Branch event from transaction. No products were found with the product ID."]);
         }
-
-        [self logEvent];
-        BNCLogDebug([NSString stringWithFormat:@"Created and logged event from transaction: %@", self.description]);
-    } else {
-        BNCLogError([NSString stringWithFormat:@"Unable to log Branch event from transaction. No products were found with the product ID."]);
-    }
-   
+    });
 }
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
