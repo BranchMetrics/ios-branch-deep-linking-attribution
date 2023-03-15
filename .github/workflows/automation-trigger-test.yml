@@ -19,7 +19,7 @@ jobs:
             ./Branch.zip
   build-testbed:
     runs-on: macos-latest
-    #needs: [build-framework]
+    needs: [build-framework]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
