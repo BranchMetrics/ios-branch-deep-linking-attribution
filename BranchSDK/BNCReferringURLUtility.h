@@ -16,10 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 //Parses the referring URL query parameters from a URL
 - (void)parseReferringURL:(NSURL *)url;
 
-//Convert the URL parameters to dictionary
-- (NSDictionary *)referringURLDictionary;
-
-- (NSDictionary *)getQueryParams(NSString *)event;
+//Based on the request endpoint, get the required URL query params to attach.
+- (NSDictionary *)getURLQueryParamsForRequest:(NSString *)endpoint;
 
 @end
 
