@@ -32,7 +32,7 @@ jobs:
             ls -la release_framework/
             ls -la release_framework/Branch.zip
             unzip release_framework/Branch.zip - d ./Framework
-            ls -la
+            ls -la ./Framework
   build:
     runs-on: ubuntu-latest
     steps:
