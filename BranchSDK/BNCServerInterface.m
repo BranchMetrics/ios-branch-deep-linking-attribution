@@ -400,6 +400,7 @@
         preparedParams[@"randomized_bundle_token"] = nil;
         preparedParams[@"identity"] = nil;
         preparedParams[@"update"] = nil;
+        preparedParams[@"anon_id"] = nil;
     }
     NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:preparedParams];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
