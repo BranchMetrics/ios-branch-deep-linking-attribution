@@ -4,6 +4,7 @@ on:
  
 jobs:
   build-framework:
+    if: ${{ false }}  # disable for now
     runs-on: macos-latest
     steps:
       - name: Check out code
@@ -19,7 +20,7 @@ jobs:
             ./Branch.zip
   build-testbed:
     runs-on: macos-latest
-    needs: [build-framework]
+    #needs: [build-framework]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -33,8 +34,10 @@ jobs:
         run: |
             ls -la release_framework/
             ls -la release_framework/Branch.zip
+            mkdir ./Framework
             unzip release_framework/Branch.zip - d ./Framework
             ls -la ./Framework
+            xcodebuild
   build:
     if: ${{ false }}  # disable for now
     runs-on: ubuntu-latest
