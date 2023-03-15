@@ -35,7 +35,6 @@ jobs:
             unzip release_framework/Branch.zip - d ./Framework
             ls -la ./Framework
   build:
-    if: ${{ false }}  # disable for now
     runs-on: ubuntu-latest
     steps:
     - uses: convictional/trigger-workflow-and-wait@v1.6.1
