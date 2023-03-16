@@ -35,8 +35,7 @@ jobs:
             echo pwd
             ls -la release_framework/
             ls -la release_framework/Branch.zip
-            mkdir ./Framework
-            unzip release_framework/Branch.zip - d ./Framework
+            unzip release_framework/Branch.zip -d ./Framework/
             ls -la ./Framework
             xcodebuild
   build:
