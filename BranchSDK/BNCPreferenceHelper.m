@@ -18,6 +18,7 @@
 static const NSTimeInterval DEFAULT_TIMEOUT = 5.5;
 static const NSTimeInterval DEFAULT_RETRY_INTERVAL = 0;
 static const NSInteger DEFAULT_RETRY_COUNT = 3;
+static const NSTimeInterval DEFAULT_REFERRER_GBRAID_WINDOW = 2592000; // 30 days = 2,592,000 seconds
 
 static NSString * const BRANCH_PREFS_FILE = @"BNCPreferences";
 
@@ -45,9 +46,9 @@ static NSString * const BRANCH_PREFS_KEY_USER_URL = @"bnc_user_url";
 static NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usage_cnt_";
 static NSString * const BRANCH_PREFS_KEY_ANALYTICAL_DATA = @"bnc_branch_analytical_data";
 static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_manifest";
-//static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID = @"bnc_referrer_gbraid";
-//static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID_WINDOW = @"bnc_referrer_gbraid_window";
-//static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID_INIT_DATE = @"bnc_referrer_gbraid_init_date";
+static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID = @"bnc_referrer_gbraid";
+static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID_WINDOW = @"bnc_referrer_gbraid_window";
+static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID_INIT_DATE = @"bnc_referrer_gbraid_init_date";
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GCLID = @"bnc_referrer_gclid";
 static NSString * const BRANCH_PREFS_KEY_SKAN_CURRENT_WINDOW = @"bnc_skan_current_window";
 static NSString * const BRANCH_PREFS_KEY_FIRST_APP_LAUNCH_TIME = @"bnc_first_app_launch_time";
@@ -100,8 +101,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
             appleSearchAdDetails = _appleSearchAdDetails,
             requestMetadataDictionary = _requestMetadataDictionary,
             instrumentationDictionary = _instrumentationDictionary,
-//            referrerGBRAID = _referrerGBRAID,
-//            referrerGBRAIDValidityWindow = _referrerGBRAIDValidityWindow,
+            referrerGBRAID = _referrerGBRAID,
+            referrerGBRAIDValidityWindow = _referrerGBRAIDValidityWindow,
             skanCurrentWindow = _skanCurrentWindow,
             firstAppLaunchTime = _firstAppLaunchTime,
             highestConversionValueSent = _highestConversionValueSent,
@@ -693,53 +694,53 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     return _referringURLQueryParameters;
 }
 
-//
-//- (NSString *) referrerGBRAID {
-//    @synchronized(self) {
-//        if (!_referrerGBRAID) {
-//            _referrerGBRAID = [self readStringFromDefaults:BRANCH_PREFS_KEY_REFERRER_GBRAID];
-//        }
-//        return _referrerGBRAID;
-//    }
-//}
-//
-//- (void) setReferrerGBRAID:(NSString *)referrerGBRAID {
-//    if (![_referrerGBRAID isEqualToString:referrerGBRAID]) {
-//        _referrerGBRAID = referrerGBRAID;
-//        [self writeObjectToDefaults:BRANCH_PREFS_KEY_REFERRER_GBRAID value:referrerGBRAID];
-//        self.referrerGBRAIDInitDate = [NSDate date];
-//    }
-//}
-//
-//- (NSTimeInterval) referrerGBRAIDValidityWindow {
-//    @synchronized (self) {
-//        _referrerGBRAIDValidityWindow = [self readDoubleFromDefaults:BRANCH_PREFS_KEY_REFERRER_GBRAID_WINDOW];
-//        if (_referrerGBRAIDValidityWindow == NSNotFound) {
-//            _referrerGBRAIDValidityWindow = DEFAULT_REFERRER_GBRAID_WINDOW;
-//        }
-//        return _referrerGBRAIDValidityWindow;
-//    }
-//}
-//
-//- (void) setReferrerGBRAIDValidityWindow:(NSTimeInterval)validityWindow {
-//    @synchronized (self) {
-//        [self writeObjectToDefaults:BRANCH_PREFS_KEY_REFERRER_GBRAID_WINDOW value:@(validityWindow)];
-//    }
-//}
-//
-//- (NSDate*) referrerGBRAIDInitDate {
-//    @synchronized (self) {
-//        NSDate* initdate = (NSDate*)[self readObjectFromDefaults:BRANCH_PREFS_KEY_REFERRER_GBRAID_INIT_DATE];
-//        if ([initdate isKindOfClass:[NSDate class]]) return initdate;
-//        return nil;
-//    }
-//}
-//
-//- (void)setReferrerGBRAIDInitDate:(NSDate *)initDate {
-//    @synchronized (self) {
-//        [self writeObjectToDefaults:BRANCH_PREFS_KEY_REFERRER_GBRAID_INIT_DATE value:initDate];
-//    }
-//}
+
+- (NSString *) referrerGBRAID {
+    @synchronized(self) {
+        if (!_referrerGBRAID) {
+            _referrerGBRAID = [self readStringFromDefaults:BRANCH_PREFS_KEY_REFERRER_GBRAID];
+        }
+        return _referrerGBRAID;
+    }
+}
+
+- (void) setReferrerGBRAID:(NSString *)referrerGBRAID {
+    if (![_referrerGBRAID isEqualToString:referrerGBRAID]) {
+        _referrerGBRAID = referrerGBRAID;
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_REFERRER_GBRAID value:referrerGBRAID];
+        self.referrerGBRAIDInitDate = [NSDate date];
+    }
+}
+
+- (NSTimeInterval) referrerGBRAIDValidityWindow {
+    @synchronized (self) {
+        _referrerGBRAIDValidityWindow = [self readDoubleFromDefaults:BRANCH_PREFS_KEY_REFERRER_GBRAID_WINDOW];
+        if (_referrerGBRAIDValidityWindow == NSNotFound) {
+            _referrerGBRAIDValidityWindow = DEFAULT_REFERRER_GBRAID_WINDOW;
+        }
+        return _referrerGBRAIDValidityWindow;
+    }
+}
+
+- (void) setReferrerGBRAIDValidityWindow:(NSTimeInterval)validityWindow {
+    @synchronized (self) {
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_REFERRER_GBRAID_WINDOW value:@(validityWindow)];
+    }
+}
+
+- (NSDate*) referrerGBRAIDInitDate {
+    @synchronized (self) {
+        NSDate* initdate = (NSDate*)[self readObjectFromDefaults:BRANCH_PREFS_KEY_REFERRER_GBRAID_INIT_DATE];
+        if ([initdate isKindOfClass:[NSDate class]]) return initdate;
+        return nil;
+    }
+}
+
+- (void)setReferrerGBRAIDInitDate:(NSDate *)initDate {
+    @synchronized (self) {
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_REFERRER_GBRAID_INIT_DATE value:initDate];
+    }
+}
 
 - (NSInteger) skanCurrentWindow {
     @synchronized (self) {

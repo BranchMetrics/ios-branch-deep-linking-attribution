@@ -9,16 +9,17 @@
 #import <XCTest/XCTest.h>
 #import "BNCReferringURLUtility.h"
 #import "BNCUrlQueryParameter.h"
+#import "BNCPreferenceHelper.h"
 
 @interface BNCReferringURLUtility(Test)
 
-- (NSMutableDictionary<NSString *, BNCUrlQueryParameter *> *)deserializeFromJson:(NSDictionary *)json;
-- (NSMutableDictionary *)serializeToJson:(NSMutableDictionary<NSString *, BNCUrlQueryParameter *> *)urlQueryParameters;
-- (NSTimeInterval)defaultValidityWindowForParam:(NSString *)paramName;
-- (BNCUrlQueryParameter *)findUrlQueryParam:(NSString *)paramName;
+- (NSString *)addGclidValueFor:(NSString *)endpoint;
+- (NSDictionary *)addGbraidValuesFor:(NSString *)endpoint;
 - (BOOL)isSupportedQueryParameter:(NSString *)param;
-- (NSDictionary *)addGbraidValuesFor:(NSString *)endpoint
-- (NSString *)addGclidValueFor:(NSString *)endpoint
+- (BNCUrlQueryParameter *)findUrlQueryParam:(NSString *)paramName;
+- (NSTimeInterval)defaultValidityWindowForParam:(NSString *)paramName;
+- (NSMutableDictionary *)serializeToJson:(NSMutableDictionary<NSString *, BNCUrlQueryParameter *> *)urlQueryParameters;
+- (NSMutableDictionary<NSString *, BNCUrlQueryParameter *> *)deserializeFromJson:(NSDictionary *)json;
 
 @end
 
@@ -28,59 +29,234 @@
 
 @implementation BNCReferringURLUtilityTests
 
-//- (void)setUp {
-//    // Put setup code here. This method is called before the invocation of each test method in the class.
-//}
-//
-//- (void)tearDown {
-//    // Put teardown code here. This method is called after the invocation of each test method in the class.
-//}
+BNCPreferenceHelper *prefHelper;
+BNCReferringURLUtility *utility;
+NSString *gbraidValue;
+NSString *gclidValue;
+
+NSString *eventEndpoint;
+NSString *openEndpoint;
+
+- (void)setUp {
+    prefHelper = [BNCPreferenceHelper sharedInstance];
+    prefHelper.referringURLQueryParameters = nil;
+    
+    eventEndpoint = @"/v2/event";
+    openEndpoint = @"/v1/open";
+    
+    gclidValue = @"gclid123";
+    gbraidValue = @"gbraid456";
+    
+    NSString *urlString = [NSString stringWithFormat:@"https://www.branch.io?test=456&gbraid=%@&gclid=%@", gbraidValue, gclidValue];
+    NSURL *url = [NSURL URLWithString:urlString];
+    
+    utility = [BNCReferringURLUtility new];
+    [utility parseReferringURL:url];
+}
 
 - (void)testParseURL {
-    NSURL *url = [NSURL URLWithString:@"https://www.branch.io?gbraid=abc123&test=456&gclid=123456789abc"];
+    NSMutableDictionary *savedParams = prefHelper.referringURLQueryParameters;
     
-    BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
-    [utility parseReferringURL:url];
+    // Remove the timestamp keys from savedParams for compare
+    [savedParams enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        NSMutableDictionary *paramDict = (NSMutableDictionary *)obj;
+        [paramDict removeObjectForKey:@"timestamp"];
+    }];
     
-    //TODO: Check that gbraid and gclid exist
+    NSMutableDictionary *gbraidDict = [NSMutableDictionary dictionary];
+    gbraidDict[@"isDeepLink"] = @(1);
+    gbraidDict[@"name"] = @"gbraid";
+    gbraidDict[@"validityWindow"] = @(2592000);
+    gbraidDict[@"value"] = gbraidValue;
+
+    NSMutableDictionary *gclidDict = [NSMutableDictionary dictionary];
+    gclidDict[@"isDeepLink"] = @(1);
+    gclidDict[@"name"] = @"gclid";
+    gclidDict[@"validityWindow"] = @(0);
+    gclidDict[@"value"] = gclidValue;
+
+    NSMutableDictionary *expectedParams = [NSMutableDictionary dictionary];
+    expectedParams[@"gbraid"] = gbraidDict;
+    expectedParams[@"gclid"] = gclidDict;
     
+    XCTAssertEqualObjects(savedParams, expectedParams);
 }
 
 -(void)testGetEventURLQueryParams {
-    NSString *endpoint = @"/v2/event";
-    NSURL *url = [NSURL URLWithString:@"https://www.branch.io?gbraid=abc123&test=456&gclid=123456789abc"];
-    
-    BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
-    [utility parseReferringURL:url];
-    
-    NSDictionary *params = [utility getURLQueryParamsForRequest:endpoint];
-    NSDictionary *expectedParams = @{@"gbraid": @"abc123",
+
+    NSDictionary *params = [utility getURLQueryParamsForRequest:eventEndpoint];
+    NSDictionary *expectedParams = @{@"gbraid": gbraidValue,
                                        @"gbraid_timestamp": params[@"gbraid_timestamp"],
-                                       @"gclid": @"123456789abc"};
-    NSLog(@"Event Params: %@", params);
-    NSLog(@"Expected Params: %@", expectedParams);
+                                       @"gclid": gclidValue};
 
     XCTAssertEqualObjects(params, expectedParams);
 }
 
 -(void)testGetOpenURLQueryParams {
-    NSString *endpoint = @"/v1/open";
     
-    NSURL *url = [NSURL URLWithString:@"https://www.branch.io?gbraid=abc123&test=456&gclid=123456789abc"];
-    
-    BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
-    [utility parseReferringURL:url];
-    
-    NSDictionary *params = [utility getURLQueryParamsForRequest:endpoint];
-    NSDictionary *expectedParams = @{@"gbraid": @"abc123",
+    NSDictionary *params = [utility getURLQueryParamsForRequest:openEndpoint];
+    NSDictionary *expectedParams = @{@"gbraid": gbraidValue,
                                      @"gbraid_timestamp": params[@"gbraid_timestamp"],
                                      @"is_deeplink_gbraid": @YES,
-                                     @"gclid": @"123456789abc"};
+                                     @"gclid": gclidValue};
     
-    NSLog(@"Open Params: %@", params);
-    NSLog(@"Expected Params: %@", expectedParams);
-
     XCTAssertEqualObjects(params, expectedParams);
+}
+
+-(void)testAddGclidValueFor {
+    NSString *eventGclidValue = [utility addGclidValueFor:eventEndpoint];
+    XCTAssertEqualObjects(eventGclidValue, gclidValue);
+    
+    NSString *openGclidValue = [utility addGclidValueFor:openEndpoint];
+    XCTAssertEqualObjects(openGclidValue, gclidValue);
+}
+
+-(void)testAddGbraidValuesFor {
+    NSDictionary *eventGbraidValue = [utility addGbraidValuesFor:eventEndpoint];
+    
+    NSDictionary *expectedEventGraidValue = @{
+        @"gbraid": gbraidValue,
+        @"gbraid_timestamp": eventGbraidValue[@"gbraid_timestamp"]
+    };
+    
+    XCTAssertEqualObjects(eventGbraidValue, expectedEventGraidValue);
+    
+    NSDictionary *expectedOpenGraidValue = @{
+        @"gbraid": gbraidValue,
+        @"gbraid_timestamp": eventGbraidValue[@"gbraid_timestamp"],
+        @"is_deeplink_gbraid": @(1)
+    };
+    
+    NSDictionary *openGbraidValue = [utility addGbraidValuesFor:openEndpoint];
+    XCTAssertEqualObjects(openGbraidValue, expectedOpenGraidValue);
+}
+
+-(void)testIsSupportedQueryParameter {
+    NSArray *validURLQueryParameters = @[@"gbraid", @"gclid"];
+    
+    for (NSString *param in validURLQueryParameters) {
+        XCTAssertTrue([utility isSupportedQueryParameter:param]);
+    }
+    
+}
+
+-(void)testFindUrlQueryParam {
+    BNCUrlQueryParameter *gbraid = [utility findUrlQueryParam:@"gbraid"];
+    
+    BNCUrlQueryParameter *expectedGbraid = [BNCUrlQueryParameter new];
+    expectedGbraid.name = @"gbraid";
+    expectedGbraid.value = gbraidValue;
+    expectedGbraid.timestamp = gbraid.timestamp;
+    expectedGbraid.validityWindow = gbraid.validityWindow;
+    expectedGbraid.isDeepLink = @(1);
+    
+    XCTAssertEqualObjects(gbraid, expectedGbraid);
+    
+    BNCUrlQueryParameter *gclid = [utility findUrlQueryParam:@"gclid"];
+    
+    BNCUrlQueryParameter *expectedGclid = [BNCUrlQueryParameter new];
+    expectedGclid.name = @"gclid";
+    expectedGclid.value = gclidValue;
+    expectedGclid.timestamp = gclid.timestamp;
+    expectedGclid.validityWindow = gclid.validityWindow;
+    expectedGclid.isDeepLink = @(1);
+    
+    XCTAssertEqualObjects(gclid, expectedGclid);
+}
+
+-(void)testDefaultValidityWindowForParam {
+
+    XCTAssertEqual(2592000, [utility defaultValidityWindowForParam:@"gbraid"]);
+    XCTAssertEqual(0, [utility defaultValidityWindowForParam:@"gclid"]);
+}
+
+-(void)testSerializeToJson {
+    
+    NSDate *currentDate = [NSDate date];
+    NSMutableDictionary<NSString *, BNCUrlQueryParameter *> * params = [NSMutableDictionary new];
+    
+    BNCUrlQueryParameter *gbraidObj = [BNCUrlQueryParameter new];
+    gbraidObj.name = @"gbraid";
+    gbraidObj.value = gbraidValue;
+    gbraidObj.timestamp = currentDate;
+    gbraidObj.validityWindow = 2592000;
+    gbraidObj.isDeepLink = @(1);
+    params[@"gbraid"] = gbraidObj;
+    
+    BNCUrlQueryParameter *gclidObj = [BNCUrlQueryParameter new];
+    gclidObj.name = @"gclid";
+    gclidObj.value = gclidValue;
+    gclidObj.timestamp = currentDate;
+    gclidObj.validityWindow = 0;
+    gclidObj.isDeepLink = @(1);
+    params[@"gclid"] = gclidObj;
+     
+    NSMutableDictionary *json = [utility serializeToJson:params];
+        
+    NSDictionary *expectedJSON = @{
+        @"gbraid": @{
+            @"isDeepLink": @(1),
+            @"name": @"gbraid",
+            @"timestamp": currentDate,
+            @"validityWindow": @(2592000),
+            @"value": @"gbraid456"
+        },
+        @"gclid": @{
+            @"isDeepLink": @(1),
+            @"name": @"gclid",
+            @"timestamp": currentDate,
+            @"validityWindow": @(0),
+            @"value": @"gclid123"
+        }
+    };
+    
+    XCTAssertEqualObjects(expectedJSON, json);
+    
+    NSMutableDictionary<NSString *, BNCUrlQueryParameter *> * deserializedParams = [utility deserializeFromJson:json];
+    XCTAssertEqualObjects(params, deserializedParams);
+}
+
+-(void)testDeserializeFromJson {
+    NSDate *currentDate = [NSDate date];
+    
+    NSMutableDictionary<NSString *, BNCUrlQueryParameter *> * params = [NSMutableDictionary new];
+    
+    BNCUrlQueryParameter *gbraidObj = [BNCUrlQueryParameter new];
+    gbraidObj.name = @"gbraid";
+    gbraidObj.value = gbraidValue;
+    gbraidObj.timestamp = currentDate;
+    gbraidObj.validityWindow = 2592000;
+    gbraidObj.isDeepLink = @(1);
+    params[@"gbraid"] = gbraidObj;
+    
+    BNCUrlQueryParameter *gclidObj = [BNCUrlQueryParameter new];
+    gclidObj.name = @"gclid";
+    gclidObj.value = gclidValue;
+    gclidObj.timestamp = currentDate;
+    gclidObj.validityWindow = 0;
+    gclidObj.isDeepLink = @(1);
+    params[@"gclid"] = gclidObj;
+
+    NSDictionary *json = @{
+        @"gbraid": @{
+            @"isDeepLink": @(1),
+            @"name": @"gbraid",
+            @"timestamp": currentDate,
+            @"validityWindow": @(2592000),
+            @"value": @"gbraid456"
+        },
+        @"gclid": @{
+            @"isDeepLink": @(1),
+            @"name": @"gclid",
+            @"timestamp": currentDate,
+            @"validityWindow": @(0),
+            @"value": @"gclid123"
+        }
+    };
+    
+    NSMutableDictionary<NSString *, BNCUrlQueryParameter *> * deserializedParams = [utility deserializeFromJson:json];
+    
+    XCTAssertEqualObjects(deserializedParams, params);
 }
 
 @end

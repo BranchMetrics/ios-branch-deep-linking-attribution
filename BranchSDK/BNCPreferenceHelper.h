@@ -70,6 +70,9 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 
 @property (assign, nonatomic) BOOL trackingDisabled;
 
+@property (copy, nonatomic) NSString *referrerGBRAID;
+@property (assign, nonatomic) NSTimeInterval referrerGBRAIDValidityWindow;
+@property (strong, nonatomic) NSDate *referrerGBRAIDInitDate;
 @property (strong, nonatomic) NSMutableDictionary *referringURLQueryParameters;
 
 @property (assign, nonatomic) NSInteger skanCurrentWindow;

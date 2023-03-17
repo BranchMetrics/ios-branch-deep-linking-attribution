@@ -10,6 +10,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
 #import "BNCUrlQueryParameter.h"
+#import "NSMutableDictionary+Branch.h"
 
 @interface BNCReferringURLUtility()
 
@@ -22,7 +23,8 @@
 - (instancetype)init {
     self = [super init];
 
-    if (self) {
+    if (self) {        
+        [self checkForAndMigrateOldGbraid];
         self.urlQueryParameters = [self deserializeFromJson:[BNCPreferenceHelper sharedInstance].referringURLQueryParameters];
     }
     
@@ -30,7 +32,6 @@
 }
 
 - (void)parseReferringURL:(NSURL *)url {
-    NSLog(@"Testing: Parsing referring URL %@", url);
     
     NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
     for(NSURLQueryItem *item in components.queryItems){
@@ -51,9 +52,7 @@
     }
     
     [BNCPreferenceHelper sharedInstance].referringURLQueryParameters = [self serializeToJson:self.urlQueryParameters];
-    NSLog(@"Testing: Saved new parsed params: %@", self.urlQueryParameters);
 }
-
 
 - (NSDictionary *)getURLQueryParamsForRequest:(NSString *)endpoint {
     NSMutableDictionary *returnedParams = [NSMutableDictionary new];
@@ -65,9 +64,9 @@
     
     NSDictionary *gbraid = [self addGbraidValuesFor:endpoint];
     if (gbraid) {
-        [returnedParams addEntriesFromDictionary:gbraid];
+        [returnedParams bnc_safeAddEntriesFromDictionary:gbraid];
     }
-//
+
     //For future parameters, their functions can be added here
     
     NSLog(@"Added following params to %@: %@", endpoint, returnedParams);
@@ -101,8 +100,8 @@
                 
                 if ([endpoint containsString:@"/v1/open"]) {
                     returnedParams[BRANCH_REQUEST_KEY_IS_DEEPLINK_GBRAID] = @(gbraid.isDeepLink);
-                    gbraid.isDeepLink = NO;
-                    
+                    gbraid.isDeepLink = 0;
+
                     //Forcing write to disk
                     [BNCPreferenceHelper sharedInstance].referringURLQueryParameters = [self serializeToJson:self.urlQueryParameters];
                 }
@@ -115,7 +114,7 @@
 
 // Helper Methods
 - (BOOL)isSupportedQueryParameter:(NSString *)param {
-    NSArray *validURLQueryParameters = @[@"gbraid", @"gclid", @"sccid"];
+    NSArray *validURLQueryParameters = @[@"gbraid", @"gclid"];
     if ([validURLQueryParameters containsObject:param]) {
         return YES;
     } else {
@@ -135,7 +134,7 @@
 
 - (NSTimeInterval)defaultValidityWindowForParam:(NSString *)paramName {
     if ([paramName isEqualToString:BRANCH_REQUEST_KEY_REFERRER_GBRAID]) {
-        return 2592000; //30 Days
+        return 2592000; // 30 days = 2,592,000 seconds
     } else {
         return 0; //Default, means indefinite.
     }
@@ -176,6 +175,28 @@
     }
     
     return result;
+}
+
+//Turns an old gbraid into a new BNCUrlQueryParameter and saves it for use, then clears it.
+-(void)checkForAndMigrateOldGbraid {
+    if ([BNCPreferenceHelper sharedInstance].referrerGBRAID) {
+        
+        NSString *existingGbraidValue = [BNCPreferenceHelper sharedInstance].referrerGBRAID;
+        NSTimeInterval existingGbraidValidityWindow = [BNCPreferenceHelper sharedInstance].referrerGBRAIDValidityWindow;
+        NSDate *existingGbraidInitDate = [BNCPreferenceHelper sharedInstance].referrerGBRAIDInitDate;
+        
+        BNCUrlQueryParameter *gbraid = [BNCUrlQueryParameter new];
+        gbraid.name = @"gbraid";
+        gbraid.value = existingGbraidValue;
+        gbraid.timestamp = existingGbraidInitDate;
+        gbraid.validityWindow = existingGbraidValidityWindow;
+        gbraid.isDeepLink = NO;
+        
+        if (self.urlQueryParameters[@"gbraid"].value == nil) {
+            [self.urlQueryParameters setValue:gbraid forKey:@"gbraid"];
+            [BNCPreferenceHelper sharedInstance].referringURLQueryParameters = [self serializeToJson:self.urlQueryParameters];
+        }
+    }
 }
 
 @end
