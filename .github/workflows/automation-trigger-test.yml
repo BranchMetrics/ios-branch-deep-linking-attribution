@@ -37,7 +37,7 @@ jobs:
             ls -la release_framework/Branch.zip
             unzip release_framework/Branch.zip -d ./Framework/
             ls -la ./Framework
-            xcodebuild -workspace DeepLinkDemo.xcworkspace -scheme DeepLinkDemo  -sdk iphoneos -allowProvisioningUpdates -configuration AppStoreDistribution archive -archivePath ./IPA/DeepLinkDemo.xcarchive
+            xcodebuild -workspace DeepLinkDemo.xcworkspace -scheme DeepLinkDemo  -sdk iphoneos -allowProvisioningUpdates archive -archivePath ./IPA/DeepLinkDemo.xcarchive
             ls -la ./IPA/
             xcodebuild -exportArchive -archivePath ./IPA/DeepLinkDemo.xcarchive -exportOptionsPlist IPA/Info.plist -exportPath IPA/
             ls -la ./IPA/
