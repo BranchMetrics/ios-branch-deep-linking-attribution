@@ -33,6 +33,6 @@ jobs:
        search_artifacts:  true
        skip_unpack: false
        
-    - name: Display S3 url
+    - name: Display test report S3 url
       if: always()
       run: grep 'Test report file link' output.txt
