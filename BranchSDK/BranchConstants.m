@@ -77,8 +77,13 @@ NSString * const BRANCH_REQUEST_KEY_PARTNER_PARAMETERS = @"partner_data";
 NSString * const BRANCH_REQUEST_METADATA_KEY_SCANTIME_WINDOW = @"skan_time_window";
 NSString * const BRANCH_REQUEST_KEY_REFERRER_GBRAID = @"gbraid";
 NSString * const BRANCH_REQUEST_KEY_REFERRER_GBRAID_TIMESTAMP = @"gbraid_timestamp";
-NSString * const BRANCH_REQUEST_KEY_GCLID = @"gclid";
 NSString * const BRANCH_REQUEST_KEY_IS_DEEPLINK_GBRAID = @"is_deeplink_gbraid";
+NSString * const BRANCH_REQUEST_KEY_GCLID = @"gclid";
+NSString * const BRANCH_URL_QUERY_PARAMETERS_NAME_KEY = @"name";
+NSString * const BRANCH_URL_QUERY_PARAMETERS_VALUE_KEY = @"value";
+NSString * const BRANCH_URL_QUERY_PARAMETERS_TIMESTAMP_KEY = @"timestamp";
+NSString * const BRANCH_URL_QUERY_PARAMETERS_IS_DEEPLINK_KEY = @"isDeepLink";
+NSString * const BRANCH_URL_QUERY_PARAMETERS_VALIDITY_WINDOW_KEY = @"validityWindow";
 
 NSString * const BRANCH_REQUEST_ENDPOINT_SET_IDENTITY = @"profile";
 NSString * const BRANCH_REQUEST_ENDPOINT_APP_LINK_SETTINGS = @"app-link-settings";
