@@ -165,12 +165,13 @@
             param.name = paramDict[BRANCH_URL_QUERY_PARAMETERS_NAME_KEY];
             param.value = paramDict[BRANCH_URL_QUERY_PARAMETERS_VALUE_KEY];
             param.timestamp = paramDict[BRANCH_URL_QUERY_PARAMETERS_TIMESTAMP_KEY];
+            param.validityWindow = [paramDict[BRANCH_URL_QUERY_PARAMETERS_VALIDITY_WINDOW_KEY] doubleValue];
+
             if (paramDict[BRANCH_URL_QUERY_PARAMETERS_IS_DEEPLINK_KEY] != nil) {
                 param.isDeepLink = ((NSNumber *)paramDict[BRANCH_URL_QUERY_PARAMETERS_IS_DEEPLINK_KEY]).boolValue;
             } else {
                 param.isDeepLink = NO;
             }
-            param.validityWindow = [paramDict[BRANCH_URL_QUERY_PARAMETERS_VALIDITY_WINDOW_KEY] doubleValue];
             
             result[param.name] = param;
         }
