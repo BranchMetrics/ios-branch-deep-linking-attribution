@@ -405,11 +405,11 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
                 @"is_downloadable": @(product.isDownloadable),
             };
             
-            if (@available(iOS 14.0, *)) {
+            if (@available(iOS 14.0, tvOS 14.0, macCatalyst 14.0, *)) {
                 [buo.contentMetadata.customMetadata setObject:[@(product.isFamilyShareable) stringValue] forKey:@"is_family_shareable"];
             }
             
-            if (@available(iOS 11.2, *)) {
+            if (@available(iOS 11.2, tvOS 11.2, macCatalyst 13.1, *)) {
                 if (product.subscriptionPeriod != nil) {
                     NSString *unitString;
                     switch (product.subscriptionPeriod.unit) {
@@ -434,7 +434,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
                 }
             }
             
-            if (@available(iOS 12.0, *)) {
+            if (@available(iOS 12.0, tvOS 12.0, macCatalyst 13.1, *)) {
                 if (product.subscriptionGroupIdentifier != nil) {
                     [buo.contentMetadata.customMetadata setObject:product.subscriptionGroupIdentifier forKey:@"subscription_group_identifier"];
                 }
@@ -450,7 +450,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
                 @"logged_from_IAP": @true
             };
             
-            if (@available(iOS 11.2, *)) {
+            if (@available(iOS 11.2, tvOS 11.2, macCatalyst 13.1, *)) {
                 if (product.subscriptionPeriod != nil) {
                     self.alias = @"Subscription";
                 } else {
