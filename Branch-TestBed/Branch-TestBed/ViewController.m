@@ -146,8 +146,8 @@ bool hasSetPartnerParams = false;
             [self.setParnerParamsButton setImage:[UIImage systemImageNamed:@"folder.badge.plus"] forState:UIControlStateNormal];
         }
     }
-    
 }
+
 - (IBAction)goToPasteControlPressed:(id)sender {
     [self performSegueWithIdentifier:@"GoToPasteControlView"
                               sender:self];
