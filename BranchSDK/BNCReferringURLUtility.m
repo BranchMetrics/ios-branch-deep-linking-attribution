@@ -183,7 +183,7 @@
 //Turns an old gbraid into a new BNCUrlQueryParameter and saves it for use, then clears the old gbraid.
 -(void)checkForAndMigrateOldGbraid {
         
-    if (self.urlQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID] != nil) {
+    if (self.urlQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID].value == nil) {
         if ([BNCPreferenceHelper sharedInstance].referrerGBRAID) {
             NSString *existingGbraidValue = [BNCPreferenceHelper sharedInstance].referrerGBRAID;
             NSTimeInterval existingGbraidValidityWindow = [BNCPreferenceHelper sharedInstance].referrerGBRAIDValidityWindow;
@@ -203,6 +203,8 @@
             [BNCPreferenceHelper sharedInstance].referrerGBRAID = nil;
             [BNCPreferenceHelper sharedInstance].referrerGBRAIDValidityWindow = 0;
             [BNCPreferenceHelper sharedInstance].referrerGBRAIDInitDate = nil;
+            
+            BNCLogDebug(@"Updated old Gbraid to new BNCUrlQueryParameter");
         }
     }
 }
