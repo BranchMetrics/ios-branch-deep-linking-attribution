@@ -25,8 +25,8 @@
     self = [super init];
 
     if (self) {        
-        [self checkForAndMigrateOldGbraid];
         self.urlQueryParameters = [self deserializeFromJson:[BNCPreferenceHelper sharedInstance].referringURLQueryParameters];
+        [self checkForAndMigrateOldGbraid];
     }
     
     return self;
@@ -180,24 +180,29 @@
     return result;
 }
 
-//Turns an old gbraid into a new BNCUrlQueryParameter and saves it for use, then clears it.
+//Turns an old gbraid into a new BNCUrlQueryParameter and saves it for use, then clears the old gbraid.
 -(void)checkForAndMigrateOldGbraid {
-    if ([BNCPreferenceHelper sharedInstance].referrerGBRAID) {
         
-        NSString *existingGbraidValue = [BNCPreferenceHelper sharedInstance].referrerGBRAID;
-        NSTimeInterval existingGbraidValidityWindow = [BNCPreferenceHelper sharedInstance].referrerGBRAIDValidityWindow;
-        NSDate *existingGbraidInitDate = [BNCPreferenceHelper sharedInstance].referrerGBRAIDInitDate;
-        
-        BNCUrlQueryParameter *gbraid = [BNCUrlQueryParameter new];
-        gbraid.name = BRANCH_REQUEST_KEY_REFERRER_GBRAID;
-        gbraid.value = existingGbraidValue;
-        gbraid.timestamp = existingGbraidInitDate;
-        gbraid.validityWindow = existingGbraidValidityWindow;
-        gbraid.isDeepLink = NO;
-        
-        if (self.urlQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID].value == nil) {
+    if (self.urlQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID] != nil) {
+        if ([BNCPreferenceHelper sharedInstance].referrerGBRAID) {
+            NSString *existingGbraidValue = [BNCPreferenceHelper sharedInstance].referrerGBRAID;
+            NSTimeInterval existingGbraidValidityWindow = [BNCPreferenceHelper sharedInstance].referrerGBRAIDValidityWindow;
+            NSDate *existingGbraidInitDate = [BNCPreferenceHelper sharedInstance].referrerGBRAIDInitDate;
+            
+            BNCUrlQueryParameter *gbraid = [BNCUrlQueryParameter new];
+            gbraid.name = BRANCH_REQUEST_KEY_REFERRER_GBRAID;
+            gbraid.value = existingGbraidValue;
+            gbraid.timestamp = existingGbraidInitDate;
+            gbraid.validityWindow = existingGbraidValidityWindow;
+            gbraid.isDeepLink = NO;
+            
             [self.urlQueryParameters setValue:gbraid forKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID];
+            
             [BNCPreferenceHelper sharedInstance].referringURLQueryParameters = [self serializeToJson:self.urlQueryParameters];
+                
+            [BNCPreferenceHelper sharedInstance].referrerGBRAID = nil;
+            [BNCPreferenceHelper sharedInstance].referrerGBRAIDValidityWindow = 0;
+            [BNCPreferenceHelper sharedInstance].referrerGBRAIDInitDate = nil;
         }
     }
 }

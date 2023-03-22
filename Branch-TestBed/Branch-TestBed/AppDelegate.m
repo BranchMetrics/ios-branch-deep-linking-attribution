@@ -31,11 +31,10 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
        Info.plist file. This makes Branch test against your test environment (As shown in the Branch
        Dashboard) instead of the live environment.
     */
-    [Branch setReferrerGbraidValidityWindow: 1000000000];
 
     // Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
     Branch *branch = [Branch getInstance];
-    
+        
     // test pre init support
     //[self testDispatchToIsolationQueue:branch]
 

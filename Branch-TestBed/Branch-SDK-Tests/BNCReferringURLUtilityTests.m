@@ -20,6 +20,7 @@
 - (NSTimeInterval)defaultValidityWindowForParam:(NSString *)paramName;
 - (NSMutableDictionary *)serializeToJson:(NSMutableDictionary<NSString *, BNCUrlQueryParameter *> *)urlQueryParameters;
 - (NSMutableDictionary<NSString *, BNCUrlQueryParameter *> *)deserializeFromJson:(NSDictionary *)json;
+- (void)checkForAndMigrateOldGbraid;
 
 @end
 
@@ -82,7 +83,7 @@ NSString *openEndpoint;
     XCTAssertEqualObjects(savedParams, expectedParams);
 }
 
--(void)testGetEventURLQueryParams {
+- (void)testGetEventURLQueryParams {
 
     NSDictionary *params = [utility getURLQueryParamsForRequest:eventEndpoint];
     NSDictionary *expectedParams = @{@"gbraid": gbraidValue,
@@ -92,7 +93,7 @@ NSString *openEndpoint;
     XCTAssertEqualObjects(params, expectedParams);
 }
 
--(void)testGetOpenURLQueryParams {
+- (void)testGetOpenURLQueryParams {
     
     NSDictionary *params = [utility getURLQueryParamsForRequest:openEndpoint];
     NSDictionary *expectedParams = @{@"gbraid": gbraidValue,
@@ -103,7 +104,7 @@ NSString *openEndpoint;
     XCTAssertEqualObjects(params, expectedParams);
 }
 
--(void)testAddGclidValueFor {
+- (void)testAddGclidValueFor {
     NSString *eventGclidValue = [utility addGclidValueFor:eventEndpoint];
     XCTAssertEqualObjects(eventGclidValue, gclidValue);
     
@@ -111,7 +112,7 @@ NSString *openEndpoint;
     XCTAssertEqualObjects(openGclidValue, gclidValue);
 }
 
--(void)testAddGbraidValuesFor {
+- (void)testAddGbraidValuesFor {
     NSDictionary *eventGbraidValue = [utility addGbraidValuesFor:eventEndpoint];
     
     NSDictionary *expectedEventGraidValue = @{
@@ -131,7 +132,7 @@ NSString *openEndpoint;
     XCTAssertEqualObjects(openGbraidValue, expectedOpenGraidValue);
 }
 
--(void)testIsSupportedQueryParameter {
+- (void)testIsSupportedQueryParameter {
     NSArray *validURLQueryParameters = @[@"gbraid", @"gclid"];
     
     for (NSString *param in validURLQueryParameters) {
@@ -140,7 +141,7 @@ NSString *openEndpoint;
     
 }
 
--(void)testFindUrlQueryParam {
+- (void)testFindUrlQueryParam {
     BNCUrlQueryParameter *gbraid = [utility findUrlQueryParam:@"gbraid"];
     
     BNCUrlQueryParameter *expectedGbraid = [BNCUrlQueryParameter new];
@@ -164,13 +165,13 @@ NSString *openEndpoint;
     XCTAssertEqualObjects(gclid, expectedGclid);
 }
 
--(void)testDefaultValidityWindowForParam {
+- (void)testDefaultValidityWindowForParam {
 
     XCTAssertEqual(2592000, [utility defaultValidityWindowForParam:@"gbraid"]);
     XCTAssertEqual(0, [utility defaultValidityWindowForParam:@"gclid"]);
 }
 
--(void)testSerializeToJson {
+- (void)testSerializeToJson {
     
     NSDate *currentDate = [NSDate date];
     NSMutableDictionary<NSString *, BNCUrlQueryParameter *> * params = [NSMutableDictionary new];
@@ -216,7 +217,7 @@ NSString *openEndpoint;
     XCTAssertEqualObjects(params, deserializedParams);
 }
 
--(void)testDeserializeFromJson {
+- (void)testDeserializeFromJson {
     NSDate *currentDate = [NSDate date];
     
     NSMutableDictionary<NSString *, BNCUrlQueryParameter *> * params = [NSMutableDictionary new];
