@@ -98,7 +98,7 @@ jobs:
       - name : Unzip and copy folder
         run: |
             ls -la ./
-            cp DeepLinkDemo.ipa testdata/builds/iOS_TestbedApp_21-Jun-2022-1.ipa 
+            cp -R DeepLinkDemo.ipa testdata/builds/iOS_TestbedApp_21-Jun-2022-1.ipa
       - name: Build with Maven
         # run: mvn -B package --file pom.xml
         id: build_maven
