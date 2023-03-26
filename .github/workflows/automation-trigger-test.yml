@@ -71,6 +71,51 @@ jobs:
             ls -la ./IPA/
             xcodebuild -exportArchive -archivePath ./IPA/DeepLinkDemo.xcarchive -exportOptionsPlist IPA/Info.plist -exportPath IPA/
             ls -la ./IPA/
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: DeepLinkDemo.xcarchive
+          path: |
+                ./IPA/DeepLinkDemo.xcarchive
+  buildAutomationTestSuite:
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: BranchMetrics/qentelli-saas-sdk-testing-automation
+          token: ${{ secrets.BRANCHLET_ACCESS_TOKEN_PUBLIC }}
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.3.0
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+      - name : Unzip and copy folder
+        run: |
+            ls -la ./
+            ls -la ./IPA
+      - name: Build with Maven
+        # run: mvn -B package --file pom.xml
+        id: build_maven
+        run: |
+          # mvn clean
+          # mvn -B clean install package -DskipTests
+           mvn clean test -DsuiteXMLFile=testng.xml -e -DInputFormat="json" -DInputFilePath="TestSelection_BrowserStack_iOS.json" -DAccessKey="${ACCESS_KEY}" -DSecretKey="${SECRET_KEY}" --log-file output.txt
+         
+      - name: Print output
+        if: always()        # run this step even if previous step failed
+        run: cat ${{ github.workspace }}/output.txt
+          
+      - name: Publishing test report
+        if: always()        # run this step even if previous step failed
+        uses: actions/upload-artifact@v3  # upload test results
+        with:
+          name: test-results
+          path: ${{ github.workspace }}/output.txt
+
   build:
     if: ${{ false }}  # disable for now
     runs-on: ubuntu-latest
