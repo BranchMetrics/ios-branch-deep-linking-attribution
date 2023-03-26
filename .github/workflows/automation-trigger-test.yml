@@ -78,6 +78,8 @@ jobs:
           path: |
                 ./IPA/DeepLinkDemo.xcarchive
   buildAutomationTestSuite:
+    runs-on: macos-latest
+    needs: [build-testbed]
     steps:
       - uses: actions/checkout@v3
         with:
