@@ -10,13 +10,13 @@ jobs:
         uses: actions/checkout@v3
       - name: Build xcframework
         run: |
-            ./scripts/prep_xcframework.sh
+            ./scripts/prep_static_xcframework.sh
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: release_framework
           path: |
-            ./Branch.zip
+            ./Branch_static.zip
   build-testbed:
     runs-on: macos-latest
     needs: [build-framework]
@@ -63,8 +63,8 @@ jobs:
             ls -la ./
             echo pwd
             ls -la release_framework/
-            ls -la release_framework/Branch.zip
-            unzip release_framework/Branch.zip -d ./Framework/
+            ls -la release_framework/Branch_static.zip
+            unzip release_framework/Branch_static.zip -d ./Framework/
             ls -la ./Framework
             xcodebuild -workspace DeepLinkDemo.xcworkspace -scheme DeepLinkDemo  -sdk iphoneos archive -archivePath ./IPA/DeepLinkDemo.xcarchive
             # xcodebuild -workspace DeepLinkDemo.xcworkspace -scheme DeepLinkDemo  -sdk iphoneos -allowProvisioningUpdates archive -archivePath ./IPA/DeepLinkDemo.xcarchive
