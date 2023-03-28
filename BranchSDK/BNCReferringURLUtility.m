@@ -112,8 +112,9 @@
 
 // Helper Methods
 - (BOOL)isSupportedQueryParameter:(NSString *)param {
+    NSString *lowercased = [param lowercaseString];
     NSArray *validURLQueryParameters = @[BRANCH_REQUEST_KEY_REFERRER_GBRAID, BRANCH_REQUEST_KEY_GCLID];
-    if ([validURLQueryParameters containsObject:param]) {
+    if ([validURLQueryParameters containsObject:lowercased]) {
         return YES;
     } else {
         return NO;
@@ -144,7 +145,7 @@
     for (BNCUrlQueryParameter *param in urlQueryParameters.allValues) {
         NSMutableDictionary *paramDict = [NSMutableDictionary new];
         paramDict[BRANCH_URL_QUERY_PARAMETERS_NAME_KEY] = param.name;
-        paramDict[BRANCH_URL_QUERY_PARAMETERS_VALUE_KEY] = param.value;
+        paramDict[BRANCH_URL_QUERY_PARAMETERS_VALUE_KEY] = param.value ?: [NSNull null];
         paramDict[BRANCH_URL_QUERY_PARAMETERS_TIMESTAMP_KEY] = param.timestamp;
         paramDict[BRANCH_URL_QUERY_PARAMETERS_IS_DEEPLINK_KEY] = @(param.isDeepLink);
         paramDict[BRANCH_URL_QUERY_PARAMETERS_VALIDITY_WINDOW_KEY] = @(param.validityWindow);
@@ -163,7 +164,13 @@
             NSDictionary *paramDict = (NSDictionary *)temp;
             BNCUrlQueryParameter *param = [BNCUrlQueryParameter new];
             param.name = paramDict[BRANCH_URL_QUERY_PARAMETERS_NAME_KEY];
-            param.value = paramDict[BRANCH_URL_QUERY_PARAMETERS_VALUE_KEY];
+
+            if (paramDict[BRANCH_URL_QUERY_PARAMETERS_VALUE_KEY] != nil) {
+                param.value = paramDict[BRANCH_URL_QUERY_PARAMETERS_VALUE_KEY];
+            } else {
+                param.value = nil;
+            }
+
             param.timestamp = paramDict[BRANCH_URL_QUERY_PARAMETERS_TIMESTAMP_KEY];
             param.validityWindow = [paramDict[BRANCH_URL_QUERY_PARAMETERS_VALIDITY_WINDOW_KEY] doubleValue];
 

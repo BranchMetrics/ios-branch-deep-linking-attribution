@@ -828,6 +828,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         self.requestMetadataDictionary = nil;
         self.lastStrongMatchDate = nil;
         self.userIdentity = nil;
+        self.referringURLQueryParameters = nil;
     }
 }
 
