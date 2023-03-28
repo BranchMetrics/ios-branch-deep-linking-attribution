@@ -1,6 +1,6 @@
 #!/bin/bash
 
-xcrun simctl list devicetypes >> simulator_list
+xcrun simctl list devices available >> simulator_list
 cat simulator_list | while read LINE; do
    if echo "$LINE" | grep -q "iPhone"
    then
