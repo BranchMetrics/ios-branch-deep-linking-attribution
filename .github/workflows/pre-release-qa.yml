@@ -75,7 +75,7 @@ jobs:
       - name: Install pod, build project and run tests
         run: |
             ./scripts/getSimulator
-            DESTINATION="platform=tvOS Simulator,name=$(cat ./appleTVSim),OS=latest"
+            DESTINATION="platform=tvOS Simulator,name=Any tvOS Device,OS=latest"
             cd  SDKIntegrationTestApps/tvOSReleaseTest-Cocoapods/
             pod install
             xcodebuild test -scheme tvOSReleaseTest -workspace tvOSReleaseTest.xcworkspace -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
@@ -98,7 +98,7 @@ jobs:
       - name: build xcframework, then build project and run tests
         run: |
             ./scripts/getSimulator
-            DESTINATION="platform=tvOS Simulator,name=$(cat ./appleTVSim),OS=latest"
+            DESTINATION="platform=tvOS Simulator,name=Any tvOS Device,OS=latest"
             xcodebuild -scheme xcframework
             cd  SDKIntegrationTestApps/tvOSReleaseTest-Manual/
             xcodebuild test -scheme tvOSReleaseTest -project tvOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
