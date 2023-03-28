@@ -11,11 +11,11 @@ jobs:
       - name: Install pod, build project and run tests
         run: |
             ./scripts/getSimulator
-            DESTINATION="'platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest'"
+            DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/iOSReleaseTest-Cocoapods/
             pod install
             echo $DESTINATION
-            xcodebuild test -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace -destination $DESTINATION | xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild test -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-carthage-iOS:
     runs-on: macos-latest
     steps:
