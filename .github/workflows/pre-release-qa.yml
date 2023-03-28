@@ -26,10 +26,12 @@ jobs:
             BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
         run: |
             CURR_DIR=$(PWD)
+            ./scripts/getSimulator
+            DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/iOSReleaseTest-Carthage/
             echo "git \"file://${CURR_DIR}\" \"$BRANCH_NAME\" " >> cartfile
             carthage update --use-xcframeworks
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination 'platform=iOS Simulator,name=iPhone 13,OS=latest' | xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-SPM-iOS:
     runs-on: macos-latest
     steps:
@@ -37,8 +39,10 @@ jobs:
         uses: actions/checkout@v3
       - name: build project and run tests
         run: |
+            ./scripts/getSimulator
+            DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/iOSReleaseTest-SPM/
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination 'platform=iOS Simulator,name=iPhone 13,OS=latest' | xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-manually-with-xcframework-iOS:
     runs-on: macos-latest
     steps:
@@ -46,9 +50,11 @@ jobs:
         uses: actions/checkout@v3
       - name: build xcframework, then build project and run tests
         run: |
+            ./scripts/getSimulator
+            DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             xcodebuild -scheme xcframework
             cd  SDKIntegrationTestApps/iOSReleaseTest-Manual/
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination 'platform=iOS Simulator,name=iPhone 13,OS=latest' | xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-manually-with-StaticFramework-iOS:
     runs-on: macos-latest
     steps:
@@ -56,9 +62,11 @@ jobs:
         uses: actions/checkout@v3
       - name: build static xcframework, then build project and run tests
         run: |
+            ./scripts/getSimulator
+            DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             xcodebuild -scheme static-xcframework
             cd  SDKIntegrationTestApps/iOSReleaseTest-Manual-Static/
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination 'platform=iOS Simulator,name=iPhone 13,OS=latest' | xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-cocoapods-tvOS:
     runs-on: macos-latest
     steps:
@@ -66,9 +74,11 @@ jobs:
         uses: actions/checkout@v3
       - name: Install pod, build project and run tests
         run: |
+            ./scripts/getSimulator
+            DESTINATION="platform=tvOS Simulator,name=$(cat ./appleTVSim),OS=latest"
             cd  SDKIntegrationTestApps/tvOSReleaseTest-Cocoapods/
             pod install
-            xcodebuild test -scheme tvOSReleaseTest -workspace tvOSReleaseTest.xcworkspace -destination 'platform=tvOS Simulator,name=Apple TV,OS=latest' | xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild test -scheme tvOSReleaseTest -workspace tvOSReleaseTest.xcworkspace -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-carthage-tvOS:
     runs-on: macos-latest
     steps:
@@ -76,6 +86,8 @@ jobs:
         uses: actions/checkout@v3
       - name: Verify Integration using Carthage for tvOS
         run: |
+            ./scripts/getSimulator
+            DESTINATION="platform=tvOS Simulator,name=$(cat ./appleTVSim),OS=latest"
             cd  SDKIntegrationTestApps/tvOSReleaseTest-Carthage/
             echo "Skipping it ... its broken"
   verify-manually-with-xcframework-tvOS:
@@ -85,6 +97,8 @@ jobs:
         uses: actions/checkout@v3
       - name: build xcframework, then build project and run tests
         run: |
+            ./scripts/getSimulator
+            DESTINATION="platform=tvOS Simulator,name=$(cat ./appleTVSim),OS=latest"
             xcodebuild -scheme xcframework
             cd  SDKIntegrationTestApps/tvOSReleaseTest-Manual/
-            xcodebuild test -scheme tvOSReleaseTest -project tvOSReleaseTest.xcodeproj -destination 'platform=tvOS Simulator,name=Apple TV,OS=latest' | xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild test -scheme tvOSReleaseTest -project tvOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}

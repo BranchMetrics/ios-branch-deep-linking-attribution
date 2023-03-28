@@ -10,9 +10,11 @@ jobs:
         uses: actions/checkout@v3
       - name: Install pod, build project and run tests
         run: |
+            ./scripts/getSimulator
+            DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/PostRelease-iOSReleaseTest-Cocoapods/
             pod install
-            xcodebuild test -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 13,OS=latest' | xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild test -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace -destination "$DESTINATION"| xcpretty && exit ${PIPESTATUS[0]}
   verify-carthage-iOS:
     runs-on: macos-latest
     steps:
@@ -20,9 +22,11 @@ jobs:
         uses: actions/checkout@v3
       - name: Run carthage command, build project and run tests
         run: |
+            ./scripts/getSimulator
+            DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/PostRelease-iOSReleaseTest-Carthage/
             carthage update --use-xcframeworks
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination 'platform=iOS Simulator,name=iPhone 13,OS=latest' | xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION"| xcpretty && exit ${PIPESTATUS[0]}
   verify-SPM-iOS:
     runs-on: macos-latest
     steps:
@@ -30,8 +34,10 @@ jobs:
         uses: actions/checkout@v3
       - name: build project and run tests
         run: |
+            ./scripts/getSimulator
+            DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/PostRelease-iOSReleaseTest-SPM/
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination 'platform=iOS Simulator,name=iPhone 13,OS=latest' | xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION"| xcpretty && exit ${PIPESTATUS[0]}
   verify-cocoapods-tvOS:
     runs-on: macos-latest
     steps:
@@ -39,7 +45,9 @@ jobs:
         uses: actions/checkout@v3
       - name: Install pod, build project and run tests
         run: |
+            ./scripts/getSimulator
+            DESTINATION="platform=tvOS Simulator,name=$(cat ./appleTVSim),OS=latest"
             cd  SDKIntegrationTestApps/PostRelease-tvOSReleaseTest-Cocoapods/
             pod install
-            xcodebuild test -scheme tvOSReleaseTest -workspace tvOSReleaseTest.xcworkspace -destination 'platform=tvOS Simulator,name=Apple TV,OS=latest' | xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild test -scheme tvOSReleaseTest -workspace tvOSReleaseTest.xcworkspace -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
 
