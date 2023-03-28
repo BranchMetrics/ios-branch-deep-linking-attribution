@@ -1,0 +1,19 @@
+#!/bin/bash
+
+xcrun simctl list devicetypes >> simulator_list
+cat simulator_list | while read LINE; do
+   if echo "$LINE" | grep -q "iPhone"
+   then
+       iphoneSim=$(echo "${LINE%%(*}")
+       rm iphoneSim
+       echo $iphoneSim>>iphoneSim
+   fi
+   if echo "$LINE" | grep -q "Apple TV"
+   then
+      appleTVSim=$(echo "${LINE%%(*}")
+      rm appleTVSim
+      echo $appleTVSim>>appleTVSim
+   fi
+done
+
+rm simulator_list
