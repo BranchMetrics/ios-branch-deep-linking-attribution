@@ -18,6 +18,7 @@
 #import "NSString+Branch.h"
 #import "BNCApplication.h"
 #import "BNCSKAdNetwork.h"
+#import "BNCReferringURLUtility.h"
 
 @interface BNCServerInterface ()
 @property (copy, nonatomic) NSString *requestEndpoint;
@@ -456,24 +457,10 @@
             fullParamDict[BRANCH_REQUEST_KEY_INSTRUMENTATION] = instrumentationDictionary;
         }
     }
-    // For DOWNSTREAM EVENTS v2/events, include referrer_gbraid in request if available
-    if([self.requestEndpoint containsString:@"/v2/event"] || [self.requestEndpoint containsString:@"/v1/open"]){
-        NSString *ref_gbraid = self.preferenceHelper.referrerGBRAID;
-        if ((ref_gbraid != nil) && (ref_gbraid.length > 0))  {
-            // Check if its valid or expired
-            NSTimeInterval validityWindow = self.preferenceHelper.referrerGBRAIDValidityWindow;
-            if (validityWindow) {
-                NSDate *initDate = self.preferenceHelper.referrerGBRAIDInitDate ;
-                NSDate *expirationDate = [initDate dateByAddingTimeInterval:validityWindow];
-                NSDate *now = [NSDate date];
-                if ([now compare:expirationDate] == NSOrderedAscending) {
-                    fullParamDict[BRANCH_REQUEST_KEY_REFERRER_GBRAID] = ref_gbraid;
-                    long long timestampInMilliSec = (long long)([initDate timeIntervalSince1970] * 1000.0);
-                    fullParamDict[BRANCH_REQUEST_KEY_REFERRER_GBRAID_TIMESTAMP] = [NSString stringWithFormat:@"%lld", timestampInMilliSec];
-                }
-            }
-        }
-    }
+    
+    BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
+    NSDictionary *urlQueryParams = [utility getURLQueryParamsForRequest:self.requestEndpoint];
+    [fullParamDict bnc_safeAddEntriesFromDictionary:urlQueryParams];
     
     if ([self.requestEndpoint containsString:@"/v1/open"]) {
         [fullParamDict bnc_safeSetObject:[BNCPreferenceHelper sharedInstance].userIdentity forKey:@"identity"];

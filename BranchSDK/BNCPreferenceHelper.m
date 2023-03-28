@@ -49,10 +49,13 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID = @"bnc_referrer_gbraid";
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID_WINDOW = @"bnc_referrer_gbraid_window";
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID_INIT_DATE = @"bnc_referrer_gbraid_init_date";
+static NSString * const BRANCH_PREFS_KEY_REFERRER_GCLID = @"bnc_referrer_gclid";
 static NSString * const BRANCH_PREFS_KEY_SKAN_CURRENT_WINDOW = @"bnc_skan_current_window";
 static NSString * const BRANCH_PREFS_KEY_FIRST_APP_LAUNCH_TIME = @"bnc_first_app_launch_time";
 static NSString * const BRANCH_PREFS_KEY_SKAN_HIGHEST_CONV_VALUE_SENT = @"bnc_skan_send_highest_conv_value";
 static NSString * const BRANCH_PREFS_KEY_SKAN_INVOKE_REGISTER_APP = @"bnc_invoke_register_app";
+                                                                
+static NSString * const BRANCH_PREFS_KEY_REFFERING_URL_QUERY_PARAMETERS = @"bnc_referring_url_query_parameters";
 
 NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
@@ -102,7 +105,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
             referrerGBRAIDValidityWindow = _referrerGBRAIDValidityWindow,
             skanCurrentWindow = _skanCurrentWindow,
             firstAppLaunchTime = _firstAppLaunchTime,
-            highestConversionValueSent = _highestConversionValueSent;
+            highestConversionValueSent = _highestConversionValueSent,
+            referringURLQueryParameters = _referringURLQueryParameters;
 
 + (BNCPreferenceHelper *)sharedInstance {
     static BNCPreferenceHelper *preferenceHelper;
@@ -674,6 +678,23 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
 }
 
+- (void)setReferringURLQueryParameters:(NSMutableDictionary *)parameters {
+    @synchronized(self) {
+        _referringURLQueryParameters = parameters;
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_REFFERING_URL_QUERY_PARAMETERS value:parameters];
+    }
+}
+
+- (NSMutableDictionary *)referringURLQueryParameters {
+    @synchronized(self) {
+        if (!_referringURLQueryParameters) {
+            _referringURLQueryParameters = (NSMutableDictionary *)[self readObjectFromDefaults:BRANCH_PREFS_KEY_REFFERING_URL_QUERY_PARAMETERS];
+        }
+    }
+    return _referringURLQueryParameters;
+}
+
+
 - (NSString *) referrerGBRAID {
     @synchronized(self) {
         if (!_referrerGBRAID) {
@@ -807,6 +828,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         self.requestMetadataDictionary = nil;
         self.lastStrongMatchDate = nil;
         self.userIdentity = nil;
+        self.referringURLQueryParameters = nil;
     }
 }
 
