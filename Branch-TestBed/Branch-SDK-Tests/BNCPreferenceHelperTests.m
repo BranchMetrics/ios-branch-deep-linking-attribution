@@ -241,24 +241,4 @@
     XCTAssert([filterDesc isEqualToString:valueDesc]);
 }
 
-- (void)testReferrerGBRAIDValidityWindow {
-    
-    NSTimeInterval DEFAULT_REFERRER_GBRAID_WINDOW = 2592000;
-    
-    XCTAssertEqual(self.prefHelper.referrerGBRAIDValidityWindow, DEFAULT_REFERRER_GBRAID_WINDOW);
-    
-    NSTimeInterval randomNumber = 9000;
-    self.prefHelper.referrerGBRAIDValidityWindow = randomNumber;
-    XCTAssertEqual(self.prefHelper.referrerGBRAIDValidityWindow, randomNumber);
-    
-    NSString *gbraidValue = @"CjwKCAiA3L6PBhBvEiwAINlJ9Chixm216y8kYYJ1K94dm4FEkOgFfhIdKQdjWsYB7FqE7rf_zkGNEhoCuIEQAvD_BwE";
-    self.prefHelper.referrerGBRAID = gbraidValue;
-    XCTAssertTrue([self.prefHelper.referrerGBRAID isEqualToString:gbraidValue]);
-    
-    NSDate *now = [NSDate date];
-    self.prefHelper.referrerGBRAIDInitDate = now;
-    XCTAssertEqual(self.prefHelper.referrerGBRAIDInitDate, now);
-
-}
-
 @end

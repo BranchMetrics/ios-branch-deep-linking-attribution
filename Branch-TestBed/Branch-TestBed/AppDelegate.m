@@ -34,7 +34,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
     Branch *branch = [Branch getInstance];
-    
+        
     // test pre init support
     //[self testDispatchToIsolationQueue:branch]
 
@@ -54,6 +54,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     [branch checkPasteboardOnInstall];
     
+
     /*
      *    Required: Initialize Branch, passing a deep link handler block:
      */

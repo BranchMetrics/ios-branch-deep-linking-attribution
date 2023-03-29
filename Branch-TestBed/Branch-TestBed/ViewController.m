@@ -150,6 +150,7 @@ bool hasSetPartnerParams = false;
         }
     }
 }
+
 - (IBAction)goToPasteControlPressed:(id)sender {
     [self performSegueWithIdentifier:@"GoToPasteControlView"
                               sender:self];

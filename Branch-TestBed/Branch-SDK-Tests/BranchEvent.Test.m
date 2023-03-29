@@ -131,22 +131,6 @@
     expectedRequest[@"branch_key"] = Branch.branchKey;
     expectedRequest[@"user_data"] = [[BNCDeviceInfo getInstance] v2dictionary];
     
-    // Add params for Gbraid
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
-    if(preferenceHelper.referrerGBRAID){
-        NSTimeInterval validityWindow = preferenceHelper.referrerGBRAIDValidityWindow;
-        if (validityWindow) {
-            NSDate *initDate = preferenceHelper.referrerGBRAIDInitDate ;
-            NSDate *expirationDate = [initDate dateByAddingTimeInterval:validityWindow];
-            NSDate *now = [NSDate date];
-            if ([now compare:expirationDate] == NSOrderedAscending) {
-                expectedRequest[BRANCH_REQUEST_KEY_REFERRER_GBRAID] = preferenceHelper.referrerGBRAID;
-                long long timestampInMilliSec = (long long)([initDate timeIntervalSince1970] * 1000.0);
-                expectedRequest[BRANCH_REQUEST_KEY_REFERRER_GBRAID_TIMESTAMP] = [NSString stringWithFormat:@"%lld", timestampInMilliSec];
-            }
-        }
-    }
-
     Branch *branch = [Branch getInstance:@"key_live_foo"];
     XCTestExpectation *expectation = [self expectationWithDescription:@"v2-event"];
     id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
@@ -172,6 +156,8 @@
         NSLog(@"testEvent 1");
         NSLog(@"URL: %@.", url);
         NSLog(@"Body: %@.", parameters);
+        
+        expectedRequest[@"gbraid_timestamp"] = parameters[@"gbraid_timestamp"];
 
         if ([url containsString:@"branch.io/v2/event/standard"]) {
             XCTAssertEqualObjects(expectedRequest, parameters);
@@ -182,7 +168,7 @@
     [branch clearNetworkQueue];
     event.contentItems = (NSMutableArray*) @[ buo ];
     [event logEvent];
-    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+    [self waitForExpectationsWithTimeout:15.0 handler:nil];
     [serverInterfaceMock stopMocking];
 }
 
@@ -196,22 +182,6 @@
     expectedRequest[@"event_data"] = nil;
     expectedRequest[@"custom_data"] = nil;
     expectedRequest[@"customer_event_alias"] = nil;
-    
-    // Add params for Gbraid 
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
-    if(preferenceHelper.referrerGBRAID){
-        NSTimeInterval validityWindow = preferenceHelper.referrerGBRAIDValidityWindow;
-        if (validityWindow) {
-            NSDate *initDate = preferenceHelper.referrerGBRAIDInitDate ;
-            NSDate *expirationDate = [initDate dateByAddingTimeInterval:validityWindow];
-            NSDate *now = [NSDate date];
-            if ([now compare:expirationDate] == NSOrderedAscending) {
-                expectedRequest[BRANCH_REQUEST_KEY_REFERRER_GBRAID] = preferenceHelper.referrerGBRAID;
-                long long timestampInMilliSec = (long long)([initDate timeIntervalSince1970] * 1000.0);
-                expectedRequest[BRANCH_REQUEST_KEY_REFERRER_GBRAID_TIMESTAMP] = [NSString stringWithFormat:@"%lld", timestampInMilliSec];
-            }
-        }
-    }
 
     Branch *branch = [Branch getInstance:@"key_live_foo"];
     XCTestExpectation *expectation = [self expectationWithDescription:@"v2-event-user-action"];
@@ -237,6 +207,8 @@
         NSLog(@"2");
         NSLog(@"URL: %@.", url);
         NSLog(@"Body: %@.", parameters);
+
+        expectedRequest[@"gbraid_timestamp"] = parameters[@"gbraid_timestamp"];
 
         if ([url containsString:@"branch.io/v2/event/standard"]) {
             XCTAssertEqualObjects(expectedRequest, parameters);

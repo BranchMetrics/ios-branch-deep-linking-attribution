@@ -47,13 +47,6 @@ BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex) {
 - (void)setUp {
     [super setUp];
     [self resetExpectations];
-    
-    // user agent needs to be loaded since many tests assume it's synchronously lazy loaded
-    __block XCTestExpectation *expectation = [self expectationWithDescription:@"setup"];
-    [[BNCUserAgentCollector instance] loadUserAgentWithCompletion:^(NSString * _Nullable userAgent) {
-        [expectation fulfill];
-    }];
-    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError * _Nullable error) { }];
 }
 
 - (void)resetExpectations {
