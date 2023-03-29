@@ -15,6 +15,7 @@
 #import "BNCSKAdNetwork.h"
 #import "BNCPartnerParameters.h"
 #import "BNCPreferenceHelper.h"
+#import "BNCEventUtils.h"
 
 #pragma mark BranchStandardEvents
 
@@ -149,8 +150,9 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
 
 #pragma mark - BranchEvent
 
-@interface BranchEvent ()
+@interface BranchEvent ()<SKRequestDelegate, SKProductsRequestDelegate>
 @property (nonatomic, copy) NSString*  eventName;
+@property (strong, nonatomic) SKProductsRequest *request;
 @end
 
 @implementation BranchEvent : NSObject
@@ -365,6 +367,108 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
         (long) self.contentItems.count,
         self.customData
     ];
+}
+
+#pragma mark - IAP Methods
+
+- (void) logEventWithTransaction:(SKPaymentTransaction *)transaction {
+    
+    self.transactionID = transaction.transactionIdentifier;
+    [[BNCEventUtils shared] storeEvent:self];
+
+    NSString *productId = transaction.payment.productIdentifier;
+    SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithObject:productId]];
+    
+    _request = productsRequest;
+    productsRequest.delegate = self;
+    [productsRequest start];
+}
+
+- (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        [[BNCEventUtils shared] removeEvent:self];
+        
+        if (response.products.count > 0) {
+            SKProduct *product = response.products.firstObject;
+            
+            BranchUniversalObject *buo = [BranchUniversalObject new];
+            buo.canonicalIdentifier = product.productIdentifier;
+            buo.title = product.localizedTitle;
+            buo.contentMetadata.price = product.price;
+            buo.contentMetadata.currency = product.priceLocale.currencyCode;
+            buo.contentMetadata.productName = product.localizedTitle;
+            buo.contentDescription = product.localizedDescription;
+            buo.contentMetadata.quantity = 1;
+            buo.contentMetadata.customMetadata =  (NSMutableDictionary*) @{
+                @"content_version": product.contentVersion,
+                @"is_downloadable": @(product.isDownloadable),
+            };
+            
+            if (@available(iOS 14.0, tvOS 14.0, macCatalyst 14.0, *)) {
+                [buo.contentMetadata.customMetadata setObject:[@(product.isFamilyShareable) stringValue] forKey:@"is_family_shareable"];
+            }
+            
+            if (@available(iOS 11.2, tvOS 11.2, macCatalyst 13.1, *)) {
+                if (product.subscriptionPeriod != nil) {
+                    NSString *unitString;
+                    switch (product.subscriptionPeriod.unit) {
+                        case SKProductPeriodUnitDay:
+                            unitString = @"day";
+                            break;
+                        case SKProductPeriodUnitWeek:
+                            unitString = @"week";
+                            break;
+                        case SKProductPeriodUnitMonth:
+                            unitString = @"month";
+                            break;
+                        case SKProductPeriodUnitYear:
+                            unitString = @"year";
+                            break;
+                        default:
+                            unitString = @"unknown";
+                            break;
+                    }
+                    NSString *subscriptionPeriodString = [NSString stringWithFormat:@"%ld %@", (long)product.subscriptionPeriod.numberOfUnits, unitString];
+                    [buo.contentMetadata.customMetadata setObject:subscriptionPeriodString forKey:@"subscription_period"];
+                }
+            }
+            
+            if (@available(iOS 12.0, tvOS 12.0, macCatalyst 13.1, *)) {
+                if (product.subscriptionGroupIdentifier != nil) {
+                    [buo.contentMetadata.customMetadata setObject:product.subscriptionGroupIdentifier forKey:@"subscription_group_identifier"];
+                }
+            }
+            
+            self.contentItems = [NSArray arrayWithObject:buo];
+            self.eventName = BranchStandardEventPurchase;
+            self.eventDescription = self.transactionID;
+            self.currency = product.priceLocale.currencyCode;
+            self.revenue = product.price;
+            self.customData = (NSMutableDictionary*) @{
+                @"transaction_identifier": self.transactionID,
+                @"logged_from_IAP": @true
+            };
+            
+            if (@available(iOS 11.2, tvOS 11.2, macCatalyst 13.1, *)) {
+                if (product.subscriptionPeriod != nil) {
+                    self.alias = @"Subscription";
+                } else {
+                    self.alias = @"IAP";
+                }
+            }
+            
+            [self logEvent];
+            BNCLogDebug([NSString stringWithFormat:@"Created and logged event from transaction: %@", self.description]);
+        } else {
+            BNCLogError([NSString stringWithFormat:@"Unable to log Branch event from transaction. No products were found with the product ID."]);
+        }
+    });
+}
+
+- (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
+    BNCLogError([NSString stringWithFormat:@"Product request failed: %@", error]);
+    [[BNCEventUtils shared] removeEvent:self];
 }
 
 @end

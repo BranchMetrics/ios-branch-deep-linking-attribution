@@ -266,6 +266,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /// TODO: Add documentation.
 @property (weak, nullable) NSObject<BranchDelegate>* delegate;
 
+//@property (strong, nonatomic, nullable) BranchEvent *testEvent;
+
 #pragma mark - BranchActivityItemProvider methods
 #if !TARGET_OS_TV
 ///-----------------------------------------
@@ -1875,6 +1877,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (void)passPasteItemProviders:(NSArray<NSItemProvider *> *)itemProviders API_AVAILABLE(ios(16));
 #endif
+
++ (void)setLogInAppPurchasesAsEventsEnabled:(BOOL)enabled;
++ (BOOL)logInAppPurchasesBranchEventsEnabled;
+
 @end
 
 NS_ASSUME_NONNULL_END

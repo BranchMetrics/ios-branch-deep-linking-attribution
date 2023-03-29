@@ -19,6 +19,7 @@
 #import "LogOutputViewController.h"
 #import "AppDelegate.h"
 #import <LinkPresentation/LinkPresentation.h>
+#import <StoreKit/StoreKit.h>
 
 extern AppDelegate* appDelegate;
 
@@ -26,6 +27,7 @@ static NSString *cononicalIdentifier = @"item/12346";
 static NSString *canonicalUrl = @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/";
 static NSString *contentTitle = @"Branch 0.19 TestBed Content Title";
 static NSString *contentDescription = @"My Content Description";
+//static NSString *imageUrl = @"https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png";
 static NSString *imageUrl = @"http://www.theweddingplayers.com/wp-content/new_folder/Mr_Wompy_web2.jpg";
 static NSString *feature = @"Sharing Feature";
 static NSString *channel = @"Distribution Channel";
@@ -42,7 +44,7 @@ static NSString *type = @"some type";
 + (NSArray<BranchStandardEvent>*) standardEvents;
 @end
 
-@interface ViewController () <BranchShareLinkDelegate> {
+@interface ViewController () <BranchShareLinkDelegate, SKProductsRequestDelegate> {
     NSDateFormatter *_dateFormatter;
 }
 
@@ -60,6 +62,7 @@ UIActivityIndicatorView *activityIndicator;
 bool hasSetPartnerParams = false;
 
 - (void)viewDidLoad {
+    
     [self.branchLinkTextField
      addTarget:self
      action:@selector(textFieldFinished:)
@@ -326,7 +329,6 @@ bool hasSetPartnerParams = false;
 #pragma mark - Share a Branch Link
 
 - (IBAction)shareLinkButtonTouchUpInside:(id)sender {
-    // The new hotness.
     [activityIndicator startAnimating];
     
     BranchUniversalObject *buo = [BranchUniversalObject new];
@@ -623,6 +625,77 @@ bool hasSetPartnerParams = false;
     [self presentViewController:actionSheet animated:YES completion:nil];
 }
 
+- (IBAction)inAppPurchaseEvent:(id)sender {
+    NSString *creditsProductId = @"io.branch.testbed.testCredits";
+        
+    if ([SKPaymentQueue canMakePayments]) {
+        NSLog(@"Making purchase");
+        NSSet *productID = [NSSet setWithObject:creditsProductId];
+        SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:productID];
+        productsRequest.delegate = self;
+        [productsRequest start];
+    } else {
+        NSLog(@"Can't make purchases");
+    }
+}
+
+- (IBAction)inAppSubscriptionEvent:(id)sender {
+    NSString *proProductId = @"io.branch.testbed.testSub";
+    
+    if ([SKPaymentQueue canMakePayments]) {
+        NSSet *productID = [NSSet setWithObject:proProductId];
+        SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:productID];
+        productsRequest.delegate = self;
+        [productsRequest start];
+    } else {
+        NSLog(@"Can't make purchases");
+    }
+}
+
+- (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
+    NSInteger count = response.products.count;
+    if (count > 0) {
+        SKProduct *validProduct = response.products[0];
+        SKPayment *payment = [SKPayment paymentWithProduct:validProduct];
+        [[SKPaymentQueue defaultQueue] addPayment:payment];
+    }
+    else {
+        NSLog(@"No products");
+    }
+}
+
+- (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
+    for (id transaction in transactions) {
+        if ([transaction isKindOfClass:[SKPaymentTransaction class]]) {
+            SKPaymentTransaction *trans = (SKPaymentTransaction *)transaction;
+            switch (trans.transactionState) {
+                case SKPaymentTransactionStatePurchased: {
+                    NSLog(@"Transaction succesfully purchased");
+
+                    [[SKPaymentQueue defaultQueue] finishTransaction:(SKPaymentTransaction *)transaction];
+                        
+                    BranchEvent *event = [[BranchEvent alloc] initWithName:@""];
+                    [event logEventWithTransaction:(SKPaymentTransaction *)transaction];
+
+                    break;
+                }
+                case SKPaymentTransactionStateFailed: {
+                    [[SKPaymentQueue defaultQueue] finishTransaction:(SKPaymentTransaction *)transaction];
+                    break;
+                }
+                case SKPaymentTransactionStateRestored: {
+                    [[SKPaymentQueue defaultQueue] finishTransaction:(SKPaymentTransaction *)transaction];
+                    break;
+                }
+                default:
+                    break;
+            }
+
+
+        }
+    }
+}
+
 #pragma mark - Spotlight
 
 - (IBAction)registerWithSpotlightButtonTouchUpInside:(id)sender {
@@ -815,12 +888,12 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     
     BranchShareLink *bsl = [[BranchShareLink alloc] initWithUniversalObject:buo linkProperties:lp];
     
-    [bsl addLPLinkMetadata:@"LPLinkMetadata Link" icon:iconImg];
+    if (@available(iOS 13.0, *)) {
+        [bsl addLPLinkMetadata:@"LPLinkMetadata Link" icon:iconImg];
+    }
     
     [bsl presentActivityViewControllerFromViewController:self anchor:nil];
-    
 }
-
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 50;

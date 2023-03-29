@@ -57,6 +57,9 @@ static NSString * const BRANCH_PREFS_KEY_SKAN_INVOKE_REGISTER_APP = @"bnc_invoke
                                                                 
 static NSString * const BRANCH_PREFS_KEY_REFFERING_URL_QUERY_PARAMETERS = @"bnc_referring_url_query_parameters";
 
+static NSString * const BRANCH_PREFS_KEY_LOG_IAP_AS_EVENTS = @"bnc_log_iap_as_events";
+
+
 NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 @interface BNCPreferenceHelper () {
@@ -106,6 +109,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
             skanCurrentWindow = _skanCurrentWindow,
             firstAppLaunchTime = _firstAppLaunchTime,
             highestConversionValueSent = _highestConversionValueSent,
+            logInAppPurchasesAsBranchEvents = _logInAppPurchasesAsBranchEvents,
             referringURLQueryParameters = _referringURLQueryParameters;
 
 + (BNCPreferenceHelper *)sharedInstance {
@@ -804,6 +808,15 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
 }
 
+- (BOOL) logInAppPurchasesAsBranchEvents {
+    _logInAppPurchasesAsBranchEvents = [self readBoolFromDefaults:BRANCH_PREFS_KEY_LOG_IAP_AS_EVENTS];
+    return _logInAppPurchasesAsBranchEvents;
+}
+
+- (void) setLogInAppPurchasesAsBranchEvents:(BOOL)logInAppPurchasesAsBranchEvents {
+    _logInAppPurchasesAsBranchEvents = logInAppPurchasesAsBranchEvents;
+    [self writeBoolToDefaults:BRANCH_PREFS_KEY_LOG_IAP_AS_EVENTS value:logInAppPurchasesAsBranchEvents];
+}
 
 - (void) clearTrackingInformation {
     @synchronized(self) {
