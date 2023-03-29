@@ -109,7 +109,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
             skanCurrentWindow = _skanCurrentWindow,
             firstAppLaunchTime = _firstAppLaunchTime,
             highestConversionValueSent = _highestConversionValueSent,
-            logInAppPurchasesAsBranchEvents = _logInAppPurchasesAsBranchEvents;
+            logInAppPurchasesAsBranchEvents = _logInAppPurchasesAsBranchEvents,
             referringURLQueryParameters = _referringURLQueryParameters;
 
 + (BNCPreferenceHelper *)sharedInstance {
