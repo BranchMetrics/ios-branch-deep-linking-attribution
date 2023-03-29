@@ -4,18 +4,17 @@ xcrun simctl list devices available >> simulator_list
 cat simulator_list | while read LINE; do
    if echo "$LINE" | grep -q "iPhone 1"
    then
-       iphoneSimName=$(echo $LINE | awk '{$NF="";sub(/[ \t]+$/,"")}1')
-       iphoneSimName=$(echo $iphoneSimName | awk  '{$NF="";sub(/[ \t]+$/,"")}1')
-       rm iphoneSim
-       echo $iphoneSimName>>iphoneSim
+        iphoneSimName=$(echo $LINE | awk '{$NF="";sub(/[ \t]+$/,"")}1')
+        iphoneSimName=$(echo $iphoneSimName | awk  '{$NF="";sub(/[ \t]+$/,"")}1')
+        rm iphoneSim
+        echo $iphoneSimName>>iphoneSim
    fi
    if echo "$LINE" | grep -q "Apple TV"
    then
-             appleTVSim=$(echo $LINE | awk '{$NF="";sub(/[ \t]+$/,"")}1')
-             appleTVSim=$(echo $appleTVSim | awk  '{$NF="";sub(/[ \t]+$/,"")}1')
-
-      rm appleTVSim
-      echo $appleTVSim>>appleTVSim
+        appleTVSimName=$(echo $LINE | awk '{$NF="";sub(/[ \t]+$/,"")}1')
+        appleTVSimName=$(echo $appleTVSim | awk  '{$NF="";sub(/[ \t]+$/,"")}1')
+        rm appleTVSim
+        echo $appleTVSimName>>appleTVSim
    fi
 done
 
