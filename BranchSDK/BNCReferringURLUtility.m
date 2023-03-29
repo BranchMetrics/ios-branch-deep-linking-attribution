@@ -167,8 +167,6 @@
 
             if (paramDict[BRANCH_URL_QUERY_PARAMETERS_VALUE_KEY] != nil) {
                 param.value = paramDict[BRANCH_URL_QUERY_PARAMETERS_VALUE_KEY];
-            } else {
-                param.value = nil;
             }
 
             param.timestamp = paramDict[BRANCH_URL_QUERY_PARAMETERS_TIMESTAMP_KEY];
