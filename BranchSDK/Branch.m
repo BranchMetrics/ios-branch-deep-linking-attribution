@@ -46,6 +46,8 @@
 #import "NSError+Branch.h"
 #import "BNCLog.h"
 #import "UIViewController+Branch.h"
+#import <StoreKit/StoreKit.h>
+#import "BNCReferringURLUtility.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
@@ -124,7 +126,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     BNCInitStatusInitialized
 };
 
-@interface Branch() <BranchDeepLinkingControllerCompletionDelegate> {
+@interface Branch() <BranchDeepLinkingControllerCompletionDelegate, SKPaymentTransactionObserver> {
     NSInteger _networkCount;
     BNCURLFilter *_userURLFilter;
 }
@@ -541,7 +543,7 @@ static NSString *bnc_branchKey = nil;
 
 + (void)setReferrerGbraidValidityWindow:(NSTimeInterval)validityWindow{
     @synchronized(self) {
-        [BNCPreferenceHelper sharedInstance].referrerGBRAIDValidityWindow = validityWindow;
+        [BNCPreferenceHelper sharedInstance].referringURLQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID][BRANCH_URL_QUERY_PARAMETERS_VALIDITY_WINDOW_KEY] = @(validityWindow);
     }
 }
 
@@ -711,17 +713,9 @@ static NSString *bnc_branchKey = nil;
     // this allows foreground links to callback
     self.initializationStatus = BNCInitStatusUninitialized;
 
-    //check the referring url/uri for query parameter gbraid
-    NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
-    NSString *gbraidValue = nil;
-    for(NSURLQueryItem *item in components.queryItems){
-        if([item.name isEqualToString:@"gbraid"])
-            gbraidValue = item.value;
-    }
-    
-    if (gbraidValue) {
-        self.preferenceHelper.referrerGBRAID = gbraidValue;
-    }
+    //Check the referring url/uri for query parameters and save them
+    BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
+    [utility parseReferringURL:url];
     
     NSString *pattern = nil;
     pattern = [self.urlFilter patternMatchingURL:url];
@@ -1683,6 +1677,10 @@ static NSString *bnc_branchKey = nil;
                     cache:[[BNCLinkCache alloc] init]
                     preferenceHelper:preferenceHelper
                     key:key];
+            
+            if ([BNCPreferenceHelper sharedInstance].logInAppPurchasesAsBranchEvents == YES) {
+                [[SKPaymentQueue defaultQueue] addTransactionObserver:branch];
+            }
         });
         return branch;
     }
@@ -2602,6 +2600,53 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [[BNCServerRequestQueue getInstance] clearQueue];
     [BranchOpenRequest releaseOpenResponseLock];
     [BNCPreferenceHelper clearAll];
+}
+
+#pragma mark - SKPaymentTransactionObserver Methods
++ (void)setLogInAppPurchasesAsEventsEnabled:(BOOL)enabled {
+    @synchronized(self) {
+        if (enabled) {
+            [BNCPreferenceHelper sharedInstance].logInAppPurchasesAsBranchEvents = YES;
+        } else {
+            [BNCPreferenceHelper sharedInstance].logInAppPurchasesAsBranchEvents = NO;
+        }
+    }
+}
+
++ (BOOL)logInAppPurchasesBranchEventsEnabled {
+    @synchronized(self) {
+        return [BNCPreferenceHelper sharedInstance].logInAppPurchasesAsBranchEvents;
+    }
+}
+
+//Logs incoming in-app purchases as events
+- (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray<SKPaymentTransaction *> *)transactions {
+    for (SKPaymentTransaction *transaction in transactions) {
+        switch (transaction.transactionState) {
+            case SKPaymentTransactionStatePurchased: {
+                
+                [[SKPaymentQueue defaultQueue] finishTransaction:(SKPaymentTransaction *)transaction];
+                
+                if ([BNCPreferenceHelper sharedInstance].logInAppPurchasesAsBranchEvents == YES) {
+                    BNCLogDebug([NSString stringWithFormat:@"Automatically logging transaction as Branch event."]);
+                    
+                    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventPurchase];
+                    [event logEventWithTransaction:transaction];
+                }
+                break;
+            }
+            case SKPaymentTransactionStateFailed: {
+                [[SKPaymentQueue defaultQueue] finishTransaction:(SKPaymentTransaction *)transaction];
+                break;
+            }
+            case SKPaymentTransactionStateRestored: {
+                [[SKPaymentQueue defaultQueue] finishTransaction:(SKPaymentTransaction *)transaction];
+                break;
+            }
+            default:
+                break;
+        }
+    }
 }
 
 @end

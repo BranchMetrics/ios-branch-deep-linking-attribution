@@ -518,6 +518,18 @@
 		5FF9DEE528EE797400D62DE1 /* NSString+Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210582894A33F00C5B190 /* NSString+Branch.h */; };
 		5FF9DEE628EE797400D62DE1 /* UIViewController+Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F22107B2894A33F00C5B190 /* UIViewController+Branch.h */; };
 		5FF9DEE728EE7A7F00D62DE1 /* BranchSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FF2AFDF28E7C22100393216 /* BranchSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C1B63C7D29D2380000D1136D /* BNCUrlQueryParameter.m in Sources */ = {isa = PBXBuildFile; fileRef = C1B63C7929D2380000D1136D /* BNCUrlQueryParameter.m */; };
+		C1B63C7E29D2380000D1136D /* BNCReferringURLUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = C1B63C7A29D2380000D1136D /* BNCReferringURLUtility.m */; };
+		C1B63C7F29D2380000D1136D /* BNCUrlQueryParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = C1B63C7B29D2380000D1136D /* BNCUrlQueryParameter.h */; };
+		C1B63C8029D2380000D1136D /* BNCReferringURLUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = C1B63C7C29D2380000D1136D /* BNCReferringURLUtility.h */; };
+		C1B63C8129D34EEF00D1136D /* BNCReferringURLUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = C1B63C7C29D2380000D1136D /* BNCReferringURLUtility.h */; };
+		C1B63C8229D34EEF00D1136D /* BNCUrlQueryParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = C1B63C7B29D2380000D1136D /* BNCUrlQueryParameter.h */; };
+		C1B63C8329D34EF700D1136D /* BNCReferringURLUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = C1B63C7A29D2380000D1136D /* BNCReferringURLUtility.m */; };
+		C1B63C8429D34EF700D1136D /* BNCUrlQueryParameter.m in Sources */ = {isa = PBXBuildFile; fileRef = C1B63C7929D2380000D1136D /* BNCUrlQueryParameter.m */; };
+		C1B63C8529D34FE400D1136D /* BNCReferringURLUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = C1B63C7C29D2380000D1136D /* BNCReferringURLUtility.h */; };
+		C1B63C8629D34FE400D1136D /* BNCUrlQueryParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = C1B63C7B29D2380000D1136D /* BNCUrlQueryParameter.h */; };
+		C1B63C8729D34FEA00D1136D /* BNCReferringURLUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = C1B63C7A29D2380000D1136D /* BNCReferringURLUtility.m */; };
+		C1B63C8829D34FEB00D1136D /* BNCUrlQueryParameter.m in Sources */ = {isa = PBXBuildFile; fileRef = C1B63C7929D2380000D1136D /* BNCUrlQueryParameter.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -742,6 +754,10 @@
 		5FF2AFDC28E7BF8A00393216 /* build_xcframework.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build_xcframework.sh; sourceTree = "<group>"; };
 		5FF2AFDE28E7C22100393216 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		5FF2AFDF28E7C22100393216 /* BranchSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchSDK.h; sourceTree = "<group>"; };
+		C1B63C7929D2380000D1136D /* BNCUrlQueryParameter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCUrlQueryParameter.m; sourceTree = "<group>"; };
+		C1B63C7A29D2380000D1136D /* BNCReferringURLUtility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCReferringURLUtility.m; sourceTree = "<group>"; };
+		C1B63C7B29D2380000D1136D /* BNCUrlQueryParameter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCUrlQueryParameter.h; sourceTree = "<group>"; };
+		C1B63C7C29D2380000D1136D /* BNCReferringURLUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCReferringURLUtility.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -821,6 +837,10 @@
 		5F22101F2894A0DB00C5B190 /* BranchSDK */ = {
 			isa = PBXGroup;
 			children = (
+				C1B63C7C29D2380000D1136D /* BNCReferringURLUtility.h */,
+				C1B63C7A29D2380000D1136D /* BNCReferringURLUtility.m */,
+				C1B63C7B29D2380000D1136D /* BNCUrlQueryParameter.h */,
+				C1B63C7929D2380000D1136D /* BNCUrlQueryParameter.m */,
 				5F2210882894A33F00C5B190 /* BNCAppGroupsData.h */,
 				5F2210A32894A34000C5B190 /* BNCAppGroupsData.m */,
 				5F2210452894A33E00C5B190 /* BNCAppleAdClient.h */,
@@ -1071,6 +1091,8 @@
 				5F2210FA2894A34000C5B190 /* BranchUniversalObject.h in Headers */,
 				5F2211362894A34000C5B190 /* BranchQRCode.h in Headers */,
 				5F22112E2894A34000C5B190 /* BranchSpotlightUrlRequest.h in Headers */,
+				C1B63C7F29D2380000D1136D /* BNCUrlQueryParameter.h in Headers */,
+				C1B63C8029D2380000D1136D /* BNCReferringURLUtility.h in Headers */,
 				5F2211032894A34000C5B190 /* BNCAppleSearchAds.h in Headers */,
 				5F2211192894A34000C5B190 /* UIViewController+Branch.h in Headers */,
 				5F2210F62894A34000C5B190 /* NSString+Branch.h in Headers */,
@@ -1160,6 +1182,8 @@
 				5FF9DEAE28EE797300D62DE1 /* BNCLog.h in Headers */,
 				5FF9DEAF28EE797300D62DE1 /* BNCNetworkInterface.h in Headers */,
 				5FF9DEB028EE797300D62DE1 /* BNCNetworkService.h in Headers */,
+				C1B63C8129D34EEF00D1136D /* BNCReferringURLUtility.h in Headers */,
+				C1B63C8229D34EEF00D1136D /* BNCUrlQueryParameter.h in Headers */,
 				5FF9DEB128EE797300D62DE1 /* BNCNetworkServiceProtocol.h in Headers */,
 				5FF9DEB228EE797300D62DE1 /* BNCPartnerParameters.h in Headers */,
 				5FF9DEB328EE797300D62DE1 /* BNCPasteboard.h in Headers */,
@@ -1245,6 +1269,8 @@
 				5F79039C28B59146003144CD /* BNCCommerceEvent.h in Headers */,
 				5F79039B28B59146003144CD /* BNCCallbacks.h in Headers */,
 				5F79039428B59145003144CD /* BNCAppGroupsData.h in Headers */,
+				C1B63C8529D34FE400D1136D /* BNCReferringURLUtility.h in Headers */,
+				C1B63C8629D34FE400D1136D /* BNCUrlQueryParameter.h in Headers */,
 				5F79039628B59145003144CD /* BNCAppleReceipt.h in Headers */,
 				5F79039828B59146003144CD /* BNCApplication.h in Headers */,
 				5F79039A28B59146003144CD /* BNCCallbackMap.h in Headers */,
@@ -1606,6 +1632,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C1B63C7D29D2380000D1136D /* BNCUrlQueryParameter.m in Sources */,
+				C1B63C7E29D2380000D1136D /* BNCReferringURLUtility.m in Sources */,
 				5F2211512894A34000C5B190 /* BNCNetworkService.m in Sources */,
 				5F22115B2894A34000C5B190 /* BNCNetworkInterface.m in Sources */,
 				5F2211592894A34000C5B190 /* BNCDeviceInfo.m in Sources */,
@@ -1718,6 +1746,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C1B63C8329D34EF700D1136D /* BNCReferringURLUtility.m in Sources */,
+				C1B63C8429D34EF700D1136D /* BNCUrlQueryParameter.m in Sources */,
 				5FF9DDFB28EE78A700D62DE1 /* BNCAppGroupsData.m in Sources */,
 				5FF9DDFD28EE78A700D62DE1 /* BNCAppleAdClient.m in Sources */,
 				5FF9DDFF28EE78A700D62DE1 /* BNCAppleReceipt.m in Sources */,
@@ -1802,6 +1832,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C1B63C8729D34FEA00D1136D /* BNCReferringURLUtility.m in Sources */,
+				C1B63C8829D34FEB00D1136D /* BNCUrlQueryParameter.m in Sources */,
 				5F7903F028B5C93E003144CD /* BNCDeepLinkViewControllerInstance.m in Sources */,
 				5F7903F128B5C93E003144CD /* BNCDeviceInfo.m in Sources */,
 				5F7903F228B5C93E003144CD /* BNCDeviceSystem.m in Sources */,
@@ -2030,7 +2062,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2.1.0;
+				CURRENT_PROJECT_VERSION = 2.1.1;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2045,7 +2077,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.BranchSDK;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2061,7 +2093,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2.1.0;
+				CURRENT_PROJECT_VERSION = 2.1.1;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2076,7 +2108,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.BranchSDK;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2262,7 +2294,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2.1.0;
+				CURRENT_PROJECT_VERSION = 2.1.1;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2278,7 +2310,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = staticlib;
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.BranchSDK;
 				PRODUCT_MODULE_NAME = BranchSDK;
 				PRODUCT_NAME = BranchSDK;
@@ -2297,7 +2329,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2.1.0;
+				CURRENT_PROJECT_VERSION = 2.1.1;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2313,7 +2345,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = staticlib;
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.BranchSDK;
 				PRODUCT_MODULE_NAME = BranchSDK;
 				PRODUCT_NAME = BranchSDK;
@@ -2331,7 +2363,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2.1.0;
+				CURRENT_PROJECT_VERSION = 2.1.1;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2345,7 +2377,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.BranchSDK;
 				PRODUCT_NAME = BranchSDK;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2361,7 +2393,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2.1.0;
+				CURRENT_PROJECT_VERSION = 2.1.1;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2375,7 +2407,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.BranchSDK;
 				PRODUCT_NAME = BranchSDK;
 				PROVISIONING_PROFILE_SPECIFIER = "";

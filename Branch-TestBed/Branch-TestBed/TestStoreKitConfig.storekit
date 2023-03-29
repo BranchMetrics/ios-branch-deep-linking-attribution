@@ -1,0 +1,66 @@
+{
+  "identifier" : "4F15AED4",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "B86498BA",
+      "localizations" : [
+        {
+          "description" : "Credits for testing",
+          "displayName" : "100 Test Credits",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "io.branch.testbed.testCredits",
+      "referenceName" : "100 Test Credits",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "69CDB027",
+      "localizations" : [
+
+      ],
+      "name" : "Pro",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "4.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "B121A024",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Monthly Pro Subscription",
+              "displayName" : "1 Month Pro",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "io.branch.testbed.testSub",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "1 Month Pro",
+          "subscriptionGroupID" : "69CDB027",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 2,
+    "minor" : 0
+  }
+}
