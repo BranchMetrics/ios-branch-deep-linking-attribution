@@ -42,7 +42,6 @@
     XCTAssert(x86_64 || arm64);
 }
 
-
 - (void)testOSName {
     XCTAssertNotNil(_deviceDescription[@"os"]);
     XCTAssert([_deviceDescription[@"os"] isEqualToString:[UIDevice currentDevice].systemName]);

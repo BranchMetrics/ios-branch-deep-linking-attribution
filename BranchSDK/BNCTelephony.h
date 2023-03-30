@@ -1,6 +1,8 @@
 //
 //  BNCTelephony.h
-//  Branch
+//  BranchSDK
+//
+//  Utility class to query for carrier information
 //
 //  Created by Ernest Cho on 11/14/19.
 //  Copyright © 2019 Branch, Inc. All rights reserved.

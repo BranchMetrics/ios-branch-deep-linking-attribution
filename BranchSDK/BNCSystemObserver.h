@@ -1,6 +1,8 @@
 //
 //  BNCSystemObserver.h
-//  Branch-SDK
+//  BranchSDK
+//
+//  A collection of simple utility methods to get system information.
 //
 //  Created by Alex Austin on 6/5/14.
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
@@ -14,23 +16,23 @@
 
 @interface BNCSystemObserver : NSObject
 
-+ (NSString *)getUniqueHardwareId:(BOOL *)isReal
-                          isDebug:(BOOL)debug
-                          andType:(NSString *__autoreleasing*)type;
-+ (NSString *)getDefaultUriScheme;
-+ (NSString *)getAppVersion;
-+ (NSString *)getBundleID;
-+ (NSString *)getTeamIdentifier;
-+ (NSString *)getBrand;
-+ (NSString *)getModel;
-+ (NSString *)getOS;
-+ (NSString *)getOSVersion;
-+ (NSNumber *)getScreenWidth;
-+ (NSNumber *)getScreenHeight;
++ (NSString *)defaultURIScheme;
++ (NSString *)applicationVersion;
++ (NSString *)bundleIdentifier;
++ (NSString *)teamIdentifier;
++ (NSString *)brand;
++ (NSString *)model;
++ (NSString *)osName;
++ (NSString *)osVersion;
++ (NSNumber *)screenWidth;
++ (NSNumber *)screenHeight;
++ (NSNumber *)screenScale;
 + (BOOL)isSimulator;
-+ (BOOL)adTrackingSafe;
-+ (NSString *)getAdId;
++ (BOOL)adTrackingEnabled;
++ (NSString *)advertiserIdentifier;
 + (NSString *)attOptedInStatus;
 + (NSString *)appleAttributionToken;
++ (NSString *)environment;
++ (BOOL)isAppClip;
 
 @end

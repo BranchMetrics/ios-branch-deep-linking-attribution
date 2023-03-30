@@ -70,7 +70,7 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
     NSLog(@"-------------------------------------------------");
 
     NSLog(@"------ Checking for URI scheme correctness ------");
-    NSString *clientUriScheme = [NSString stringWithFormat:@"%@%@", [BNCSystemObserver getDefaultUriScheme], @"://"];
+    NSString *clientUriScheme = [NSString stringWithFormat:@"%@%@", [BNCSystemObserver defaultURIScheme], @"://"];
     NSString *uriScheme = [serverUriScheme isEqualToString:clientUriScheme] ? passString : errorString;
     NSString *uriSchemeMessage =
         [NSString stringWithFormat:@"%@: Dashboard Link Settings page '%@' compared to client side '%@'",

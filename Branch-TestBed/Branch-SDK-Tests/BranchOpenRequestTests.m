@@ -50,16 +50,12 @@
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     id systemObserverMock = OCMClassMock([BNCSystemObserver class]);
-    [[[[systemObserverMock stub] ignoringNonObjectArgs] andReturn:HARDWARE_ID]
-        getUniqueHardwareId:0
-        isDebug:preferenceHelper.isDebug
-        andType:&hardwareType];
-    [[[systemObserverMock stub] andReturnValue:AD_TRACKING_SAFE] adTrackingSafe];
-    [[[systemObserverMock stub] andReturn:BUNDLE_ID] getBundleID];
-    [[[systemObserverMock stub] andReturn:APP_VERSION] getAppVersion];
-    [[[systemObserverMock stub] andReturn:OS] getOS];
-    [[[systemObserverMock stub] andReturn:OS_VERSION] getOSVersion];
-    [[[systemObserverMock stub] andReturn:URI_SCHEME] getDefaultUriScheme];
+    [[[systemObserverMock stub] andReturnValue:AD_TRACKING_SAFE] adTrackingEnabled];
+    [[[systemObserverMock stub] andReturn:BUNDLE_ID] bundleIdentifier];
+    [[[systemObserverMock stub] andReturn:APP_VERSION] applicationVersion];
+    [[[systemObserverMock stub] andReturn:OS] osName];
+    [[[systemObserverMock stub] andReturn:OS_VERSION] osVersion];
+    [[[systemObserverMock stub] andReturn:URI_SCHEME] defaultURIScheme];
 
     preferenceHelper.isDebug = [IS_DEBUG boolValue];
     preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
@@ -130,16 +126,12 @@
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     id systemObserverMock = OCMClassMock([BNCSystemObserver class]);
-    [[[[systemObserverMock stub] ignoringNonObjectArgs] andReturn:HARDWARE_ID]
-        getUniqueHardwareId:0
-        isDebug:preferenceHelper.isDebug
-        andType:&hardwareType];
-    [[[systemObserverMock stub] andReturnValue:AD_TRACKING_SAFE] adTrackingSafe];
-    [[[systemObserverMock stub] andReturn:BUNDLE_ID] getBundleID];
-    [[[systemObserverMock stub] andReturn:APP_VERSION] getAppVersion];
-    [[[systemObserverMock stub] andReturn:OS] getOS];
-    [[[systemObserverMock stub] andReturn:OS_VERSION] getOSVersion];
-    [[[systemObserverMock stub] andReturn:URI_SCHEME] getDefaultUriScheme];
+    [[[systemObserverMock stub] andReturnValue:AD_TRACKING_SAFE] adTrackingEnabled];
+    [[[systemObserverMock stub] andReturn:BUNDLE_ID] bundleIdentifier];
+    [[[systemObserverMock stub] andReturn:APP_VERSION] applicationVersion];
+    [[[systemObserverMock stub] andReturn:OS] osName];
+    [[[systemObserverMock stub] andReturn:OS_VERSION] osVersion];
+    [[[systemObserverMock stub] andReturn:URI_SCHEME] defaultURIScheme];
 
     preferenceHelper.isDebug = [IS_DEBUG boolValue];
     preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
