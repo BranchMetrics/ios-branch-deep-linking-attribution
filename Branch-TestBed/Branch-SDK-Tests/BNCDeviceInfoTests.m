@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "BNCDeviceInfo.h"
+#import "BNCUserAgentCollector.h"
 
 @interface BNCDeviceInfoTests : XCTestCase
 @property (nonatomic, strong, readwrite) BNCDeviceInfo *deviceInfo;
@@ -16,7 +17,17 @@
 @implementation BNCDeviceInfoTests
 
 - (void)setUp {
+    [self workaroundUserAgentLazyLoad];
     self.deviceInfo = [BNCDeviceInfo new];
+}
+
+// user agent needs to be loaded
+- (void)workaroundUserAgentLazyLoad {
+    __block XCTestExpectation *expectation = [self expectationWithDescription:@"setup"];
+    [[BNCUserAgentCollector instance] loadUserAgentWithCompletion:^(NSString * _Nullable userAgent) {
+        [expectation fulfill];
+    }];
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError * _Nullable error) { }];
 }
 
 - (void)tearDown {
