@@ -1,9 +1,10 @@
-#on: [push]
+
 on:
  workflow_dispatch:
  
 jobs:
-  build-framework:
+  # This job creates a static lib which will be used by Qentelli Automation Testbed App. Its uploaded as an artifact.
+  build-Brach-Static-framework:
     runs-on: macos-latest
     steps:
       - name: Check out code
@@ -17,7 +18,12 @@ jobs:
           name: release_framework
           path: |
             ./Branch_static.zip
-  build-testbed:
+            
+  # This job
+  # 1.Downloads static framework build in job build-Brach-Static-framework and copies it to framework directory of qentelli-saas-sdk-testing-ios-testbed repo
+  # 2.Builds testbed app.
+  # 3.Installs Certificates and Provisioning profile for signing App and creating IPA. Final IPA is uploaded as an artifact.
+  build-Automation-testbed-App:
     runs-on: macos-latest
     needs: [build-framework]
     steps:
@@ -56,28 +62,20 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
           
-      - name: Download build artifacts
+      - name: Download Branch SDK lib, build testbed app and create IPA File
         uses: actions/download-artifact@v3
       - name : Unzip and copy folder
         run: |
-            ls -la ./
-            echo pwd
-            ls -la release_framework/
-            ls -la release_framework/Branch_static.zip
             unzip release_framework/Branch_static.zip -d ./Framework/
-            ls -la ./Framework
             xcodebuild -workspace DeepLinkDemo.xcworkspace -scheme DeepLinkDemo  -sdk iphoneos archive -archivePath ./IPA/DeepLinkDemo.xcarchive
-            # xcodebuild -workspace DeepLinkDemo.xcworkspace -scheme DeepLinkDemo  -sdk iphoneos -allowProvisioningUpdates archive -archivePath ./IPA/DeepLinkDemo.xcarchive
-            ls -la ./IPA/
             xcodebuild -exportArchive -archivePath ./IPA/DeepLinkDemo.xcarchive -exportOptionsPlist IPA/Info.plist -exportPath IPA/
-            ls -la ./IPA/
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: DeepLinkDemo.ipa
           path: |
                 ./IPA/DeepLinkDemo.ipa
-  buildAutomationTestSuite:
+  buildAndRunAutomationTestSuite:
     runs-on: macos-latest
     needs: [build-testbed]
     steps:
@@ -100,60 +98,18 @@ jobs:
             ls -la ./
             cp -R DeepLinkDemo.ipa testdata/builds/iOS_TestbedApp_21-Jun-2022-1.ipa
       - name: Build with Maven
-        # run: mvn -B package --file pom.xml
         id: build_maven
         run: |
-          # mvn clean
-          # mvn -B clean install package -DskipTests
            mvn clean test -DsuiteXMLFile=testng.xml -e -DInputFormat="json" -DInputFilePath="TestSelection_BrowserStack_iOS.json" -DAccessKey="${{ secrets.S3_ACCESS_KEY }}" -DSecretKey="${{ secrets.S3_SECRET_KEY }}" --log-file output.txt
-         
       - name: Print output
         if: always()        # run this step even if previous step failed
         run: cat ${{ github.workspace }}/output.txt
-          
       - name: Publishing test report
         if: always()        # run this step even if previous step failed
         uses: actions/upload-artifact@v3  # upload test results
         with:
           name: test-results
           path: ${{ github.workspace }}/output.txt
-
-  build:
-    if: ${{ false }}  # disable for now
-    runs-on: ubuntu-latest
-    steps:
-    - uses: convictional/trigger-workflow-and-wait@v1.6.1
-      with:
-          owner: BranchMetrics
-          repo: qentelli-saas-sdk-testing-automation
-          github_token: ${{ secrets.BRANCHLET_ACCESS_TOKEN_PUBLIC }}
-          workflow_file_name: ios-maven.yml
-          ref: 'test-trigger-from-iOSSDKRepo'
-          wait_interval: 10
-          client_payload: '{}'
-          propagate_failure: true
-          trigger_workflow: true
-          wait_workflow: true
-    - name: Fetching test report from automation suite
-      uses: dawidd6/action-download-artifact@v2
-      with:
-       github_token: ${{ secrets.BRANCHLET_ACCESS_TOKEN_PUBLIC }}
-       repo: BranchMetrics/qentelli-saas-sdk-testing-automation
-       workflow: ios-maven.yml
-       branch: development
-       name: test-results
-       check_artifacts:  true
-       search_artifacts:  true
-       skip_unpack: false
-       
-    - name: Display S3 url
-#       run: grep -C2 'Test report file link' output.txt
-      run: grep 'Test report file link' output.txt
-    
-#     - name: Publishing test report to artifact
-#       uses: actions/upload-artifact@v3
-#       with:
-#         name: test-results
-#         path: ./*
-        
-        
+      - name: Display test report S3 url
+        if: always()
+        run: grep 'Test report file link' output.txt
