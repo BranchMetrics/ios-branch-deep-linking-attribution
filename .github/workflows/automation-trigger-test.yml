@@ -25,7 +25,7 @@ jobs:
   # 3.Installs Certificates and Provisioning profile for signing App and creating IPA. Final IPA is uploaded as an artifact.
   build-Automation-testbed-App:
     runs-on: macos-latest
-    needs: [build-framework]
+    needs: [build-Brach-Static-framework]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
