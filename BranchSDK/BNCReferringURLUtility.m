@@ -31,12 +31,17 @@
 
 - (void)parseReferringURL:(NSURL *)url {
     NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
-    for(NSURLQueryItem *item in components.queryItems){
+    for  (NSURLQueryItem *item in components.queryItems) {
         if ([self isSupportedQueryParameter:item.name]) {
             [self processQueryParameter:item];
         }
         
-        // Meta places their AEM value in an url encoded json
+        /*
+         * Meta places their AEM value in an url encoded json.
+         * `al_applink_data` is the query parameter
+         * `campaign_ids` is the json field
+         * we map this value to `meta_campaign_ids`
+         */
         if ([self isMetaQueryParameter:item.name]) {
             [self processMetaQueryParameter:item];
         }
@@ -68,7 +73,7 @@
         param.value = campaignIDs;
         param.timestamp = [NSDate date];
         param.isDeepLink = YES;
-        param.validityWindow = 0;
+        param.validityWindow = [self defaultValidityWindowForParam:BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS];
         [self.urlQueryParameters setValue:param forKey:BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS];
     }
 }
@@ -108,7 +113,10 @@
 
 - (NSString *)metaCampaignIDsForEndpoint:(NSString *)endpoint {
     if (([endpoint containsString:@"/v2/event"]) || ([endpoint containsString:@"/v1/open"])) {
-        return self.urlQueryParameters[BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS].value;
+        BNCUrlQueryParameter *metaCampaignIDs = self.urlQueryParameters[BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS];
+        if (metaCampaignIDs.value != nil && [metaCampaignIDs isWithinValidityWindow]) {
+            return self.urlQueryParameters[BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS].value;
+        }
     }
     return nil;
 }
@@ -126,21 +134,18 @@
     if (([endpoint containsString:@"/v2/event"]) || ([endpoint containsString:@"/v1/open"])) {
 
         BNCUrlQueryParameter *gbraid = self.urlQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID];
-        if (gbraid.value != nil) {
-            NSDate *expirationDate = [gbraid.timestamp dateByAddingTimeInterval:gbraid.validityWindow];
-            NSDate *now = [NSDate date];
-            if ([now compare:expirationDate] == NSOrderedAscending) {
-                returnedParams[BRANCH_REQUEST_KEY_REFERRER_GBRAID] = gbraid.value;
+        if (gbraid.value != nil && [gbraid isWithinValidityWindow]) {
+            
+            returnedParams[BRANCH_REQUEST_KEY_REFERRER_GBRAID] = gbraid.value;
+            
+            NSNumber *timestampInMilliSec = @([gbraid.timestamp timeIntervalSince1970] * 1000.0);
+            returnedParams[BRANCH_REQUEST_KEY_REFERRER_GBRAID_TIMESTAMP] = timestampInMilliSec.stringValue;
+            
+            if ([endpoint containsString:@"/v1/open"]) {
+                returnedParams[BRANCH_REQUEST_KEY_IS_DEEPLINK_GBRAID] = @(gbraid.isDeepLink);
+                gbraid.isDeepLink = NO;
 
-                NSNumber *timestampInMilliSec = @([gbraid.timestamp timeIntervalSince1970] * 1000.0);
-                returnedParams[BRANCH_REQUEST_KEY_REFERRER_GBRAID_TIMESTAMP] = timestampInMilliSec.stringValue;
-                
-                if ([endpoint containsString:@"/v1/open"]) {
-                    returnedParams[BRANCH_REQUEST_KEY_IS_DEEPLINK_GBRAID] = @(gbraid.isDeepLink);
-                    gbraid.isDeepLink = NO;
-
-                    self.preferenceHelper.referringURLQueryParameters = [self serializeToJson:self.urlQueryParameters];
-                }
+                self.preferenceHelper.referringURLQueryParameters = [self serializeToJson:self.urlQueryParameters];
             }
         }
     }
@@ -179,9 +184,11 @@
 
 - (NSTimeInterval)defaultValidityWindowForParam:(NSString *)param {
     if ([param isEqualToString:BRANCH_REQUEST_KEY_REFERRER_GBRAID]) {
-        return 2592000; // 30 days = 2,592,000 seconds
+        return 30 * 24 * 60 * 60; // 30 days
+    } else if ([param isEqualToString:BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS]) {
+        return 7 * 24 * 60 * 60; // 7 days
     } else {
-        return 0; //Default, means indefinite.
+        return 0; // default, means indefinite.
     }
 }
 

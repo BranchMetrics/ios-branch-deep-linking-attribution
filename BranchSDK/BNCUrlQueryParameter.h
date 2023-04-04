@@ -17,8 +17,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readwrite, strong, nonatomic) NSDate *timestamp;
 @property (readwrite, assign, nonatomic) BOOL isDeepLink;
 
-//Configuration
 @property (readwrite, assign, nonatomic) NSTimeInterval validityWindow;
+
+// YES - [NSDate date] is within validity window
+- (BOOL)isWithinValidityWindow;
 
 @end
 
