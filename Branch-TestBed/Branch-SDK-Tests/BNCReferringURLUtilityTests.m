@@ -12,382 +12,441 @@
 #import "BNCPreferenceHelper.h"
 
 @interface BNCReferringURLUtility(Test)
+// expose the private data structure so tests can clear it
+@property (strong, readwrite, nonatomic) NSMutableDictionary<NSString *, BNCUrlQueryParameter *> *urlQueryParameters;
 
-- (NSString *)addGclidValueFor:(NSString *)endpoint;
-- (NSDictionary *)addGbraidValuesFor:(NSString *)endpoint;
-- (BOOL)isSupportedQueryParameter:(NSString *)param;
-- (BNCUrlQueryParameter *)findUrlQueryParam:(NSString *)paramName;
-- (NSTimeInterval)defaultValidityWindowForParam:(NSString *)paramName;
-- (NSMutableDictionary *)serializeToJson:(NSMutableDictionary<NSString *, BNCUrlQueryParameter *> *)urlQueryParameters;
-- (NSMutableDictionary<NSString *, BNCUrlQueryParameter *> *)deserializeFromJson:(NSDictionary *)json;
+// expose private methods to test data migration
 - (void)checkForAndMigrateOldGbraid;
-
 @end
 
 @interface BNCReferringURLUtilityTests : XCTestCase
-
-@property (nonatomic, strong, readwrite) BNCPreferenceHelper *prefHelper;
-@property (nonatomic, strong, readwrite) BNCReferringURLUtility *utility;
-
-@property (nonatomic, copy) NSString *gbraidValue;
-@property (nonatomic, copy) NSString *gclidValue;
-
-@property (nonatomic, copy) NSString *eventEndpoint;
-@property (nonatomic, copy) NSString *openEndpoint;
 
 @end
 
 @implementation BNCReferringURLUtilityTests
 
-- (void)setUp {
-    self.prefHelper = [BNCPreferenceHelper sharedInstance];
-    self.prefHelper.referringURLQueryParameters = nil;
-    
-    self.eventEndpoint = @"/v2/event";
-    self.openEndpoint = @"/v1/open";
-    
-    self.gclidValue = @"gclid123";
-    self.gbraidValue = @"gbraid456";
-    
-    NSString *urlString = [NSString stringWithFormat:@"https://www.branch.io?test=456&gbraid=%@&gclid=%@", self.gbraidValue, self.gclidValue];
-    NSURL *url = [NSURL URLWithString:urlString];
-    
-    self.utility = [BNCReferringURLUtility new];
-    [self.utility parseReferringURL:url];
+// test constants
+static NSString *openEndpoint = @"/v1/open";
+static NSString *eventEndpoint = @"/v2/event";
+
+// workaround for BNCPreferenceHelper being persistent across tests and not currently mockable
+- (BNCReferringURLUtility *)referringUtilityForTests {
+    BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
+    utility.urlQueryParameters = [NSMutableDictionary new];
+    return utility;
 }
 
-- (NSMutableDictionary *)defaultGbraidDictionary {
-    NSMutableDictionary *gbraidDict = [NSMutableDictionary dictionary];
-    gbraidDict[@"isDeepLink"] = @(1);
-    gbraidDict[@"name"] = @"gbraid";
-    gbraidDict[@"validityWindow"] = @(2592000);
-    gbraidDict[@"value"] = self.gbraidValue;
-    return gbraidDict;
-}
+- (void)testReferringURLUniversalLinkWithNoParams {
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link"];
+    NSDictionary *expected = @{};
 
-- (NSMutableDictionary *)defaultGclidDictionary {
-    NSMutableDictionary *gclidDict = [NSMutableDictionary dictionary];
-    gclidDict[@"isDeepLink"] = @(1);
-    gclidDict[@"name"] = @"gclid";
-    gclidDict[@"validityWindow"] = @(0);
-    gclidDict[@"value"] = self.gclidValue;
-    return gclidDict;
-}
-
-- (BNCUrlQueryParameter *)defaultGbraid {
-    BNCUrlQueryParameter *expectedGbraid = [BNCUrlQueryParameter new];
-    expectedGbraid.name = @"gbraid";
-    expectedGbraid.value = self.gbraidValue;
-    expectedGbraid.validityWindow = 2592000;
-    expectedGbraid.isDeepLink = @(1);
-    return expectedGbraid;
-}
-
-- (BNCUrlQueryParameter *)defaultGclid {
-    BNCUrlQueryParameter *expectedGclid = [BNCUrlQueryParameter new];
-    expectedGclid.name = @"gclid";
-    expectedGclid.value = self.gclidValue;
-    expectedGclid.validityWindow = 0;
-    expectedGclid.isDeepLink = @(1);
-    return expectedGclid;
-}
-
-- (void)testParseURL {
-    NSMutableDictionary *savedParams = self.prefHelper.referringURLQueryParameters;
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
     
-    // Remove the timestamp keys from savedParams for compare
-    [savedParams enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        NSMutableDictionary *paramDict = (NSMutableDictionary *)obj;
-        [paramDict removeObjectForKey:@"timestamp"];
-    }];
-    
-    NSMutableDictionary *expectedParams = [NSMutableDictionary dictionary];
-    expectedParams[@"gbraid"] = self.defaultGbraidDictionary;
-    expectedParams[@"gclid"] = self.defaultGclidDictionary;
-    
-    XCTAssertEqualObjects(savedParams, expectedParams);
+    XCTAssert([expected isEqualToDictionary:params]);
 }
 
-- (void)testGetEventURLQueryParams {
+- (void)testReferringURLSchemeWithNoParams {
+    NSURL *url = [NSURL URLWithString:@"branchtest://"];
+    NSDictionary *expected = @{};
 
-    NSDictionary *params = [self.utility getURLQueryParamsForRequest:self.eventEndpoint];
-    NSDictionary *expectedParams = @{@"gbraid": self.gbraidValue,
-                                       @"gbraid_timestamp": params[@"gbraid_timestamp"],
-                                       @"gclid": self.gclidValue};
-
-    XCTAssertEqualObjects(params, expectedParams);
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
 }
 
-- (void)testGetOpenURLQueryParams {
+- (void)testReferringURLUniversalLinkIgnoredParam {
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?other=12345"];
+    NSDictionary *expected = @{ };
     
-    NSDictionary *params = [self.utility getURLQueryParamsForRequest:self.openEndpoint];
-    NSDictionary *expectedParams = @{@"gbraid": self.gbraidValue,
-                                     @"gbraid_timestamp": params[@"gbraid_timestamp"],
-                                     @"is_deeplink_gbraid": @YES,
-                                     @"gclid": self.gclidValue};
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
     
-    XCTAssertEqualObjects(params, expectedParams);
+    XCTAssert([expected isEqualToDictionary:params]);
 }
 
-- (void)testAddGclidValueFor {
-    NSString *eventGclidValue = [self.utility addGclidValueFor:self.eventEndpoint];
-    XCTAssertEqualObjects(eventGclidValue, self.gclidValue);
+- (void)testReferringURLSchemeWithIgnoredParam {
+    NSURL *url = [NSURL URLWithString:@"branchtest://?other=12345"];
+    NSDictionary *expected = @{ };
     
-    NSString *openGclidValue = [self.utility addGclidValueFor:self.openEndpoint];
-    XCTAssertEqualObjects(openGclidValue, self.gclidValue);
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
 }
 
-- (void)testAddGbraidValuesFor {
-    NSDictionary *eventGbraidValue = [self.utility addGbraidValuesFor:self.eventEndpoint];
-    
-    NSDictionary *expectedEventGraidValue = @{
-        @"gbraid": self.gbraidValue,
-        @"gbraid_timestamp": eventGbraidValue[@"gbraid_timestamp"]
+- (void)testReferringURLUniversalLinkWithGclid {
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?gclid=12345"];
+    NSDictionary *expected = @{
+        @"gclid": @"12345"
     };
     
-    XCTAssertEqualObjects(eventGbraidValue, expectedEventGraidValue);
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
     
-    NSDictionary *expectedOpenGraidValue = @{
-        @"gbraid": self.gbraidValue,
-        @"gbraid_timestamp": eventGbraidValue[@"gbraid_timestamp"],
-        @"is_deeplink_gbraid": @(1)
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLSchemeWithGclid {
+    NSURL *url = [NSURL URLWithString:@"branchtest://?gclid=12345"];
+    NSDictionary *expected = @{
+        @"gclid": @"12345"
     };
     
-    NSDictionary *openGbraidValue = [self.utility addGbraidValuesFor:self.openEndpoint];
-    XCTAssertEqualObjects(openGbraidValue, expectedOpenGraidValue);
-}
-
-- (void)testIsSupportedQueryParameterForGbraid {
-    NSString *gbraidParam = @"gbraid";
-    XCTAssertTrue([self.utility isSupportedQueryParameter:gbraidParam]);
-}
-
-- (void)testIsSupportedQueryParameterForGclid {
-    NSString *gclidParam = @"gclid";
-    XCTAssertTrue([self.utility isSupportedQueryParameter:gclidParam]);
-}
-
-- (void)testIsSupportedQueryParameterForEmptyString {
-    NSString *emptyStringParam = @"";
-    XCTAssertFalse([self.utility isSupportedQueryParameter:emptyStringParam]);
-}
-
-- (void)testIsSupportedQueryParameterForSpecialCharacters {
-    NSString *specialCharsParam = @"g!b@r#a$i^d&";
-    XCTAssertFalse([self.utility isSupportedQueryParameter:specialCharsParam]);
-}
-
-- (void)testIsSupportedQueryParameterForSpaces {
-    NSString *spacesParam = @" gclid ";
-    XCTAssertFalse([self.utility isSupportedQueryParameter:spacesParam]);
-}
-
-- (void)testIsSupportedQueryParameterForMixedCase {
-    NSString *mixedCaseParam = @"GcLiD";
-    XCTAssertTrue([self.utility isSupportedQueryParameter:mixedCaseParam]);
-}
-
-- (void)testFindUrlQueryParam {
-    BNCUrlQueryParameter *gbraid = [self.utility findUrlQueryParam:@"gbraid"];
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
     
-    BNCUrlQueryParameter *expectedGbraid = self.defaultGbraid;
-    expectedGbraid.timestamp = gbraid.timestamp;
-    
-    XCTAssertEqualObjects(gbraid, expectedGbraid);
-    
-    BNCUrlQueryParameter *gclid = [self.utility findUrlQueryParam:@"gclid"];
-    
-    BNCUrlQueryParameter *expectedGclid = self.defaultGclid;
-    expectedGclid.timestamp = gclid.timestamp;
-    
-    XCTAssertEqualObjects(gclid, expectedGclid);
+    XCTAssert([expected isEqualToDictionary:params]);
 }
 
-- (void)testFindUrlQueryParamForUnsupported {
-    BNCUrlQueryParameter *unsupported = [self.utility findUrlQueryParam:@"unsupported"];
-    XCTAssertNotNil(unsupported);
-    XCTAssertEqualObjects(unsupported.name, @"unsupported");
-    XCTAssertNil(unsupported.value);
-    XCTAssertNil(unsupported.timestamp);
-    XCTAssertEqual(unsupported.isDeepLink, 0);
-    XCTAssertEqual(unsupported.validityWindow, 0);
-}
-
-- (void)testFindUrlQueryParamForSpecialCharacters {
-    BNCUrlQueryParameter *specialChars = [self.utility findUrlQueryParam:@"g!b@r#a$i^d&"];
-    XCTAssertNotNil(specialChars);
-    XCTAssertEqualObjects(specialChars.name, @"g!b@r#a$i^d&");
-    XCTAssertNil(specialChars.value);
-    XCTAssertNil(specialChars.timestamp);
-    XCTAssertEqual(specialChars.isDeepLink, 0);
-    XCTAssertEqual(specialChars.validityWindow, 0);
-}
-
-- (void)testFindUrlQueryParamForSpaces {
-    BNCUrlQueryParameter *spaces = [self.utility findUrlQueryParam:@" gbraid "];
-    XCTAssertNotNil(spaces);
-    XCTAssertEqualObjects(spaces.name, @" gbraid ");
-    XCTAssertNil(spaces.value);
-    XCTAssertNil(spaces.timestamp);
-    XCTAssertEqual(spaces.isDeepLink, 0);
-    XCTAssertEqual(spaces.validityWindow, 0);
-}
-
-- (void)testFindUrlQueryParamForNil {
-    BNCUrlQueryParameter *nilParam = [self.utility findUrlQueryParam:nil];
-    XCTAssertNotNil(nilParam);
-    XCTAssertNil(nilParam.name);
-    XCTAssertNil(nilParam.value);
-    XCTAssertNil(nilParam.timestamp);
-    XCTAssertEqual(nilParam.isDeepLink, 0);
-    XCTAssertEqual(nilParam.validityWindow, 0);
-}
-
-- (void)testDefaultValidityWindowForParam {
-    XCTAssertEqual(2592000, [self.utility defaultValidityWindowForParam:@"gbraid"]);
-    XCTAssertEqual(0, [self.utility defaultValidityWindowForParam:@"gclid"]);
-}
-
-- (void)testDefaultValidityWindowForParamForUnsupported {
-    NSString *unsupportedParam = @"unsupported";
-    XCTAssertEqual(0, [self.utility defaultValidityWindowForParam:unsupportedParam]);
-}
-
-- (void)testDefaultValidityWindowForParamForSpecialCharacters {
-    NSString *specialCharsParam = @"g!b@r#a$i^d&";
-    XCTAssertEqual(0, [self.utility defaultValidityWindowForParam:specialCharsParam]);
-}
-
-- (void)testDefaultValidityWindowForParamForSpaces {
-    NSString *spacesParam = @" gbraid ";
-    XCTAssertEqual(0, [self.utility defaultValidityWindowForParam:spacesParam]);
-}
-
-- (void)testDefaultValidityWindowForParamForMixedCase {
-    NSString *mixedCaseParam = @"GcLiD";
-    XCTAssertEqual(0, [self.utility defaultValidityWindowForParam:mixedCaseParam]);
-}
-
-- (void)testDefaultValidityWindowForParamForNil {
-    XCTAssertEqual(0, [self.utility defaultValidityWindowForParam:nil]);
-}
-
-- (void)testSerializeToJson {
-    
-    NSDate *currentDate = [NSDate date];
-    NSMutableDictionary<NSString *, BNCUrlQueryParameter *> * params = [NSMutableDictionary new];
-    
-    BNCUrlQueryParameter *gbraidObj = self.defaultGbraid;
-    gbraidObj.timestamp = currentDate;
-    params[@"gbraid"] = gbraidObj;
-    
-    BNCUrlQueryParameter *gclidObj = self.defaultGclid;
-    gclidObj.timestamp = currentDate;
-    params[@"gclid"] = gclidObj;
-     
-    NSMutableDictionary *json = [self.utility serializeToJson:params];
-        
-    NSDictionary *expectedJSON = @{
-        @"gbraid": @{
-            @"isDeepLink": @(1),
-            @"name": @"gbraid",
-            @"timestamp": currentDate,
-            @"validityWindow": @(2592000),
-            @"value": @"gbraid456"
-        },
-        @"gclid": @{
-            @"isDeepLink": @(1),
-            @"name": @"gclid",
-            @"timestamp": currentDate,
-            @"validityWindow": @(0),
-            @"value": @"gclid123"
-        }
+- (void)testReferringURLUniversalLinkWithGclidCapitalizedConvertedToLowerCase {
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?GCLID=12345"];
+    NSDictionary *expected = @{
+        @"gclid": @"12345"
     };
     
-    XCTAssertEqualObjects(expectedJSON, json);
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
     
-    NSMutableDictionary<NSString *, BNCUrlQueryParameter *> * deserializedParams = [self.utility deserializeFromJson:json];
-    XCTAssertEqualObjects(params, deserializedParams);
+    XCTAssert([expected isEqualToDictionary:params]);
 }
 
-- (void)testSerializeToJsonWithEmptyDictionary {
-    NSMutableDictionary<NSString *, BNCUrlQueryParameter *> *emptyParams = [NSMutableDictionary new];
-    NSMutableDictionary *json = [self.utility serializeToJson:emptyParams];
-    NSDictionary *expectedJSON = @{};
-    XCTAssertEqualObjects(expectedJSON, json);
-}
-
-- (void)testDeserializeToEmptyDictionaryFromJson {
-    NSMutableDictionary<NSString *, BNCUrlQueryParameter *> *emptyParams = [NSMutableDictionary new];
-    NSDictionary *json = @{};
-
-    NSMutableDictionary<NSString *, BNCUrlQueryParameter *> *deserializedParams = [self.utility deserializeFromJson:json];
-    XCTAssertEqualObjects(emptyParams, deserializedParams);
-}
-
-- (void)testSerializeToJsonWithSpecialCharactersAndNilValue {
-    NSDate *currentDate = [NSDate date];
-    NSMutableDictionary<NSString *, BNCUrlQueryParameter *> *params = [NSMutableDictionary new];
-    
-    BNCUrlQueryParameter *specialCharsObj = [BNCUrlQueryParameter new];
-    specialCharsObj.name = @"g!b@r#a$i^d&";
-    specialCharsObj.timestamp = currentDate;
-    specialCharsObj.validityWindow = 0;
-    specialCharsObj.isDeepLink = NO;
-    specialCharsObj.value = @"";
-    params[@"g!b@r#a$i^d&"] = specialCharsObj;
-
-    NSMutableDictionary *json = [self.utility serializeToJson:params];
-    
-    NSDictionary *expectedJSON = @{
-        @"g!b@r#a$i^d&": @{
-            @"isDeepLink": @(0),
-            @"name": @"g!b@r#a$i^d&",
-            @"timestamp": currentDate,
-            @"validityWindow": @(0),
-            @"value": @""
-        }
+- (void)testReferringURLSchemeWithGclidCapitalizedConvertedToLowerCase {
+    NSURL *url = [NSURL URLWithString:@"branchtest://?GCLID=12345"];
+    NSDictionary *expected = @{
+        @"gclid": @"12345"
     };
     
-    XCTAssertEqualObjects(expectedJSON, json);
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
     
-    NSMutableDictionary<NSString *, BNCUrlQueryParameter *> *deserializedParams = [self.utility deserializeFromJson:json];
-    XCTAssertEqualObjects(params, deserializedParams);
+    XCTAssert([expected isEqualToDictionary:params]);
 }
 
-- (void)testDeserializeFromJson {
-    NSDate *currentDate = [NSDate date];
-    
-    NSMutableDictionary<NSString *, BNCUrlQueryParameter *> * params = [NSMutableDictionary new];
-    
-    BNCUrlQueryParameter *gbraidObj = self.defaultGbraid;
-    gbraidObj.timestamp = currentDate;
-    params[@"gbraid"] = gbraidObj;
-    
-    BNCUrlQueryParameter *gclidObj = self.defaultGclid;
-    gclidObj.timestamp = currentDate;
-    params[@"gclid"] = gclidObj;
-
-    NSDictionary *json = @{
-        @"gbraid": @{
-            @"isDeepLink": @(1),
-            @"name": @"gbraid",
-            @"timestamp": currentDate,
-            @"validityWindow": @(2592000),
-            @"value": @"gbraid456"
-        },
-        @"gclid": @{
-            @"isDeepLink": @(1),
-            @"name": @"gclid",
-            @"timestamp": currentDate,
-            @"validityWindow": @(0),
-            @"value": @"gclid123"
-        }
+- (void)testReferringURLUniversalLinkWithGclidMixedCaseConvertedToLowerCase {
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?GcLiD=12345"];
+    NSDictionary *expected = @{
+        @"gclid": @"12345"
     };
     
-    NSMutableDictionary<NSString *, BNCUrlQueryParameter *> * deserializedParams = [self.utility deserializeFromJson:json];
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
     
-    XCTAssertEqualObjects(deserializedParams, params);
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLSchemeWithGclidMixedCaseConvertedToLowerCase {
+    NSURL *url = [NSURL URLWithString:@"branchtest://?GcLiD=12345"];
+    NSDictionary *expected = @{
+        @"gclid": @"12345"
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLUniversalLinkWithGclidNoValue {
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?gclid="];
+    NSDictionary *expected = @{
+        @"gclid": @""
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLSchemeWithGclidNoValue {
+    NSURL *url = [NSURL URLWithString:@"branchtest://?gclid="];
+    NSDictionary *expected = @{
+        @"gclid": @""
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLUniversalLinkWithGclidValueCasePreserved {
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?gclid=aAbBcC"];
+    NSDictionary *expected = @{
+        @"gclid": @"aAbBcC"
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLSchemeWithGclidValueCasePreserved {
+    NSURL *url = [NSURL URLWithString:@"branchtest://?gclid=aAbBcC"];
+    NSDictionary *expected = @{
+        @"gclid": @"aAbBcC"
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLUniversalLinkWithGclidIgnoredParam {
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?gclid=12345&other=abcde"];
+    NSDictionary *expected = @{
+        @"gclid": @"12345"
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLSchemeWithGclidIgnoredParam {
+    NSURL *url = [NSURL URLWithString:@"branchtest://?gclid=12345&other=abcde"];
+    NSDictionary *expected = @{
+        @"gclid": @"12345"
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLUniversalLinkWithGclidFragment{
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?gclid=12345#header"];
+    NSDictionary *expected = @{
+        @"gclid": @"12345"
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLSchemeWithGclidFragment {
+    NSURL *url = [NSURL URLWithString:@"branchtest://?gclid=12345#header"];
+    NSDictionary *expected = @{
+        @"gclid": @"12345"
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLUniversalLinkWithGclidAsFragment{
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?other=abcde#gclid=12345"];
+    NSDictionary *expected = @{ };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLSchemeWithGclidAsFragment {
+    NSURL *url = [NSURL URLWithString:@"branchtest://?other=abcde#gclid=12345"];
+    NSDictionary *expected = @{ };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLUniversalLinkWithMetaCampaignIds {
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?al_applink_data=%7B%22target_url%22%3A%22http%3A%5C%2F%5C%2Fitunes.apple.com%5C%2Fapp%5C%2Fid880047117%22%2C%22extras%22%3A%7B%22fb_app_id%22%3A2020399148181142%7D%2C%22referer_app_link%22%3A%7B%22url%22%3A%22fb%3A%5C%2F%5C%2F%5C%2F%3Fapp_id%3D2020399148181142%22%2C%22app_name%22%3A%22Facebook%22%7D%2C%22acs_token%22%3A%22debuggingtoken%22%2C%22campaign_ids%22%3A%22ARFUlbyOurYrHT2DsknR7VksCSgN4tiH8TzG8RIvVoUQoYog5bVCvADGJil5kFQC6tQm-fFJQH0w8wCi3NbOmEHHrtgCNglkXNY-bECEL0aUhj908hIxnBB0tchJCqwxHjorOUqyk2v4bTF75PyWvxOksZ6uTzBmr7wJq8XnOav0bA%22%2C%22test_deeplink%22%3A1%7D"];
+    NSDictionary *expected = @{
+        @"meta_campaign_ids": @"ARFUlbyOurYrHT2DsknR7VksCSgN4tiH8TzG8RIvVoUQoYog5bVCvADGJil5kFQC6tQm-fFJQH0w8wCi3NbOmEHHrtgCNglkXNY-bECEL0aUhj908hIxnBB0tchJCqwxHjorOUqyk2v4bTF75PyWvxOksZ6uTzBmr7wJq8XnOav0bA"
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLSchemeWithMetaCampaignIds {
+    NSURL *url = [NSURL URLWithString:@"branchtest://products/next?al_applink_data=%7B%22target_url%22%3A%22http%3A%5C%2F%5C%2Fitunes.apple.com%5C%2Fapp%5C%2Fid880047117%22%2C%22extras%22%3A%7B%22fb_app_id%22%3A2020399148181142%7D%2C%22referer_app_link%22%3A%7B%22url%22%3A%22fb%3A%5C%2F%5C%2F%5C%2F%3Fapp_id%3D2020399148181142%22%2C%22app_name%22%3A%22Facebook%22%7D%2C%22acs_token%22%3A%22debuggingtoken%22%2C%22campaign_ids%22%3A%22ARFUlbyOurYrHT2DsknR7VksCSgN4tiH8TzG8RIvVoUQoYog5bVCvADGJil5kFQC6tQm-fFJQH0w8wCi3NbOmEHHrtgCNglkXNY-bECEL0aUhj908hIxnBB0tchJCqwxHjorOUqyk2v4bTF75PyWvxOksZ6uTzBmr7wJq8XnOav0bA%22%2C%22test_deeplink%22%3A1%7D"];
+    NSDictionary *expected = @{
+        @"meta_campaign_ids": @"ARFUlbyOurYrHT2DsknR7VksCSgN4tiH8TzG8RIvVoUQoYog5bVCvADGJil5kFQC6tQm-fFJQH0w8wCi3NbOmEHHrtgCNglkXNY-bECEL0aUhj908hIxnBB0tchJCqwxHjorOUqyk2v4bTF75PyWvxOksZ6uTzBmr7wJq8XnOav0bA"
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLUniversalLinkWithMetaNoCampaignIds {
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?al_applink_data=%7B%22target_url%22%3A%22http%3A%5C%2F%5C%2Fitunes.apple.com%5C%2Fapp%5C%2Fid880047117%22%2C%22extras%22%3A%7B%22fb_app_id%22%3A2020399148181142%7D%2C%22referer_app_link%22%3A%7B%22url%22%3A%22fb%3A%5C%2F%5C%2F%5C%2F%3Fapp_id%3D2020399148181142%22%2C%22app_name%22%3A%22Facebook%22%7D%2C%22acs_token%22%3A%22debuggingtoken%22%2C%22test_deeplink%22%3A1%7D"];
+    NSDictionary *expected = @{ };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLSchemeWithMetaNoCampaignIds {
+    NSURL *url = [NSURL URLWithString:@"branchtest://products/next?al_applink_data=%7B%22target_url%22%3A%22http%3A%5C%2F%5C%2Fitunes.apple.com%5C%2Fapp%5C%2Fid880047117%22%2C%22extras%22%3A%7B%22fb_app_id%22%3A2020399148181142%7D%2C%22referer_app_link%22%3A%7B%22url%22%3A%22fb%3A%5C%2F%5C%2F%5C%2F%3Fapp_id%3D2020399148181142%22%2C%22app_name%22%3A%22Facebook%22%7D%2C%22acs_token%22%3A%22debuggingtoken%22%2C%22test_deeplink%22%3A1%7D"];
+    NSDictionary *expected = @{ };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+// gbraid timestamp is a string representing time in millis
+- (void)validateGbraidTimestampInReferringParameters:(NSDictionary *)params {
+    id timestamp = params[@"gbraid_timestamp"];
+    XCTAssert(timestamp != nil);
+    XCTAssert([timestamp isKindOfClass:NSString.class]);
+}
+
+// make gbraid equality check simpler by excluding timestamp
+- (NSDictionary *)removeTimestampFromParams:(NSDictionary *)params {
+    NSMutableDictionary *paramsWithoutTimestamp = [params mutableCopy];
+    paramsWithoutTimestamp[@"gbraid_timestamp"] = nil;
+    return paramsWithoutTimestamp;
+}
+
+- (void)testReferringURLUniversalLinkWithGbraid {
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?gbraid=abcde"];
+    NSDictionary *expected = @{
+        @"gbraid": @"abcde",
+        @"is_deeplink_gbraid": @(true)
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    [self validateGbraidTimestampInReferringParameters:params];
+    NSDictionary *paramsWithoutTimestamp = [self removeTimestampFromParams:params];
+    XCTAssert([expected isEqualToDictionary:paramsWithoutTimestamp]);
+}
+
+- (void)testReferringURLSchemeWithGbraid {
+    NSURL *url = [NSURL URLWithString:@"branchtest://?gbraid=abcde"];
+    NSDictionary *expected = @{
+        @"gbraid": @"abcde",
+        @"is_deeplink_gbraid": @(true)
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    [self validateGbraidTimestampInReferringParameters:params];
+    NSDictionary *paramsWithoutTimestamp = [self removeTimestampFromParams:params];
+    XCTAssert([expected isEqualToDictionary:paramsWithoutTimestamp]);
+}
+
+- (void)testReferringURLUniversalLinkWithGclidGbraid {
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?gclid=12345&gbraid=abcde"];
+    NSDictionary *expected = @{
+        @"gclid": @"12345",
+        @"gbraid": @"abcde",
+        @"is_deeplink_gbraid": @(true)
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    [self validateGbraidTimestampInReferringParameters:params];
+    NSDictionary *paramsWithoutTimestamp = [self removeTimestampFromParams:params];
+    XCTAssert([expected isEqualToDictionary:paramsWithoutTimestamp]);
+}
+
+- (void)testReferringURLSchemeWithGclidGbraid {
+    NSURL *url = [NSURL URLWithString:@"branchtest://?gclid=12345&gbraid=abcde"];
+    NSDictionary *expected = @{
+        @"gclid": @"12345",
+        @"gbraid": @"abcde",
+        @"is_deeplink_gbraid": @(true)
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    [self validateGbraidTimestampInReferringParameters:params];
+    NSDictionary *paramsWithoutTimestamp = [self removeTimestampFromParams:params];
+    XCTAssert([expected isEqualToDictionary:paramsWithoutTimestamp]);
+}
+
+- (void)testGbraidDataMigration {
+    // Manipulates the global BNCPreferenceHelper.
+    // This is not safe for concurrent unit tests, so only the happy path is tested.
+    [self clearCurrentQueryParameters];
+    [self addOldGbraidData];
+    
+    NSDictionary *expected = @{
+        @"gbraid": @"abcde",
+        @"is_deeplink_gbraid": @(false)
+    };
+    
+    BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    [self validateGbraidTimestampInReferringParameters:params];
+    NSDictionary *paramsWithoutTimestamp = [self removeTimestampFromParams:params];
+    XCTAssert([expected isEqualToDictionary:paramsWithoutTimestamp]);
+    
+    [self verifyOldGbraidDataIsCleared];
+}
+
+- (void)clearCurrentQueryParameters {
+    [BNCPreferenceHelper sharedInstance].referringURLQueryParameters = nil;
+}
+
+- (void)addOldGbraidData {
+    [BNCPreferenceHelper sharedInstance].referrerGBRAID = @"abcde";
+    [BNCPreferenceHelper sharedInstance].referrerGBRAIDValidityWindow = 2592000;
+    [BNCPreferenceHelper sharedInstance].referrerGBRAIDInitDate = [NSDate date];
+}
+
+- (void)verifyOldGbraidDataIsCleared {
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].referrerGBRAID);
+    XCTAssert([BNCPreferenceHelper sharedInstance].referrerGBRAIDValidityWindow == 0);
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].referrerGBRAIDInitDate);
 }
 
 @end

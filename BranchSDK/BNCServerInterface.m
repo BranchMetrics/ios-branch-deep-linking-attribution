@@ -460,7 +460,7 @@
     }
     
     BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
-    NSDictionary *urlQueryParams = [utility getURLQueryParamsForRequest:self.requestEndpoint];
+    NSDictionary *urlQueryParams = [utility referringURLQueryParamsForEndpoint:self.requestEndpoint];
     [fullParamDict bnc_safeAddEntriesFromDictionary:urlQueryParams];
     
     if ([self.requestEndpoint containsString:@"/v1/open"]) {
