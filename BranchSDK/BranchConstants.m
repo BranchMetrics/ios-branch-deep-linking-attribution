@@ -79,6 +79,7 @@ NSString * const BRANCH_REQUEST_KEY_REFERRER_GBRAID = @"gbraid";
 NSString * const BRANCH_REQUEST_KEY_REFERRER_GBRAID_TIMESTAMP = @"gbraid_timestamp";
 NSString * const BRANCH_REQUEST_KEY_IS_DEEPLINK_GBRAID = @"is_deeplink_gbraid";
 NSString * const BRANCH_REQUEST_KEY_GCLID = @"gclid";
+NSString * const BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS = @"meta_campaign_ids";
 NSString * const BRANCH_URL_QUERY_PARAMETERS_NAME_KEY = @"name";
 NSString * const BRANCH_URL_QUERY_PARAMETERS_VALUE_KEY = @"value";
 NSString * const BRANCH_URL_QUERY_PARAMETERS_TIMESTAMP_KEY = @"timestamp";

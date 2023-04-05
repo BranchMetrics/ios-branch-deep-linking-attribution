@@ -13,11 +13,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BNCReferringURLUtility : NSObject
 
-//Parses the referring URL query parameters from a URL
+// Parses the referring URL query parameters from a URL
 - (void)parseReferringURL:(NSURL *)url;
 
-//Based on the request endpoint, get the required URL query params to attach.
-- (NSDictionary *)getURLQueryParamsForRequest:(NSString *)endpoint;
+// Based on the request endpoint, get the required URL query params to attach.
+- (NSDictionary *)referringURLQueryParamsForEndpoint:(NSString *)endpoint;
 
 @end
 
