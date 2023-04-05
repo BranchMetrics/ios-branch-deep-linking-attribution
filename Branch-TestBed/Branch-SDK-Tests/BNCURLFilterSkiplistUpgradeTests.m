@@ -1,5 +1,5 @@
 //
-//  BNCURLFilterTests2.m
+//  BNCURLFilterSkiplistUpgradeTests.m
 //  Branch-SDK-Tests
 //
 //  Created by Ernest Cho on 4/4/23.
@@ -17,11 +17,11 @@
 @property (assign, nonatomic) NSInteger listVersion;
 @end
 
-@interface BNCURLFilterTests2 : XCTestCase
+@interface BNCURLFilterSkiplistUpgradeTests : XCTestCase
 
 @end
 
-@implementation BNCURLFilterTests2
+@implementation BNCURLFilterSkiplistUpgradeTests
 
 - (void)setUp {
     
