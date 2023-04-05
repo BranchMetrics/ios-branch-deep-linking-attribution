@@ -157,8 +157,6 @@
         NSLog(@"URL: %@.", url);
         NSLog(@"Body: %@.", parameters);
         
-        expectedRequest[@"gbraid_timestamp"] = parameters[@"gbraid_timestamp"];
-
         if ([url containsString:@"branch.io/v2/event/standard"]) {
             XCTAssertEqualObjects(expectedRequest, parameters);
             [expectation fulfill];
@@ -207,8 +205,6 @@
         NSLog(@"2");
         NSLog(@"URL: %@.", url);
         NSLog(@"Body: %@.", parameters);
-
-        expectedRequest[@"gbraid_timestamp"] = parameters[@"gbraid_timestamp"];
 
         if ([url containsString:@"branch.io/v2/event/standard"]) {
             XCTAssertEqualObjects(expectedRequest, parameters);

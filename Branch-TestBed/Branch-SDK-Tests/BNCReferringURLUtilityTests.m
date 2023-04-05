@@ -29,6 +29,14 @@
 static NSString *openEndpoint = @"/v1/open";
 static NSString *eventEndpoint = @"/v2/event";
 
++ (void)tearDown {
+    // clear test data from global storage
+    [BNCPreferenceHelper sharedInstance].referringURLQueryParameters = nil;
+    [BNCPreferenceHelper sharedInstance].referrerGBRAID = nil;
+    [BNCPreferenceHelper sharedInstance].referrerGBRAIDValidityWindow = 0;
+    [BNCPreferenceHelper sharedInstance].referrerGBRAIDInitDate = nil;
+}
+
 // workaround for BNCPreferenceHelper being persistent across tests and not currently mockable
 - (BNCReferringURLUtility *)referringUtilityForTests {
     BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
@@ -299,17 +307,18 @@ static NSString *eventEndpoint = @"/v2/event";
     XCTAssert([expected isEqualToDictionary:params]);
 }
 
-- (void)testReferringURLPreservesNonZeroValidityWindow {
+- (void)testReferringURLPreservesNonZeroValidityWindowForGbraid {
     NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?gbraid=12345"];
 
     BNCReferringURLUtility *utility = [self referringUtilityForTests];
     
     // pretend this object was loaded from disk
+    // this simulates setting a custom non-zero validity window, only supported for gbraid
     BNCUrlQueryParameter *existingParam = [BNCUrlQueryParameter new];
     existingParam.name = @"gbraid";
     existingParam.value = @"";
     existingParam.timestamp = [NSDate date];
-    existingParam.validityWindow = 5;
+    existingParam.validityWindow = 5; // not the default gbraid window
     utility.urlQueryParameters[@"gbraid"] = existingParam;
     
     [utility parseReferringURL:url];
@@ -318,12 +327,13 @@ static NSString *eventEndpoint = @"/v2/event";
     XCTAssert(utility.urlQueryParameters[@"gbraid"].validityWindow == 5);
 }
 
-- (void)testReferringURLOverwritesZeroValidityWindow {
+- (void)testReferringURLOverwritesZeroValidityWindowForGbraid {
     NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?gbraid=12345"];
 
     BNCReferringURLUtility *utility = [self referringUtilityForTests];
     
     // pretend this object was loaded from disk
+    // for gbraid, or any param, we overwrite the 0 validity windows with the default
     BNCUrlQueryParameter *existingParam = [BNCUrlQueryParameter new];
     existingParam.name = @"gbraid";
     existingParam.value = @"";
