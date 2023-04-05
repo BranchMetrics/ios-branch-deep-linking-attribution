@@ -135,8 +135,6 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
 "
 {
     \"name\": \"PURCHASE\",
-    \"gbraid\": \"gbraid456\",
-    \"gclid\": \"gclid123\",
     \"metadata\" : {
         \"skan_time_window\": \"5184000.000000\"
     },

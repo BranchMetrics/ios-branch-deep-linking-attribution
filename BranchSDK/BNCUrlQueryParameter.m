@@ -10,6 +10,20 @@
 
 @implementation BNCUrlQueryParameter
 
+- (BOOL)isWithinValidityWindow {
+    if (self.validityWindow == 0) {
+        return YES;
+    }
+    
+    NSDate *expirationDate = [self.timestamp dateByAddingTimeInterval:self.validityWindow];
+    NSDate *now = [NSDate date];
+    if ([now compare:expirationDate] == NSOrderedAscending) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
 - (NSString *)description {
     return [NSString stringWithFormat:@"<BNCUrlQueryParameter name=%@, value=%@, timestamp=%@, isDeepLink=%d, validityWindow=%f>",
             self.name, self.value, self.timestamp, self.isDeepLink, self.validityWindow];
@@ -19,7 +33,7 @@
     if (![object isKindOfClass:[self class]]) {
         return NO;
     }
-    
+
     BNCUrlQueryParameter *other = (BNCUrlQueryParameter *)object;
 
     return [self.name isEqualToString:other.name] &&

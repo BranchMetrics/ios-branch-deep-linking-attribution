@@ -10,99 +10,142 @@
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
 #import "BNCUrlQueryParameter.h"
-#import "NSMutableDictionary+Branch.h"
 #import "BNCLog.h"
 
 @interface BNCReferringURLUtility()
-
 @property (strong, readwrite, nonatomic) NSMutableDictionary<NSString *, BNCUrlQueryParameter *> *urlQueryParameters;
-
+@property (strong, readwrite, nonatomic) BNCPreferenceHelper *preferenceHelper;
 @end
 
 @implementation BNCReferringURLUtility
 
 - (instancetype)init {
     self = [super init];
-
-    if (self) {        
-        self.urlQueryParameters = [self deserializeFromJson:[BNCPreferenceHelper sharedInstance].referringURLQueryParameters];
+    if (self) {
+        self.preferenceHelper = [BNCPreferenceHelper sharedInstance];
+        self.urlQueryParameters = [self deserializeFromJson:self.preferenceHelper.referringURLQueryParameters];
         [self checkForAndMigrateOldGbraid];
     }
-    
     return self;
 }
 
 - (void)parseReferringURL:(NSURL *)url {
-    
     NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
-    for(NSURLQueryItem *item in components.queryItems){
-        
+    for  (NSURLQueryItem *item in components.queryItems) {
         if ([self isSupportedQueryParameter:item.name]) {
-            BNCUrlQueryParameter *param = [self findUrlQueryParam:item.name];
-            param.value = item.value;
-            param.timestamp = [NSDate date];
-            param.isDeepLink = YES;
-
-            //If there is no validity window, set to default.
-            if (param.validityWindow == 0) {
-                param.validityWindow = [self defaultValidityWindowForParam:item.name];
-            }
-            
-            [self.urlQueryParameters setValue:param forKey:item.name];
+            [self processQueryParameter:item];
+        }
+        
+        /*
+         * Meta places their AEM value in an url encoded json.
+         * `al_applink_data` is the query parameter
+         * `campaign_ids` is the json field
+         * we map this value to `meta_campaign_ids`
+         */
+        if ([self isMetaQueryParameter:item.name]) {
+            [self processMetaQueryParameter:item];
         }
     }
-    
-    [BNCPreferenceHelper sharedInstance].referringURLQueryParameters = [self serializeToJson:self.urlQueryParameters];
+
+    self.preferenceHelper.referringURLQueryParameters = [self serializeToJson:self.urlQueryParameters];
 }
 
-- (NSDictionary *)getURLQueryParamsForRequest:(NSString *)endpoint {
-    NSMutableDictionary *returnedParams = [NSMutableDictionary new];
+- (void)processQueryParameter:(NSURLQueryItem *)item {
+    NSString *name = [item.name lowercaseString];
+    
+    BNCUrlQueryParameter *param = [self findUrlQueryParam:name];
+    param.value = item.value;
+    param.timestamp = [NSDate date];
+    param.isDeepLink = YES;
 
-    NSString *gclid = [self addGclidValueFor:endpoint];
-    if (gclid) {
-        returnedParams[BRANCH_REQUEST_KEY_GCLID] = gclid;
+    // If there is no validity window, set to default.
+    if (param.validityWindow == 0) {
+        param.validityWindow = [self defaultValidityWindowForParam:name];
     }
     
-    NSDictionary *gbraid = [self addGbraidValuesFor:endpoint];
-    if (gbraid) {
-        [returnedParams bnc_safeAddEntriesFromDictionary:gbraid];
-    }
-    
-    return returnedParams;
+    [self.urlQueryParameters setValue:param forKey:name];
 }
 
-- (NSString *)addGclidValueFor:(NSString *)endpoint {
+- (void)processMetaQueryParameter:(NSURLQueryItem *)item {
+    NSString *campaignIDs = [self metaCampaignIDsFromDictionary:[self dictionaryFromEncodedJsonString:item.value]];
+    if (campaignIDs) {
+        BNCUrlQueryParameter *param = [self findUrlQueryParam:BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS];
+        param.value = campaignIDs;
+        param.timestamp = [NSDate date];
+        param.isDeepLink = YES;
+        param.validityWindow = [self defaultValidityWindowForParam:BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS];
+        [self.urlQueryParameters setValue:param forKey:BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS];
+    }
+}
+
+- (NSString *)metaCampaignIDsFromDictionary:(NSDictionary *)json {
+    NSString *campaignIDs = nil;
+    id value = [json objectForKey:@"campaign_ids"];
+    if ([value isKindOfClass:NSString.class]) {
+        campaignIDs = (NSString *)value;
+    }
+    return campaignIDs;
+}
+
+- (NSDictionary *)dictionaryFromEncodedJsonString:(NSString *)encodedJsonString {
+    NSString *jsonString = [encodedJsonString stringByRemovingPercentEncoding];
+    NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+    
+    if (jsonData) {
+        NSError *error;
+        NSDictionary *json = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
+        if (!error) {
+            return json;
+        }
+    }
+    return nil;
+}
+
+- (NSDictionary *)referringURLQueryParamsForEndpoint:(NSString *)endpoint {
+    NSMutableDictionary *params = [NSMutableDictionary new];
+        
+    params[BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS] = [self metaCampaignIDsForEndpoint:endpoint];
+    params[BRANCH_REQUEST_KEY_GCLID] = [self gclidValueForEndpoint:endpoint];
+    [params addEntriesFromDictionary:[self gbraidValuesForEndpoint:endpoint]];
+    
+    return params;
+}
+
+- (NSString *)metaCampaignIDsForEndpoint:(NSString *)endpoint {
+    if (([endpoint containsString:@"/v2/event"]) || ([endpoint containsString:@"/v1/open"])) {
+        BNCUrlQueryParameter *metaCampaignIDs = self.urlQueryParameters[BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS];
+        if (metaCampaignIDs.value != nil && [metaCampaignIDs isWithinValidityWindow]) {
+            return self.urlQueryParameters[BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS].value;
+        }
+    }
+    return nil;
+}
+
+- (NSString *)gclidValueForEndpoint:(NSString *)endpoint {
     if (([endpoint containsString:@"/v2/event"]) || ([endpoint containsString:@"/v1/open"])) {
         return self.urlQueryParameters[BRANCH_REQUEST_KEY_GCLID].value;
     }
     return nil;
 }
 
-- (NSDictionary *)addGbraidValuesFor:(NSString *)endpoint {
+- (NSDictionary *)gbraidValuesForEndpoint:(NSString *)endpoint {
     NSMutableDictionary *returnedParams = [NSMutableDictionary new];
 
     if (([endpoint containsString:@"/v2/event"]) || ([endpoint containsString:@"/v1/open"])) {
 
         BNCUrlQueryParameter *gbraid = self.urlQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID];
+        if (gbraid.value != nil && [gbraid isWithinValidityWindow]) {
+            
+            returnedParams[BRANCH_REQUEST_KEY_REFERRER_GBRAID] = gbraid.value;
+            
+            NSNumber *timestampInMilliSec = @([gbraid.timestamp timeIntervalSince1970] * 1000.0);
+            returnedParams[BRANCH_REQUEST_KEY_REFERRER_GBRAID_TIMESTAMP] = timestampInMilliSec.stringValue;
+            
+            if ([endpoint containsString:@"/v1/open"]) {
+                returnedParams[BRANCH_REQUEST_KEY_IS_DEEPLINK_GBRAID] = @(gbraid.isDeepLink);
+                gbraid.isDeepLink = NO;
 
-        if (gbraid.value != nil) {
-            // Check if its valid or expired
-            NSDate *expirationDate = [gbraid.timestamp dateByAddingTimeInterval:gbraid.validityWindow];
-            NSDate *now = [NSDate date];
-            if ([now compare:expirationDate] == NSOrderedAscending) {
-                returnedParams[BRANCH_REQUEST_KEY_REFERRER_GBRAID] = gbraid.value;
-
-                //TODO: Check what our server expects gbraid_timestamp as
-                NSNumber *timestampInMilliSec = @([gbraid.timestamp timeIntervalSince1970] * 1000.0);
-                returnedParams[BRANCH_REQUEST_KEY_REFERRER_GBRAID_TIMESTAMP] = timestampInMilliSec.stringValue;
-                
-                if ([endpoint containsString:@"/v1/open"]) {
-                    returnedParams[BRANCH_REQUEST_KEY_IS_DEEPLINK_GBRAID] = @(gbraid.isDeepLink);
-                    gbraid.isDeepLink = NO;
-
-                    //Forcing write to disk
-                    [BNCPreferenceHelper sharedInstance].referringURLQueryParameters = [self serializeToJson:self.urlQueryParameters];
-                }
+                self.preferenceHelper.referringURLQueryParameters = [self serializeToJson:self.urlQueryParameters];
             }
         }
     }
@@ -110,11 +153,19 @@
     return returnedParams;
 }
 
-// Helper Methods
 - (BOOL)isSupportedQueryParameter:(NSString *)param {
-    NSString *lowercased = [param lowercaseString];
     NSArray *validURLQueryParameters = @[BRANCH_REQUEST_KEY_REFERRER_GBRAID, BRANCH_REQUEST_KEY_GCLID];
-    if ([validURLQueryParameters containsObject:lowercased]) {
+    return [self isSupportedQueryParameter:param validParams:validURLQueryParameters];
+}
+
+- (BOOL)isMetaQueryParameter:(NSString *)param {
+    NSArray *validURLQueryParameters = @[@"al_applink_data"];
+    return [self isSupportedQueryParameter:param validParams:validURLQueryParameters];
+}
+
+- (BOOL)isSupportedQueryParameter:(NSString *)param validParams:(NSArray *)validParams {
+    NSString *lowercased = [param lowercaseString];
+    if ([validParams containsObject:lowercased]) {
         return YES;
     } else {
         return NO;
@@ -131,11 +182,13 @@
     }
 }
 
-- (NSTimeInterval)defaultValidityWindowForParam:(NSString *)paramName {
-    if ([paramName isEqualToString:BRANCH_REQUEST_KEY_REFERRER_GBRAID]) {
-        return 2592000; // 30 days = 2,592,000 seconds
+- (NSTimeInterval)defaultValidityWindowForParam:(NSString *)param {
+    if ([param isEqualToString:BRANCH_REQUEST_KEY_REFERRER_GBRAID]) {
+        return 30 * 24 * 60 * 60; // 30 days
+    } else if ([param isEqualToString:BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS]) {
+        return 7 * 24 * 60 * 60; // 7 days
     } else {
-        return 0; //Default, means indefinite.
+        return 0; // default, means indefinite.
     }
 }
 
@@ -185,32 +238,31 @@
     return result;
 }
 
-//Turns an old gbraid into a new BNCUrlQueryParameter and saves it for use, then clears the old gbraid.
--(void)checkForAndMigrateOldGbraid {
+- (void)checkForAndMigrateOldGbraid {
         
-    if (self.urlQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID].value == nil) {
-        if ([BNCPreferenceHelper sharedInstance].referrerGBRAID) {
-            NSString *existingGbraidValue = [BNCPreferenceHelper sharedInstance].referrerGBRAID;
-            NSTimeInterval existingGbraidValidityWindow = [BNCPreferenceHelper sharedInstance].referrerGBRAIDValidityWindow;
-            NSDate *existingGbraidInitDate = [BNCPreferenceHelper sharedInstance].referrerGBRAIDInitDate;
-            
-            BNCUrlQueryParameter *gbraid = [BNCUrlQueryParameter new];
-            gbraid.name = BRANCH_REQUEST_KEY_REFERRER_GBRAID;
-            gbraid.value = existingGbraidValue;
-            gbraid.timestamp = existingGbraidInitDate;
-            gbraid.validityWindow = existingGbraidValidityWindow;
-            gbraid.isDeepLink = NO;
-            
-            [self.urlQueryParameters setValue:gbraid forKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID];
-            
-            [BNCPreferenceHelper sharedInstance].referringURLQueryParameters = [self serializeToJson:self.urlQueryParameters];
-                
-            [BNCPreferenceHelper sharedInstance].referrerGBRAID = nil;
-            [BNCPreferenceHelper sharedInstance].referrerGBRAIDValidityWindow = 0;
-            [BNCPreferenceHelper sharedInstance].referrerGBRAIDInitDate = nil;
-            
-            BNCLogDebug(@"Updated old Gbraid to new BNCUrlQueryParameter");
-        }
+    if (self.preferenceHelper.referrerGBRAID != nil &&
+        self.urlQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID].value == nil) {
+        
+        NSString *existingGbraidValue = self.preferenceHelper.referrerGBRAID;
+        NSTimeInterval existingGbraidValidityWindow = self.preferenceHelper.referrerGBRAIDValidityWindow;
+        NSDate *existingGbraidInitDate = self.preferenceHelper.referrerGBRAIDInitDate;
+        
+        BNCUrlQueryParameter *gbraid = [BNCUrlQueryParameter new];
+        gbraid.name = BRANCH_REQUEST_KEY_REFERRER_GBRAID;
+        gbraid.value = existingGbraidValue;
+        gbraid.timestamp = existingGbraidInitDate;
+        gbraid.validityWindow = existingGbraidValidityWindow;
+        gbraid.isDeepLink = NO;
+        
+        [self.urlQueryParameters setValue:gbraid forKey:BRANCH_REQUEST_KEY_REFERRER_GBRAID];
+        self.preferenceHelper.referringURLQueryParameters = [self serializeToJson:self.urlQueryParameters];
+
+        // delete old gbraid entry
+        self.preferenceHelper.referrerGBRAID = nil;
+        self.preferenceHelper.referrerGBRAIDValidityWindow = 0;
+        self.preferenceHelper.referrerGBRAIDInitDate = nil;
+        
+        BNCLogDebug(@"Updated old Gbraid to new BNCUrlQueryParameter");
     }
 }
 
