@@ -159,7 +159,7 @@ jobs:
           echo "Current version is $(cat fastlane/.version)."
           echo "version=$(cat fastlane/.version)" >> $GITHUB_OUTPUT
       - name: Create GitHub Release
-        uses: actions/github-script@v4
+        uses: actions/github-script@v6
         with:
           script: |
             const createRelease = require('./.github/custom-scripts/create-release');
@@ -173,7 +173,7 @@ jobs:
               version: tagName,
             });
       - name: Upload Release Assets
-        uses: actions/github-script@v4
+        uses: actions/github-script@v6
         with:
           script: |
             const uploadAsset = require('./.github/custom-scripts/upload-asset');
@@ -243,9 +243,9 @@ jobs:
               assetName: 'checksum',
               path: 'release_framework/checksum.txt',
             });
+
       - name: Trigger workflow in iOS Branch SDK spm repo for updating code and creating release
         run: |
             curl -X POST https://api.github.com/repos/BranchMetrics/ios-branch-sdk-spm/dispatches -H 'Accept: application/vnd.github.everest-preview+json' -u "branchlet:${{ secrets.BRANCHLET_ACCESS_TOKEN_PUBLIC}}" --data '{"event_type": "Trigger Workflow", "client_payload":
                    { "tag":"${{steps.get-version.outputs.version}}"}}'
-    
-  
+ 

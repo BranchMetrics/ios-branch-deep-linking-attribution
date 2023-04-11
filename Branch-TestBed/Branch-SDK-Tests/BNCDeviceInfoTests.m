@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "BNCDeviceInfo.h"
+#import "BNCUserAgentCollector.h"
 
 @interface BNCDeviceInfoTests : XCTestCase
 @property (nonatomic, strong, readwrite) BNCDeviceInfo *deviceInfo;
@@ -16,16 +17,85 @@
 @implementation BNCDeviceInfoTests
 
 - (void)setUp {
+    [self workaroundUserAgentLazyLoad];
     self.deviceInfo = [BNCDeviceInfo new];
+}
+
+// user agent needs to be loaded
+- (void)workaroundUserAgentLazyLoad {
+    __block XCTestExpectation *expectation = [self expectationWithDescription:@"setup"];
+    [[BNCUserAgentCollector instance] loadUserAgentWithCompletion:^(NSString * _Nullable userAgent) {
+        [expectation fulfill];
+    }];
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError * _Nullable error) { }];
 }
 
 - (void)tearDown {
 
 }
 
-- (void)testAppVersion {
-    // checks test app version
-    XCTAssert([@"1.1" isEqualToString:self.deviceInfo.applicationVersion]);
+- (void)testHardwareId {
+    XCTAssertNotNil(self.deviceInfo.hardwareId);
+    
+    // verify hardwareId is a valid UUID
+    NSUUID *hardwareId = [[NSUUID alloc] initWithUUIDString:self.deviceInfo.hardwareId];
+    XCTAssertNotNil(hardwareId);
+}
+
+- (void)testHardwareIdType {
+    // without ATT, this is the IDFV. Branch servers expect it as vendor_id
+    XCTAssert([self.deviceInfo.hardwareIdType isEqualToString:@"vendor_id"]);
+}
+
+- (void)testIsRealHardwareId {
+    XCTAssert(self.deviceInfo.isRealHardwareId);
+}
+
+- (void)testAdvertiserId {
+    // the testbed does not show the ATT prompt.
+    XCTAssertNil(self.deviceInfo.advertiserId);
+}
+
+- (void)testVendorId {
+    XCTAssertNotNil(self.deviceInfo.vendorId);
+    
+    // verify vendorId is a valid UUID
+    NSUUID *vendorId = [[NSUUID alloc] initWithUUIDString:self.deviceInfo.vendorId];
+    XCTAssertNotNil(vendorId);
+}
+
+- (void)testAnonId {
+    XCTAssertNotNil(self.deviceInfo.anonId);
+    
+    // verify anonId is a valid UUID
+    NSUUID *anonId = [[NSUUID alloc] initWithUUIDString:self.deviceInfo.anonId];
+    XCTAssertNotNil(anonId);
+}
+
+- (void)testOptedInStatus {
+    // the testbed does not show the ATT prompt.
+    XCTAssert([self.deviceInfo.optedInStatus isEqualToString:@"not_determined"]);
+}
+
+- (void)testIsFirstOptIn {
+    // the testbed does not show the ATT prompt.
+    XCTAssert(self.deviceInfo.isFirstOptIn == NO);
+}
+
+- (void)testIsAdTrackingEnabled {
+    // on iOS 14+, this is always NO
+    XCTAssert(self.deviceInfo.isAdTrackingEnabled == NO);
+}
+
+- (void)testLocalIPAddress {
+    NSString *address = [self.deviceInfo localIPAddress];
+    XCTAssertNotNil(address);
+    XCTAssert(address.length > 7);
+}
+
+- (void)testConnectionType {
+    // simulator is on wifi
+    XCTAssert([[self.deviceInfo connectionType] isEqualToString:@"wifi"]);
 }
 
 - (void)testBrandName {
@@ -42,13 +112,9 @@
     XCTAssert(x86_64 || arm64);
 }
 
-//- (void)testModelName_iPhone7 {
-//    XCTAssert([@"iPhone9,3" isEqualToString:self.deviceInfo.modelName]);
-//}
-
 - (void)testOSName {
     XCTAssertNotNil(self.deviceInfo.osName);
-    XCTAssert([self.deviceInfo.osName isEqualToString:[UIDevice currentDevice].systemName]);
+    XCTAssert([@"iOS" isEqualToString:self.deviceInfo.osName]);
 }
 
 - (void)testOSVersion {
@@ -61,6 +127,7 @@
 }
 
 - (void)testEnvironment {
+    // currently not running unit tests on extensions
     XCTAssert([@"FULL_APP" isEqualToString:self.deviceInfo.environment]);
 }
 
@@ -75,24 +142,20 @@
 }
 
 - (void)testScreenWidth {
-    XCTAssert(self.deviceInfo.screenWidth.intValue > 320);
+    XCTAssert(self.deviceInfo.screenWidth.intValue >= 320);
 }
 
 - (void)testScreenHeight {
-    XCTAssert(self.deviceInfo.screenHeight.intValue > 320);
+    XCTAssert(self.deviceInfo.screenHeight.intValue >= 320);
 }
 
 - (void)testScreenScale {
-    XCTAssert(self.deviceInfo.screenScale.intValue > 0);
+    XCTAssert(self.deviceInfo.screenScale.intValue >= 1);
 }
 
 - (void)testCarrierName_Simulator {
     XCTAssertNil(self.deviceInfo.carrierName);
 }
-
-//- (void)testCarrierName_Att {
-//    XCTAssert([@"AT&T" isEqualToString:self.deviceInfo.carrierName]);
-//}
 
 - (void)testLocale {
     NSString *locale = [NSLocale currentLocale].localeIdentifier;
@@ -113,11 +176,14 @@
 }
 
 - (void)testUserAgentString {
-    // Currently this method is a trivial pass through to the BNCUserAgentCollector singleton
-    // Eventually remove the singleton to enable easier testing
+    XCTAssert([self.deviceInfo.userAgentString containsString:@"AppleWebKit"]);
 }
 
-- (void)testPlugin {
+- (void)testApplicationVersion_TestBed {
+    XCTAssert([@"1.1" isEqualToString:self.deviceInfo.applicationVersion]);
+}
+
+- (void)testRegisterPluginNameVersion {
     XCTAssertNil(self.deviceInfo.pluginName);
     XCTAssertNil(self.deviceInfo.pluginVersion);
 
@@ -128,14 +194,6 @@
     
     XCTAssert([expectedName isEqualToString:self.deviceInfo.pluginName]);
     XCTAssert([expectedVersion isEqualToString:self.deviceInfo.pluginVersion]);
-}
-
-- (void)testLocalIPAddress {
-    NSString *address = [self.deviceInfo localIPAddress];
-    XCTAssertNotNil(address);
-    
-    // shortest ipv4 is 7
-    XCTAssert(address.length >= 7);
 }
 
 // just a sanity check on the V2 dictionary

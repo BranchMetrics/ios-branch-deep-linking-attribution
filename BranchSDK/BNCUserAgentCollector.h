@@ -1,6 +1,8 @@
 //
 //  BNCUserAgentCollector.h
-//  Branch
+//  BranchSDK
+//
+//  Utility class to query WebKit user agent
 //
 //  Created by Ernest Cho on 8/29/19.
 //  Copyright © 2019 Branch, Inc. All rights reserved.

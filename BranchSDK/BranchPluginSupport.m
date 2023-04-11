@@ -10,10 +10,7 @@
 #import "NSMutableDictionary+Branch.h"
 #import "BNCDeviceInfo.h"
 #import "BNCPreferenceHelper.h"
-
-@interface BranchPluginSupport()
-
-@end
+#import "Branch.h"
 
 @implementation BranchPluginSupport
 
@@ -26,7 +23,7 @@
     return pluginSupport;
 }
 
-
+// Provides a subset of BNCDeviceInfo.v2dictionary for Adobe Launch
 - (NSDictionary<NSString *, NSString *> *)deviceDescription {
     NSMutableDictionary<NSString *, NSString *> *dictionary = [NSMutableDictionary new];
     BNCDeviceInfo *deviceInfo = [BNCDeviceInfo getInstance];

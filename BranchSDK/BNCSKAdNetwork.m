@@ -37,7 +37,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        if (@available(iOS 16.1, *)){
+        if (@available(iOS 16.1, macCatalyst 16.1, *)){
             // For SKAN 4.0, its 60 days = 3600.0 * 24.0 * 60 seconds
             self.maxTimeSinceInstall = 3600.0 * 24.0 * 60;
         } else {
@@ -70,7 +70,7 @@
 }
 
 - (void)registerAppForAdNetworkAttribution {
-    if (@available(iOS 14.0, *)) {
+    if (@available(iOS 14.0, macCatalyst 14.0, *)) {
         if ([self shouldAttemptSKAdNetworkCallout]) {
 
             // Equivalent call [SKAdNetwork registerAppForAdNetworkAttribution];
@@ -80,7 +80,7 @@
 }
 
 - (void)updateConversionValue:(NSInteger)conversionValue {
-    if (@available(iOS 14.0, *)) {
+    if (@available(iOS 14.0, macCatalyst 14.0, *)) {
         if ([self shouldAttemptSKAdNetworkCallout]) {
             
             // Equivalent call [SKAdNetwork updateConversionValue:conversionValue];
@@ -91,7 +91,7 @@
 
 - (void)updatePostbackConversionValue:(NSInteger)conversionValue
                     completionHandler:(void (^)(NSError *error))completion {
-    if (@available(iOS 15.4, *)) {
+    if (@available(iOS 15.4, macCatalyst 15.4, *)) {
         if ([self shouldAttemptSKAdNetworkCallout]) {
             
             // Equivalent call [SKAdNetwork updatePostbackConversionValue:completionHandler:];
@@ -105,9 +105,10 @@
                           coarseValue:(NSString *)coarseValue
                            lockWindow:(BOOL)lockWindow
                     completionHandler:(void (^)(NSError *error))completion {
-    if (@available(iOS 16.1, *)) {
+    if (@available(iOS 16.1, macCatalyst 16.1, *)) {
         if ([self shouldAttemptSKAdNetworkCallout]) {
             
+            // Equivalent call [SKAdNetwork updatePostbackConversionValue:coarseValue:lockWindow:completionHandler:];
             ((id (*)(id, SEL, NSInteger, NSString *, BOOL, void (^)(NSError *error)))[self.skAdNetworkClass methodForSelector:self.skAdNetworkUpdatePostbackConversionValueCoarseValueLockWindow])(self.skAdNetworkClass, self.skAdNetworkUpdatePostbackConversionValueCoarseValueLockWindow, fineValue, coarseValue, lockWindow, completion);
         }
     }

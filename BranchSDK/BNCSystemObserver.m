@@ -1,12 +1,11 @@
 //
 //  BNCSystemObserver.m
-//  Branch-SDK
+//  BranchSDK
 //
 //  Created by Alex Austin on 6/5/14.
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-#import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BNCLog.h"
 #if __has_feature(modules)
@@ -29,31 +28,6 @@
 
 @implementation BNCSystemObserver
 
-+ (NSString *)getUniqueHardwareId:(BOOL *)isReal
-                          isDebug:(BOOL)debug
-                          andType:(NSString *__autoreleasing*)type {
-    NSString *uid = nil;
-    *isReal = YES;
-
-    if (!debug) {
-        uid = [self getAdId];
-        *type = @"idfa";
-    }
-
-    if (!uid && NSClassFromString(@"UIDevice") && !debug) {
-        uid = [[UIDevice currentDevice].identifierForVendor UUIDString];
-        *type = @"vendor_id";
-    }
-
-    if (!uid) {
-        uid = [[NSUUID UUID] UUIDString];
-        *type = @"random";
-        *isReal = NO;
-    }
-
-    return uid;
-}
-
 + (NSString *)appleAttributionToken {
     // token is not available on simulator
     if ([self isSimulator]) {
@@ -63,6 +37,7 @@
     __block NSString *token = nil;
     
 #if !TARGET_OS_TV
+#if !TARGET_OS_MACCATALYST
     if (@available(iOS 14.3, *)) {
 
         // We are getting reports on iOS 14.5 that this API can hang, adding a short timeout for now.
@@ -84,11 +59,12 @@
         }
     }
 #endif
+#endif
     
     return token;
 }
 
-+ (NSString *)getAdId {
++ (NSString *)advertiserIdentifier {
     #ifdef BRANCH_EXCLUDE_IDFA_CODE
     return nil;
     
@@ -150,7 +126,7 @@
 }
 
 // this value is deprecated on iOS 14+
-+ (BOOL)adTrackingSafe {
++ (BOOL)adTrackingEnabled {
     #ifdef BRANCH_EXCLUDE_IDFA_CODE
     return NO;
     
@@ -167,7 +143,7 @@
     #endif
 }
 
-+ (NSString *)getDefaultUriScheme {
++ (NSString *)defaultURIScheme {
     NSArray *urlTypes = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"];
 
     for (NSDictionary *urlType in urlTypes) {
@@ -187,15 +163,11 @@
     return nil;
 }
 
-+ (NSString *)getAppVersion {
-    return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
-}
-
-+ (NSString *)getBundleID {
++ (NSString *)bundleIdentifier {
     return [[NSBundle mainBundle] bundleIdentifier];
 }
 
-+ (NSString *)getTeamIdentifier {
++ (NSString *)teamIdentifier {
     NSString *teamWithDot = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"AppIdentifierPrefix"];
     if (teamWithDot.length) {
         return [teamWithDot substringToIndex:([teamWithDot length] - 1)];
@@ -203,11 +175,43 @@
     return nil;
 }
 
-+ (NSString *)getBrand {
++ (BOOL)isAppClip {
+    // App Clips have a zero'd out IDFV
+    if ([@"00000000-0000-0000-0000-000000000000" isEqualToString:[[UIDevice currentDevice].identifierForVendor UUIDString]]) {
+        return YES;
+    }
+    return NO;
+}
+
++ (NSString *)applicationVersion {
+    NSString *version = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
+    if (!version.length) {
+        version = [NSBundle mainBundle].infoDictionary[@"CFBundleVersionKey"];
+    }
+    return version;
+}
+
++ (NSString *)environment {
+    NSString *result = @"FULL_APP";
+    
+    if ([self isAppClip]) {
+        result = @"APP_CLIP";
+    }
+    
+    // iMessage has an extension id set in the Bundle
+    NSString *extensionType = [NSBundle mainBundle].infoDictionary[@"NSExtension"][@"NSExtensionPointIdentifier"];
+    if ([extensionType isEqualToString:@"com.apple.identitylookup.message-filter"]) {
+        result = @"IMESSAGE_APP";
+    }
+    
+    return result;
+}
+
++ (NSString *)brand {
     return @"Apple";
 }
 
-+ (NSString *)getModel {
++ (NSString *)model {
     struct utsname systemInfo;
     uname(&systemInfo);
 
@@ -222,7 +226,7 @@
     #endif
 }
 
-+ (NSString *)getOS {
++ (NSString *)osName {
     #if TARGET_OS_TV
     return @"tv_OS";
     #else
@@ -230,23 +234,27 @@
     #endif
 }
 
-+ (NSString *)getOSVersion {
++ (NSString *)osVersion {
     UIDevice *device = [UIDevice currentDevice];
     return [device systemVersion];
 }
 
-+ (NSNumber *)getScreenWidth {
++ (NSNumber *)screenWidth {
     UIScreen *mainScreen = [UIScreen mainScreen];
     CGFloat scaleFactor = mainScreen.scale;
     CGFloat width = mainScreen.bounds.size.width * scaleFactor;
     return [NSNumber numberWithInteger:(NSInteger)width];
 }
 
-+ (NSNumber *)getScreenHeight {
++ (NSNumber *)screenHeight {
     UIScreen *mainScreen = [UIScreen mainScreen];
     CGFloat scaleFactor = mainScreen.scale;
     CGFloat height = mainScreen.bounds.size.height * scaleFactor;
     return [NSNumber numberWithInteger:(NSInteger)height];
+}
+
++ (NSNumber *)screenScale {
+    return @([UIScreen mainScreen].scale);
 }
 
 @end

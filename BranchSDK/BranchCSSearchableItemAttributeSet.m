@@ -56,7 +56,7 @@
 }
 
 - (void)indexWithCallback:(callbackWithUrlAndSpotlightIdentifier)callback {
-    if ([BNCSystemObserver getOSVersion].integerValue < 9) {
+    if ([BNCSystemObserver osVersion].integerValue < 9) {
         if (callback) {
             callback(nil, nil, [NSError branchErrorWithCode:BNCSpotlightNotAvailableError]);
         }
