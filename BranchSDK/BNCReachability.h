@@ -1,6 +1,8 @@
 //
 //  BNCReachability.h
-//  Branch
+//  BranchSDK
+//
+//  Utility class to query device connectivity
 //
 //  Created by Ernest Cho on 11/18/19.
 //  Copyright © 2019 Branch, Inc. All rights reserved.
@@ -10,7 +12,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-// Handles network connectivity and type information
 @interface BNCReachability : NSObject
 
 + (BNCReachability *)shared;

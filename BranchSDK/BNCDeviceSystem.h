@@ -1,6 +1,8 @@
 //
 //  BNCDeviceSystem.h
-//  Branch
+//  BranchSDK
+//
+//  Utility class to query build, machine and cpu info
 //
 //  Created by Ernest Cho on 11/14/19.
 //  Copyright © 2019 Branch, Inc. All rights reserved.

@@ -1,6 +1,10 @@
 //
 //  BNCLocale.h
-//  Branch
+//  BranchSDK
+//
+//  Utility class to query country and language
+//
+//  Hides details of gathering country and language on iOS 8 and iOS 9. Remove once iOS 10 is the min version.
 //
 //  Created by Ernest Cho on 11/18/19.
 //  Copyright © 2019 Branch, Inc. All rights reserved.
@@ -10,8 +14,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-// Hides details of gathering country and language on iOS 8 and iOS 9
-// This can be removed once iOS 10 becomes the min version
 @interface BNCLocale : NSObject
 
 - (nullable NSString *)country;

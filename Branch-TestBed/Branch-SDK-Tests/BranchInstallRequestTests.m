@@ -52,22 +52,16 @@
     preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
     
     id systemObserverMock = OCMClassMock([BNCSystemObserver class]);
-    [[[[systemObserverMock stub]
-        ignoringNonObjectArgs]
-        andReturn:HARDWARE_ID]
-            getUniqueHardwareId:0
-            isDebug:YES
-            andType:nil];
-    [[[systemObserverMock stub] andReturnValue:AD_TRACKING_SAFE] adTrackingSafe];
-    [[[systemObserverMock stub] andReturn:BUNDLE_ID] getBundleID];
-    [[[systemObserverMock stub] andReturn:APP_VERSION] getAppVersion];
-    [[[systemObserverMock stub] andReturn:OS] getOS];
-    [[[systemObserverMock stub] andReturn:OS_VERSION] getOSVersion];
-    [[[systemObserverMock stub] andReturn:URI_SCHEME] getDefaultUriScheme];
-    [[[systemObserverMock stub] andReturn:BRAND] getBrand];
-    [[[systemObserverMock stub] andReturn:MODEL] getModel];
-    [[[systemObserverMock stub] andReturn:SCREEN_WIDTH] getScreenWidth];
-    [[[systemObserverMock stub] andReturn:SCREEN_HEIGHT] getScreenHeight];
+    [[[systemObserverMock stub] andReturnValue:AD_TRACKING_SAFE] adTrackingEnabled];
+    [[[systemObserverMock stub] andReturn:BUNDLE_ID] bundleIdentifier];
+    [[[systemObserverMock stub] andReturn:APP_VERSION] applicationVersion];
+    [[[systemObserverMock stub] andReturn:OS] osName];
+    [[[systemObserverMock stub] andReturn:OS_VERSION] osVersion];
+    [[[systemObserverMock stub] andReturn:URI_SCHEME] defaultURIScheme];
+    [[[systemObserverMock stub] andReturn:BRAND] brand];
+    [[[systemObserverMock stub] andReturn:MODEL] model];
+    [[[systemObserverMock stub] andReturn:SCREEN_WIDTH] screenWidth];
+    [[[systemObserverMock stub] andReturn:SCREEN_HEIGHT] screenHeight];
 
     NSDate *appDate = [NSDate date];
     [[BNCApplication currentApplication]

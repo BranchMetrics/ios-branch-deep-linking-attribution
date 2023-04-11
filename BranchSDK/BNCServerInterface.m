@@ -18,6 +18,7 @@
 #import "NSString+Branch.h"
 #import "BNCApplication.h"
 #import "BNCSKAdNetwork.h"
+#import "BNCReferringURLUtility.h"
 
 @interface BNCServerInterface ()
 @property (copy, nonatomic) NSString *requestEndpoint;
@@ -400,6 +401,7 @@
         preparedParams[@"randomized_bundle_token"] = nil;
         preparedParams[@"identity"] = nil;
         preparedParams[@"update"] = nil;
+        preparedParams[@"anon_id"] = nil;
     }
     NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:preparedParams];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
@@ -456,24 +458,10 @@
             fullParamDict[BRANCH_REQUEST_KEY_INSTRUMENTATION] = instrumentationDictionary;
         }
     }
-    // For DOWNSTREAM EVENTS v2/events, include referrer_gbraid in request if available
-    if([self.requestEndpoint containsString:@"/v2/event"] || [self.requestEndpoint containsString:@"/v1/open"]){
-        NSString *ref_gbraid = self.preferenceHelper.referrerGBRAID;
-        if ((ref_gbraid != nil) && (ref_gbraid.length > 0))  {
-            // Check if its valid or expired
-            NSTimeInterval validityWindow = self.preferenceHelper.referrerGBRAIDValidityWindow;
-            if (validityWindow) {
-                NSDate *initDate = self.preferenceHelper.referrerGBRAIDInitDate ;
-                NSDate *expirationDate = [initDate dateByAddingTimeInterval:validityWindow];
-                NSDate *now = [NSDate date];
-                if ([now compare:expirationDate] == NSOrderedAscending) {
-                    fullParamDict[BRANCH_REQUEST_KEY_REFERRER_GBRAID] = ref_gbraid;
-                    long long timestampInMilliSec = (long long)([initDate timeIntervalSince1970] * 1000.0);
-                    fullParamDict[BRANCH_REQUEST_KEY_REFERRER_GBRAID_TIMESTAMP] = [NSString stringWithFormat:@"%lld", timestampInMilliSec];
-                }
-            }
-        }
-    }
+    
+    BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
+    NSDictionary *urlQueryParams = [utility referringURLQueryParamsForEndpoint:self.requestEndpoint];
+    [fullParamDict bnc_safeAddEntriesFromDictionary:urlQueryParams];
     
     if ([self.requestEndpoint containsString:@"/v1/open"]) {
         [fullParamDict bnc_safeSetObject:[BNCPreferenceHelper sharedInstance].userIdentity forKey:@"identity"];
@@ -537,6 +525,7 @@
         [self safeSetValue:deviceInfo.vendorId forKey:BRANCH_REQUEST_KEY_IOS_VENDOR_ID onDict:dict];
         // idfa is only in the hardware id field
         // [self safeSetValue:deviceInfo.advertiserId forKey:@"idfa" onDict:dict];
+        [self safeSetValue:deviceInfo.anonId forKey:@"anon_id" onDict:dict];
         
         [self safeSetValue:deviceInfo.osName forKey:BRANCH_REQUEST_KEY_OS onDict:dict];
         [self safeSetValue:deviceInfo.osVersion forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:dict];

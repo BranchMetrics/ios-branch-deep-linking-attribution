@@ -14,9 +14,8 @@ NSString * _Nonnull const BranchJsonConfigBranchKeyOption = @"branchKey";
 NSString * _Nonnull const BranchJsonConfigLiveKeyOption = @"liveKey";
 NSString * _Nonnull const BranchJsonConfigTestKeyOption = @"testKey";
 NSString * _Nonnull const BranchJsonConfigUseTestInstanceOption = @"useTestInstance";
-NSString * _Nonnull const BranchJsonConfigDelayInitToCheckForSearchAdsOption = @"delayInitToCheckForSearchAds";
-NSString * _Nonnull const BranchJsonConfigAppleSearchAdsDebugModeOption = @"appleSearchAdsDebugMode";
-NSString * _Nonnull const BranchJsonConfigDeferInitializationForJSLoadOption = @"deferInitializationForJSLoad";
+NSString * _Nonnull const BranchJsonConfigDeferInitForPluginRuntimeOption = @"deferInitForPluginRuntime";
+NSString * _Nonnull const BranchJsonConfigEnableLogging = @"enableLogging";
 NSString * _Nonnull const BranchJsonConfigEnableFacebookLinkCheck = @"enableFacebookLinkCheck";
 NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPasteboardOnInstall";
 
@@ -73,7 +72,7 @@ NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPast
 - (NSData *)configFileContents
 {
     if (!self.configFileURL) return nil;
-    BNCLog([NSString stringWithFormat:@"Loading %@", self.configFileURL.pathComponents.lastObject]);
+    BNCLogDebug([NSString stringWithFormat:@"Loading %@", self.configFileURL.pathComponents.lastObject]);
 
     NSError *error;
     NSData *data = [NSData dataWithContentsOfURL:self.configFileURL options:0 error:&error];
@@ -99,12 +98,17 @@ NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPast
       @"branch.ios",
       @"branch"
       ];
-
+    
     [filesToCheck enumerateObjectsUsingBlock:^(NSString *  _Nonnull file, NSUInteger idx, BOOL * _Nonnull stop) {
         configFileURL = [mainBundle URLForResource:file withExtension:@"json"];
         *stop = (configFileURL != nil);
     }];
-
+    
+    // Unity places the config at [[NSBundle mainBundle] bundlePath] + /Data/Raw/branch.json
+    if (!configFileURL) {
+        configFileURL = [mainBundle URLForResource:@"branch" withExtension:@"json" subdirectory:@"Data/Raw"];
+    }
+    
     if (!configFileURL) {
         BNCLogDebug(@"No branch.json in app bundle.");
         return;
@@ -125,21 +129,15 @@ NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPast
     return number.boolValue;
 }
 
-- (BOOL)delayInitToCheckForSearchAds
+- (BOOL)deferInitForPluginRuntime
 {
-    NSNumber *number = self[BranchJsonConfigDelayInitToCheckForSearchAdsOption];
+    NSNumber *number = self[BranchJsonConfigDeferInitForPluginRuntimeOption];
     return number.boolValue;
 }
 
-- (BOOL)appleSearchAdsDebugMode
+- (BOOL)enableLogging
 {
-    NSNumber *number = self[BranchJsonConfigAppleSearchAdsDebugModeOption];
-    return number.boolValue;
-}
-
-- (BOOL)deferInitializationForJSLoad
-{
-    NSNumber *number = self[BranchJsonConfigDeferInitializationForJSLoadOption];
+    NSNumber *number = self[BranchJsonConfigEnableLogging];
     return number.boolValue;
 }
 

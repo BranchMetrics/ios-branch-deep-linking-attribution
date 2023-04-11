@@ -40,7 +40,6 @@
     XCTAssert(x86_64 || arm64);
 }
 
-/* Commenting out until this can be made more robust/portable/updated/whatever.
 - (void)testCPUType_Simulator {
     // intel processor
     bool x86 = [@(7) isEqualToNumber:self.deviceSystem.cpuType];
@@ -51,12 +50,13 @@
     bool arm_sub = [@(2) isEqualToNumber:self.deviceSystem.cpuSubType];
     
     XCTAssert(x86 || arm);
-    if (x86) {
-        XCTAssert(x86_sub);
-    } else {
-        XCTAssert(arm_sub);
-    }
+
+// cpu subtype is different on cloud runners
+//    if (x86) {
+//        XCTAssert(x86_sub);
+//    } else {
+//        XCTAssert(arm_sub);
+//    }
 }
-// */
 
 @end
