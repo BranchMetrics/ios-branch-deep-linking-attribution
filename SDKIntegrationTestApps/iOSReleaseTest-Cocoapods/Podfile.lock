@@ -1,0 +1,16 @@
+PODS:
+  - BranchSDK (2.0.0)
+
+DEPENDENCIES:
+  - BranchSDK (from `./../../`)
+
+EXTERNAL SOURCES:
+  BranchSDK:
+    :path: "./../../"
+
+SPEC CHECKSUMS:
+  BranchSDK: dbecf9d1da931c2cf57393b233347b3587d11acb
+
+PODFILE CHECKSUM: 7f1a17826ebb04b3ecb0951b204f760667812b76
+
+COCOAPODS: 1.11.2

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.NipunSingh.iOSReleaseTest</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>iOSReleaseTest</string>
+			</array>
+		</dict>
+	</array>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneConfigurationName</key>
+					<string>Default Configuration</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+					<key>UISceneStoryboardFile</key>
+					<string>Main</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+	<key>branch_key</key>
+	<dict>
+		<key>live</key>
+		<string>key_live_ok7NoVhyIh1llbtOW6sfHpbnxBlJjiDp</string>
+		<key>test</key>
+		<string>secret_live_NktIf5YHh5us8Hbm7CbyUCPmqwtyqz9M</string>
+	</dict>
+	<key>branch_universal_link_domains</key>
+	<array>
+		<string>nipunreleasetest.app.link</string>
+		<string>nipunreleasetest-alternate.app.link</string>
+	</array>
+</dict>
+</plist>

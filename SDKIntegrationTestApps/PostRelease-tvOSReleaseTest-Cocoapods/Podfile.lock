@@ -1,0 +1,16 @@
+PODS:
+  - BranchSDK (2.0.0)
+
+DEPENDENCIES:
+  - BranchSDK
+
+SPEC REPOS:
+  trunk:
+    - BranchSDK
+
+SPEC CHECKSUMS:
+  BranchSDK: dbecf9d1da931c2cf57393b233347b3587d11acb
+
+PODFILE CHECKSUM: b7db230f02cca02441bc18cee8f2e100c8afe864
+
+COCOAPODS: 1.11.2

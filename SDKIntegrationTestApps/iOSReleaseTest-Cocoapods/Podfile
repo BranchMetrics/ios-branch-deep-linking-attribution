@@ -1,0 +1,20 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'iOSReleaseTest' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for iOSReleaseTest
+  pod 'BranchSDK', :path => './../../'
+
+end
+
+target 'iOSReleaseTestTests' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for iOSReleaseTestTests
+  pod 'BranchSDK', :path => './../../'
+
+end

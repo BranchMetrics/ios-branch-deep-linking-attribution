@@ -530,6 +530,12 @@
 		C1B63C8629D34FE400D1136D /* BNCUrlQueryParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = C1B63C7B29D2380000D1136D /* BNCUrlQueryParameter.h */; };
 		C1B63C8729D34FEA00D1136D /* BNCReferringURLUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = C1B63C7A29D2380000D1136D /* BNCReferringURLUtility.m */; };
 		C1B63C8829D34FEB00D1136D /* BNCUrlQueryParameter.m in Sources */ = {isa = PBXBuildFile; fileRef = C1B63C7929D2380000D1136D /* BNCUrlQueryParameter.m */; };
+		E761E92129E61DA000E55C98 /* BNCEventUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = E761E91F29E61DA000E55C98 /* BNCEventUtils.m */; };
+		E761E92229E61DA000E55C98 /* BNCEventUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = E761E91F29E61DA000E55C98 /* BNCEventUtils.m */; };
+		E761E92329E61DA000E55C98 /* BNCEventUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = E761E91F29E61DA000E55C98 /* BNCEventUtils.m */; };
+		E761E92429E61DA000E55C98 /* BNCEventUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = E761E92029E61DA000E55C98 /* BNCEventUtils.h */; };
+		E761E92529E61DA000E55C98 /* BNCEventUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = E761E92029E61DA000E55C98 /* BNCEventUtils.h */; };
+		E761E92629E61DA000E55C98 /* BNCEventUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = E761E92029E61DA000E55C98 /* BNCEventUtils.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -758,6 +764,8 @@
 		C1B63C7A29D2380000D1136D /* BNCReferringURLUtility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCReferringURLUtility.m; sourceTree = "<group>"; };
 		C1B63C7B29D2380000D1136D /* BNCUrlQueryParameter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCUrlQueryParameter.h; sourceTree = "<group>"; };
 		C1B63C7C29D2380000D1136D /* BNCReferringURLUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCReferringURLUtility.h; sourceTree = "<group>"; };
+		E761E91F29E61DA000E55C98 /* BNCEventUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEventUtils.m; sourceTree = "<group>"; };
+		E761E92029E61DA000E55C98 /* BNCEventUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCEventUtils.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -837,6 +845,8 @@
 		5F22101F2894A0DB00C5B190 /* BranchSDK */ = {
 			isa = PBXGroup;
 			children = (
+				E761E92029E61DA000E55C98 /* BNCEventUtils.h */,
+				E761E91F29E61DA000E55C98 /* BNCEventUtils.m */,
 				C1B63C7C29D2380000D1136D /* BNCReferringURLUtility.h */,
 				C1B63C7A29D2380000D1136D /* BNCReferringURLUtility.m */,
 				C1B63C7B29D2380000D1136D /* BNCUrlQueryParameter.h */,
@@ -1144,6 +1154,7 @@
 				5F2211502894A34000C5B190 /* BNCEncodingUtils.h in Headers */,
 				5F2211292894A34000C5B190 /* BNCQRCodeCache.h in Headers */,
 				5F2211432894A34000C5B190 /* BNCFacebookAppLinks.h in Headers */,
+				E761E92429E61DA000E55C98 /* BNCEventUtils.h in Headers */,
 				5F22111A2894A34000C5B190 /* BNCDeepLinkViewControllerInstance.h in Headers */,
 				5F2210D92894A34000C5B190 /* BNCAppleReceipt.h in Headers */,
 				5F22114F2894A34000C5B190 /* BNCLog.h in Headers */,
@@ -1235,6 +1246,7 @@
 				5FF9DEE028EE797400D62DE1 /* BranchSpotlightUrlRequest.h in Headers */,
 				5FF9DEE128EE797400D62DE1 /* BranchUniversalObject.h in Headers */,
 				5FF9DEE228EE797400D62DE1 /* BranchUserCompletedActionRequest.h in Headers */,
+				E761E92529E61DA000E55C98 /* BNCEventUtils.h in Headers */,
 				5FF9DEE328EE797400D62DE1 /* NSError+Branch.h in Headers */,
 				5FF9DEE428EE797400D62DE1 /* NSMutableDictionary+Branch.h in Headers */,
 				5FF9DEE528EE797400D62DE1 /* NSString+Branch.h in Headers */,
@@ -1313,6 +1325,7 @@
 				5F7903DD28B59148003144CD /* BranchShortUrlSyncRequest.h in Headers */,
 				5F7903DE28B59148003144CD /* BranchSpotlightUrlRequest.h in Headers */,
 				5F7903E028B59148003144CD /* BranchUserCompletedActionRequest.h in Headers */,
+				E761E92629E61DA000E55C98 /* BNCEventUtils.h in Headers */,
 				5F7903E128B59148003144CD /* NSError+Branch.h in Headers */,
 				5F7903E228B59148003144CD /* NSMutableDictionary+Branch.h in Headers */,
 				5F7903E328B59148003144CD /* NSString+Branch.h in Headers */,
@@ -1632,6 +1645,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E761E92129E61DA000E55C98 /* BNCEventUtils.m in Sources */,
 				C1B63C7D29D2380000D1136D /* BNCUrlQueryParameter.m in Sources */,
 				C1B63C7E29D2380000D1136D /* BNCReferringURLUtility.m in Sources */,
 				5F2211512894A34000C5B190 /* BNCNetworkService.m in Sources */,
@@ -1746,6 +1760,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E761E92229E61DA000E55C98 /* BNCEventUtils.m in Sources */,
 				C1B63C8329D34EF700D1136D /* BNCReferringURLUtility.m in Sources */,
 				C1B63C8429D34EF700D1136D /* BNCUrlQueryParameter.m in Sources */,
 				5FF9DDFB28EE78A700D62DE1 /* BNCAppGroupsData.m in Sources */,
@@ -1844,6 +1859,7 @@
 				5F7903F728B5C93E003144CD /* BNCKeyChain.m in Sources */,
 				5F7903F828B5C93E003144CD /* BNCLinkCache.m in Sources */,
 				5F7903F928B5C93E003144CD /* BNCLinkData.m in Sources */,
+				E761E92329E61DA000E55C98 /* BNCEventUtils.m in Sources */,
 				5F7903FA28B5C93E003144CD /* BNCLocale.m in Sources */,
 				5F7903FB28B5C93E003144CD /* BNCLog.m in Sources */,
 				5F7903FC28B5C93E003144CD /* BNCNetworkInterface.m in Sources */,
@@ -2062,7 +2078,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2.1.1;
+				CURRENT_PROJECT_VERSION = "$(MARKETING_VERSION)";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2093,7 +2109,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2.1.1;
+				CURRENT_PROJECT_VERSION = "$(MARKETING_VERSION)";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2294,7 +2310,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2.1.1;
+				CURRENT_PROJECT_VERSION = "$(MARKETING_VERSION)";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2329,7 +2345,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2.1.1;
+				CURRENT_PROJECT_VERSION = "$(MARKETING_VERSION)";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2363,7 +2379,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2.1.1;
+				CURRENT_PROJECT_VERSION = "$(MARKETING_VERSION)";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2393,7 +2409,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2.1.1;
+				CURRENT_PROJECT_VERSION = "$(MARKETING_VERSION)";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
