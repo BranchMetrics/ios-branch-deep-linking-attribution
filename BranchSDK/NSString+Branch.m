@@ -10,7 +10,7 @@
 
 #import "NSString+Branch.h"
 
-__attribute__((constructor)) void BNCForceNSStringCategoryToLoad() {
+__attribute__((constructor)) void BNCForceNSStringCategoryToLoad(void) {
     //  Nothing here, but forces linker to load the category.
 }
 

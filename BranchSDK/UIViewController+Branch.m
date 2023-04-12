@@ -64,6 +64,6 @@
 
 @end
 
-__attribute__((constructor)) void BNCForceUIViewControllerCategoryToLoad() {
+__attribute__((constructor)) void BNCForceUIViewControllerCategoryToLoad(void) {
     //  Nothing here, but forces linker to load the category.
 }

@@ -10,7 +10,7 @@
 
 #import "NSError+Branch.h"
 
-__attribute__((constructor)) void BNCForceNSErrorCategoryToLoad() {
+__attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
     // Nothing here, but forces linker to load the category.
 }
 

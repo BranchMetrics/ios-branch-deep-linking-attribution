@@ -1112,7 +1112,7 @@ NSURL* _Null_unspecified BNCCreateDirectoryForBranchURLWithSearchPath_Unthreaded
     return nil;
 }
 
-NSURL* _Nonnull BNCURLForBranchDirectory_Unthreaded() {
+NSURL* _Nonnull BNCURLForBranchDirectory_Unthreaded(void) {
     #if TARGET_OS_TV
     // tvOS only allows the caches or temp directory
     NSArray *kSearchDirectories = @[
@@ -1151,7 +1151,7 @@ NSURL* _Nonnull BNCURLForBranchDirectory_Unthreaded() {
     return branchURL;
 }
 
-NSURL* _Nonnull BNCURLForBranchDirectory() {
+NSURL* _Nonnull BNCURLForBranchDirectory(void) {
     static NSURL *urlForBranchDirectory = nil;
     static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^ {

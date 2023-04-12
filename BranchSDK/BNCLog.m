@@ -25,7 +25,7 @@ void BNCLogInternalError(NSString *message) {
 
 static BNCLogLevel bnc_LogDisplayLevel = BNCLogLevelWarning;
 
-BNCLogLevel BNCLogDisplayLevel() {
+BNCLogLevel BNCLogDisplayLevel(void) {
     BNCLogLevel level = bnc_LogDisplayLevel;
     return level;
 }
