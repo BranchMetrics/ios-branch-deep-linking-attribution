@@ -10,6 +10,7 @@
 #import "BNCApplication.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
+#import "BNCLog.h"
 
 @interface BNCSKAdNetwork()
 
@@ -71,8 +72,9 @@
 
 - (void)registerAppForAdNetworkAttribution {
     if (@available(iOS 14.0, macCatalyst 14.0, *)) {
-        if ([self shouldAttemptSKAdNetworkCallout]) {
-
+        if ([self shouldAttemptSKAdNetworkCallout] && [self.skAdNetworkClass respondsToSelector:self.skAdNetworkRegisterAppForAdNetworkAttribution]) {
+            BNCLogDebug(@"Calling registerAppForAdNetworkAttribution");
+            
             // Equivalent call [SKAdNetwork registerAppForAdNetworkAttribution];
             ((id (*)(id, SEL))[self.skAdNetworkClass methodForSelector:self.skAdNetworkRegisterAppForAdNetworkAttribution])(self.skAdNetworkClass, self.skAdNetworkRegisterAppForAdNetworkAttribution);
         }
@@ -81,7 +83,8 @@
 
 - (void)updateConversionValue:(NSInteger)conversionValue {
     if (@available(iOS 14.0, macCatalyst 14.0, *)) {
-        if ([self shouldAttemptSKAdNetworkCallout]) {
+        if ([self shouldAttemptSKAdNetworkCallout] && [self.skAdNetworkClass respondsToSelector:self.skAdNetworkUpdateConversionValue]) {
+            BNCLogDebug([NSString stringWithFormat:@"Calling updateConversionValue:%ld", (long)conversionValue]);
             
             // Equivalent call [SKAdNetwork updateConversionValue:conversionValue];
             ((id (*)(id, SEL, NSInteger))[self.skAdNetworkClass methodForSelector:self.skAdNetworkUpdateConversionValue])(self.skAdNetworkClass, self.skAdNetworkUpdateConversionValue, conversionValue);
@@ -89,11 +92,11 @@
     }
 }
 
-- (void)updatePostbackConversionValue:(NSInteger)conversionValue
-                    completionHandler:(void (^)(NSError *error))completion {
+- (void)updatePostbackConversionValue:(NSInteger)conversionValue completionHandler:(void (^)(NSError *error))completion {
     if (@available(iOS 15.4, macCatalyst 15.4, *)) {
-        if ([self shouldAttemptSKAdNetworkCallout]) {
-            
+        if ([self shouldAttemptSKAdNetworkCallout] && [self.skAdNetworkClass respondsToSelector:self.skAdNetworkUpdatePostbackConversionValue]) {
+            BNCLogDebug([NSString stringWithFormat:@"Calling updatePostbackConversionValue:%ld completionHandler:completion", (long)conversionValue]);
+
             // Equivalent call [SKAdNetwork updatePostbackConversionValue:completionHandler:];
             ((id (*)(id, SEL, NSInteger,void (^)(NSError *error)))[self.skAdNetworkClass methodForSelector:self.skAdNetworkUpdatePostbackConversionValue])(self.skAdNetworkClass, self.skAdNetworkUpdatePostbackConversionValue, conversionValue, completion);
         }
@@ -106,8 +109,9 @@
                            lockWindow:(BOOL)lockWindow
                     completionHandler:(void (^)(NSError *error))completion {
     if (@available(iOS 16.1, macCatalyst 16.1, *)) {
-        if ([self shouldAttemptSKAdNetworkCallout]) {
-            
+        if ([self shouldAttemptSKAdNetworkCallout] && [self.skAdNetworkClass respondsToSelector:self.skAdNetworkUpdatePostbackConversionValueCoarseValueLockWindow]) {
+            BNCLogDebug([NSString stringWithFormat:@"Calling updatePostbackConversionValue:%ld coarseValue:%@ lockWindow:%d completionHandler:completion", (long)fineValue, coarseValue, lockWindow]);
+
             // Equivalent call [SKAdNetwork updatePostbackConversionValue:coarseValue:lockWindow:completionHandler:];
             ((id (*)(id, SEL, NSInteger, NSString *, BOOL, void (^)(NSError *error)))[self.skAdNetworkClass methodForSelector:self.skAdNetworkUpdatePostbackConversionValueCoarseValueLockWindow])(self.skAdNetworkClass, self.skAdNetworkUpdatePostbackConversionValueCoarseValueLockWindow, fineValue, coarseValue, lockWindow, completion);
         }
