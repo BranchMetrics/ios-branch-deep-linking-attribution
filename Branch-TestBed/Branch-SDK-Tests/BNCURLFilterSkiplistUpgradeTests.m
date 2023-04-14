@@ -11,8 +11,7 @@
 
 @interface BNCURLFilter(Test)
 
-// BNCURLFilter defines this as an ivar with a setter & getter
-// I think it's safe to redefine it as a property
+// BNCURLFilter defines this as an ivar with a setter & getter, redefine it as a property
 @property (nonatomic, strong, readwrite) NSArray<NSString *> *patternList;
 @property (assign, nonatomic) NSInteger listVersion;
 @end
@@ -31,7 +30,7 @@
     
 }
 
- // v0 list - hard coded into SDKs
+ // v0 list
  // https://cdn.branch.io/sdk/uriskiplist_v0.json
 - (NSArray <NSString *> *)v0PatternList {
     NSArray<NSString *> *patternList = @[
@@ -46,7 +45,7 @@
     return patternList;
 }
 
-// v1 list - is exactly the same as the v0 list
+// v1 list
 // https://cdn.branch.io/sdk/uriskiplist_v1.json
 - (NSArray <NSString *> *)v1PatternList {
    NSArray<NSString *> *patternList = @[
@@ -61,11 +60,10 @@
    return patternList;
 }
 
-// v2 list - proposed v2 list for Meta AEM support
+// v2 list
 // https://cdn.branch.io/sdk/uriskiplist_v2.json
 - (NSArray <NSString *> *)v2PatternList {
     NSArray<NSString *> *patternList = @[
-        //@"^fb\\d+:",
         @"^fb\\d+:((?!campaign_ids).)*$",
         @"^li\\d+:",
         @"^pdk\\d+:",
