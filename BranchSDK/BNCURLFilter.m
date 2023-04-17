@@ -30,7 +30,7 @@
     if (!self) return self;
 
     self.patternList = @[
-        @"^fb\\d+:",
+        @"^fb\\d+:((?!campaign_ids).)*$",
         @"^li\\d+:",
         @"^pdk\\d+:",
         @"^twitterkit-.*:",
