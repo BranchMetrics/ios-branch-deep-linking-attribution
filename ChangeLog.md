@@ -1,5 +1,14 @@
 Branch iOS SDK Change Log
 
+V.2.1.2
+Branch iOS SDK 2.1.2 adds additional support for Meta AEM links. It also includes some bug fixes and debugging improvements.
+
+- SDK-1796, SDK-1797 and SDK-1906 additional support for Meta AEM links
+- SDK-1908 Xcode 14.3 warns on C functions with empty parameter lists
+- SDK-1747 macCatalyst SKAdNetwork crash on older devices
+- SDK-1893 SKAdNetwork additional logging and safety checks
+
+
 v.2.1.1
 
 Branch iOS SDK 2.1.1 contains changes to how URL query parameters, like GBRAID and GCLID, are parsed and stored as well as a small fix for Mac Catalyst.
