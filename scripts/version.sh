@@ -30,7 +30,7 @@ Options:
 USAGE
 }
 
-version=2.1.1
+version=2.1.2
 prev_version="$version"
 
 if (( $# == 0 )); then
@@ -105,13 +105,8 @@ if [[ $update ]]; then
 
     # Update the Podspec version:
     sed -i '' -e "/^[[:space:]]*s\.version/ {s/\".*\"/\"$version\"/; }" ../BranchSDK.podspec
-
-    # Update the Carthage version:
-    plutil -replace CFBundleVersion -string "$version"  ../Branch-TestBed/Framework-Info.plist
-    plutil -replace CFBundleShortVersionString -string "$version"  ../Branch-TestBed/Framework-Info.plist
   
-    # Update Carthage Project version
-    echo '"$prev_version"'
+    # Update framework version
     sed -ie 's/MARKETING_VERSION = '"$prev_version"'/MARKETING_VERSION = '"$version"'/g' ../BranchSDK.xcodeproj/project.pbxproj
 fi
 

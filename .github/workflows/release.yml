@@ -24,34 +24,36 @@ jobs:
       - name: Run static analysis
         run: |
             xcodebuild analyze -project BranchSDK.xcodeproj
-            
-  version-bump:
-    runs-on: macos-latest
-    needs: [static-analysis]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Update Version
-        run: |
-            if [[ ${{ inputs.version }} == "patch" ]]; then
-                ./scripts/version.sh -i
-            elif [[ ${{ inputs.version }} == "minor" ]]; then
-                ./scripts/version.sh -im
-            elif [[ ${{ inputs.version }} == "major" ]]; then
-                ./scripts/version.sh -iM
-            else
-                echo "Invalid option"
-            fi
-            git config user.name "Branch SDK Team"
-            git config user.email branch-sdks@branch.io
-            git add BranchSDK.xcodeproj/project.pbxproj BranchSDK/BNCConfig.m BranchSDK.podspec Branch-TestBed/Framework-Info.plist ./scripts/version.sh
-            git commit BranchSDK.xcodeproj/project.pbxproj BranchSDK/BNCConfig.m BranchSDK.podspec Branch-TestBed/Framework-Info.plist ./scripts/version.sh -m'Updated version'
-            echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-            git push
+
+  # TODO: current repo merge controls are preventing this step from passing 
+  # version-bump:
+  #   runs-on: macos-latest
+  #   needs: [static-analysis]
+  #   steps:
+  #     - name: Check out code
+  #       uses: actions/checkout@v3
+  #     - name: Update Version
+  #       run: |
+  #           if [[ ${{ inputs.version }} == "patch" ]]; then
+  #               ./scripts/version.sh -i
+  #           elif [[ ${{ inputs.version }} == "minor" ]]; then
+  #               ./scripts/version.sh -im
+  #           elif [[ ${{ inputs.version }} == "major" ]]; then
+  #               ./scripts/version.sh -iM
+  #           else
+  #               echo "Invalid option"
+  #           fi
+  #           git config user.name "Branch SDK Team"
+  #           git config user.email branch-sdks@branch.io
+  #           git add BranchSDK.xcodeproj/project.pbxproj BranchSDK/BNCConfig.m BranchSDK.podspec Branch-TestBed/Framework-Info.plist ./scripts/version.sh
+  #           git commit BranchSDK.xcodeproj/project.pbxproj BranchSDK/BNCConfig.m BranchSDK.podspec Branch-TestBed/Framework-Info.plist ./scripts/version.sh -m'Updated version'
+  #           echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+  #           git push
 
   build-framework:
     runs-on: macos-latest
-    needs: [version-bump]
+    # needs: [version-bump]
+    needs: [static-analysis]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
