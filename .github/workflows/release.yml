@@ -52,7 +52,7 @@ jobs:
 
   build-framework:
     runs-on: macos-latest
-    # needs: [version-bump]
+    #needs: [version-bump]
     needs: [static-analysis]
     steps:
       - name: Check out code
@@ -70,7 +70,8 @@ jobs:
 
   build-noidfa-framework:
     runs-on: macos-latest
-    needs: [version-bump]
+    #needs: [version-bump]
+    needs: [static-analysis]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -87,7 +88,8 @@ jobs:
 
   build-static-framework:
     runs-on: macos-latest
-    needs: [version-bump]
+    #needs: [version-bump]
+    needs: [static-analysis]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -104,7 +106,8 @@ jobs:
 
   build-static-noidfa-framework:
     runs-on: macos-latest
-    needs: [version-bump]
+    #needs: [version-bump]
+    needs: [static-analysis]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
