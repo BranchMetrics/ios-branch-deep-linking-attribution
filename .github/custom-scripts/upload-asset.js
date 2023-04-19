@@ -5,7 +5,7 @@ async function uploadAsset({ github, context, releaseId, assetName, path }) {
 
   console.log(`Uploading asset ${assetName}...`);
 
-  const { data } = await github.repos.uploadReleaseAsset({
+  const { data } = await github.rest.repos.uploadReleaseAsset({
     owner: context.repo.owner,
     repo: context.repo.repo,
     release_id: releaseId,
