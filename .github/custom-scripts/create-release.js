@@ -17,7 +17,7 @@ async function createRelease({ context, core, github, sha, version }) {
     prelease: false,
   };
 
-  await github.repos.createRelease(release);
+  await github.rest.repos.createRelease(release);
 }
 
 module.exports = createRelease;

@@ -184,7 +184,7 @@ jobs:
             const uploadAsset = require('./.github/custom-scripts/upload-asset');
             const tagName = '${{ steps.get-version.outputs.version }}';
 
-            const { data } = await github.repos.getReleaseByTag({
+            const { data } = await github.rest.repos.getReleaseByTag({
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag: tagName,
