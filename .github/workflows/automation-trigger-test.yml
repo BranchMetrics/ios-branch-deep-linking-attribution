@@ -1,10 +1,11 @@
-
+name: SaaS SDK Automation Tests
 on:
  workflow_dispatch:
+ pull_request:
  
 jobs:
   # This job creates a static lib which will be used by Qentelli Automation Testbed App. Its uploaded as an artifact.
-  build-Brach-Static-framework:
+  build-Branch-Static-framework:
     runs-on: macos-latest
     steps:
       - name: Check out code
@@ -25,7 +26,7 @@ jobs:
   # 3.Installs Certificates and Provisioning profile for signing App and creating IPA. Final IPA is uploaded as an artifact.
   build-Automation-testbed-App:
     runs-on: macos-latest
-    needs: [build-Brach-Static-framework]
+    needs: [build-Branch-Static-framework]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -75,7 +76,7 @@ jobs:
           name: DeepLinkDemo.ipa
           path: |
                 ./IPA/DeepLinkDemo.ipa
-  buildAndRunAutomationTestSuite:
+  build-And-Run-AutomationTestSuite:
     runs-on: macos-latest
     needs: [build-Automation-testbed-App]
     steps:
