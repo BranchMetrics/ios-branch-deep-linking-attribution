@@ -102,7 +102,7 @@ jobs:
       - name: Build with Maven
         id: build_maven
         run: |
-           mvn clean test -DsuiteXMLFile=testng.xml -e -DInputFormat="json" -DInputFilePath="TestSelection_BrowserStack_iOS.json" -DAccessKey="${{ secrets.S3_ACCESS_KEY }}" -DSecretKey="${{ secrets.S3_SECRET_KEY }}" --log-file output.txt
+           mvn clean test -DsuiteXMLFile=testng.xml -e -DInputFormat="json" -DInputFilePath="TestSelection_BrowserStack_iOS.json" -DAccessKey="${{ secrets.S3_ACCESS_KEY }}" -DSecretKey="${{ secrets.S3_SECRET_KEY }}"  -DBROWSERSTACK_USER="${{ secrets.BROWSER_STACK_USER }}" -DBROWSERSTACK_KEY="${{ secrets.BROWSER_STACK_KEY }}" --log-file output.txt
       - name: Print output
         if: always()        # run this step even if previous step failed
         run: cat ${{ github.workspace }}/output.txt
@@ -113,5 +113,5 @@ jobs:
           name: test-results
           path: ${{ github.workspace }}/output.txt
       - name: Display test report S3 url
-        if: always()
+        if: success() || steps.build_maven.outcome == 'failure'
         run: grep 'Test report file link' output.txt
