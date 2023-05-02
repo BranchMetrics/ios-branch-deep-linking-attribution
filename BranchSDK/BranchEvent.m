@@ -16,6 +16,7 @@
 #import "BNCPartnerParameters.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCEventUtils.h"
+#import "BNCAppleReceipt.h"
 
 #pragma mark BranchStandardEvents
 
@@ -372,16 +373,19 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
 #pragma mark - IAP Methods
 
 - (void) logEventWithTransaction:(SKPaymentTransaction *)transaction {
-    
-    self.transactionID = transaction.transactionIdentifier;
-    [[BNCEventUtils shared] storeEvent:self];
-
-    NSString *productId = transaction.payment.productIdentifier;
-    SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithObject:productId]];
-    
-    _request = productsRequest;
-    productsRequest.delegate = self;
-    [productsRequest start];
+    if ([BNCAppleReceipt isReceiptValid]) {
+        self.transactionID = transaction.transactionIdentifier;
+        [[BNCEventUtils shared] storeEvent:self];
+        
+        NSString *productId = transaction.payment.productIdentifier;
+        SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithObject:productId]];
+        
+        _request = productsRequest;
+        productsRequest.delegate = self;
+        [productsRequest start];
+    } else {
+        BNCLogDebug(@"Invalid receipt. Branch Event was not logged.");
+    }
 }
 
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
