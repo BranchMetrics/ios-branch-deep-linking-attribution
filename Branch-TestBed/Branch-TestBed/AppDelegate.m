@@ -50,7 +50,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     //[branch delayInitToCheckForSearchAds];
 
     // partner parameter sample
-    //[branch addFacebookPartnerParameterWithName:@"em" value:@"11234e56af071e9c79927651156bd7a10bca8ac34672aba121056e2698ee7088"];
+    [branch addFacebookPartnerParameterWithName:@"em" value:@"11234e56af071e9c79927651156bd7a10bca8ac34672aba121056e2698ee7088"];
     
     [branch checkPasteboardOnInstall];
     
@@ -60,7 +60,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
      */
 
     [self setLogFile:@"OpenNInstall"];
-    // [branch setIdentity:@"Bobby Branch"];
+    [branch setIdentity:@"Bobby Branch"];
     
     [Branch setLogInAppPurchasesAsEventsEnabled:true];
     

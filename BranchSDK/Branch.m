@@ -166,6 +166,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 #pragma mark - Public methods
 
 #pragma mark - GetInstance methods
+@synthesize installUserId;
 
 // deprecated
 + (Branch *)getTestInstance {
@@ -1094,6 +1095,8 @@ static NSString *bnc_branchKey = nil;
         }
         return;
     }
+    
+    installUserId = userId;
 
     [self initSafetyCheck];
     dispatch_async(self.isolationQueue, ^(){
