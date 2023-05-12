@@ -1881,7 +1881,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 + (void)setLogInAppPurchasesAsEventsEnabled:(BOOL)enabled;
 + (BOOL)logInAppPurchasesBranchEventsEnabled;
 
-@property (copy, nonatomic) NSString *installUserId;
+@property (copy, nonatomic, nullable) NSString *installUserId;
+@property (copy, nonatomic, nullable) callbackWithParams setIdentityCallback;
 
 @end
 
