@@ -67,27 +67,12 @@
 + (BOOL)isReceiptValid {
     NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
     NSData *receiptData = [NSData dataWithContentsOfURL:receiptURL];
-
-    if (!receiptData) {
-        return NO;
+    
+    if (receiptData == nil) {
+        return false;
+    } else {
+        return true;
     }
-
-    NSString *receiptHash = [self sha256HashForData:receiptData];
-    if (receiptHash) {
-        return YES;
-    }
-
-    return NO;
-}
-
-+ (NSString *)sha256HashForData:(NSData *)data {
-    uint8_t digest[CC_SHA256_DIGEST_LENGTH];
-    CC_SHA256(data.bytes, (CC_LONG)data.length, digest);
-    NSMutableString *output = [NSMutableString stringWithCapacity:CC_SHA256_DIGEST_LENGTH * 2];
-    for (int i = 0; i < CC_SHA256_DIGEST_LENGTH; i++) {
-        [output appendFormat:@"%02x", digest[i]];
-    }
-    return output;
 }
 
 @end
