@@ -33,7 +33,7 @@
 		7EE84374281CDFAE00A1561C /* StartupOptionsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE84373281CDFAE00A1561C /* StartupOptionsData.swift */; };
 		7EF58D5B2812CF2300BA92D5 /* WebViewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EF58D5A2812CF2300BA92D5 /* WebViewVC.swift */; };
 		B7B7DC2A2859974E00D45FC5 /* TextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B7DC292859974E00D45FC5 /* TextViewController.swift */; };
-		E71086B229D2422600BDC598 /* BranchSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E75B12BE29C197B800110675 /* BranchSDK.xcframework */; };
+		E70E80C22A0E22C1008007B6 /* BranchSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E70E80C12A0E22C1008007B6 /* BranchSDK.xcframework */; };
 		E71086B529D2423100BDC598 /* Pods_DeepLinkDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA28D389F8D830715B437AAD /* Pods_DeepLinkDemo.framework */; };
 /* End PBXBuildFile section */
 
@@ -74,7 +74,7 @@
 		7EF58D5C2816D14700BA92D5 /* DeepLinkDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DeepLinkDemo.entitlements; sourceTree = "<group>"; };
 		B7B7DC292859974E00D45FC5 /* TextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewController.swift; sourceTree = "<group>"; };
 		CA28D389F8D830715B437AAD /* Pods_DeepLinkDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DeepLinkDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E75B12BE29C197B800110675 /* BranchSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = BranchSDK.xcframework; path = Framework/BranchSDK.xcframework; sourceTree = "<group>"; };
+		E70E80C12A0E22C1008007B6 /* BranchSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = BranchSDK.xcframework; path = Framework/BranchSDK.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,7 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E71086B229D2422600BDC598 /* BranchSDK.xcframework in Frameworks */,
+				E70E80C22A0E22C1008007B6 /* BranchSDK.xcframework in Frameworks */,
 				E71086B529D2423100BDC598 /* Pods_DeepLinkDemo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -103,7 +103,7 @@
 		29D53CAAE9E9EF2F96296086 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E75B12BE29C197B800110675 /* BranchSDK.xcframework */,
+				E70E80C12A0E22C1008007B6 /* BranchSDK.xcframework */,
 				CA28D389F8D830715B437AAD /* Pods_DeepLinkDemo.framework */,
 			);
 			name = Frameworks;

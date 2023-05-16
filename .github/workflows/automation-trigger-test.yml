@@ -4,21 +4,6 @@ on:
  pull_request:
  
 jobs:
-  # This job creates a static lib which will be used by Qentelli Automation Testbed App. Its uploaded as an artifact.
-  build-Branch-Static-framework:
-    runs-on: macos-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Build xcframework
-        run: |
-            ./scripts/prep_static_xcframework.sh
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: release_framework
-          path: |
-            ./Branch_static.zip
             
   # This job
   # 1.Downloads static framework build in job build-Brach-Static-framework and copies it to framework directory of qentelli-saas-sdk-testing-ios-testbed repo
@@ -26,14 +11,12 @@ jobs:
   # 3.Installs Certificates and Provisioning profile for signing App and creating IPA. Final IPA is uploaded as an artifact.
   build-Automation-testbed-App:
     runs-on: macos-latest
-    needs: [build-Branch-Static-framework]
+    env:
+      ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+      SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
+      BROWSERSTACK_KEY: ${{ secrets.BROWSER_STACK_KEY }}
+      BROWSERSTACK_USER: ${{ secrets.BROWSER_STACK_USER }}
     steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-        with:
-          repository: BranchMetrics/qentelli-saas-sdk-testing-ios-testbed
-          ref: test-dynamic-linking
-          token: ${{ secrets.BRANCHLET_ACCESS_TOKEN_PUBLIC }}
       - name: Install the Apple certificate and provisioning profile
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
@@ -62,33 +45,27 @@ jobs:
           # apply provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
-          
-      - name: Download Branch SDK lib, build testbed app and create IPA File
-        uses: actions/download-artifact@v3
-      - name : Unzip and copy folder
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name : Build project and export IPA
         run: |
-            unzip release_framework/Branch_static.zip -d ./Framework/
+            ./scripts/prep_static_xcframework.sh
+            cd ./DeepLinkDemo
+            mkdir Framework
+            unzip ../Branch_static.zip -d ./Framework/
             xcodebuild -workspace DeepLinkDemo.xcworkspace -scheme DeepLinkDemo  -sdk iphoneos archive -archivePath ./IPA/DeepLinkDemo.xcarchive
             xcodebuild -exportArchive -archivePath ./IPA/DeepLinkDemo.xcarchive -exportOptionsPlist IPA/Info.plist -exportPath IPA/
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: DeepLinkDemo.ipa
-          path: |
-                ./IPA/DeepLinkDemo.ipa
-  build-And-Run-AutomationTestSuite:
-    runs-on: macos-latest
-    needs: [build-Automation-testbed-App]
-    env:
-      ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
-      SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
-      BROWSERSTACK_KEY: ${{ secrets.BROWSER_STACK_KEY }}
-      BROWSERSTACK_USER: ${{ secrets.BROWSER_STACK_USER }}
-    steps:
-      - uses: actions/checkout@v3
+      - name: Upload IPA to Browserstack
+        run: |
+           response=$(curl -X POST https://api-cloud.browserstack.com/app-automate/upload -u "${{ secrets.BROWSER_STACK_USER }}:${{ secrets.BROWSER_STACK_KEY }}"  -F "file=./DeepLinkDemo/IPA/DeepLinkDemo.xcarchive")
+          parsed=$(echo $response | jq ".app_url")
+          echo "::add-mask::$parsed"
+          echo "APP_URL=$parsed" >> "$GITHUB_ENV"
+      - name: Cheout Automation Code
+        uses: actions/checkout@v3
         with:
           repository: BranchMetrics/qentelli-saas-sdk-testing-automation
-          ref: master
+          ref: gdeluna-branch/RemoveLoggingAppUrl
           token: ${{ secrets.BRANCHLET_ACCESS_TOKEN_PUBLIC }}
       - name: Set up JDK 11
         uses: actions/setup-java@v3
@@ -100,10 +77,6 @@ jobs:
         uses: actions/setup-node@v3.3.0
       - name: Download artifact
         uses: actions/download-artifact@v3
-      - name : Unzip and copy folder
-        run: |
-            ls -la ./
-            cp -R DeepLinkDemo.ipa testdata/builds/iOS_TestbedApp_21-Jun-2022-1.ipa
       - name: Build with Maven
         id: build_maven
         run: |
