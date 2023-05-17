@@ -9,7 +9,7 @@ jobs:
   # 1.Downloads static framework build in job build-Brach-Static-framework and copies it to framework directory of qentelli-saas-sdk-testing-ios-testbed repo
   # 2.Builds testbed app.
   # 3.Installs Certificates and Provisioning profile for signing App and creating IPA. Final IPA is uploaded as an artifact.
-  build-Automation-testbed-App:
+  build-and-run-automation-tests-onBrowserstack:
     runs-on: macos-latest
     env:
       ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
@@ -48,6 +48,8 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
       
+      - name: Create and export DeepLinkDemo IPA file
+        run: |
           ./scripts/prep_static_xcframework.sh
           cd ./DeepLinkDemo
           mkdir Framework
@@ -57,13 +59,9 @@ jobs:
           xcodebuild -exportArchive -archivePath ./IPA/DeepLinkDemo.xcarchive -exportOptionsPlist IPA/Info.plist -exportPath IPA/
       - name: Upload IPA to Browserstack
         run: |
-           ls -la ./
-           ls -la ./DeepLinkDemo/IPA/
            response=$(curl -X POST https://api-cloud.browserstack.com/app-automate/upload -u "${{ secrets.BROWSER_STACK_USER }}:${{ secrets.BROWSER_STACK_KEY }}"  -F "file=@DeepLinkDemo/IPA/DeepLinkDemo.ipa")
-           echo $response
            parsed=$(echo $response | jq ".app_url")
-           #echo "::add-mask::$parsed"
-           echo "APP_URL=$parsed"
+           echo "::add-mask::$parsed"
            echo "APP_URL=$parsed" >> "$GITHUB_ENV"
       - name: Cheout Automation Code
         uses: actions/checkout@v3
@@ -79,8 +77,6 @@ jobs:
           cache: maven
       - name: Setup Node.js environment
         uses: actions/setup-node@v3.3.0
-      - name: Download artifact
-        uses: actions/download-artifact@v3
       - name: Build with Maven
         id: build_maven
         run: |
