@@ -6,9 +6,13 @@ on:
 jobs:
             
   # This job
-  # 1.Downloads static framework build in job build-Brach-Static-framework and copies it to framework directory of qentelli-saas-sdk-testing-ios-testbed repo
-  # 2.Builds testbed app.
-  # 3.Installs Certificates and Provisioning profile for signing App and creating IPA. Final IPA is uploaded as an artifact.
+  # 1.Installs Certificates and Provisioning profile for signing App and creating IPA.
+  # 2.Creates Branch SDK framework for DeeplinkDemo app.
+  # 3.Compiles DeepLinkDemo and creates its IPA.
+  # 4.Uploads IPA to browserstack and app_url returned is set as envirnoment variable
+  # 5.Runs SaaS SDK Automation tests on Browserstack
+  # 6.Prints and uploads output result as an artifact.
+  
   build-and-run-automation-tests-onBrowserstack:
     runs-on: macos-latest
     env:
