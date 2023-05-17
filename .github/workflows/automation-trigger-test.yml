@@ -60,6 +60,7 @@ jobs:
            ls -la ./
            ls -la ./DeepLinkDemo/IPA/
            response=$(curl -X POST https://api-cloud.browserstack.com/app-automate/upload -u "${{ secrets.BROWSER_STACK_USER }}:${{ secrets.BROWSER_STACK_KEY }}"  -F "file=./DeepLinkDemo/IPA/DeepLinkDemo.ipa")
+           echo $response
            parsed=$(echo $response | jq ".app_url")
            #echo "::add-mask::$parsed"
            echo "APP_URL=$parsed"
