@@ -17,7 +17,9 @@ jobs:
       BROWSERSTACK_KEY: ${{ secrets.BROWSER_STACK_KEY }}
       BROWSERSTACK_USER: ${{ secrets.BROWSER_STACK_USER }}
     steps:
-      - name: Install the Apple certificate and provisioning profile
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name: Install the Apple certificate and provisioning profile and export IPA
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
           P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
@@ -45,17 +47,14 @@ jobs:
           # apply provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name : Build project and export IPA
-        run: |
-            ./scripts/prep_static_xcframework.sh
-            cd ./DeepLinkDemo
-            mkdir Framework
-            unzip ../Branch_static.zip -d ./Framework/
-            pod install
-            xcodebuild -workspace DeepLinkDemo.xcworkspace -scheme DeepLinkDemo  -sdk iphoneos archive -archivePath ./IPA/DeepLinkDemo.xcarchive
-            xcodebuild -exportArchive -archivePath ./IPA/DeepLinkDemo.xcarchive -exportOptionsPlist IPA/Info.plist -exportPath IPA/
+      
+          ./scripts/prep_static_xcframework.sh
+          cd ./DeepLinkDemo
+          mkdir Framework
+          unzip ../Branch_static.zip -d ./Framework/
+          pod install
+          xcodebuild -workspace DeepLinkDemo.xcworkspace -scheme DeepLinkDemo  -sdk iphoneos archive -archivePath ./IPA/DeepLinkDemo.xcarchive
+          xcodebuild -exportArchive -archivePath ./IPA/DeepLinkDemo.xcarchive -exportOptionsPlist IPA/Info.plist -exportPath IPA/
       - name: Upload IPA to Browserstack
         run: |
            response=$(curl -X POST https://api-cloud.browserstack.com/app-automate/upload -u "${{ secrets.BROWSER_STACK_USER }}:${{ secrets.BROWSER_STACK_KEY }}"  -F "file=./DeepLinkDemo/IPA/DeepLinkDemo.xcarchive")
