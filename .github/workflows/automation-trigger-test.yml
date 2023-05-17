@@ -53,6 +53,7 @@ jobs:
             cd ./DeepLinkDemo
             mkdir Framework
             unzip ../Branch_static.zip -d ./Framework/
+            pod install
             xcodebuild -workspace DeepLinkDemo.xcworkspace -scheme DeepLinkDemo  -sdk iphoneos archive -archivePath ./IPA/DeepLinkDemo.xcarchive
             xcodebuild -exportArchive -archivePath ./IPA/DeepLinkDemo.xcarchive -exportOptionsPlist IPA/Info.plist -exportPath IPA/
       - name: Upload IPA to Browserstack
