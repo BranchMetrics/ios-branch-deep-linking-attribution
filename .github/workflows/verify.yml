@@ -45,5 +45,4 @@ jobs:
       - name: Upload codecov  results
         uses: codecov/codecov-action@v3
         with:
-          directory: ./fastlane/test_output/
-          files: ./report.junit
+          files: ./fastlane/test_output/report.junit
