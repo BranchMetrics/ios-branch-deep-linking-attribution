@@ -18,7 +18,7 @@ lane :unit_tests do
   slather(
       cobertura_xml: true,
       output_directory: "./fastlane/test_output",
-      workspace: "./Branch-TestBed/Branch-TestBed.xcworkspace",
+      proj: "./Branch-TestBed/Branch-TestBed.xcodeproj",
       scheme: "Branch-TestBed-CI"
 )
 end
