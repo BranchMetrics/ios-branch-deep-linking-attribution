@@ -19,8 +19,9 @@ lane :unit_tests do
       cobertura_xml: true,
       output_directory: "./fastlane/test_output",
       proj: "./Branch-TestBed/Branch-TestBed.xcodeproj",
+      workspace: "./Branch-TestBed/Branch-TestBed.xcworkspace",
       scheme: "Branch-TestBed-CI"
-)
+  )
 end
 
 lane :integration_tests do
