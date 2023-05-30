@@ -27,7 +27,7 @@ final class tvOSReleaseTestTests: XCTestCase {
           }
         Branch.setTrackingDisabled(false)
         let x = Branch.trackingDisabled()
-        assert( x == true)
+        assert( x == false)
     }
 
 
