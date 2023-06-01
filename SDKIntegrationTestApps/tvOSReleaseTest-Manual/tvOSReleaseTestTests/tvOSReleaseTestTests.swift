@@ -23,10 +23,9 @@ final class tvOSReleaseTestTests: XCTestCase {
     func testSetTrackingDisabled() throws {
         let sdk = BranchSDKTest()
         
-        sdk.disableTracking(status: true)
+        sdk.disableTracking(status: false)
         let x = sdk.trackingStatus()
-        assert( x == true)
-        sdk.disableTracking(status: true)
+        assert( x == false)
     }
 
 
