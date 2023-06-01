@@ -110,7 +110,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     skanCurrentWindow = _skanCurrentWindow,
     firstAppLaunchTime = _firstAppLaunchTime,
     highestConversionValueSent = _highestConversionValueSent,
-    logInAppPurchasesAsBranchEvents = _logInAppPurchasesAsBranchEvents,
     referringURLQueryParameters = _referringURLQueryParameters,
     anonID = _anonID;
 
@@ -822,16 +821,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         NSNumber *b = [NSNumber numberWithBool:invoke];
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_SKAN_INVOKE_REGISTER_APP value:b];
     }
-}
-
-- (BOOL) logInAppPurchasesAsBranchEvents {
-    _logInAppPurchasesAsBranchEvents = [self readBoolFromDefaults:BRANCH_PREFS_KEY_LOG_IAP_AS_EVENTS];
-    return _logInAppPurchasesAsBranchEvents;
-}
-
-- (void) setLogInAppPurchasesAsBranchEvents:(BOOL)logInAppPurchasesAsBranchEvents {
-    _logInAppPurchasesAsBranchEvents = logInAppPurchasesAsBranchEvents;
-    [self writeBoolToDefaults:BRANCH_PREFS_KEY_LOG_IAP_AS_EVENTS value:logInAppPurchasesAsBranchEvents];
 }
 
 - (void) clearTrackingInformation {

@@ -61,9 +61,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     [self setLogFile:@"OpenNInstall"];
     // [branch setIdentity:@"Bobby Branch"];
-    
-    [Branch setLogInAppPurchasesAsEventsEnabled:true];
-    
+        
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandlerUsingBranchUniversalObject:
         ^ (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) {

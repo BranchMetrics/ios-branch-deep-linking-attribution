@@ -63,15 +63,4 @@
     return self.isSandboxReceipt;
 }
 
-+ (BOOL)isReceiptValid {
-    NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
-    NSData *receiptData = [NSData dataWithContentsOfURL:receiptURL];
-    
-    if (receiptData == nil) {
-        return false;
-    } else {
-        return true;
-    }
-}
-
 @end

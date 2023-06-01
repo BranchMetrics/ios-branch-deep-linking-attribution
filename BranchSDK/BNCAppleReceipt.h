@@ -21,7 +21,6 @@ NS_ASSUME_NONNULL_BEGIN
 // this is only available on builds from Apple
 - (nullable NSString *)installReceipt;
 - (BOOL)isTestFlight;
-+ (BOOL)isReceiptValid;
 
 @end
 
