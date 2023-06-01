@@ -7,7 +7,6 @@
 //
 
 #import "BNCAppleReceipt.h"
-#import <CommonCrypto/CommonDigest.h>
 
 @interface BNCAppleReceipt()
 
