@@ -52,7 +52,6 @@ NSString * const BRANCH_REQUEST_KEY_OS_VERSION = @"os_version";
 NSString * const BRANCH_REQUEST_KEY_URI_SCHEME = @"uri_scheme";
 NSString * const BRANCH_REQUEST_KEY_LINK_IDENTIFIER = @"link_identifier";
 NSString * const BRANCH_REQUEST_KEY_CHECKED_FACEBOOK_APPLINKS = @"facebook_app_link_checked";
-NSString * const BRANCH_REQUEST_KEY_CHECKED_APPLE_AD_ATTRIBUTION = @"apple_ad_attribution_checked";
 NSString * const BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER = @"spotlight_identifier";
 NSString * const BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL = @"universal_link_url";
 NSString * const BRANCH_REQUEST_KEY_LOCAL_URL = @"local_url";
@@ -162,7 +161,6 @@ NSString * const BRANCH_CONTENT_KEYS_KEY = @"ck";
 NSString * const BRANCH_PACKAGE_NAME_KEY = @"p";
 NSString * const BRANCH_ENTITIES_KEY = @"e";
 
-NSString * const BRANCH_REQUEST_KEY_SEARCH_AD = @"search_ad_encoded";
 NSString * const BRANCH_REQUEST_KEY_APPLE_ATTRIBUTION_TOKEN = @"apple_attribution_token";
 
 NSString * const BRANCH_CRASHLYTICS_SDK_VERSION_KEY = @"io.branch.sdk.version";

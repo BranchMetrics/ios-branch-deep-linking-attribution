@@ -64,8 +64,6 @@
     [self safeSetValue:[BNCSystemObserver defaultURIScheme] forKey:BRANCH_REQUEST_KEY_URI_SCHEME onDict:params];
     [self safeSetValue:[NSNumber numberWithBool:preferenceHelper.checkedFacebookAppLinks]
         forKey:BRANCH_REQUEST_KEY_CHECKED_FACEBOOK_APPLINKS onDict:params];
-    [self safeSetValue:[NSNumber numberWithBool:preferenceHelper.checkedAppleSearchAdAttribution]
-        forKey:BRANCH_REQUEST_KEY_CHECKED_APPLE_AD_ATTRIBUTION onDict:params];
     [self safeSetValue:preferenceHelper.linkClickIdentifier forKey:BRANCH_REQUEST_KEY_LINK_IDENTIFIER onDict:params];
     [self safeSetValue:preferenceHelper.spotlightIdentifier forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:params];
     [self safeSetValue:preferenceHelper.universalLinkUrl forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:params];
@@ -83,17 +81,6 @@
     [cdDict bnc_safeSetObject:[BNCSystemObserver bundleIdentifier] forKey:BRANCH_BUNDLE_IDENTIFIER];
     [self safeSetValue:cdDict forKey:BRANCH_CONTENT_DISCOVER_KEY onDict:params];
 #endif
-    
-    if (preferenceHelper.appleSearchAdNeedsSend) {
-        NSString *encodedSearchData = nil;
-        @try {
-            NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:preferenceHelper.appleSearchAdDetails];
-            encodedSearchData = [BNCEncodingUtils base64EncodeData:jsonData];
-        } @catch (id) { }
-        [self safeSetValue:encodedSearchData
-                    forKey:BRANCH_REQUEST_KEY_SEARCH_AD
-                    onDict:params];
-    }
     
     if (!preferenceHelper.appleAttributionTokenChecked) {
         NSString *appleAttributionToken = [BNCSystemObserver appleAttributionToken];
@@ -263,7 +250,6 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     preferenceHelper.spotlightIdentifier = nil;
     preferenceHelper.universalLinkUrl = nil;
     preferenceHelper.externalIntentURI = nil;
-    preferenceHelper.appleSearchAdNeedsSend = NO;
     preferenceHelper.referringURL = referringURL;
     preferenceHelper.dropURLOpen = NO;
 

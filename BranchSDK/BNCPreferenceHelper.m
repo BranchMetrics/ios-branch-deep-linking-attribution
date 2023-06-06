@@ -32,8 +32,6 @@ static NSString * const BRANCH_PREFS_KEY_RANDOMIZED_BUNDLE_TOKEN = @"bnc_randomi
 static NSString * const BRANCH_PREFS_KEY_SESSION_ID = @"bnc_session_id";
 static NSString * const BRANCH_PREFS_KEY_IDENTITY = @"bnc_identity";
 static NSString * const BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS = @"bnc_checked_fb_app_links";
-static NSString * const BRANCH_PREFS_KEY_CHECKED_APPLE_SEARCH_ADS = @"bnc_checked_apple_search_ads";
-static NSString * const BRANCH_PREFS_KEY_APPLE_SEARCH_ADS_INFO = @"bnc_apple_search_ads_info";
 static NSString * const BRANCH_PREFS_KEY_LINK_CLICK_IDENTIFIER = @"bnc_link_click_identifier";
 static NSString * const BRANCH_PREFS_KEY_SPOTLIGHT_IDENTIFIER = @"bnc_spotlight_identifier";
 static NSString * const BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL = @"bnc_universal_link_url";
@@ -101,8 +99,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     timeout = _timeout,
     lastStrongMatchDate = _lastStrongMatchDate,
     checkedFacebookAppLinks = _checkedFacebookAppLinks,
-    checkedAppleSearchAdAttribution = _checkedAppleSearchAdAttribution,
-    appleSearchAdDetails = _appleSearchAdDetails,
     requestMetadataDictionary = _requestMetadataDictionary,
     instrumentationDictionary = _instrumentationDictionary,
     referrerGBRAID = _referrerGBRAID,
@@ -421,28 +417,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
 }
 
-- (void) setAppleSearchAdDetails:(NSDictionary*)details {
-    if (details == nil || [details isKindOfClass:[NSDictionary class]]) {
-        _appleSearchAdDetails = details;
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_APPLE_SEARCH_ADS_INFO value:details];
-    }
-}
-
-- (NSDictionary*) appleSearchAdDetails {
-    if (!_appleSearchAdDetails) {
-        _appleSearchAdDetails = (NSDictionary *) [self readObjectFromDefaults:BRANCH_PREFS_KEY_APPLE_SEARCH_ADS_INFO];
-    }
-    return [_appleSearchAdDetails isKindOfClass:[NSDictionary class]] ? _appleSearchAdDetails : nil;
-}
-
-- (void) setAppleSearchAdNeedsSend:(BOOL)appleSearchAdNeedsSend {
-    [self writeBoolToDefaults:@"_appleSearchAdNeedsSend" value:appleSearchAdNeedsSend];
-}
-
-- (BOOL) appleSearchAdNeedsSend {
-    return [self readBoolFromDefaults:@"_appleSearchAdNeedsSend"];
-}
-
 - (void)setAppleAttributionTokenChecked:(BOOL)appleAttributionTokenChecked {
     [self writeBoolToDefaults:@"_appleAttributionTokenChecked" value:appleAttributionTokenChecked];
 }
@@ -527,17 +501,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
     return baseUrl;
 }
-
-- (BOOL)checkedAppleSearchAdAttribution {
-    _checkedAppleSearchAdAttribution = [self readBoolFromDefaults:BRANCH_PREFS_KEY_CHECKED_APPLE_SEARCH_ADS];
-    return _checkedAppleSearchAdAttribution;
-}
-
-- (void)setCheckedAppleSearchAdAttribution:(BOOL)checked {
-    _checkedAppleSearchAdAttribution = checked;
-    [self writeBoolToDefaults:BRANCH_PREFS_KEY_CHECKED_APPLE_SEARCH_ADS value:checked];
-}
-
 
 - (BOOL)checkedFacebookAppLinks {
     _checkedFacebookAppLinks = [self readBoolFromDefaults:BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS];
@@ -848,8 +811,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         self.universalLinkUrl = nil;
         self.initialReferrer = nil;
         self.installParams = nil;
-        self.appleSearchAdDetails = nil;
-        self.appleSearchAdNeedsSend = NO;
         self.sessionParams = nil;
         self.externalIntentURI = nil;
         self.savedAnalyticsData = nil;
