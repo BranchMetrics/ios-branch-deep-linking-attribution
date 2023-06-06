@@ -34,8 +34,6 @@
     [self safeSetValue:[BNCSystemObserver defaultURIScheme] forKey:BRANCH_REQUEST_KEY_URI_SCHEME onDict:params];
     [self safeSetValue:[NSNumber numberWithBool:preferenceHelper.checkedFacebookAppLinks]
         forKey:BRANCH_REQUEST_KEY_CHECKED_FACEBOOK_APPLINKS onDict:params];
-    [self safeSetValue:[NSNumber numberWithBool:preferenceHelper.checkedAppleSearchAdAttribution]
-        forKey:BRANCH_REQUEST_KEY_CHECKED_APPLE_AD_ATTRIBUTION onDict:params];
     [self safeSetValue:preferenceHelper.linkClickIdentifier forKey:BRANCH_REQUEST_KEY_LINK_IDENTIFIER onDict:params];
     [self safeSetValue:preferenceHelper.spotlightIdentifier forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:params];
     [self safeSetValue:preferenceHelper.universalLinkUrl forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:params];
@@ -57,17 +55,6 @@
     }
         
     params[BRANCH_REQUEST_KEY_DEBUG] = @(preferenceHelper.isDebug);
-
-    if (preferenceHelper.appleSearchAdNeedsSend) {
-        NSString *encodedSearchData = nil;
-        @try {
-            NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:preferenceHelper.appleSearchAdDetails];
-            encodedSearchData = [BNCEncodingUtils base64EncodeData:jsonData];
-        } @catch (id) { }
-        [self safeSetValue:encodedSearchData
-                    forKey:BRANCH_REQUEST_KEY_SEARCH_AD
-                    onDict:params];
-    }
     
     if ([BNCPasteboard sharedInstance].checkOnInstall) {
         NSURL *pasteboardURL = nil;

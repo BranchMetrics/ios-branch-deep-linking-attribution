@@ -51,7 +51,6 @@
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
-#import "BNCAppleSearchAds.h"
 #import "BNCSpotlightService.h"
 #import "BNCContentDiscoveryManager.h"
 #import "BranchContentDiscoverer.h"
@@ -657,7 +656,6 @@ static NSString *bnc_branchKey = nil;
 
         // queue up async attribution checks
         [self checkFacebookAppLinks];
-        [self checkAppleSearchAdsAttribution];
         [self checkAttributionStatusAndInitialize];
     }
 }
@@ -936,24 +934,6 @@ static NSString *bnc_branchKey = nil;
 
 #pragma mark - Apple Search Ad Check
 
-- (void)delayInitToCheckForSearchAds {
-    #if !TARGET_OS_TV
-    [BNCAppleSearchAds sharedInstance].enableAppleSearchAdsCheck = YES;
-    #endif
-}
-
-- (void)useLongerWaitForAppleSearchAds {
-    #if !TARGET_OS_TV
-    [[BNCAppleSearchAds sharedInstance] useLongWaitAppleSearchAdsConfig];
-    #endif
-}
-
-- (void)ignoreAppleSearchAdsTestData {
-    #if !TARGET_OS_TV
-    [BNCAppleSearchAds sharedInstance].ignoreAppleTestData = YES;
-    #endif
-}
-
 - (void)checkPasteboardOnInstall {
     [BNCPasteboard sharedInstance].checkOnInstall = YES;
 }
@@ -965,22 +945,6 @@ static NSString *bnc_branchKey = nil;
         return YES;
     }
     return NO;
-}
-
-- (void)checkAppleSearchAdsAttribution {
-    #if !TARGET_OS_TV
-    if (![BNCAppleSearchAds sharedInstance].enableAppleSearchAdsCheck) {
-        return;
-    }
-
-    dispatch_async(self.isolationQueue, ^(){
-        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-        [[BNCAppleSearchAds sharedInstance] checkAppleSearchAdsSaveTo:[BNCPreferenceHelper sharedInstance] installDate:[BNCApplication currentApplication].currentInstallDate completion:^{
-            dispatch_semaphore_signal(semaphore);
-        }];
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-    });
-    #endif
 }
 
 - (void)setAppClipAppGroup:(NSString *)appGroup {

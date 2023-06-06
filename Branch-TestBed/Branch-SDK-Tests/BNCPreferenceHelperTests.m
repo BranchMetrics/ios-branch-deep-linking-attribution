@@ -181,39 +181,6 @@
     XCTAssert([[tmp objectForKey:key4] isEqual:@(value4)]);
 }
 
-// The legacy Apple Search Ads dictionary
-- (void)testSerializeDict_ASA {
-    NSMutableDictionary *dict = [NSMutableDictionary new];
-    
-    NSString *key = @"bnc_apple_search_ads_info";
-    NSDictionary *value = @{
-        @"Version3.1": @{
-            @"iad-attribution": @"true",
-            @"iad-campaign-id": @"1234567890",
-            @"iad-campaign-name": @"CampaignName",
-            @"iad-click-date": @"2022-02-01T01:22:37Z",
-            @"iad-conversion-date": @"2022-02-01T01:22:37Z",
-            @"iad-lineitem-id": @"1234567890",
-            @"iad-lineitem-name": @"LineName",
-            @"iad-org-name": @"OrgName",
-            @"iad-purchase-date": @"2022-02-01T01:22:37Z"
-        }
-    };
-    [dict setObject:value forKey:key];
-    NSData *data = [self.prefHelper serializePrefDict:dict];
-    
-    NSMutableDictionary *tmp = [self.prefHelper deserializePrefDictFromData:data];
-    
-    XCTAssert(tmp != nil);
-    XCTAssert([tmp isKindOfClass:NSMutableDictionary.class]);
-    
-    NSDictionary *asa = [tmp objectForKey:key];
-    
-    NSString *asaDesc = asa.description;
-    NSString *valueDesc = value.description;
-    XCTAssert([asaDesc isEqualToString:valueDesc]);
-}
-
 - (void)testURLSkipList {
     NSMutableDictionary *dict = [NSMutableDictionary new];
     NSString *key = @"test";
