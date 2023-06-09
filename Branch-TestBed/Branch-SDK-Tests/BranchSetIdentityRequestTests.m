@@ -15,9 +15,24 @@
 static NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
 
 @interface BranchSetIdentityRequestTests : BNCTestCase
+@property (nonatomic, strong) Branch *branch;
+@property (nonatomic, strong) BNCPreferenceHelper *preferenceHelper;
 @end
 
 @implementation BranchSetIdentityRequestTests
+
+- (void)setUp {
+    [super setUp];
+    self.branch = [Branch getInstance];
+    self.preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    [self.branch logout];
+}
+
+- (void)tearDown {
+    self.branch = nil;
+    self.preferenceHelper = nil;
+    [super tearDown];
+}
 
 - (void)testRequestBody {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
@@ -176,6 +191,35 @@ static NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
     XCTAssertNotNil(preferenceHelper.userUrl);
     XCTAssertNotNil(preferenceHelper.sessionID);
     XCTAssertNotNil(preferenceHelper.randomizedBundleToken);
+}
+
+#pragma mark -  setIdentity Tests
+- (void)testSetIdentityWithNilUserId {
+    [self.branch logout];
+    
+    [self.branch setIdentity:nil withCallback:nil];
+    XCTAssertNil(self.preferenceHelper.userIdentity);
+}
+
+- (void)testSetIdentityWithUserId {
+    [self.branch logout];
+
+    NSString *testUserId = @"testUserId";
+    [self.branch setIdentity:testUserId withCallback:nil];
+    XCTAssertEqualObjects(@"testUserId", (self.preferenceHelper.userIdentity));
+}
+
+- (void)testSetIdentityWithCallback {
+    [self.branch logout];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"setIdentity callback is called"];
+    
+    [self.branch setIdentity:@"testUserIdWithCallback" withCallback:^(NSDictionary *params, NSError *error) {
+        XCTAssertEqualObjects(@"testUserIdWithCallback", [BNCPreferenceHelper sharedInstance].userIdentity);
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 }
 
 @end
