@@ -10,6 +10,8 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCEncodingUtils.h"
 #import "Branch.h"
+#import "BranchPluginSupport.h"
+#import "BNCConfig.h"
 
 @interface BNCPreferenceHelper()
 
@@ -239,6 +241,62 @@
     NSString *filterDesc = filter.description;
     NSString *valueDesc = value.description;
     XCTAssert([filterDesc isEqualToString:valueDesc]);
+}
+
+- (void)testSetAPIURL_Example {
+    
+    NSString *url = @"https://www.example.com/";
+    [BranchPluginSupport setAPIUrl:url] ;
+    
+    NSString *urlStored = [BNCPreferenceHelper sharedInstance].branchAPIURL ;
+    XCTAssert([url isEqualToString:urlStored]);
+}
+
+- (void)testSetAPIURL_InvalidHttp {
+    
+    NSString *url = @"Invalid://www.example.com/";
+    [BranchPluginSupport setAPIUrl:url] ;
+    
+    NSString *urlStored = [BNCPreferenceHelper sharedInstance].branchAPIURL ;
+    XCTAssert(![url isEqualToString:urlStored]);
+    XCTAssert([urlStored isEqualToString:BNC_API_BASE_URL]);
+}
+
+- (void)testSetAPIURL_InvalidEmpty {
+    
+    [BranchPluginSupport setAPIUrl:@""] ;
+    
+    NSString *urlStored = [BNCPreferenceHelper sharedInstance].branchAPIURL ;
+    XCTAssert(![urlStored isEqualToString:@""]);
+    XCTAssert([urlStored isEqualToString:BNC_API_BASE_URL]);
+}
+
+- (void)testSetCDNBaseURL_Example {
+    
+    NSString *url = @"https://www.example.com/";
+    [BranchPluginSupport setCDNBaseUrl:url] ;
+    
+    NSString *urlStored = [BNCPreferenceHelper sharedInstance].patternListURL ;
+    XCTAssert([url isEqualToString:urlStored]);
+}
+
+- (void)testSetCDNBaseURL_InvalidHttp {
+    
+    NSString *url = @"Invalid://www.example.com/";
+    [BranchPluginSupport setCDNBaseUrl:url] ;
+    
+    NSString *urlStored = [BNCPreferenceHelper sharedInstance].patternListURL ;
+    XCTAssert(![url isEqualToString:urlStored]);
+    XCTAssert([urlStored isEqualToString:BNC_CDN_URL]);
+}
+
+- (void)testSetCDNBaseURL_InvalidEmpty {
+    
+    [BranchPluginSupport setCDNBaseUrl:@""] ;
+    
+    NSString *urlStored = [BNCPreferenceHelper sharedInstance].patternListURL ;
+    XCTAssert(![urlStored isEqualToString:@""]);
+    XCTAssert([urlStored isEqualToString:BNC_CDN_URL]);
 }
 
 @end
