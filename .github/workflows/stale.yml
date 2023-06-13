@@ -19,7 +19,7 @@ jobs:
     steps:
     - uses: actions/stale@v5
       with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        repo-token: ${{ secrets.STALE_PERSONAL_ACCESS_TOKEN }}
         days-before-issue-stale: 60
         days-before-close: 7
         stale-issue-message: 'This issue has been automatically marked as stale due to inactivity for 60 days. If this issue is still relevant, please respond with any updates or this issue will be closed in 7 days. If you believe this is a mistake, please comment to let us know. Thank you for your contributions.'        
