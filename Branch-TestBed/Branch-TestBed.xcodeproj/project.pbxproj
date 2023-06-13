@@ -176,16 +176,10 @@
 		5F437E3D237E03C00052064B /* BNCDeviceSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F437E3B237E03C00052064B /* BNCDeviceSystem.h */; };
 		5F437E3E237E03C00052064B /* BNCDeviceSystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F437E3C237E03C00052064B /* BNCDeviceSystem.m */; };
 		5F437E40237E1A560052064B /* BNCDeviceSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F437E3F237E1A560052064B /* BNCDeviceSystemTests.m */; };
-		5F5EC45B2374D95300AAAFC7 /* BNCAppleAdClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F5EC4592374D95300AAAFC7 /* BNCAppleAdClient.h */; };
-		5F5EC45C2374D95300AAAFC7 /* BNCAppleAdClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F5EC45A2374D95300AAAFC7 /* BNCAppleAdClient.m */; };
-		5F5EC4602374E96B00AAAFC7 /* BNCAppleAdClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F5EC45F2374E96B00AAAFC7 /* BNCAppleAdClientTests.m */; };
 		5F67F48E228F535500067429 /* BNCEncodingUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F67F48D228F535500067429 /* BNCEncodingUtilsTests.m */; };
 		5F73FC7E23313F7A000EBD32 /* BNCJSONUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F73FC7C23313F7A000EBD32 /* BNCJSONUtility.h */; };
 		5F73FC7F23313F7A000EBD32 /* BNCJSONUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F73FC7D23313F7A000EBD32 /* BNCJSONUtility.m */; };
 		5F83B9ED2433BAAA0054A022 /* BNCServerInterface.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16837E2098C901008819E3 /* BNCServerInterface.Test.m */; };
-		5F892EB82360EFE90023AEC1 /* BNCAppleSearchAds.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F892EB62360EFE90023AEC1 /* BNCAppleSearchAds.m */; };
-		5F892EB92360EFE90023AEC1 /* BNCAppleSearchAds.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F892EB72360EFE90023AEC1 /* BNCAppleSearchAds.h */; };
-		5F892EBB2360F0290023AEC1 /* BNCAppleSearchAdsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F892EBA2360F0290023AEC1 /* BNCAppleSearchAdsTests.m */; };
 		5F892EBE2361157E0023AEC1 /* NSError+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F892EBC2361157D0023AEC1 /* NSError+Branch.m */; };
 		5F892EBF2361157E0023AEC1 /* NSError+Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F892EBD2361157D0023AEC1 /* NSError+Branch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F892EC5236116CD0023AEC1 /* NSErrorBranchCategoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F892EC4236116CC0023AEC1 /* NSErrorBranchCategoryTests.m */; };
@@ -504,16 +498,10 @@
 		5F437E3B237E03C00052064B /* BNCDeviceSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCDeviceSystem.h; sourceTree = "<group>"; };
 		5F437E3C237E03C00052064B /* BNCDeviceSystem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCDeviceSystem.m; sourceTree = "<group>"; };
 		5F437E3F237E1A560052064B /* BNCDeviceSystemTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCDeviceSystemTests.m; sourceTree = "<group>"; };
-		5F5EC4592374D95300AAAFC7 /* BNCAppleAdClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCAppleAdClient.h; sourceTree = "<group>"; };
-		5F5EC45A2374D95300AAAFC7 /* BNCAppleAdClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCAppleAdClient.m; sourceTree = "<group>"; };
-		5F5EC45F2374E96B00AAAFC7 /* BNCAppleAdClientTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCAppleAdClientTests.m; sourceTree = "<group>"; };
 		5F67F48D228F535500067429 /* BNCEncodingUtilsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtilsTests.m; sourceTree = "<group>"; };
 		5F73FC7C23313F7A000EBD32 /* BNCJSONUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCJSONUtility.h; sourceTree = "<group>"; };
 		5F73FC7D23313F7A000EBD32 /* BNCJSONUtility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCJSONUtility.m; sourceTree = "<group>"; };
 		5F73FC8023314697000EBD32 /* BNCJSONUtilityTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCJSONUtilityTests.m; sourceTree = "<group>"; };
-		5F892EB62360EFE90023AEC1 /* BNCAppleSearchAds.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCAppleSearchAds.m; sourceTree = "<group>"; };
-		5F892EB72360EFE90023AEC1 /* BNCAppleSearchAds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCAppleSearchAds.h; sourceTree = "<group>"; };
-		5F892EBA2360F0290023AEC1 /* BNCAppleSearchAdsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCAppleSearchAdsTests.m; sourceTree = "<group>"; };
 		5F892EBC2361157D0023AEC1 /* NSError+Branch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSError+Branch.m"; sourceTree = "<group>"; };
 		5F892EBD2361157D0023AEC1 /* NSError+Branch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+Branch.h"; sourceTree = "<group>"; };
 		5F892EC4236116CC0023AEC1 /* NSErrorBranchCategoryTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSErrorBranchCategoryTests.m; sourceTree = "<group>"; };
@@ -728,9 +716,7 @@
 		4D16837A2098C901008819E3 /* Branch-SDK-Tests */ = {
 			isa = PBXGroup;
 			children = (
-				5F5EC45F2374E96B00AAAFC7 /* BNCAppleAdClientTests.m */,
 				5FC7326F22DD1F93006E6FBC /* BNCAppleReceiptTests.m */,
-				5F892EBA2360F0290023AEC1 /* BNCAppleSearchAdsTests.m */,
 				4D1683972098C901008819E3 /* BNCApplication.Test.m */,
 				4D7881FB209CF2D4002B750F /* BNCApplication+BNCTest.h */,
 				4D7881FC209CF2D4002B750F /* BNCApplication+BNCTest.m */,
@@ -941,12 +927,8 @@
 			children = (
 				5FB38C7E2521234F00E9A85A /* BNCAppGroupsData.h */,
 				5FB38C7F2521234F00E9A85A /* BNCAppGroupsData.m */,
-				5F5EC4592374D95300AAAFC7 /* BNCAppleAdClient.h */,
-				5F5EC45A2374D95300AAAFC7 /* BNCAppleAdClient.m */,
 				5FC7326622D81002006E6FBC /* BNCAppleReceipt.h */,
 				5FC7326722D81002006E6FBC /* BNCAppleReceipt.m */,
-				5F892EB72360EFE90023AEC1 /* BNCAppleSearchAds.h */,
-				5F892EB62360EFE90023AEC1 /* BNCAppleSearchAds.m */,
 				4D59B51B2006979B00F89FD5 /* BNCApplication.h */,
 				4D59B51C2006979B00F89FD5 /* BNCApplication.m */,
 				5FE693F52405E91500E3AEE2 /* BNCCallbackMap.h */,
@@ -1123,7 +1105,6 @@
 				F185BAAA1F3D30D70056300C /* BNCSpotlightService.h in Headers */,
 				5F38021024DCC2E800E6FAFD /* BranchCloseRequest.h in Headers */,
 				5FDB04ED24E4D23300F2F267 /* BNCSKAdNetwork.h in Headers */,
-				5F5EC45B2374D95300AAAFC7 /* BNCAppleAdClient.h in Headers */,
 				4D955CCC2035021400FB8008 /* BNCURLFilter.h in Headers */,
 				5F38023824DCC2E800E6FAFD /* BranchContentDiscoverer.h in Headers */,
 				5F38023324DCC2E800E6FAFD /* BranchContentDiscoveryManifest.h in Headers */,
@@ -1150,7 +1131,6 @@
 				C1CC887F29BAA06600BDD2B5 /* BNCReferringURLUtility.h in Headers */,
 				C12320B7280E2060007771C0 /* BranchQRCode.h in Headers */,
 				4DCAC8171F426F7C00405D1D /* BranchDeepLinkingController.h in Headers */,
-				5F892EB92360EFE90023AEC1 /* BNCAppleSearchAds.h in Headers */,
 				4DB327FF1FA10B9000ACF9B0 /* BranchDelegate.h in Headers */,
 				5F38022424DCC2E800E6FAFD /* BranchShortUrlRequest.h in Headers */,
 				5F22AFC1240600BE00837CF5 /* BNCCallbackMap.m in Headers */,
@@ -1493,9 +1473,7 @@
 				4DB328001FA10B9000ACF9B0 /* BranchDelegate.m in Sources */,
 				5F38022F24DCC2E800E6FAFD /* BranchSpotlightUrlRequest.m in Sources */,
 				E729974E28E2BBFA007D91B2 /* BranchPasteControl.m in Sources */,
-				5F892EB82360EFE90023AEC1 /* BNCAppleSearchAds.m in Sources */,
 				466B58591B17779C00A69EDE /* BNCPreferenceHelper.m in Sources */,
-				5F5EC45C2374D95300AAAFC7 /* BNCAppleAdClient.m in Sources */,
 				5F38021724DCC2E800E6FAFD /* BranchOpenRequest.m in Sources */,
 				4D59B5222006979C00F89FD5 /* BNCKeyChain.m in Sources */,
 				F1D359211ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m in Sources */,
@@ -1613,7 +1591,6 @@
 				C12320B52808DB90007771C0 /* BranchQRCodeTests.m in Sources */,
 				5F3D671B233062FD00454FF1 /* BNCJsonLoader.m in Sources */,
 				4D1683C02098C902008819E3 /* BranchUniversalObject.Test.m in Sources */,
-				5F5EC4602374E96B00AAAFC7 /* BNCAppleAdClientTests.m in Sources */,
 				5FC7327022DD1F93006E6FBC /* BNCAppleReceiptTests.m in Sources */,
 				4D1683C82098C902008819E3 /* NSString+Branch.Test.m in Sources */,
 				5F892EC5236116CD0023AEC1 /* NSErrorBranchCategoryTests.m in Sources */,
@@ -1624,7 +1601,6 @@
 				4D1683BC2098C902008819E3 /* BranchDelegate.Test.m in Sources */,
 				4D1683B62098C902008819E3 /* BNCURLFilterTests.m in Sources */,
 				C10C61AA282481FB00761D7E /* BranchShareLinkTests.m in Sources */,
-				5F892EBB2360F0290023AEC1 /* BNCAppleSearchAdsTests.m in Sources */,
 				5F437E40237E1A560052064B /* BNCDeviceSystemTests.m in Sources */,
 				4D1683AC2098C902008819E3 /* BranchInstallRequestTests.m in Sources */,
 				4D1683C72098C902008819E3 /* BNCCrashlyticsWrapper.Test.m in Sources */,

@@ -46,9 +46,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Comment out in production. Un-comment to test your Branch SDK Integration:
     //[branch validateSDKIntegration];
 
-    // Check for Apple Search Ad attribution (trade-off: slows down app startup):
-    //[branch delayInitToCheckForSearchAds];
-
     // partner parameter sample
     //[branch addFacebookPartnerParameterWithName:@"em" value:@"11234e56af071e9c79927651156bd7a10bca8ac34672aba121056e2698ee7088"];
     
