@@ -26,6 +26,9 @@ static NSString * const BRANCH_PREFS_KEY_APP_VERSION = @"bnc_app_version";
 static NSString * const BRANCH_PREFS_KEY_LAST_RUN_BRANCH_KEY = @"bnc_last_run_branch_key";
 static NSString * const BRANCH_PREFS_KEY_LAST_STRONG_MATCH_DATE = @"bnc_strong_match_created_date";
 
+static NSString * const BRANCH_PREFS_KEY_API_URL = @"bnc_api_url";
+static NSString * const BRANCH_PREFS_KEY_PATTERN_LIST_URL = @"bnc_pattern_list_url";
+
 static NSString * const BRANCH_PREFS_KEY_RANDOMIZED_DEVICE_TOKEN = @"bnc_randomized_device_token";
 static NSString * const BRANCH_PREFS_KEY_RANDOMIZED_BUNDLE_TOKEN = @"bnc_randomized_bundle_token";
 
@@ -108,7 +111,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     highestConversionValueSent = _highestConversionValueSent,
     logInAppPurchasesAsBranchEvents = _logInAppPurchasesAsBranchEvents,
     referringURLQueryParameters = _referringURLQueryParameters,
-    anonID = _anonID;
+    anonID = _anonID,
+    patternListURL = _patternListURL;
 
 + (BNCPreferenceHelper *)sharedInstance {
     static BNCPreferenceHelper *preferenceHelper;
@@ -131,7 +135,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         _persistPrefsQueue = [[NSOperationQueue alloc] init];
         _persistPrefsQueue.maxConcurrentOperationCount = 1;
 
-        self.patternListURL = @"https://cdn.branch.io";
         self.disableAdNetworkCallouts = NO;
     }
     return self;
@@ -150,13 +153,18 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (void) setBranchAPIURL:(NSString*)branchAPIURL_ {
     @synchronized (self) {
         _branchAPIURL = [branchAPIURL_ copy];
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_API_URL value:_branchAPIURL];
     }
 }
 
 - (NSString*) branchAPIURL {
     @synchronized (self) {
         if (!_branchAPIURL) {
+            _branchAPIURL = [self readStringFromDefaults:BRANCH_PREFS_KEY_API_URL];
+        }
+        if (_branchAPIURL == nil || [_branchAPIURL isEqualToString:@""]) {
             _branchAPIURL = [BNC_API_BASE_URL copy];
+            [self writeObjectToDefaults:BRANCH_PREFS_KEY_API_URL value:_branchAPIURL];
         }
         return _branchAPIURL;
     }
@@ -179,6 +187,26 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         return [url substringFromIndex:index];
     }
     return @"";
+}
+
+- (void) setPatternListURL:(NSString*)url {
+    @synchronized (self) {
+        _patternListURL = url;
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_PATTERN_LIST_URL value:url];
+    }
+}
+
+- (NSString*) patternListURL {
+    @synchronized (self) {
+        if (!_patternListURL) {
+            _patternListURL =  [self readStringFromDefaults:BRANCH_PREFS_KEY_PATTERN_LIST_URL];
+        }
+        if (_patternListURL == nil || [_patternListURL isEqualToString:@""]) {
+            _patternListURL = BNC_CDN_URL;
+            [self writeObjectToDefaults:BRANCH_PREFS_KEY_PATTERN_LIST_URL value:_patternListURL];
+        }
+        return _patternListURL;
+    }
 }
 
 #pragma mark - Preference Storage

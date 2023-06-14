@@ -87,6 +87,9 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 - (NSString *)getAPIURL:(NSString *)endpoint;
 - (NSString *)getEndpointFromURL:(NSString *)url;
 
+- (void) setBranchAPIURL:(NSString*)branchAPIURL;
+- (void) setPatternListURL:(NSString*)cdnURL;
+
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value;
 - (NSMutableDictionary *)requestMetadataDictionary;
 

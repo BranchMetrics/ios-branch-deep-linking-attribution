@@ -11,6 +11,8 @@
 #import "BNCDeviceInfo.h"
 #import "BNCPreferenceHelper.h"
 #import "Branch.h"
+#import "BNCLog.h"
+#import "BNCConfig.h"
 
 @implementation BranchPluginSupport
 
@@ -48,6 +50,26 @@
     }
     
     return dictionary;
+}
+
+#pragma mark - Server URL methods
+
++ (void)setAPIUrl:(NSString *)url {
+    if([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
+        [[BNCPreferenceHelper sharedInstance] setBranchAPIURL:url];
+    } else {
+        BNCLogWarning([NSString stringWithFormat:@"Not setting url - %@. Its invalid.", url]);
+        [[BNCPreferenceHelper sharedInstance] setBranchAPIURL:BNC_API_BASE_URL];
+    }
+}
+
++ (void)setCDNBaseUrl:(NSString *)url {
+    if([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
+        [[BNCPreferenceHelper sharedInstance] setPatternListURL:url];
+    } else {
+        BNCLogWarning([NSString stringWithFormat:@"Not setting url - %@. Its invalid.", url]);
+        [[BNCPreferenceHelper sharedInstance] setPatternListURL:BNC_CDN_URL];
+    }
 }
 
 @end
