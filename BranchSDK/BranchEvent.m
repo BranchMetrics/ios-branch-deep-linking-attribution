@@ -16,7 +16,6 @@
 #import "BNCPartnerParameters.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCEventUtils.h"
-#import "BNCAppleReceipt.h"
 
 #pragma mark BranchStandardEvents
 
