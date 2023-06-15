@@ -61,12 +61,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     [self setLogFile:@"OpenNInstall"];
     
-    //[branch setIdentity:@"Bobby Branch"];
-    
-//    [branch setIdentity:@"Bobby Branch" withCallback:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
-//        NSLog(@"Bobby Branch: Set Identity Callback");
-//    }];
-    
+    [branch setIdentity:@"Bobby Branch"];
     
     [Branch setLogInAppPurchasesAsEventsEnabled:true];
     
@@ -74,12 +69,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
      ^ (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) {
         [self setLogFile:nil];
         [self handleDeepLinkObject:universalObject linkProperties:linkProperties error:error];
-        
-        //[branch setIdentity:@"Bobby Branch"];
-        
-        [branch setIdentity:@"Bobby Branch" withCallback:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
-            NSLog(@"Bobby Branch: Set Identity Callback");
-        }];
     }];
 
     // Push notification support (Optional)
