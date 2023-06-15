@@ -372,10 +372,9 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
 #pragma mark - IAP Methods
 
 - (void) logEventWithTransaction:(SKPaymentTransaction *)transaction {
-    
     self.transactionID = transaction.transactionIdentifier;
     [[BNCEventUtils shared] storeEvent:self];
-
+    
     NSString *productId = transaction.payment.productIdentifier;
     SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithObject:productId]];
     

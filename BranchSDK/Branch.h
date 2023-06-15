@@ -1856,9 +1856,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)passPasteItemProviders:(NSArray<NSItemProvider *> *)itemProviders API_AVAILABLE(ios(16));
 #endif
 
-+ (void)setLogInAppPurchasesAsEventsEnabled:(BOOL)enabled;
-+ (BOOL)logInAppPurchasesBranchEventsEnabled;
-
 @end
 
 NS_ASSUME_NONNULL_END
