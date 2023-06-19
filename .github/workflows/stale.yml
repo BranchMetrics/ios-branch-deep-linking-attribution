@@ -17,7 +17,7 @@ jobs:
       issues: write
 
     steps:
-    - uses: actions/stale@v5
+    - uses: actions/stale@v8
       with:
         repo-token: ${{ secrets.STALE_PERSONAL_ACCESS_TOKEN }}
         days-before-issue-stale: 60
