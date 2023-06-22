@@ -15,9 +15,24 @@
 static NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
 
 @interface BranchSetIdentityRequestTests : BNCTestCase
+//@property (nonatomic, strong) Branch *branch;
+//@property (nonatomic, strong) BNCPreferenceHelper *preferenceHelper;
 @end
 
 @implementation BranchSetIdentityRequestTests
+
+//- (void)setUp {
+//    [super setUp];
+//    self.branch = [Branch getInstance];
+//    self.preferenceHelper = [BNCPreferenceHelper sharedInstance];
+//    [self.branch logout];
+//}
+//
+//- (void)tearDown {
+//    self.branch = nil;
+//    self.preferenceHelper = nil;
+//    [super tearDown];
+//}
 
 - (void)testRequestBody {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
@@ -176,6 +191,54 @@ static NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
     XCTAssertNotNil(preferenceHelper.userUrl);
     XCTAssertNotNil(preferenceHelper.sessionID);
     XCTAssertNotNil(preferenceHelper.randomizedBundleToken);
+}
+
+#pragma mark -  setIdentity Tests
+- (void)testSetIdentityWithCallback {
+    Branch *branch = [Branch getInstance];
+    [branch logoutWithCallback:^(BOOL changed, NSError * _Nullable error) {
+        BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper new];
+
+        XCTestExpectation *expectation = [self expectationWithDescription:@"setIdentity callback is called"];
+        
+        [branch setIdentity:@"testUserIdWithCallback" withCallback:^(NSDictionary *params, NSError *error) {
+            XCTAssertEqualObjects(@"testUserIdWithCallback", preferenceHelper.userIdentity);
+            [expectation fulfill];
+        }];
+        
+        [self waitForExpectationsWithTimeout:5 handler:nil];
+    }];
+}
+
+- (void)testSetIdentityWithNilUserId {
+    Branch *branch = [Branch getInstance];
+    [branch logoutWithCallback:^(BOOL changed, NSError * _Nullable error) {
+        BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper new];
+
+        XCTestExpectation *expectation = [self expectationWithDescription:@"setIdentityWithNil callback is called"];
+        
+        [branch setIdentity:nil withCallback:^(NSDictionary *params, NSError *error) {
+            XCTAssertNil(preferenceHelper.userIdentity);
+            [expectation fulfill];
+        }];
+        
+        [self waitForExpectationsWithTimeout:5 handler:nil];
+    }];
+    
+
+}
+
+- (void)testSetIdentityWithUserId {
+    Branch *branch = [Branch getInstance];
+    [branch logoutWithCallback:^(BOOL changed, NSError * _Nullable error) {
+        BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper new];
+
+        NSString *testUserId = @"testUserId";
+        [branch setIdentity:testUserId withCallback:nil];
+
+        XCTAssertEqualObjects(@"testUserId", preferenceHelper.userIdentity);
+    }];
+
 }
 
 @end

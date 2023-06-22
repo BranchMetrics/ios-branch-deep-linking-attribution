@@ -51,19 +51,19 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     [branch checkPasteboardOnInstall];
     
-
     /*
      *    Required: Initialize Branch, passing a deep link handler block:
      */
 
     [self setLogFile:@"OpenNInstall"];
-    // [branch setIdentity:@"Bobby Branch"];
-        
-    [branch initSessionWithLaunchOptions:launchOptions
-        andRegisterDeepLinkHandlerUsingBranchUniversalObject:
-        ^ (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) {
+    
+    [branch setIdentity:@"Bobby Branch"];
+    
+    [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandlerUsingBranchUniversalObject:
+     ^ (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) {
+
         [self setLogFile:nil];
-            [self handleDeepLinkObject:universalObject linkProperties:linkProperties error:error];
+        [self handleDeepLinkObject:universalObject linkProperties:linkProperties error:error];
     }];
 
     // Push notification support (Optional)

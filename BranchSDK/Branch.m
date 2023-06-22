@@ -1047,7 +1047,7 @@ static NSString *bnc_branchKey = nil;
 #pragma mark - Identity methods
 
 - (void)setIdentity:(NSString *)userId {
-    [self setIdentity:userId withCallback:NULL];
+    [self setIdentity:userId withCallback: nil];
 }
 
 - (void)setIdentity:(NSString *)userId withCallback:(callbackWithParams)callback {
@@ -1057,8 +1057,15 @@ static NSString *bnc_branchKey = nil;
         }
         return;
     }
+    
+    if (self.initializationStatus == BNCInitStatusUninitialized ) {
+        [self cacheIdentity:userId withCallback:callback];
+    } else {
+        [self sendIdentity:userId withCallback:callback];
+    }
+}
 
-    [self initSafetyCheck];
+- (void) sendIdentity:(NSString *)userId withCallback:(callbackWithParams)callback {
     dispatch_async(self.isolationQueue, ^(){
         BranchSetIdentityRequest *req = [[BranchSetIdentityRequest alloc] initWithUserId:userId callback:callback];
         [self.requestQueue enqueue:req];
@@ -1066,10 +1073,23 @@ static NSString *bnc_branchKey = nil;
     });
 }
 
+- (void) cacheIdentity: (NSString *)userId withCallback:(callbackWithParams)callback {
+    self.installUserId = userId;
+    self.setIdentityCallback = callback;
+}
+
+- (void) applySavedIdentity {
+    if (self.installUserId != nil) {
+        [self sendIdentity:self.installUserId withCallback:self.setIdentityCallback];
+        
+        self.installUserId = nil;
+        self.setIdentityCallback = nil;
+    }
+}
+
 - (void)logout {
     [self logoutWithCallback:nil];
 }
-
 
 - (void)logoutWithCallback:(callbackWithStatus)callback {
     if (self.initializationStatus == BNCInitStatusUninitialized) {
@@ -2285,6 +2305,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
     [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
 
+    [self applySavedIdentity];
+    
     if (!self.urlFilter.hasUpdatedPatternList) {
         [self.urlFilter updatePatternListWithCompletion:nil];
     }
