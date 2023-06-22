@@ -15,24 +15,9 @@
 static NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
 
 @interface BranchSetIdentityRequestTests : BNCTestCase
-//@property (nonatomic, strong) Branch *branch;
-//@property (nonatomic, strong) BNCPreferenceHelper *preferenceHelper;
 @end
 
 @implementation BranchSetIdentityRequestTests
-
-//- (void)setUp {
-//    [super setUp];
-//    self.branch = [Branch getInstance];
-//    self.preferenceHelper = [BNCPreferenceHelper sharedInstance];
-//    [self.branch logout];
-//}
-//
-//- (void)tearDown {
-//    self.branch = nil;
-//    self.preferenceHelper = nil;
-//    [super tearDown];
-//}
 
 - (void)testRequestBody {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];

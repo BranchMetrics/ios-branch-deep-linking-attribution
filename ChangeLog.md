@@ -1,6 +1,15 @@
 Branch iOS SDK Change Log
 
+V.2.2.0
+ 
+Branch iOS SDK 2.2.0 adds the ability to include developer ID in installs and a new method to change the Branch API base URL.
+
+- SDK-1944 - Add Developer ID to v1/install
+- SDK-1755 - Remove old Apple Search Ads APIs
+- SDK-1934 - Expose a public method to change the Branch API base url
+
 V.2.1.2
+
 Branch iOS SDK 2.1.2 adds additional support for Meta AEM links. It also includes some bug fixes and debugging improvements.
 
 - SDK-1796, SDK-1797 and SDK-1906 additional support for Meta AEM links
