@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>Timber</string>
+			</array>
+		</dict>
+	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>processing</string>
+		<string>remote-notification</string>
+	</array>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleLightContent</string>
+	<key>adjust_app_token</key>
+	<string>x66ziay2jtvk</string>
+	<key>amplitude_api_key</key>
+	<string>3dc11880800fe99b829ca66886abf9e5</string>
+	<key>appboy_api_key</key>
+	<string>d781dccf-9f96-46a8-878a-a1bef7bb6968</string>
+	<key>appmetrica_api_key</key>
+	<string>4805cb1a-2e2c-4a03-af63-4c712939817b</string>
+	<key>appsflyer_api_key</key>
+	<string>84qHoE3ZXh7SetmHU6boi5</string>
+	<key>branch_key</key>
+	<dict>
+		<key>live</key>
+		<string>key_live_nf8w3l1WBpzWdlC00KsLNdmbuEccK6Yr</string>
+		<key>test</key>
+		<string>key_test_om2EWe1WBeBYmpz9Z1mdpopouDmoN72T</string>
+	</dict>
+	<key>branch_universal_link_domains</key>
+	<array>
+		<string>timber.app.link</string>
+		<string>timber-alternate.app.link</string>
+		<string>timber.test.app.link</string>
+		<string>timber-alternate.test.app.link</string>
+	</array>
+</dict>
+</plist>

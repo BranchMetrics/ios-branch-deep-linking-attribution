@@ -1,3 +1,6 @@
 workspace 'Branch-TestBed/Branch-TestBed.xcworkspace'
 device 'iPhone 12'
-output_types 'junit'
+output_types 'junit,html'
+code_coverage true
+clean true 
+output_directory 'fastlane/test_output/'

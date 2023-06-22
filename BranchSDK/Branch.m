@@ -46,12 +46,10 @@
 #import "NSError+Branch.h"
 #import "BNCLog.h"
 #import "UIViewController+Branch.h"
-#import <StoreKit/StoreKit.h>
 #import "BNCReferringURLUtility.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
-#import "BNCAppleSearchAds.h"
 #import "BNCSpotlightService.h"
 #import "BNCContentDiscoveryManager.h"
 #import "BranchContentDiscoverer.h"
@@ -126,7 +124,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     BNCInitStatusInitialized
 };
 
-@interface Branch() <BranchDeepLinkingControllerCompletionDelegate, SKPaymentTransactionObserver> {
+@interface Branch() <BranchDeepLinkingControllerCompletionDelegate> {
     NSInteger _networkCount;
     BNCURLFilter *_userURLFilter;
 }
@@ -657,7 +655,6 @@ static NSString *bnc_branchKey = nil;
 
         // queue up async attribution checks
         [self checkFacebookAppLinks];
-        [self checkAppleSearchAdsAttribution];
         [self checkAttributionStatusAndInitialize];
     }
 }
@@ -936,24 +933,6 @@ static NSString *bnc_branchKey = nil;
 
 #pragma mark - Apple Search Ad Check
 
-- (void)delayInitToCheckForSearchAds {
-    #if !TARGET_OS_TV
-    [BNCAppleSearchAds sharedInstance].enableAppleSearchAdsCheck = YES;
-    #endif
-}
-
-- (void)useLongerWaitForAppleSearchAds {
-    #if !TARGET_OS_TV
-    [[BNCAppleSearchAds sharedInstance] useLongWaitAppleSearchAdsConfig];
-    #endif
-}
-
-- (void)ignoreAppleSearchAdsTestData {
-    #if !TARGET_OS_TV
-    [BNCAppleSearchAds sharedInstance].ignoreAppleTestData = YES;
-    #endif
-}
-
 - (void)checkPasteboardOnInstall {
     [BNCPasteboard sharedInstance].checkOnInstall = YES;
 }
@@ -965,22 +944,6 @@ static NSString *bnc_branchKey = nil;
         return YES;
     }
     return NO;
-}
-
-- (void)checkAppleSearchAdsAttribution {
-    #if !TARGET_OS_TV
-    if (![BNCAppleSearchAds sharedInstance].enableAppleSearchAdsCheck) {
-        return;
-    }
-
-    dispatch_async(self.isolationQueue, ^(){
-        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-        [[BNCAppleSearchAds sharedInstance] checkAppleSearchAdsSaveTo:[BNCPreferenceHelper sharedInstance] installDate:[BNCApplication currentApplication].currentInstallDate completion:^{
-            dispatch_semaphore_signal(semaphore);
-        }];
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-    });
-    #endif
 }
 
 - (void)setAppClipAppGroup:(NSString *)appGroup {
@@ -1697,10 +1660,6 @@ static NSString *bnc_branchKey = nil;
                     cache:[[BNCLinkCache alloc] init]
                     preferenceHelper:preferenceHelper
                     key:key];
-            
-            if ([BNCPreferenceHelper sharedInstance].logInAppPurchasesAsBranchEvents == YES) {
-                [[SKPaymentQueue defaultQueue] addTransactionObserver:branch];
-            }
         });
         return branch;
     }
@@ -2622,53 +2581,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [[BNCServerRequestQueue getInstance] clearQueue];
     [BranchOpenRequest releaseOpenResponseLock];
     [BNCPreferenceHelper clearAll];
-}
-
-#pragma mark - SKPaymentTransactionObserver Methods
-+ (void)setLogInAppPurchasesAsEventsEnabled:(BOOL)enabled {
-    @synchronized(self) {
-        if (enabled) {
-            [BNCPreferenceHelper sharedInstance].logInAppPurchasesAsBranchEvents = YES;
-        } else {
-            [BNCPreferenceHelper sharedInstance].logInAppPurchasesAsBranchEvents = NO;
-        }
-    }
-}
-
-+ (BOOL)logInAppPurchasesBranchEventsEnabled {
-    @synchronized(self) {
-        return [BNCPreferenceHelper sharedInstance].logInAppPurchasesAsBranchEvents;
-    }
-}
-
-//Logs incoming in-app purchases as events
-- (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray<SKPaymentTransaction *> *)transactions {
-    for (SKPaymentTransaction *transaction in transactions) {
-        switch (transaction.transactionState) {
-            case SKPaymentTransactionStatePurchased: {
-                
-                [[SKPaymentQueue defaultQueue] finishTransaction:(SKPaymentTransaction *)transaction];
-                
-                if ([BNCPreferenceHelper sharedInstance].logInAppPurchasesAsBranchEvents == YES) {
-                    BNCLogDebug([NSString stringWithFormat:@"Automatically logging transaction as Branch event."]);
-                    
-                    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventPurchase];
-                    [event logEventWithTransaction:transaction];
-                }
-                break;
-            }
-            case SKPaymentTransactionStateFailed: {
-                [[SKPaymentQueue defaultQueue] finishTransaction:(SKPaymentTransaction *)transaction];
-                break;
-            }
-            case SKPaymentTransactionStateRestored: {
-                [[SKPaymentQueue defaultQueue] finishTransaction:(SKPaymentTransaction *)transaction];
-                break;
-            }
-            default:
-                break;
-        }
-    }
 }
 
 @end

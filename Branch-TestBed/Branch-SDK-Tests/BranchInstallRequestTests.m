@@ -27,7 +27,6 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     preferenceHelper.installParams = nil;
     preferenceHelper.randomizedBundleToken = nil;
-    preferenceHelper.checkedAppleSearchAdAttribution = NO;
     [preferenceHelper saveContentAnalyticsManifest:nil];
     [preferenceHelper synchronize];
 }
@@ -72,7 +71,6 @@
 
     NSMutableDictionary *expectedParams = [NSMutableDictionary dictionaryWithDictionary:@{
         @"app_version":                 @"foo-app-version",
-        @"apple_ad_attribution_checked":@0,
         @"debug":                       @1,
         @"facebook_app_link_checked":   @0,
         @"latest_install_time":         BNCWireFormatFromDate(appDate),

@@ -41,7 +41,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (copy, nonatomic) NSString *installParams;
 @property (assign, nonatomic) BOOL isDebug;
 @property (assign, nonatomic) BOOL checkedFacebookAppLinks;
-@property (assign, nonatomic) BOOL checkedAppleSearchAdAttribution;
 @property (nonatomic, assign, readwrite) BOOL appleAttributionTokenChecked;
 @property (nonatomic, assign, readwrite) BOOL hasOptedInBefore;
 @property (nonatomic, assign, readwrite) BOOL hasCalledHandleATTAuthorizationStatus;
@@ -50,8 +49,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) NSTimeInterval timeout;
 @property (copy, nonatomic) NSString *externalIntentURI;
 @property (strong, nonatomic) NSMutableDictionary *savedAnalyticsData;
-@property (strong, nonatomic) NSDictionary *appleSearchAdDetails;
-@property (assign, nonatomic) BOOL appleSearchAdNeedsSend;
 @property (copy, nonatomic) NSString *lastSystemBuildVersion;
 @property (copy, nonatomic) NSString *browserUserAgentString;
 @property (copy, nonatomic) NSString *referringURL;
@@ -80,7 +77,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) NSInteger highestConversionValueSent;
 @property (strong, nonatomic) NSDate   *firstAppLaunchTime;
 @property (assign, nonatomic) BOOL invokeRegisterApp;
-@property (assign, nonatomic) BOOL logInAppPurchasesAsBranchEvents;
 
 - (void) clearTrackingInformation;
 
@@ -89,6 +85,9 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 - (NSString *)getAPIBaseURL;
 - (NSString *)getAPIURL:(NSString *)endpoint;
 - (NSString *)getEndpointFromURL:(NSString *)url;
+
+- (void) setBranchAPIURL:(NSString*)branchAPIURL;
+- (void) setPatternListURL:(NSString*)cdnURL;
 
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value;
 - (NSMutableDictionary *)requestMetadataDictionary;
