@@ -38,7 +38,7 @@
     
 #if !TARGET_OS_TV
 #if !TARGET_OS_MACCATALYST
-    if (@available(iOS 14.3, *)) {
+    if (@available(iOS 14.3, macCatalyst 14.3, *)) {
 
         // We are getting reports on iOS 14.5 that this API can hang, adding a short timeout for now.
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);

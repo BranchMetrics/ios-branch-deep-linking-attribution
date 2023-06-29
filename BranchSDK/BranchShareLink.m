@@ -180,7 +180,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         [_activityItems addObject:item];
     }
 
-    if (@available(iOS 13.0, *)) {
+    if (@available(iOS 13.0, macCatalyst 13.0, *)) {
         if (self.lpMetaData) {
             [_activityItems addObject:self];
         }

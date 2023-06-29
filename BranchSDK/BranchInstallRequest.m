@@ -58,7 +58,7 @@
     
     if ([BNCPasteboard sharedInstance].checkOnInstall) {
         NSURL *pasteboardURL = nil;
-        if (@available(iOS 16.0, *)) {
+        if (@available(iOS 16.0, macCatalyst 16.0, *)) {
             NSString *localURLString = [[BNCPreferenceHelper sharedInstance] localUrl];
             if(localURLString){
                 pasteboardURL = [[NSURL alloc] initWithString:localURLString];

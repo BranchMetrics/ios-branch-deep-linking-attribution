@@ -576,7 +576,7 @@
     //NSTimeInterval maxTimeSinceInstall = 60.0;
     NSTimeInterval maxTimeSinceInstall = 0;
     
-    if (@available(iOS 16.1, *)) {
+    if (@available(iOS 16.1, macCatalyst 16.1, *)) {
         maxTimeSinceInstall = 3600.0 * 24.0 * 60; // For SKAN 4.0, The user has 60 days to launch the app.
     } else {
         maxTimeSinceInstall = 3600.0 * 24.0 * 30;
