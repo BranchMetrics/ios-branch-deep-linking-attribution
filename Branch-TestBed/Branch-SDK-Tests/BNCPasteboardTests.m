@@ -157,7 +157,7 @@
 // This test fails intermittently when executed with other tests - depending upon the order in which its executed
 - (void) testPassPasteControl {
 #if !TARGET_OS_TV
-    if (@available(iOS 16.0, *)) {
+    if (@available(iOS 16.0, macCatalyst 16.0, *)) {
         
         long long timeStamp = ([[NSDate date] timeIntervalSince1970] - 5*60)*1000; // 5 minute earlier timestamp
         NSString *urlString = [NSString stringWithFormat:@"https://bnctestbed-alternate.app.link/9R7MbTmnRtb?__branch_flow_type=viewapp&__branch_flow_id=1105940563590163783&__branch_mobile_deepview_type=1&nl_opt_in=1&_cpts=%lld", timeStamp];

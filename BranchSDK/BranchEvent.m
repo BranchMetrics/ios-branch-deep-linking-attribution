@@ -88,7 +88,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
         NSNumber *conversionValue = (NSNumber *)dictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
         // Regardless of SKAN opted-in in dashboard, we always get conversionValue, so adding check to find out if install/open response had "invoke_register_app" true
         if (conversionValue && [BNCPreferenceHelper sharedInstance].invokeRegisterApp) {
-            if (@available(iOS 16.1, *)){
+            if (@available(iOS 16.1, macCatalyst 16.1, *)){
                 NSString * coarseConversionValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:dictionary] ;
                 BOOL lockWin = [[BNCSKAdNetwork sharedInstance] getLockedStatusFromDataResponse:dictionary];
                 BOOL shouldCallUpdatePostback = [[BNCSKAdNetwork sharedInstance] shouldCallPostbackForDataResponse:dictionary];
@@ -105,7 +105,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
                     }];
                 }
                 
-            } else if (@available(iOS 15.4, *)) {
+            } else if (@available(iOS 15.4, macCatalyst 15.4, *)) {
                 [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:conversionValue.intValue completionHandler: ^(NSError *error){
                     if (error) {
                         BNCLogError([NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]]);
