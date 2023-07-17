@@ -1729,61 +1729,50 @@ static NSString *bnc_branchKey = nil;
                      andParams:(NSDictionary *)params
                 ignoreUAString:(NSString *)ignoreUAString
              forceLinkCreation:(BOOL)forceLinkCreation {
-
+    
     NSString *shortURL = nil;
-
+    
     BNCLinkData *linkData =
-        [self prepareLinkDataFor:tags
-            andAlias:alias
-             andType:type
-    andMatchDuration:duration
-          andChannel:channel
-          andFeature:feature
-            andStage:stage
-         andCampaign:campaign
-           andParams:params
-      ignoreUAString:ignoreUAString];
-
+    [self prepareLinkDataFor:tags
+                    andAlias:alias
+                     andType:type
+            andMatchDuration:duration
+                  andChannel:channel
+                  andFeature:feature
+                    andStage:stage
+                 andCampaign:campaign
+                   andParams:params
+              ignoreUAString:ignoreUAString];
+    
     // If an ignore UA string is present, we always get a new url.
     // Otherwise, if we've already seen this request, use the cached version.
     if (!ignoreUAString && [self.linkCache objectForKey:linkData]) {
         shortURL = [self.linkCache objectForKey:linkData];
     } else {
         BranchShortUrlSyncRequest *req =
-            [[BranchShortUrlSyncRequest alloc]
-                initWithTags:tags
-                alias:alias
-                type:type
-                matchDuration:duration
-                channel:channel
-                feature:feature
-                stage:stage
-                campaign:campaign
-                params:params
-                linkData:linkData
-                linkCache:self.linkCache];
-
-        if (self.initializationStatus == BNCInitStatusInitialized) {
-            BNCLogDebug(@"Creating a custom URL synchronously.");
-            BNCServerResponse *serverResponse = [req makeRequest:self.serverInterface key:self.class.branchKey];
-            shortURL = [req processResponse:serverResponse];
-
-            // cache the link
-            if (shortURL) {
-                [self.linkCache setObject:shortURL forKey:linkData];
-            }
-        } else {
-            if (forceLinkCreation) {
-                if (self.class.branchKey) {
-                    return [BranchShortUrlSyncRequest createLinkFromBranchKey:self.class.branchKey
-                        tags:tags alias:alias type:type matchDuration:duration
-                            channel:channel feature:feature stage:stage params:params];
-                }
-            }
-            BNCLogError(@"Making a Branch request before init has succeeded!");
+        [[BranchShortUrlSyncRequest alloc]
+         initWithTags:tags
+         alias:alias
+         type:type
+         matchDuration:duration
+         channel:channel
+         feature:feature
+         stage:stage
+         campaign:campaign
+         params:params
+         linkData:linkData
+         linkCache:self.linkCache];
+        
+        BNCLogDebug(@"Creating a custom URL synchronously.");
+        BNCServerResponse *serverResponse = [req makeRequest:self.serverInterface key:self.class.branchKey];
+        shortURL = [req processResponse:serverResponse];
+        
+        // cache the link
+        if (shortURL) {
+            [self.linkCache setObject:shortURL forKey:linkData];
         }
     }
-
+    
     return shortURL;
 }
 
