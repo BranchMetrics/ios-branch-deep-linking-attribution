@@ -65,6 +65,7 @@ NSString * const BRANCH_REQUEST_KEY_LOG = @"log";
 NSString * const BRANCH_REQUEST_KEY_INSTRUMENTATION = @"instrumentation";
 NSString * const BRANCH_REQUEST_KEY_APPLE_RECEIPT = @"apple_receipt";
 NSString * const BRANCH_REQUEST_KEY_APPLE_TESTFLIGHT = @"apple_testflight";
+NSString * const BRANCH_REQUEST_KEY_ANON_ID = @"anon_id";
 
 NSString * const BRANCH_REQUEST_KEY_APP_CLIP_BUNDLE_ID = @"app_clip_bundle_id";
 NSString * const BRANCH_REQUEST_KEY_LATEST_APP_CLIP_INSTALL_TIME = @"latest_app_clip_time";

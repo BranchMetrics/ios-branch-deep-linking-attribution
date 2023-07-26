@@ -403,6 +403,14 @@
         preparedParams[@"update"] = nil;
         preparedParams[@"anon_id"] = nil;
     }
+    
+    //Remove unneccesary fields from v1/url requests.
+    if ([self.requestEndpoint containsString:@"v1/url"]) {
+        NSArray *keysToRemove = @[BRANCH_REQUEST_KEY_SESSION_ID, BRANCH_REQUEST_KEY_OPTED_IN_STATUS, BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN, BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN, BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL, BRANCH_REQUEST_KEY_IOS_VENDOR_ID, BRANCH_REQUEST_KEY_HARDWARE_ID_TYPE, BRANCH_REQUEST_KEY_HARDWARE_ID, BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED, BRANCH_REQUEST_KEY_ANON_ID];
+        
+        [preparedParams removeObjectsForKeys: keysToRemove];
+    }
+    
     NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:preparedParams];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
 
@@ -530,7 +538,7 @@
         [self safeSetValue:deviceInfo.vendorId forKey:BRANCH_REQUEST_KEY_IOS_VENDOR_ID onDict:dict];
         // idfa is only in the hardware id field
         // [self safeSetValue:deviceInfo.advertiserId forKey:@"idfa" onDict:dict];
-        [self safeSetValue:deviceInfo.anonId forKey:@"anon_id" onDict:dict];
+        [self safeSetValue:deviceInfo.anonId forKey:BRANCH_REQUEST_KEY_ANON_ID onDict:dict];
         
         [self safeSetValue:deviceInfo.osName forKey:BRANCH_REQUEST_KEY_OS onDict:dict];
         [self safeSetValue:deviceInfo.osVersion forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:dict];
