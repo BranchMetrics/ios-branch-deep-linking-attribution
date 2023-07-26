@@ -404,7 +404,7 @@
         preparedParams[@"anon_id"] = nil;
     }
     
-    //Remove unneccesary fields from v1/url requests.
+    //Remove unnecessary fields from v1/url requests.
     if ([self.requestEndpoint containsString:@"v1/url"]) {
         NSArray *keysToRemove = @[BRANCH_REQUEST_KEY_SESSION_ID, BRANCH_REQUEST_KEY_OPTED_IN_STATUS, BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN, BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN, BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL, BRANCH_REQUEST_KEY_IOS_VENDOR_ID, BRANCH_REQUEST_KEY_HARDWARE_ID_TYPE, BRANCH_REQUEST_KEY_HARDWARE_ID, BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED, BRANCH_REQUEST_KEY_ANON_ID];
         
