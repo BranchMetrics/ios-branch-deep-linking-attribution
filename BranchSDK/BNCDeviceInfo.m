@@ -13,7 +13,6 @@
 #import "BNCConfig.h"
 #import "BNCNetworkInterface.h"
 #import "BNCReachability.h"
-#import "BNCLocale.h"
 #import "NSMutableDictionary+Branch.h"
 #import "BNCDeviceSystem.h"
 
@@ -71,8 +70,6 @@
 }
 
 - (void)loadDeviceInfo {
-
-    BNCLocale *locale = [BNCLocale new];
     BNCDeviceSystem *deviceSystem = [BNCDeviceSystem new];
 
     // The random id is regenerated per app launch.  This maintains existing behavior.
@@ -101,8 +98,8 @@
     #endif 
 
     self.locale = [NSLocale currentLocale].localeIdentifier;
-    self.country = [locale country];
-    self.language = [locale language];
+    self.country = [[NSLocale currentLocale] countryCode];
+    self.language = [[NSLocale currentLocale] languageCode];
     self.environment = [BNCSystemObserver environment];
     self.branchSDKVersion = [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION];
     self.applicationVersion = [BNCSystemObserver applicationVersion];
