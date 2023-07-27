@@ -92,13 +92,7 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
     id value = nil;
     if (valueData) {
         @try {
-            if (@available(iOS 11.0, tvOS 11.0, *)) {
-                value = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSDate class] fromData:(__bridge NSData*)valueData error:NULL];
-            } else {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
-                value = [NSKeyedUnarchiver unarchiveObjectWithData:(__bridge NSDate*)valueData];
-#endif
-            }
+            value = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSDate class] fromData:(__bridge NSData*)valueData error:NULL];
         }
         @catch (id) {
             value = nil;
@@ -120,13 +114,7 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
 
     NSData* valueData = nil;
     @try {
-        if (@available(iOS 11.0, tvOS 11.0, *)) {
-            valueData = [NSKeyedArchiver archivedDataWithRootObject:date requiringSecureCoding:YES error:NULL];
-        } else {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
-            valueData = [NSKeyedArchiver archivedDataWithRootObject:value];
-#endif
-        }
+        valueData = [NSKeyedArchiver archivedDataWithRootObject:date requiringSecureCoding:YES error:NULL];
     }
     @catch(id) {
         valueData = nil;
