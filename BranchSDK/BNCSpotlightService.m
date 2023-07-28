@@ -12,15 +12,6 @@
 #import "NSError+Branch.h"
 #import "UIViewController+Branch.h"
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wpartial-availability"
-
-#pragma mark Defensive Declarations
-
-#ifndef CSSearchableItemActivityIdentifier
-#define CSSearchableItemActivityIdentifier @"kCSSearchableItemActivityIdentifier"
-#endif
-
 @interface CSSearchableItemAttributeSetDummyClass : NSObject
 - (void) setKeywords:(NSArray<NSString*>*)keywords;
 - (void) setWeakRelatedUniqueIdentifier:(NSString*)uniqueIdentifier;
@@ -47,13 +38,6 @@ static NSString* const kDomainIdentifier = @"io.branch.sdk.spotlight";
                               callback:(void (^_Nullable)(BranchUniversalObject * _Nullable universalObject,
                                                           NSString* _Nullable url,
                                                           NSError * _Nullable error))completion {
-    if ([BNCSystemObserver osVersion].floatValue < 9.0) {
-        NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError];
-        if (completion) {
-            completion(universalObject,nil,error);
-        }
-        return;
-    }
     if (!universalObject.title) {
         NSError *error = [NSError branchErrorWithCode:BNCSpotlightTitleError];
         if (completion) {

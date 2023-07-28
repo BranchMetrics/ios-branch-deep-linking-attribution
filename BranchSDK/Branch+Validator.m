@@ -235,14 +235,10 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
     [newQueryParams addObject:[NSURLQueryItem queryItemWithName:@"validate" value:@"true"]];
     comp.queryItems = newQueryParams;
     
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
     Class applicationClass = NSClassFromString(@"UIApplication");
     id<NSObject> sharedApplication = [applicationClass performSelector:@selector(sharedApplication)];
-    SEL openURL = @selector(openURL:);
-    if ([sharedApplication respondsToSelector:openURL])
-        [sharedApplication performSelector:openURL withObject:comp.URL];
-    #pragma clang diagnostic pop
+    if ([sharedApplication respondsToSelector:@selector(openURL:)])
+        [sharedApplication performSelector:@selector(openURL:) withObject:comp.URL];
 }
 
 - (void)validateDeeplinkRouting:(NSDictionary *)params {

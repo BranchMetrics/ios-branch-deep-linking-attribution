@@ -50,12 +50,6 @@
 }
 
 - (void)indexWithCallback:(callbackWithUrlAndSpotlightIdentifier)callback {
-    if ([BNCSystemObserver osVersion].integerValue < 9) {
-        if (callback) {
-            callback(nil, nil, [NSError branchErrorWithCode:BNCSpotlightNotAvailableError]);
-        }
-        return;
-    }
     if (![CSSearchableIndex isIndexingAvailable]) {
         if (callback) {
             callback(nil, nil, [NSError branchErrorWithCode:BNCSpotlightNotAvailableError]);

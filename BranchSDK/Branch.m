@@ -2270,16 +2270,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         NSString* referringLink = [self.class returnNonUniversalLink:latestReferringParams[@"~referring_link"] ];
         NSURLComponents *comp = [NSURLComponents componentsWithURL:[NSURL URLWithString:referringLink]
                                            resolvingAgainstBaseURL:NO];
-
-
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        
         Class applicationClass = NSClassFromString(@"UIApplication");
         id<NSObject> sharedApplication = [applicationClass performSelector:@selector(sharedApplication)];
-        SEL openURL = @selector(openURL:);
-        if ([sharedApplication respondsToSelector:openURL])
-            [sharedApplication performSelector:openURL withObject:comp.URL];
-        #pragma clang diagnostic pop
+        if ([sharedApplication respondsToSelector:@selector(openURL:)])
+            [sharedApplication performSelector:@selector(openURL:) withObject:comp.URL];
     }
 
     if (callCallback) {
@@ -2511,14 +2506,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 #pragma mark - BranchDeepLinkingControllerCompletionDelegate methods
-
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-- (void)deepLinkingControllerCompleted {
-    [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:NULL];
-}
-#pragma clang diagnostic pop
 
 - (void)deepLinkingControllerCompletedFrom:(UIViewController *)viewController {
     [self.deepLinkControllers enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {

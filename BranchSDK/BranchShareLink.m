@@ -198,26 +198,11 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
             applicationActivities:nil];
     shareViewController.title = self.title;
 
-    if ([shareViewController respondsToSelector:@selector(completionWithItemsHandler)]) {
-
-        shareViewController.completionWithItemsHandler =
-            ^ (NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
-                self->_activityType = activityType;
-                [self shareDidComplete:completed activityError:activityError];
-            };
-
-    } else {
-
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        shareViewController.completionHandler =
-            ^ (UIActivityType activityType, BOOL completed) {
-                self->_activityType = activityType;
-                [self shareDidComplete:completed activityError:nil];
-            };
-        #pragma clang diagnostic pop
-        
-    }
+    shareViewController.completionWithItemsHandler =
+        ^ (NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+            self->_activityType = activityType;
+            [self shareDidComplete:completed activityError:activityError];
+        };
 
     NSString *emailSubject = self.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT];
     if (emailSubject.length <= 0) emailSubject = self.emailSubject;
