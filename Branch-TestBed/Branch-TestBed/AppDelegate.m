@@ -67,7 +67,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     }];
 
     // Push notification support (Optional)
-    [self registerForPushNotifications:application];
+    // [self registerForPushNotifications:application];
 
     return YES;
 }
@@ -173,7 +173,7 @@ continueUserActivity:(NSUserActivity *)userActivity
 }
 
 #pragma mark - Push Notifications (Optional)
-
+/*
 // Helper method
 - (void)registerForPushNotifications:(UIApplication *)application {
     if ([[[UIDevice currentDevice] systemVersion] doubleValue] >= 8.0) {
@@ -206,8 +206,9 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
 didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     NSLog(@"Error registering for remote notifications: %@", error);
 }
+ */
 
-// Hook Fucntion for SDK - Its for taking control of Logging messages.
+// hook Function for SDK - Its for taking control of Logging messages.
 void APPLogHookFunction(NSDate*_Nonnull timestamp, BNCLogLevel level, NSString*_Nullable message) {
     [appDelegate processLogMessage:message];
 }
