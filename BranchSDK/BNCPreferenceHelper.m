@@ -927,13 +927,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     
     NSData *data = nil;
     @try {
-        if (@available(iOS 11.0, tvOS 11.0, *)) {
-            data = [NSKeyedArchiver archivedDataWithRootObject:dict requiringSecureCoding:YES error:NULL];
-        } else {
-            #if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
-            data = [NSKeyedArchiver archivedDataWithRootObject:dict];
-            #endif
-        }
+        data = [NSKeyedArchiver archivedDataWithRootObject:dict requiringSecureCoding:YES error:NULL];
     } @catch (id exception) {
         BNCLogWarning([NSString stringWithFormat:@"Exception serializing preferences dict: %@.", exception]);
     }
@@ -973,19 +967,12 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (NSMutableDictionary *)deserializePrefDictFromData:(NSData *)data {
     NSDictionary *dict = nil;
     if (data) {
-        if (@available(iOS 11.0, tvOS 11.0, *)) {
-            NSError *error = nil;
-            NSSet *classes = [[NSMutableSet alloc] initWithArray:@[ NSNumber.class, NSString.class, NSDate.class, NSArray.class, NSDictionary.class ]];
+        NSError *error = nil;
+        NSSet *classes = [[NSMutableSet alloc] initWithArray:@[ NSNumber.class, NSString.class, NSDate.class, NSArray.class, NSDictionary.class ]];
 
-            dict = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes fromData:data error:&error];
-            if (error) {
-                BNCLogWarning(@"Failed to load preferences from storage.");
-            }
-
-        } else {
-        #if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
-            dict = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-        #endif
+        dict = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes fromData:data error:&error];
+        if (error) {
+            BNCLogWarning(@"Failed to load preferences from storage.");
         }
     }
     
