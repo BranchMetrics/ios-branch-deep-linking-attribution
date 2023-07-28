@@ -789,17 +789,10 @@ static NSString *bnc_branchKey = nil;
 
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
-            options:(NSDictionary</*UIApplicationOpenURLOptionsKey*/NSString*,id> *)options {
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
 
-    NSString *source = nil;
-    NSString *annotation = nil;
-    if (@available(iOS 9.0, *)) {
-        if (UIApplicationOpenURLOptionsSourceApplicationKey &&
-            UIApplicationOpenURLOptionsAnnotationKey) {
-            source = options[UIApplicationOpenURLOptionsSourceApplicationKey];
-            annotation = options[UIApplicationOpenURLOptionsAnnotationKey];
-        }
-    }
+    NSString *source = options[UIApplicationOpenURLOptionsSourceApplicationKey];
+    NSString *annotation = options[UIApplicationOpenURLOptionsAnnotationKey];
     return [self application:application openURL:url sourceApplication:source annotation:annotation];
 }
 
