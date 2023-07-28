@@ -433,8 +433,7 @@
     [fullParamDict bnc_safeAddEntriesFromDictionary:params];
     fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION];
     
-    // using rangeOfString instead of containsString to support devices running pre iOS 8
-    if ([[[NSBundle mainBundle] executablePath] rangeOfString:@".appex/"].location != NSNotFound) {
+    if ([[[NSBundle mainBundle] executablePath] containsString:@".appex/"]) {
         fullParamDict[@"ios_extension"] = @(1);
     }
     fullParamDict[@"retryNumber"] = @(retryNumber);
@@ -545,7 +544,6 @@
         [self safeSetValue:deviceInfo.screenScale forKey:@"screen_dpi" onDict:dict];
         [self safeSetValue:deviceInfo.screenHeight forKey:BRANCH_REQUEST_KEY_SCREEN_HEIGHT onDict:dict];
         [self safeSetValue:deviceInfo.screenWidth forKey:BRANCH_REQUEST_KEY_SCREEN_WIDTH onDict:dict];
-        [self safeSetValue:deviceInfo.carrierName forKey:@"device_carrier" onDict:dict];
         
         [self safeSetValue:[deviceInfo localIPAddress] forKey:@"local_ip" onDict:dict];
         [self safeSetValue:[deviceInfo connectionType] forKey:@"connection_type" onDict:dict];

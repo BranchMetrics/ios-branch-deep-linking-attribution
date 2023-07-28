@@ -16,26 +16,6 @@
 //      keychainServConcepts/02concepts/concepts.html#//apple_ref/doc/uid/TP30000897-CH204-SW1
 //
 // To translate security errors to text from the command line use: `security error -34018`
-
-#pragma mark SecCopyErrorMessageString
-
-#if TARGET_OS_OSX
-
-//#pragma clang link undefined _SecCopyErrorMessageString // -Wl,-U,_SecCopyErrorMessageString
-extern CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved)
-    __attribute__((weak_import));
-
-#else
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wpartial-availability"
-CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
-    return CFSTR("Sec OSStatus error.");
-}
-#pragma clang diagnostic pop
-
-#endif
-
 #pragma mark - BNCKeyChain
 
 @implementation BNCKeyChain
@@ -43,19 +23,12 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
 + (NSError *) errorWithKey:(NSString *)key OSStatus:(OSStatus)status {
     // Security errors are defined in Security/SecBase.h
     if (status == errSecSuccess) return nil;
-    NSString *reason = nil;
-    NSString *description =
-        [NSString stringWithFormat:@"Security error with key '%@': code %ld.", key, (long) status];
-
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wtautological-compare"
-    #pragma clang diagnostic ignored "-Wpartial-availability"
-    if (SecCopyErrorMessageString != NULL)
-        reason = (__bridge_transfer NSString*) SecCopyErrorMessageString(status, NULL);
-    #pragma clang diagnostic pop
-
-    if (!reason)
+    NSString *reason = (__bridge_transfer NSString*) SecCopyErrorMessageString(status, NULL);
+    NSString *description = [NSString stringWithFormat:@"Security error with key '%@': code %ld.", key, (long) status];
+    
+    if (!reason) {
         reason = @"Sec OSStatus error.";
+    }
 
     NSError *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:status userInfo:@{
         NSLocalizedDescriptionKey: description,
@@ -92,13 +65,7 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
     id value = nil;
     if (valueData) {
         @try {
-            if (@available(iOS 11.0, tvOS 11.0, *)) {
-                value = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSDate class] fromData:(__bridge NSData*)valueData error:NULL];
-            } else {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
-                value = [NSKeyedUnarchiver unarchiveObjectWithData:(__bridge NSDate*)valueData];
-#endif
-            }
+            value = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSDate class] fromData:(__bridge NSData*)valueData error:NULL];
         }
         @catch (id) {
             value = nil;
@@ -120,13 +87,7 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
 
     NSData* valueData = nil;
     @try {
-        if (@available(iOS 11.0, tvOS 11.0, *)) {
-            valueData = [NSKeyedArchiver archivedDataWithRootObject:date requiringSecureCoding:YES error:NULL];
-        } else {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
-            valueData = [NSKeyedArchiver archivedDataWithRootObject:value];
-#endif
-        }
+        valueData = [NSKeyedArchiver archivedDataWithRootObject:date requiringSecureCoding:YES error:NULL];
     }
     @catch(id) {
         valueData = nil;

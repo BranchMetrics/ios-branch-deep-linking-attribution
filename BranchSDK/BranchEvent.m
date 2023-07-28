@@ -408,35 +408,31 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
                 [buo.contentMetadata.customMetadata setObject:[@(product.isFamilyShareable) stringValue] forKey:@"is_family_shareable"];
             }
             
-            if (@available(iOS 11.2, tvOS 11.2, macCatalyst 13.1, *)) {
-                if (product.subscriptionPeriod != nil) {
-                    NSString *unitString;
-                    switch (product.subscriptionPeriod.unit) {
-                        case SKProductPeriodUnitDay:
-                            unitString = @"day";
-                            break;
-                        case SKProductPeriodUnitWeek:
-                            unitString = @"week";
-                            break;
-                        case SKProductPeriodUnitMonth:
-                            unitString = @"month";
-                            break;
-                        case SKProductPeriodUnitYear:
-                            unitString = @"year";
-                            break;
-                        default:
-                            unitString = @"unknown";
-                            break;
-                    }
-                    NSString *subscriptionPeriodString = [NSString stringWithFormat:@"%ld %@", (long)product.subscriptionPeriod.numberOfUnits, unitString];
-                    [buo.contentMetadata.customMetadata setObject:subscriptionPeriodString forKey:@"subscription_period"];
+            if (product.subscriptionPeriod != nil) {
+                NSString *unitString;
+                switch (product.subscriptionPeriod.unit) {
+                    case SKProductPeriodUnitDay:
+                        unitString = @"day";
+                        break;
+                    case SKProductPeriodUnitWeek:
+                        unitString = @"week";
+                        break;
+                    case SKProductPeriodUnitMonth:
+                        unitString = @"month";
+                        break;
+                    case SKProductPeriodUnitYear:
+                        unitString = @"year";
+                        break;
+                    default:
+                        unitString = @"unknown";
+                        break;
                 }
+                NSString *subscriptionPeriodString = [NSString stringWithFormat:@"%ld %@", (long)product.subscriptionPeriod.numberOfUnits, unitString];
+                [buo.contentMetadata.customMetadata setObject:subscriptionPeriodString forKey:@"subscription_period"];
             }
             
-            if (@available(iOS 12.0, tvOS 12.0, macCatalyst 13.1, *)) {
-                if (product.subscriptionGroupIdentifier != nil) {
-                    [buo.contentMetadata.customMetadata setObject:product.subscriptionGroupIdentifier forKey:@"subscription_group_identifier"];
-                }
+            if (product.subscriptionGroupIdentifier != nil) {
+                [buo.contentMetadata.customMetadata setObject:product.subscriptionGroupIdentifier forKey:@"subscription_group_identifier"];
             }
             
             self.contentItems = [NSArray arrayWithObject:buo];
@@ -449,12 +445,10 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
                 @"logged_from_IAP": @true
             };
             
-            if (@available(iOS 11.2, tvOS 11.2, macCatalyst 13.1, *)) {
-                if (product.subscriptionPeriod != nil) {
-                    self.alias = @"Subscription";
-                } else {
-                    self.alias = @"IAP";
-                }
+            if (product.subscriptionPeriod != nil) {
+                self.alias = @"Subscription";
+            } else {
+                self.alias = @"IAP";
             }
             
             [self logEvent];

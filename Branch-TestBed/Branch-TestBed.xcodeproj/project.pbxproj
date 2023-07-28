@@ -169,10 +169,7 @@
 		5F4101F526851DC7003699AD /* BNCPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F4101F326851DC7003699AD /* BNCPasteboard.h */; };
 		5F4101F626851DC7003699AD /* BNCPasteboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F4101F426851DC7003699AD /* BNCPasteboard.m */; };
 		5F42763325DB3694005B9BBC /* AdServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F42763225DB3694005B9BBC /* AdServices.framework */; };
-		5F437E35237DDF770052064B /* BNCTelephony.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F437E33237DDF770052064B /* BNCTelephony.h */; };
-		5F437E36237DDF770052064B /* BNCTelephony.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F437E34237DDF770052064B /* BNCTelephony.m */; };
 		5F437E38237DE1320052064B /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F437E37237DE1320052064B /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		5F437E3A237DE3480052064B /* BNCTelephonyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F437E39237DE3480052064B /* BNCTelephonyTests.m */; };
 		5F437E3D237E03C00052064B /* BNCDeviceSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F437E3B237E03C00052064B /* BNCDeviceSystem.h */; };
 		5F437E3E237E03C00052064B /* BNCDeviceSystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F437E3C237E03C00052064B /* BNCDeviceSystem.m */; };
 		5F437E40237E1A560052064B /* BNCDeviceSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F437E3F237E1A560052064B /* BNCDeviceSystemTests.m */; };
@@ -198,9 +195,6 @@
 		5F92B23223834AFD00CA909B /* BNCReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F92B23023834AFD00CA909B /* BNCReachability.m */; };
 		5F92B23423835FEB00CA909B /* BNCReachabilityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F92B23323835FEB00CA909B /* BNCReachabilityTests.m */; };
 		5F92B2362383644C00CA909B /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F92B2352383644C00CA909B /* SystemConfiguration.framework */; };
-		5F92B2392383703700CA909B /* BNCLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F92B2372383703700CA909B /* BNCLocale.h */; };
-		5F92B23A2383703700CA909B /* BNCLocale.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F92B2382383703700CA909B /* BNCLocale.m */; };
-		5F92B23C2384744A00CA909B /* BNCLocaleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F92B23B2384744A00CA909B /* BNCLocaleTests.m */; };
 		5F92B23F238486E200CA909B /* BNCNetworkInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F92B23D238486E200CA909B /* BNCNetworkInterface.h */; };
 		5F92B240238486E200CA909B /* BNCNetworkInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F92B23E238486E200CA909B /* BNCNetworkInterface.m */; };
 		5F92B242238752A500CA909B /* BNCDeviceInfoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F92B241238752A500CA909B /* BNCDeviceInfoTests.m */; };
@@ -491,10 +485,7 @@
 		5F4101F326851DC7003699AD /* BNCPasteboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCPasteboard.h; sourceTree = "<group>"; };
 		5F4101F426851DC7003699AD /* BNCPasteboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCPasteboard.m; sourceTree = "<group>"; };
 		5F42763225DB3694005B9BBC /* AdServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdServices.framework; path = System/Library/Frameworks/AdServices.framework; sourceTree = SDKROOT; };
-		5F437E33237DDF770052064B /* BNCTelephony.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCTelephony.h; sourceTree = "<group>"; };
-		5F437E34237DDF770052064B /* BNCTelephony.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCTelephony.m; sourceTree = "<group>"; };
 		5F437E37237DE1320052064B /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreTelephony.framework; sourceTree = DEVELOPER_DIR; };
-		5F437E39237DE3480052064B /* BNCTelephonyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCTelephonyTests.m; sourceTree = "<group>"; };
 		5F437E3B237E03C00052064B /* BNCDeviceSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCDeviceSystem.h; sourceTree = "<group>"; };
 		5F437E3C237E03C00052064B /* BNCDeviceSystem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCDeviceSystem.m; sourceTree = "<group>"; };
 		5F437E3F237E1A560052064B /* BNCDeviceSystemTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCDeviceSystemTests.m; sourceTree = "<group>"; };
@@ -521,9 +512,6 @@
 		5F92B23023834AFD00CA909B /* BNCReachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCReachability.m; sourceTree = "<group>"; };
 		5F92B23323835FEB00CA909B /* BNCReachabilityTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCReachabilityTests.m; sourceTree = "<group>"; };
 		5F92B2352383644C00CA909B /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/SystemConfiguration.framework; sourceTree = DEVELOPER_DIR; };
-		5F92B2372383703700CA909B /* BNCLocale.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCLocale.h; sourceTree = "<group>"; };
-		5F92B2382383703700CA909B /* BNCLocale.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCLocale.m; sourceTree = "<group>"; };
-		5F92B23B2384744A00CA909B /* BNCLocaleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCLocaleTests.m; sourceTree = "<group>"; };
 		5F92B23D238486E200CA909B /* BNCNetworkInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCNetworkInterface.h; sourceTree = "<group>"; };
 		5F92B23E238486E200CA909B /* BNCNetworkInterface.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCNetworkInterface.m; sourceTree = "<group>"; };
 		5F92B241238752A500CA909B /* BNCDeviceInfoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCDeviceInfoTests.m; sourceTree = "<group>"; };
@@ -734,7 +722,6 @@
 				5F73FC8023314697000EBD32 /* BNCJSONUtilityTests.m */,
 				5F8BB66D278771890055D2DC /* BNCKeyChainTests.m */,
 				4D1683842098C901008819E3 /* BNCLinkDataTests.m */,
-				5F92B23B2384744A00CA909B /* BNCLocaleTests.m */,
 				4D1683902098C901008819E3 /* BNCLog.Test.m */,
 				5FA9112E29BC662000F3D35C /* BNCNetworkInterfaceTests.m */,
 				5FDF91582581CDF4009BE5A3 /* BNCPartnerParametersTests.m */,
@@ -747,7 +734,6 @@
 				5FB6CC12264F0C7C0020E478 /* BNCServerRequestQueueTests.m */,
 				5FDB04F324E6156800F2F267 /* BNCSKAdNetworkTests.m */,
 				4D16838F2098C901008819E3 /* BNCSystemObserverTests.m */,
-				5F437E39237DE3480052064B /* BNCTelephonyTests.m */,
 				4D1683A12098C901008819E3 /* BNCTestCase.h */,
 				4D16838D2098C901008819E3 /* BNCTestCase.m */,
 				4D7881F9209CF2D4002B750F /* BNCTestCase.strings */,
@@ -965,8 +951,6 @@
 				7E30BCF61A72FE7900AC7402 /* BNCLinkCache.m */,
 				7E30BCF21A71EEEE00AC7402 /* BNCLinkData.h */,
 				7E30BCF31A71EEEE00AC7402 /* BNCLinkData.m */,
-				5F92B2372383703700CA909B /* BNCLocale.h */,
-				5F92B2382383703700CA909B /* BNCLocale.m */,
 				4DA577151E67B1D600A43BDD /* BNCLog.h */,
 				4DA577161E67B1D600A43BDD /* BNCLog.m */,
 				5F92B23D238486E200CA909B /* BNCNetworkInterface.h */,
@@ -1000,8 +984,6 @@
 				F185BAA91F3D30D70056300C /* BNCSpotlightService.m */,
 				670016C71946309100A9E103 /* BNCSystemObserver.h */,
 				670016C81946309100A9E103 /* BNCSystemObserver.m */,
-				5F437E33237DDF770052064B /* BNCTelephony.h */,
-				5F437E34237DDF770052064B /* BNCTelephony.m */,
 				4D7881F6209CF28E002B750F /* BNCThreads.h */,
 				4D7881F5209CF28E002B750F /* BNCThreads.m */,
 				5F08460F23480008005B17E6 /* BNCTuneUtility.h */,
@@ -1158,10 +1140,8 @@
 				4DCAC80E1F426F7C00405D1D /* BNCSystemObserver.h in Headers */,
 				C10C61AD28248E5A00761D7E /* BNCQRCodeCache.h in Headers */,
 				5FE693F72405E91500E3AEE2 /* BNCCallbackMap.h in Headers */,
-				5F92B2392383703700CA909B /* BNCLocale.h in Headers */,
 				5F38021F24DCC2E800E6FAFD /* BNCServerResponse.h in Headers */,
 				5F38023024DCC2E800E6FAFD /* BNCServerRequestQueue.h in Headers */,
-				5F437E35237DDF770052064B /* BNCTelephony.h in Headers */,
 				4DCAC8161F426F7C00405D1D /* BranchCSSearchableItemAttributeSet.h in Headers */,
 				4D59B51F2006979C00F89FD5 /* BNCApplication.h in Headers */,
 				5FB0AA6B231875B500A0F9EA /* BNCUserAgentCollector.h in Headers */,
@@ -1499,10 +1479,8 @@
 				4D9607F51FBF9473008AB3C2 /* UIViewController+Branch.m in Sources */,
 				C1CC888929C27E8000BDD2B5 /* BNCUrlQueryParameter.m in Sources */,
 				4D35141C1E3201D80085EBA1 /* NSMutableDictionary+Branch.m in Sources */,
-				5F92B23A2383703700CA909B /* BNCLocale.m in Sources */,
 				4D955CCD2035021400FB8008 /* BNCURLFilter.m in Sources */,
 				466B58681B17779C00A69EDE /* BNCLinkData.m in Sources */,
-				5F437E36237DDF770052064B /* BNCTelephony.m in Sources */,
 				5F892ED8236258390023AEC1 /* BNCFacebookAppLinks.m in Sources */,
 				54FF1F921BD1DC320004CE2E /* BranchLinkProperties.m in Sources */,
 				466B586A1B17779C00A69EDE /* BNCLinkCache.m in Sources */,
@@ -1570,8 +1548,6 @@
 				5F205D0823186AF700C776D1 /* BNCUserAgentCollectorTests.m in Sources */,
 				5FCF7EAD29DC96A7008D629E /* BNCURLFilterSkiplistUpgradeTests.m in Sources */,
 				4D1683C12098C902008819E3 /* BNCApplication.Test.m in Sources */,
-				5F92B23C2384744A00CA909B /* BNCLocaleTests.m in Sources */,
-				5F437E3A237DE3480052064B /* BNCTelephonyTests.m in Sources */,
 				4D1683B92098C902008819E3 /* BNCSystemObserverTests.m in Sources */,
 				4D1683BE2098C902008819E3 /* BranchShortUrlSyncRequestTests.m in Sources */,
 				4D1683CA2098C902008819E3 /* BNCPreferenceHelperTests.m in Sources */,
