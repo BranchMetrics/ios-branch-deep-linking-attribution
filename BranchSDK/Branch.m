@@ -1077,7 +1077,6 @@ static NSString *bnc_branchKey = nil;
     
     // Removed stored values
     self.preferenceHelper.userIdentity = nil;
-    self.preferenceHelper.sessionParams = nil;
     
     if (callback) {
         callback(YES, nil);
