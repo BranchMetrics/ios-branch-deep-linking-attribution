@@ -1560,7 +1560,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
  @param title Title for the spotlight preview item.
  @param description Description for the spotlight preview item.
- @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description;
 
@@ -1570,7 +1569,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param title Title for the spotlight preview item.
  @param description Description for the spotlight preview item.
  @param callback Callback called with the Branch url this will fallback to.
- @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description callback:(callbackWithUrl)callback;
 
@@ -1581,7 +1579,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param description Description for the spotlight preview item.
  @param publiclyIndexable Whether or not this item should be added to Apple's public search index.
  @param callback Callback called with the Branch url this will fallback to.
- @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable callback:(callbackWithUrl)callback;
 
@@ -1593,7 +1590,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param type The type to use for the NSUserActivity, taken from the list of constants provided in the MobileCoreServices framework.
  @param publiclyIndexable Whether or not this item should be added to Apple's public search index.
  @param callback Callback called with the Branch url this will fallback to.
- @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable callback:(callbackWithUrl)callback;
 
@@ -1606,7 +1602,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param type The type to use for the NSUserActivity, taken from the list of constants provided in the MobileCoreServices framework.
  @param publiclyIndexable Whether or not this item should be added to Apple's public search index.
  @param callback Callback called with the Branch url this will fallback to.
- @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable callback:(callbackWithUrl)callback;
 
@@ -1620,7 +1615,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param type The type to use for the NSUserActivity, taken from the list of constants provided in the MobileCoreServices framework.
  @param keywords A set of keywords to be used in Apple's search index.
  @param callback Callback called with the Branch url this will fallback to.
- @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords callback:(callbackWithUrl)callback;
 
@@ -1633,7 +1627,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param linkParams Additional params to be added to the NSUserActivity. These will also be added to the Branch link.
  @param publiclyIndexable Whether or not this item should be added to Apple's public search index.
  @param keywords A set of keywords to be used in Apple's search index.
- @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl linkParams:(NSDictionary *)linkParams publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords;
 
@@ -1647,7 +1640,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param type The type to use for the NSUserActivity, taken from the list of constants provided in the MobileCoreServices framework.
  @param publiclyIndexable Whether or not this item should be added to Apple's public search index.
  @param keywords A set of keywords to be used in Apple's search index.
- @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords;
 
@@ -1660,7 +1652,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param type The type to use for the NSUserActivity, taken from the list of constants provided in the MobileCoreServices framework.
  @param publiclyIndexable Whether or not this item should be added to Apple's public search index.
  @param keywords A set of keywords to be used in Apple's search index.
- @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords;
 
@@ -1672,7 +1663,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param thumbnailUrl Url to an image to be used for the thumnbail in spotlight.
  @param publiclyIndexable Whether or not this item should be added to Apple's public search index.
  @param linkParams A set of keywords to be used in Apple's search index.
- @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl linkParams:(NSDictionary *)linkParams publiclyIndexable:(BOOL)publiclyIndexable;
 
@@ -1687,7 +1677,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param type The type to use for the NSUserActivity, taken from the list of constants provided in the MobileCoreServices framework.
  @param keywords A set of keywords to be used in Apple's search index.
  @param callback Callback called with the Branch url this will fallback to.
- @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords callback:(callbackWithUrl)callback;
@@ -1703,7 +1692,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param keywords A set of keywords to be used in Apple's search index.
  @param expirationDate ExpirationDate after which this will not appear in Apple's search index.
  @param callback Callback called with the Branch url this will fallback to.
- @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate callback:(callbackWithUrl)callback;
 
@@ -1720,7 +1708,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param keywords A set of keywords to be used in Apple's search index.
  @param expirationDate ExpirationDate after which this will not appear in Apple's search index.
  @param callback Callback called with the Branch url this will fallback to.
- @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl canonicalId:(NSString *)canonicalId linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate callback:(callbackWithUrl)callback;
 
@@ -1737,7 +1724,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param keywords A set of keywords to be used in Apple's search index.
  @param expirationDate ExpirationDate after which this will not appear in Apple's search index.
  @param spotlightCallback Callback called with the Branch url this will fallback to.
- @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
 
@@ -1754,7 +1740,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param keywords A set of keywords to be used in Apple's search index.
  @param expirationDate ExpirationDate after which this will not appear in Apple's search index.
  @param spotlightCallback Callback called with the Branch url this will fallback to.
- @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl canonicalId:(NSString *)canonicalId linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
 
@@ -1763,7 +1748,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param universalObject Branch Universal Object is indexed on spotlight using meta data of spotlight
  @param linkProperties  Branch Link Properties is used in short url generation
  @param completion Callback called when all Branch Universal Objects are indexed. Dynamic url generated and saved as spotlight identifier
- @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)indexOnSpotlightWithBranchUniversalObject:(BranchUniversalObject *)universalObject
                                    linkProperties:(nullable BranchLinkProperties *)linkProperties
@@ -1783,7 +1767,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  Remove Indexing of a Branch Universal Objects, which is indexed using SearchableItem of Apple's CoreSpotlight.
  @param universalObject Branch Universal Object which is already indexed using SearchableItem is removed from spotlight
  @param completion Called when the request has been journaled by the index (“journaled” means that the index makes a note that it has to perform this operation). Note that the request may not have completed.
- @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)removeSearchableItemWithBranchUniversalObject:(BranchUniversalObject *)universalObject
                                              callback:(void (^_Nullable)(NSError * _Nullable error))completion;
@@ -1791,7 +1774,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  Remove Indexing of an array of Branch Universal Objects, which are indexed using SearchableItem of Apple's CoreSpotlight.
  @param universalObjects Multiple Branch Universal Objects which are already indexed using SearchableItem are removed from spotlight. Note: The spotlight identifier of Branch Universal Object is used to remove indexing.
  @param completion Called when the request has been journaled by the index (“journaled” means that the index makes a note that it has to perform this operation). Note that the request may not have completed.
- @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)removeSearchableItemsWithBranchUniversalObjects:(NSArray<BranchUniversalObject*> *)universalObjects
                                                callback:(void (^_Nullable)(NSError * _Nullable error))completion;
@@ -1799,7 +1781,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /*
  Remove all content spotlight indexed through either Searchable Item or privately indexed Branch Universal Object.
  @param completion Called when the request has been journaled by the index (“journaled” means that the index makes a note that it has to perform this operation). Note that the request may not have completed.
- @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)removeAllPrivateContentFromSpotLightWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion;
 

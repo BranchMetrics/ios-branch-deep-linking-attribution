@@ -223,8 +223,7 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
     // TODO: test with short url where, say, t1=b is set in deep link data.
     // If this logic fails then we'll need to generate a new short URL, which is sucky.
     referringLink = [self.class returnNonUniversalLink:referringLink];
-    NSURLComponents *comp = [NSURLComponents componentsWithURL:[NSURL URLWithString:referringLink]
-                                       resolvingAgainstBaseURL:NO]; // TODO: Check iOS 8 support
+    NSURLComponents *comp = [NSURLComponents componentsWithURL:[NSURL URLWithString:referringLink] resolvingAgainstBaseURL:NO];
     NSArray *queryParams = [comp queryItems];
     NSMutableArray *newQueryParams = [NSMutableArray array];
     for (NSURLQueryItem *queryParam in queryParams) {
