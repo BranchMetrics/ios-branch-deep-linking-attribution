@@ -1853,7 +1853,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param itemProviders - an array of item providers collected from pasteboard.
  @warning This function works with  iOS 16 or above.
  */
-- (void)passPasteItemProviders:(NSArray<NSItemProvider *> *)itemProviders API_AVAILABLE(ios(16));
+- (void)passPasteItemProviders:(NSArray<NSItemProvider *> *)itemProviders API_AVAILABLE(ios(16), macCatalyst(16));
 #endif
 
 @property (copy, nonatomic, nullable) NSString *installUserId;

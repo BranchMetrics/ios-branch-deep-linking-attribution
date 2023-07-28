@@ -88,7 +88,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
         NSNumber *conversionValue = (NSNumber *)dictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
         // Regardless of SKAN opted-in in dashboard, we always get conversionValue, so adding check to find out if install/open response had "invoke_register_app" true
         if (conversionValue && [BNCPreferenceHelper sharedInstance].invokeRegisterApp) {
-            if (@available(iOS 16.1, *)){
+            if (@available(iOS 16.1, macCatalyst 16.1, *)){
                 NSString * coarseConversionValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:dictionary] ;
                 BOOL lockWin = [[BNCSKAdNetwork sharedInstance] getLockedStatusFromDataResponse:dictionary];
                 BOOL shouldCallUpdatePostback = [[BNCSKAdNetwork sharedInstance] shouldCallPostbackForDataResponse:dictionary];
@@ -105,7 +105,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
                     }];
                 }
                 
-            } else if (@available(iOS 15.4, *)) {
+            } else if (@available(iOS 15.4, macCatalyst 15.4, *)) {
                 [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:conversionValue.intValue completionHandler: ^(NSError *error){
                     if (error) {
                         BNCLogError([NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]]);
@@ -408,35 +408,31 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
                 [buo.contentMetadata.customMetadata setObject:[@(product.isFamilyShareable) stringValue] forKey:@"is_family_shareable"];
             }
             
-            if (@available(iOS 11.2, tvOS 11.2, macCatalyst 13.1, *)) {
-                if (product.subscriptionPeriod != nil) {
-                    NSString *unitString;
-                    switch (product.subscriptionPeriod.unit) {
-                        case SKProductPeriodUnitDay:
-                            unitString = @"day";
-                            break;
-                        case SKProductPeriodUnitWeek:
-                            unitString = @"week";
-                            break;
-                        case SKProductPeriodUnitMonth:
-                            unitString = @"month";
-                            break;
-                        case SKProductPeriodUnitYear:
-                            unitString = @"year";
-                            break;
-                        default:
-                            unitString = @"unknown";
-                            break;
-                    }
-                    NSString *subscriptionPeriodString = [NSString stringWithFormat:@"%ld %@", (long)product.subscriptionPeriod.numberOfUnits, unitString];
-                    [buo.contentMetadata.customMetadata setObject:subscriptionPeriodString forKey:@"subscription_period"];
+            if (product.subscriptionPeriod != nil) {
+                NSString *unitString;
+                switch (product.subscriptionPeriod.unit) {
+                    case SKProductPeriodUnitDay:
+                        unitString = @"day";
+                        break;
+                    case SKProductPeriodUnitWeek:
+                        unitString = @"week";
+                        break;
+                    case SKProductPeriodUnitMonth:
+                        unitString = @"month";
+                        break;
+                    case SKProductPeriodUnitYear:
+                        unitString = @"year";
+                        break;
+                    default:
+                        unitString = @"unknown";
+                        break;
                 }
+                NSString *subscriptionPeriodString = [NSString stringWithFormat:@"%ld %@", (long)product.subscriptionPeriod.numberOfUnits, unitString];
+                [buo.contentMetadata.customMetadata setObject:subscriptionPeriodString forKey:@"subscription_period"];
             }
             
-            if (@available(iOS 12.0, tvOS 12.0, macCatalyst 13.1, *)) {
-                if (product.subscriptionGroupIdentifier != nil) {
-                    [buo.contentMetadata.customMetadata setObject:product.subscriptionGroupIdentifier forKey:@"subscription_group_identifier"];
-                }
+            if (product.subscriptionGroupIdentifier != nil) {
+                [buo.contentMetadata.customMetadata setObject:product.subscriptionGroupIdentifier forKey:@"subscription_group_identifier"];
             }
             
             self.contentItems = [NSArray arrayWithObject:buo];
@@ -449,12 +445,10 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
                 @"logged_from_IAP": @true
             };
             
-            if (@available(iOS 11.2, tvOS 11.2, macCatalyst 13.1, *)) {
-                if (product.subscriptionPeriod != nil) {
-                    self.alias = @"Subscription";
-                } else {
-                    self.alias = @"IAP";
-                }
+            if (product.subscriptionPeriod != nil) {
+                self.alias = @"Subscription";
+            } else {
+                self.alias = @"IAP";
             }
             
             [self logEvent];
