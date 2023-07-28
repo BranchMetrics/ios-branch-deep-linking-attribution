@@ -545,7 +545,6 @@
         [self safeSetValue:deviceInfo.screenScale forKey:@"screen_dpi" onDict:dict];
         [self safeSetValue:deviceInfo.screenHeight forKey:BRANCH_REQUEST_KEY_SCREEN_HEIGHT onDict:dict];
         [self safeSetValue:deviceInfo.screenWidth forKey:BRANCH_REQUEST_KEY_SCREEN_WIDTH onDict:dict];
-        [self safeSetValue:deviceInfo.carrierName forKey:@"device_carrier" onDict:dict];
         
         [self safeSetValue:[deviceInfo localIPAddress] forKey:@"local_ip" onDict:dict];
         [self safeSetValue:[deviceInfo connectionType] forKey:@"connection_type" onDict:dict];

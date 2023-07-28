@@ -17,8 +17,7 @@
 #import "BNCDeviceSystem.h"
 
 #if !TARGET_OS_TV
-// tvOS does not support webkit or telephony
-#import "BNCTelephony.h"
+// tvOS does not support webkit
 #import "BNCUserAgentCollector.h"
 #endif
 
@@ -91,11 +90,6 @@
     self.screenWidth = [BNCSystemObserver screenWidth];
     self.screenHeight = [BNCSystemObserver screenHeight];
     self.screenScale = [BNCSystemObserver screenScale];
-
-    #if !TARGET_OS_TV
-    BNCTelephony *telephony = [BNCTelephony new];
-    self.carrierName = telephony.carrierName;
-    #endif 
 
     self.locale = [NSLocale currentLocale].localeIdentifier;
     self.country = [[NSLocale currentLocale] countryCode];
@@ -194,7 +188,6 @@
         [dictionary bnc_safeSetObject:self.locale forKey:@"locale"];
         [dictionary bnc_safeSetObject:self.country forKey:@"country"];
         [dictionary bnc_safeSetObject:self.language forKey:@"language"];
-        [dictionary bnc_safeSetObject:self.carrierName forKey:@"device_carrier"];
         [dictionary bnc_safeSetObject:[self connectionType] forKey:@"connection_type"];
         [dictionary bnc_safeSetObject:[self userAgentString] forKey:@"user_agent"];
 
