@@ -756,34 +756,9 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
 - (void)showAlert: (NSString *)title withDescription:(NSString *) message {
     
     BNCPerformBlockOnMainThread(^ {
-        
-        if ([UIDevice currentDevice].systemVersion.doubleValue < 8.0) {
-            
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            UIAlertView *alert = [[UIAlertView alloc]
-                                  initWithTitle:title
-                                  message:message
-                                  delegate:nil
-                                  cancelButtonTitle:@"OK"
-                                  otherButtonTitles:nil];
-            [alert show];
-#pragma clang diagnostic pop
-            
-        } else {
-            
-            UIAlertController* alert = [UIAlertController
-                                        alertControllerWithTitle:title
-                                        message:message
-                                        preferredStyle:UIAlertControllerStyleAlert];
-            [alert addAction:[UIAlertAction actionWithTitle:@"OK"
-                                                      style:UIAlertActionStyleCancel
-                                                    handler:nil]];
-            [self presentViewController:alert
-                               animated:YES
-                             completion:nil];
-            
-        }
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
+        [self presentViewController:alert animated:YES completion:nil];
     });
 }
 

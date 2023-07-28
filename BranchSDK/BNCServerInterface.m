@@ -433,8 +433,7 @@
     [fullParamDict bnc_safeAddEntriesFromDictionary:params];
     fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION];
     
-    // using rangeOfString instead of containsString to support devices running pre iOS 8
-    if ([[[NSBundle mainBundle] executablePath] rangeOfString:@".appex/"].location != NSNotFound) {
+    if ([[[NSBundle mainBundle] executablePath] containsString:@".appex/"]) {
         fullParamDict[@"ios_extension"] = @(1);
     }
     fullParamDict[@"retryNumber"] = @(retryNumber);
