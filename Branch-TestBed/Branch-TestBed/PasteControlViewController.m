@@ -25,8 +25,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    if (@available(iOS 16.0, *)) {
-        
+
+    if (@available(iOS 16.0, macCatalyst 16.0, *)) {
         CGRect rectPC = CGRectMake(0, 0, _applePasteControlView.frame.size.width, _applePasteControlView.frame.size.height);
         UIPasteControl *pc = [[UIPasteControl alloc] initWithFrame:rectPC];
         pc.target = self;
@@ -41,14 +41,14 @@
 }
 
 - (void)pasteItemProviders:(NSArray<NSItemProvider *> *)itemProviders {
-    if (@available(iOS 16, *)) {
+    if (@available(iOS 16, macCatalyst 16.0, *)) {
         [[Branch getInstance] passPasteItemProviders:itemProviders];
     }
 }
 
 - (BOOL)canPasteItemProviders:(NSArray<NSItemProvider *> *)itemProviders {
     for (NSItemProvider* item in itemProviders)
-        if (@available(iOS 14.0, *)) {
+        if (@available(iOS 14.0, macCatalyst 14.0, *)) {
             if ( [item hasItemConformingToTypeIdentifier: UTTypeURL.identifier] )
                 return true;
         }
