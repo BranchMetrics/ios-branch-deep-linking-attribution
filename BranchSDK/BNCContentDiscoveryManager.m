@@ -11,12 +11,10 @@
 #import "BranchConstants.h"
 #import "BNCSpotlightService.h"
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-    #if __has_feature(modules)
-    @import MobileCoreServices;
-    #else
-    #import <MobileCoreServices/MobileCoreServices.h>
-    #endif
+#if __has_feature(modules)
+@import MobileCoreServices;
+#else
+#import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
 static NSString* const kUTTypeGeneric = @"public.content";
@@ -49,25 +47,19 @@ static NSString* const kUTTypeGeneric = @"public.content";
 #pragma mark - Launch handling
 
 - (NSString *)spotlightIdentifierFromActivity:(NSUserActivity *)userActivity {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     // If it has our prefix, then the link identifier is just the last piece of the identifier.
     NSString *activityIdentifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
     BOOL isBranchIdentifier = [activityIdentifier hasPrefix:BRANCH_SPOTLIGHT_PREFIX];
     if (isBranchIdentifier) {
         return activityIdentifier;
     }
-#endif
-    
     return nil;
 }
 
 - (NSString *)standardSpotlightIdentifierFromActivity:(NSUserActivity *)userActivity {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     if (userActivity.userInfo[CSSearchableItemActivityIdentifier]) {
         return userActivity.userInfo[CSSearchableItemActivityIdentifier];
     }
-#endif
-    
     return nil;
 }
 

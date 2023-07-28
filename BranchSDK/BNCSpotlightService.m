@@ -166,7 +166,6 @@ static NSString* const kDomainIdentifier = @"io.branch.sdk.spotlight";
                             thumbnail:(NSData*)thumbnailData
                                   url:(NSString*)url {
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     NSString *type = universalObject.contentMetadata.contentSchema ?: (NSString *)kUTTypeGeneric;
     
     id CSSearchableItemAttributeSetClass = NSClassFromString(@"CSSearchableItemAttributeSet");
@@ -200,12 +199,6 @@ static NSString* const kDomainIdentifier = @"io.branch.sdk.spotlight";
     #undef safePerformSelector
 
     return attributes;
-
-#else
-
-    return nil;
-
-#endif
 }
 
 - (void)indexPrivatelyWithBranchUniversalObjects:(NSArray<BranchUniversalObject*>* _Nonnull)universalObjects
