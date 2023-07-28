@@ -31,43 +31,33 @@
 
 - (void)addStringToPasteboard {
 #if !TARGET_OS_TV
-    if (@available(iOS 10.0, *)) {
-        [UIPasteboard.generalPasteboard setString:self.testString];
-    }
+    [UIPasteboard.generalPasteboard setString:self.testString];
 #endif
 }
 
 - (void)addBranchURLToPasteboard {
 #if !TARGET_OS_TV
-    if (@available(iOS 10.0, *)) {
-        [UIPasteboard.generalPasteboard setURL:self.testBranchURL];
-    }
+    [UIPasteboard.generalPasteboard setURL:self.testBranchURL];
 #endif
 }
 
 - (void)addNonBranchURLToPasteboard {
 #if !TARGET_OS_TV
-    if (@available(iOS 10.0, *)) {
-        [UIPasteboard.generalPasteboard setURL:[NSURL URLWithString:@"https://www.apple.com"]];
-    }
+    [UIPasteboard.generalPasteboard setURL:[NSURL URLWithString:@"https://www.apple.com"]];
 #endif
 }
 
 - (void)clearPasteboard {
 #if !TARGET_OS_TV
-    if (@available(iOS 10.0, *)) {
-        // cannot delete items from the pasteboard, but we can put something else on there
-        [[UIPasteboard generalPasteboard] setString:@""];
-    }
+    // cannot delete items from the pasteboard, but we can put something else on there
+    [[UIPasteboard generalPasteboard] setString:@""];
 #endif
 }
 
 - (NSString *)getStringFromClipboard {
     NSString *string = nil;
 #if !TARGET_OS_TV
-    if (@available(iOS 10.0, *)) {
-        string = [UIPasteboard.generalPasteboard string];
-    }
+    string = [UIPasteboard.generalPasteboard string];
 #endif
     return string;
 }
@@ -75,9 +65,7 @@
 - (NSURL *)getURLFromPasteboard {
     NSURL *url = nil;
 #if !TARGET_OS_TV
-    if (@available(iOS 10.0, *)) {
-        url = [UIPasteboard.generalPasteboard URL];
-    }
+    url = [UIPasteboard.generalPasteboard URL];
 #endif
     return url;
 }
