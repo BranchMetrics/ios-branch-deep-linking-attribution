@@ -238,7 +238,7 @@
     }];
 }
 
-- (LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController API_AVAILABLE(ios(13.0)) {
+- (LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController API_AVAILABLE(ios(13.0), macCatalyst(13.1)) {
     LPLinkMetadata * metaData = [[LPLinkMetadata alloc] init];
     metaData.title = self.buoTitle;
     

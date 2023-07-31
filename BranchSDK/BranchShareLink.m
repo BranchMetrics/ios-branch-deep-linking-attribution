@@ -317,7 +317,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     return @"";
 }
 
-- (nullable LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController API_AVAILABLE(ios(13.0)) {
+- (nullable LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController API_AVAILABLE(ios(13.0), macCatalyst(13.1)) {
     return self.lpMetaData;
 }
 
@@ -326,7 +326,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     return nil;
 }
 
-- (void)addLPLinkMetadata:(NSString *)title icon:(UIImage *)icon API_AVAILABLE(ios(13.0)) {
+- (void)addLPLinkMetadata:(NSString *)title icon:(UIImage *)icon API_AVAILABLE(ios(13.0), macCatalyst(13.1)) {
     LPLinkMetadata *metadata = [LPLinkMetadata new];
 
     metadata.title = title;
