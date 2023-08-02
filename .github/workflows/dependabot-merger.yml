@@ -11,13 +11,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Install GitHub CLI
-        run: |
-          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
-          sudo apt-add-repository https://cli.github.com/packages
-          sudo apt update
-          sudo apt install gh
-
       - name: Authenticate GitHub CLI
         run: echo "${{ secrets.DEPENDABOT_MERGER_PAT }}" | gh auth login --with-token
 
