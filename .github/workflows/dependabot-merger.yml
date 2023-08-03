@@ -40,7 +40,7 @@ jobs:
             PR_NUMBER="${PR_INFO[0]}"
             BRANCH_NAME="${PR_INFO[1]}"
             echo "Merging PR #$PR_NUMBER from branch $BRANCH_NAME into test branch..."
-            git pull origin $BRANCH_NAME 
+            git pull --rebase origin $BRANCH_NAME 
             echo "Pushing changes to dependabot-test-branch..."
             git push origin dependabot-test-branch
           done
