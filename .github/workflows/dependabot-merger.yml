@@ -27,7 +27,7 @@ jobs:
         id: pr_list
         run: |
           PR_LIST=$(gh pr list --json number,headRefName --jq '.[] | "\(.number) \(.headRefName)"' | grep dependabot)
-          echo "::set-output name=numbers::$(echo "$PR_LIST" | tr " " "\n")"
+          echo "::set-output name=numbers::$PR_LIST"
           echo "PRs to be merged: $PR_LIST"
       
       - name: Merge PRs into test branch
