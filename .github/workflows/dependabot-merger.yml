@@ -32,13 +32,9 @@ jobs:
       
       - name: Merge PRs into test branch
         run: |
-          IFS=$'\n' read -r -a array <<< "${{ steps.pr_list.outputs.numbers }}"
           git checkout dependabot-test-branch
-          for item in "${array[@]}"
+          echo "${{ steps.pr_list.outputs.numbers }}" | while IFS=' ' read -r PR_NUMBER BRANCH_NAME
           do
-            IFS=' ' read -r -a PR_INFO <<< "$item"
-            PR_NUMBER="${PR_INFO[0]}"
-            BRANCH_NAME="${PR_INFO[1]}"
             echo "Merging PR #$PR_NUMBER from branch $BRANCH_NAME into test branch..."
             git fetch origin $BRANCH_NAME
             git merge --no-commit --strategy-option theirs origin/$BRANCH_NAME
