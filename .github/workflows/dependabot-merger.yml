@@ -19,13 +19,12 @@ jobs:
           git checkout master
           git pull
           git checkout dependabot-test-branch
-          git merge master
+          git merge master --allow-unrelated-histories
 
       - name: Get list of PRs from dependabot
         id: pr_list
         run: |
           echo "::set-output name=numbers::$(gh pr list | grep dependabot | awk '{print $1}')"
-
           
       - name: Merge PRs into test branch
         run: |
