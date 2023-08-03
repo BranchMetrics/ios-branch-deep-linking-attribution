@@ -27,9 +27,9 @@ jobs:
         id: pr_list
         run: |
           PR_LIST=$(gh pr list --json number,headRefName --jq '.[] | "\(.number) \(.headRefName)"' | grep dependabot)
-          echo "::set-output name=numbers::$PR_LIST"
+          echo "::set-output name=numbers::$(echo "$PR_LIST" | tr " " "\n")"
           echo "PRs to be merged: $PR_LIST"
-
+      
       - name: Merge PRs into test branch
         run: |
           IFS=$'\n' read -r -a array <<< "${{ steps.pr_list.outputs.numbers }}"
@@ -40,9 +40,9 @@ jobs:
             PR_NUMBER="${PR_INFO[0]}"
             BRANCH_NAME="${PR_INFO[1]}"
             echo "Merging PR #$PR_NUMBER from branch $BRANCH_NAME into test branch..."
-            git pull --rebase=merges --strategy-option theirs origin $BRANCH_NAME
-            echo "Pulling latest changes from test branch before push..."
-            git pull origin dependabot-test-branch
+            git fetch origin $BRANCH_NAME
+            git merge --no-commit --strategy-option theirs origin/$BRANCH_NAME
             echo "Pushing changes to dependabot-test-branch..."
+            git commit -m "Merged PR #$PR_NUMBER into test branch"
             git push origin dependabot-test-branch
           done
