@@ -42,13 +42,8 @@ jobs:
             BRANCH_NAME="${PR_INFO[1]}"
             echo "Merging PR #$PR_NUMBER from branch $BRANCH_NAME into test branch..."
             git fetch origin $BRANCH_NAME
-
-            if [[ -n "$(git diff dependabot-test-branch..origin/$BRANCH_NAME)" ]]; then
-              git merge --no-commit --strategy-option theirs origin/$BRANCH_NAME
-              echo "Pushing changes to dependabot-test-branch..."
-              git commit -m "Merged PR #$PR_NUMBER into test branch"
-              git push origin dependabot-test-branch
-            else
-              echo "No differences found for PR #$PR_NUMBER. Skipping merge."
-            fi
+            git merge --ff-only origin/$BRANCH_NAME
+            echo "Pushing changes to dependabot-test-branch..."
+            git commit -m "Merged PR #$PR_NUMBER into test branch"
+            git push origin dependabot-test-branch
           done
