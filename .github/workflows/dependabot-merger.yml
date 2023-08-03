@@ -14,13 +14,10 @@ jobs:
       - name: Authenticate GitHub CLI
         run: echo "${{ secrets.DEPENDABOT_MERGER_PAT }}" | gh auth login --with-token
 
-      - name: Set up Git user
-        run: |
-          git config --global user.email "sdk-dependabot-merger@branch.io"
-          git config --global user.name "Dependabot Merger"
-
       - name: Ensure test branch is up to date with master
         run: |
+          git config --global user.email "github-action-bot@example.com"
+          git config --global user.name "GitHub Action Bot"
           git checkout master
           git pull
           git checkout dependabot-test-branch
@@ -31,11 +28,12 @@ jobs:
         run: |
           echo "::set-output name=numbers::$(gh pr list | grep dependabot | awk '{print $1}')"
 
-          
       - name: Merge PRs into test branch
         run: |
           IFS=' ' read -r -a array <<< "${{ steps.pr_list.outputs.numbers }}"
           for PR_NUMBER in "${array[@]}"
           do
-            gh pr merge $PR_NUMBER --merge --repo ${{ github.repository }} --branch dependabot-test-branch
+            gh pr checkout $PR_NUMBER
+            git merge --no-ff -m "Merging PR #$PR_NUMBER via GitHub Action"
+            git push origin dependabot-test-branch
           done
