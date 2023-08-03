@@ -21,24 +21,26 @@ jobs:
           git checkout master
           git pull
           git checkout dependabot-test-branch
-          git merge master --allow-unrelated-histories || echo "Failed to merge master into test branch."
+          git merge master || echo "Failed to merge master into test branch."
 
       - name: Get list of PRs from dependabot
         id: pr_list
         run: |
-          PR_LIST=$(gh pr list | grep dependabot | awk '{print $1}')
+          PR_LIST=$(gh pr list --json number,headRefName --jq '.[] | "\(.number) \(.headRefName)"' | grep dependabot)
           echo "::set-output name=numbers::$PR_LIST"
           echo "PRs to be merged: $PR_LIST"
-          
+
       - name: Merge PRs into test branch
         run: |
-          IFS=' ' read -r -a array <<< "${{ steps.pr_list.outputs.numbers }}"
+          IFS=$'\n' read -r -a array <<< "${{ steps.pr_list.outputs.numbers }}"
           git checkout dependabot-test-branch
-          for PR_NUMBER in "${array[@]}"
+          for item in "${array[@]}"
           do
-            echo "Merging PR #$PR_NUMBER into test branch..."
-            git fetch origin pull/$PR_NUMBER/head:pr-$PR_NUMBER
-            git merge pr-$PR_NUMBER --allow-unrelated-histories || git checkout --theirs . && git commit -m "Resolved merge conflicts"
+            IFS=' ' read -r -a PR_INFO <<< "$item"
+            PR_NUMBER="${PR_INFO[0]}"
+            BRANCH_NAME="${PR_INFO[1]}"
+            echo "Merging PR #$PR_NUMBER from branch $BRANCH_NAME into test branch..."
+            git pull origin $BRANCH_NAME 
             echo "Pushing changes to dependabot-test-branch..."
             git push origin dependabot-test-branch
           done
