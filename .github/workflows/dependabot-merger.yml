@@ -1,7 +1,7 @@
 name: Merge Dependabot PRs
 on:
   schedule:
-    - cron: '0 12 * * 5'  # Run this workflow every Friday at 12:00
+    - cron: '0 9 * * 1'  # Run this workflow every Monday at 9:00
   workflow_dispatch:
 
 jobs:
@@ -24,7 +24,8 @@ jobs:
       - name: Get list of PRs from dependabot
         id: pr_list
         run: |
-          echo "::set-output name=numbers::$(gh pr list --author 'dependabot[bot]' --state open --json number --jq '.[] .number')"
+          echo "::set-output name=numbers::$(gh pr list | grep dependabot | awk '{print $1}')"
+
           
       - name: Merge PRs into test branch
         run: |
