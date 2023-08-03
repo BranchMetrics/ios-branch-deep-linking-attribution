@@ -1,0 +1,35 @@
+name: Merge Dependabot PRs
+on:
+  schedule:
+    - cron: '0 12 * * 5'  # Run this workflow every Friday at 12:00
+  workflow_dispatch:
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Authenticate GitHub CLI
+        run: echo "${{ secrets.DEPENDABOT_MERGER_PAT }}" | gh auth login --with-token
+
+      - name: Ensure test branch is up to date with master
+        run: |
+          git checkout master
+          git pull
+          git checkout dependabot-test-branch
+          git merge master
+
+      - name: Get list of PRs from dependabot
+        id: pr_list
+        run: |
+          echo "::set-output name=numbers::$(gh pr list --author 'dependabot[bot]' --state open --json number --jq '.[] .number')"
+          
+      - name: Merge PRs into test branch
+        run: |
+          IFS=' ' read -r -a array <<< "${{ steps.pr_list.outputs.numbers }}"
+          for PR_NUMBER in "${array[@]}"
+          do
+            gh pr merge $PR_NUMBER --merge --repo ${{ github.repository }} --branch dependabot-test-branch
+          done
