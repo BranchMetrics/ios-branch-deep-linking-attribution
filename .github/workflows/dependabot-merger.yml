@@ -35,7 +35,7 @@ jobs:
       - name: Get list of PRs from dependabot
         id: pr_list
         run: |
-          PR_LIST=$(gh pr list --json number,headRefName --jq '.[] | select(.user.login == "dependabot") | "\(.number) \(.headRefName)"')
+          PR_LIST=$(gh pr list --json number,headRefName --jq '.[] | "\(.number) \(.headRefName)"' | grep dependabot)
           if [ -z "$PR_LIST" ]; then
             echo "No PRs from dependabot found."
             exit 0
@@ -51,9 +51,7 @@ jobs:
           IFS=$'\n' read -r -a array <<< "${{ steps.pr_list.outputs.numbers }}"
           echo "PR Array contents: ${array[@]}"
           for item in "${array[@]}"; do
-            IFS=' ' read -r -a PR_INFO <<< "$item"
-            PR_NUMBER="${PR_INFO[0]}"
-            BRANCH_NAME="${PR_INFO[1]}"
+            IFS=' ' read -r PR_NUMBER BRANCH_NAME <<< "$item"
             echo "Merging PR #$PR_NUMBER from branch $BRANCH_NAME into $NEW_BRANCH..."
             git fetch origin $BRANCH_NAME
             git merge --no-commit --allow-unrelated-histories --strategy-option=theirs origin/$BRANCH_NAME
