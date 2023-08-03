@@ -1,7 +1,7 @@
 name: Merge Dependabot PRs
 on:
   schedule:
-    - cron: '0 12 * * 5'  # Run this workflow every Friday at 12:00
+    - cron: '0 9 * * 1'  # Run this workflow every Monday at 9:00
   workflow_dispatch:
 
 jobs:
@@ -10,26 +10,58 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+        with:
+          ref: master
 
       - name: Authenticate GitHub CLI
         run: echo "${{ secrets.DEPENDABOT_MERGER_PAT }}" | gh auth login --with-token
 
-      - name: Ensure test branch is up to date with master
+      - name: Set Git user identity
         run: |
-          git checkout master
-          git pull
-          git checkout dependabot-test-branch
-          git merge master
+          git config user.email "dependabot-merger-bot@branch.io"
+          git config user.name "Dependabot Merger Bot"
+
+      - name: Get current date and time
+        id: datetime
+        run: echo "::set-output name=date::$(date +'%m-%d-%Y-%H-%M')"
+
+      - name: Create new branch based on date and time
+        id: create_new_branch
+        run: |
+          NEW_BRANCH="dependabot-test-${{ steps.datetime.outputs.date }}"
+          git checkout -b $NEW_BRANCH
+          git push origin $NEW_BRANCH
 
       - name: Get list of PRs from dependabot
         id: pr_list
         run: |
-          echo "::set-output name=numbers::$(gh pr list --author 'dependabot[bot]' --state open --json number --jq '.[] .number')"
-          
-      - name: Merge PRs into test branch
+          PR_LIST=$(gh pr list --json number,headRefName --jq '.[] | "\(.number) \(.headRefName)"' | grep dependabot)
+          if [ -z "$PR_LIST" ]; then
+            echo "No PRs from dependabot found."
+            exit 0
+          fi
+          echo "::set-output name=numbers::$PR_LIST"
+          PR_COUNT=$(echo "$PR_LIST" | wc -l)
+          echo "$PR_COUNT PR's to be merged: $PR_LIST"
+
+      - name: Merge PRs into new branch
         run: |
-          IFS=' ' read -r -a array <<< "${{ steps.pr_list.outputs.numbers }}"
-          for PR_NUMBER in "${array[@]}"
-          do
-            gh pr merge $PR_NUMBER --merge --repo ${{ github.repository }} --branch dependabot-test-branch
-          done
+          NEW_BRANCH="dependabot-test-${{ steps.datetime.outputs.date }}"
+          git checkout $NEW_BRANCH
+          PR_LIST=$(gh pr list --json number,headRefName --jq '.[] | "\(.number) \(.headRefName)"' | grep dependabot)
+          PR_LIST=$(echo "$PR_LIST" | tr -d '\r')
+          echo "::set-output name=numbers::$PR_LIST"
+          while IFS= read -r line; do
+            IFS=' ' read -r PR_NUMBER BRANCH_NAME <<< "$line"
+            echo "Merging PR #$PR_NUMBER from branch $BRANCH_NAME into $NEW_BRANCH..."
+            git fetch origin $BRANCH_NAME
+            git merge --no-commit --allow-unrelated-histories --strategy-option=theirs origin/$BRANCH_NAME
+            echo "Pushing changes to $NEW_BRANCH..."
+            git commit -m "Merged PR #$PR_NUMBER into $NEW_BRANCH"
+            git push origin $NEW_BRANCH
+          done <<< "$PR_LIST"
+
+      - name: Merge process status
+        run: |
+          echo "Merging process completed successfully!"
+          echo "New branch name: dependabot-test-${{ steps.datetime.outputs.date }}"
