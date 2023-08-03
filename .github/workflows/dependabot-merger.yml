@@ -19,14 +19,14 @@ jobs:
       - name: Get current date and time
         id: datetime
         run: echo "::set-output name=date::$(date +'%m-%d-%Y-%H-%M')"
-  
+
       - name: Create new branch based on date and time
         run: |
           NEW_BRANCH="dependabot-test-${{ steps.datetime.outputs.date }}"
           git checkout -b $NEW_BRANCH
           git push origin $NEW_BRANCH
         id: create_new_branch
-  
+
       - name: Get list of PRs from dependabot
         id: pr_list
         run: |
@@ -39,27 +39,26 @@ jobs:
           echo "PRs to be merged: $PR_LIST"
           PR_COUNT=$(echo "$PR_LIST" | wc -l)
           echo "$PR_COUNT PR's to be merged: $PR_LIST"
-  
+
       - name: Merge PRs into new branch
-          id: merge_prs
-          run: |
-            IFS=$'\n' read -r -a array <<< "${{ steps.pr_list.outputs.numbers }}"
-            NEW_BRANCH="dependabot-test-${{ steps.datetime.outputs.date }}"
-            git checkout $NEW_BRANCH
-            for item in "${array[@]}"
-            do
-              IFS=' ' read -r -a PR_INFO <<< "$item"
-              PR_NUMBER="${PR_INFO[0]}"
-              BRANCH_NAME="${PR_INFO[1]}"
-              echo "Merging PR #$PR_NUMBER from branch $BRANCH_NAME into $NEW_BRANCH..."
-              git fetch origin $BRANCH_NAME
-              git merge --no-commit --allow-unrelated-histories --strategy-option=theirs origin/$BRANCH_NAME
-              echo "Pushing changes to $NEW_BRANCH..."
-              git commit -m "Merged PR #$PR_NUMBER into $NEW_BRANCH"
-              git push origin $NEW_BRANCH
-            done
-  
-  
+        id: merge_prs
+        run: |
+          IFS=$'\n' read -r -a array <<< "${{ steps.pr_list.outputs.numbers }}"
+          NEW_BRANCH="dependabot-test-${{ steps.datetime.outputs.date }}"
+          git checkout $NEW_BRANCH
+          for item in "${array[@]}"
+          do
+            IFS=' ' read -r -a PR_INFO <<< "$item"
+            PR_NUMBER="${PR_INFO[0]}"
+            BRANCH_NAME="${PR_INFO[1]}"
+            echo "Merging PR #$PR_NUMBER from branch $BRANCH_NAME into $NEW_BRANCH..."
+            git fetch origin $BRANCH_NAME
+            git merge --no-commit --allow-unrelated-histories --strategy-option=theirs origin/$BRANCH_NAME
+            echo "Pushing changes to $NEW_BRANCH..."
+            git commit -m "Merged PR #$PR_NUMBER into $NEW_BRANCH"
+            git push origin $NEW_BRANCH
+          done
+
       - name: Merge process status
         run: |
           echo "Merging process completed successfully!"
