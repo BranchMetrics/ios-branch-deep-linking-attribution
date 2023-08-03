@@ -22,15 +22,15 @@ jobs:
           git pull
           git checkout dependabot-test-branch
           git merge master || echo "Failed to merge master into test branch."
-
       - name: Get list of PRs from dependabot
         id: pr_list
         run: |
           PR_LIST=$(gh pr list --json number,headRefName --jq '.[] | "\(.number) \(.headRefName)"' | grep dependabot)
           echo "::set-output name=numbers::$PR_LIST"
+          echo "PRs to be merged: $PR_LIST"
           PR_COUNT=$(echo "$PR_LIST" | wc -l)
           echo "$PR_COUNT PR's to be merged: $PR_LIST"
-
+          
       - name: Merge PRs into test branch
         run: |
           IFS=$'\n' read -r -a array <<< "${{ steps.pr_list.outputs.numbers }}"
@@ -42,7 +42,7 @@ jobs:
             BRANCH_NAME="${PR_INFO[1]}"
             echo "Merging PR #$PR_NUMBER from branch $BRANCH_NAME into test branch..."
             git fetch origin $BRANCH_NAME
-            git merge --no-commit --strategy=recursive --allow-unrelated-histories origin/$BRANCH_NAME
+            git merge --no-commit --strategy-option theirs origin/$BRANCH_NAME
             echo "Pushing changes to dependabot-test-branch..."
             git commit -m "Merged PR #$PR_NUMBER into test branch"
             git push origin dependabot-test-branch
