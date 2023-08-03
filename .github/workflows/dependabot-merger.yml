@@ -28,13 +28,18 @@ jobs:
         run: |
           PR_LIST=$(gh pr list --json number,headRefName --jq '.[] | "\(.number) \(.headRefName)"' | grep dependabot)
           echo "::set-output name=numbers::$PR_LIST"
-          echo "PRs to be merged: $PR_LIST"
-      
+          PR_COUNT=$(echo "$PR_LIST" | wc -l)
+          echo "Number of PRs to be merged: $PR_COUNT. PRs to be merged: $PR_LIST"
+
       - name: Merge PRs into test branch
         run: |
+          IFS=$'\n' read -r -a array <<< "${{ steps.pr_list.outputs.numbers }}"
           git checkout dependabot-test-branch
-          echo "${{ steps.pr_list.outputs.numbers }}" | while IFS=' ' read -r PR_NUMBER BRANCH_NAME
+          for item in "${array[@]}"
           do
+            IFS=' ' read -r -a PR_INFO <<< "$item"
+            PR_NUMBER="${PR_INFO[0]}"
+            BRANCH_NAME="${PR_INFO[1]}"
             echo "Merging PR #$PR_NUMBER from branch $BRANCH_NAME into test branch..."
             git fetch origin $BRANCH_NAME
             git merge --no-commit --strategy-option theirs origin/$BRANCH_NAME
