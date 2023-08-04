@@ -60,14 +60,13 @@ jobs:
             git push origin $NEW_BRANCH
           done
       
-          # Generate the PR links and names for Slack message
           PR_LINKS=""
           for item in "${array[@]}"; do
             IFS=' ' read -r PR_NUMBER BRANCH_NAME <<< "$item"
             PR_LINKS+="\n• <https://github.com/BranchMetrics/ios-branch-deep-linking-attribution/pull/$PR_NUMBER|#$PR_NUMBER>"
           done
-      
-          echo "::set-output name=pr_links::$PR_LINKS"
+  
+          echo "::set-output name=pr_links::${PR_LINKS}"
 
 
       - name: Merge process status
