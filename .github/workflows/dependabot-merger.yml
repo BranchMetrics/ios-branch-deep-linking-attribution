@@ -68,7 +68,7 @@ jobs:
       - name: Post to a Slack channel
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: 'C04E69NEDAT'
+          channel-id: 'C03RTLRKJQP'
           payload: |
             {
               "blocks": [
