@@ -45,20 +45,21 @@ jobs:
           echo "$PR_COUNT PR's to be merged: $PR_LIST"
 
       - name: Merge PRs into new branch
-        id: merge_prs
         run: |
           NEW_BRANCH="dependabot-test-${{ steps.datetime.outputs.date }}"
           git checkout $NEW_BRANCH
-          IFS=$'\n' read -r -a array <<< "${{ steps.pr_list.outputs.numbers }}"
-          for item in "${array[@]}"; do
-            IFS=' ' read -r PR_NUMBER BRANCH_NAME <<< "$item"
+          PR_LIST=$(gh pr list --json number,headRefName --jq '.[] | "\(.number) \(.headRefName)"' | grep dependabot)
+          PR_LIST=$(echo "$PR_LIST" | tr -d '\r') # Remove trailing newline
+          echo "::set-output name=numbers::$PR_LIST"
+          while IFS= read -r line; do
+            IFS=' ' read -r PR_NUMBER BRANCH_NAME <<< "$line"
             echo "Merging PR #$PR_NUMBER from branch $BRANCH_NAME into $NEW_BRANCH..."
             git fetch origin $BRANCH_NAME
             git merge --no-commit --allow-unrelated-histories --strategy-option=theirs origin/$BRANCH_NAME
             echo "Pushing changes to $NEW_BRANCH..."
             git commit -m "Merged PR #$PR_NUMBER into $NEW_BRANCH"
             git push origin $NEW_BRANCH
-          done
+          done <<< "$PR_LIST"
 
       - name: Merge process status
         run: |
@@ -68,7 +69,7 @@ jobs:
       - name: Post to a Slack channel
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: 'C03RTLRKJQP'
+          channel-id: 'C04E69NEDAT'
           payload: |
             {
               "blocks": [
