@@ -51,8 +51,11 @@ jobs:
           PR_LIST=$(gh pr list --json number,headRefName --jq '.[] | "\(.number) \(.headRefName)"' | grep dependabot)
           PR_LIST=$(echo "$PR_LIST" | tr -d '\r') # Remove trailing newline
           echo "::set-output name=numbers::$PR_LIST"
+          PR_LINKS=""
           while IFS= read -r line; do
             IFS=' ' read -r PR_NUMBER BRANCH_NAME <<< "$line"
+            PR_URL="https://github.com/${GITHUB_REPOSITORY}/pull/$PR_NUMBER"
+            PR_LINKS+="\n• <$PR_URL|#${PR_NUMBER}: ${BRANCH_NAME}>"
             echo "Merging PR #$PR_NUMBER from branch $BRANCH_NAME into $NEW_BRANCH..."
             git fetch origin $BRANCH_NAME
             git merge --no-commit --allow-unrelated-histories --strategy-option=theirs origin/$BRANCH_NAME
@@ -60,6 +63,7 @@ jobs:
             git commit -m "Merged PR #$PR_NUMBER into $NEW_BRANCH"
             git push origin $NEW_BRANCH
           done <<< "$PR_LIST"
+          echo "::set-output name=pr_links::$PR_LINKS"
 
       - name: Merge process status
         run: |
@@ -72,7 +76,7 @@ jobs:
           channel-id: 'C04E69NEDAT'
           payload: |
             {
-              "blocks": [
+             "blocks": [
                 {
                   "type": "header",
                   "text": {
@@ -89,6 +93,13 @@ jobs:
                   "text": {
                     "type": "mrkdwn",
                     "text": "*Testing Branch: *<https://github.com/BranchMetrics/ios-branch-deep-linking-attribution/tree/dependabot-test-${{ steps.datetime.outputs.date }}|dependabot-test-${{ steps.datetime.outputs.date }}>"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "'${{ steps.merge_prs.outputs.pr_links }}'"
                   }
                 }
               ]
