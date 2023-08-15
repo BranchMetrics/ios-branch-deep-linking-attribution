@@ -47,7 +47,7 @@
 
 - (void)testDefaultMaxTimeout {
     NSTimeInterval days;
-    if (@available(iOS 16.1, *)) {
+    if (@available(iOS 16.1, macCatalyst 16.1, *)) {
         days = 3600.0 * 24.0 * 60.0; // one day
     } else {
         days = 3600.0 * 24.0; // one day
@@ -66,7 +66,7 @@
 
 - (void)testPostbackCall {
     
-    if (@available(iOS 16.1, *)) {
+    if (@available(iOS 16.1, macCatalyst 16.1, *)) {
         self.skAdNetwork.maxTimeSinceInstall = 3600.0 * 24.0 * 60.0; 
     } else {
         self.skAdNetwork.maxTimeSinceInstall = 3600.0 * 24.0; // one day
@@ -94,7 +94,7 @@
 
 - (void)testSKAN4ParamsDefaultValues {
     
-    if (@available(iOS 16.1, *)) {
+    if (@available(iOS 16.1, macCatalyst 16.1, *)) {
         NSString *coarseValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:@{}];
         XCTAssertTrue([coarseValue isEqualToString:@"low"]);
         
@@ -108,7 +108,7 @@
 
 - (void)testSKAN4ParamsValues {
     
-    if (@available(iOS 16.1, *)) {
+    if (@available(iOS 16.1, macCatalyst 16.1, *)) {
         
         NSDictionary *response = @{@"update_conversion_value": @16, @"coarse_key": @"high", @"locked": @YES, @"ascending_only":@NO };
         BNCSKAdNetwork *adNetwork = [BNCSKAdNetwork sharedInstance];

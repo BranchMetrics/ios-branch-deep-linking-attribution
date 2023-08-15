@@ -390,18 +390,7 @@ NSString* BNCWireFormatFromString(NSString *string) {
         NSArray *kv = [pair componentsSeparatedByString:@"="];
         if (kv.count > 1) { // If this key has a value (so, not foo&bar=...)
             NSString *key = kv[0];
-            NSString *val;
-            
-            //Pre iOS 7, stringByReplacingPercentEscapesUsingEncoding was deprecated in iOS 9
-            if (NSFoundationVersionNumber < NSFoundationVersionNumber_iOS_7_0) {
-                #pragma clang diagnostic push
-                #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-                val = [kv[1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-                #pragma clang diagnostic pop
-
-            } else { //iOS 7 and later
-                val = [kv[1] stringByRemovingPercentEncoding]; // uses the default UTF-8 encoding, introduced in iOS 7
-            }
+            NSString *val = [kv[1] stringByRemovingPercentEncoding];
             
             // Don't add empty items
             if (val.length) {

@@ -104,7 +104,7 @@ v.1.40.0
 
 ```objective-c
     // LPLinkMetadata example
-    if (@available(iOS 13.0, *)) {
+    if (@available(iOS 13.0, macCatalyst 13.0, *)) {
         LPLinkMetadata *tempLinkMetatData = [[LPLinkMetadata alloc] init];
         tempLinkMetatData.title = @"Branch URL";
         UIImage *img = [UIImage imageNamed:@"Brand Assets"];

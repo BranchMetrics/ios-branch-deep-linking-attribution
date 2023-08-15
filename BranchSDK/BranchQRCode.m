@@ -178,6 +178,7 @@
     
     [postDataTask resume];
 }
+
 #if !TARGET_OS_TV
 - (void)showShareSheetWithQRCodeFromViewController:(nullable UIViewController *)viewController
                                             anchor:(nullable id)anchorViewOrButtonItem
@@ -211,7 +212,7 @@
                         return;
                     }
 
-                    // Required for iPad/Universal apps on iOS 8+
+                    // Required for iPad/Universal apps
                     if ([presentingViewController respondsToSelector:@selector(popoverPresentationController)]) {
                         if ([anchorViewOrButtonItem isKindOfClass:UIBarButtonItem.class]) {
                             UIBarButtonItem *anchor = (UIBarButtonItem*) anchorViewOrButtonItem;
@@ -237,9 +238,7 @@
     }];
 }
 
-// Helper Functions
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 13000
-- (LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController API_AVAILABLE(ios(13.0)) {
+- (LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController API_AVAILABLE(ios(13.0), macCatalyst(13.1)) {
     LPLinkMetadata * metaData = [[LPLinkMetadata alloc] init];
     metaData.title = self.buoTitle;
     
@@ -254,7 +253,6 @@
     
     return metaData;
 }
-#endif
 #endif
 
 - (BOOL)isValidUrl:(NSString *)urlString{

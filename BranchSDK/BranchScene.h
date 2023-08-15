@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Provide  support for UIScene.  This is only supported on iOS 13.0+, iPadOS 13.0+
 */
-API_AVAILABLE(ios(13.0))
+API_AVAILABLE(ios(13.0), macCatalyst(13.1))
 @interface BranchScene : NSObject
 
 + (BranchScene *)shared;

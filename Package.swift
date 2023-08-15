@@ -5,8 +5,8 @@ import PackageDescription
 let package = Package(
     name: "BranchSDK",
     platforms: [
-        .iOS(.v11),
-        .tvOS(.v11),
+        .iOS(.v12),
+        .tvOS(.v12),
     ],
     products: [
         .library(
@@ -21,7 +21,6 @@ let package = Package(
             linkerSettings: [
                 .linkedFramework("CoreServices"),
                 .linkedFramework("SystemConfiguration"),
-                .linkedFramework("CoreTelephony", .when(platforms: [.iOS])),
                 .linkedFramework("WebKit", .when(platforms: [.iOS])),
                 .linkedFramework("CoreSpotlight", .when(platforms: [.iOS])),
                 .linkedFramework("AdServices", .when(platforms: [.iOS]))
