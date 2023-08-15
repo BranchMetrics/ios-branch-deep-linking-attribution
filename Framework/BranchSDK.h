@@ -49,9 +49,10 @@ FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 
 // Cascading public headers...
 
-// BranchUniversalObject uses constants defined in BNCCommerceEvent.h
-#import <BranchSDK/BNCCommerceEvent.h>
-// BNCCommerceEvent.h includes BNCServerRequest.h
+// BranchUniversalObject uses constants defined in BNCCurrency.h and BNCCurrency.h
+#import <BranchSDK/BNCCurrency.h>
+#import <BranchSDK/BNCCurrency.h>
+
 #import <BranchSDK/BNCServerRequest.h>
 // BNCServerRequest includes BNCServerInterface.h
 #import <BranchSDK/BNCServerInterface.h>
