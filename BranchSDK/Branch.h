@@ -1857,7 +1857,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 #endif
 
 @property (copy, nonatomic, nullable) NSString *installUserId;
-@property (copy, nonatomic, nullable) callbackWithParams setIdentityCallback;
 
 @end
 

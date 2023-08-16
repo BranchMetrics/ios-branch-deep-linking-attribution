@@ -1049,36 +1049,11 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)setIdentity:(NSString *)userId withCallback:(callbackWithParams)callback {
-    if (!userId || [self.preferenceHelper.userIdentity isEqualToString:userId]) {
-        if (callback) {
-            callback([self getFirstReferringParams], nil);
-        }
-        return;
-    }
-    
-    if (self.initializationStatus == BNCInitStatusUninitialized ) {
-        [self cacheIdentity:userId withCallback:callback];
-    } else {
+    if (userId) {
         self.preferenceHelper.userIdentity = userId;
-        if (callback) {
-            callback([self getFirstReferringParams], nil);
-        }
     }
-}
-
-- (void) cacheIdentity: (NSString *)userId withCallback:(callbackWithParams)callback {
-    self.installUserId = userId;
-    self.setIdentityCallback = callback;
-}
-
-- (void) applySavedIdentity {
-    if (self.installUserId != nil) {
-        self.preferenceHelper.userIdentity = self.installUserId;
-        if (self.setIdentityCallback) {
-            self.setIdentityCallback([self getFirstReferringParams], nil);
-        }
-        self.installUserId = nil;
-        self.setIdentityCallback = nil;
+    if (callback) {
+        callback([self getFirstReferringParams], nil);
     }
 }
 
@@ -2287,8 +2262,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         }
     }
     [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
-    
-    [self applySavedIdentity];
+
     
     if (!self.urlFilter.hasUpdatedPatternList) {
         [self.urlFilter updatePatternListWithCompletion:nil];
