@@ -72,7 +72,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: BranchMetrics/qentelli-saas-sdk-testing-automation
-          ref: pr_changes
+          ref: ReInstallationScenario
           token: ${{ secrets.BRANCHLET_ACCESS_TOKEN_PUBLIC }}
       - name: Set up JDK 11
         uses: actions/setup-java@v3
