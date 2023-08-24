@@ -84,6 +84,7 @@ NSString * const BRANCH_URL_QUERY_PARAMETERS_VALUE_KEY = @"value";
 NSString * const BRANCH_URL_QUERY_PARAMETERS_TIMESTAMP_KEY = @"timestamp";
 NSString * const BRANCH_URL_QUERY_PARAMETERS_IS_DEEPLINK_KEY = @"isDeepLink";
 NSString * const BRANCH_URL_QUERY_PARAMETERS_VALIDITY_WINDOW_KEY = @"validityWindow";
+NSString * const BRANCH_REQUEST_KEY_SCCID = @"sccid";
 
 NSString * const BRANCH_REQUEST_ENDPOINT_SET_IDENTITY = @"profile";
 NSString * const BRANCH_REQUEST_ENDPOINT_APP_LINK_SETTINGS = @"app-link-settings";
