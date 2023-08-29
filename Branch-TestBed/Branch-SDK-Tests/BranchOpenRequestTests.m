@@ -72,10 +72,6 @@
 
     NSMutableDictionary *expectedParams = [NSMutableDictionary dictionaryWithDictionary:@{
         @"app_version": APP_VERSION,
-        @"cd": @{
-            @"mv": @"-1",
-            @"pn": BUNDLE_ID
-        },
         @"debug":                       IS_DEBUG,
         @"facebook_app_link_checked":   @0,
         @"randomized_bundle_token":     RANDOMIZED_BUNDLE_TOKEN,
@@ -83,7 +79,6 @@
         @"ios_team_id":                 @"R63EM248DP",
         @"link_identifier":             LINK_IDENTIFIER,
         @"uri_scheme":                  URI_SCHEME,
-
         @"latest_install_time":         BNCWireFormatFromDate(installDate),
         @"lastest_update_time":         BNCWireFormatFromDate(installDate),
         @"first_install_time":          BNCWireFormatFromDate(installDate),
@@ -146,11 +141,7 @@
     [preferenceHelper setPreviousAppBuildDate:updateDate];
 
     NSMutableDictionary *expectedParams = [NSMutableDictionary dictionaryWithDictionary:@{
-        @"app_version": APP_VERSION,      
-        @"cd": @{
-            @"mv": @"-1",
-            @"pn": BUNDLE_ID
-        },
+        @"app_version": APP_VERSION,
         @"debug":                       IS_DEBUG,
         @"randomized_device_token":     DEVICE_TOKEN,
         @"facebook_app_link_checked":   @0,

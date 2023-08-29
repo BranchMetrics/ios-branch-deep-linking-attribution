@@ -20,9 +20,17 @@
 #import "BNCSKAdNetwork.h"
 #import "BNCReferringURLUtility.h"
 
+// TODO: would prefer to have this with the request class.
+#import "BNCRequestFactory.h"
+
+
 @interface BNCServerInterface ()
 @property (copy, nonatomic) NSString *requestEndpoint;
 @property (strong, nonatomic) id<BNCNetworkServiceProtocol> networkService;
+
+// Temp location for this class
+@property (strong, nonatomic, readwrite) BNCRequestFactory *factory;
+
 @end
 
 @implementation BNCServerInterface
@@ -31,6 +39,7 @@
     self = [super init];
     if (self) {
         self.networkService = [[Branch networkServiceClass] new];
+        self.factory = [BNCRequestFactory new];
     }
     return self;
 }
@@ -42,18 +51,11 @@
 
 #pragma mark - GET methods
 
-- (void)getRequest:(NSDictionary *)params
-               url:(NSString *)url
-               key:(NSString *)key
-          callback:(BNCServerCallback)callback {
+- (void)getRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key callback:(BNCServerCallback)callback {
     [self getRequest:params url:url key:key retryNumber:0 callback:callback];
 }
 
-- (void)getRequest:(NSDictionary *)params
-               url:(NSString *)url
-               key:(NSString *)key
-       retryNumber:(NSInteger)retryNumber
-          callback:(BNCServerCallback)callback {
+- (void)getRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key retryNumber:(NSInteger)retryNumber callback:(BNCServerCallback)callback {
     NSURLRequest *request = [self prepareGetRequest:params url:url key:key retryNumber:retryNumber];
 
     [self genericHTTPRequest:request retryNumber:retryNumber callback:callback
@@ -64,10 +66,7 @@
 
 #pragma mark - POST methods
 
-- (void)postRequest:(NSDictionary *)post
-                url:(NSString *)url
-                key:(NSString *)key
-           callback:(BNCServerCallback)callback {
+- (void)postRequest:(NSDictionary *)post url:(NSString *)url key:(NSString *)key callback:(BNCServerCallback)callback {
     [self postRequest:post url:url retryNumber:0 key:key callback:callback];
 }
 
@@ -108,7 +107,7 @@
         if (post) {
             [extendedParams addEntriesFromDictionary:post];
         }
-        NSDictionary *d = [[BNCDeviceInfo getInstance] v2dictionary];
+        NSDictionary *d = [self.factory v2dictionary:[NSMutableDictionary new]];
         if (d.count) {
             extendedParams[@"user_data"] = d;
         }
@@ -117,23 +116,19 @@
     } else if ([self isNewV1API:url]) {
         extendedParams = [NSMutableDictionary new];
         
-        NSMutableDictionary *tmp = [NSMutableDictionary dictionaryWithDictionary: [[BNCDeviceInfo getInstance] v2dictionary]];
+        NSMutableDictionary *tmp = [NSMutableDictionary dictionaryWithDictionary: [self.factory v2dictionary:[NSMutableDictionary new]]];
         if (tmp.count) {
             extendedParams[@"user_data"] = tmp;
             [tmp addEntriesFromDictionary:post];
         }
     
     } else {
-        extendedParams = [self updateDeviceInfoToParams:post];
+        extendedParams = [self.factory v1dictionary:[post mutableCopy]];
     }
     return extendedParams;
 }
 
-- (void)postRequest:(NSDictionary *)post
-                url:(NSString *)url
-        retryNumber:(NSInteger)retryNumber
-                key:(NSString *)key
-           callback:(BNCServerCallback)callback {
+- (void)postRequest:(NSDictionary *)post url:(NSString *)url retryNumber:(NSInteger)retryNumber key:(NSString *)key callback:(BNCServerCallback)callback {
     
     // Instrumentation metrics
     self.requestEndpoint = [self.preferenceHelper getEndpointFromURL:url];
@@ -149,10 +144,10 @@
     }];
 }
 
-- (BNCServerResponse *)postRequestSynchronous:(NSDictionary *)post
-                                          url:(NSString *)url
-                                          key:(NSString *)key {
-    NSDictionary *extendedParams = [self updateDeviceInfoToParams:post];
+// Only used by BranchShortUrlSyncRequest
+- (BNCServerResponse *)postRequestSynchronous:(NSDictionary *)post url:(NSString *)url key:(NSString *)key {
+    
+    NSDictionary *extendedParams = [self.factory v1dictionary:[post mutableCopy]];
     NSURLRequest *request = [self preparePostRequest:extendedParams url:url key:key retryNumber:0];
     return [self genericHTTPRequestSynchronous:request];
 }
@@ -166,10 +161,7 @@
     }];
 }
 
-- (void)genericHTTPRequest:(NSURLRequest *)request
-               retryNumber:(NSInteger)retryNumber
-                  callback:(BNCServerCallback)callback
-              retryHandler:(NSURLRequest *(^)(NSInteger))retryHandler {
+- (void)genericHTTPRequest:(NSURLRequest *)request retryNumber:(NSInteger)retryNumber callback:(BNCServerCallback)callback retryHandler:(NSURLRequest *(^)(NSInteger))retryHandler {
 
     void (^completionHandler)(id<BNCNetworkOperationProtocol>operation) =
         ^void (id<BNCNetworkOperationProtocol>operation) {
@@ -294,7 +286,7 @@
     return NO;
 }
 
-- (NSError*) verifyNetworkOperation:(id<BNCNetworkOperationProtocol>)operation {
+- (NSError *)verifyNetworkOperation:(id<BNCNetworkOperationProtocol>)operation {
 
     if (!operation) {
         NSString *message = @"A network operation instance is expected to be returned by the"
@@ -355,10 +347,7 @@
 
 #pragma mark - Internals
 
-- (NSURLRequest *)prepareGetRequest:(NSDictionary *)params
-                                url:(NSString *)url
-                                key:(NSString *)key
-                        retryNumber:(NSInteger)retryNumber {
+- (NSURLRequest *)prepareGetRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key retryNumber:(NSInteger)retryNumber {
 
     NSDictionary *preparedParams =
         [self prepareParamDict:params key:key retryNumber:retryNumber requestType:@"GET"];
@@ -376,10 +365,7 @@
     return request;
 }
 
-- (NSURLRequest *)preparePostRequest:(NSDictionary *)params
-                                 url:(NSString *)url
-                                 key:(NSString *)key
-                         retryNumber:(NSInteger)retryNumber {
+- (NSURLRequest *)preparePostRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key retryNumber:(NSInteger)retryNumber {
 
     NSMutableDictionary *preparedParams =
         [self prepareParamDict:params key:key retryNumber:retryNumber requestType:@"POST"];
@@ -424,10 +410,7 @@
     return request;
 }
 
-- (NSMutableDictionary *)prepareParamDict:(NSDictionary *)params
-							   key:(NSString *)key
-					   retryNumber:(NSInteger)retryNumber
-                       requestType:(NSString *)reqType {
+- (NSMutableDictionary *)prepareParamDict:(NSDictionary *)params key:(NSString *)key retryNumber:(NSInteger)retryNumber requestType:(NSString *)reqType {
 
     NSMutableDictionary *fullParamDict = [[NSMutableDictionary alloc] init];
     [fullParamDict bnc_safeAddEntriesFromDictionary:params];
@@ -474,9 +457,7 @@
     return fullParamDict;
 }
 
-- (BNCServerResponse *)processServerResponse:(NSURLResponse *)response
-                                        data:(NSData *)data
-                                       error:(NSError *)error {
+- (BNCServerResponse *)processServerResponse:(NSURLResponse *)response data:(NSData *)data error:(NSError *)error {
     BNCServerResponse *serverResponse = [[BNCServerResponse alloc] init];
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
     NSString *requestId = httpResponse.allHeaderFields[@"X-Branch-Request-Id"];
@@ -508,99 +489,6 @@
     NSString * brttKey = [NSString stringWithFormat:@"%@-brtt", self.requestEndpoint];
     [self.preferenceHelper clearInstrumentationDictionary];
     [self.preferenceHelper addInstrumentationDictionaryKey:brttKey value:lastRoundTripTime];
-}
-
-- (void)updateDeviceInfoToMutableDictionary:(NSMutableDictionary *)dict {
-    BNCDeviceInfo *deviceInfo  = [BNCDeviceInfo getInstance];
-    @synchronized (deviceInfo) {
-        [deviceInfo checkAdvertisingIdentifier];
-        
-        // hardware id information.  idfa, idfv or random
-        NSString *hardwareId = [deviceInfo.hardwareId copy];
-        NSString *hardwareIdType = [deviceInfo.hardwareIdType copy];
-        NSNumber *isRealHardwareId = @(deviceInfo.isRealHardwareId);
-        if (hardwareId != nil && hardwareIdType != nil && isRealHardwareId != nil) {
-            dict[BRANCH_REQUEST_KEY_HARDWARE_ID] = hardwareId;
-            dict[BRANCH_REQUEST_KEY_HARDWARE_ID_TYPE] = hardwareIdType;
-            dict[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = isRealHardwareId;
-        }
-
-        // idfv is duplicated in the hardware id field when idfa is unavailable
-        [self safeSetValue:deviceInfo.vendorId forKey:BRANCH_REQUEST_KEY_IOS_VENDOR_ID onDict:dict];
-        // idfa is only in the hardware id field
-        // [self safeSetValue:deviceInfo.advertiserId forKey:@"idfa" onDict:dict];
-        [self safeSetValue:deviceInfo.anonId forKey:@"anon_id" onDict:dict];
-        
-        [self safeSetValue:deviceInfo.osName forKey:BRANCH_REQUEST_KEY_OS onDict:dict];
-        [self safeSetValue:deviceInfo.osVersion forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:dict];
-        [self safeSetValue:deviceInfo.osBuildVersion forKey:@"build" onDict:dict];
-        [self safeSetValue:deviceInfo.environment forKey:@"environment" onDict:dict];
-        [self safeSetValue:deviceInfo.locale forKey:@"locale" onDict:dict];
-        [self safeSetValue:deviceInfo.country forKey:@"country" onDict:dict];
-        [self safeSetValue:deviceInfo.language forKey:@"language" onDict:dict];
-        [self safeSetValue:deviceInfo.brandName forKey:BRANCH_REQUEST_KEY_BRAND onDict:dict];
-        [self safeSetValue:deviceInfo.modelName forKey:BRANCH_REQUEST_KEY_MODEL onDict:dict];
-        [self safeSetValue:deviceInfo.cpuType forKey:@"cpu_type" onDict:dict];
-        [self safeSetValue:deviceInfo.screenScale forKey:@"screen_dpi" onDict:dict];
-        [self safeSetValue:deviceInfo.screenHeight forKey:BRANCH_REQUEST_KEY_SCREEN_HEIGHT onDict:dict];
-        [self safeSetValue:deviceInfo.screenWidth forKey:BRANCH_REQUEST_KEY_SCREEN_WIDTH onDict:dict];
-        
-        [self safeSetValue:[deviceInfo localIPAddress] forKey:@"local_ip" onDict:dict];
-        [self safeSetValue:[deviceInfo connectionType] forKey:@"connection_type" onDict:dict];
-        [self safeSetValue:[deviceInfo userAgentString] forKey:@"user_agent" onDict:dict];
-        
-        [self safeSetValue:[deviceInfo optedInStatus] forKey:BRANCH_REQUEST_KEY_OPTED_IN_STATUS onDict:dict];
-        
-        if ([self installDateIsRecent] && [deviceInfo isFirstOptIn]) {
-            [self safeSetValue:@(deviceInfo.isFirstOptIn) forKey:BRANCH_REQUEST_KEY_FIRST_OPT_IN onDict:dict];
-            [BNCPreferenceHelper sharedInstance].hasOptedInBefore = YES;
-        }
-        
-        [self safeSetValue:@(deviceInfo.isAdTrackingEnabled) forKey:BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED onDict:dict];
-        
-        [self safeSetValue:deviceInfo.applicationVersion forKey:@"app_version" onDict:dict];
-        [self safeSetValue:deviceInfo.pluginName forKey:@"plugin_name" onDict:dict];
-        [self safeSetValue:deviceInfo.pluginVersion forKey:@"plugin_version" onDict:dict];
-        
-        BOOL disableAdNetworkCallouts = self.preferenceHelper.disableAdNetworkCallouts;
-        if (disableAdNetworkCallouts) {
-            [dict setObject:[NSNumber numberWithBool:disableAdNetworkCallouts] forKey:@"disable_ad_network_callouts"];
-        }
-    }
-}
-
-// we do not need to send first_opt_in, if the install is older than 30 days
-- (BOOL)installDateIsRecent {
-    //NSTimeInterval maxTimeSinceInstall = 60.0;
-    NSTimeInterval maxTimeSinceInstall = 0;
-    
-    if (@available(iOS 16.1, macCatalyst 16.1, *)) {
-        maxTimeSinceInstall = 3600.0 * 24.0 * 60; // For SKAN 4.0, The user has 60 days to launch the app.
-    } else {
-        maxTimeSinceInstall = 3600.0 * 24.0 * 30;
-    }
-        
-    NSDate *now = [NSDate date];
-    NSDate *maxDate = [[BNCApplication currentApplication].currentInstallDate dateByAddingTimeInterval:maxTimeSinceInstall];
-    
-    if ([now compare:maxDate] == NSOrderedDescending) {
-        return NO;
-    } else {
-        return YES;
-    }
-}
-
-- (NSMutableDictionary*)updateDeviceInfoToParams:(NSDictionary *)params {
-    NSMutableDictionary *extendedParams=[[NSMutableDictionary alloc] init];
-    [extendedParams addEntriesFromDictionary:params];
-    [self updateDeviceInfoToMutableDictionary:extendedParams];
-    return extendedParams;
-}
-
-- (void)safeSetValue:(NSObject *)value forKey:(NSString *)key onDict:(NSMutableDictionary *)dict {
-    if (value) {
-        dict[key] = value;
-    }
 }
 
 @end

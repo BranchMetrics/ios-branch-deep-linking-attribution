@@ -20,6 +20,8 @@
 
 - (id)initWithCallback:(callbackWithStatus)callback;
 - (id)initWithCallback:(callbackWithStatus)callback isInstall:(BOOL)isInstall;
-+ (NSNumber*) appUpdateState;
+
+// TODO: move this Tune upgrade logic
+//+ (NSNumber*) appUpdateState;
 
 @end
