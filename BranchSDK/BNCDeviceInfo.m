@@ -13,13 +13,11 @@
 #import "BNCConfig.h"
 #import "BNCNetworkInterface.h"
 #import "BNCReachability.h"
-#import "BNCLocale.h"
 #import "NSMutableDictionary+Branch.h"
 #import "BNCDeviceSystem.h"
 
 #if !TARGET_OS_TV
-// tvOS does not support webkit or telephony
-#import "BNCTelephony.h"
+// tvOS does not support webkit
 #import "BNCUserAgentCollector.h"
 #endif
 
@@ -71,8 +69,6 @@
 }
 
 - (void)loadDeviceInfo {
-
-    BNCLocale *locale = [BNCLocale new];
     BNCDeviceSystem *deviceSystem = [BNCDeviceSystem new];
 
     // The random id is regenerated per app launch.  This maintains existing behavior.
@@ -95,14 +91,9 @@
     self.screenHeight = [BNCSystemObserver screenHeight];
     self.screenScale = [BNCSystemObserver screenScale];
 
-    #if !TARGET_OS_TV
-    BNCTelephony *telephony = [BNCTelephony new];
-    self.carrierName = telephony.carrierName;
-    #endif 
-
     self.locale = [NSLocale currentLocale].localeIdentifier;
-    self.country = [locale country];
-    self.language = [locale language];
+    self.country = [[NSLocale currentLocale] countryCode];
+    self.language = [[NSLocale currentLocale] languageCode];
     self.environment = [BNCSystemObserver environment];
     self.branchSDKVersion = [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION];
     self.applicationVersion = [BNCSystemObserver applicationVersion];
@@ -197,7 +188,6 @@
         [dictionary bnc_safeSetObject:self.locale forKey:@"locale"];
         [dictionary bnc_safeSetObject:self.country forKey:@"country"];
         [dictionary bnc_safeSetObject:self.language forKey:@"language"];
-        [dictionary bnc_safeSetObject:self.carrierName forKey:@"device_carrier"];
         [dictionary bnc_safeSetObject:[self connectionType] forKey:@"connection_type"];
         [dictionary bnc_safeSetObject:[self userAgentString] forKey:@"user_agent"];
 

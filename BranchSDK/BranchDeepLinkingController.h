@@ -16,9 +16,6 @@
 
 @protocol BranchDeepLinkingControllerCompletionDelegate <NSObject>
 
-- (void)deepLinkingControllerCompleted
-    __attribute__((deprecated(("This API is deprecated. Instead, use deepLinkingControllerCompletedFrom: viewController"))));;
-
 - (void)deepLinkingControllerCompletedFrom:(UIViewController*) viewController;
 
 @end

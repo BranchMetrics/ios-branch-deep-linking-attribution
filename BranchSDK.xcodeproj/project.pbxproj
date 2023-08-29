@@ -87,11 +87,9 @@
 		5F2210E12894A34000C5B190 /* BranchEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210432894A33E00C5B190 /* BranchEvent.m */; };
 		5F2210E22894A34000C5B190 /* BranchCSSearchableItemAttributeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210442894A33E00C5B190 /* BranchCSSearchableItemAttributeSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F2210E42894A34000C5B190 /* BNCDeviceSystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210462894A33E00C5B190 /* BNCDeviceSystem.m */; };
-		5F2210E52894A34000C5B190 /* BNCTelephony.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210472894A33E00C5B190 /* BNCTelephony.h */; };
 		5F2210E62894A34000C5B190 /* BNCServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210482894A33E00C5B190 /* BNCServerResponse.m */; };
 		5F2210E72894A34000C5B190 /* BranchInstallRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210492894A33E00C5B190 /* BranchInstallRequest.h */; };
 		5F2210E82894A34000C5B190 /* BranchCrossPlatformID.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F22104A2894A33E00C5B190 /* BranchCrossPlatformID.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5F2210E92894A34000C5B190 /* BNCLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F22104B2894A33E00C5B190 /* BNCLocale.h */; };
 		5F2210EA2894A34000C5B190 /* BNCThreads.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F22104C2894A33F00C5B190 /* BNCThreads.h */; };
 		5F2210EB2894A34000C5B190 /* BNCNetworkService.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F22104D2894A33F00C5B190 /* BNCNetworkService.h */; };
 		5F2210EC2894A34000C5B190 /* BNCLinkCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F22104E2894A33F00C5B190 /* BNCLinkCache.m */; };
@@ -121,7 +119,6 @@
 		5F2211062894A34000C5B190 /* BranchCPIDRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210682894A33F00C5B190 /* BranchCPIDRequest.m */; };
 		5F2211072894A34000C5B190 /* BranchDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210692894A33F00C5B190 /* BranchDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F2211082894A34000C5B190 /* BranchLogoutRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F22106A2894A33F00C5B190 /* BranchLogoutRequest.m */; };
-		5F2211092894A34000C5B190 /* BNCLocale.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F22106B2894A33F00C5B190 /* BNCLocale.m */; };
 		5F22110A2894A34000C5B190 /* BranchShortUrlRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F22106C2894A33F00C5B190 /* BranchShortUrlRequest.h */; };
 		5F22110B2894A34000C5B190 /* BNCServerInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F22106D2894A33F00C5B190 /* BNCServerInterface.m */; };
 		5F22110C2894A34000C5B190 /* BNCCrashlyticsWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F22106E2894A33F00C5B190 /* BNCCrashlyticsWrapper.h */; };
@@ -172,7 +169,6 @@
 		5F22113D2894A34000C5B190 /* BranchContentPathProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F22109F2894A34000C5B190 /* BranchContentPathProperties.m */; };
 		5F22113E2894A34000C5B190 /* BranchSetIdentityRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210A02894A34000C5B190 /* BranchSetIdentityRequest.m */; };
 		5F22113F2894A34000C5B190 /* BNCPreferenceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210A12894A34000C5B190 /* BNCPreferenceHelper.m */; };
-		5F2211402894A34000C5B190 /* BNCTelephony.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210A22894A34000C5B190 /* BNCTelephony.m */; };
 		5F2211412894A34000C5B190 /* BNCAppGroupsData.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210A32894A34000C5B190 /* BNCAppGroupsData.m */; };
 		5F2211422894A34000C5B190 /* BNCLinkData.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210A42894A34000C5B190 /* BNCLinkData.m */; };
 		5F2211432894A34000C5B190 /* BNCFacebookAppLinks.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210A52894A34000C5B190 /* BNCFacebookAppLinks.h */; };
@@ -237,7 +233,6 @@
 		5F7903A828B59146003144CD /* BNCKeyChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210B52894A34000C5B190 /* BNCKeyChain.h */; };
 		5F7903A928B59146003144CD /* BNCLinkCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210552894A33F00C5B190 /* BNCLinkCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F7903AA28B59146003144CD /* BNCLinkData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210532894A33F00C5B190 /* BNCLinkData.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5F7903AB28B59146003144CD /* BNCLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F22104B2894A33E00C5B190 /* BNCLocale.h */; };
 		5F7903AC28B59146003144CD /* BNCLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210B12894A34000C5B190 /* BNCLog.h */; };
 		5F7903AD28B59146003144CD /* BNCNetworkInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210AA2894A34000C5B190 /* BNCNetworkInterface.h */; };
 		5F7903AE28B59146003144CD /* BNCNetworkService.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F22104D2894A33F00C5B190 /* BNCNetworkService.h */; };
@@ -301,7 +296,6 @@
 		5F7903F728B5C93E003144CD /* BNCKeyChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210932894A34000C5B190 /* BNCKeyChain.m */; };
 		5F7903F828B5C93E003144CD /* BNCLinkCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F22104E2894A33F00C5B190 /* BNCLinkCache.m */; };
 		5F7903F928B5C93E003144CD /* BNCLinkData.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210A42894A34000C5B190 /* BNCLinkData.m */; };
-		5F7903FA28B5C93E003144CD /* BNCLocale.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F22106B2894A33F00C5B190 /* BNCLocale.m */; };
 		5F7903FB28B5C93E003144CD /* BNCLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210722894A33F00C5B190 /* BNCLog.m */; };
 		5F7903FC28B5C93E003144CD /* BNCNetworkInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210BD2894A34000C5B190 /* BNCNetworkInterface.m */; };
 		5F7903FD28B5C93E003144CD /* BNCNetworkService.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210B32894A34000C5B190 /* BNCNetworkService.m */; };
@@ -366,7 +360,6 @@
 		5FF9DE1F28EE78A700D62DE1 /* BNCKeyChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210932894A34000C5B190 /* BNCKeyChain.m */; };
 		5FF9DE2128EE78A700D62DE1 /* BNCLinkCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F22104E2894A33F00C5B190 /* BNCLinkCache.m */; };
 		5FF9DE2328EE78A700D62DE1 /* BNCLinkData.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210A42894A34000C5B190 /* BNCLinkData.m */; };
-		5FF9DE2528EE78A700D62DE1 /* BNCLocale.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F22106B2894A33F00C5B190 /* BNCLocale.m */; };
 		5FF9DE2728EE78A800D62DE1 /* BNCLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210722894A33F00C5B190 /* BNCLog.m */; };
 		5FF9DE2928EE78A800D62DE1 /* BNCNetworkInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210BD2894A34000C5B190 /* BNCNetworkInterface.m */; };
 		5FF9DE2B28EE78A800D62DE1 /* BNCNetworkService.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210B32894A34000C5B190 /* BNCNetworkService.m */; };
@@ -382,7 +375,6 @@
 		5FF9DE4028EE78A800D62DE1 /* BNCSKAdNetwork.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210842894A33F00C5B190 /* BNCSKAdNetwork.m */; };
 		5FF9DE4228EE78A800D62DE1 /* BNCSpotlightService.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F22103E2894A33E00C5B190 /* BNCSpotlightService.m */; };
 		5FF9DE4428EE78A800D62DE1 /* BNCSystemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210862894A33F00C5B190 /* BNCSystemObserver.m */; };
-		5FF9DE4628EE78A800D62DE1 /* BNCTelephony.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210A22894A34000C5B190 /* BNCTelephony.m */; };
 		5FF9DE4828EE78A800D62DE1 /* BNCThreads.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210AD2894A34000C5B190 /* BNCThreads.m */; };
 		5FF9DE4A28EE78A800D62DE1 /* BNCTuneUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210872894A33F00C5B190 /* BNCTuneUtility.m */; };
 		5FF9DE4C28EE78A800D62DE1 /* BNCURLFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210292894A33E00C5B190 /* BNCURLFilter.m */; };
@@ -440,7 +432,6 @@
 		5FF9DEAA28EE797300D62DE1 /* BNCKeyChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210B52894A34000C5B190 /* BNCKeyChain.h */; };
 		5FF9DEAB28EE797300D62DE1 /* BNCLinkCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210552894A33F00C5B190 /* BNCLinkCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FF9DEAC28EE797300D62DE1 /* BNCLinkData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210532894A33F00C5B190 /* BNCLinkData.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5FF9DEAD28EE797300D62DE1 /* BNCLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F22104B2894A33E00C5B190 /* BNCLocale.h */; };
 		5FF9DEAE28EE797300D62DE1 /* BNCLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210B12894A34000C5B190 /* BNCLog.h */; };
 		5FF9DEAF28EE797300D62DE1 /* BNCNetworkInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210AA2894A34000C5B190 /* BNCNetworkInterface.h */; };
 		5FF9DEB028EE797300D62DE1 /* BNCNetworkService.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F22104D2894A33F00C5B190 /* BNCNetworkService.h */; };
@@ -457,7 +448,6 @@
 		5FF9DEBB28EE797300D62DE1 /* BNCSKAdNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210322894A33E00C5B190 /* BNCSKAdNetwork.h */; };
 		5FF9DEBC28EE797300D62DE1 /* BNCSpotlightService.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210BE2894A34000C5B190 /* BNCSpotlightService.h */; };
 		5FF9DEBD28EE797300D62DE1 /* BNCSystemObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F22103D2894A33E00C5B190 /* BNCSystemObserver.h */; };
-		5FF9DEBE28EE797300D62DE1 /* BNCTelephony.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210472894A33E00C5B190 /* BNCTelephony.h */; };
 		5FF9DEBF28EE797300D62DE1 /* BNCThreads.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F22104C2894A33F00C5B190 /* BNCThreads.h */; };
 		5FF9DEC028EE797300D62DE1 /* BNCTuneUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210BA2894A34000C5B190 /* BNCTuneUtility.h */; };
 		5FF9DEC128EE797300D62DE1 /* BNCURLFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210A72894A34000C5B190 /* BNCURLFilter.h */; };
@@ -601,11 +591,9 @@
 		5F2210432894A33E00C5B190 /* BranchEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchEvent.m; sourceTree = "<group>"; };
 		5F2210442894A33E00C5B190 /* BranchCSSearchableItemAttributeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchCSSearchableItemAttributeSet.h; sourceTree = "<group>"; };
 		5F2210462894A33E00C5B190 /* BNCDeviceSystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDeviceSystem.m; sourceTree = "<group>"; };
-		5F2210472894A33E00C5B190 /* BNCTelephony.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCTelephony.h; sourceTree = "<group>"; };
 		5F2210482894A33E00C5B190 /* BNCServerResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerResponse.m; sourceTree = "<group>"; };
 		5F2210492894A33E00C5B190 /* BranchInstallRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchInstallRequest.h; sourceTree = "<group>"; };
 		5F22104A2894A33E00C5B190 /* BranchCrossPlatformID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchCrossPlatformID.h; sourceTree = "<group>"; };
-		5F22104B2894A33E00C5B190 /* BNCLocale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCLocale.h; sourceTree = "<group>"; };
 		5F22104C2894A33F00C5B190 /* BNCThreads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCThreads.h; sourceTree = "<group>"; };
 		5F22104D2894A33F00C5B190 /* BNCNetworkService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCNetworkService.h; sourceTree = "<group>"; };
 		5F22104E2894A33F00C5B190 /* BNCLinkCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLinkCache.m; sourceTree = "<group>"; };
@@ -635,7 +623,6 @@
 		5F2210682894A33F00C5B190 /* BranchCPIDRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchCPIDRequest.m; sourceTree = "<group>"; };
 		5F2210692894A33F00C5B190 /* BranchDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchDelegate.h; sourceTree = "<group>"; };
 		5F22106A2894A33F00C5B190 /* BranchLogoutRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLogoutRequest.m; sourceTree = "<group>"; };
-		5F22106B2894A33F00C5B190 /* BNCLocale.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLocale.m; sourceTree = "<group>"; };
 		5F22106C2894A33F00C5B190 /* BranchShortUrlRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchShortUrlRequest.h; sourceTree = "<group>"; };
 		5F22106D2894A33F00C5B190 /* BNCServerInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerInterface.m; sourceTree = "<group>"; };
 		5F22106E2894A33F00C5B190 /* BNCCrashlyticsWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCCrashlyticsWrapper.h; sourceTree = "<group>"; };
@@ -686,7 +673,6 @@
 		5F22109F2894A34000C5B190 /* BranchContentPathProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchContentPathProperties.m; sourceTree = "<group>"; };
 		5F2210A02894A34000C5B190 /* BranchSetIdentityRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchSetIdentityRequest.m; sourceTree = "<group>"; };
 		5F2210A12894A34000C5B190 /* BNCPreferenceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCPreferenceHelper.m; sourceTree = "<group>"; };
-		5F2210A22894A34000C5B190 /* BNCTelephony.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCTelephony.m; sourceTree = "<group>"; };
 		5F2210A32894A34000C5B190 /* BNCAppGroupsData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCAppGroupsData.m; sourceTree = "<group>"; };
 		5F2210A42894A34000C5B190 /* BNCLinkData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLinkData.m; sourceTree = "<group>"; };
 		5F2210A52894A34000C5B190 /* BNCFacebookAppLinks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCFacebookAppLinks.h; sourceTree = "<group>"; };
@@ -879,8 +865,6 @@
 				5F22104E2894A33F00C5B190 /* BNCLinkCache.m */,
 				5F2210532894A33F00C5B190 /* BNCLinkData.h */,
 				5F2210A42894A34000C5B190 /* BNCLinkData.m */,
-				5F22104B2894A33E00C5B190 /* BNCLocale.h */,
-				5F22106B2894A33F00C5B190 /* BNCLocale.m */,
 				5F2210B12894A34000C5B190 /* BNCLog.h */,
 				5F2210722894A33F00C5B190 /* BNCLog.m */,
 				5F2210AA2894A34000C5B190 /* BNCNetworkInterface.h */,
@@ -912,8 +896,6 @@
 				5F22103E2894A33E00C5B190 /* BNCSpotlightService.m */,
 				5F22103D2894A33E00C5B190 /* BNCSystemObserver.h */,
 				5F2210862894A33F00C5B190 /* BNCSystemObserver.m */,
-				5F2210472894A33E00C5B190 /* BNCTelephony.h */,
-				5F2210A22894A34000C5B190 /* BNCTelephony.m */,
 				5F22104C2894A33F00C5B190 /* BNCThreads.h */,
 				5F2210AD2894A34000C5B190 /* BNCThreads.m */,
 				5F2210BA2894A34000C5B190 /* BNCTuneUtility.h */,
@@ -1104,7 +1086,6 @@
 				5F22114A2894A34000C5B190 /* BranchLogoutRequest.h in Headers */,
 				5F2210D02894A34000C5B190 /* BNCSKAdNetwork.h in Headers */,
 				5F22110C2894A34000C5B190 /* BNCCrashlyticsWrapper.h in Headers */,
-				5F2210E92894A34000C5B190 /* BNCLocale.h in Headers */,
 				5F22110A2894A34000C5B190 /* BranchShortUrlRequest.h in Headers */,
 				5F22111C2894A34000C5B190 /* Branch+Validator.h in Headers */,
 				5F2211442894A34000C5B190 /* BNCPasteboard.h in Headers */,
@@ -1114,7 +1095,6 @@
 				5F2210C62894A34000C5B190 /* BNCDeviceSystem.h in Headers */,
 				5F2211532894A34000C5B190 /* BNCKeyChain.h in Headers */,
 				5F2210D62894A34000C5B190 /* BranchLATDRequest.h in Headers */,
-				5F2210E52894A34000C5B190 /* BNCTelephony.h in Headers */,
 				5F2210E72894A34000C5B190 /* BranchInstallRequest.h in Headers */,
 				5F22115C2894A34000C5B190 /* BNCSpotlightService.h in Headers */,
 				5F2210CD2894A34000C5B190 /* BNCDeviceInfo.h in Headers */,
@@ -1168,7 +1148,6 @@
 				5FF9DEAA28EE797300D62DE1 /* BNCKeyChain.h in Headers */,
 				5FF9DEAB28EE797300D62DE1 /* BNCLinkCache.h in Headers */,
 				5FF9DEAC28EE797300D62DE1 /* BNCLinkData.h in Headers */,
-				5FF9DEAD28EE797300D62DE1 /* BNCLocale.h in Headers */,
 				5FF9DEAE28EE797300D62DE1 /* BNCLog.h in Headers */,
 				5FF9DEAF28EE797300D62DE1 /* BNCNetworkInterface.h in Headers */,
 				5FF9DEB028EE797300D62DE1 /* BNCNetworkService.h in Headers */,
@@ -1188,7 +1167,6 @@
 				5FF9DEBB28EE797300D62DE1 /* BNCSKAdNetwork.h in Headers */,
 				5FF9DEBC28EE797300D62DE1 /* BNCSpotlightService.h in Headers */,
 				5FF9DEBD28EE797300D62DE1 /* BNCSystemObserver.h in Headers */,
-				5FF9DEBE28EE797300D62DE1 /* BNCTelephony.h in Headers */,
 				5FF9DEBF28EE797300D62DE1 /* BNCThreads.h in Headers */,
 				5FF9DEC028EE797300D62DE1 /* BNCTuneUtility.h in Headers */,
 				5FF9DEC128EE797300D62DE1 /* BNCURLFilter.h in Headers */,
@@ -1277,7 +1255,6 @@
 				5F7903A528B59146003144CD /* BNCFieldDefines.h in Headers */,
 				5F7903A728B59146003144CD /* BNCJSONUtility.h in Headers */,
 				5F7903A828B59146003144CD /* BNCKeyChain.h in Headers */,
-				5F7903AB28B59146003144CD /* BNCLocale.h in Headers */,
 				5F7903AC28B59146003144CD /* BNCLog.h in Headers */,
 				5F7903AD28B59146003144CD /* BNCNetworkInterface.h in Headers */,
 				5F7903AE28B59146003144CD /* BNCNetworkService.h in Headers */,
@@ -1696,8 +1673,6 @@
 				5F22115F2894A34000C5B190 /* BranchCrossPlatformID.m in Sources */,
 				5F2211252894A34000C5B190 /* BNCTuneUtility.m in Sources */,
 				5F22112B2894A34000C5B190 /* BranchLinkProperties.m in Sources */,
-				5F2211402894A34000C5B190 /* BNCTelephony.m in Sources */,
-				5F2211092894A34000C5B190 /* BNCLocale.m in Sources */,
 				5F2210D42894A34000C5B190 /* BranchConstants.m in Sources */,
 				5F2211612894A34000C5B190 /* BNCUserAgentCollector.m in Sources */,
 				5F22113C2894A34000C5B190 /* BranchActivityItemProvider.m in Sources */,
@@ -1776,7 +1751,6 @@
 				5FF9DE4028EE78A800D62DE1 /* BNCSKAdNetwork.m in Sources */,
 				5FF9DE4228EE78A800D62DE1 /* BNCSpotlightService.m in Sources */,
 				5FF9DE4428EE78A800D62DE1 /* BNCSystemObserver.m in Sources */,
-				5FF9DE4628EE78A800D62DE1 /* BNCTelephony.m in Sources */,
 				5FF9DE4828EE78A800D62DE1 /* BNCThreads.m in Sources */,
 				5FF9DE4A28EE78A800D62DE1 /* BNCTuneUtility.m in Sources */,
 				5FF9DE4C28EE78A800D62DE1 /* BNCURLFilter.m in Sources */,
@@ -1836,7 +1810,6 @@
 				5F7903F828B5C93E003144CD /* BNCLinkCache.m in Sources */,
 				5F7903F928B5C93E003144CD /* BNCLinkData.m in Sources */,
 				E761E92329E61DA000E55C98 /* BNCEventUtils.m in Sources */,
-				5F7903FA28B5C93E003144CD /* BNCLocale.m in Sources */,
 				5F7903FB28B5C93E003144CD /* BNCLog.m in Sources */,
 				5F7903FC28B5C93E003144CD /* BNCNetworkInterface.m in Sources */,
 				5F7903FD28B5C93E003144CD /* BNCNetworkService.m in Sources */,

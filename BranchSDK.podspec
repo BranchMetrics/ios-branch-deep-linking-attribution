@@ -15,8 +15,8 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.license          = 'MIT'
   s.author           = { "Branch" => "sdk-team@branch.io" }
   s.source           = { git: "https://github.com/BranchMetrics/ios-branch-deep-linking-attribution.git", tag: s.version.to_s }
-  s.ios.deployment_target = '11.0'
-  s.tvos.deployment_target = '11.0'
+  s.ios.deployment_target = '12.0'
+  s.tvos.deployment_target = '12.0'
 
   s.ios.source_files = "BranchSDK/*.{h,m}"
 
@@ -24,7 +24,6 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.tvos.exclude_files = "BranchSDK/BNCAdClient.{h,m}",
 	"BranchSDK/BNCAppleSearchAds.{h,m}",
 	"BranchSDK/BNCContentDiscoveryManager.{h,m}",
-	"BranchSDK/BNCTelephony.{h,m}",
 	"BranchSDK/BNCUserAgentCollector.{h,m}",
 	"BranchSDK/BNCSpotlightService.{h,m}",
 	"BranchSDK/BranchActivityItemProvider.{h,m}",
@@ -34,5 +33,5 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
 
   s.frameworks = 'CoreServices', 'SystemConfiguration'
   s.weak_framework = 'LinkPresentation'
-  s.ios.frameworks = 'WebKit', 'CoreTelephony'
+  s.ios.frameworks = 'WebKit'
 end

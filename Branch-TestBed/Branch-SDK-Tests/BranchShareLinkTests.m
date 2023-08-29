@@ -23,7 +23,7 @@
     
     BranchShareLink *bsl = [[BranchShareLink alloc] initWithUniversalObject:buo linkProperties:lp];
     
-    if (@available(iOS 13.0, *)) {
+    if (@available(iOS 13.0, macCatalyst 13.1, *)) {
         NSURL *imageURL = [NSURL URLWithString:@"https://cdn.branch.io/branch-assets/1598575682753-og_image.png"];
         NSData *imageData = [NSData dataWithContentsOfURL:imageURL];
         UIImage *iconImage = [UIImage imageWithData:imageData];

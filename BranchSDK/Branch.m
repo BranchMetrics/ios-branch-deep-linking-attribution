@@ -788,17 +788,10 @@ static NSString *bnc_branchKey = nil;
 
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
-            options:(NSDictionary</*UIApplicationOpenURLOptionsKey*/NSString*,id> *)options {
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
 
-    NSString *source = nil;
-    NSString *annotation = nil;
-    if (@available(iOS 9.0, *)) {
-        if (UIApplicationOpenURLOptionsSourceApplicationKey &&
-            UIApplicationOpenURLOptionsAnnotationKey) {
-            source = options[UIApplicationOpenURLOptionsSourceApplicationKey];
-            annotation = options[UIApplicationOpenURLOptionsAnnotationKey];
-        }
-    }
+    NSString *source = options[UIApplicationOpenURLOptionsSourceApplicationKey];
+    NSString *annotation = options[UIApplicationOpenURLOptionsAnnotationKey];
     return [self application:application openURL:url sourceApplication:source annotation:annotation];
 }
 
@@ -820,10 +813,8 @@ static NSString *bnc_branchKey = nil;
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier {
     BNCLogDebugSDK(@"continueUserActivity:");
 
-    if (@available(iOS 11.0, tvOS 11.0, *)) {
-        if (userActivity.referrerURL) {
-            self.preferenceHelper.initialReferrer = userActivity.referrerURL.absoluteString;
-        }
+    if (userActivity.referrerURL) {
+        self.preferenceHelper.initialReferrer = userActivity.referrerURL.absoluteString;
     }
     
     // Check to see if a browser activity needs to be handled
@@ -976,7 +967,7 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)setSKAdNetworkCalloutMaxTimeSinceInstall:(NSTimeInterval)maxTimeInterval {
-    if (@available(iOS 16.1, *)) {
+    if (@available(iOS 16.1, macCatalyst 16.1, *)) {
         BNCLogDebug(@"This is no longer supported for iOS 16.1+ - SKAN4.0");
     } else {
         [BNCSKAdNetwork sharedInstance].maxTimeSinceInstall = maxTimeInterval;
@@ -1466,7 +1457,6 @@ static NSString *bnc_branchKey = nil;
     [self.contentDiscoveryManager indexContentWithTitle:title description:description canonicalId:canonicalId publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords userInfo:linkParams expirationDate:expirationDate callback:callback];
 }
 
-// Use this with iOS 9+ only
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
     [self.contentDiscoveryManager indexContentWithTitle:title description:description canonicalId:nil publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords userInfo:linkParams expirationDate:expirationDate callback:nil spotlightCallback:spotlightCallback];
 }
@@ -2239,16 +2229,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         NSString* referringLink = [self.class returnNonUniversalLink:latestReferringParams[@"~referring_link"] ];
         NSURLComponents *comp = [NSURLComponents componentsWithURL:[NSURL URLWithString:referringLink]
                                            resolvingAgainstBaseURL:NO];
-
-
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        
         Class applicationClass = NSClassFromString(@"UIApplication");
         id<NSObject> sharedApplication = [applicationClass performSelector:@selector(sharedApplication)];
-        SEL openURL = @selector(openURL:);
-        if ([sharedApplication respondsToSelector:openURL])
-            [sharedApplication performSelector:openURL withObject:comp.URL];
-        #pragma clang diagnostic pop
+        if ([sharedApplication respondsToSelector:@selector(openURL:)])
+            [sharedApplication performSelector:@selector(openURL:) withObject:comp.URL];
     }
 
     if (callCallback) {
@@ -2480,14 +2465,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 #pragma mark - BranchDeepLinkingControllerCompletionDelegate methods
-
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-- (void)deepLinkingControllerCompleted {
-    [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:NULL];
-}
-#pragma clang diagnostic pop
 
 - (void)deepLinkingControllerCompletedFrom:(UIViewController *)viewController {
     [self.deepLinkControllers enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {

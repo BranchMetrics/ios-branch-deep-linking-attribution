@@ -73,7 +73,7 @@ bool hasSetPartnerParams = false;
     [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyboard)];
     [self.tableView addGestureRecognizer:gestureRecognizer];
     
-    if (@available(iOS 13.0, *)) {
+    if (@available(iOS 13.0, macCatalyst 13.1, *)) {
         activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleMedium];
     } else {
         activityIndicator = [[UIActivityIndicatorView alloc] init];
@@ -128,24 +128,24 @@ bool hasSetPartnerParams = false;
     
     if ([Branch trackingDisabled]) {
         [self.disableTrackingButton setTitle:@"Enable Tracking" forState:UIControlStateNormal];
-        if (@available(iOS 13.0, *)) {
+        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
             [self.disableTrackingButton setImage:[UIImage systemImageNamed:@"eye.fill"] forState:UIControlStateNormal];
         }
     } else {
         [self.disableTrackingButton setTitle:@"Disable Tracking" forState:UIControlStateNormal];
-        if (@available(iOS 13.0, *)) {
+        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
             [self.disableTrackingButton setImage:[UIImage systemImageNamed:@"eye.slash.fill"] forState:UIControlStateNormal];
         }
     }
     
     if (hasSetPartnerParams) {
         [self.setParnerParamsButton setTitle:@"Clear Partner Params" forState:UIControlStateNormal];
-        if (@available(iOS 13.0, *)) {
+        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
             [self.setParnerParamsButton setImage:[UIImage systemImageNamed:@"folder.badge.minus"] forState:UIControlStateNormal];
         }
     } else {
         [self.setParnerParamsButton setTitle:@"Set Partner Params" forState:UIControlStateNormal];
-        if (@available(iOS 13.0, *)) {
+        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
             [self.setParnerParamsButton setImage:[UIImage systemImageNamed:@"folder.badge.plus"] forState:UIControlStateNormal];
         }
     }
@@ -388,7 +388,7 @@ bool hasSetPartnerParams = false;
                            @"Shared from Branch-TestBed at %@.",
                            [self.dateFormatter stringFromDate:[NSDate date]]];
     
-    if (@available(iOS 13.0, *)) {
+    if (@available(iOS 13.0, macCatalyst 13.1, *)) {
         LPLinkMetadata *tempLinkMetatData = [[LPLinkMetadata alloc] init];
         tempLinkMetatData.title = @"Branch URL";
         UIImage *img = [UIImage imageNamed:@"Brand Assets"];
@@ -756,34 +756,9 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
 - (void)showAlert: (NSString *)title withDescription:(NSString *) message {
     
     BNCPerformBlockOnMainThread(^ {
-        
-        if ([UIDevice currentDevice].systemVersion.doubleValue < 8.0) {
-            
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            UIAlertView *alert = [[UIAlertView alloc]
-                                  initWithTitle:title
-                                  message:message
-                                  delegate:nil
-                                  cancelButtonTitle:@"OK"
-                                  otherButtonTitles:nil];
-            [alert show];
-#pragma clang diagnostic pop
-            
-        } else {
-            
-            UIAlertController* alert = [UIAlertController
-                                        alertControllerWithTitle:title
-                                        message:message
-                                        preferredStyle:UIAlertControllerStyleAlert];
-            [alert addAction:[UIAlertAction actionWithTitle:@"OK"
-                                                      style:UIAlertActionStyleCancel
-                                                    handler:nil]];
-            [self presentViewController:alert
-                               animated:YES
-                             completion:nil];
-            
-        }
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
+        [self presentViewController:alert animated:YES completion:nil];
     });
 }
 
@@ -794,7 +769,7 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
         [self showAlert:@"Cleared Partner Parameters" withDescription:@""];
         hasSetPartnerParams = false;
         [self.setParnerParamsButton setTitle:@"Set Partner Params" forState:UIControlStateNormal];
-        if (@available(iOS 13.0, *)) {
+        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
             [self.setParnerParamsButton setImage:[UIImage systemImageNamed:@"folder.badge.plus"] forState:UIControlStateNormal];
         }
     } else {
@@ -804,7 +779,7 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
         [self showAlert:@"Set Partner Parameters" withDescription:@""];
         hasSetPartnerParams = true;
         [self.setParnerParamsButton setTitle:@"Clear Partner Params" forState:UIControlStateNormal];
-        if (@available(iOS 13.0, *)) {
+        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
             [self.setParnerParamsButton setImage:[UIImage systemImageNamed:@"folder.badge.minus"] forState:UIControlStateNormal];
         }
     }
@@ -831,13 +806,13 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     if ([title isEqualToString:@"Disable Tracking"]) {
         [Branch setTrackingDisabled:YES];
         [self.disableTrackingButton setTitle:@"Enable Tracking" forState:UIControlStateNormal];
-        if (@available(iOS 13.0, *)) {
+        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
             [self.disableTrackingButton setImage:[UIImage systemImageNamed:@"eye.fill"] forState:UIControlStateNormal];
         }
     } else {
         [Branch setTrackingDisabled:NO];
         [self.disableTrackingButton setTitle:@"Disable Tracking" forState:UIControlStateNormal];
-        if (@available(iOS 13.0, *)) {
+        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
             [self.disableTrackingButton setImage:[UIImage systemImageNamed:@"eye.slash.fill"] forState:UIControlStateNormal];
         }
     }
@@ -888,7 +863,7 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     
     BranchShareLink *bsl = [[BranchShareLink alloc] initWithUniversalObject:buo linkProperties:lp];
     
-    if (@available(iOS 13.0, *)) {
+    if (@available(iOS 13.0, macCatalyst 13.1, *)) {
         [bsl addLPLinkMetadata:@"LPLinkMetadata Link" icon:iconImg];
     }
     

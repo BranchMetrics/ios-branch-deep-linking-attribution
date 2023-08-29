@@ -33,7 +33,7 @@ typedef NS_ENUM(NSInteger, BranchSkanWindow) {
 - (void)updatePostbackConversionValue:(NSInteger)fineValue
                           coarseValue:(NSString *) coarseValue
                            lockWindow:(BOOL)lockWindow
-                    completionHandler:(void (^)(NSError *error))completion API_AVAILABLE(ios(16.1));
+                    completionHandler:(void (^)(NSError *error))completion API_AVAILABLE(ios(16.1), macCatalyst(16.1));
 
 - (int) calculateSKANWindowForTime:(NSDate *) currentTime;
 
