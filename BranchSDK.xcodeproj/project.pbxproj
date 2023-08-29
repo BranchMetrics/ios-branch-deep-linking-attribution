@@ -510,6 +510,14 @@
 		C1B63C8629D34FE400D1136D /* BNCUrlQueryParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = C1B63C7B29D2380000D1136D /* BNCUrlQueryParameter.h */; };
 		C1B63C8729D34FEA00D1136D /* BNCReferringURLUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = C1B63C7A29D2380000D1136D /* BNCReferringURLUtility.m */; };
 		C1B63C8829D34FEB00D1136D /* BNCUrlQueryParameter.m in Sources */ = {isa = PBXBuildFile; fileRef = C1B63C7929D2380000D1136D /* BNCUrlQueryParameter.m */; };
+		C1BE797E2A9E704600E15EDF /* BNCCurrency.h in Headers */ = {isa = PBXBuildFile; fileRef = C1CDEF2E2A95717E0098524F /* BNCCurrency.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C1BE797F2A9E704700E15EDF /* BNCCurrency.h in Headers */ = {isa = PBXBuildFile; fileRef = C1CDEF2E2A95717E0098524F /* BNCCurrency.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C1BE79802A9E707200E15EDF /* BNCCurrency.m in Sources */ = {isa = PBXBuildFile; fileRef = C1CDEF2D2A95717E0098524F /* BNCCurrency.m */; };
+		C1BE79812A9E707300E15EDF /* BNCCurrency.m in Sources */ = {isa = PBXBuildFile; fileRef = C1CDEF2D2A95717E0098524F /* BNCCurrency.m */; };
+		C1BE79822A9E708900E15EDF /* BNCProductCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = C1CDEF322A95718C0098524F /* BNCProductCategory.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C1BE79832A9E708900E15EDF /* BNCProductCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = C1CDEF322A95718C0098524F /* BNCProductCategory.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C1BE79842A9E708F00E15EDF /* BNCProductCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = C1CDEF312A95718C0098524F /* BNCProductCategory.m */; };
+		C1BE79852A9E709000E15EDF /* BNCProductCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = C1CDEF312A95718C0098524F /* BNCProductCategory.m */; };
 		C1CDEF2F2A95717E0098524F /* BNCCurrency.m in Sources */ = {isa = PBXBuildFile; fileRef = C1CDEF2D2A95717E0098524F /* BNCCurrency.m */; };
 		C1CDEF302A95717E0098524F /* BNCCurrency.h in Headers */ = {isa = PBXBuildFile; fileRef = C1CDEF2E2A95717E0098524F /* BNCCurrency.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C1CDEF332A95718C0098524F /* BNCProductCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = C1CDEF312A95718C0098524F /* BNCProductCategory.m */; };
@@ -1173,6 +1181,7 @@
 				5FF9DEB528EE797300D62DE1 /* BNCQRCodeCache.h in Headers */,
 				5FF9DEB628EE797300D62DE1 /* BNCReachability.h in Headers */,
 				5FF9DEB728EE797300D62DE1 /* BNCServerInterface.h in Headers */,
+				C1BE79822A9E708900E15EDF /* BNCProductCategory.h in Headers */,
 				5FF9DEB828EE797300D62DE1 /* BNCServerRequest.h in Headers */,
 				5FF9DEB928EE797300D62DE1 /* BNCServerRequestQueue.h in Headers */,
 				5FF9DEBA28EE797300D62DE1 /* BNCServerResponse.h in Headers */,
@@ -1191,6 +1200,7 @@
 				5FF9DEC728EE797400D62DE1 /* BranchConstants.h in Headers */,
 				5FF9DEC828EE797400D62DE1 /* BranchContentDiscoverer.h in Headers */,
 				5FF9DEC928EE797400D62DE1 /* BranchContentDiscoveryManifest.h in Headers */,
+				C1BE797E2A9E704600E15EDF /* BNCCurrency.h in Headers */,
 				5FF9DECA28EE797400D62DE1 /* BranchContentPathProperties.h in Headers */,
 				5FF9DECB28EE797400D62DE1 /* BranchCPIDRequest.h in Headers */,
 				5FF9DECC28EE797400D62DE1 /* BranchCrossPlatformID.h in Headers */,
@@ -1237,6 +1247,7 @@
 				5F7903CE28B59147003144CD /* BranchEvent.h in Headers */,
 				5F7903CC28B59147003144CD /* BranchDeepLinkingController.h in Headers */,
 				5F7903CD28B59147003144CD /* BranchDelegate.h in Headers */,
+				C1BE797F2A9E704700E15EDF /* BNCCurrency.h in Headers */,
 				5F7903CA28B59147003144CD /* BranchCrossPlatformID.h in Headers */,
 				5F7903C128B59147003144CD /* Branch.h in Headers */,
 				5F7903B828B59147003144CD /* BNCServerResponse.h in Headers */,
@@ -1279,6 +1290,7 @@
 				5F7903BD28B59147003144CD /* BNCThreads.h in Headers */,
 				5F7903BE28B59147003144CD /* BNCTuneUtility.h in Headers */,
 				5F7903BF28B59147003144CD /* BNCURLFilter.h in Headers */,
+				C1BE79832A9E708900E15EDF /* BNCProductCategory.h in Headers */,
 				5F7903C228B59147003144CD /* Branch+Validator.h in Headers */,
 				5F7903C428B59147003144CD /* BranchCloseRequest.h in Headers */,
 				5F7903C528B59147003144CD /* BranchConstants.h in Headers */,
@@ -1748,6 +1760,7 @@
 				5FF9DE2328EE78A700D62DE1 /* BNCLinkData.m in Sources */,
 				5F1B240C29148CBD003BEEC7 /* BranchPasteControl.m in Sources */,
 				5FF9DE2528EE78A700D62DE1 /* BNCLocale.m in Sources */,
+				C1BE79802A9E707200E15EDF /* BNCCurrency.m in Sources */,
 				5FF9DE2728EE78A800D62DE1 /* BNCLog.m in Sources */,
 				5FF9DE2928EE78A800D62DE1 /* BNCNetworkInterface.m in Sources */,
 				5FF9DE2B28EE78A800D62DE1 /* BNCNetworkService.m in Sources */,
@@ -1778,6 +1791,7 @@
 				5FF9DE5E28EE78A800D62DE1 /* BranchContentPathProperties.m in Sources */,
 				5FF9DE6028EE78A800D62DE1 /* BranchCPIDRequest.m in Sources */,
 				5FF9DE6228EE78A800D62DE1 /* BranchCrossPlatformID.m in Sources */,
+				C1BE79842A9E708F00E15EDF /* BNCProductCategory.m in Sources */,
 				5FF9DE6428EE78A800D62DE1 /* BranchCSSearchableItemAttributeSet.m in Sources */,
 				5FF9DE6728EE78A800D62DE1 /* BranchDelegate.m in Sources */,
 				5FF9DE6928EE78A800D62DE1 /* BranchEvent.m in Sources */,
@@ -1831,12 +1845,14 @@
 				5F79040028B5C93E003144CD /* BNCPreferenceHelper.m in Sources */,
 				5F79040128B5C93E003144CD /* BNCQRCodeCache.m in Sources */,
 				5F79040228B5C93E003144CD /* BNCReachability.m in Sources */,
+				C1BE79812A9E707300E15EDF /* BNCCurrency.m in Sources */,
 				5F79040328B5C93E003144CD /* BNCServerInterface.m in Sources */,
 				5F79040428B5C93E003144CD /* BNCServerRequest.m in Sources */,
 				5F79040528B5C93E003144CD /* BNCServerRequestQueue.m in Sources */,
 				5F79040628B5C93E003144CD /* BNCServerResponse.m in Sources */,
 				5F79040728B5C93E003144CD /* BNCSKAdNetwork.m in Sources */,
 				5F79040928B5C93E003144CD /* BNCSystemObserver.m in Sources */,
+				C1BE79852A9E709000E15EDF /* BNCProductCategory.m in Sources */,
 				5F79040B28B5C93E003144CD /* BNCThreads.m in Sources */,
 				5F79040C28B5C93E003144CD /* BNCTuneUtility.m in Sources */,
 				5F79040D28B5C93E003144CD /* BNCURLFilter.m in Sources */,
