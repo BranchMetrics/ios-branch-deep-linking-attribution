@@ -80,7 +80,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Setup Node.js environment
-        uses: actions/setup-node@v3.6.0
+        uses: actions/setup-node@v3.8.1
       - name: Build with Maven
         id: build_maven
         run: |
