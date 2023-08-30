@@ -180,10 +180,6 @@
 		5F892EBE2361157E0023AEC1 /* NSError+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F892EBC2361157D0023AEC1 /* NSError+Branch.m */; };
 		5F892EBF2361157E0023AEC1 /* NSError+Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F892EBD2361157D0023AEC1 /* NSError+Branch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F892EC5236116CD0023AEC1 /* NSErrorBranchCategoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F892EC4236116CC0023AEC1 /* NSErrorBranchCategoryTests.m */; };
-		5F892ECE23624E0A0023AEC1 /* BNCFacebookAppLinksTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F892ECD23624E0A0023AEC1 /* BNCFacebookAppLinksTests.m */; };
-		5F892ED1236257AF0023AEC1 /* BNCFacebookMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F892ED0236257AF0023AEC1 /* BNCFacebookMock.m */; };
-		5F892ED8236258390023AEC1 /* BNCFacebookAppLinks.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F892ED6236258390023AEC1 /* BNCFacebookAppLinks.m */; };
-		5F892ED9236258390023AEC1 /* BNCFacebookAppLinks.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F892ED7236258390023AEC1 /* BNCFacebookAppLinks.h */; };
 		5F8B7B4021B5F5CD009CE0A6 /* libBranch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 466B58381B17773000A69EDE /* libBranch.a */; };
 		5F8B7B4721B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F8B7B4621B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m */; };
 		5F8BB66E278771890055D2DC /* BNCKeyChainTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F8BB66D278771890055D2DC /* BNCKeyChainTests.m */; };
@@ -496,11 +492,6 @@
 		5F892EBC2361157D0023AEC1 /* NSError+Branch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSError+Branch.m"; sourceTree = "<group>"; };
 		5F892EBD2361157D0023AEC1 /* NSError+Branch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+Branch.h"; sourceTree = "<group>"; };
 		5F892EC4236116CC0023AEC1 /* NSErrorBranchCategoryTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSErrorBranchCategoryTests.m; sourceTree = "<group>"; };
-		5F892ECD23624E0A0023AEC1 /* BNCFacebookAppLinksTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCFacebookAppLinksTests.m; sourceTree = "<group>"; };
-		5F892ECF236257AF0023AEC1 /* BNCFacebookMock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCFacebookMock.h; sourceTree = "<group>"; };
-		5F892ED0236257AF0023AEC1 /* BNCFacebookMock.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCFacebookMock.m; sourceTree = "<group>"; };
-		5F892ED6236258390023AEC1 /* BNCFacebookAppLinks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCFacebookAppLinks.m; sourceTree = "<group>"; };
-		5F892ED7236258390023AEC1 /* BNCFacebookAppLinks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCFacebookAppLinks.h; sourceTree = "<group>"; };
 		5F8B7B3B21B5F5CD009CE0A6 /* Branch-SDK-Unhosted-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-SDK-Unhosted-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F8B7B3F21B5F5CD009CE0A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5F8B7B4621B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_setBranchKeyTests.m; sourceTree = "<group>"; };
@@ -714,9 +705,6 @@
 				5F437E3F237E1A560052064B /* BNCDeviceSystemTests.m */,
 				5F2035CB240DDE90004FDC3E /* BNCDisableAdNetworkCalloutsTests.m */,
 				4D16838E2098C901008819E3 /* BNCEncodingUtils.Test.m */,
-				5F892ECD23624E0A0023AEC1 /* BNCFacebookAppLinksTests.m */,
-				5F892ECF236257AF0023AEC1 /* BNCFacebookMock.h */,
-				5F892ED0236257AF0023AEC1 /* BNCFacebookMock.m */,
 				5F3D6719233062FD00454FF1 /* BNCJsonLoader.h */,
 				5F3D671A233062FD00454FF1 /* BNCJsonLoader.m */,
 				5F73FC8023314697000EBD32 /* BNCJSONUtilityTests.m */,
@@ -938,8 +926,6 @@
 				464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */,
 				C10A6DE329A991E30061A851 /* BNCEventUtils.h */,
 				C10A6DE129A991CB0061A851 /* BNCEventUtils.m */,
-				5F892ED7236258390023AEC1 /* BNCFacebookAppLinks.h */,
-				5F892ED6236258390023AEC1 /* BNCFacebookAppLinks.m */,
 				4DE649191FE1D7F500226507 /* BNCFieldDefines.h */,
 				5FE276AD2432705B00EA1BD2 /* BNCInitSessionResponse.h */,
 				5FE276AE2432705B00EA1BD2 /* BNCInitSessionResponse.m */,
@@ -1153,7 +1139,6 @@
 				4DCAC8301F426F7C00405D1D /* NSMutableDictionary+Branch.h in Headers */,
 				4DCAC8311F426F7C00405D1D /* NSString+Branch.h in Headers */,
 				5F38021E24DCC2E800E6FAFD /* BranchCPIDRequest.h in Headers */,
-				5F892ED9236258390023AEC1 /* BNCFacebookAppLinks.h in Headers */,
 				5F38021A24DCC2E800E6FAFD /* BNCServerInterface.h in Headers */,
 				5F38022D24DCC2E800E6FAFD /* BranchInstallRequest.h in Headers */,
 				5FE276AF2432705B00EA1BD2 /* BNCInitSessionResponse.h in Headers */,
@@ -1481,7 +1466,6 @@
 				4D35141C1E3201D80085EBA1 /* NSMutableDictionary+Branch.m in Sources */,
 				4D955CCD2035021400FB8008 /* BNCURLFilter.m in Sources */,
 				466B58681B17779C00A69EDE /* BNCLinkData.m in Sources */,
-				5F892ED8236258390023AEC1 /* BNCFacebookAppLinks.m in Sources */,
 				54FF1F921BD1DC320004CE2E /* BranchLinkProperties.m in Sources */,
 				466B586A1B17779C00A69EDE /* BNCLinkCache.m in Sources */,
 				4D7881F7209CF28F002B750F /* BNCThreads.m in Sources */,
@@ -1554,7 +1538,6 @@
 				4AB16368239E3A2700D42931 /* DispatchToIsolationQueueTests.m in Sources */,
 				5F8BB66E278771890055D2DC /* BNCKeyChainTests.m in Sources */,
 				C1CC888229BAAFC000BDD2B5 /* BNCReferringURLUtilityTests.m in Sources */,
-				5F892ECE23624E0A0023AEC1 /* BNCFacebookAppLinksTests.m in Sources */,
 				5FE694382405FA2700E3AEE2 /* BNCCallbackMapTests.m in Sources */,
 				5FDB04F424E6156800F2F267 /* BNCSKAdNetworkTests.m in Sources */,
 				4D1683BB2098C902008819E3 /* BranchShortUrlRequestTests.m in Sources */,
@@ -1581,7 +1564,6 @@
 				4D1683AC2098C902008819E3 /* BranchInstallRequestTests.m in Sources */,
 				4D1683C72098C902008819E3 /* BNCCrashlyticsWrapper.Test.m in Sources */,
 				5FDF91592581CDF4009BE5A3 /* BNCPartnerParametersTests.m in Sources */,
-				5F892ED1236257AF0023AEC1 /* BNCFacebookMock.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

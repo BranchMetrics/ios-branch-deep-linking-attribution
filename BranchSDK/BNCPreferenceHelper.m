@@ -34,7 +34,6 @@ static NSString * const BRANCH_PREFS_KEY_RANDOMIZED_BUNDLE_TOKEN = @"bnc_randomi
 
 static NSString * const BRANCH_PREFS_KEY_SESSION_ID = @"bnc_session_id";
 static NSString * const BRANCH_PREFS_KEY_IDENTITY = @"bnc_identity";
-static NSString * const BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS = @"bnc_checked_fb_app_links";
 static NSString * const BRANCH_PREFS_KEY_LINK_CLICK_IDENTIFIER = @"bnc_link_click_identifier";
 static NSString * const BRANCH_PREFS_KEY_SPOTLIGHT_IDENTIFIER = @"bnc_spotlight_identifier";
 static NSString * const BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL = @"bnc_universal_link_url";
@@ -101,7 +100,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     retryInterval = _retryInterval,
     timeout = _timeout,
     lastStrongMatchDate = _lastStrongMatchDate,
-    checkedFacebookAppLinks = _checkedFacebookAppLinks,
     requestMetadataDictionary = _requestMetadataDictionary,
     instrumentationDictionary = _instrumentationDictionary,
     referrerGBRAID = _referrerGBRAID,
@@ -527,16 +525,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         [baseUrl appendString:@"?"];
     }
     return baseUrl;
-}
-
-- (BOOL)checkedFacebookAppLinks {
-    _checkedFacebookAppLinks = [self readBoolFromDefaults:BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS];
-    return _checkedFacebookAppLinks;
-}
-
-- (void)setCheckedFacebookAppLinks:(BOOL)checked {
-    _checkedFacebookAppLinks = checked;
-    [self writeBoolToDefaults:BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS value:checked];
 }
 
 - (NSMutableDictionary *)requestMetadataDictionary {

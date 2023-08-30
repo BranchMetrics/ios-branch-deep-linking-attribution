@@ -77,7 +77,6 @@
             @"pn": BUNDLE_ID
         },
         @"debug":                       IS_DEBUG,
-        @"facebook_app_link_checked":   @0,
         @"randomized_bundle_token":     RANDOMIZED_BUNDLE_TOKEN,
         @"ios_bundle_id":               BUNDLE_ID,
         @"ios_team_id":                 @"R63EM248DP",
@@ -153,7 +152,6 @@
         },
         @"debug":                       IS_DEBUG,
         @"randomized_device_token":     DEVICE_TOKEN,
-        @"facebook_app_link_checked":   @0,
         @"randomized_bundle_token":     RANDOMIZED_BUNDLE_TOKEN,
         @"ios_bundle_id":               BUNDLE_ID,
         @"ios_team_id":                 @"R63EM248DP",
