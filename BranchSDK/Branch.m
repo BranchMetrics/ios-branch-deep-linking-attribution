@@ -29,7 +29,6 @@
 #import "BranchShortUrlSyncRequest.h"
 #import "BranchSpotlightUrlRequest.h"
 #import "BranchUniversalObject.h"
-#import "BranchUserCompletedActionRequest.h"
 #import "NSMutableDictionary+Branch.h"
 #import "NSString+Branch.h"
 #import "Branch+Validator.h"
@@ -1115,34 +1114,6 @@ static NSString *bnc_branchKey = nil;
     [self processNextQueueItem];
 }
 
-
-
-#pragma mark - User Action methods
-
-- (void)userCompletedAction:(NSString *)action {
-    [self userCompletedAction:action withState:nil];
-}
-
-- (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state {
-    
-    NSLog(@"'userCompletedAction' method has been deprecated. Please use BranchEvent for your event tracking use cases. You can refer to https://help.branch.io/developers-hub/docs/tracking-commerce-content-lifecycle-and-custom-events for additional information.");
-    
-    if (!action) {
-        return;
-    }
-
-    [self initSafetyCheck];
-    dispatch_async(self.isolationQueue, ^(){
-        BranchUserCompletedActionRequest *req = [[BranchUserCompletedActionRequest alloc] initWithAction:action state:state];
-        [self.requestQueue enqueue:req];
-        [self processNextQueueItem];
-    });
-}
-
-- (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state withDelegate:(id)branchViewCallback {
-    [self userCompletedAction:action withState:state];
-}
-
 - (void)sendServerRequest:(BNCServerRequest*)request {
     [self initSafetyCheck];
     dispatch_async(self.isolationQueue, ^(){
@@ -1154,16 +1125,6 @@ static NSString *bnc_branchKey = nil;
 // deprecated, use sendServerRequest
 - (void)sendServerRequestWithoutSession:(BNCServerRequest*)request {
     [self sendServerRequest:request];
-}
-
-- (void)sendCommerceEvent:(BNCCommerceEvent *)commerceEvent metadata:(NSDictionary*)metadata withCompletion:(void (^)(NSDictionary *, NSError *))completion {
-    NSLog(@"'sendCommerceEvent' method has been deprecated. Please use BranchEvent for your event tracking use cases. You can refer to https://help.branch.io/developers-hub/docs/tracking-commerce-content-lifecycle-and-custom-events for additional information.");
-    [self initSafetyCheck];
-    dispatch_async(self.isolationQueue, ^(){
-        BranchCommerceEventRequest *request = [[BranchCommerceEventRequest alloc] initWithCommerceEvent:commerceEvent metadata:metadata completion:completion];
-        [self.requestQueue enqueue:request];
-        [self processNextQueueItem];
-    });
 }
 
 #pragma mark - Credit methods
@@ -2039,9 +2000,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // These request types
     NSSet<Class> *replayableRequests = [[NSSet alloc] initWithArray:@[
         BranchEventRequest.class,
-        BranchUserCompletedActionRequest.class,
         BranchSetIdentityRequest.class,
-        BranchCommerceEventRequest.class,
     ]];
 
     if ([replayableRequests containsObject:request.class]) {

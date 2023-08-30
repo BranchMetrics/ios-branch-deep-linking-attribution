@@ -15,8 +15,6 @@
 #import "BranchInstallRequest.h"
 #import "BranchOpenRequest.h"
 #import "BranchEvent.h"
-#import "BNCCommerceEvent.h"
-#import "BranchUserCompletedActionRequest.h"
 #import "BranchSetIdentityRequest.h"
 #import "BranchLogoutRequest.h"
 
@@ -392,8 +390,6 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             [BranchOpenRequest class],
             [BranchInstallRequest class],
             [BranchEventRequest class],
-            [BranchCommerceEventRequest class],
-            [BranchUserCompletedActionRequest class],
             [BranchSetIdentityRequest class],
             [BranchLogoutRequest class],
         ];
