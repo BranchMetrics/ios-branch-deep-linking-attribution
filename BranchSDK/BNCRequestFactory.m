@@ -49,32 +49,32 @@
     [self addSystemObserverData:json];
     [self addPreferenceHelperData:json];
     [self addPartnerParameters:json];
-    [self addAppleReceiptData:json];
     [self addAppleReceiptSource:json];
-    [self addAppClipData:json];
     [self addPartnerParameters:json];
     [self addLocalURL:json];
     [self addTimestamps:json];
-
+    
+    // Only for installs
+    [self addAppleReceiptData:json];
+    [self addAppClipData:json];
+    
     return json;
 }
 
 - (NSDictionary *)dataForOpen {
-    // TODO: do I need to synchronize on preferenceHelper? The old version did not.
     NSMutableDictionary *json = [NSMutableDictionary new];
     [self addSystemObserverData:json];
-    [self addOpenTokens:json];
     [self addPreferenceHelperData:json];
     [self addAppleReceiptSource:json];
     [self addAppleAttributionToken:json];
     [self addPartnerParameters:json];
     [self addLocalURL:json];
     [self addTimestamps:json];
+    
+    // Only for opens
+    [self addOpenTokens:json];
+    
     return json;
-}
-
-- (NSDictionary *)dataForEvent {
-    return [NSDictionary new];
 }
 
 - (void)addOpenTokens:(NSMutableDictionary *)json {
@@ -135,6 +135,7 @@
 }
 
 // NativeLink URL
+// TODO: isn't this install only? Why was this code in the open request code? Bad inheritance design?
 - (BOOL)addLocalURL:(NSMutableDictionary *)json {
     if (@available(iOS 16.0, macCatalyst 16.0, *)) {
         NSString *localURLString = [[BNCPreferenceHelper sharedInstance] localUrl];

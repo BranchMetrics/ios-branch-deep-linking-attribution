@@ -11,16 +11,13 @@
 #import "BNCEncodingUtils.h"
 #import "NSError+Branch.h"
 #import "BranchConstants.h"
-#import "BNCDeviceInfo.h"
 #import "NSMutableDictionary+Branch.h"
 #import "BNCLog.h"
 #import "Branch.h"
-#import "NSString+Branch.h"
-#import "BNCApplication.h"
 #import "BNCSKAdNetwork.h"
 #import "BNCReferringURLUtility.h"
 
-// TODO: would prefer to have this with the request class.
+// some data is appended by this class
 #import "BNCRequestFactory.h"
 
 

@@ -17,10 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 // Request JSON factory methods
 - (NSDictionary *)dataForInstall;
 - (NSDictionary *)dataForOpen;
-- (NSDictionary *)dataForEvent;
 
-// JSON Builder APIs
-// Used internally to generate request JSONs from smaller JSON fragments
+// BNCServerInterface appends data to request payloads
 - (NSMutableDictionary *)v1dictionary:(NSMutableDictionary *)json;
 - (NSMutableDictionary *)v2dictionary:(NSMutableDictionary *)json;
 
