@@ -1,38 +1,59 @@
+#TODO: Replace v5.5.1 with main doc branch
+#TODO: Replace authorization token with a {{ secrets.readme_api_key_base64 }}
 name: Update Changelog on Readme.com
 
 on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      manual_release_name:
+        description: 'Release Name (X.X.X)'     
+        required: false
+      manual_release_body:
+        description: 'Release Body (Changelog))' 
+        required: false
+      manual_release_date:
+        description: 'Release Date (YYYY-MM-DD)'
+        required: false
 
 jobs:
   update-changelog:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+    - name: Format and publish release notes to version history doc
+      run: |
+        # Get release name, body, and date either from manual input or from the release event
+        if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            release_name="${{ github.event.inputs.manual_release_name }}"
+            release_body="${{ github.event.inputs.manual_release_body }}"
+            release_date="${{ github.event.inputs.manual_release_date }}"
+        else
+            release_name="${{ github.event.release.name }}"
+            release_body="${{ github.event.release.body }}"
+            release_date=$(date -d "${{ github.event.release.published_at }}" +"%Y-%B-%d")
+        fi
 
-    - name: Print release information
-      run: |
-        echo "Name: ${{ github.event.release.name }}"
-        echo "Description: ${{ github.event.release.body }}"
-    
-    - name: Format release notes
-      id: format
-      run: |
-        release_name="${{ github.event.release.name }}"
-        release_body="${{ github.event.release.body }}"
-        formatted_date=$(date +"%Y-%B-%d")
-        formatted_notes="## v$release_name\n\n**($formatted_date)**\n\n$release_body"
+        # Format release notes
+        formatted_notes="## v$release_name\n\n**($release_date)**\n\n$release_body"
         
-        echo -e "$formatted_notes"
-        echo "formatted_notes=$formatted_notes" >> $GITHUB_OUTPUT
+        # Get existing version history page
+        existing_content=$(curl --request GET \
+            --url https://dash.readme.com/api/v1/docs/ios-version-history \
+            --header 'accept: application/json' \
+            --header "authorization: Basic cmRtZV94bjhzOWg2MGQzM2UzZGI1MDkyNmMyYjY3MDk3YTQ0MzUyZTg0NGFhNDY1MDRlYWUzNTc5MGI4MDUxZWQ3ZDZiYWE3NDJhOg==" \
+            | jq -r '.body')
     
-    - name: Update ReadMe Documentation
-      uses: readmeio/rdme@v8
-      with:
-        key: ${{ secrets.README_API_KEY }}
-        version: "main"
-        doc: "ios-version-history"
-        prepend: ${{ steps.format.outputs.formatted_notes }}
+        # Prepend new release notes to existing content
+        new_content=$(echo -e "$formatted_notes\n\n$existing_content")
+        payload=$(jq -n --arg nc "$new_content" '{"body": $nc}')
+
+        # Update version history page with new release notes
+        curl --request PUT \
+            --url https://dash.readme.com/api/v1/docs/ios-version-history \
+            --header 'accept: application/json' \
+            --header "authorization: Basic cmRtZV94bjhzOWg2MGQzM2UzZGI1MDkyNmMyYjY3MDk3YTQ0MzUyZTg0NGFhNDY1MDRlYWUzNTc5MGI4MDUxZWQ3ZDZiYWE3NDJhOg==" \
+            --header 'content-type: application/json' \
+            --header 'x-readme-version: v5.5.1' \
+            --data "$payload"
