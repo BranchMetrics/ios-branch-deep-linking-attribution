@@ -34,7 +34,7 @@ jobs:
       - name: Get list of PRs from dependabot
         id: pr_list
         run: |
-          PR_LIST=$(gh pr list --json number,author,headRefName --jq '.[] | select( .author.is_bot == true and .author.login == "app/dependabot" ) | "\(.number) \(.headRefName)"')
+          PR_LIST=$(gh pr list --json number,headRefName --jq '.[] | "\(.number) \(.headRefName)"' | grep dependabot)
           PR_LIST=$(echo "$PR_LIST" | tr -d '\r')
           if [ -z "$PR_LIST" ]; then
             echo "No PRs from dependabot found."

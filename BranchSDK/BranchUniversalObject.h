@@ -14,8 +14,7 @@
 #import <CoreSpotlight/CoreSpotlight.h>
 #endif
 
-#import "BNCProductCategory.h"
-#import "BNCCurrency.h"
+#import "BNCCommerceEvent.h"
 #import "BranchLinkProperties.h"
 
 #pragma mark BranchContentIndexMode
@@ -159,6 +158,17 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
 
 - (void)registerView;
 - (void)registerViewWithCallback:(void (^_Nullable)(NSDictionary * _Nullable params, NSError * _Nullable error))callback;
+
+
+/// @name User Event Tracking
+
+
+- (void)userCompletedAction:(nonnull NSString *)action;
+    // __attribute__((deprecated(("Use `[BranchEvent logEvent...]` instead."))));
+
+- (void)userCompletedAction:(nonnull NSString *)action withState:(nullable NSDictionary *)state;
+    // __attribute__((deprecated(("Use `[BranchEvent logEvent...]` instead."))));
+
 
 /// @name Short Links
 

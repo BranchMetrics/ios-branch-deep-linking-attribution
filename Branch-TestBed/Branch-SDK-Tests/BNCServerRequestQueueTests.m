@@ -15,6 +15,8 @@
 #import "BranchInstallRequest.h"
 #import "BranchOpenRequest.h"
 #import "BranchEvent.h"
+#import "BNCCommerceEvent.h"
+#import "BranchUserCompletedActionRequest.h"
 #import "BranchSetIdentityRequest.h"
 #import "BranchLogoutRequest.h"
 
@@ -100,6 +102,32 @@
     BranchEventRequest *unarchived = [self.queue unarchiveObjectFromData:archived];
     XCTAssertNotNil(unarchived);
     XCTAssert([unarchived isKindOfClass:[BranchEventRequest class]]);
+
+    // The request object is not very test friendly, so comparing the two is not helpful at the moment
+}
+
+- (void)testArchiveCommerceEventRequest {
+    BranchCommerceEventRequest *object = [BranchCommerceEventRequest new];
+    
+    NSData *archived = [self.queue archiveObject:object];
+    XCTAssertNotNil(archived);
+    
+    BranchCommerceEventRequest *unarchived = [self.queue unarchiveObjectFromData:archived];
+    XCTAssertNotNil(unarchived);
+    XCTAssert([unarchived isKindOfClass:[BranchCommerceEventRequest class]]);
+
+    // The request object is not very test friendly, so comparing the two is not helpful at the moment
+}
+
+- (void)testArchiveUserCompletedActionRequest {
+    BranchUserCompletedActionRequest *object = [BranchUserCompletedActionRequest new];
+    
+    NSData *archived = [self.queue archiveObject:object];
+    XCTAssertNotNil(archived);
+    
+    BranchUserCompletedActionRequest *unarchived = [self.queue unarchiveObjectFromData:archived];
+    XCTAssertNotNil(unarchived);
+    XCTAssert([unarchived isKindOfClass:[BranchUserCompletedActionRequest class]]);
 
     // The request object is not very test friendly, so comparing the two is not helpful at the moment
 }

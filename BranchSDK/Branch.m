@@ -29,6 +29,7 @@
 #import "BranchShortUrlSyncRequest.h"
 #import "BranchSpotlightUrlRequest.h"
 #import "BranchUniversalObject.h"
+#import "BranchUserCompletedActionRequest.h"
 #import "NSMutableDictionary+Branch.h"
 #import "NSString+Branch.h"
 #import "Branch+Validator.h"
@@ -1114,6 +1115,34 @@ static NSString *bnc_branchKey = nil;
     [self processNextQueueItem];
 }
 
+
+
+#pragma mark - User Action methods
+
+- (void)userCompletedAction:(NSString *)action {
+    [self userCompletedAction:action withState:nil];
+}
+
+- (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state {
+    
+    NSLog(@"'userCompletedAction' method has been deprecated. Please use BranchEvent for your event tracking use cases. You can refer to https://help.branch.io/developers-hub/docs/tracking-commerce-content-lifecycle-and-custom-events for additional information.");
+    
+    if (!action) {
+        return;
+    }
+
+    [self initSafetyCheck];
+    dispatch_async(self.isolationQueue, ^(){
+        BranchUserCompletedActionRequest *req = [[BranchUserCompletedActionRequest alloc] initWithAction:action state:state];
+        [self.requestQueue enqueue:req];
+        [self processNextQueueItem];
+    });
+}
+
+- (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state withDelegate:(id)branchViewCallback {
+    [self userCompletedAction:action withState:state];
+}
+
 - (void)sendServerRequest:(BNCServerRequest*)request {
     [self initSafetyCheck];
     dispatch_async(self.isolationQueue, ^(){
@@ -1125,6 +1154,16 @@ static NSString *bnc_branchKey = nil;
 // deprecated, use sendServerRequest
 - (void)sendServerRequestWithoutSession:(BNCServerRequest*)request {
     [self sendServerRequest:request];
+}
+
+- (void)sendCommerceEvent:(BNCCommerceEvent *)commerceEvent metadata:(NSDictionary*)metadata withCompletion:(void (^)(NSDictionary *, NSError *))completion {
+    NSLog(@"'sendCommerceEvent' method has been deprecated. Please use BranchEvent for your event tracking use cases. You can refer to https://help.branch.io/developers-hub/docs/tracking-commerce-content-lifecycle-and-custom-events for additional information.");
+    [self initSafetyCheck];
+    dispatch_async(self.isolationQueue, ^(){
+        BranchCommerceEventRequest *request = [[BranchCommerceEventRequest alloc] initWithCommerceEvent:commerceEvent metadata:metadata completion:completion];
+        [self.requestQueue enqueue:request];
+        [self processNextQueueItem];
+    });
 }
 
 #pragma mark - Credit methods
@@ -1680,50 +1719,61 @@ static NSString *bnc_branchKey = nil;
                      andParams:(NSDictionary *)params
                 ignoreUAString:(NSString *)ignoreUAString
              forceLinkCreation:(BOOL)forceLinkCreation {
-    
+
     NSString *shortURL = nil;
-    
+
     BNCLinkData *linkData =
-    [self prepareLinkDataFor:tags
-                    andAlias:alias
-                     andType:type
-            andMatchDuration:duration
-                  andChannel:channel
-                  andFeature:feature
-                    andStage:stage
-                 andCampaign:campaign
-                   andParams:params
-              ignoreUAString:ignoreUAString];
-    
+        [self prepareLinkDataFor:tags
+            andAlias:alias
+             andType:type
+    andMatchDuration:duration
+          andChannel:channel
+          andFeature:feature
+            andStage:stage
+         andCampaign:campaign
+           andParams:params
+      ignoreUAString:ignoreUAString];
+
     // If an ignore UA string is present, we always get a new url.
     // Otherwise, if we've already seen this request, use the cached version.
     if (!ignoreUAString && [self.linkCache objectForKey:linkData]) {
         shortURL = [self.linkCache objectForKey:linkData];
     } else {
         BranchShortUrlSyncRequest *req =
-        [[BranchShortUrlSyncRequest alloc]
-         initWithTags:tags
-         alias:alias
-         type:type
-         matchDuration:duration
-         channel:channel
-         feature:feature
-         stage:stage
-         campaign:campaign
-         params:params
-         linkData:linkData
-         linkCache:self.linkCache];
-        
-        BNCLogDebug(@"Creating a custom URL synchronously.");
-        BNCServerResponse *serverResponse = [req makeRequest:self.serverInterface key:self.class.branchKey];
-        shortURL = [req processResponse:serverResponse];
-        
-        // cache the link
-        if (shortURL) {
-            [self.linkCache setObject:shortURL forKey:linkData];
+            [[BranchShortUrlSyncRequest alloc]
+                initWithTags:tags
+                alias:alias
+                type:type
+                matchDuration:duration
+                channel:channel
+                feature:feature
+                stage:stage
+                campaign:campaign
+                params:params
+                linkData:linkData
+                linkCache:self.linkCache];
+
+        if (self.initializationStatus == BNCInitStatusInitialized) {
+            BNCLogDebug(@"Creating a custom URL synchronously.");
+            BNCServerResponse *serverResponse = [req makeRequest:self.serverInterface key:self.class.branchKey];
+            shortURL = [req processResponse:serverResponse];
+
+            // cache the link
+            if (shortURL) {
+                [self.linkCache setObject:shortURL forKey:linkData];
+            }
+        } else {
+            if (forceLinkCreation) {
+                if (self.class.branchKey) {
+                    return [BranchShortUrlSyncRequest createLinkFromBranchKey:self.class.branchKey
+                        tags:tags alias:alias type:type matchDuration:duration
+                            channel:channel feature:feature stage:stage params:params];
+                }
+            }
+            BNCLogError(@"Making a Branch request before init has succeeded!");
         }
     }
-    
+
     return shortURL;
 }
 
@@ -1989,7 +2039,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // These request types
     NSSet<Class> *replayableRequests = [[NSSet alloc] initWithArray:@[
         BranchEventRequest.class,
+        BranchUserCompletedActionRequest.class,
         BranchSetIdentityRequest.class,
+        BranchCommerceEventRequest.class,
     ]];
 
     if ([replayableRequests containsObject:request.class]) {

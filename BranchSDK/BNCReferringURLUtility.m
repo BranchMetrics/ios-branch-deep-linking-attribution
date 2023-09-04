@@ -11,7 +11,6 @@
 #import "BranchConstants.h"
 #import "BNCUrlQueryParameter.h"
 #import "BNCLog.h"
-#import <UIKit/UIKit.h>
 
 @interface BNCReferringURLUtility()
 @property (strong, readwrite, nonatomic) NSMutableDictionary<NSString *, BNCUrlQueryParameter *> *urlQueryParameters;
@@ -26,24 +25,9 @@
         self.preferenceHelper = [BNCPreferenceHelper sharedInstance];
         self.urlQueryParameters = [self deserializeFromJson:self.preferenceHelper.referringURLQueryParameters];
         [self checkForAndMigrateOldGbraid];
-        
-        NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-        [notificationCenter addObserver:self
-                               selector:@selector(clearSccid)
-                                   name:UIApplicationDidEnterBackgroundNotification
-                                 object:nil];
-        [notificationCenter addObserver:self
-                               selector:@selector(clearSccid)
-                                   name:UIApplicationWillTerminateNotification
-                                 object:nil];
     }
     return self;
 }
-
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
 
 - (void)parseReferringURL:(NSURL *)url {
     NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
@@ -123,7 +107,6 @@
     params[BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS] = [self metaCampaignIDsForEndpoint:endpoint];
     params[BRANCH_REQUEST_KEY_GCLID] = [self gclidValueForEndpoint:endpoint];
     [params addEntriesFromDictionary:[self gbraidValuesForEndpoint:endpoint]];
-    params[BRANCH_REQUEST_KEY_SCCID] = [self sccidValueForEndpoint:endpoint];
     
     return params;
 }
@@ -170,15 +153,8 @@
     return returnedParams;
 }
 
-- (NSString *)sccidValueForEndpoint:(NSString *)endpoint {
-    if (([endpoint containsString:@"/v2/event"]) || ([endpoint containsString:@"/v1/open"]) || ([endpoint containsString:@"/v1/install"]) ) {
-        return self.urlQueryParameters[BRANCH_REQUEST_KEY_SCCID].value;
-    }
-    return nil;
-}
-
 - (BOOL)isSupportedQueryParameter:(NSString *)param {
-    NSArray *validURLQueryParameters = @[BRANCH_REQUEST_KEY_REFERRER_GBRAID, BRANCH_REQUEST_KEY_GCLID, BRANCH_REQUEST_KEY_SCCID];
+    NSArray *validURLQueryParameters = @[BRANCH_REQUEST_KEY_REFERRER_GBRAID, BRANCH_REQUEST_KEY_GCLID];
     return [self isSupportedQueryParameter:param validParams:validURLQueryParameters];
 }
 
@@ -289,11 +265,5 @@
         BNCLogDebug(@"Updated old Gbraid to new BNCUrlQueryParameter");
     }
 }
-
-- (void)clearSccid {
-    [self.urlQueryParameters removeObjectForKey:BRANCH_REQUEST_KEY_SCCID];
-    self.preferenceHelper.referringURLQueryParameters = [self serializeToJson:self.urlQueryParameters];
-}
-
 
 @end
