@@ -86,9 +86,7 @@ NSString * const BRANCH_URL_QUERY_PARAMETERS_IS_DEEPLINK_KEY = @"isDeepLink";
 NSString * const BRANCH_URL_QUERY_PARAMETERS_VALIDITY_WINDOW_KEY = @"validityWindow";
 NSString * const BRANCH_REQUEST_KEY_SCCID = @"sccid";
 
-NSString * const BRANCH_REQUEST_ENDPOINT_SET_IDENTITY = @"profile";
 NSString * const BRANCH_REQUEST_ENDPOINT_APP_LINK_SETTINGS = @"app-link-settings";
-NSString * const BRANCH_REQUEST_ENDPOINT_LOGOUT = @"logout";
 NSString * const BRANCH_REQUEST_ENDPOINT_USER_COMPLETED_ACTION = @"event";
 NSString * const BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL = @"url";
 NSString * const BRANCH_REQUEST_ENDPOINT_CLOSE = @"close";
