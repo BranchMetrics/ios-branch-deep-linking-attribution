@@ -1,21 +1,8 @@
-#TODO: Replace v5.5.1 with main doc branch
-#TODO: Replace authorization token with a {{ secrets.readme_api_key_base64 }}
 name: Update Changelog on Readme.com
 
 on:
   release:
     types: [published]
-  workflow_dispatch:
-    inputs:
-      manual_release_name:
-        description: 'Release Name (X.X.X)'     
-        required: false
-      manual_release_body:
-        description: 'Release Body (Changelog))' 
-        required: false
-      manual_release_date:
-        description: 'Release Date (YYYY-MM-DD)'
-        required: false
 
 jobs:
   update-changelog:
@@ -23,17 +10,12 @@ jobs:
 
     steps:
     - name: Format and publish release notes to version history doc
+      id: update
       run: |
-        # Get release name, body, and date either from manual input or from the release event
-        if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            release_name="${{ github.event.inputs.manual_release_name }}"
-            release_body="${{ github.event.inputs.manual_release_body }}"
-            release_date="${{ github.event.inputs.manual_release_date }}"
-        else
-            release_name="${{ github.event.release.name }}"
-            release_body="${{ github.event.release.body }}"
-            release_date=$(date -d "${{ github.event.release.published_at }}" +"%Y-%B-%d")
-        fi
+        # Get release name, body, and date from the release event
+        release_name="${{ github.event.release.name }}"
+        release_body="${{ github.event.release.body }}"
+        release_date=$(date -d "${{ github.event.release.published_at }}" +"%Y-%B-%d")
 
         # Format release notes
         formatted_notes="## v$release_name\n\n**($release_date)**\n\n$release_body"
@@ -42,7 +24,7 @@ jobs:
         existing_content=$(curl --request GET \
             --url https://dash.readme.com/api/v1/docs/ios-version-history \
             --header 'accept: application/json' \
-            --header "authorization: Basic cmRtZV94bjhzOWg2MGQzM2UzZGI1MDkyNmMyYjY3MDk3YTQ0MzUyZTg0NGFhNDY1MDRlYWUzNTc5MGI4MDUxZWQ3ZDZiYWE3NDJhOg==" \
+            --header "authorization: Basic ${{ secrets.readme_api_key_base64 }}" \
             | jq -r '.body')
     
         # Prepend new release notes to existing content
@@ -53,7 +35,57 @@ jobs:
         curl --request PUT \
             --url https://dash.readme.com/api/v1/docs/ios-version-history \
             --header 'accept: application/json' \
-            --header "authorization: Basic cmRtZV94bjhzOWg2MGQzM2UzZGI1MDkyNmMyYjY3MDk3YTQ0MzUyZTg0NGFhNDY1MDRlYWUzNTc5MGI4MDUxZWQ3ZDZiYWE3NDJhOg==" \
+            --header "authorization: Basic ${{ secrets.readme_api_key_base64 }}" \
             --header 'content-type: application/json' \
-            --header 'x-readme-version: v5.5.1' \
             --data "$payload"
+
+    - name: Announce New Release in Slack
+      uses: slackapi/slack-github-action@v1.24.0
+      with:
+        channel-id: "CDFGXRM9S"
+        payload: |
+            {
+                "text": "New Release: Branch iOS SDK v${{ github.event.release.name }}",
+                "blocks": [
+                    {
+                        "type": "header",
+                        "text": {
+                            "type": "plain_text",
+                            "text": ":rocket: New Release: Branch iOS SDK v${{ github.event.release.name }}",                            
+                            "emoji": true
+                        }
+                    },
+                    {
+                        "type": "divider"
+                    },
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": ":star: *What's New*:\n\n${{ github.event.release.body }}"
+                        }
+                    },
+                    {
+                        "type": "divider"
+                    },
+                    {
+                        "type": "actions",
+                        "elements": [
+                            {
+                                "type": "button",
+                                "text": {
+                                    "type": "plain_text",
+                                    "text": ":git: GitHub Release",
+                                    "emoji": true
+                                },
+                                "value": "github",
+                                "action_id": "github",
+                                "url": "${{ github.event.release.html_url }}"
+                            }
+                        ]
+                    }
+                ]
+            }
+    env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_SDK_BOT_TOKEN }}
+          
