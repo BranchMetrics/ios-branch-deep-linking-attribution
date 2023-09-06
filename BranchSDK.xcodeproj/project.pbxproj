@@ -1658,11 +1658,6 @@
 				5F2211612894A34000C5B190 /* BNCUserAgentCollector.m in Sources */,
 				5F22113C2894A34000C5B190 /* BranchActivityItemProvider.m in Sources */,
 				5F2210D22894A34000C5B190 /* BranchOpenRequest.m in Sources */,
-<<<<<<< HEAD
-				5F2211182894A34000C5B190 /* BranchUserCompletedActionRequest.m in Sources */,
-=======
-				5F22113E2894A34000C5B190 /* BranchSetIdentityRequest.m in Sources */,
->>>>>>> master
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
