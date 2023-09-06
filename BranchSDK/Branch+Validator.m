@@ -223,8 +223,7 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
     // TODO: test with short url where, say, t1=b is set in deep link data.
     // If this logic fails then we'll need to generate a new short URL, which is sucky.
     referringLink = [self.class returnNonUniversalLink:referringLink];
-    NSURLComponents *comp = [NSURLComponents componentsWithURL:[NSURL URLWithString:referringLink]
-                                       resolvingAgainstBaseURL:NO]; // TODO: Check iOS 8 support
+    NSURLComponents *comp = [NSURLComponents componentsWithURL:[NSURL URLWithString:referringLink] resolvingAgainstBaseURL:NO];
     NSArray *queryParams = [comp queryItems];
     NSMutableArray *newQueryParams = [NSMutableArray array];
     for (NSURLQueryItem *queryParam in queryParams) {
@@ -236,14 +235,10 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
     [newQueryParams addObject:[NSURLQueryItem queryItemWithName:@"validate" value:@"true"]];
     comp.queryItems = newQueryParams;
     
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
     Class applicationClass = NSClassFromString(@"UIApplication");
     id<NSObject> sharedApplication = [applicationClass performSelector:@selector(sharedApplication)];
-    SEL openURL = @selector(openURL:);
-    if ([sharedApplication respondsToSelector:openURL])
-        [sharedApplication performSelector:openURL withObject:comp.URL];
-    #pragma clang diagnostic pop
+    if ([sharedApplication respondsToSelector:@selector(openURL:)])
+        [sharedApplication performSelector:@selector(openURL:) withObject:comp.URL];
 }
 
 - (void)validateDeeplinkRouting:(NSDictionary *)params {

@@ -15,8 +15,6 @@
 #import "BranchInstallRequest.h"
 #import "BranchOpenRequest.h"
 #import "BranchEvent.h"
-#import "BNCCommerceEvent.h"
-#import "BranchUserCompletedActionRequest.h"
 
 #import "BNCLog.h"
 
@@ -322,17 +320,10 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 - (NSData *)archiveObject:(NSObject *)object {
     NSData *data = nil;
     NSError *error = nil;
-    if (@available(iOS 11.0, tvOS 11.0, *)) {
-        data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:YES error:&error];
-        
-        if (!data && error) {
-            BNCLogWarning([NSString stringWithFormat:@"Failed to archive: %@", error]);
-        }
-        
-    } else {
-        #if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
-        data = [NSKeyedArchiver archivedDataWithRootObject:object];
-        #endif
+    data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:YES error:&error];
+    
+    if (!data && error) {
+        BNCLogWarning([NSString stringWithFormat:@"Failed to archive: %@", error]);
     }
     return data;
 }
@@ -378,15 +369,13 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 }
 
 - (id)unarchiveObjectFromData:(NSData *)data {
-    id object = nil;
-    if (@available(iOS 11.0, tvOS 11.0, *)) {
-        object = [NSKeyedUnarchiver unarchivedObjectOfClasses:[BNCServerRequestQueue encodableClasses] fromData:data error:nil];
-
-    } else {
-        #if __IPHONE_OS_VERSION_MIN_REQUIRED < 12000
-        object = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-        #endif
+    NSError *error;
+    id object = [NSKeyedUnarchiver unarchivedObjectOfClasses:[BNCServerRequestQueue encodableClasses] fromData:data error:&error];
+    
+    if (error) {
+        BNCLogWarning([NSString stringWithFormat:@"Failed to unarchive: %@", error]);
     }
+    
     return object;
 }
 
@@ -399,8 +388,6 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             [BranchOpenRequest class],
             [BranchInstallRequest class],
             [BranchEventRequest class],
-            [BranchCommerceEventRequest class],
-            [BranchUserCompletedActionRequest class],
         ];
         requestClasses = [NSSet setWithArray:tmp];
     });

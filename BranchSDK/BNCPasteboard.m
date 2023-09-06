@@ -31,10 +31,8 @@
 
 - (BOOL)isUrlOnPasteboard {
     #if !TARGET_OS_TV
-    if (@available(iOS 10.0, *)) {
-        if ([UIPasteboard.generalPasteboard hasURLs]) {
-            return YES;
-        }
+    if ([UIPasteboard.generalPasteboard hasURLs]) {
+        return YES;
     }
     #endif
     return NO;

@@ -153,10 +153,6 @@
     XCTAssert(self.deviceInfo.screenScale.intValue >= 1);
 }
 
-- (void)testCarrierName_Simulator {
-    XCTAssertNil(self.deviceInfo.carrierName);
-}
-
 - (void)testLocale {
     NSString *locale = [NSLocale currentLocale].localeIdentifier;
     XCTAssertNotNil(locale);

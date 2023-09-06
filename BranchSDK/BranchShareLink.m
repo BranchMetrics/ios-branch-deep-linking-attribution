@@ -180,7 +180,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         [_activityItems addObject:item];
     }
 
-    if (@available(iOS 13.0, *)) {
+    if (@available(iOS 13.0, macCatalyst 13.1, *)) {
         if (self.lpMetaData) {
             [_activityItems addObject:self];
         }
@@ -198,26 +198,11 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
             applicationActivities:nil];
     shareViewController.title = self.title;
 
-    if ([shareViewController respondsToSelector:@selector(completionWithItemsHandler)]) {
-
-        shareViewController.completionWithItemsHandler =
-            ^ (NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
-                self->_activityType = activityType;
-                [self shareDidComplete:completed activityError:activityError];
-            };
-
-    } else {
-
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        shareViewController.completionHandler =
-            ^ (UIActivityType activityType, BOOL completed) {
-                self->_activityType = activityType;
-                [self shareDidComplete:completed activityError:nil];
-            };
-        #pragma clang diagnostic pop
-        
-    }
+    shareViewController.completionWithItemsHandler =
+        ^ (NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+            self->_activityType = activityType;
+            [self shareDidComplete:completed activityError:activityError];
+        };
 
     NSString *emailSubject = self.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT];
     if (emailSubject.length <= 0) emailSubject = self.emailSubject;
@@ -247,7 +232,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         return;
     }
 
-    // Required for iPad/Universal apps on iOS 8+
+    // Required for iPad/Universal apps
     if ([presentingViewController respondsToSelector:@selector(popoverPresentationController)]) {
         if ([anchorViewOrButtonItem isKindOfClass:UIBarButtonItem.class]) {
             UIBarButtonItem *anchor = (UIBarButtonItem*) anchorViewOrButtonItem;
@@ -327,23 +312,21 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     return returnURL;
 }
 
-- (id)activityViewControllerPlaceholderItem:(UIActivityViewController *)activityViewController  // called to determine data type. only the class of the return type is consulted. it should match what -itemForActivityType: returns later
-{
+// called to determine data type. only the class of the return type is consulted. it should match what -itemForActivityType: returns later
+- (id)activityViewControllerPlaceholderItem:(UIActivityViewController *)activityViewController  {
     return @"";
 }
 
-- (nullable LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController API_AVAILABLE(ios(13.0))
-{
+- (nullable LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController API_AVAILABLE(ios(13.0), macCatalyst(13.1)) {
     return self.lpMetaData;
 }
 
-- (nullable id)activityViewController:(UIActivityViewController *)activityViewController itemForActivityType:(nullable UIActivityType)activityType   // called to fetch data after an activity is selected. you can return nil.
-{
+// called to fetch data after an activity is selected. you can return nil.
+- (nullable id)activityViewController:(UIActivityViewController *)activityViewController itemForActivityType:(nullable UIActivityType)activityType {
     return nil;
 }
 
-- (void) addLPLinkMetadata:(NSString *)title icon:(UIImage *)icon API_AVAILABLE(ios(13.0)) {
-
+- (void)addLPLinkMetadata:(NSString *)title icon:(UIImage *)icon API_AVAILABLE(ios(13.0), macCatalyst(13.1)) {
     LPLinkMetadata *metadata = [LPLinkMetadata new];
 
     metadata.title = title;

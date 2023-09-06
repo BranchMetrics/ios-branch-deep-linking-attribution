@@ -12,10 +12,6 @@
 #import "BranchConstants.h"
 #import "BNCLog.h"
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wpartial-availability"
-
 #import "Branch.h"
 #import "BNCSystemObserver.h"
 
@@ -33,14 +29,12 @@
     return [self initWithItemContentType:kUTTypeGeneric];
 }
 
-#ifdef __IPHONE_14_0
 - (instancetype)initWithContentType:(nonnull UTType *)contentType {
     if (self = [super initWithContentType:contentType]) {
         self.publiclyIndexable = YES;
     }
     return self;
 }
-#endif
 
 - (instancetype)initWithItemContentType:(nonnull NSString *)type {
     if (self = [super initWithItemContentType:type]) {
@@ -56,12 +50,6 @@
 }
 
 - (void)indexWithCallback:(callbackWithUrlAndSpotlightIdentifier)callback {
-    if ([BNCSystemObserver osVersion].integerValue < 9) {
-        if (callback) {
-            callback(nil, nil, [NSError branchErrorWithCode:BNCSpotlightNotAvailableError]);
-        }
-        return;
-    }
     if (![CSSearchableIndex isIndexingAvailable]) {
         if (callback) {
             callback(nil, nil, [NSError branchErrorWithCode:BNCSpotlightNotAvailableError]);
@@ -169,5 +157,3 @@
 }
 
 @end
-
-#endif

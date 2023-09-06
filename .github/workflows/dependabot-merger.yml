@@ -1,0 +1,128 @@
+name: Merge Dependabot PRs
+on:
+  schedule:
+    - cron: "0 9 * * 1" # Run this workflow every Monday at 9:00
+  workflow_dispatch:
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          ref: master
+
+      - name: Authenticate GitHub CLI
+        run: echo "${{ secrets.DEPENDABOT_MERGER_PAT }}" | gh auth login --with-token
+
+      - name: Set Git user identity
+        run: |
+          git config user.email "dependabot-merger-bot@branch.io"
+          git config user.name "Dependabot Merger Bot"
+
+      - name: Get current date and time
+        id: datetime
+        run: echo "date=$(date +'%m-%d-%Y-%H-%M')" >> $GITHUB_OUTPUT
+
+      - name: Create new branch based on date and time
+        run: |
+          NEW_BRANCH="dependabot-test-${{ steps.datetime.outputs.date }}"
+          git checkout -b $NEW_BRANCH
+          git push origin $NEW_BRANCH
+
+      - name: Get list of PRs from dependabot
+        id: pr_list
+        run: |
+          PR_LIST=$(gh pr list --json number,author,headRefName --jq '.[] | select( .author.is_bot == true and .author.login == "app/dependabot" ) | "\(.number) \(.headRefName)"')
+          PR_LIST=$(echo "$PR_LIST" | tr -d '\r')
+          if [ -z "$PR_LIST" ]; then
+            echo "No PRs from dependabot found."
+            exit 0
+          fi
+
+          PR_COUNT=$(echo "$PR_LIST" | wc -l)
+          echo "$PR_COUNT PR's to be merged."
+
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "prs<<$EOF" >> $GITHUB_OUTPUT
+          echo "$PR_LIST" >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
+
+      - name: Merge PRs into new branch
+        run: |
+          NEW_BRANCH="dependabot-test-${{ steps.datetime.outputs.date }}"
+          git checkout $NEW_BRANCH
+          PR_LIST="${{ steps.pr_list.outputs.prs }}"
+          while IFS= read -r line; do
+            IFS=' ' read -r PR_NUMBER BRANCH_NAME <<< "$line"
+            echo "Merging PR #$PR_NUMBER from branch $BRANCH_NAME into $NEW_BRANCH..."
+            git fetch origin $BRANCH_NAME
+            git merge --no-commit --allow-unrelated-histories --strategy-option=theirs origin/$BRANCH_NAME
+            echo "Pushing changes to $NEW_BRANCH..."
+            git commit -m "Merged PR #$PR_NUMBER into $NEW_BRANCH"
+            git push origin $NEW_BRANCH
+          done <<< "$PR_LIST"
+
+      - name: Merge process status
+        run: |
+          echo "Merging process completed successfully!"
+          echo "New branch name: dependabot-test-${{ steps.datetime.outputs.date }}"
+
+      - name: Generate PR links
+        id: pr_links
+        run: |
+          PR_LIST="${{ steps.pr_list.outputs.prs }}"
+          PR_LINKS=""
+          while IFS= read -r line; do
+            IFS=' ' read -r PR_NUMBER BRANCH_NAME <<< "$line"
+            PR_URL="https://github.com/${GITHUB_REPOSITORY}/pull/$PR_NUMBER"
+            PR_LINKS+="\n• <$PR_URL|#${PR_NUMBER}: ${BRANCH_NAME}>"
+          done <<< "$PR_LIST"
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "pr_links<<$EOF" >> $GITHUB_OUTPUT
+          echo "$PR_LINKS" >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
+
+      - name: Post to a Slack channel
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: "C03RTLRKJQP"
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "⚡️ New iOS Dependabot Testing Branch",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Included PRs:*${{ steps.pr_links.outputs.pr_links }}"
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "Checkout Test Branch",
+                        "emoji": true
+                      },
+                      "value": "branch-button",
+                      "url": "https://github.com/${{ github.repository }}/tree/dependabot-test-${{ steps.datetime.outputs.date }}",
+                      "action_id": "link-action"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_SDK_BOT_TOKEN }}

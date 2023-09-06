@@ -1,44 +1,14 @@
 //
-//  BNCCommerceEvent.h
-//  Branch-SDK
+//  BNCCurrency.h
+//  Branch
 //
-//  Created by Edward Smith on 12/14/16.
-//  Copyright (c) 2016 Branch Metrics. All rights reserved.
+//  Created by Nipun Singh on 8/14/23.
+//  Copyright © 2023 Branch, Inc. All rights reserved.
 //
 
-#import "BNCServerRequest.h"
+#import <Foundation/Foundation.h>
 
-#pragma mark BNCProductCategory
-
-typedef NSString*const BNCProductCategory NS_STRING_ENUM;
-
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryAnimalSupplies;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryApparel;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryArtsEntertainment;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryBabyToddler;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryBusinessIndustrial;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryCamerasOptics;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryElectronics;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryFoodBeverageTobacco;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryFurniture;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryHardware;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryHealthBeauty;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryHomeGarden;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryLuggageBags;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryMature;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryMedia;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryOfficeSupplies;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryReligious;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategorySoftware;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategorySportingGoods;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryToysGames;
-FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryVehiclesParts;
-
-NSArray<BNCProductCategory>*_Nonnull BNCProductCategoryAllCategories(void);
-
-#pragma mark - BNCCurrency
-
-typedef NSString*const BNCCurrency NS_STRING_ENUM;
+typedef NSString * const BNCCurrency NS_STRING_ENUM;
 
 FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyAED;
 FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyAFN;
@@ -234,39 +204,3 @@ FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyZAR;
 FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyZMW;
 
 NSArray<BNCCurrency>*_Nonnull BNCCurrencyAllCurrencies(void);
-
-#pragma mark - BNCProduct
-
-@interface BNCProduct : NSObject
-@property (nonatomic, copy) NSString*_Nullable            sku;
-@property (nonatomic, copy) NSString*_Nullable            name;
-@property (nonatomic, strong) NSDecimalNumber*_Nullable     price;
-@property (nonatomic, strong) NSNumber*_Nullable            quantity;
-@property (nonatomic, copy) NSString*_Nullable            brand;
-@property (nonatomic, copy) BNCProductCategory _Nullable  category;
-@property (nonatomic, copy) NSString*_Nullable            variant;
-@end
-
-#pragma mark - BNCCommerceEvent
-
-//__attribute__((deprecated(("Please use BranchEvent to track commerce events."))))
-@interface BNCCommerceEvent : NSObject
-@property (nonatomic, strong) NSDecimalNumber*_Nullable     revenue;
-@property (nonatomic, copy) BNCCurrency _Nullable         currency;
-@property (nonatomic, copy) NSString*_Nullable            transactionID;
-@property (nonatomic, strong) NSDecimalNumber*_Nullable     shipping;
-@property (nonatomic, strong) NSDecimalNumber*_Nullable     tax;
-@property (nonatomic, copy) NSString*_Nullable            coupon;
-@property (nonatomic, copy) NSString*_Nullable            affiliation;
-@property (nonatomic, strong) NSArray<BNCProduct*>*_Nullable products;
-@end
-
-
-@interface BranchCommerceEventRequest : BNCServerRequest <NSSecureCoding>
-
-- (instancetype _Nonnull) initWithCommerceEvent:(BNCCommerceEvent*_Nonnull)commerceEvent
-							           metadata:(NSDictionary*_Nullable)dictionary
-							         completion:
-            (void (^_Nullable)(NSDictionary*_Nullable response, NSError*_Nullable error))callBack;
-
-@end

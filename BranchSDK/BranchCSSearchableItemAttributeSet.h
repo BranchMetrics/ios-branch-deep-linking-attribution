@@ -26,9 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)init;
 
-#ifdef __IPHONE_14_0
-- (instancetype)initWithContentType:(UTType *)contentType NS_AVAILABLE(10_16, 14_0);
-#endif
+- (instancetype)initWithContentType:(UTType *)contentType API_AVAILABLE(ios(14), macCatalyst(14));
 
 - (instancetype)initWithItemContentType:(NSString *)type;
 
