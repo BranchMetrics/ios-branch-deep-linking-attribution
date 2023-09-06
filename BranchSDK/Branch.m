@@ -22,9 +22,7 @@
 #import "BranchConstants.h"
 #import "BranchInstallRequest.h"
 #import "BranchJsonConfig.h"
-#import "BranchLogoutRequest.h"
 #import "BranchOpenRequest.h"
-#import "BranchSetIdentityRequest.h"
 #import "BranchShortUrlRequest.h"
 #import "BranchShortUrlSyncRequest.h"
 #import "BranchSpotlightUrlRequest.h"
@@ -1041,39 +1039,11 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)setIdentity:(NSString *)userId withCallback:(callbackWithParams)callback {
-    if (!userId || [self.preferenceHelper.userIdentity isEqualToString:userId]) {
-        if (callback) {
-            callback([self getFirstReferringParams], nil);
-        }
-        return;
+    if (userId) {
+        self.preferenceHelper.userIdentity = userId;
     }
-    
-    if (self.initializationStatus == BNCInitStatusUninitialized ) {
-        [self cacheIdentity:userId withCallback:callback];
-    } else {
-        [self sendIdentity:userId withCallback:callback];
-    }
-}
-
-- (void) sendIdentity:(NSString *)userId withCallback:(callbackWithParams)callback {
-    dispatch_async(self.isolationQueue, ^(){
-        BranchSetIdentityRequest *req = [[BranchSetIdentityRequest alloc] initWithUserId:userId callback:callback];
-        [self.requestQueue enqueue:req];
-        [self processNextQueueItem];
-    });
-}
-
-- (void) cacheIdentity: (NSString *)userId withCallback:(callbackWithParams)callback {
-    self.installUserId = userId;
-    self.setIdentityCallback = callback;
-}
-
-- (void) applySavedIdentity {
-    if (self.installUserId != nil) {
-        [self sendIdentity:self.installUserId withCallback:self.setIdentityCallback];
-        
-        self.installUserId = nil;
-        self.setIdentityCallback = nil;
+    if (callback) {
+        callback([self getFirstReferringParams], nil);
     }
 }
 
@@ -1092,26 +1062,15 @@ static NSString *bnc_branchKey = nil;
         return;
     }
 
-    BranchLogoutRequest *req =
-        [[BranchLogoutRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
-            if (success) {
-                // Clear cached links
-                self.linkCache = [[BNCLinkCache alloc] init];
-
-                if (callback) {
-                    callback(YES, nil);
-                }
-                BNCLogDebug(@"Logout success.");
-            } else /*failure*/ {
-                if (callback) {
-                    callback(NO, error);
-                }
-                BNCLogDebug(@"Logout failure.");
-            }
-        }];
-
-    [self.requestQueue enqueue:req];
-    [self processNextQueueItem];
+    // Clear cached links
+    self.linkCache = [[BNCLinkCache alloc] init];
+    
+    // Removed stored values
+    self.preferenceHelper.userIdentity = nil;
+    
+    if (callback) {
+        callback(YES, nil);
+    }
 }
 
 - (void)sendServerRequest:(BNCServerRequest*)request {
@@ -1988,8 +1947,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     // These request types
     NSSet<Class> *replayableRequests = [[NSSet alloc] initWithArray:@[
-        BranchEventRequest.class,
-        BranchSetIdentityRequest.class,
+        BranchEventRequest.class
     ]];
 
     if ([replayableRequests containsObject:request.class]) {
@@ -2238,7 +2196,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
     [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
 
-    [self applySavedIdentity];
     
     if (!self.urlFilter.hasUpdatedPatternList) {
         [self.urlFilter updatePatternListWithCompletion:nil];
