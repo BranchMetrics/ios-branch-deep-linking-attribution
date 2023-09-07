@@ -107,8 +107,6 @@
 		54391A161BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 54391A141BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m */; };
 		54FF1F8E1BD1D4AE0004CE2E /* BranchUniversalObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F8C1BD1D4AE0004CE2E /* BranchUniversalObject.m */; };
 		54FF1F921BD1DC320004CE2E /* BranchLinkProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F901BD1DC320004CE2E /* BranchLinkProperties.m */; };
-		5F08461123480008005B17E6 /* BNCTuneUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F08460F23480008005B17E6 /* BNCTuneUtility.h */; };
-		5F08461223480008005B17E6 /* BNCTuneUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F08461023480008005B17E6 /* BNCTuneUtility.m */; };
 		5F205D05231864E800C776D1 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F205D04231864E800C776D1 /* WebKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		5F205D062318659500C776D1 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F205D04231864E800C776D1 /* WebKit.framework */; };
 		5F205D0823186AF700C776D1 /* BNCUserAgentCollectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F205D022318641700C776D1 /* BNCUserAgentCollectorTests.m */; };
@@ -419,8 +417,6 @@
 		54FF1F8C1BD1D4AE0004CE2E /* BranchUniversalObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchUniversalObject.m; sourceTree = "<group>"; };
 		54FF1F8F1BD1DC320004CE2E /* BranchLinkProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchLinkProperties.h; sourceTree = "<group>"; };
 		54FF1F901BD1DC320004CE2E /* BranchLinkProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLinkProperties.m; sourceTree = "<group>"; };
-		5F08460F23480008005B17E6 /* BNCTuneUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCTuneUtility.h; sourceTree = "<group>"; };
-		5F08461023480008005B17E6 /* BNCTuneUtility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCTuneUtility.m; sourceTree = "<group>"; };
 		5F2035CB240DDE90004FDC3E /* BNCDisableAdNetworkCalloutsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCDisableAdNetworkCalloutsTests.m; sourceTree = "<group>"; };
 		5F205D022318641700C776D1 /* BNCUserAgentCollectorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCUserAgentCollectorTests.m; sourceTree = "<group>"; };
 		5F205D04231864E800C776D1 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
@@ -970,8 +966,6 @@
 				670016C81946309100A9E103 /* BNCSystemObserver.m */,
 				4D7881F6209CF28E002B750F /* BNCThreads.h */,
 				4D7881F5209CF28E002B750F /* BNCThreads.m */,
-				5F08460F23480008005B17E6 /* BNCTuneUtility.h */,
-				5F08461023480008005B17E6 /* BNCTuneUtility.m */,
 				4D955CCA2035021400FB8008 /* BNCURLFilter.h */,
 				4D955CCB2035021400FB8008 /* BNCURLFilter.m */,
 				C1CC888629C27E8000BDD2B5 /* BNCUrlQueryParameter.h */,
@@ -1125,7 +1119,6 @@
 				4DCAC8161F426F7C00405D1D /* BranchCSSearchableItemAttributeSet.h in Headers */,
 				4D59B51F2006979C00F89FD5 /* BNCApplication.h in Headers */,
 				5FB0AA6B231875B500A0F9EA /* BNCUserAgentCollector.h in Headers */,
-				5F08461123480008005B17E6 /* BNCTuneUtility.h in Headers */,
 				5F892EBF2361157E0023AEC1 /* NSError+Branch.h in Headers */,
 				5F3D6715232C589100454FF1 /* BranchLastAttributedTouchData.h in Headers */,
 				5F38020E24DCC2E800E6FAFD /* BranchContentPathProperties.h in Headers */,
@@ -1426,7 +1419,6 @@
 				5F38021D24DCC2E800E6FAFD /* BranchLATDRequest.m in Sources */,
 				5F3D6714232C589100454FF1 /* BranchLastAttributedTouchData.m in Sources */,
 				3A78D576251EB5BF002A25CF /* BranchJsonConfig.m in Sources */,
-				5F08461223480008005B17E6 /* BNCTuneUtility.m in Sources */,
 				5FDB04EE24E4D23300F2F267 /* BNCSKAdNetwork.m in Sources */,
 				4DB328001FA10B9000ACF9B0 /* BranchDelegate.m in Sources */,
 				5F38022F24DCC2E800E6FAFD /* BranchSpotlightUrlRequest.m in Sources */,
