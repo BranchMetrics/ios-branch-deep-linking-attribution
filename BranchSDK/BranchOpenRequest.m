@@ -119,18 +119,9 @@
         callback:callback];
 }
 
-typedef NS_ENUM(NSInteger, BNCUpdateState) {
-    // Values 0-4 are deprecated and ignored by the server
-    BNCUpdateStateIgnored0 = 0,
-    BNCUpdateStateIgnored1 = 1,
-    BNCUpdateStateIgnored2 = 2,
-    BNCUpdateStateIgnored3 = 3,
-    BNCUpdateStateIgnored4 = 4
-};
-
+// Always send 0
 + (NSNumber *)appUpdateState {
-    BNCUpdateState update_state = BNCUpdateStateIgnored0;
-    return @(update_state);
+    return @(0);
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
