@@ -45,7 +45,6 @@
 //#import "BranchScene.h"
 //#import "BranchPluginSupport.h"
 //#import "BranchQRCode.h"
-//#import "BNCCommerceEvent.h"
 //#import "BNCConfig.h"
 //#import "NSError+Branch.h"
 //#import "BNCLog.h"
@@ -813,8 +812,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  * Opening Branch deep links with an explicit URL will work.
  * Deferred deep linking will not work.
  * Generating short links will not work and will return long links instead.
- * Sending user tracking events such as `userCompletedAction`, `BranchCommerceEvents`, and
-   `BranchEvents` will fail.
+ * Sending user tracking events such as `BranchEvents` will fail.
  * User rewards and credits will not work.
  * Setting a user identity and logging a user identity out will not work.
 
@@ -953,73 +951,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)getCreditHistoryAfter:(nullable NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(nullable callbackWithList)callback __deprecated_msg("Referral feature has been deprecated. This is no-op.");
 
 - (void)getCreditHistoryForBucket:(nullable NSString *)bucket after:(nullable NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(nullable callbackWithList)callback __deprecated_msg("Referral feature has been deprecated. This is no-op.");
-
-#pragma mark - Action methods
-
-///--------------
-/// @name Actions
-///--------------
-
-/**
- Send a user action to the server. Some examples actions could be things like `viewed_personal_welcome`, `purchased_an_item`, etc.
-
- This method should only be invoked after initSession completes, either within the callback or after a delay.
- If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
- 
- @param action The action string.
- */
-- (void)userCompletedAction:(nullable NSString *)action __attribute__((deprecated(("Please use BranchEvent to track commerce events. You can refer to https://help.branch.io/developers-hub/docs/tracking-commerce-content-lifecycle-and-custom-events for additional information."))));
-
-/**
- Send a user action to the server with additional state items. Some examples actions could be things like `viewed_personal_welcome`, `purchased_an_item`, etc.
-
- This method should only be invoked after initSession completes, either within the callback or after a delay.
- If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
- 
- @param action The action string.
- @param state The additional state items associated with the action.
- */
-- (void)userCompletedAction:(nullable NSString *)action withState:(nullable NSDictionary *)state __attribute__((deprecated(("Please use BranchEvent to track commerce events. You can refer to https://help.branch.io/developers-hub/docs/tracking-commerce-content-lifecycle-and-custom-events for additional information."))));
-
-/**
- Send a user action to the server with additional state items. Some examples actions could be things like `viewed_personal_welcome`, `purchased_an_item`, etc.
- 
- This method should only be invoked after initSession completes, either within the callback or after a delay.
- If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
- 
- @param action The action string.
- @param state The additional state items associated with the action.
- @param branchViewCallback Callback for Branch view state.
- 
- @deprecated Please use userCompletedAction:action:state instead
- */
-- (void)userCompletedAction:(nullable NSString *)action withState:(nullable NSDictionary *)state withDelegate:(nullable id)branchViewCallback __attribute__((deprecated(("Please use BranchEvent to track commerce events. You can refer to https://help.branch.io/developers-hub/docs/tracking-commerce-content-lifecycle-and-custom-events for additional information."))));
-
-/**
- Sends a user commerce event to the server.
-
- Use commerce events to track when a user purchases an item in your online store,
- makes an in-app purchase, or buys a subscription.  The commerce events are tracked in
- the Branch dashboard along with your other events so you can judge the effectiveness of
- campaigns and other analytics.
- 
- This method should only be invoked after initSession completes, either within the callback or after a delay.
- If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
-
- @param commerceEvent 	The BNCCommerceEvent that describes the purchase.
- @param metadata        Optional metadata you may want add to the event.
- @param completion 		The optional completion callback.
- 
- @deprecated Please use BNCEvent to track commerce events instead.
- */
-- (void) sendCommerceEvent:(BNCCommerceEvent*)commerceEvent
-				  metadata:(NSDictionary<NSString*,id>*)metadata
-			withCompletion:(void (^) (NSDictionary* _Nullable response, NSError* _Nullable error))completion __attribute__((deprecated(("Please use BranchEvent to track commerce events. You can refer to https://help.branch.io/developers-hub/docs/tracking-commerce-content-lifecycle-and-custom-events for additional information."))));
-
 
 #pragma mark - Query methods
 
@@ -1829,9 +1760,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (void)passPasteItemProviders:(NSArray<NSItemProvider *> *)itemProviders API_AVAILABLE(ios(16), macCatalyst(16));
 #endif
-
-@property (copy, nonatomic, nullable) NSString *installUserId;
-@property (copy, nonatomic, nullable) callbackWithParams setIdentityCallback;
 
 @end
 
