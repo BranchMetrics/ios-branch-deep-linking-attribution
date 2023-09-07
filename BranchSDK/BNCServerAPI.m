@@ -25,7 +25,6 @@
 }
 
 - (NSURL *)installServiceURL{
-    
     return [NSURL URLWithString: [[self getBaseURLWithVersion] stringByAppendingString: BRANCH_REQUEST_ENDPOINT_INSTALL]];
 }
 
@@ -71,7 +70,7 @@
         urlString = BNC_API_URL;
     }
     
-    [urlString stringByAppendingFormat:@"/%@/", BNC_API_VERSION_3];
+    urlString = [urlString stringByAppendingFormat:@"/%@/", BNC_API_VERSION_3];
     return urlString;
 }
 

@@ -47,6 +47,7 @@
 #import "BNCLog.h"
 #import "UIViewController+Branch.h"
 #import "BNCReferringURLUtility.h"
+#import "BNCServerAPI.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
@@ -145,6 +146,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (strong, nonatomic) NSDictionary *deepLinkDebugParams;
 @property (strong, nonatomic) NSMutableArray *allowedSchemeList;
 @property (strong, nonatomic) BNCURLFilter *urlFilter;
+@property (strong, nonatomic) BNCServerAPI *serverAPI;
 
 #if !TARGET_OS_TV
 @property (strong, nonatomic) BNCContentDiscoveryManager *contentDiscoveryManager;
@@ -202,6 +204,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     _networkCount = 0;
     _deepLinkControllers = [[NSMutableDictionary alloc] init];
     _allowedSchemeList = [[NSMutableArray alloc] init];
+    _serverAPI = [BNCServerAPI sharedInstance];
 
     #if !TARGET_OS_TV
     _contentDiscoveryManager = [[BNCContentDiscoveryManager alloc] init];
