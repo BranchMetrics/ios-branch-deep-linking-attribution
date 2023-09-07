@@ -110,7 +110,6 @@
 		5F2210FA2894A34000C5B190 /* BranchUniversalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F22105C2894A33F00C5B190 /* BranchUniversalObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F2210FB2894A34000C5B190 /* BranchDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F22105D2894A33F00C5B190 /* BranchDelegate.m */; };
 		5F2210FC2894A34000C5B190 /* BNCApplication.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F22105E2894A33F00C5B190 /* BNCApplication.h */; };
-		5F2210FE2894A34000C5B190 /* BNCFacebookAppLinks.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210602894A33F00C5B190 /* BNCFacebookAppLinks.m */; };
 		5F2210FF2894A34000C5B190 /* BranchScene.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210612894A33F00C5B190 /* BranchScene.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F2211002894A34000C5B190 /* BNCServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210622894A33F00C5B190 /* BNCServerRequest.m */; };
 		5F2211012894A34000C5B190 /* BNCFieldDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210632894A33F00C5B190 /* BNCFieldDefines.h */; };
@@ -174,7 +173,6 @@
 		5F22113F2894A34000C5B190 /* BNCPreferenceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210A12894A34000C5B190 /* BNCPreferenceHelper.m */; };
 		5F2211412894A34000C5B190 /* BNCAppGroupsData.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210A32894A34000C5B190 /* BNCAppGroupsData.m */; };
 		5F2211422894A34000C5B190 /* BNCLinkData.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210A42894A34000C5B190 /* BNCLinkData.m */; };
-		5F2211432894A34000C5B190 /* BNCFacebookAppLinks.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210A52894A34000C5B190 /* BNCFacebookAppLinks.h */; };
 		5F2211442894A34000C5B190 /* BNCPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210A62894A34000C5B190 /* BNCPasteboard.h */; };
 		5F2211452894A34000C5B190 /* BNCURLFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210A72894A34000C5B190 /* BNCURLFilter.h */; };
 		5F2211462894A34000C5B190 /* BNCServerRequestQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210A82894A34000C5B190 /* BNCServerRequestQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -231,7 +229,6 @@
 		5F7903A128B59146003144CD /* BNCDeviceInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F22102F2894A33E00C5B190 /* BNCDeviceInfo.h */; };
 		5F7903A228B59146003144CD /* BNCDeviceSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210282894A33E00C5B190 /* BNCDeviceSystem.h */; };
 		5F7903A328B59146003144CD /* BNCEncodingUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210B22894A34000C5B190 /* BNCEncodingUtils.h */; };
-		5F7903A428B59146003144CD /* BNCFacebookAppLinks.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210A52894A34000C5B190 /* BNCFacebookAppLinks.h */; };
 		5F7903A528B59146003144CD /* BNCFieldDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210632894A33F00C5B190 /* BNCFieldDefines.h */; };
 		5F7903A628B59146003144CD /* BNCInitSessionResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210782894A33F00C5B190 /* BNCInitSessionResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F7903A728B59146003144CD /* BNCJSONUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210392894A33E00C5B190 /* BNCJSONUtility.h */; };
@@ -297,7 +294,6 @@
 		5F7903F128B5C93E003144CD /* BNCDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210BB2894A34000C5B190 /* BNCDeviceInfo.m */; };
 		5F7903F228B5C93E003144CD /* BNCDeviceSystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210462894A33E00C5B190 /* BNCDeviceSystem.m */; };
 		5F7903F328B5C93E003144CD /* BNCEncodingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F22108C2894A33F00C5B190 /* BNCEncodingUtils.m */; };
-		5F7903F428B5C93E003144CD /* BNCFacebookAppLinks.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210602894A33F00C5B190 /* BNCFacebookAppLinks.m */; };
 		5F7903F528B5C93E003144CD /* BNCInitSessionResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210742894A33F00C5B190 /* BNCInitSessionResponse.m */; };
 		5F7903F628B5C93E003144CD /* BNCJSONUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F22108E2894A34000C5B190 /* BNCJSONUtility.m */; };
 		5F7903F728B5C93E003144CD /* BNCKeyChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210932894A34000C5B190 /* BNCKeyChain.m */; };
@@ -363,7 +359,6 @@
 		5FF9DE1228EE78A700D62DE1 /* BNCDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210BB2894A34000C5B190 /* BNCDeviceInfo.m */; };
 		5FF9DE1428EE78A700D62DE1 /* BNCDeviceSystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210462894A33E00C5B190 /* BNCDeviceSystem.m */; };
 		5FF9DE1628EE78A700D62DE1 /* BNCEncodingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F22108C2894A33F00C5B190 /* BNCEncodingUtils.m */; };
-		5FF9DE1828EE78A700D62DE1 /* BNCFacebookAppLinks.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210602894A33F00C5B190 /* BNCFacebookAppLinks.m */; };
 		5FF9DE1B28EE78A700D62DE1 /* BNCInitSessionResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210742894A33F00C5B190 /* BNCInitSessionResponse.m */; };
 		5FF9DE1D28EE78A700D62DE1 /* BNCJSONUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F22108E2894A34000C5B190 /* BNCJSONUtility.m */; };
 		5FF9DE1F28EE78A700D62DE1 /* BNCKeyChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2210932894A34000C5B190 /* BNCKeyChain.m */; };
@@ -436,7 +431,6 @@
 		5FF9DEA328EE797300D62DE1 /* BNCDeviceInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F22102F2894A33E00C5B190 /* BNCDeviceInfo.h */; };
 		5FF9DEA428EE797300D62DE1 /* BNCDeviceSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210282894A33E00C5B190 /* BNCDeviceSystem.h */; };
 		5FF9DEA528EE797300D62DE1 /* BNCEncodingUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210B22894A34000C5B190 /* BNCEncodingUtils.h */; };
-		5FF9DEA628EE797300D62DE1 /* BNCFacebookAppLinks.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210A52894A34000C5B190 /* BNCFacebookAppLinks.h */; };
 		5FF9DEA728EE797300D62DE1 /* BNCFieldDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210632894A33F00C5B190 /* BNCFieldDefines.h */; };
 		5FF9DEA828EE797300D62DE1 /* BNCInitSessionResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210782894A33F00C5B190 /* BNCInitSessionResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FF9DEA928EE797300D62DE1 /* BNCJSONUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210392894A33E00C5B190 /* BNCJSONUtility.h */; };
@@ -614,7 +608,6 @@
 		5F22105C2894A33F00C5B190 /* BranchUniversalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchUniversalObject.h; sourceTree = "<group>"; };
 		5F22105D2894A33F00C5B190 /* BranchDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchDelegate.m; sourceTree = "<group>"; };
 		5F22105E2894A33F00C5B190 /* BNCApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCApplication.h; sourceTree = "<group>"; };
-		5F2210602894A33F00C5B190 /* BNCFacebookAppLinks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCFacebookAppLinks.m; sourceTree = "<group>"; };
 		5F2210612894A33F00C5B190 /* BranchScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchScene.h; sourceTree = "<group>"; };
 		5F2210622894A33F00C5B190 /* BNCServerRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerRequest.m; sourceTree = "<group>"; };
 		5F2210632894A33F00C5B190 /* BNCFieldDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCFieldDefines.h; sourceTree = "<group>"; };
@@ -678,7 +671,6 @@
 		5F2210A12894A34000C5B190 /* BNCPreferenceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCPreferenceHelper.m; sourceTree = "<group>"; };
 		5F2210A32894A34000C5B190 /* BNCAppGroupsData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCAppGroupsData.m; sourceTree = "<group>"; };
 		5F2210A42894A34000C5B190 /* BNCLinkData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLinkData.m; sourceTree = "<group>"; };
-		5F2210A52894A34000C5B190 /* BNCFacebookAppLinks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCFacebookAppLinks.h; sourceTree = "<group>"; };
 		5F2210A62894A34000C5B190 /* BNCPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCPasteboard.h; sourceTree = "<group>"; };
 		5F2210A72894A34000C5B190 /* BNCURLFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCURLFilter.h; sourceTree = "<group>"; };
 		5F2210A82894A34000C5B190 /* BNCServerRequestQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCServerRequestQueue.h; sourceTree = "<group>"; };
@@ -850,8 +842,6 @@
 				5F2210462894A33E00C5B190 /* BNCDeviceSystem.m */,
 				5F2210B22894A34000C5B190 /* BNCEncodingUtils.h */,
 				5F22108C2894A33F00C5B190 /* BNCEncodingUtils.m */,
-				5F2210A52894A34000C5B190 /* BNCFacebookAppLinks.h */,
-				5F2210602894A33F00C5B190 /* BNCFacebookAppLinks.m */,
 				5F2210632894A33F00C5B190 /* BNCFieldDefines.h */,
 				5F2210782894A33F00C5B190 /* BNCInitSessionResponse.h */,
 				5F2210742894A33F00C5B190 /* BNCInitSessionResponse.m */,
@@ -1115,7 +1105,6 @@
 				5F2210EA2894A34000C5B190 /* BNCThreads.h in Headers */,
 				5F2211502894A34000C5B190 /* BNCEncodingUtils.h in Headers */,
 				5F2211292894A34000C5B190 /* BNCQRCodeCache.h in Headers */,
-				5F2211432894A34000C5B190 /* BNCFacebookAppLinks.h in Headers */,
 				E761E92429E61DA000E55C98 /* BNCEventUtils.h in Headers */,
 				5F22111A2894A34000C5B190 /* BNCDeepLinkViewControllerInstance.h in Headers */,
 				5F2210D92894A34000C5B190 /* BNCAppleReceipt.h in Headers */,
@@ -1142,7 +1131,6 @@
 				5FF9DEA328EE797300D62DE1 /* BNCDeviceInfo.h in Headers */,
 				5FF9DEA428EE797300D62DE1 /* BNCDeviceSystem.h in Headers */,
 				5FF9DEA528EE797300D62DE1 /* BNCEncodingUtils.h in Headers */,
-				5FF9DEA628EE797300D62DE1 /* BNCFacebookAppLinks.h in Headers */,
 				5FF9DEA728EE797300D62DE1 /* BNCFieldDefines.h in Headers */,
 				5FF9DEA828EE797300D62DE1 /* BNCInitSessionResponse.h in Headers */,
 				5FF9DEA928EE797300D62DE1 /* BNCJSONUtility.h in Headers */,
@@ -1251,7 +1239,6 @@
 				5F7903A228B59146003144CD /* BNCDeviceSystem.h in Headers */,
 				5FF2AFE128E7C22400393216 /* BranchSDK.h in Headers */,
 				5F7903A328B59146003144CD /* BNCEncodingUtils.h in Headers */,
-				5F7903A428B59146003144CD /* BNCFacebookAppLinks.h in Headers */,
 				5F7903A528B59146003144CD /* BNCFieldDefines.h in Headers */,
 				5F7903A728B59146003144CD /* BNCJSONUtility.h in Headers */,
 				5F7903A828B59146003144CD /* BNCKeyChain.h in Headers */,
@@ -1659,7 +1646,6 @@
 				5F2211352894A34000C5B190 /* BNCCallbackMap.m in Sources */,
 				5F2210C82894A34000C5B190 /* NSString+Branch.m in Sources */,
 				5F2210DF2894A34000C5B190 /* UIViewController+Branch.m in Sources */,
-				5F2210FE2894A34000C5B190 /* BNCFacebookAppLinks.m in Sources */,
 				5F2211082894A34000C5B190 /* BranchLogoutRequest.m in Sources */,
 				5F2211322894A34000C5B190 /* BranchUniversalObject.m in Sources */,
 				5F2210D12894A34000C5B190 /* BranchShortUrlSyncRequest.m in Sources */,
@@ -1728,7 +1714,6 @@
 				5FF9DE1228EE78A700D62DE1 /* BNCDeviceInfo.m in Sources */,
 				5FF9DE1428EE78A700D62DE1 /* BNCDeviceSystem.m in Sources */,
 				5FF9DE1628EE78A700D62DE1 /* BNCEncodingUtils.m in Sources */,
-				5FF9DE1828EE78A700D62DE1 /* BNCFacebookAppLinks.m in Sources */,
 				5FF9DE1B28EE78A700D62DE1 /* BNCInitSessionResponse.m in Sources */,
 				5FF9DE1D28EE78A700D62DE1 /* BNCJSONUtility.m in Sources */,
 				5FF9DE1F28EE78A700D62DE1 /* BNCKeyChain.m in Sources */,
@@ -1802,7 +1787,6 @@
 				5F7903F128B5C93E003144CD /* BNCDeviceInfo.m in Sources */,
 				5F7903F228B5C93E003144CD /* BNCDeviceSystem.m in Sources */,
 				5F7903F328B5C93E003144CD /* BNCEncodingUtils.m in Sources */,
-				5F7903F428B5C93E003144CD /* BNCFacebookAppLinks.m in Sources */,
 				5F7903F528B5C93E003144CD /* BNCInitSessionResponse.m in Sources */,
 				5F7903F628B5C93E003144CD /* BNCJSONUtility.m in Sources */,
 				5F7903F728B5C93E003144CD /* BNCKeyChain.m in Sources */,
