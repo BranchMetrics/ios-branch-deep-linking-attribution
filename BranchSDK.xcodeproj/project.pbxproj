@@ -1622,7 +1622,6 @@
 				5F2211352894A34000C5B190 /* BNCCallbackMap.m in Sources */,
 				5F2210C82894A34000C5B190 /* NSString+Branch.m in Sources */,
 				5F2210DF2894A34000C5B190 /* UIViewController+Branch.m in Sources */,
-				5F2211082894A34000C5B190 /* BranchLogoutRequest.m in Sources */,
 				5F2211322894A34000C5B190 /* BranchUniversalObject.m in Sources */,
 				5F2210D12894A34000C5B190 /* BranchShortUrlSyncRequest.m in Sources */,
 				5F2211412894A34000C5B190 /* BNCAppGroupsData.m in Sources */,
