@@ -113,7 +113,7 @@
     params[@"first_install_time"] = BNCWireFormatFromDate(application.firstInstallDate);
     params[@"update"] = [self.class appUpdateState];
 
-    if (@available(iOS 16.1, *)){
+    if (@available(iOS 16.1, macCatalyst 16.1, *)){
         if ([BNCPreferenceHelper sharedInstance].invokeRegisterApp) {
             int currentWindow = [[BNCSKAdNetwork sharedInstance] calculateSKANWindowForTime:[NSDate date]];
             if (currentWindow == BranchSkanWindowFirst){
@@ -303,7 +303,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
         NSNumber *invokeRegister = (NSNumber *)data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP];
         preferenceHelper.invokeRegisterApp = invokeRegister.boolValue;
         if (invokeRegister.boolValue && self.isInstall) {
-            if (@available(iOS 16.1, *)){
+            if (@available(iOS 16.1, macCatalyst 16.1, *)){
                 NSString *defaultCoarseConValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:@{}];
                 [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:0 coarseValue:defaultCoarseConValue
                     lockWindow:NO completionHandler:^(NSError * _Nullable error) {
@@ -335,7 +335,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
         NSNumber *conversionValue = (NSNumber *)data[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
         // Regardless of SKAN opted-in in dashboard, we always get conversionValue, so adding check to find out if install/open response had "invoke_register_app" true
         if (conversionValue && preferenceHelper.invokeRegisterApp ) {
-            if (@available(iOS 16.1, *)){
+            if (@available(iOS 16.1, macCatalyst 16.1, *)){
                 NSString* coarseConversionValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:data] ;
                 BOOL lockWin = [[BNCSKAdNetwork sharedInstance] getLockedStatusFromDataResponse:data];
                 BOOL shouldCallUpdatePostback = [[BNCSKAdNetwork sharedInstance] shouldCallPostbackForDataResponse:data];
