@@ -187,7 +187,7 @@
         BOOL ascendingOnly = [self getAscendingOnlyFromDataResponse:dataResponseDictionary];
         if (!ascendingOnly)
             shouldCallUpdatePostback = YES;
-    } else if ((currentWindow != BranchSkanWindowFirst) && (highestConversionValue != 0) && (conversionValue.intValue <= highestConversionValue)){
+    } else if ((currentWindow != BranchSkanWindowFirst) && (highestConversionValue != 0) && (conversionValue.intValue <= highestConversionValue)){  // In second and third windows, conversion values can be negative, so added extra check here.
         BOOL ascendingOnly = [self getAscendingOnlyFromDataResponse:dataResponseDictionary];
         if (!ascendingOnly)
             shouldCallUpdatePostback = YES;
