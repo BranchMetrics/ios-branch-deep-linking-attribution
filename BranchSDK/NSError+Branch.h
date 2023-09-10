@@ -19,7 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NS_ENUM(NSInteger, BNCErrorCode) {
     BNCInitError                    = 1000,
     BNCDuplicateResourceError       = 1001,
-    BNCRedeemCreditsError           = 1002,
     BNCBadRequestError              = 1003,
     BNCServerProblemError           = 1004,
     BNCNilLogError                  = 1005, // Not used at the moment.
@@ -29,7 +28,6 @@ typedef NS_ENUM(NSInteger, BNCErrorCode) {
     BNCContentIdentifierError       = 1009,
     BNCSpotlightNotAvailableError   = 1010,
     BNCSpotlightTitleError          = 1011,
-    BNCRedeemZeroCreditsError       = 1012,
     BNCSpotlightIdentifierError     = 1013,
     BNCSpotlightPublicIndexError    = 1014,
     BNCTrackingDisabledError        = 1015,
