@@ -28,7 +28,6 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
         messages = [NSMutableDictionary<NSNumber *, NSString *> new];
         [messages setObject:@"The Branch user session has not been initialized." forKey:@(BNCInitError)];
         [messages setObject:@"A resource with this identifier already exists." forKey:@(BNCDuplicateResourceError)];
-        [messages setObject:@"You're trying to redeem more credits than are available. Have you loaded rewards?" forKey:@(BNCRedeemCreditsError)];
         [messages setObject:@"The network request was invalid." forKey:@(BNCBadRequestError)];
         [messages setObject:@"Trouble reaching the Branch servers, please try again shortly." forKey:@(BNCServerProblemError)];
         [messages setObject:@"Can't log error messages because the logger is set to nil." forKey:@(BNCNilLogError)];
@@ -38,7 +37,6 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
         [messages setObject:@"A canonical identifier or title are required to uniquely identify content." forKey:@(BNCContentIdentifierError)];
         [messages setObject:@"The Core Spotlight indexing service is not available on this device." forKey:@(BNCSpotlightNotAvailableError)];
         [messages setObject:@"Spotlight indexing requires a title." forKey:@(BNCSpotlightTitleError)];
-        [messages setObject:@"Can't redeem zero credits." forKey:@(BNCRedeemZeroCreditsError)];
         [messages setObject:@"The Spotlight identifier is required to remove indexing from spotlight." forKey:@(BNCSpotlightIdentifierError)];
         [messages setObject:@"Spotlight cannot remove publicly indexed content." forKey:@(BNCSpotlightPublicIndexError)];
         [messages setObject:@"User tracking is disabled and the request is not allowed" forKey:@(BNCTrackingDisabledError)];

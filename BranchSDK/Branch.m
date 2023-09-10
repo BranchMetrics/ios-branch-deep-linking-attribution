@@ -1086,52 +1086,6 @@ static NSString *bnc_branchKey = nil;
     [self sendServerRequest:request];
 }
 
-#pragma mark - Credit methods
-
-- (void)loadRewardsWithCallback:(callbackWithStatus)callback {
-    return;
-}
-
-- (NSInteger)getCredits {
-    return 0;
-}
-
-- (void)redeemRewards:(NSInteger)count {
-    return;
-}
-
-- (void)redeemRewards:(NSInteger)count callback:(callbackWithStatus)callback {
-    return;
-}
-
-- (NSInteger)getCreditsForBucket:(NSString *)bucket {
-    return 0;
-}
-
-- (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket {
-    return;
-}
-
-- (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket callback:(callbackWithStatus)callback {
-    return;
-}
-
-- (void)getCreditHistoryWithCallback:(callbackWithList)callback {
-    return;
-}
-
-- (void)getCreditHistoryForBucket:(NSString *)bucket andCallback:(callbackWithList)callback {
-    return;
-}
-
-- (void)getCreditHistoryAfter:(NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(callbackWithList)callback {
-    return;
-}
-
-- (void)getCreditHistoryForBucket:(NSString *)bucket after:(NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(callbackWithList)callback {
-    return;
-}
-
 - (BranchUniversalObject *)getFirstReferringBranchUniversalObject {
     NSDictionary *params = [self getFirstReferringParams];
     if ([[params objectForKey:BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] isEqual:@1]) {

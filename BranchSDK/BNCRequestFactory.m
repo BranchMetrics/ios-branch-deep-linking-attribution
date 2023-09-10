@@ -20,7 +20,6 @@
 #import "BNCPartnerParameters.h"
 #import "BNCDeviceInfo.h"
 #import "BNCPreferenceHelper.h"
-#import "BNCTuneUtility.h"
 #import "BNCAppleReceipt.h"
 #import "BNCAppGroupsData.h"
 
@@ -275,25 +274,9 @@
     }
 }
 
-// TODO: consider moving business logic not related to privacy. This is only for installs
-typedef NS_ENUM(NSInteger, BNCUpdateState) {
-    // Values 0-4 are deprecated and ignored by the server
-    BNCUpdateStateIgnored0 = 0,
-    BNCUpdateStateIgnored1 = 1,
-    BNCUpdateStateIgnored2 = 2,
-    BNCUpdateStateIgnored3 = 3,
-    BNCUpdateStateIgnored4 = 4,
-    
-    // App was migrated from Tune SDK to Branch SDK
-    BNCUpdateStateTuneMigration = 5
-};
-
+// deprecated
 - (NSNumber *)appUpdateState {
-    BNCUpdateState update_state = BNCUpdateStateIgnored0;
-    if ([BNCTuneUtility isTuneDataPresent]) {
-        update_state = BNCUpdateStateTuneMigration;
-    }
-    return @(update_state);
+    return @(0);
 }
 
 @end

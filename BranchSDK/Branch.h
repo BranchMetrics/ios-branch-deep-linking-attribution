@@ -152,12 +152,6 @@ extern NSString * __nonnull const BNCShareCompletedEvent;
 // Spotlight Constant
 extern NSString * __nonnull const BNCSpotlightFeature;
 
-#pragma mark - Branch Enums
-typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
-    BranchMostRecentFirst,
-    BranchLeastRecentFirst
-};
-
 #pragma mark - BranchLink
 
 @interface BranchLink : NSObject
@@ -820,7 +814,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  * Deferred deep linking will not work.
  * Generating short links will not work and will return long links instead.
  * Sending user tracking events such as `BranchEvents` will fail.
- * User rewards and credits will not work.
  * Setting a user identity and logging a user identity out will not work.
 
  @param disabled    If set to `true` then tracking will be disabled.
@@ -930,34 +923,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)logout;
 
 - (void)logoutWithCallback:(nullable callbackWithStatus)callback;
-
-#pragma mark - Credit methods
-
-///--------------
-/// @name Credits
-///--------------
-
-- (void)loadRewardsWithCallback:(nullable callbackWithStatus)callback __deprecated_msg("Referral feature has been deprecated. This is no-op.");
-
-- (void)redeemRewards:(NSInteger)count __deprecated_msg("Referral feature has been deprecated. This is no-op.");;
-
-- (void)redeemRewards:(NSInteger)count callback:(nullable callbackWithStatus)callback __deprecated_msg("Referral feature has been deprecated. This is no-op.");
-
-- (void)redeemRewards:(NSInteger)count forBucket:(nullable NSString *)bucket __deprecated_msg("Referral feature has been deprecated. This is no-op.");
-
-- (void)redeemRewards:(NSInteger)count forBucket:(nullable NSString *)bucket callback:(nullable callbackWithStatus)callback __deprecated_msg("Referral feature has been deprecated. This is no-op.");
-
-- (NSInteger)getCredits __deprecated_msg("Referral feature has been deprecated. This is no-op.");
-
-- (NSInteger)getCreditsForBucket:(NSString *)bucket __deprecated_msg("Referral feature has been deprecated. This is no-op.");
-
-- (void)getCreditHistoryWithCallback:(nullable callbackWithList)callback __deprecated_msg("Referral feature has been deprecated. This is no-op.");
-
-- (void)getCreditHistoryForBucket:(nullable NSString *)bucket andCallback:(nullable callbackWithList)callback __deprecated_msg("Referral feature has been deprecated. This is no-op.");
-
-- (void)getCreditHistoryAfter:(nullable NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(nullable callbackWithList)callback __deprecated_msg("Referral feature has been deprecated. This is no-op.");
-
-- (void)getCreditHistoryForBucket:(nullable NSString *)bucket after:(nullable NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(nullable callbackWithList)callback __deprecated_msg("Referral feature has been deprecated. This is no-op.");
 
 #pragma mark - Query methods
 
