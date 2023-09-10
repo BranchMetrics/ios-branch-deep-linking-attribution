@@ -56,6 +56,8 @@ static NSString * const BRANCH_PREFS_KEY_FIRST_APP_LAUNCH_TIME = @"bnc_first_app
 static NSString * const BRANCH_PREFS_KEY_SKAN_HIGHEST_CONV_VALUE_SENT = @"bnc_skan_send_highest_conv_value";
 static NSString * const BRANCH_PREFS_KEY_SKAN_INVOKE_REGISTER_APP = @"bnc_invoke_register_app";
                                                                 
+static NSString * const BRANCH_PREFS_KEY_USE_EU_SERVERS = @"bnc_use_EU_servers";
+
 static NSString * const BRANCH_PREFS_KEY_REFFERING_URL_QUERY_PARAMETERS = @"bnc_referring_url_query_parameters";
 
 static NSString * const BRANCH_PREFS_KEY_LOG_IAP_AS_EVENTS = @"bnc_log_iap_as_events";
@@ -111,7 +113,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     highestConversionValueSent = _highestConversionValueSent,
     referringURLQueryParameters = _referringURLQueryParameters,
     anonID = _anonID,
-    patternListURL = _patternListURL;
+    patternListURL = _patternListURL,
+    useEUServers = _useEUServers;
 
 + (BNCPreferenceHelper *)sharedInstance {
     static BNCPreferenceHelper *preferenceHelper;
@@ -811,6 +814,23 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     @synchronized(self) {
         NSNumber *b = [NSNumber numberWithBool:invoke];
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_SKAN_INVOKE_REGISTER_APP value:b];
+    }
+}
+
+- (BOOL) useEUServers {
+    @synchronized(self) {
+        NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_USE_EU_SERVERS];
+        if ([b isKindOfClass:NSNumber.class])
+            return [b boolValue];
+        return false;
+    }
+}
+
+- (void)setUseEUServers:(BOOL)useEUServers {
+    @synchronized(self) {
+        NSNumber *b = [NSNumber numberWithBool:useEUServers];
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_USE_EU_SERVERS value:b];
+
     }
 }
 
