@@ -15,6 +15,8 @@
 #import "BranchInstallRequest.h"
 #import "BranchOpenRequest.h"
 #import "BranchEvent.h"
+#import "BranchSetIdentityRequest.h"
+#import "BranchLogoutRequest.h"
 
 @interface BNCServerRequestQueue ()
 - (NSData *)archiveQueue:(NSArray<BNCServerRequest *> *)queue;
@@ -102,6 +104,32 @@
     // The request object is not very test friendly, so comparing the two is not helpful at the moment
 }
 
+- (void)testArchiveSetIdentityRequest {
+    BranchSetIdentityRequest *object = [BranchSetIdentityRequest new];
+    
+    NSData *archived = [self.queue archiveObject:object];
+    XCTAssertNotNil(archived);
+    
+    BranchSetIdentityRequest *unarchived = [self.queue unarchiveObjectFromData:archived];
+    XCTAssertNotNil(unarchived);
+    XCTAssert([unarchived isKindOfClass:[BranchSetIdentityRequest class]]);
+
+    // The request object is not very test friendly, so comparing the two is not helpful at the moment
+}
+
+- (void)testArchiveLogoutRequest {
+    BranchLogoutRequest *object = [BranchLogoutRequest new];
+    
+    NSData *archived = [self.queue archiveObject:object];
+    XCTAssertNotNil(archived);
+    
+    BranchLogoutRequest *unarchived = [self.queue unarchiveObjectFromData:archived];
+    XCTAssertNotNil(unarchived);
+    XCTAssert([unarchived isKindOfClass:[BranchLogoutRequest class]]);
+
+    // The request object is not very test friendly, so comparing the two is not helpful at the moment
+}
+
 - (void)testArchiveArrayOfRequests {
     NSMutableArray<BNCServerRequest *> *tmp = [NSMutableArray<BNCServerRequest *> new];
     [tmp addObject:[BranchOpenRequest new]];
@@ -133,6 +161,7 @@
     [tmp addObject:[BranchOpenRequest new]];
     [tmp addObject:@"Hello World"];
     [tmp addObject:[BranchEventRequest new]];
+    [tmp addObject:[BranchCloseRequest new]];
     
     NSData *data = [self.queue archiveQueue:tmp];
     XCTAssertNotNil(data);
@@ -148,6 +177,7 @@
     [tmp addObject:[BranchOpenRequest new]];
     [tmp addObject:@"Hello World"];
     [tmp addObject:[BranchEventRequest new]];
+    [tmp addObject:[BranchCloseRequest new]];
     
     NSData *data = [self.queue oldArchiveQueue:tmp];
     XCTAssertNotNil(data);

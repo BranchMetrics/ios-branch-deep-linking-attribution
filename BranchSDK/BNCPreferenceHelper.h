@@ -78,8 +78,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (strong, nonatomic) NSDate   *firstAppLaunchTime;
 @property (assign, nonatomic) BOOL invokeRegisterApp;
 
-@property (assign, nonatomic) BOOL useEUServers;
-
 - (void) clearTrackingInformation;
 
 + (BNCPreferenceHelper *)sharedInstance;

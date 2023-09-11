@@ -15,6 +15,7 @@
 #import "Branch.h"
 #import "BNCApplication.h"
 #import "BNCAppleReceipt.h"
+#import "BNCTuneUtility.h"
 #import "BNCSKAdNetwork.h"
 #import "BNCAppGroupsData.h"
 #import "BNCPartnerParameters.h"
@@ -119,9 +120,24 @@
         callback:callback];
 }
 
-// Always send 0
+typedef NS_ENUM(NSInteger, BNCUpdateState) {
+    // Values 0-4 are deprecated and ignored by the server
+    BNCUpdateStateIgnored0 = 0,
+    BNCUpdateStateIgnored1 = 1,
+    BNCUpdateStateIgnored2 = 2,
+    BNCUpdateStateIgnored3 = 3,
+    BNCUpdateStateIgnored4 = 4,
+    
+    // App was migrated from Tune SDK to Branch SDK
+    BNCUpdateStateTuneMigration = 5
+};
+
 + (NSNumber *)appUpdateState {
-    return @(0);
+    BNCUpdateState update_state = BNCUpdateStateIgnored0;
+    if ([BNCTuneUtility isTuneDataPresent]) {
+        update_state = BNCUpdateStateTuneMigration;
+    }
+    return @(update_state);
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {

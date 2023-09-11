@@ -22,7 +22,9 @@
 #import "BranchConstants.h"
 #import "BranchInstallRequest.h"
 #import "BranchJsonConfig.h"
+#import "BranchLogoutRequest.h"
 #import "BranchOpenRequest.h"
+#import "BranchSetIdentityRequest.h"
 #import "BranchShortUrlRequest.h"
 #import "BranchShortUrlSyncRequest.h"
 #import "BranchSpotlightUrlRequest.h"
@@ -44,7 +46,6 @@
 #import "BNCLog.h"
 #import "UIViewController+Branch.h"
 #import "BNCReferringURLUtility.h"
-#import "BNCServerAPI.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
@@ -143,7 +144,6 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (strong, nonatomic) NSDictionary *deepLinkDebugParams;
 @property (strong, nonatomic) NSMutableArray *allowedSchemeList;
 @property (strong, nonatomic) BNCURLFilter *urlFilter;
-@property (strong, nonatomic) BNCServerAPI *serverAPI;
 
 #if !TARGET_OS_TV
 @property (strong, nonatomic) BNCContentDiscoveryManager *contentDiscoveryManager;
@@ -201,7 +201,6 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     _networkCount = 0;
     _deepLinkControllers = [[NSMutableDictionary alloc] init];
     _allowedSchemeList = [[NSMutableArray alloc] init];
-    _serverAPI = [BNCServerAPI sharedInstance];
 
     #if !TARGET_OS_TV
     _contentDiscoveryManager = [[BNCContentDiscoveryManager alloc] init];
@@ -1042,11 +1041,39 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)setIdentity:(NSString *)userId withCallback:(callbackWithParams)callback {
-    if (userId) {
-        self.preferenceHelper.userIdentity = userId;
+    if (!userId || [self.preferenceHelper.userIdentity isEqualToString:userId]) {
+        if (callback) {
+            callback([self getFirstReferringParams], nil);
+        }
+        return;
     }
-    if (callback) {
-        callback([self getFirstReferringParams], nil);
+    
+    if (self.initializationStatus == BNCInitStatusUninitialized ) {
+        [self cacheIdentity:userId withCallback:callback];
+    } else {
+        [self sendIdentity:userId withCallback:callback];
+    }
+}
+
+- (void) sendIdentity:(NSString *)userId withCallback:(callbackWithParams)callback {
+    dispatch_async(self.isolationQueue, ^(){
+        BranchSetIdentityRequest *req = [[BranchSetIdentityRequest alloc] initWithUserId:userId callback:callback];
+        [self.requestQueue enqueue:req];
+        [self processNextQueueItem];
+    });
+}
+
+- (void) cacheIdentity: (NSString *)userId withCallback:(callbackWithParams)callback {
+    self.installUserId = userId;
+    self.setIdentityCallback = callback;
+}
+
+- (void) applySavedIdentity {
+    if (self.installUserId != nil) {
+        [self sendIdentity:self.installUserId withCallback:self.setIdentityCallback];
+        
+        self.installUserId = nil;
+        self.setIdentityCallback = nil;
     }
 }
 
@@ -1065,15 +1092,26 @@ static NSString *bnc_branchKey = nil;
         return;
     }
 
-    // Clear cached links
-    self.linkCache = [[BNCLinkCache alloc] init];
-    
-    // Removed stored values
-    self.preferenceHelper.userIdentity = nil;
-    
-    if (callback) {
-        callback(YES, nil);
-    }
+    BranchLogoutRequest *req =
+        [[BranchLogoutRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
+            if (success) {
+                // Clear cached links
+                self.linkCache = [[BNCLinkCache alloc] init];
+
+                if (callback) {
+                    callback(YES, nil);
+                }
+                BNCLogDebug(@"Logout success.");
+            } else /*failure*/ {
+                if (callback) {
+                    callback(NO, error);
+                }
+                BNCLogDebug(@"Logout failure.");
+            }
+        }];
+
+    [self.requestQueue enqueue:req];
+    [self processNextQueueItem];
 }
 
 - (void)sendServerRequest:(BNCServerRequest*)request {
@@ -1087,6 +1125,52 @@ static NSString *bnc_branchKey = nil;
 // deprecated, use sendServerRequest
 - (void)sendServerRequestWithoutSession:(BNCServerRequest*)request {
     [self sendServerRequest:request];
+}
+
+#pragma mark - Credit methods
+
+- (void)loadRewardsWithCallback:(callbackWithStatus)callback {
+    return;
+}
+
+- (NSInteger)getCredits {
+    return 0;
+}
+
+- (void)redeemRewards:(NSInteger)count {
+    return;
+}
+
+- (void)redeemRewards:(NSInteger)count callback:(callbackWithStatus)callback {
+    return;
+}
+
+- (NSInteger)getCreditsForBucket:(NSString *)bucket {
+    return 0;
+}
+
+- (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket {
+    return;
+}
+
+- (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket callback:(callbackWithStatus)callback {
+    return;
+}
+
+- (void)getCreditHistoryWithCallback:(callbackWithList)callback {
+    return;
+}
+
+- (void)getCreditHistoryForBucket:(NSString *)bucket andCallback:(callbackWithList)callback {
+    return;
+}
+
+- (void)getCreditHistoryAfter:(NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(callbackWithList)callback {
+    return;
+}
+
+- (void)getCreditHistoryForBucket:(NSString *)bucket after:(NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(callbackWithList)callback {
+    return;
 }
 
 - (BranchUniversalObject *)getFirstReferringBranchUniversalObject {
@@ -1904,7 +1988,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     // These request types
     NSSet<Class> *replayableRequests = [[NSSet alloc] initWithArray:@[
-        BranchEventRequest.class
+        BranchEventRequest.class,
+        BranchSetIdentityRequest.class,
     ]];
 
     if ([replayableRequests containsObject:request.class]) {
@@ -2153,6 +2238,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
     [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
 
+    [self applySavedIdentity];
     
     if (!self.urlFilter.hasUpdatedPatternList) {
         [self.urlFilter updatePatternListWithCompletion:nil];

@@ -462,9 +462,14 @@
     NSDictionary *urlQueryParams = [utility referringURLQueryParamsForEndpoint:self.requestEndpoint];
     [fullParamDict bnc_safeAddEntriesFromDictionary:urlQueryParams];
     
-    if ([self.requestEndpoint containsString:@"/v1/open"] || [self.requestEndpoint containsString:@"/v1/install"]) {
+    if ([self.requestEndpoint containsString:@"/v1/open"]) {
         [fullParamDict bnc_safeSetObject:[BNCPreferenceHelper sharedInstance].userIdentity forKey:@"identity"];
     }
+    
+    if ([self.requestEndpoint containsString:@"/v1/install"]) {
+        [fullParamDict bnc_safeSetObject: [Branch getInstance].installUserId forKey:@"identity"];
+    }
+        
 
     return fullParamDict;
 }

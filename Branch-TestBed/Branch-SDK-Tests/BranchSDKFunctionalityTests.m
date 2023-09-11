@@ -180,17 +180,31 @@ NSString * const TEST_NEW_USER_LINK = @"https://bnc.lt/i/2kkbX6k-As";
     BNCServerResponse *logoutResp = [[BNCServerResponse alloc] init];
     logoutResp.data = @{ @"session_id": @"foo", @"randomized_bundle_token": @"foo", @"link": @"http://foo" };
 
+    __block BNCServerCallback logoutCallback;
+    [[[serverInterfaceMock expect]
+        andDo:^(NSInvocation *invocation) {
+            logoutCallback(logoutResp, nil);
+        }]
+            postRequest:[OCMArg any]
+            url:[preferenceHelper
+            getAPIURL:@"logout"]
+            key:[OCMArg any]
+            callback:[OCMArg
+            checkWithBlock:^BOOL(BNCServerCallback callback) {
+                logoutCallback = callback;
+                return YES;
+            }]];
 
     XCTestExpectation *logoutExpectation =
         [self expectationWithDescription:@"Logout Session"];
 
-    self.hasExceededExpectations = NO;
     [branch logoutWithCallback:^(BOOL changed, NSError * _Nullable error) {
         XCTAssertNil(error);
         NSLog(@"Fullfilled 2.");
         [self safelyFulfillExpectation:logoutExpectation];
     }];
 
+    self.hasExceededExpectations = NO;
     [self awaitExpectations];
 
     // Get short URL
