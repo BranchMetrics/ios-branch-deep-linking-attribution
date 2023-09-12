@@ -76,6 +76,18 @@
     return json;
 }
 
+- (NSDictionary *)dataForEventWithEventDictionary:(NSMutableDictionary *)dictionary {
+    NSMutableDictionary *json = dictionary ? dictionary : [NSMutableDictionary new];
+    // BNCServerInterface adds data from v2dictionary, everything else is passed in
+    return json;
+}
+
+- (NSDictionary *)dataForShortURLWithLinkDataDictionary:(NSMutableDictionary *)dictionary isSpotlightRequest:(BOOL)isSpotlightRequest {
+    NSMutableDictionary *json = dictionary ? dictionary : [NSMutableDictionary new];
+    [self addShortURLTokens:json isSpotlightRequest:isSpotlightRequest];
+    return json;
+}
+
 - (void)addOpenTokens:(NSMutableDictionary *)json {
     if (self.preferenceHelper.randomizedDeviceToken) {
         json[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = self.preferenceHelper.randomizedDeviceToken;
@@ -87,6 +99,15 @@
     if (self.preferenceHelper.limitFacebookTracking) {
         json[@"limit_facebook_tracking"] = (__bridge NSNumber*) kCFBooleanTrue;
     }
+}
+
+- (void)addShortURLTokens:(NSMutableDictionary *)json isSpotlightRequest:(BOOL)isSpotlightRequest {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    json[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = preferenceHelper.randomizedDeviceToken;
+    if (!isSpotlightRequest) {
+        json[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = preferenceHelper.randomizedBundleToken;
+    }
+    json[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
 }
 
 - (void)addPreferenceHelperData:(NSMutableDictionary *)json {
@@ -157,9 +178,12 @@
     json[@"previous_update_time"] = BNCWireFormatFromDate(self.preferenceHelper.previousAppBuildDate);
     json[@"latest_install_time"] = BNCWireFormatFromDate(application.currentInstallDate);
     json[@"first_install_time"] = BNCWireFormatFromDate(application.firstInstallDate);
-    json[@"update"] = [self appUpdateState];
+    
+    // TODO: can we remove this deprecated update flag?
+    json[@"update"] = @(0);
 }
 
+// App Clips upgrade data
 - (void)addAppClipData:(NSMutableDictionary *)json {
     if ([[BNCAppGroupsData shared] loadAppClipData]) {
         [self safeSetValue:[BNCAppGroupsData shared].bundleID forKey:BRANCH_REQUEST_KEY_APP_CLIP_BUNDLE_ID onDict:json];
@@ -181,7 +205,7 @@
     return json;
 }
 
-// This one is pretty awkward, considering leaving this mostly as is
+// TODO: This one is pretty awkward, considering leaving this as is?
 - (NSMutableDictionary *)performanceMetrics:(NSMutableDictionary *)json {
     return json;
 }
@@ -272,11 +296,6 @@
     if (value) {
         dict[key] = value;
     }
-}
-
-// deprecated
-- (NSNumber *)appUpdateState {
-    return @(0);
 }
 
 @end

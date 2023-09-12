@@ -12,6 +12,7 @@
 #import "BranchConstants.h"
 #import "BNCConfig.h"
 #import "BNCLog.h"
+#import "BNCRequestFactory.h"
 
 @interface BranchShortUrlSyncRequest ()
 
@@ -50,17 +51,11 @@
 }
 
 - (BNCServerResponse *)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key {
-    NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:self.linkData.data];
-    
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
-    if (!preferenceHelper.trackingDisabled) {
-        params[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = preferenceHelper.randomizedDeviceToken;
-        params[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = preferenceHelper.randomizedBundleToken;
-        params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
-    }
+    BNCRequestFactory *factory = [BNCRequestFactory new];
+    NSDictionary *json = [factory dataForShortURLWithLinkDataDictionary:[self.linkData.data mutableCopy] isSpotlightRequest:NO];
 
-    return [serverInterface postRequestSynchronous:params
-		url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL]
+    return [serverInterface postRequestSynchronous:json
+		url:[[BNCPreferenceHelper sharedInstance] getAPIURL:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL]
 		key:key];
 }
 

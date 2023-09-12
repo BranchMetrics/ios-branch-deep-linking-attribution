@@ -12,15 +12,32 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BNCRequestFactory : NSObject
 
+// TODO: describe privacy settings
+@property (nonatomic, assign, readwrite) BOOL trackingDisabled;
+@property (nonatomic, assign, readwrite) BOOL trackingDomainEnabled;
+
 - (instancetype)init;
 
-// Request JSON factory methods
 - (NSDictionary *)dataForInstall;
 - (NSDictionary *)dataForOpen;
+- (NSDictionary *)dataForEventWithEventDictionary:(NSMutableDictionary *)dictionary;
 
-// BNCServerInterface appends data to request payloads
+// BranchShortUrlRequest, BranchShortUrlSyncRequest and BranchSpotlightUrlRequest
+- (NSDictionary *)dataForShortURLWithLinkDataDictionary:(NSMutableDictionary *)dictionary isSpotlightRequest:(BOOL)isSpotlightRequest;
+
+// TODO: implement these
+- (NSDictionary *)dataForCPID;
+- (NSDictionary *)dataForLATD;
+- (NSDictionary *)dataForClose;
+
+// Methods used by BNCServerInterface to maintain existing behavior
 - (NSMutableDictionary *)v1dictionary:(NSMutableDictionary *)json;
 - (NSMutableDictionary *)v2dictionary:(NSMutableDictionary *)json;
+
+// TODO: pull logic from BNCServerInterface prepareParamDict here
+
+// TODO: implement this
+- (NSMutableDictionary *)addPerformanceMetrics:(NSMutableDictionary *)json;
 
 @end
 

@@ -16,6 +16,7 @@
 #import "BNCPartnerParameters.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCEventUtils.h"
+#import "BNCRequestFactory.h"
 
 #pragma mark BranchStandardEvents
 
@@ -73,10 +74,11 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
 - (void)makeRequest:(BNCServerInterface *)serverInterface
 			    key:(NSString *)key
            callback:(BNCServerCallback)callback {
-    [serverInterface postRequest:self.eventDictionary
-							 url:[self.serverURL absoluteString]
-							 key:key
-						callback:callback];
+    
+    BNCRequestFactory *factory = [BNCRequestFactory new];
+    NSDictionary *json = [factory dataForEventWithEventDictionary:[self.eventDictionary mutableCopy]];
+    
+    [serverInterface postRequest:json url:[self.serverURL absoluteString] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse*)response error:(NSError*)error {
