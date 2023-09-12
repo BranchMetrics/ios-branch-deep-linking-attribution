@@ -43,6 +43,7 @@
 #import "BNCLog.h"
 #import "UIViewController+Branch.h"
 #import "BNCReferringURLUtility.h"
+#import "BNCServerAPI.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
@@ -141,6 +142,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (strong, nonatomic) NSDictionary *deepLinkDebugParams;
 @property (strong, nonatomic) NSMutableArray *allowedSchemeList;
 @property (strong, nonatomic) BNCURLFilter *urlFilter;
+@property (strong, nonatomic) BNCServerAPI *serverAPI;
 
 #if !TARGET_OS_TV
 @property (strong, nonatomic) BNCContentDiscoveryManager *contentDiscoveryManager;
@@ -198,6 +200,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     _networkCount = 0;
     _deepLinkControllers = [[NSMutableDictionary alloc] init];
     _allowedSchemeList = [[NSMutableArray alloc] init];
+    _serverAPI = [BNCServerAPI sharedInstance];
 
     #if !TARGET_OS_TV
     _contentDiscoveryManager = [[BNCContentDiscoveryManager alloc] init];
@@ -1049,52 +1052,6 @@ static NSString *bnc_branchKey = nil;
 // deprecated, use sendServerRequest
 - (void)sendServerRequestWithoutSession:(BNCServerRequest*)request {
     [self sendServerRequest:request];
-}
-
-#pragma mark - Credit methods
-
-- (void)loadRewardsWithCallback:(callbackWithStatus)callback {
-    return;
-}
-
-- (NSInteger)getCredits {
-    return 0;
-}
-
-- (void)redeemRewards:(NSInteger)count {
-    return;
-}
-
-- (void)redeemRewards:(NSInteger)count callback:(callbackWithStatus)callback {
-    return;
-}
-
-- (NSInteger)getCreditsForBucket:(NSString *)bucket {
-    return 0;
-}
-
-- (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket {
-    return;
-}
-
-- (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket callback:(callbackWithStatus)callback {
-    return;
-}
-
-- (void)getCreditHistoryWithCallback:(callbackWithList)callback {
-    return;
-}
-
-- (void)getCreditHistoryForBucket:(NSString *)bucket andCallback:(callbackWithList)callback {
-    return;
-}
-
-- (void)getCreditHistoryAfter:(NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(callbackWithList)callback {
-    return;
-}
-
-- (void)getCreditHistoryForBucket:(NSString *)bucket after:(NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(callbackWithList)callback {
-    return;
 }
 
 - (BranchUniversalObject *)getFirstReferringBranchUniversalObject {
