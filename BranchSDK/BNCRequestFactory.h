@@ -16,7 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, readwrite) BOOL trackingDisabled;
 @property (nonatomic, assign, readwrite) BOOL trackingDomainEnabled;
 
-- (instancetype)init;
+- (instancetype)initWithBranchKey:(NSString *)key NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
 
 - (NSDictionary *)dataForInstall;
 - (NSDictionary *)dataForOpen;
@@ -25,19 +26,11 @@ NS_ASSUME_NONNULL_BEGIN
 // BranchShortUrlRequest, BranchShortUrlSyncRequest and BranchSpotlightUrlRequest
 - (NSDictionary *)dataForShortURLWithLinkDataDictionary:(NSMutableDictionary *)dictionary isSpotlightRequest:(BOOL)isSpotlightRequest;
 
-// TODO: implement these
 - (NSDictionary *)dataForCPID;
-- (NSDictionary *)dataForLATD;
-- (NSDictionary *)dataForClose;
+- (NSDictionary *)dataForLATDWithDataDictionary:(NSMutableDictionary *)dictionary;
 
-// Methods used by BNCServerInterface to maintain existing behavior
-- (NSMutableDictionary *)v1dictionary:(NSMutableDictionary *)json;
-- (NSMutableDictionary *)v2dictionary:(NSMutableDictionary *)json;
-
-// TODO: pull logic from BNCServerInterface prepareParamDict here
-
-// TODO: implement this
-- (NSMutableDictionary *)addPerformanceMetrics:(NSMutableDictionary *)json;
+// TODO: can we finish deprecating close?
+//- (NSDictionary *)dataForClose;
 
 @end
 

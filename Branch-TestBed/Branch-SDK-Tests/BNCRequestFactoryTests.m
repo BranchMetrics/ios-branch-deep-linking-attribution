@@ -24,14 +24,7 @@
 }
 
 - (void)testExample {
-    BNCRequestFactory *factory = [BNCRequestFactory new];
-    XCTAssertNotNil(factory);
 
-//    NSDictionary *v1 = [factory v1dictionary];
-//    NSLog(@"V1 dictionary? %@", v1);
-//    
-//    NSDictionary *v2 = [factory v2dictionary];
-//    NSLog(@"V2 dictionary? %@", v2);
 }
 
 @end

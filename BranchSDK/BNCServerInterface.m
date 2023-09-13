@@ -17,16 +17,9 @@
 #import "BNCSKAdNetwork.h"
 #import "BNCReferringURLUtility.h"
 
-// some data is appended by this class
-#import "BNCRequestFactory.h"
-
-
 @interface BNCServerInterface ()
 @property (copy, nonatomic) NSString *requestEndpoint;
 @property (strong, nonatomic) id<BNCNetworkServiceProtocol> networkService;
-
-// Temp location for this class
-@property (strong, nonatomic, readwrite) BNCRequestFactory *factory;
 
 @end
 
@@ -36,7 +29,6 @@
     self = [super init];
     if (self) {
         self.networkService = [[Branch networkServiceClass] new];
-        self.factory = [BNCRequestFactory new];
     }
     return self;
 }
@@ -67,85 +59,21 @@
     [self postRequest:post url:url retryNumber:0 key:key callback:callback];
 }
 
-- (BOOL)isV2APIURL:(NSString *)urlstring {
-    return [self isV2APIURL:urlstring baseURL:[self.preferenceHelper branchAPIURL]];
-}
-
-- (BOOL)isV2APIURL:(NSString *)urlstring baseURL:(NSString *)baseURL {
-    BOOL found = NO;
-    if (urlstring && baseURL) {
-        NSString *matchString = [NSString stringWithFormat:@"%@/v2/", baseURL];
-        NSRange range = [urlstring rangeOfString:matchString];
-        found = (range.location != NSNotFound);
-    }
-    return found;
-}
-
-// workaround for new V1 APIs that expects different format
-- (BOOL)isNewV1API:(NSString *)urlstring {
-    NSArray<NSString *> *newV1Apis = @[ BRANCH_REQUEST_ENDPOINT_CPID, BRANCH_REQUEST_ENDPOINT_LATD ];
-    for (NSString *tmp in newV1Apis) {
-        NSRange range = [urlstring rangeOfString:tmp];
-        BOOL found = (range.location != NSNotFound);
-        if (found) {
-            return YES;
-        }
-    }
-    return NO;
-}
-
-// SDK-635  Follow up ticket to redesign this.  The payload format should be the responsibility of the network request class.
-- (NSMutableDictionary *)buildExtendedParametersForURL:(NSString *)url withPostDictionary:(NSDictionary *)post {
-    NSMutableDictionary *extendedParams = nil;
-    
-    // v2 endpoints expect a user data section
-    if ([self isV2APIURL:url]) {
-        extendedParams = [NSMutableDictionary new];
-        if (post) {
-            [extendedParams addEntriesFromDictionary:post];
-        }
-        NSDictionary *d = [self.factory v2dictionary:[NSMutableDictionary new]];
-        if (d.count) {
-            extendedParams[@"user_data"] = d;
-        }
-    
-    // cpid and latd endpoints expect a v2 format, except with possible customization
-    } else if ([self isNewV1API:url]) {
-        extendedParams = [NSMutableDictionary new];
-        
-        NSMutableDictionary *tmp = [NSMutableDictionary dictionaryWithDictionary: [self.factory v2dictionary:[NSMutableDictionary new]]];
-        if (tmp.count) {
-            extendedParams[@"user_data"] = tmp;
-            [tmp addEntriesFromDictionary:post];
-        }
-    
-    } else {
-        extendedParams = [self.factory v1dictionary:[post mutableCopy]];
-    }
-    return extendedParams;
-}
-
 - (void)postRequest:(NSDictionary *)post url:(NSString *)url retryNumber:(NSInteger)retryNumber key:(NSString *)key callback:(BNCServerCallback)callback {
-    
-    // Instrumentation metrics
     self.requestEndpoint = [self.preferenceHelper getEndpointFromURL:url];
-    
-    NSMutableDictionary *extendedParams = [self buildExtendedParametersForURL:url withPostDictionary:post];
-    NSURLRequest *request = [self preparePostRequest:extendedParams url:url key:key retryNumber:retryNumber];
+    NSURLRequest *request = [self preparePostRequest:post url:url key:key retryNumber:retryNumber];
     
     [self genericHTTPRequest:request
                  retryNumber:retryNumber
                     callback:callback
                 retryHandler:^ NSURLRequest *(NSInteger lastRetryNumber) {
-        return [self preparePostRequest:extendedParams url:url key:key retryNumber:lastRetryNumber+1];
+        return [self preparePostRequest:post url:url key:key retryNumber:lastRetryNumber+1];
     }];
 }
 
 // Only used by BranchShortUrlSyncRequest
 - (BNCServerResponse *)postRequestSynchronous:(NSDictionary *)post url:(NSString *)url key:(NSString *)key {
-    
-    NSDictionary *extendedParams = [self.factory v1dictionary:[post mutableCopy]];
-    NSURLRequest *request = [self preparePostRequest:extendedParams url:url key:key retryNumber:0];
+    NSURLRequest *request = [self preparePostRequest:post url:url key:key retryNumber:0];
     return [self genericHTTPRequestSynchronous:request];
 }
 
@@ -346,16 +274,13 @@
 
 - (NSURLRequest *)prepareGetRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key retryNumber:(NSInteger)retryNumber {
 
-    NSDictionary *preparedParams =
-        [self prepareParamDict:params key:key retryNumber:retryNumber requestType:@"GET"];
-    NSString *requestUrlString =
-        [NSString stringWithFormat:@"%@%@", url, [BNCEncodingUtils encodeDictionaryToQueryString:preparedParams]];
+    // TODO: update retry count in params
+    NSString *requestUrlString = [NSString stringWithFormat:@"%@%@", url, [BNCEncodingUtils encodeDictionaryToQueryString:params]];
     BNCLogDebug([NSString stringWithFormat:@"URL: %@", requestUrlString]);
 
-    NSMutableURLRequest *request =
-        [NSMutableURLRequest requestWithURL:[NSURL URLWithString:requestUrlString]
-            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
-            timeoutInterval:self.preferenceHelper.timeout];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:requestUrlString]
+                                                           cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
+                                                       timeoutInterval:self.preferenceHelper.timeout];
     [request setHTTPMethod:@"GET"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     
@@ -364,34 +289,32 @@
 
 - (NSURLRequest *)preparePostRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key retryNumber:(NSInteger)retryNumber {
 
-    NSMutableDictionary *preparedParams =
-        [self prepareParamDict:params key:key retryNumber:retryNumber requestType:@"POST"];
-    if ([self isV2APIURL:url]) {
-        preparedParams[@"sdk"] = nil;
-    }
-    if (Branch.trackingDisabled) {
-        preparedParams[@"tracking_disabled"] = (__bridge NSNumber*) kCFBooleanTrue;
-        preparedParams[@"local_ip"] = nil;
-        preparedParams[@"lastest_update_time"] = nil;
-        preparedParams[@"previous_update_time"] = nil;
-        preparedParams[@"latest_install_time"] = nil;
-        preparedParams[@"first_install_time"] = nil;
-        preparedParams[@"ios_vendor_id"] = nil;
-        preparedParams[@"hardware_id"] = nil;
-        preparedParams[@"hardware_id_type"] = nil;
-        preparedParams[@"is_hardware_id_real"] = nil;
-        preparedParams[@"randomized_device_token"] = nil;
-        preparedParams[@"randomized_bundle_token"] = nil;
-        preparedParams[@"identity"] = nil;
-        preparedParams[@"update"] = nil;
-        preparedParams[@"anon_id"] = nil;
-    }
-    NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:preparedParams];
+    // TODO: update retry count in params
+    // TODO: move tracking disabled handling to BNCRequestFactory
+//    if (Branch.trackingDisabled) {
+//        preparedParams[@"tracking_disabled"] = (__bridge NSNumber*) kCFBooleanTrue;
+//        preparedParams[@"local_ip"] = nil;
+//        preparedParams[@"lastest_update_time"] = nil;
+//        preparedParams[@"previous_update_time"] = nil;
+//        preparedParams[@"latest_install_time"] = nil;
+//        preparedParams[@"first_install_time"] = nil;
+//        preparedParams[@"ios_vendor_id"] = nil;
+//        preparedParams[@"hardware_id"] = nil;
+//        preparedParams[@"hardware_id_type"] = nil;
+//        preparedParams[@"is_hardware_id_real"] = nil;
+//        preparedParams[@"randomized_device_token"] = nil;
+//        preparedParams[@"randomized_bundle_token"] = nil;
+//        preparedParams[@"identity"] = nil;
+//        preparedParams[@"update"] = nil;
+//        preparedParams[@"anon_id"] = nil;
+//    }
+    
+    NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:params];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
 
     BNCLogDebug([NSString stringWithFormat:@"URL: %@.\n", url]);
     BNCLogDebug([NSString stringWithFormat:@"Body: %@\nJSON: %@.",
-        preparedParams,
+        params,
         [[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding]]
     );
     
@@ -405,48 +328,6 @@
     [request setHTTPBody:postData];
     
     return request;
-}
-
-- (NSMutableDictionary *)prepareParamDict:(NSDictionary *)params key:(NSString *)key retryNumber:(NSInteger)retryNumber requestType:(NSString *)reqType {
-
-    NSMutableDictionary *fullParamDict = [[NSMutableDictionary alloc] init];
-    [fullParamDict bnc_safeAddEntriesFromDictionary:params];
-    fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION];
-    
-    if ([[[NSBundle mainBundle] executablePath] containsString:@".appex/"]) {
-        fullParamDict[@"ios_extension"] = @(1);
-    }
-    fullParamDict[@"retryNumber"] = @(retryNumber);
-    fullParamDict[@"branch_key"] = key;
-
-    NSMutableDictionary *metadata = [[NSMutableDictionary alloc] init];
-    [metadata bnc_safeAddEntriesFromDictionary:self.preferenceHelper.requestMetadataDictionary];
-    [metadata bnc_safeAddEntriesFromDictionary:fullParamDict[BRANCH_REQUEST_KEY_STATE]];
-    
-    if(([self.requestEndpoint containsString:@"/v1/open"]) || ([self.requestEndpoint containsString:@"/v1/install"]) || ([self.requestEndpoint containsString:@"/v2/event"])){
-        [metadata bnc_safeSetObject:[NSString stringWithFormat:@"%f", [BNCSKAdNetwork sharedInstance].maxTimeSinceInstall] forKey:BRANCH_REQUEST_METADATA_KEY_SCANTIME_WINDOW];
-    }
-    
-    if (metadata.count) {
-        fullParamDict[BRANCH_REQUEST_KEY_STATE] = metadata;
-    }
-    // we only send instrumentation info in the POST body request
-    if ([reqType isEqualToString:@"POST"]) {
-        NSDictionary *instrumentationDictionary = self.preferenceHelper.instrumentationParameters;
-        if (instrumentationDictionary) {
-            fullParamDict[BRANCH_REQUEST_KEY_INSTRUMENTATION] = instrumentationDictionary;
-        }
-    }
-    
-    BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
-    NSDictionary *urlQueryParams = [utility referringURLQueryParamsForEndpoint:self.requestEndpoint];
-    [fullParamDict bnc_safeAddEntriesFromDictionary:urlQueryParams];
-    
-    if ([self.requestEndpoint containsString:@"/v1/open"] || [self.requestEndpoint containsString:@"/v1/install"]) {
-        [fullParamDict bnc_safeSetObject:[BNCPreferenceHelper sharedInstance].userIdentity forKey:@"identity"];
-    }
-
-    return fullParamDict;
 }
 
 - (BNCServerResponse *)processServerResponse:(NSURLResponse *)response data:(NSData *)data error:(NSError *)error {

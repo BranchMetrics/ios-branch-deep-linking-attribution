@@ -25,7 +25,7 @@
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     
-    BNCRequestFactory *factory = [BNCRequestFactory new];
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key];
     NSDictionary *params = [factory dataForInstall];
 
     // TODO: figure out why this is different

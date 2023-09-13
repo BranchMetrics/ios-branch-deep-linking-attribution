@@ -46,7 +46,7 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     // TODO: handle clearLocalURL, it's needs to be touched in two disparate locations...
     self.clearLocalURL = NO;
-    BNCRequestFactory *factory = [BNCRequestFactory new];
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key];
     NSDictionary *params = [factory dataForOpen];
 
     [serverInterface postRequest:params

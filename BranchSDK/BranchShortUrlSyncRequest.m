@@ -51,7 +51,7 @@
 }
 
 - (BNCServerResponse *)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key {
-    BNCRequestFactory *factory = [BNCRequestFactory new];
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key];
     NSDictionary *json = [factory dataForShortURLWithLinkDataDictionary:[self.linkData.data mutableCopy] isSpotlightRequest:NO];
 
     return [serverInterface postRequestSynchronous:json
