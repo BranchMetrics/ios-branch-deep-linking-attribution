@@ -127,7 +127,6 @@
         self.isFirstOptIn = NO;
     }
     
-    self.isAdTrackingEnabled = [BNCSystemObserver adTrackingEnabled];
     self.advertiserId = [BNCSystemObserver advertiserIdentifier];
     BOOL ignoreIdfa = [BNCPreferenceHelper sharedInstance].isDebug;
 
@@ -168,9 +167,6 @@
         [dictionary bnc_safeSetObject:[self localIPAddress] forKey:@"local_ip"];
 
         [dictionary bnc_safeSetObject:[self optedInStatus] forKey:@"opted_in_status"];
-        if (!self.isAdTrackingEnabled) {
-            dictionary[@"limit_ad_tracking"] = @(YES);
-        }
 
         if ([BNCPreferenceHelper sharedInstance].limitFacebookTracking) {
             dictionary[@"limit_facebook_tracking"] = @(YES);

@@ -39,7 +39,6 @@
 @property (nonatomic, copy, readwrite) NSString *vendorId;
 @property (nonatomic, copy, readwrite) NSString *optedInStatus;
 @property (nonatomic, assign, readwrite) BOOL isFirstOptIn;
-@property (nonatomic, assign, readwrite) BOOL isAdTrackingEnabled;
 - (NSString *)localIPAddress;
 - (NSString *)connectionType;
 

@@ -12,10 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BNCRequestFactory : NSObject
 
-// TODO: describe privacy settings
-@property (nonatomic, assign, readwrite) BOOL trackingDisabled;
-@property (nonatomic, assign, readwrite) BOOL trackingDomainEnabled;
-
 - (instancetype)initWithBranchKey:(NSString *)key NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 

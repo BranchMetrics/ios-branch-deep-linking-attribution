@@ -288,25 +288,6 @@
 }
 
 - (NSURLRequest *)preparePostRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key retryNumber:(NSInteger)retryNumber {
-
-    // TODO: move tracking disabled handling to BNCRequestFactory
-//    if (Branch.trackingDisabled) {
-//        preparedParams[@"tracking_disabled"] = (__bridge NSNumber*) kCFBooleanTrue;
-//        preparedParams[@"local_ip"] = nil;
-//        preparedParams[@"lastest_update_time"] = nil;
-//        preparedParams[@"previous_update_time"] = nil;
-//        preparedParams[@"latest_install_time"] = nil;
-//        preparedParams[@"first_install_time"] = nil;
-//        preparedParams[@"ios_vendor_id"] = nil;
-//        preparedParams[@"hardware_id"] = nil;
-//        preparedParams[@"hardware_id_type"] = nil;
-//        preparedParams[@"is_hardware_id_real"] = nil;
-//        preparedParams[@"randomized_device_token"] = nil;
-//        preparedParams[@"randomized_bundle_token"] = nil;
-//        preparedParams[@"identity"] = nil;
-//        preparedParams[@"update"] = nil;
-//        preparedParams[@"anon_id"] = nil;
-//    }
     
     NSDictionary *tmp = [self addRetryCount:retryNumber toJSON:params];
 
@@ -356,7 +337,7 @@
     return serverResponse;
 }
 
-- (void) collectInstrumentationMetricsWithOperation:(id<BNCNetworkOperationProtocol>)operation {
+- (void)collectInstrumentationMetricsWithOperation:(id<BNCNetworkOperationProtocol>)operation {
     // multiplying by negative because startTime happened in the past
     NSTimeInterval elapsedTime = [operation.startDate timeIntervalSinceNow] * -1000.0;
     NSString *lastRoundTripTime = [[NSNumber numberWithDouble:floor(elapsedTime)] stringValue];

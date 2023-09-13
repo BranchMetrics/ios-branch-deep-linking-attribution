@@ -33,7 +33,6 @@
 
 - (void)testRequestBody {
     NSString * const HARDWARE_ID = @"foo-hardware-id";
-    NSNumber * const AD_TRACKING_SAFE = @YES;
     NSString * const BUNDLE_ID = @"foo-bundle-id";
     NSString * const APP_VERSION = @"foo-app-version";
     NSString * const OS = @"foo-os";
@@ -51,7 +50,6 @@
     preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
     
     id systemObserverMock = OCMClassMock([BNCSystemObserver class]);
-    [[[systemObserverMock stub] andReturnValue:AD_TRACKING_SAFE] adTrackingEnabled];
     [[[systemObserverMock stub] andReturn:BUNDLE_ID] bundleIdentifier];
     [[[systemObserverMock stub] andReturn:APP_VERSION] applicationVersion];
     [[[systemObserverMock stub] andReturn:OS] osName];

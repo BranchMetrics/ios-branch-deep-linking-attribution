@@ -82,11 +82,6 @@
     XCTAssert(self.deviceInfo.isFirstOptIn == NO);
 }
 
-- (void)testIsAdTrackingEnabled {
-    // on iOS 14+, this is always NO
-    XCTAssert(self.deviceInfo.isAdTrackingEnabled == NO);
-}
-
 - (void)testLocalIPAddress {
     NSString *address = [self.deviceInfo localIPAddress];
     XCTAssertNotNil(address);

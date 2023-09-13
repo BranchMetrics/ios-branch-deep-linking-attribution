@@ -8,9 +8,19 @@
 
 #import "BNCRequestFactory.h"
 
+// For privacy setting
+#import "Branch.h"
+
+// For SDK version number
 #import "BNCConfig.h"
+
+// For request JSON key names
 #import "BranchConstants.h"
+
+// Data format utility
 #import "BNCEncodingUtils.h"
+
+// nil checked set and copy methods
 #import "NSMutableDictionary+Branch.h"
 
 // Data sources
@@ -61,6 +71,13 @@
         self.appleReceipt = [BNCAppleReceipt sharedInstance];
     }
     return self;
+}
+
+// SDK level tracking control
+// When set to YES, only link creation and resolution calls are allowed.
+// NO by default.
+- (BOOL)isTrackingDisabled {
+    return Branch.trackingDisabled;
 }
 
 - (NSDictionary *)dataForInstall {
@@ -139,6 +156,12 @@
 
 // The event data dictionary is NOT checked
 - (NSDictionary *)dataForEventWithEventDictionary:(NSMutableDictionary *)dictionary {
+    
+    // Event requests are not valid when tracking is disabled
+    if ([self isTrackingDisabled]) {
+        return [NSMutableDictionary new];
+    }
+    
     NSMutableDictionary *json = dictionary ? dictionary : [NSMutableDictionary new];
 
     // All requests
@@ -182,6 +205,12 @@
 }
 
 - (NSDictionary *)dataForCPID {
+    
+    // CPID requests are not valid when tracking is disabled
+    if ([self isTrackingDisabled]) {
+        return [NSMutableDictionary new];
+    }
+    
     NSMutableDictionary *json = [NSMutableDictionary new];
     
     // All requests
@@ -200,6 +229,12 @@
 }
 
 - (NSDictionary *)dataForLATDWithDataDictionary:(NSMutableDictionary *)dictionary {
+    
+    // LATD requests are not valid when tracking is disabled
+    if ([self isTrackingDisabled]) {
+        return [NSMutableDictionary new];
+    }
+    
     NSMutableDictionary *json = dictionary ? dictionary : [NSMutableDictionary new];
     
     // All requests
@@ -218,24 +253,38 @@
 }
 
 - (void)addOpenTokensToJSON:(NSMutableDictionary *)json {
-    if (self.preferenceHelper.randomizedDeviceToken) {
-        json[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = self.preferenceHelper.randomizedDeviceToken;
-    }
-    json[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = self.preferenceHelper.randomizedBundleToken;
     
     // TODO: remove if deprecated
     // tmp location, it's only on opens like the tokens but it will probably be deleted
     if (self.preferenceHelper.limitFacebookTracking) {
         json[@"limit_facebook_tracking"] = (__bridge NSNumber*) kCFBooleanTrue;
     }
+    
+    // Tokens are not valid when tracking is disabled
+    if ([self isTrackingDisabled]) {
+        return;
+    }
+    
+    if (self.preferenceHelper.randomizedDeviceToken) {
+        json[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = self.preferenceHelper.randomizedDeviceToken;
+    }
+    json[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = self.preferenceHelper.randomizedBundleToken;
 }
 
 - (void)addShortURLTokensToJSON:(NSMutableDictionary *)json isSpotlightRequest:(BOOL)isSpotlightRequest {
+    
+    // TODO: should this be cleared when tracking is disabled?
+    json[BRANCH_REQUEST_KEY_SESSION_ID] = self.preferenceHelper.sessionID;
+    
+    // Tokens are not valid when tracking is disabled
+    if ([self isTrackingDisabled]) {
+        return;
+    }
+    
     json[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = self.preferenceHelper.randomizedDeviceToken;
     if (!isSpotlightRequest) {
         json[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = self.preferenceHelper.randomizedBundleToken;
     }
-    json[BRANCH_REQUEST_KEY_SESSION_ID] = self.preferenceHelper.sessionID;
 }
 
 - (void)addPreferenceHelperDataToJSON:(NSMutableDictionary *)json {
@@ -304,6 +353,11 @@
 }
 
 - (void)addTimestampsToJSON:(NSMutableDictionary *)json {
+    // timestamps are not valid when tracking is disabled
+    if ([self isTrackingDisabled]) {
+        return;
+    }
+    
     json[@"lastest_update_time"] = BNCWireFormatFromDate(self.application.currentBuildDate);
     json[@"previous_update_time"] = BNCWireFormatFromDate(self.preferenceHelper.previousAppBuildDate);
     json[@"latest_install_time"] = BNCWireFormatFromDate(self.application.currentInstallDate);
@@ -327,7 +381,12 @@
 - (void)addDefaultRequestDataToJSON:(NSMutableDictionary *)json {
     json[@"branch_key"] = self.branchKey;
     
-    // existing behavior is to omit this field when the value is NO
+    // omit field if value is NO
+    if ([self isTrackingDisabled]) {
+        json[@"tracking_disabled"] = @(1);
+    }
+    
+    // omit field if value is NO
     if ([self isAppExtension]) {
         json[@"ios_extension"] = @(1);
     }
@@ -341,7 +400,10 @@
 - (void)addMetadataToJSON:(NSMutableDictionary *)json {
     NSMutableDictionary *metadata = [[NSMutableDictionary alloc] init];
     [metadata bnc_safeAddEntriesFromDictionary:self.preferenceHelper.requestMetadataDictionary];
+    
+    // TODO: confirm this call does nothing with the new design. copies existing metadata keys
     [metadata bnc_safeAddEntriesFromDictionary:json[BRANCH_REQUEST_KEY_STATE]];
+    
     if (metadata.count) {
         json[BRANCH_REQUEST_KEY_STATE] = metadata;
     }
@@ -383,10 +445,65 @@
 
 // event
 - (void)addV2DictionaryToJSON:(NSMutableDictionary *)json {
-    NSDictionary *tmp = [self.deviceInfo v2dictionary];
+    NSDictionary *tmp = [self v2dictionary];
     if (tmp.count > 0) {
         json[@"user_data"] = tmp;
     }
+}
+
+- (NSDictionary *)v2dictionary {
+    NSMutableDictionary *dictionary = [NSMutableDictionary new];
+    @synchronized (self.deviceInfo) {
+        [self.deviceInfo checkAdvertisingIdentifier];
+
+        BOOL disableAdNetworkCallouts = self.preferenceHelper.disableAdNetworkCallouts;
+        if (disableAdNetworkCallouts) {
+            dictionary[@"disable_ad_network_callouts"] = [NSNumber numberWithBool:disableAdNetworkCallouts];
+        }
+
+        if (self.preferenceHelper.isDebug) {
+            dictionary[@"unidentified_device"] = @(YES);
+        } else {
+            [dictionary bnc_safeSetObject:self.deviceInfo.vendorId forKey:@"idfv"];
+            [dictionary bnc_safeSetObject:self.deviceInfo.advertiserId forKey:@"idfa"];
+        }
+        [dictionary bnc_safeSetObject:self.deviceInfo.anonId forKey:@"anon_id"];
+        [dictionary bnc_safeSetObject:self.deviceInfo.localIPAddress forKey:@"local_ip"];
+
+        [dictionary bnc_safeSetObject:self.deviceInfo.optedInStatus forKey:@"opted_in_status"];
+
+        if (self.preferenceHelper.limitFacebookTracking) {
+            dictionary[@"limit_facebook_tracking"] = @(YES);
+        }
+        [dictionary bnc_safeSetObject:self.deviceInfo.brandName forKey:@"brand"];
+        [dictionary bnc_safeSetObject:self.deviceInfo.modelName forKey:@"model"];
+        [dictionary bnc_safeSetObject:self.deviceInfo.osName forKey:@"os"];
+        [dictionary bnc_safeSetObject:self.deviceInfo.osVersion forKey:@"os_version"];
+        [dictionary bnc_safeSetObject:self.deviceInfo.osBuildVersion forKey:@"build"];
+        [dictionary bnc_safeSetObject:self.deviceInfo.environment forKey:@"environment"];
+        [dictionary bnc_safeSetObject:self.deviceInfo.cpuType forKey:@"cpu_type"];
+        [dictionary bnc_safeSetObject:self.deviceInfo.screenScale forKey:@"screen_dpi"];
+        [dictionary bnc_safeSetObject:self.deviceInfo.screenHeight forKey:@"screen_height"];
+        [dictionary bnc_safeSetObject:self.deviceInfo.screenWidth forKey:@"screen_width"];
+        [dictionary bnc_safeSetObject:self.deviceInfo.locale forKey:@"locale"];
+        [dictionary bnc_safeSetObject:self.deviceInfo.country forKey:@"country"];
+        [dictionary bnc_safeSetObject:self.deviceInfo.language forKey:@"language"];
+        [dictionary bnc_safeSetObject:[self.deviceInfo connectionType] forKey:@"connection_type"];
+        [dictionary bnc_safeSetObject:[self.deviceInfo userAgentString] forKey:@"user_agent"];
+
+        [dictionary bnc_safeSetObject:[BNCPreferenceHelper sharedInstance].userIdentity forKey:@"developer_identity"];
+        
+        [dictionary bnc_safeSetObject:[BNCPreferenceHelper sharedInstance].randomizedDeviceToken forKey:@"randomized_device_token"];
+
+        [dictionary bnc_safeSetObject:self.deviceInfo.applicationVersion forKey:@"app_version"];
+
+        [dictionary bnc_safeSetObject:self.deviceInfo.pluginName forKey:@"plugin_name"];
+        [dictionary bnc_safeSetObject:self.deviceInfo.pluginVersion forKey:@"plugin_version"];
+        dictionary[@"sdk_version"] = BNC_SDK_VERSION;
+        dictionary[@"sdk"] = @"ios";
+    }
+
+    return dictionary;
 }
 
 // install, open, cpid and latd
@@ -396,23 +513,29 @@
 
 - (void)updateDeviceInfoToMutableDictionary:(NSMutableDictionary *)dict {
     @synchronized (self.deviceInfo) {
-        [self.deviceInfo checkAdvertisingIdentifier];
         
-        // hardware id information.  idfa, idfv or random
-        NSString *hardwareId = [self.deviceInfo.hardwareId copy];
-        NSString *hardwareIdType = [self.deviceInfo.hardwareIdType copy];
-        NSNumber *isRealHardwareId = @(self.deviceInfo.isRealHardwareId);
-        if (hardwareId != nil && hardwareIdType != nil && isRealHardwareId != nil) {
-            dict[BRANCH_REQUEST_KEY_HARDWARE_ID] = hardwareId;
-            dict[BRANCH_REQUEST_KEY_HARDWARE_ID_TYPE] = hardwareIdType;
-            dict[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = isRealHardwareId;
-        }
+        // These fields are not necessary for link resolution calls
+        if (![self isTrackingDisabled]) {
+            [self.deviceInfo checkAdvertisingIdentifier];
+            
+            // hardware id information.  idfa, idfv or random
+            NSString *hardwareId = [self.deviceInfo.hardwareId copy];
+            NSString *hardwareIdType = [self.deviceInfo.hardwareIdType copy];
+            NSNumber *isRealHardwareId = @(self.deviceInfo.isRealHardwareId);
+            if (hardwareId != nil && hardwareIdType != nil && isRealHardwareId != nil) {
+                dict[BRANCH_REQUEST_KEY_HARDWARE_ID] = hardwareId;
+                dict[BRANCH_REQUEST_KEY_HARDWARE_ID_TYPE] = hardwareIdType;
+                dict[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = isRealHardwareId;
+            }
 
-        // idfv is duplicated in the hardware id field when idfa is unavailable
-        [self safeSetValue:self.deviceInfo.vendorId forKey:BRANCH_REQUEST_KEY_IOS_VENDOR_ID onDict:dict];
-        // idfa is only in the hardware id field
-        // [self safeSetValue:deviceInfo.advertiserId forKey:@"idfa" onDict:dict];
-        [self safeSetValue:self.deviceInfo.anonId forKey:@"anon_id" onDict:dict];
+            // idfv is duplicated in the hardware id field when idfa is unavailable
+            [self safeSetValue:self.deviceInfo.vendorId forKey:BRANCH_REQUEST_KEY_IOS_VENDOR_ID onDict:dict];
+            // idfa is only in the hardware id field
+            // [self safeSetValue:deviceInfo.advertiserId forKey:@"idfa" onDict:dict];
+            [self safeSetValue:self.deviceInfo.anonId forKey:@"anon_id" onDict:dict];
+            
+            [self safeSetValue:[self.deviceInfo localIPAddress] forKey:@"local_ip" onDict:dict];
+        }
         
         [self safeSetValue:self.deviceInfo.osName forKey:BRANCH_REQUEST_KEY_OS onDict:dict];
         [self safeSetValue:self.deviceInfo.osVersion forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:dict];
@@ -428,18 +551,14 @@
         [self safeSetValue:self.deviceInfo.screenHeight forKey:BRANCH_REQUEST_KEY_SCREEN_HEIGHT onDict:dict];
         [self safeSetValue:self.deviceInfo.screenWidth forKey:BRANCH_REQUEST_KEY_SCREEN_WIDTH onDict:dict];
         
-        [self safeSetValue:[self.deviceInfo localIPAddress] forKey:@"local_ip" onDict:dict];
         [self safeSetValue:[self.deviceInfo connectionType] forKey:@"connection_type" onDict:dict];
         [self safeSetValue:[self.deviceInfo userAgentString] forKey:@"user_agent" onDict:dict];
         
         [self safeSetValue:[self.deviceInfo optedInStatus] forKey:BRANCH_REQUEST_KEY_OPTED_IN_STATUS onDict:dict];
-        
         if ([self installDateIsRecent] && [self.deviceInfo isFirstOptIn]) {
             [self safeSetValue:@(self.deviceInfo.isFirstOptIn) forKey:BRANCH_REQUEST_KEY_FIRST_OPT_IN onDict:dict];
             [BNCPreferenceHelper sharedInstance].hasOptedInBefore = YES;
         }
-        
-        [self safeSetValue:@(self.deviceInfo.isAdTrackingEnabled) forKey:BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED onDict:dict];
         
         [self safeSetValue:self.deviceInfo.applicationVersion forKey:@"app_version" onDict:dict];
         [self safeSetValue:self.deviceInfo.pluginName forKey:@"plugin_name" onDict:dict];
@@ -482,7 +601,7 @@
     return NO;
 }
 
-// skips nils. Low value helper method
+// Low value helper method, ignores nils. Also redundant with the category on NSMutableDictionary.
 - (void)safeSetValue:(NSObject *)value forKey:(NSString *)key onDict:(NSMutableDictionary *)dict {
     if (value) {
         dict[key] = value;
