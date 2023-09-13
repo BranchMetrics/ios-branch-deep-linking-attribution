@@ -338,14 +338,6 @@
     json[@"sdk"] = [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION];
 }
 
-- (void)addRetryCount:(int)count toJSON:(NSMutableDictionary *)json {
-    if (count > 0) {
-        json[@"retryNumber"] = @(count);
-    } else {
-        json[@"retryNumber"] = @(0);
-    }
-}
-
 - (void)addMetadataToJSON:(NSMutableDictionary *)json {
     NSMutableDictionary *metadata = [[NSMutableDictionary alloc] init];
     [metadata bnc_safeAddEntriesFromDictionary:self.preferenceHelper.requestMetadataDictionary];

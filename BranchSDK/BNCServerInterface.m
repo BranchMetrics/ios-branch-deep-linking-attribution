@@ -274,8 +274,8 @@
 
 - (NSURLRequest *)prepareGetRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key retryNumber:(NSInteger)retryNumber {
 
-    // TODO: update retry count in params
-    NSString *requestUrlString = [NSString stringWithFormat:@"%@%@", url, [BNCEncodingUtils encodeDictionaryToQueryString:params]];
+    NSDictionary *tmp = [self addRetryCount:retryNumber toJSON:params];
+    NSString *requestUrlString = [NSString stringWithFormat:@"%@%@", url, [BNCEncodingUtils encodeDictionaryToQueryString:tmp]];
     BNCLogDebug([NSString stringWithFormat:@"URL: %@", requestUrlString]);
 
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:requestUrlString]
@@ -289,7 +289,6 @@
 
 - (NSURLRequest *)preparePostRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key retryNumber:(NSInteger)retryNumber {
 
-    // TODO: update retry count in params
     // TODO: move tracking disabled handling to BNCRequestFactory
 //    if (Branch.trackingDisabled) {
 //        preparedParams[@"tracking_disabled"] = (__bridge NSNumber*) kCFBooleanTrue;
@@ -309,7 +308,9 @@
 //        preparedParams[@"anon_id"] = nil;
 //    }
     
-    NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:params];
+    NSDictionary *tmp = [self addRetryCount:retryNumber toJSON:params];
+
+    NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:tmp];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
 
     BNCLogDebug([NSString stringWithFormat:@"URL: %@.\n", url]);
@@ -362,6 +363,18 @@
     NSString * brttKey = [NSString stringWithFormat:@"%@-brtt", self.requestEndpoint];
     [self.preferenceHelper clearInstrumentationDictionary];
     [self.preferenceHelper addInstrumentationDictionaryKey:brttKey value:lastRoundTripTime];
+}
+
+- (NSDictionary *)addRetryCount:(NSInteger)count toJSON:(NSDictionary *)json {
+    // json should be a NSMutableDictionary, so this should be like a cast
+    NSMutableDictionary *tmp = [json mutableCopy];
+    
+    if (count > 0) {
+        tmp[@"retryNumber"] = @(count);
+    } else {
+        tmp[@"retryNumber"] = @(0);
+    }
+    return tmp;
 }
 
 @end
