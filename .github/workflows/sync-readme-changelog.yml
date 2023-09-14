@@ -1,4 +1,4 @@
-name: Update Changelog on Readme.com
+name: Update Version History on ReadMe
 
 on:
   release:
@@ -13,7 +13,7 @@ jobs:
       id: update
       run: |
         # Get release name, body, and date from the release event
-        release_name="${{ github.event.release.name }}"
+        release_name="${{ github.event.release.tag_name }}"
         release_body="${{ github.event.release.body }}"
         release_date=$(date -d "${{ github.event.release.published_at }}" +"%Y-%B-%d")
 
@@ -45,13 +45,13 @@ jobs:
         channel-id: "CDFGXRM9S"
         payload: |
             {
-                "text": "New Release: Branch iOS SDK v${{ github.event.release.name }}",
+                "text": "New Release: Branch iOS SDK v${{ github.event.release.tag_name }}",
                 "blocks": [
                     {
                         "type": "header",
                         "text": {
                             "type": "plain_text",
-                            "text": ":rocket: New Release: Branch iOS SDK v${{ github.event.release.name }}",                            
+                            "text": ":rocket: New Release: Branch iOS SDK v${{ github.event.release.tag_name }}",                            
                             "emoji": true
                         }
                     },
@@ -62,9 +62,16 @@ jobs:
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": ":star: *What's New*:\n\n${{ github.event.release.body }}"
+                            "text": ":star: *What's New*"
                         }
                     },
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": ${{ toJSON(github.event.release.body) }}
+                        }
+                	},
                     {
                         "type": "divider"
                     },
