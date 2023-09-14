@@ -187,16 +187,4 @@
     XCTAssert([expectedVersion isEqualToString:self.deviceInfo.pluginVersion]);
 }
 
-// just a sanity check on the V2 dictionary
-- (void)testV2Dictionary {
-    NSDictionary *dict = [self.deviceInfo v2dictionary];
-    XCTAssertNotNil(dict);
-    XCTAssertNotNil(dict[@"brand"]);
-    XCTAssertNotNil(dict[@"os"]);
-    XCTAssertNotNil(dict[@"sdk"]);
-    XCTAssertNotNil(dict[@"sdk_version"]);
-    
-    XCTAssertNil(dict[@"disable_ad_network_callouts"]);
-}
-
 @end

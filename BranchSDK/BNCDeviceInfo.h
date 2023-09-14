@@ -20,8 +20,6 @@
 
 - (void)registerPluginName:(NSString *)name version:(NSString *)version;
 
-- (NSDictionary *) v2dictionary;
-
 /*
  Thread safety is the callee's responsibility!
  

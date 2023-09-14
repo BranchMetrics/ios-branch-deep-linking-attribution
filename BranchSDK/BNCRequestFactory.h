@@ -22,7 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 // BranchShortUrlRequest, BranchShortUrlSyncRequest and BranchSpotlightUrlRequest
 - (NSDictionary *)dataForShortURLWithLinkDataDictionary:(NSMutableDictionary *)dictionary isSpotlightRequest:(BOOL)isSpotlightRequest;
 
-- (NSDictionary *)dataForCPID;
 - (NSDictionary *)dataForLATDWithDataDictionary:(NSMutableDictionary *)dictionary;
 
 // TODO: can we finish deprecating close?

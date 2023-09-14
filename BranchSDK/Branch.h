@@ -16,7 +16,6 @@
 // Public classes that should be in the umbrella header
 #import "BranchLinkProperties.h"
 #import "BranchUniversalObject.h"
-#import "BranchCrossPlatformID.h"
 #import "BranchLastAttributedTouchData.h"
 #import "BranchDeepLinkingController.h"
 #import "BranchDelegate.h"
@@ -925,17 +924,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 - (void)logoutWithCallback:(nullable callbackWithStatus)callback;
 
 #pragma mark - Query methods
-
-/**
- Branch includes SDK methods to allow retrieval of our Cross Platform ID (CPID) from the client. This results in an asynchronous call being made to Branch’s servers with CPID data returned when possible.
- 
- This method should only be invoked after initSession completes, either within the callback or after a delay.
- If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
- 
- @param completion callback with cross platform id data
- */
-- (void)crossPlatformIdDataWithCompletion:(void(^) (BranchCrossPlatformID * _Nullable cpid))completion;
 
 /**
  Branch includes SDK methods to allow retrieval of our last attributed touch data (LATD) from the client. This results in an asynchronous call being made to Branch's servers with LATD data returned when possible.

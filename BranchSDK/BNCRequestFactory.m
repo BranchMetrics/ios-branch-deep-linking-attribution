@@ -173,7 +173,7 @@
     // Install, Open and Event
     [self addMetadataWithSKANWindowToJSON:json];
     
-    // Event, CPID and LATD
+    // Event and LATD
     [self addV2DictionaryToJSON:json];
     
     // TODO: refactor to simply request values for event
@@ -195,35 +195,14 @@
     // All POST requests other than Events
     [self addSDKVersionToJSON:json];
     
-    // TODO: is this required?
+    // TODO: is this required? Confirm with server team that we can remove this?
     [self addV1DictionaryToJSON:json];
     
+    // TODO: metadata is very likely dropped at server
     [self addMetadataToJSON:json];
+    
+    // TODO: These are optional fields in the server code. Is there value in sending it?
     [self addShortURLTokensToJSON:json isSpotlightRequest:isSpotlightRequest];
-    
-    return json;
-}
-
-- (NSDictionary *)dataForCPID {
-    
-    // CPID requests are not valid when tracking is disabled
-    if ([self isTrackingDisabled]) {
-        return [NSMutableDictionary new];
-    }
-    
-    NSMutableDictionary *json = [NSMutableDictionary new];
-    
-    // All requests
-    [self addDefaultRequestDataToJSON:json];
-        
-    // All POST requests
-    [self addInstrumentationToJSON:json];
-    
-    // All POST requests other than Events
-    [self addSDKVersionToJSON:json];
-    [self addV2DictionaryToJSON:json];
-    
-    [self addMetadataToJSON:json];
     
     return json;
 }
@@ -245,21 +224,17 @@
     
     // All POST requests other than Events
     [self addSDKVersionToJSON:json];
-    [self addV2DictionaryToJSON:json];
     
+    // TODO: likely a subset of the V2 dictionary is sufficient, should we minimize it
+    [self addV2DictionaryToJSON:json];
+
+    // TODO: probably remove this, this is a pull request
     [self addMetadataToJSON:json];
     
     return json;
 }
 
 - (void)addOpenTokensToJSON:(NSMutableDictionary *)json {
-    
-    // TODO: remove if deprecated
-    // tmp location, it's only on opens like the tokens but it will probably be deleted
-    if (self.preferenceHelper.limitFacebookTracking) {
-        json[@"limit_facebook_tracking"] = (__bridge NSNumber*) kCFBooleanTrue;
-    }
-    
     // Tokens are not valid when tracking is disabled
     if ([self isTrackingDisabled]) {
         return;
@@ -269,13 +244,15 @@
         json[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = self.preferenceHelper.randomizedDeviceToken;
     }
     json[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = self.preferenceHelper.randomizedBundleToken;
+    
+    // TODO: remove if deprecated
+    // tmp location, it's only on opens like the tokens but it will probably be deleted
+    if (self.preferenceHelper.limitFacebookTracking) {
+        json[@"limit_facebook_tracking"] = (__bridge NSNumber*) kCFBooleanTrue;
+    }
 }
 
 - (void)addShortURLTokensToJSON:(NSMutableDictionary *)json isSpotlightRequest:(BOOL)isSpotlightRequest {
-    
-    // TODO: should this be cleared when tracking is disabled?
-    json[BRANCH_REQUEST_KEY_SESSION_ID] = self.preferenceHelper.sessionID;
-    
     // Tokens are not valid when tracking is disabled
     if ([self isTrackingDisabled]) {
         return;
@@ -285,6 +262,7 @@
     if (!isSpotlightRequest) {
         json[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = self.preferenceHelper.randomizedBundleToken;
     }
+    json[BRANCH_REQUEST_KEY_SESSION_ID] = self.preferenceHelper.sessionID;
 }
 
 - (void)addPreferenceHelperDataToJSON:(NSMutableDictionary *)json {
@@ -386,10 +364,11 @@
         json[@"tracking_disabled"] = @(1);
     }
     
+    // TODO: does anyone actually use this, it's set for every request
     // omit field if value is NO
-    if ([self isAppExtension]) {
-        json[@"ios_extension"] = @(1);
-    }
+//    if ([self isAppExtension]) {
+//        json[@"ios_extension"] = @(1);
+//    }
 }
 
 // event omits this from the top level
@@ -422,6 +401,7 @@
     }
 }
 
+// TODO: android is looking to remove this, confirm with server team
 // POST requests include instrumentation
 - (void)addInstrumentationToJSON:(NSMutableDictionary *)json {
     NSDictionary *instrumentationDictionary = self.preferenceHelper.instrumentationParameters;
@@ -506,7 +486,7 @@
     return dictionary;
 }
 
-// install, open, cpid and latd
+// install, open and latd
 - (void)addV1DictionaryToJSON:(NSMutableDictionary *)json {
     [self updateDeviceInfoToMutableDictionary:json];
 }
@@ -535,8 +515,15 @@
             [self safeSetValue:self.deviceInfo.anonId forKey:@"anon_id" onDict:dict];
             
             [self safeSetValue:[self.deviceInfo localIPAddress] forKey:@"local_ip" onDict:dict];
+            
+            [self safeSetValue:[self.deviceInfo optedInStatus] forKey:BRANCH_REQUEST_KEY_OPTED_IN_STATUS onDict:dict];
+            if ([self installDateIsRecent] && [self.deviceInfo isFirstOptIn]) {
+                [self safeSetValue:@(self.deviceInfo.isFirstOptIn) forKey:BRANCH_REQUEST_KEY_FIRST_OPT_IN onDict:dict];
+                [BNCPreferenceHelper sharedInstance].hasOptedInBefore = YES;
+            }
         }
         
+        // TODO: if tracking is disabled can we drop most of these?
         [self safeSetValue:self.deviceInfo.osName forKey:BRANCH_REQUEST_KEY_OS onDict:dict];
         [self safeSetValue:self.deviceInfo.osVersion forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:dict];
         [self safeSetValue:self.deviceInfo.osBuildVersion forKey:@"build" onDict:dict];
@@ -553,12 +540,6 @@
         
         [self safeSetValue:[self.deviceInfo connectionType] forKey:@"connection_type" onDict:dict];
         [self safeSetValue:[self.deviceInfo userAgentString] forKey:@"user_agent" onDict:dict];
-        
-        [self safeSetValue:[self.deviceInfo optedInStatus] forKey:BRANCH_REQUEST_KEY_OPTED_IN_STATUS onDict:dict];
-        if ([self installDateIsRecent] && [self.deviceInfo isFirstOptIn]) {
-            [self safeSetValue:@(self.deviceInfo.isFirstOptIn) forKey:BRANCH_REQUEST_KEY_FIRST_OPT_IN onDict:dict];
-            [BNCPreferenceHelper sharedInstance].hasOptedInBefore = YES;
-        }
         
         [self safeSetValue:self.deviceInfo.applicationVersion forKey:@"app_version" onDict:dict];
         [self safeSetValue:self.deviceInfo.pluginName forKey:@"plugin_name" onDict:dict];

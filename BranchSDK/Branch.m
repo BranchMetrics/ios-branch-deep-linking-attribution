@@ -1154,13 +1154,6 @@ static NSString *bnc_branchKey = nil;
 
 #pragma mark - Query methods
 
-- (void)crossPlatformIdDataWithCompletion:(void(^) (BranchCrossPlatformID * _Nullable cpid))completion {
-    [self initSafetyCheck];
-    dispatch_async(self.isolationQueue, ^(){
-        [BranchCrossPlatformID requestCrossPlatformIdData:self.serverInterface key:self.class.branchKey completion:completion];
-    });
-}
-
 - (void)lastAttributedTouchDataWithAttributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData * _Nullable latd, NSError * _Nullable error))completion {
     [self initSafetyCheck];
     dispatch_async(self.isolationQueue, ^(){

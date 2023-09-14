@@ -86,7 +86,6 @@ NSString * const BRANCH_REQUEST_ENDPOINT_CLOSE = @"close";
 NSString * const BRANCH_REQUEST_ENDPOINT_OPEN = @"open";
 NSString * const BRANCH_REQUEST_ENDPOINT_INSTALL = @"install";
 NSString * const BRANCH_REQUEST_ENDPOINT_REGISTER_VIEW = @"register-view";
-NSString * const BRANCH_REQUEST_ENDPOINT_CPID = @"cpid";
 NSString * const BRANCH_REQUEST_ENDPOINT_LATD = @"cpid/latd";
 
 NSString * const BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN = @"randomized_bundle_token";
