@@ -51,7 +51,7 @@
 }
 
 - (NSURL *)linkServiceURL {
-    return [NSURL URLWithString: [[self getBaseURL] stringByAppendingString: @"/v1/url"]];
+    return [NSURL URLWithString: [[self getBaseURLForLinkingEndpoints] stringByAppendingString: @"/v1/url"]];
 }
 
 // Currently we switch to tracking domains if we detect IDFA, indicating that Ad Tracking is enabled
@@ -61,6 +61,18 @@
         return TRUE;
     }
     return FALSE;
+}
+
+// Linking endpoints are not used for Ads tracking
+- (NSString *)getBaseURLForLinkingEndpoints {
+    NSString * urlString;
+    if (self.useEUServers){
+        urlString = BNC_EU_API_URL;
+    } else {
+        urlString = BNC_API_URL;
+    }
+    
+    return urlString;
 }
 
 - (NSString *)getBaseURL {
