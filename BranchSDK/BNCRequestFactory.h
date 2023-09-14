@@ -24,9 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSDictionary *)dataForLATDWithDataDictionary:(NSMutableDictionary *)dictionary;
 
-// TODO: can we finish deprecating close?
-//- (NSDictionary *)dataForClose;
-
 @end
 
 NS_ASSUME_NONNULL_END

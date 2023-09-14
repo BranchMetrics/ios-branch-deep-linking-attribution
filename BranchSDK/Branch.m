@@ -18,7 +18,6 @@
 #import "BNCServerRequestQueue.h"
 #import "BNCServerResponse.h"
 #import "BNCSystemObserver.h"
-#import "BranchCloseRequest.h"
 #import "BranchConstants.h"
 #import "BranchInstallRequest.h"
 #import "BranchJsonConfig.h"
@@ -1770,28 +1769,9 @@ static NSString *bnc_branchKey = nil;
 
 - (void)applicationWillResignActive {
     if (!Branch.trackingDisabled) {
-        [self callClose];
         [self.requestQueue persistImmediately];
         [BranchOpenRequest setWaitNeededForOpenResponseLock];
         BNCLogDebugSDK(@"Application resigned active.");
-    }
-}
-
-- (void)callClose {
-    if (self.initializationStatus != BNCInitStatusUninitialized) {
-        self.initializationStatus = BNCInitStatusUninitialized;
-
-#if !TARGET_OS_TV
-        BranchContentDiscoverer *contentDiscoverer = [BranchContentDiscoverer getInstance];
-        if (contentDiscoverer) [contentDiscoverer stopDiscoveryTask];
-#endif
-        
-        BOOL sendCloseRequests = [[BNCPreferenceHelper sharedInstance] sendCloseRequests];
-        if (sendCloseRequests && self.preferenceHelper.sessionID && ![self.requestQueue containsClose]) {
-            BranchCloseRequest *req = [[BranchCloseRequest alloc] init];
-            [self.requestQueue enqueue:req];
-            [self processNextQueueItem];
-        }
     }
 }
 

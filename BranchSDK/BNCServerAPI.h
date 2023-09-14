@@ -17,8 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (BNCServerAPI *)sharedInstance;
 
-// retrieves appropriate service URL
-// TODO: Update BNCServerInterface to accept a NSURL. Currently accepts a NSString
+// BNCServerInterface takes a NSString and is using url.absoluteString
 - (NSURL *)installServiceURL;
 - (NSURL *)openServiceURL;
 - (NSURL *)standardEventServiceURL;

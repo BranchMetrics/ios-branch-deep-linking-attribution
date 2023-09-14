@@ -64,8 +64,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) NSInteger savedURLPatternListVersion;
 @property (assign, nonatomic) BOOL dropURLOpen;
 
-@property (assign, nonatomic) BOOL sendCloseRequests;
-
 @property (assign, nonatomic) BOOL trackingDisabled;
 
 @property (copy, nonatomic) NSString *referrerGBRAID;

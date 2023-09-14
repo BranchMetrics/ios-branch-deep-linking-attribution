@@ -316,11 +316,6 @@
     BNCServerResponse *serverResponse = [[BNCServerResponse alloc] init];
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
     NSString *requestId = httpResponse.allHeaderFields[@"X-Branch-Request-Id"];
-
-    NSString *sendCloseRequests = httpResponse.allHeaderFields[@"X-Branch-Send-Close-Request"];
-    if (sendCloseRequests != nil) {
-        [[BNCPreferenceHelper sharedInstance] setSendCloseRequests:sendCloseRequests.boolValue];
-    }
     
     if (!error) {
         serverResponse.statusCode = @([httpResponse statusCode]);

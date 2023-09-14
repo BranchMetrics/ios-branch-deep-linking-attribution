@@ -676,22 +676,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
 }
 
-- (BOOL)sendCloseRequests {
-    @synchronized(self) {
-        NSNumber *b = (id) [self readObjectFromDefaults:@"sendCloseRequests"];
-        if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
-        
-        // by default, we do not send close events
-        return NO;
-    }
-}
-
-- (void)setSendCloseRequests:(BOOL)disabled {
-    @synchronized(self) {
-        [self writeObjectToDefaults:@"sendCloseRequests" value:@(disabled)];
-    }
-}
-
 - (void)setReferringURLQueryParameters:(NSMutableDictionary *)parameters {
     @synchronized(self) {
         _referringURLQueryParameters = parameters;

@@ -82,7 +82,6 @@ NSString * const BRANCH_REQUEST_KEY_SCCID = @"sccid";
 NSString * const BRANCH_REQUEST_ENDPOINT_APP_LINK_SETTINGS = @"app-link-settings";
 NSString * const BRANCH_REQUEST_ENDPOINT_USER_COMPLETED_ACTION = @"event";
 NSString * const BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL = @"url";
-NSString * const BRANCH_REQUEST_ENDPOINT_CLOSE = @"close";
 NSString * const BRANCH_REQUEST_ENDPOINT_OPEN = @"open";
 NSString * const BRANCH_REQUEST_ENDPOINT_INSTALL = @"install";
 NSString * const BRANCH_REQUEST_ENDPOINT_REGISTER_VIEW = @"register-view";
