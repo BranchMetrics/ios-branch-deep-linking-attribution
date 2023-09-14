@@ -110,6 +110,19 @@
     params[@"first_install_time"] = BNCWireFormatFromDate(application.firstInstallDate);
     params[@"update"] = [self.class appUpdateState];
 
+    if (@available(iOS 16.1, macCatalyst 16.1, *)){
+        if ([BNCPreferenceHelper sharedInstance].invokeRegisterApp) {
+            int currentWindow = [[BNCSKAdNetwork sharedInstance] calculateSKANWindowForTime:[NSDate date]];
+            if (currentWindow == BranchSkanWindowFirst){
+                params[BRANCH_REQUEST_KEY_SKAN_POSTBACK_INDEX] = BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_0;
+            } else if (currentWindow == BranchSkanWindowSecond) {
+                params[BRANCH_REQUEST_KEY_SKAN_POSTBACK_INDEX] = BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_1;
+            } else if (currentWindow == BranchSkanWindowThird) {
+                params[BRANCH_REQUEST_KEY_SKAN_POSTBACK_INDEX] = BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_2;
+            }
+        }
+    }
+    
     [serverInterface postRequest:params
         url:[preferenceHelper
         getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN]
