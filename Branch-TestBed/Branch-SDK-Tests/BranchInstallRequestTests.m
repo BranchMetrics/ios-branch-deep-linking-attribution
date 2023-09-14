@@ -72,7 +72,6 @@
     NSMutableDictionary *expectedParams = [NSMutableDictionary dictionaryWithDictionary:@{
         @"app_version":                 @"foo-app-version",
         @"debug":                       @1,
-        @"facebook_app_link_checked":   @0,
         @"latest_install_time":         BNCWireFormatFromDate(appDate),
         @"ios_bundle_id":               @"foo-bundle-id",
         @"ios_team_id":                 @"R63EM248DP",
