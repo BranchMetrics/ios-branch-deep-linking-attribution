@@ -17,6 +17,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCEventUtils.h"
 #import "BNCRequestFactory.h"
+#import "BNCServerAPI.h"
 
 #pragma mark BranchStandardEvents
 
@@ -309,8 +310,8 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
     
     NSString *serverURL =
     ([self.class.standardEvents containsObject:self.eventName])
-    ? [NSString stringWithFormat:@"%@/%@", preferenceHelper.branchAPIURL, @"v2/event/standard"]
-    : [NSString stringWithFormat:@"%@/%@", preferenceHelper.branchAPIURL, @"v2/event/custom"];
+    ? [[BNCServerAPI sharedInstance] standardEventServiceURL].absoluteString
+    : [[BNCServerAPI sharedInstance] customEventServiceURL].absoluteString;
 
     BranchEventRequest *request =
     [[BranchEventRequest alloc]

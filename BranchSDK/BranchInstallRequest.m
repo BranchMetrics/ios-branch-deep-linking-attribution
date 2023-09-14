@@ -7,7 +7,7 @@
 //
 
 #import "BranchInstallRequest.h"
-#import "BNCPreferenceHelper.h"
+#import "BNCServerAPI.h"
 #import "BranchConstants.h"
 
 #import "BNCRequestFactory.h"
@@ -22,9 +22,7 @@
     
     // TODO: move this logic
     super.clearLocalURL = NO;
-    
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
-    
+        
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key];
     NSDictionary *params = [factory dataForInstall];
 
@@ -48,7 +46,7 @@
 //        }
 //    }
 
-    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_INSTALL] key:key callback:callback];
+    [serverInterface postRequest:params url:[[BNCServerAPI sharedInstance] installServiceURL].absoluteString key:key callback:callback];
 }
 
 - (NSString *)getActionName {

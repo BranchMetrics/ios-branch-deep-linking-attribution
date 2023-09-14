@@ -24,53 +24,62 @@
     return serverAPI;
 }
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.useTrackingDomain = NO;
+        self.useEUServers = NO;
+        self.automaticallyEnableTrackingDomain = YES;
+    }
+    return self;
+}
+
 - (NSURL *)installServiceURL{
-    return [NSURL URLWithString: [[self getBaseURLWithVersion] stringByAppendingString: BRANCH_REQUEST_ENDPOINT_INSTALL]];
+    return [NSURL URLWithString: [[self getBaseURL] stringByAppendingString: @"/v1/install"]];
 }
 
 - (NSURL *)openServiceURL {
-    return [NSURL URLWithString: [[self getBaseURLWithVersion] stringByAppendingString: BRANCH_REQUEST_ENDPOINT_OPEN]];
+    return [NSURL URLWithString: [[self getBaseURL] stringByAppendingString: @"/v1/open"]];
 }
 
-- (NSURL *)eventServiceURL{
-    return [NSURL URLWithString: [[self getBaseURLWithVersion] stringByAppendingString: BRANCH_REQUEST_ENDPOINT_USER_COMPLETED_ACTION]];
+- (NSURL *)standardEventServiceURL{
+    return [NSURL URLWithString: [[self getBaseURL] stringByAppendingString: @"/v2/event/standard"]];
+}
+
+- (NSURL *)customEventServiceURL{
+    return [NSURL URLWithString: [[self getBaseURL] stringByAppendingString: @"/v2/event/custom"]];
 }
 
 - (NSURL *)linkServiceURL {
-    return [NSURL URLWithString: [[self getBaseURLWithVersion] stringByAppendingString: BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL]];
+    return [NSURL URLWithString: [[self getBaseURL] stringByAppendingString: @"/v1/url"]];
 }
 
-- (BOOL)useTrackingDomain {
+// Currently we switch to tracking domains if we detect IDFA, indicating that Ad Tracking is enabled
+- (BOOL)optedIntoIDFA {
     NSString* optedInStatus = [BNCSystemObserver attOptedInStatus];
-    
     if ([optedInStatus isEqualToString:@"authorized"]){
         return TRUE;
     }
     return FALSE;
 }
 
-- (void)setUseEUServers:(BOOL)useEUServers {
-    [[BNCPreferenceHelper sharedInstance] setUseEUServers: useEUServers];
-}
-
-- (BOOL)useEUServers {
-    return [[BNCPreferenceHelper sharedInstance] useEUServers];
-}
-
-- (NSString *) getBaseURLWithVersion {
+- (NSString *)getBaseURL {
+    if (self.automaticallyEnableTrackingDomain) {
+        self.useTrackingDomain = [self optedIntoIDFA];
+    }
+    
     NSString * urlString;
     
-    if ([self useTrackingDomain] && [ self useEUServers]){
+    if (self.useTrackingDomain && self.useEUServers){
         urlString = BNC_SAFETRACK_EU_API_URL;
-    } else if ([self useTrackingDomain]) {
+    } else if (self.useTrackingDomain) {
         urlString = BNC_SAFETRACK_API_URL;
-    } else if ([self useEUServers]){
+    } else if (self.useEUServers){
         urlString = BNC_EU_API_URL;
     } else {
         urlString = BNC_API_URL;
     }
     
-    urlString = [urlString stringByAppendingFormat:@"/%@/", BNC_API_VERSION_3];
     return urlString;
 }
 

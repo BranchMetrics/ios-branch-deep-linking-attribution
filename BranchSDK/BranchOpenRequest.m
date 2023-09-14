@@ -23,6 +23,8 @@
 #import "BNCLog.h"
 #import "BNCRequestFactory.h"
 
+#import "BNCServerAPI.h"
+
 @interface BranchOpenRequest ()
 @property (assign, nonatomic) BOOL isInstall;
 @end
@@ -50,7 +52,7 @@
     NSDictionary *params = [factory dataForOpen];
 
     [serverInterface postRequest:params
-        url:[[BNCPreferenceHelper sharedInstance] getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN]
+        url:[[BNCServerAPI sharedInstance] openServiceURL].absoluteString
         key:key
         callback:callback];
 }

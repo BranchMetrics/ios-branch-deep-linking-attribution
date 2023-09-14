@@ -113,8 +113,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     highestConversionValueSent = _highestConversionValueSent,
     referringURLQueryParameters = _referringURLQueryParameters,
     anonID = _anonID,
-    patternListURL = _patternListURL,
-    useEUServers = _useEUServers;
+    patternListURL = _patternListURL;
 
 + (BNCPreferenceHelper *)sharedInstance {
     static BNCPreferenceHelper *preferenceHelper;
@@ -152,14 +151,15 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 #pragma mark - API methods
 
-- (void) setBranchAPIURL:(NSString*)branchAPIURL_ {
+// TODO: figure out if we can support custom domains for proxying with Apple's Tracking domains.
+- (void)setBranchAPIURL:(NSString*)branchAPIURL_ {
     @synchronized (self) {
         _branchAPIURL = [branchAPIURL_ copy];
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_API_URL value:_branchAPIURL];
     }
 }
 
-- (NSString*) branchAPIURL {
+- (NSString *)branchAPIURL {
     @synchronized (self) {
         if (!_branchAPIURL) {
             _branchAPIURL = [self readStringFromDefaults:BRANCH_PREFS_KEY_API_URL];
@@ -182,6 +182,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     return [[self getAPIBaseURL] stringByAppendingString:endpoint];
 }
 
+// TODO: reconsider this API, it's used to identify the behavior of referring URL query param handling. Not a good design IMHO.
 - (NSString *)getEndpointFromURL:(NSString *)url {
     NSString *APIBase = self.branchAPIURL;
     if ([url hasPrefix:APIBase]) {
@@ -814,23 +815,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     @synchronized(self) {
         NSNumber *b = [NSNumber numberWithBool:invoke];
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_SKAN_INVOKE_REGISTER_APP value:b];
-    }
-}
-
-- (BOOL) useEUServers {
-    @synchronized(self) {
-        NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_USE_EU_SERVERS];
-        if ([b isKindOfClass:NSNumber.class])
-            return [b boolValue];
-        return false;
-    }
-}
-
-- (void)setUseEUServers:(BOOL)useEUServers {
-    @synchronized(self) {
-        NSNumber *b = [NSNumber numberWithBool:useEUServers];
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_USE_EU_SERVERS value:b];
-
     }
 }
 

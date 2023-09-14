@@ -13,109 +13,229 @@
 #import "BranchConstants.h"
 
 @interface BNCAPIServerTest : XCTestCase
-@property (nonatomic, strong, readwrite) BNCServerAPI *serverAPI;
-@property (nonatomic, strong, readwrite) NSString *optedInStatus;
+
 @end
 
 @implementation BNCAPIServerTest
 
-- (void)setUp {
-    self.serverAPI = [BNCServerAPI sharedInstance];
-    self.optedInStatus = [BNCSystemObserver attOptedInStatus];
-}
-
-- (void)testGetBaseURLWithVersion {
-    
-    NSString *urlStr = [[BNCServerAPI sharedInstance] getBaseURLWithVersion];
-    NSString *expectedUrlStr;
-    
-    if ([self.optedInStatus isEqualToString:@"authorized"]){
-        expectedUrlStr =  [BNC_SAFETRACK_API_URL stringByAppendingFormat:@"/%@/", BNC_API_VERSION_3];
-    } else {
-        expectedUrlStr =  [BNC_API_URL stringByAppendingFormat:@"/%@/", BNC_API_VERSION_3];
-    }
-    
-    XCTAssertTrue([urlStr isEqualToString:expectedUrlStr]);
-    
-    [self.serverAPI setUseEUServers:true];
-    urlStr = [[BNCServerAPI sharedInstance] getBaseURLWithVersion];
-    
-    if ([self.optedInStatus isEqualToString:@"authorized"]){
-        expectedUrlStr =  [BNC_SAFETRACK_EU_API_URL stringByAppendingFormat:@"/%@/", BNC_API_VERSION_3];
-    } else {
-        expectedUrlStr =  [BNC_EU_API_URL stringByAppendingFormat:@"/%@/", BNC_API_VERSION_3];
-    }
-    
-    XCTAssertTrue([urlStr isEqualToString:expectedUrlStr]);
-    [self.serverAPI setUseEUServers:false];
-}
-
 - (void)testInstallServiceURL {
-    NSURL *url;
-    NSString *expectedUrlStr;
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
     
-    [self.serverAPI setUseEUServers:true];
-    url = [[BNCServerAPI sharedInstance] installServiceURL];
-    
-    if ([self.optedInStatus isEqualToString:@"authorized"]){
-        expectedUrlStr =  [BNC_SAFETRACK_EU_API_URL stringByAppendingFormat:@"/%@/%@", BNC_API_VERSION_3, BRANCH_REQUEST_ENDPOINT_INSTALL];
-    } else {
-        expectedUrlStr =  [BNC_EU_API_URL stringByAppendingFormat:@"/%@/%@", BNC_API_VERSION_3, BRANCH_REQUEST_ENDPOINT_INSTALL];
-    }
+    NSURL *url = [serverAPI installServiceURL];
+    NSString *expectedUrlStr = @"https://api3.branch.io/v1/install";
     
     XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
-    [self.serverAPI setUseEUServers:false];
 }
 
 - (void)testOpenServiceURL {
-    NSURL *url;
-    NSString *expectedUrlStr;
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
     
-    [self.serverAPI setUseEUServers:true];
-    url = [[BNCServerAPI sharedInstance] openServiceURL];
-    
-    if ([self.optedInStatus isEqualToString:@"authorized"]){
-        expectedUrlStr =  [BNC_SAFETRACK_EU_API_URL stringByAppendingFormat:@"/%@/%@", BNC_API_VERSION_3, BRANCH_REQUEST_ENDPOINT_OPEN];
-    } else {
-        expectedUrlStr =  [BNC_EU_API_URL stringByAppendingFormat:@"/%@/%@", BNC_API_VERSION_3, BRANCH_REQUEST_ENDPOINT_OPEN];
-    }
+    NSURL *url = [serverAPI openServiceURL];
+    NSString *expectedUrlStr = @"https://api3.branch.io/v1/open";
     
     XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
-    [self.serverAPI setUseEUServers:false];
 }
 
-- (void)testEventServiceURL {
-    NSURL *url;
-    NSString *expectedUrlStr;
+- (void)testStandardEventServiceURL {
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
     
-    [self.serverAPI setUseEUServers:true];
-    url = [[BNCServerAPI sharedInstance] eventServiceURL];
-    
-    if ([self.optedInStatus isEqualToString:@"authorized"]){
-        expectedUrlStr =  [BNC_SAFETRACK_EU_API_URL stringByAppendingFormat:@"/%@/%@", BNC_API_VERSION_3, BRANCH_REQUEST_ENDPOINT_USER_COMPLETED_ACTION];
-    } else {
-        expectedUrlStr =  [BNC_EU_API_URL stringByAppendingFormat:@"/%@/%@", BNC_API_VERSION_3, BRANCH_REQUEST_ENDPOINT_USER_COMPLETED_ACTION];
-    }
+    NSURL *url = [serverAPI standardEventServiceURL];
+    NSString *expectedUrlStr = @"https://api3.branch.io/v2/event/standard";
     
     XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
-    [self.serverAPI setUseEUServers:false];
+}
+
+- (void)testCustomEventServiceURL {
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    
+    NSURL *url = [serverAPI customEventServiceURL];
+    NSString *expectedUrlStr = @"https://api3.branch.io/v2/event/custom";
+    
+    XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
 }
 
 - (void)testLinkServiceURL {
-    NSURL *url;
-    NSString *expectedUrlStr;
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
     
-    [self.serverAPI setUseEUServers:true];
-    url = [[BNCServerAPI sharedInstance] linkServiceURL];
-    
-    if ([self.optedInStatus isEqualToString:@"authorized"]){
-        expectedUrlStr =  [BNC_SAFETRACK_EU_API_URL stringByAppendingFormat:@"/%@/%@", BNC_API_VERSION_3, BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL];
-    } else {
-        expectedUrlStr =  [BNC_EU_API_URL stringByAppendingFormat:@"/%@/%@", BNC_API_VERSION_3, BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL];
-    }
+    NSURL *url = [serverAPI linkServiceURL];
+    NSString *expectedUrlStr = @"https://api3.branch.io/v1/url";
     
     XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
-    [self.serverAPI setUseEUServers:false];
+}
+
+- (void)testInstallServiceURL_Tracking {
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    serverAPI.useTrackingDomain = YES;
+    
+    NSURL *url = [serverAPI installServiceURL];
+    NSString *expectedUrlStr = @"https://api-safetrack.branch.io/v1/install";
+    
+    XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
+}
+
+- (void)testOpenServiceURL_Tracking {
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    serverAPI.useTrackingDomain = YES;
+    
+    NSURL *url = [serverAPI openServiceURL];
+    NSString *expectedUrlStr = @"https://api-safetrack.branch.io/v1/open";
+    
+    XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
+}
+
+- (void)testStandardEventServiceURL_Tracking {
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    serverAPI.useTrackingDomain = YES;
+    
+    NSURL *url = [serverAPI standardEventServiceURL];
+    NSString *expectedUrlStr = @"https://api-safetrack.branch.io/v2/event/standard";
+    
+    XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
+}
+
+- (void)testCustomEventServiceURL_Tracking {
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    serverAPI.useTrackingDomain = YES;
+    
+    NSURL *url = [serverAPI customEventServiceURL];
+    NSString *expectedUrlStr = @"https://api-safetrack.branch.io/v2/event/custom";
+    
+    XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
+}
+
+- (void)testLinkServiceURL_Tracking {
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    serverAPI.useTrackingDomain = YES;
+    
+    NSURL *url = [serverAPI linkServiceURL];
+    NSString *expectedUrlStr = @"https://api-safetrack.branch.io/v1/url";
+    
+    XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
+}
+
+- (void)testInstallServiceURL_EU {
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    serverAPI.useEUServers = YES;
+    
+    NSURL *url = [serverAPI installServiceURL];
+    NSString *expectedUrlStr = @"https://api3-eu.branch.io/v1/install";
+    
+    XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
+}
+
+- (void)testOpenServiceURL_EU {
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    serverAPI.useEUServers = YES;
+
+    NSURL *url = [serverAPI openServiceURL];
+    NSString *expectedUrlStr = @"https://api3-eu.branch.io/v1/open";
+    
+    XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
+}
+
+- (void)testStandardEventServiceURL_EU {
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    serverAPI.useEUServers = YES;
+
+    NSURL *url = [serverAPI standardEventServiceURL];
+    NSString *expectedUrlStr = @"https://api3-eu.branch.io/v2/event/standard";
+    
+    XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
+}
+
+- (void)testCustomEventServiceURL_EU {
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    serverAPI.useEUServers = YES;
+
+    NSURL *url = [serverAPI customEventServiceURL];
+    NSString *expectedUrlStr = @"https://api3-eu.branch.io/v2/event/custom";
+    
+    XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
+}
+
+- (void)testLinkServiceURL_EU {
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    serverAPI.useEUServers = YES;
+
+    NSURL *url = [serverAPI linkServiceURL];
+    NSString *expectedUrlStr = @"https://api3-eu.branch.io/v1/url";
+    
+    XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
+}
+
+- (void)testInstallServiceURL_EUTracking {
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    serverAPI.useEUServers = YES;
+    serverAPI.useTrackingDomain = YES;
+    
+    NSURL *url = [serverAPI installServiceURL];
+    NSString *expectedUrlStr = @"https://api-safetrack-eu.branch.io/v1/install";
+    
+    XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
+}
+
+- (void)testOpenServiceURL_EUTracking {
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    serverAPI.useEUServers = YES;
+    serverAPI.useTrackingDomain = YES;
+
+    NSURL *url = [serverAPI openServiceURL];
+    NSString *expectedUrlStr = @"https://api-safetrack-eu.branch.io/v1/open";
+    
+    XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
+}
+
+- (void)testStandardEventServiceURL_EUTracking {
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    serverAPI.useEUServers = YES;
+    serverAPI.useTrackingDomain = YES;
+
+    NSURL *url = [serverAPI standardEventServiceURL];
+    NSString *expectedUrlStr = @"https://api-safetrack-eu.branch.io/v2/event/standard";
+    
+    XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
+}
+
+- (void)testCustomEventServiceURL_EUTracking {
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    serverAPI.useEUServers = YES;
+    serverAPI.useTrackingDomain = YES;
+
+    NSURL *url = [serverAPI customEventServiceURL];
+    NSString *expectedUrlStr = @"https://api-safetrack-eu.branch.io/v2/event/custom";
+    
+    XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
+}
+
+- (void)testLinkServiceURL_EUTracking {
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    serverAPI.useEUServers = YES;
+    serverAPI.useTrackingDomain = YES;
+
+    NSURL *url = [serverAPI linkServiceURL];
+    NSString *expectedUrlStr = @"https://api-safetrack-eu.branch.io/v1/url";
+    
+    XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
 }
 
 @end

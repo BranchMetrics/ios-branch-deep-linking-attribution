@@ -18,5 +18,3 @@ NSString*  const BNC_API_URL                = @"https://api3.branch.io";
 NSString*  const BNC_SAFETRACK_API_URL      = @"https://api-safetrack.branch.io";
 NSString*  const BNC_EU_API_URL             = @"https://api3-eu.branch.io";
 NSString*  const BNC_SAFETRACK_EU_API_URL   = @"https://api-safetrack-eu.branch.io";
-
-NSString*  const BNC_API_VERSION_3 = @"v3";

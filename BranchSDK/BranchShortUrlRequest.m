@@ -12,6 +12,7 @@
 #import "BranchConstants.h"
 #import "BNCConfig.h"
 #import "BNCRequestFactory.h"
+#import "BNCServerAPI.h"
 
 @interface BranchShortUrlRequest ()
 
@@ -60,7 +61,7 @@
     NSDictionary *json = [factory dataForShortURLWithLinkDataDictionary:[self.linkData.data mutableCopy] isSpotlightRequest:self.isSpotlightRequest];
 
     [serverInterface postRequest:json
-        url:[[BNCPreferenceHelper sharedInstance] getAPIURL:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL]
+        url:[[BNCServerAPI sharedInstance] linkServiceURL].absoluteString
         key:key
         callback:callback];
 }
