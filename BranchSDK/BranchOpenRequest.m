@@ -46,8 +46,6 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
-    // TODO: handle clearLocalURL, it's needs to be touched in two disparate locations...
-    self.clearLocalURL = NO;
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key];
     NSDictionary *params = [factory dataForOpen];
 
@@ -174,18 +172,12 @@
     NSString *string = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN]);
     if (!string) {
         // fallback to deprecated name. The old name was easily confused with the setIdentity, hence the name change.
+        // fallback to deprecated name. The old name was easily confused with the setIdentity, hence the name change.
         string = BNCStringFromWireFormat(data[@"identity_id"]);
     }
     
     if (string) {
         preferenceHelper.randomizedBundleToken = string;
-    }
-    
-    if (self.clearLocalURL) {
-        preferenceHelper.localUrl = nil;
-#if !TARGET_OS_TV
-        UIPasteboard.generalPasteboard.URL = nil;
-#endif
     }
     
     [BranchOpenRequest releaseOpenResponseLock];

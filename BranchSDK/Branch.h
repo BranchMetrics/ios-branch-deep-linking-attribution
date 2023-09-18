@@ -255,7 +255,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 + (BOOL)branchKeyIsSet;
 
-/// TODO: Add documentation.
 @property (weak, nullable) NSObject<BranchDelegate>* delegate;
 
 //@property (strong, nonatomic, nullable) BranchEvent *testEvent;

@@ -33,6 +33,7 @@
 #import "BNCAppGroupsData.h"
 #import "BNCSKAdNetwork.h"
 #import "BNCReferringURLUtility.h"
+#import "BNCPasteboard.h"
 
 @interface BNCRequestFactory()
 
@@ -46,6 +47,7 @@
 @property (nonatomic, strong, readwrite) BNCAppGroupsData *appGroupsData;
 @property (nonatomic, strong, readwrite) BNCSKAdNetwork *skAdNetwork;
 @property (nonatomic, strong, readwrite) BNCAppleReceipt *appleReceipt;
+@property (nonatomic, strong, readwrite) BNCPasteboard *pasteboard;
 
 @end
 
@@ -69,6 +71,7 @@
         self.appGroupsData = [BNCAppGroupsData shared];
         self.skAdNetwork = [BNCSKAdNetwork sharedInstance];
         self.appleReceipt = [BNCAppleReceipt sharedInstance];
+        self.pasteboard = [BNCPasteboard sharedInstance];
     }
     return self;
 }
@@ -102,7 +105,6 @@
     [self addPreferenceHelperDataToJSON:json];
     [self addPartnerParametersToJSON:json];
     [self addAppleReceiptSourceToJSON:json];
-    [self addLocalURLToJSON:json];
     [self addTimestampsToJSON:json];
     
     [self addAppleAttributionTokenToJSON:json];
@@ -110,6 +112,7 @@
     // Install Only
     [self addAppleReceiptDataToJSON:json];
     [self addAppClipDataToJSON:json];
+    [self addLocalURLToInstallJSON:json];
     
     // TODO: refactor to simply request values for install
     [self addReferringURLsToJSON:json forEndpoint:@"/v1/install"];
@@ -139,7 +142,6 @@
     [self addPreferenceHelperDataToJSON:json];
     [self addPartnerParametersToJSON:json];
     [self addAppleReceiptSourceToJSON:json];
-    [self addLocalURLToJSON:json];
     [self addTimestampsToJSON:json];
     
     // Usually sent with install, but retry on open if it didn't get sent
@@ -147,6 +149,7 @@
     
     // Only for opens
     [self addOpenTokensToJSON:json];
+    [self addLocalURLToOpenJSON:json];
     
     // TODO: refactor to simply request values for open
     [self addReferringURLsToJSON:json forEndpoint:@"/v1/open"];
@@ -195,13 +198,13 @@
     // All POST requests other than Events
     [self addSDKVersionToJSON:json];
     
-    // TODO: is this required? Confirm with server team that we can remove this?
+    // TODO: is this required? Confirm with server team that we can remove this.
     [self addV1DictionaryToJSON:json];
     
-    // TODO: metadata is very likely dropped at server
+    // TODO: metadata is very likely dropped at server. Confirm with server team.
     [self addMetadataToJSON:json];
     
-    // TODO: These are optional fields in the server code. Is there value in sending it?
+    // TODO: These are optional fields in the server code. Can we drop these as well?
     [self addShortURLTokensToJSON:json isSpotlightRequest:isSpotlightRequest];
     
     return json;
@@ -225,10 +228,10 @@
     // All POST requests other than Events
     [self addSDKVersionToJSON:json];
     
-    // TODO: likely a subset of the V2 dictionary is sufficient, should we minimize it
+    // TODO: likely a subset of the V2 dictionary is sufficient, should we minimize it.
     [self addV2DictionaryToJSON:json];
 
-    // TODO: probably remove this, this is a pull request
+    // TODO: probably remove this, this is a data pull request and likely does nothing.
     [self addMetadataToJSON:json];
     
     return json;
@@ -312,22 +315,48 @@
     }
 }
 
-// NativeLink URL
-// TODO: isn't this install only? Why was this code in the open request code? Bad inheritance design?
-- (BOOL)addLocalURLToJSON:(NSMutableDictionary *)json {
+- (void)addLocalURLToInstallJSON:(NSMutableDictionary *)json {
+    if ([BNCPasteboard sharedInstance].checkOnInstall) {
+        NSURL *pasteboardURL = nil;
+        if (@available(iOS 16.0, macCatalyst 16.0, *)) {
+            NSString *localURLString = [self.preferenceHelper localUrl];
+            if (localURLString){
+                // TODO: url was found in storage, remember to clear it
+                pasteboardURL = [[NSURL alloc] initWithString:localURLString];
+            } else {
+                pasteboardURL = [[BNCPasteboard sharedInstance] checkForBranchLink];
+            }
+        } else {
+            pasteboardURL = [[BNCPasteboard sharedInstance] checkForBranchLink];
+        }
+
+        if (pasteboardURL) {
+            [self safeSetValue:pasteboardURL.absoluteString forKey:BRANCH_REQUEST_KEY_LOCAL_URL onDict:json];
+            [self clearLocalURLFromStorage];
+        }
+    }
+}
+
+// If the client uses a UIPasteControl, force a new open to fetch the payload
+- (void)addLocalURLToOpenJSON:(NSMutableDictionary *)json {
     if (@available(iOS 16.0, macCatalyst 16.0, *)) {
         NSString *localURLString = [[BNCPreferenceHelper sharedInstance] localUrl];
-        if(localURLString){
-            NSURL *localURL = [[NSURL alloc] initWithString:localURLString];
-            if (localURL) {
-                [self safeSetValue:localURL.absoluteString forKey:BRANCH_REQUEST_KEY_LOCAL_URL onDict:json];
-                // TODO: add logic status logic. Maybe a callback block indicating status?
-                //self.clearLocalURL = TRUE;
-                return YES;
+        if (localURLString){
+            // TODO: url was found in storage, remember to clear it
+            NSURL *pasteboardURL = [[NSURL alloc] initWithString:localURLString];
+            if (pasteboardURL) {
+                [self safeSetValue:pasteboardURL.absoluteString forKey:BRANCH_REQUEST_KEY_LOCAL_URL onDict:json];
+                [self clearLocalURLFromStorage];
             }
         }
     }
-    return NO;
+}
+
+- (void)clearLocalURLFromStorage {
+    self.preferenceHelper.localUrl = nil;
+#if !TARGET_OS_TV
+    UIPasteboard.generalPasteboard.URL = nil;
+#endif
 }
 
 - (void)addTimestampsToJSON:(NSMutableDictionary *)json {
@@ -341,7 +370,7 @@
     json[@"latest_install_time"] = BNCWireFormatFromDate(self.application.currentInstallDate);
     json[@"first_install_time"] = BNCWireFormatFromDate(self.application.firstInstallDate);
     
-    // TODO: can we remove this deprecated update flag?
+    // TODO: can we omit this deprecated update flag?
     json[@"update"] = @(0);
 }
 
@@ -363,12 +392,6 @@
     if ([self isTrackingDisabled]) {
         json[@"tracking_disabled"] = @(1);
     }
-    
-    // TODO: does anyone actually use this, it's set for every request
-    // omit field if value is NO
-//    if ([self isAppExtension]) {
-//        json[@"ios_extension"] = @(1);
-//    }
 }
 
 // event omits this from the top level
@@ -380,7 +403,8 @@
     NSMutableDictionary *metadata = [[NSMutableDictionary alloc] init];
     [metadata bnc_safeAddEntriesFromDictionary:self.preferenceHelper.requestMetadataDictionary];
     
-    // TODO: confirm this call does nothing with the new design. copies existing metadata keys
+    // TODO: confirm this call does nothing with the new design.
+    // copies existing metadata keys, believe there's only one pass on this so it should be empty.
     [metadata bnc_safeAddEntriesFromDictionary:json[BRANCH_REQUEST_KEY_STATE]];
     
     if (metadata.count) {

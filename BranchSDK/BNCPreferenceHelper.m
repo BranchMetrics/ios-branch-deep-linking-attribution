@@ -182,7 +182,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     return [[self getAPIBaseURL] stringByAppendingString:endpoint];
 }
 
-// TODO: reconsider this API, it's used to identify the behavior of referring URL query param handling. Not a good design IMHO.
+// TODO: reconsider this API, it's used to identify the behavior of referring URL query param handling
 - (NSString *)getEndpointFromURL:(NSString *)url {
     NSString *APIBase = self.branchAPIURL;
     if ([url hasPrefix:APIBase]) {
@@ -401,6 +401,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (void)setInitialReferrer:(NSString *)initialReferrer {
     [self writeObjectToDefaults:BRANCH_REQUEST_KEY_INITIAL_REFERRER value:initialReferrer];
 }
+
 - (NSString *)sessionParams {
     @synchronized (self) {
         if (!_sessionParams) {

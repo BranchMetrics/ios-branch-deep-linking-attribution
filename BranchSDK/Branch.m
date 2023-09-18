@@ -2138,6 +2138,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
+// TODO: can we deprecate and remove this, it doesn't work well.
 // UI code, must run on main
 - (void)automaticallyDeeplinkWithReferringParams:(NSDictionary *)latestReferringParams {
     // Find any matched keys, then launch any controllers that match
