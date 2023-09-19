@@ -42,7 +42,7 @@ jobs:
           fi
 
           PR_COUNT=$(echo "$PR_LIST" | wc -l)
-          echo "$PR_COUNT PR's to be merged."
+          echo "$PR_COUNT PRs to be merged."
 
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "prs<<$EOF" >> $GITHUB_OUTPUT
@@ -87,7 +87,7 @@ jobs:
       - name: Post to a Slack channel
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: "C03RTLRKJQP"
+          channel-id: "C04E69NEDAT"
           payload: |
             {
               "blocks": [
