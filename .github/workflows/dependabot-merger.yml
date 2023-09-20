@@ -14,7 +14,6 @@ jobs:
         uses: actions/github-script@v6
         id: create-pr
         with:
-          github-token: ${{secrets.DEPENDABOT_MERGER_PAT}}
           script: |
             const pulls = await github.paginate('GET /repos/:owner/:repo/pulls', {
               owner: context.repo.owner,
@@ -25,10 +24,8 @@ jobs:
             let baseBranchSHA = null;
             for (const pull of pulls) {
               const branch = pull['head']['ref'];
-              console.log('Pull for branch: ' + branch);
               if (branch.startsWith('dependabot/')) {
-                console.log('Branch matched prefix: ' + branch);
-                console.log('Adding branch to array: ' + branch);
+                console.log('Branch matched prefix. Adding to array: ' + branch);
                 const prString = '#' + pull['number'] + ' ' + pull['title'];
                 branchesAndPRStrings.push({ branch, prString });
                 baseBranch = pull['base']['ref'];
@@ -36,7 +33,7 @@ jobs:
               }
             }
             if (branchesAndPRStrings.length == 0) {
-              core.setFailed('No PRs/branches matched criteria');
+              core.setFailed('There are no open dependabot PRs.');
               return;
             }
             try {
@@ -48,7 +45,7 @@ jobs:
               });
             } catch (error) {
               console.log(error);
-              core.setFailed('Failed to create combined branch - maybe a branch by that name already exists?');
+              core.setFailed('Failed to create combined branch');
               return;
             }
 
@@ -109,7 +106,7 @@ jobs:
                     "type": "section",
                     "text": {
                     "type": "mrkdwn",
-                    "text": "*Included PRs:*${{ steps.create-pr.outputs.pr_body }}"
+                    "text": "*Included PRs:*\n${{ steps.create-pr.outputs.pr_body }}"
                     }
                 },
                 {
