@@ -15,6 +15,7 @@ jobs:
         id: create-pr
         with:
           script: |
+            const uniqueBranchName = 'dependabot-combined-prs-' + new Date().toISOString();
             const pulls = await github.paginate('GET /repos/:owner/:repo/pulls', {
               owner: context.repo.owner,
               repo: context.repo.repo
@@ -40,7 +41,7 @@ jobs:
               await github.rest.git.createRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                ref: 'refs/heads/' + 'dependabot-combined-prs',
+                ref: 'refs/heads/' + uniqueBranchName,
                 sha: baseBranchSHA
               });
             } catch (error) {
@@ -56,7 +57,7 @@ jobs:
                 await github.rest.repos.merge({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  base: 'dependabot-combined-prs',
+                  base: uniqueBranchName,
                   head: branch,
                 });
                 console.log('Merged branch ' + branch);
@@ -78,7 +79,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: 'Combined Dependabot PR',
-              head: 'dependabot-combined-prs',
+              head: uniqueBranchName,
               base: baseBranch,
               body: body
             });
