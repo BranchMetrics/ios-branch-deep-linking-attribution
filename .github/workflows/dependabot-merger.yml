@@ -85,7 +85,7 @@ jobs:
             });
             console.log('Created combined PR: ' + response.data.html_url);
             core.setOutput('pr_url', response.data.html_url);
-            core.setOutput('pr_body', response.data.body);
+            core.setOutput('pr_list', combinedPRs);
 
       - name: Post to a Slack channel
         uses: slackapi/slack-github-action@v1.24.0
@@ -99,7 +99,7 @@ jobs:
                     "type": "header",
                     "text": {
                     "type": "plain_text",
-                    "text": "⚡️ New iOS Dependabot Combined PR",
+                    "text": "⚡️ New iOS Combined Dependabot PR",
                     "emoji": true
                     }
                 },
@@ -107,26 +107,27 @@ jobs:
                     "type": "section",
                     "text": {
                     "type": "mrkdwn",
-                    "text": "*Included PRs:*\n${{ steps.create-pr.outputs.pr_body }}"
+                    "text": "*Included PRs:*\n${{ toJSON(steps.create-pr.outputs.pr_list) }}"
                     }
                 },
                 {
                     "type": "actions",
                     "elements": [
-                    {
-                        "type": "button",
-                        "text": {
-                        "type": "plain_text",
-                        "text": "View Combined PR",
-                        "emoji": true
-                        },
-                        "value": "pr-button",
-                        "url": "${{ steps.create-pr.outputs.pr_url }}",
-                        "action_id": "link-action"
-                    }
+                      {
+                          "type": "button",
+                          "text": {
+                            "type": "plain_text",
+                            "text": "View Combined PR",
+                            "emoji": true
+                          },
+                          "value": "pr-button",
+                          "url": "${{ steps.create-pr.outputs.pr_url }}",
+                          "action_id": "link-action",
+                          "style": "primary"
+                      }
                     ]
                 }
-                ]
+              ]
             }
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_SDK_BOT_TOKEN }}
