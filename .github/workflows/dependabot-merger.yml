@@ -1,4 +1,5 @@
 name: Merge Dependabot PRs
+
 on:
   schedule:
     - cron: "0 9 * * 1" # Run this workflow every Monday at 9:00
@@ -7,122 +8,127 @@ on:
 jobs:
   merge:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Check out code
-        uses: actions/checkout@v3
+      - name: Create PR
+        uses: actions/github-script@v6
+        id: create-pr
         with:
-          ref: master
+          github-token: ${{secrets.DEPENDABOT_MERGER_PAT}}
+          script: |
+            const pulls = await github.paginate('GET /repos/:owner/:repo/pulls', {
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            let branchesAndPRStrings = [];
+            let baseBranch = null;
+            let baseBranchSHA = null;
+            for (const pull of pulls) {
+              const branch = pull['head']['ref'];
+              console.log('Pull for branch: ' + branch);
+              if (branch.startsWith('dependabot/')) {
+                console.log('Branch matched prefix: ' + branch);
+                console.log('Adding branch to array: ' + branch);
+                const prString = '#' + pull['number'] + ' ' + pull['title'];
+                branchesAndPRStrings.push({ branch, prString });
+                baseBranch = pull['base']['ref'];
+                baseBranchSHA = pull['base']['sha'];
+              }
+            }
+            if (branchesAndPRStrings.length == 0) {
+              core.setFailed('No PRs/branches matched criteria');
+              return;
+            }
+            try {
+              await github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: 'refs/heads/' + 'dependabot-combined-prs',
+                sha: baseBranchSHA
+              });
+            } catch (error) {
+              console.log(error);
+              core.setFailed('Failed to create combined branch - maybe a branch by that name already exists?');
+              return;
+            }
 
-      - name: Authenticate GitHub CLI
-        run: echo "${{ secrets.DEPENDABOT_MERGER_PAT }}" | gh auth login --with-token
+            let combinedPRs = [];
+            let mergeFailedPRs = [];
+            for(const { branch, prString } of branchesAndPRStrings) {
+              try {
+                await github.rest.repos.merge({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  base: dependabot-combined-prs,
+                  head: branch,
+                });
+                console.log('Merged branch ' + branch);
+                combinedPRs.push(prString);
+              } catch (error) {
+                console.log('Failed to merge branch ' + branch);
+                mergeFailedPRs.push(prString);
+              }
+            }
 
-      - name: Set Git user identity
-        run: |
-          git config user.email "dependabot-merger-bot@branch.io"
-          git config user.name "Dependabot Merger Bot"
-
-      - name: Get current date and time
-        id: datetime
-        run: echo "date=$(date +'%m-%d-%Y-%H-%M')" >> $GITHUB_OUTPUT
-
-      - name: Create new branch based on date and time
-        run: |
-          NEW_BRANCH="dependabot-test-${{ steps.datetime.outputs.date }}"
-          git checkout -b $NEW_BRANCH
-          git push origin $NEW_BRANCH
-
-      - name: Get list of PRs from dependabot
-        id: pr_list
-        run: |
-          PR_LIST=$(gh pr list --json number,author,headRefName --jq '.[] | select( .author.is_bot == true and .author.login == "app/dependabot" ) | "\(.number) \(.headRefName)"')
-          PR_LIST=$(echo "$PR_LIST" | tr -d '\r')
-          if [ -z "$PR_LIST" ]; then
-            echo "No PRs from dependabot found."
-            exit 0
-          fi
-
-          PR_COUNT=$(echo "$PR_LIST" | wc -l)
-          echo "$PR_COUNT PRs to be merged."
-
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "prs<<$EOF" >> $GITHUB_OUTPUT
-          echo "$PR_LIST" >> $GITHUB_OUTPUT
-          echo "$EOF" >> $GITHUB_OUTPUT
-
-      - name: Merge PRs into new branch
-        run: |
-          NEW_BRANCH="dependabot-test-${{ steps.datetime.outputs.date }}"
-          git checkout $NEW_BRANCH
-          PR_LIST="${{ steps.pr_list.outputs.prs }}"
-          while IFS= read -r line; do
-            IFS=' ' read -r PR_NUMBER BRANCH_NAME <<< "$line"
-            echo "Merging PR #$PR_NUMBER from branch $BRANCH_NAME into $NEW_BRANCH..."
-            git fetch origin $BRANCH_NAME
-            git merge --no-commit --allow-unrelated-histories --strategy-option=theirs origin/$BRANCH_NAME
-            echo "Pushing changes to $NEW_BRANCH..."
-            git commit -m "Merged PR #$PR_NUMBER into $NEW_BRANCH"
-            git push origin $NEW_BRANCH
-          done <<< "$PR_LIST"
-
-      - name: Merge process status
-        run: |
-          echo "Merging process completed successfully!"
-          echo "New branch name: dependabot-test-${{ steps.datetime.outputs.date }}"
-
-      - name: Generate PR links
-        id: pr_links
-        run: |
-          PR_LIST="${{ steps.pr_list.outputs.prs }}"
-          PR_LINKS=""
-          while IFS= read -r line; do
-            IFS=' ' read -r PR_NUMBER BRANCH_NAME <<< "$line"
-            PR_URL="https://github.com/${GITHUB_REPOSITORY}/pull/$PR_NUMBER"
-            PR_LINKS+="\n• <$PR_URL|#${PR_NUMBER}: ${BRANCH_NAME}>"
-          done <<< "$PR_LIST"
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "pr_links<<$EOF" >> $GITHUB_OUTPUT
-          echo "$PR_LINKS" >> $GITHUB_OUTPUT
-          echo "$EOF" >> $GITHUB_OUTPUT
+            console.log('Creating combined PR');
+            const combinedPRsString = combinedPRs.join('\n');
+            let body = '✅ This PR was created by the Merge Dependabot PRs action by combining the following dependabot PRs:\n' + combinedPRsString;
+            if(mergeFailedPRs.length > 0) {
+              const mergeFailedPRsString = mergeFailedPRs.join('\n');
+              body += '\n\n⚠️ The following dependabot PRs were left out due to merge conflicts:\n' + mergeFailedPRsString
+            }
+            let response = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Combined Dependabot PR',
+              head: dependabot-combined-prs,
+              base: baseBranch,
+              body: body
+            });
+            console.log('Created combined PR: ' + response.data.html_url);
+            core.setOutput('pr_url', response.data.html_url);
+            core.setOutput('pr_body', response.data.body);
 
       - name: Post to a Slack channel
         uses: slackapi/slack-github-action@v1.24.0
+        id: slack
         with:
           channel-id: "C04E69NEDAT"
           payload: |
             {
-              "blocks": [
+                "blocks": [
                 {
-                  "type": "header",
-                  "text": {
+                    "type": "header",
+                    "text": {
                     "type": "plain_text",
-                    "text": "⚡️ New iOS Dependabot Testing Branch",
+                    "text": "⚡️ New iOS Dependabot Combined PR",
                     "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Included PRs:*${{ steps.pr_links.outputs.pr_links }}"
-                  }
-                },
-                {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "Checkout Test Branch",
-                        "emoji": true
-                      },
-                      "value": "branch-button",
-                      "url": "https://github.com/${{ github.repository }}/tree/dependabot-test-${{ steps.datetime.outputs.date }}",
-                      "action_id": "link-action"
                     }
-                  ]
+                },
+                {
+                    "type": "section",
+                    "text": {
+                    "type": "mrkdwn",
+                    "text": "*Included PRs:*${{ steps.create-pr.outputs.pr_body }}"
+                    }
+                },
+                {
+                    "type": "actions",
+                    "elements": [
+                    {
+                        "type": "button",
+                        "text": {
+                        "type": "plain_text",
+                        "text": "View Combined PR",
+                        "emoji": true
+                        },
+                        "value": "pr-button",
+                        "url": "${{ steps.create-pr.outputs.pr_url }}",
+                        "action_id": "link-action"
+                    }
+                    ]
                 }
-              ]
+                ]
             }
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_SDK_BOT_TOKEN }}
