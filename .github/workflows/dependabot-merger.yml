@@ -85,7 +85,7 @@ jobs:
             });
             console.log('Created combined PR: ' + response.data.html_url);
             core.setOutput('pr_url', response.data.html_url);
-            core.setOutput('pr_list', combinedPRs);
+            core.setOutput('pr_list', combinedPRsString);
 
       - name: Post to a Slack channel
         uses: slackapi/slack-github-action@v1.24.0
