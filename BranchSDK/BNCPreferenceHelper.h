@@ -40,7 +40,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (copy, nonatomic) NSString *sessionParams;
 @property (copy, nonatomic) NSString *installParams;
 @property (assign, nonatomic) BOOL isDebug;
-@property (assign, nonatomic) BOOL checkedFacebookAppLinks;
 @property (nonatomic, assign, readwrite) BOOL appleAttributionTokenChecked;
 @property (nonatomic, assign, readwrite) BOOL hasOptedInBefore;
 @property (nonatomic, assign, readwrite) BOOL hasCalledHandleATTAuthorizationStatus;
@@ -56,8 +55,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) BOOL limitFacebookTracking;
 @property (strong, nonatomic) NSDate *previousAppBuildDate;
 @property (assign, nonatomic, readwrite) BOOL disableAdNetworkCallouts;
-
-@property (strong, nonatomic, readwrite) NSURL *faceBookAppLink;
 
 @property (nonatomic, copy, readwrite) NSString *patternListURL;
 @property (strong, nonatomic) NSArray<NSString *> *savedURLPatternList;
@@ -77,6 +74,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) NSInteger highestConversionValueSent;
 @property (strong, nonatomic) NSDate   *firstAppLaunchTime;
 @property (assign, nonatomic) BOOL invokeRegisterApp;
+
+@property (assign, nonatomic) BOOL useEUServers;
 
 - (void) clearTrackingInformation;
 

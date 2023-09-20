@@ -401,4 +401,116 @@ static NSString *eventEndpoint = @"/v2/event";
     XCTAssertNil([BNCPreferenceHelper sharedInstance].referrerGBRAIDInitDate);
 }
 
+- (void)testReferringURLWithSccid {
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?sccid=12345"];
+    NSDictionary *expected = @{
+        @"sccid": @"12345"
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLWithSccidMixedCase {
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?ScCiD=12345"];
+    NSDictionary *expected = @{
+        @"sccid": @"12345"
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLWithSccidNoValue {
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?sccid="];
+    NSDictionary *expected = @{
+        @"sccid": @""
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLWithSccidValueCasePreserved {
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?sccid=aAbBcC"];
+    NSDictionary *expected = @{
+        @"sccid": @"aAbBcC"
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLWithSccidIgnoredParam {
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?sccid=12345&other=abcde"];
+    NSDictionary *expected = @{
+        @"sccid": @"12345"
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLWithSccidFragment{
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?sccid=12345#header"];
+    NSDictionary *expected = @{
+        @"sccid": @"12345"
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLWithSccidAsFragment{
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?other=abcde#sccid=12345"];
+    NSDictionary *expected = @{ };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
+- (void)testReferringURLWithSccidOverwritesValue {
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?sccid=12345"];
+    NSDictionary *expected = @{
+        @"sccid": @"12345"
+    };
+    
+    NSURL *url2 = [NSURL URLWithString:@"https://bnctestbed.app.link?sccid=abcde"];
+    NSDictionary *expected2 = @{
+        @"sccid": @"abcde"
+    };
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    XCTAssert([expected isEqualToDictionary:params]);
+    
+    [utility parseReferringURL:url2];
+    NSDictionary *params2 = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected2 isEqualToDictionary:params2]);
+}
+
+
 @end

@@ -15,7 +15,6 @@
 #import "Branch.h"
 #import "BNCApplication.h"
 #import "BNCAppleReceipt.h"
-#import "BNCTuneUtility.h"
 #import "BNCSKAdNetwork.h"
 #import "BNCAppGroupsData.h"
 #import "BNCPartnerParameters.h"
@@ -62,8 +61,6 @@
     [self safeSetValue:[BNCSystemObserver teamIdentifier] forKey:BRANCH_REQUEST_KEY_TEAM_ID onDict:params];
     [self safeSetValue:[BNCSystemObserver applicationVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:params];
     [self safeSetValue:[BNCSystemObserver defaultURIScheme] forKey:BRANCH_REQUEST_KEY_URI_SCHEME onDict:params];
-    [self safeSetValue:[NSNumber numberWithBool:preferenceHelper.checkedFacebookAppLinks]
-        forKey:BRANCH_REQUEST_KEY_CHECKED_FACEBOOK_APPLINKS onDict:params];
     [self safeSetValue:preferenceHelper.linkClickIdentifier forKey:BRANCH_REQUEST_KEY_LINK_IDENTIFIER onDict:params];
     [self safeSetValue:preferenceHelper.spotlightIdentifier forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:params];
     [self safeSetValue:preferenceHelper.universalLinkUrl forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:params];
@@ -113,6 +110,19 @@
     params[@"first_install_time"] = BNCWireFormatFromDate(application.firstInstallDate);
     params[@"update"] = [self.class appUpdateState];
 
+    if (@available(iOS 16.1, macCatalyst 16.1, *)){
+        if ([BNCPreferenceHelper sharedInstance].invokeRegisterApp) {
+            int currentWindow = [[BNCSKAdNetwork sharedInstance] calculateSKANWindowForTime:[NSDate date]];
+            if (currentWindow == BranchSkanWindowFirst){
+                params[BRANCH_REQUEST_KEY_SKAN_POSTBACK_INDEX] = BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_0;
+            } else if (currentWindow == BranchSkanWindowSecond) {
+                params[BRANCH_REQUEST_KEY_SKAN_POSTBACK_INDEX] = BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_1;
+            } else if (currentWindow == BranchSkanWindowThird) {
+                params[BRANCH_REQUEST_KEY_SKAN_POSTBACK_INDEX] = BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_2;
+            }
+        }
+    }
+    
     [serverInterface postRequest:params
         url:[preferenceHelper
         getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN]
@@ -120,24 +130,9 @@
         callback:callback];
 }
 
-typedef NS_ENUM(NSInteger, BNCUpdateState) {
-    // Values 0-4 are deprecated and ignored by the server
-    BNCUpdateStateIgnored0 = 0,
-    BNCUpdateStateIgnored1 = 1,
-    BNCUpdateStateIgnored2 = 2,
-    BNCUpdateStateIgnored3 = 3,
-    BNCUpdateStateIgnored4 = 4,
-    
-    // App was migrated from Tune SDK to Branch SDK
-    BNCUpdateStateTuneMigration = 5
-};
-
+// Always send 0
 + (NSNumber *)appUpdateState {
-    BNCUpdateState update_state = BNCUpdateStateIgnored0;
-    if ([BNCTuneUtility isTuneDataPresent]) {
-        update_state = BNCUpdateStateTuneMigration;
-    }
-    return @(update_state);
+    return @(0);
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
@@ -245,7 +240,6 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     }
 
     // Clear link identifiers so they don't get reused on the next open
-    preferenceHelper.checkedFacebookAppLinks = NO;
     preferenceHelper.linkClickIdentifier = nil;
     preferenceHelper.spotlightIdentifier = nil;
     preferenceHelper.universalLinkUrl = nil;
