@@ -56,7 +56,7 @@ jobs:
                 await github.rest.repos.merge({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  base: dependabot-combined-prs,
+                  base: 'dependabot-combined-prs',
                   head: branch,
                 });
                 console.log('Merged branch ' + branch);
@@ -78,7 +78,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: 'Combined Dependabot PR',
-              head: dependabot-combined-prs,
+              head: 'dependabot-combined-prs',
               base: baseBranch,
               body: body
             });
