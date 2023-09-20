@@ -1,5 +1,11 @@
 Branch iOS SDK Change Log
 
+V.2.2.1
+ 
+Branch iOS SDK 2.2.1 adds parameter for current SKAN 4.0 Window in /v1/open and /v2/event requests.
+
+- SDK-1982 - SKAN Simplification DB updates
+
 V.2.2.0
  
 Branch iOS SDK 2.2.0 adds the ability to include developer ID in installs and a new method to change the Branch API base URL.

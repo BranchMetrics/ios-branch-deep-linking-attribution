@@ -34,7 +34,6 @@ static NSString * const BRANCH_PREFS_KEY_RANDOMIZED_BUNDLE_TOKEN = @"bnc_randomi
 
 static NSString * const BRANCH_PREFS_KEY_SESSION_ID = @"bnc_session_id";
 static NSString * const BRANCH_PREFS_KEY_IDENTITY = @"bnc_identity";
-static NSString * const BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS = @"bnc_checked_fb_app_links";
 static NSString * const BRANCH_PREFS_KEY_LINK_CLICK_IDENTIFIER = @"bnc_link_click_identifier";
 static NSString * const BRANCH_PREFS_KEY_SPOTLIGHT_IDENTIFIER = @"bnc_spotlight_identifier";
 static NSString * const BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL = @"bnc_universal_link_url";
@@ -56,6 +55,8 @@ static NSString * const BRANCH_PREFS_KEY_FIRST_APP_LAUNCH_TIME = @"bnc_first_app
 static NSString * const BRANCH_PREFS_KEY_SKAN_HIGHEST_CONV_VALUE_SENT = @"bnc_skan_send_highest_conv_value";
 static NSString * const BRANCH_PREFS_KEY_SKAN_INVOKE_REGISTER_APP = @"bnc_invoke_register_app";
                                                                 
+static NSString * const BRANCH_PREFS_KEY_USE_EU_SERVERS = @"bnc_use_EU_servers";
+
 static NSString * const BRANCH_PREFS_KEY_REFFERING_URL_QUERY_PARAMETERS = @"bnc_referring_url_query_parameters";
 
 static NSString * const BRANCH_PREFS_KEY_LOG_IAP_AS_EVENTS = @"bnc_log_iap_as_events";
@@ -101,7 +102,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     retryInterval = _retryInterval,
     timeout = _timeout,
     lastStrongMatchDate = _lastStrongMatchDate,
-    checkedFacebookAppLinks = _checkedFacebookAppLinks,
     requestMetadataDictionary = _requestMetadataDictionary,
     instrumentationDictionary = _instrumentationDictionary,
     referrerGBRAID = _referrerGBRAID,
@@ -111,7 +111,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     highestConversionValueSent = _highestConversionValueSent,
     referringURLQueryParameters = _referringURLQueryParameters,
     anonID = _anonID,
-    patternListURL = _patternListURL;
+    patternListURL = _patternListURL,
+    useEUServers = _useEUServers;
 
 + (BNCPreferenceHelper *)sharedInstance {
     static BNCPreferenceHelper *preferenceHelper;
@@ -529,16 +530,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     return baseUrl;
 }
 
-- (BOOL)checkedFacebookAppLinks {
-    _checkedFacebookAppLinks = [self readBoolFromDefaults:BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS];
-    return _checkedFacebookAppLinks;
-}
-
-- (void)setCheckedFacebookAppLinks:(BOOL)checked {
-    _checkedFacebookAppLinks = checked;
-    [self writeBoolToDefaults:BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS value:checked];
-}
-
 - (NSMutableDictionary *)requestMetadataDictionary {
     if (!_requestMetadataDictionary) {
         _requestMetadataDictionary = [NSMutableDictionary dictionary];
@@ -811,6 +802,23 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     @synchronized(self) {
         NSNumber *b = [NSNumber numberWithBool:invoke];
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_SKAN_INVOKE_REGISTER_APP value:b];
+    }
+}
+
+- (BOOL) useEUServers {
+    @synchronized(self) {
+        NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_USE_EU_SERVERS];
+        if ([b isKindOfClass:NSNumber.class])
+            return [b boolValue];
+        return false;
+    }
+}
+
+- (void)setUseEUServers:(BOOL)useEUServers {
+    @synchronized(self) {
+        NSNumber *b = [NSNumber numberWithBool:useEUServers];
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_USE_EU_SERVERS value:b];
+
     }
 }
 

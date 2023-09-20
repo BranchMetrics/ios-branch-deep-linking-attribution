@@ -7,7 +7,6 @@
 //
 
 #import "Branch.h"
-#import "BNCCommerceEvent.h"
 #import "BranchUniversalObject.h"
 #import <StoreKit/StoreKit.h>
 
