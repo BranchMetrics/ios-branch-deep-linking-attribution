@@ -91,15 +91,16 @@ jobs:
         uses: slackapi/slack-github-action@v1.24.0
         id: slack
         with:
-          channel-id: "C04E69NEDAT"
+          channel-id: "C03RTLRKJQP"
           payload: |
             {
+                "text": "iOS: New Dependabot PR Awaiting Review",
                 "blocks": [
                 {
                     "type": "header",
                     "text": {
                     "type": "plain_text",
-                    "text": "⚡️ New iOS Combined Dependabot PR",
+                    "text":"📱🔧 iOS: New Dependabot PR Awaiting Review",
                     "emoji": true
                     }
                 },
@@ -117,7 +118,7 @@ jobs:
                           "type": "button",
                           "text": {
                             "type": "plain_text",
-                            "text": "View Combined PR",
+                            "text": "github-pull-request-open:  View Combined PR",
                             "emoji": true
                           },
                           "value": "pr-button",
