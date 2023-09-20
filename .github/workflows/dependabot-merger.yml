@@ -15,7 +15,7 @@ jobs:
         id: create-pr
         with:
           script: |
-            const uniqueBranchName = 'dependabot-combined-prs-' + new Date().toISOString();
+            const uniqueBranchName = 'dependabot-combined-prs-' + Date.now().toString();
             const pulls = await github.paginate('GET /repos/:owner/:repo/pulls', {
               owner: context.repo.owner,
               repo: context.repo.repo
