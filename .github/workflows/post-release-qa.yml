@@ -8,7 +8,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install pod, build project and run tests
         run: |
             ./scripts/getSimulator
@@ -20,7 +20,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Run carthage command, build project and run tests
         run: |
             ./scripts/getSimulator
@@ -32,7 +32,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: build project and run tests
         run: |
             ./scripts/getSimulator
@@ -43,7 +43,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install pod, build project and run tests
         run: |
             ./scripts/getSimulator

@@ -15,7 +15,6 @@ extern NSString * _Nonnull const BranchJsonConfigTestKeyOption;
 extern NSString * _Nonnull const BranchJsonConfigUseTestInstanceOption;
 extern NSString * _Nonnull const BranchJsonConfigDeferInitForPluginRuntimeOption;
 extern NSString * _Nonnull const BranchJsonConfigEnableLogging;
-extern NSString * _Nonnull const BranchJsonConfigEnableFacebookLinkCheck;
 extern NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall;
 
 @interface BranchJsonConfig : NSObject
@@ -29,7 +28,6 @@ extern NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall;
 @property (nonatomic, readonly, assign) BOOL useTestInstance;
 @property (nonatomic, readonly, assign) BOOL deferInitForPluginRuntime;
 @property (nonatomic, readonly, assign) BOOL enableLogging;
-@property (nonatomic, readonly, assign) BOOL enableFacebookLinkCheck;
 @property (nonatomic, readonly, assign) BOOL checkPasteboardOnInstall;
 
 - (nullable id)objectForKey:(NSString * _Nonnull)key;
