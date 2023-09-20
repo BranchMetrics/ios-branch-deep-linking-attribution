@@ -351,6 +351,19 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
         eventDictionary[BRANCH_REQUEST_KEY_PARTNER_PARAMETERS] = partnerParameters;
     }
     
+    if (@available(iOS 16.1, macCatalyst 16.1, *)){
+        if ([BNCPreferenceHelper sharedInstance].invokeRegisterApp) {
+            int currentWindow = [[BNCSKAdNetwork sharedInstance] calculateSKANWindowForTime:[NSDate date]];
+            if (currentWindow == BranchSkanWindowFirst){
+                eventDictionary[BRANCH_REQUEST_KEY_SKAN_POSTBACK_INDEX] = BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_0;
+            } else if (currentWindow == BranchSkanWindowSecond) {
+                eventDictionary[BRANCH_REQUEST_KEY_SKAN_POSTBACK_INDEX] = BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_1;
+            } else if (currentWindow == BranchSkanWindowThird) {
+                eventDictionary[BRANCH_REQUEST_KEY_SKAN_POSTBACK_INDEX] = BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_2;
+            }
+        }
+    }
+    
     return eventDictionary;
 }
 
