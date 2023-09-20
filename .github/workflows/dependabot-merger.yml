@@ -107,7 +107,7 @@ jobs:
                     "type": "section",
                     "text": {
                     "type": "mrkdwn",
-                    "text": "*Included PRs:*\n${{ toJSON(steps.create-pr.outputs.pr_list) }}"
+                    "text": "*Included PRs:*\n${{ steps.create-pr.outputs.pr_list }}"
                     }
                 },
                 {
