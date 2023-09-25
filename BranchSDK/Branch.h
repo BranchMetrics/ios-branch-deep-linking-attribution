@@ -640,13 +640,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 @property (copy, nullable) NSArray<NSString*>/*_Nullable*/* urlPatternsToIgnore;
 
 /**
- Register your Facebook SDK's FBSDKAppLinkUtility class to be used by Branch for deferred deep linking from their platform
-
- @param FBSDKAppLinkUtility - call [FBSDKAppLinkUtility class] after importing #import <FBSDKCoreKit/FBSDKCoreKit.h>
- */
-- (void)registerFacebookDeepLinkingClass:(id)FBSDKAppLinkUtility;
-
-/**
  Checks the pasteboard (clipboard) for a Branch Link on App Install.
  If found, the Branch Link is used to provide deferred deeplink data.
  

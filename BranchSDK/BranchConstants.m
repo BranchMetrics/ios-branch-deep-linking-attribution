@@ -44,7 +44,6 @@ NSString * const BRANCH_REQUEST_KEY_OS = @"os";
 NSString * const BRANCH_REQUEST_KEY_OS_VERSION = @"os_version";
 NSString * const BRANCH_REQUEST_KEY_URI_SCHEME = @"uri_scheme";
 NSString * const BRANCH_REQUEST_KEY_LINK_IDENTIFIER = @"link_identifier";
-NSString * const BRANCH_REQUEST_KEY_CHECKED_FACEBOOK_APPLINKS = @"facebook_app_link_checked";
 NSString * const BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER = @"spotlight_identifier";
 NSString * const BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL = @"universal_link_url";
 NSString * const BRANCH_REQUEST_KEY_LOCAL_URL = @"local_url";
@@ -157,3 +156,8 @@ NSString * const BRANCH_CRASHLYTICS_SDK_VERSION_KEY = @"io.branch.sdk.version";
 NSString * const BRANCH_CRASHLYTICS_LOW_MEMORY_KEY = @"io.branch.device.lowmemory";
 
 NSString * const BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI = @"external_intent_uri";
+
+NSString * const BRANCH_REQUEST_KEY_SKAN_POSTBACK_INDEX = @"skan_postback_index";
+NSString * const BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_0 = @"postback-sequence-index-0";
+NSString * const BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_1 = @"postback-sequence-index-1";
+NSString * const BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_2 = @"postback-sequence-index-2";

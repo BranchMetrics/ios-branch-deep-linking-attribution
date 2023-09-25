@@ -31,7 +31,6 @@
 #import "Branch+Validator.h"
 #import "BNCApplication.h"
 #import "BNCURLFilter.h"
-#import "BNCFacebookAppLinks.h"
 #import "BNCDeviceInfo.h"
 #import "BNCCallbackMap.h"
 #import "BNCSKAdNetwork.h"
@@ -238,16 +237,6 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     
     if (config.checkPasteboardOnInstall) {
         [self checkPasteboardOnInstall];
-    }
-
-    if (config.enableFacebookLinkCheck) {
-        Class FBSDKAppLinkUtility = NSClassFromString(@"FBSDKAppLinkUtility");
-        if (FBSDKAppLinkUtility) {
-            [self registerFacebookDeepLinkingClass:FBSDKAppLinkUtility];
-        }
-        else {
-            BNCLogWarning(@"FBSDKAppLinkUtility not found but enableFacebookLinkCheck set to true. Please be sure you have integrated the Facebook SDK.");
-        }
     }
 
     return self;
@@ -653,18 +642,13 @@ static NSString *bnc_branchKey = nil;
     if (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
 
         // queue up async attribution checks
-        [self checkFacebookAppLinks];
         [self checkAttributionStatusAndInitialize];
     }
 }
 
 - (void)checkAttributionStatusAndInitialize {
     dispatch_async(self.isolationQueue, ^(){
-        if ([BNCPreferenceHelper sharedInstance].faceBookAppLink) {
-            [self handleDeepLink:[BNCPreferenceHelper sharedInstance].faceBookAppLink sceneIdentifier:nil];
-        } else {
-            [self initUserSessionAndCallCallback:YES sceneIdentifier:nil];
-        }
+        [self initUserSessionAndCallCallback:YES sceneIdentifier:nil];
     });
 }
 
@@ -996,25 +980,6 @@ static NSString *bnc_branchKey = nil;
 
 - (void) dispatchToIsolationQueue:(dispatch_block_t) initBlock {
     dispatch_async(self.isolationQueue, initBlock);
-}
-
-#pragma mark - Facebook App Link Check
-
-- (void)registerFacebookDeepLinkingClass:(id)FBSDKAppLinkUtility {
-    [[BNCFacebookAppLinks sharedInstance] registerFacebookDeepLinkingClass:FBSDKAppLinkUtility];
-}
-
-- (void)checkFacebookAppLinks {
-    dispatch_async(self.isolationQueue, ^(){
-        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-        [[BNCFacebookAppLinks sharedInstance] fetchFacebookAppLinkWithCompletion:^(NSURL * _Nullable appLink, NSError * _Nullable error) {
-            if (appLink && !error) {
-                [BNCPreferenceHelper sharedInstance].faceBookAppLink = appLink;
-            }
-            dispatch_semaphore_signal(semaphore);
-        }];
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-    });
 }
 
 #pragma mark - Deep Link Controller methods

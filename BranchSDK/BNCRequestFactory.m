@@ -86,7 +86,7 @@
     [self addInstrumentationToJSON:json];
     
     // Install, Open and Event
-    [self addMetadataWithSKANWindowToJSON:json];
+    [self addMetadataWithSKANMaxTimeToJSON:json];
     
     // All POST requests other than Events
     [self addSDKVersionToJSON:json];
@@ -123,7 +123,10 @@
     [self addInstrumentationToJSON:json];
     
     // Install, Open and Event
-    [self addMetadataWithSKANWindowToJSON:json];
+    [self addMetadataWithSKANMaxTimeToJSON:json];
+    
+    // Open and Event
+    [self addSKANWindowToJSON:json];
     
     // All POST requests other than Events
     [self addSDKVersionToJSON:json];
@@ -167,7 +170,10 @@
     [self addInstrumentationToJSON:json];
     
     // Install, Open and Event
-    [self addMetadataWithSKANWindowToJSON:json];
+    [self addMetadataWithSKANMaxTimeToJSON:json];
+
+    // Open and Event
+    [self addSKANWindowToJSON:json];
     
     // Event and LATD
     [self addV2DictionaryToJSON:json];
@@ -264,7 +270,6 @@
 - (void)addPreferenceHelperDataToJSON:(NSMutableDictionary *)json {
     json[BRANCH_REQUEST_KEY_DEBUG] = @(self.preferenceHelper.isDebug);
 
-    [self safeSetValue:[NSNumber numberWithBool:self.preferenceHelper.checkedFacebookAppLinks] forKey:BRANCH_REQUEST_KEY_CHECKED_FACEBOOK_APPLINKS onDict:json];
     [self safeSetValue:self.preferenceHelper.linkClickIdentifier forKey:BRANCH_REQUEST_KEY_LINK_IDENTIFIER onDict:json];
     [self safeSetValue:self.preferenceHelper.spotlightIdentifier forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:json];
     [self safeSetValue:self.preferenceHelper.universalLinkUrl forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
@@ -412,8 +417,8 @@
     }
 }
 
-// install, open and event requests  include SKAN window within the metadata block
-- (void)addMetadataWithSKANWindowToJSON:(NSMutableDictionary *)json {
+// install, open and event requests  include SKAN max time within the metadata block
+- (void)addMetadataWithSKANMaxTimeToJSON:(NSMutableDictionary *)json {
     NSMutableDictionary *metadata = [[NSMutableDictionary alloc] init];
     [metadata bnc_safeAddEntriesFromDictionary:self.preferenceHelper.requestMetadataDictionary];
     [metadata bnc_safeAddEntriesFromDictionary:json[BRANCH_REQUEST_KEY_STATE]];
@@ -422,6 +427,22 @@
     
     if (metadata.count) {
         json[BRANCH_REQUEST_KEY_STATE] = metadata;
+    }
+}
+
+// open and event requests include the postback window number
+- (void)addSKANWindowToJSON:(NSMutableDictionary *)json {
+    if (@available(iOS 16.1, macCatalyst 16.1, *)){
+        if (self.preferenceHelper.invokeRegisterApp) {
+            int currentWindow = [self.skAdNetwork calculateSKANWindowForTime:[NSDate date]];
+            if (currentWindow == BranchSkanWindowFirst){
+                json[BRANCH_REQUEST_KEY_SKAN_POSTBACK_INDEX] = BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_0;
+            } else if (currentWindow == BranchSkanWindowSecond) {
+                json[BRANCH_REQUEST_KEY_SKAN_POSTBACK_INDEX] = BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_1;
+            } else if (currentWindow == BranchSkanWindowThird) {
+                json[BRANCH_REQUEST_KEY_SKAN_POSTBACK_INDEX] = BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_2;
+            }
+        }
     }
 }
 

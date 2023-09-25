@@ -160,14 +160,12 @@
     }
 
     // Clear link identifiers so they don't get reused on the next open
-    preferenceHelper.checkedFacebookAppLinks = NO;
     preferenceHelper.linkClickIdentifier = nil;
     preferenceHelper.spotlightIdentifier = nil;
     preferenceHelper.universalLinkUrl = nil;
     preferenceHelper.externalIntentURI = nil;
     preferenceHelper.referringURL = referringURL;
     preferenceHelper.dropURLOpen = NO;
-
     
     NSString *string = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN]);
     if (!string) {
