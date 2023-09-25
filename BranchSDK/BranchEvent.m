@@ -305,13 +305,11 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
     [self logEventWithCompletion:nil];
 }
 
-- (BranchEventRequest *)buildRequestWithEventDictionary:(NSDictionary *)eventDictionary {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
-    
+- (BranchEventRequest *)buildRequestWithEventDictionary:(NSDictionary *)eventDictionary {    
     NSString *serverURL =
     ([self.class.standardEvents containsObject:self.eventName])
-    ? [[BNCServerAPI sharedInstance] standardEventServiceURL].absoluteString
-    : [[BNCServerAPI sharedInstance] customEventServiceURL].absoluteString;
+    ? [[BNCServerAPI sharedInstance] standardEventServiceURL]
+    : [[BNCServerAPI sharedInstance] customEventServiceURL];
 
     BranchEventRequest *request =
     [[BranchEventRequest alloc]

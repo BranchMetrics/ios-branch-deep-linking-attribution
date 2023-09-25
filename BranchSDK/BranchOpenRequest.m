@@ -50,7 +50,7 @@
     NSDictionary *params = [factory dataForOpen];
 
     [serverInterface postRequest:params
-        url:[[BNCServerAPI sharedInstance] openServiceURL].absoluteString
+        url:[[BNCServerAPI sharedInstance] openServiceURL]
         key:key
         callback:callback];
 }
@@ -171,7 +171,6 @@
     
     NSString *string = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN]);
     if (!string) {
-        // fallback to deprecated name. The old name was easily confused with the setIdentity, hence the name change.
         // fallback to deprecated name. The old name was easily confused with the setIdentity, hence the name change.
         string = BNCStringFromWireFormat(data[@"identity_id"]);
     }

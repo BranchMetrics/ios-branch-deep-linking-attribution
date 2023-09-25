@@ -22,50 +22,50 @@
     BNCServerAPI *serverAPI = [BNCServerAPI new];
     serverAPI.automaticallyEnableTrackingDomain = NO;
     
-    NSURL *url = [serverAPI installServiceURL];
+    NSString *url = [serverAPI installServiceURL];
     NSString *expectedUrlStr = @"https://api3.branch.io/v1/install";
     
-    XCTAssertTrue([url isEqual:[NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 - (void)testOpenServiceURL {
     BNCServerAPI *serverAPI = [BNCServerAPI new];
     serverAPI.automaticallyEnableTrackingDomain = NO;
     
-    NSURL *url = [serverAPI openServiceURL];
+    NSString *url = [serverAPI openServiceURL];
     NSString *expectedUrlStr = @"https://api3.branch.io/v1/open";
     
-    XCTAssertTrue([url isEqual:[NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 - (void)testStandardEventServiceURL {
     BNCServerAPI *serverAPI = [BNCServerAPI new];
     serverAPI.automaticallyEnableTrackingDomain = NO;
     
-    NSURL *url = [serverAPI standardEventServiceURL];
+    NSString *url = [serverAPI standardEventServiceURL];
     NSString *expectedUrlStr = @"https://api3.branch.io/v2/event/standard";
     
-    XCTAssertTrue([url isEqual:[NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 - (void)testCustomEventServiceURL {
     BNCServerAPI *serverAPI = [BNCServerAPI new];
     serverAPI.automaticallyEnableTrackingDomain = NO;
     
-    NSURL *url = [serverAPI customEventServiceURL];
+    NSString *url = [serverAPI customEventServiceURL];
     NSString *expectedUrlStr = @"https://api3.branch.io/v2/event/custom";
     
-    XCTAssertTrue([url isEqual:[NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 - (void)testLinkServiceURL {
     BNCServerAPI *serverAPI = [BNCServerAPI new];
     serverAPI.automaticallyEnableTrackingDomain = NO;
     
-    NSURL *url = [serverAPI linkServiceURL];
+    NSString *url = [serverAPI linkServiceURL];
     NSString *expectedUrlStr = @"https://api3.branch.io/v1/url";
     
-    XCTAssertTrue([url isEqual:[NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 - (void)testInstallServiceURL_Tracking {
@@ -73,10 +73,10 @@
     serverAPI.automaticallyEnableTrackingDomain = NO;
     serverAPI.useTrackingDomain = YES;
     
-    NSURL *url = [serverAPI installServiceURL];
+    NSString *url = [serverAPI installServiceURL];
     NSString *expectedUrlStr = @"https://api-safetrack.branch.io/v1/install";
     
-    XCTAssertTrue([url isEqual:[NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 - (void)testOpenServiceURL_Tracking {
@@ -84,10 +84,10 @@
     serverAPI.automaticallyEnableTrackingDomain = NO;
     serverAPI.useTrackingDomain = YES;
     
-    NSURL *url = [serverAPI openServiceURL];
+    NSString *url = [serverAPI openServiceURL];
     NSString *expectedUrlStr = @"https://api-safetrack.branch.io/v1/open";
     
-    XCTAssertTrue([url isEqual:[NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 - (void)testStandardEventServiceURL_Tracking {
@@ -95,10 +95,10 @@
     serverAPI.automaticallyEnableTrackingDomain = NO;
     serverAPI.useTrackingDomain = YES;
     
-    NSURL *url = [serverAPI standardEventServiceURL];
+    NSString *url = [serverAPI standardEventServiceURL];
     NSString *expectedUrlStr = @"https://api-safetrack.branch.io/v2/event/standard";
     
-    XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 - (void)testCustomEventServiceURL_Tracking {
@@ -106,10 +106,10 @@
     serverAPI.automaticallyEnableTrackingDomain = NO;
     serverAPI.useTrackingDomain = YES;
     
-    NSURL *url = [serverAPI customEventServiceURL];
+    NSString *url = [serverAPI customEventServiceURL];
     NSString *expectedUrlStr = @"https://api-safetrack.branch.io/v2/event/custom";
     
-    XCTAssertTrue([url isEqual:[NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 - (void)testLinkServiceURL_Tracking {
@@ -117,10 +117,10 @@
     serverAPI.automaticallyEnableTrackingDomain = NO;
     serverAPI.useTrackingDomain = YES;
     
-    NSURL *url = [serverAPI linkServiceURL];
+    NSString *url = [serverAPI linkServiceURL];
     NSString *expectedUrlStr = @"https://api3.branch.io/v1/url";
     
-    XCTAssertTrue([url isEqual:[NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 - (void)testInstallServiceURL_EU {
@@ -128,10 +128,10 @@
     serverAPI.automaticallyEnableTrackingDomain = NO;
     serverAPI.useEUServers = YES;
     
-    NSURL *url = [serverAPI installServiceURL];
+    NSString *url = [serverAPI installServiceURL];
     NSString *expectedUrlStr = @"https://api3-eu.branch.io/v1/install";
     
-    XCTAssertTrue([url isEqual:[ NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 - (void)testOpenServiceURL_EU {
@@ -139,10 +139,10 @@
     serverAPI.automaticallyEnableTrackingDomain = NO;
     serverAPI.useEUServers = YES;
 
-    NSURL *url = [serverAPI openServiceURL];
+    NSString *url = [serverAPI openServiceURL];
     NSString *expectedUrlStr = @"https://api3-eu.branch.io/v1/open";
     
-    XCTAssertTrue([url isEqual:[NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 - (void)testStandardEventServiceURL_EU {
@@ -150,10 +150,10 @@
     serverAPI.automaticallyEnableTrackingDomain = NO;
     serverAPI.useEUServers = YES;
 
-    NSURL *url = [serverAPI standardEventServiceURL];
+    NSString *url = [serverAPI standardEventServiceURL];
     NSString *expectedUrlStr = @"https://api3-eu.branch.io/v2/event/standard";
     
-    XCTAssertTrue([url isEqual:[NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 - (void)testCustomEventServiceURL_EU {
@@ -161,10 +161,10 @@
     serverAPI.automaticallyEnableTrackingDomain = NO;
     serverAPI.useEUServers = YES;
 
-    NSURL *url = [serverAPI customEventServiceURL];
+    NSString *url = [serverAPI customEventServiceURL];
     NSString *expectedUrlStr = @"https://api3-eu.branch.io/v2/event/custom";
     
-    XCTAssertTrue([url isEqual:[NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 - (void)testLinkServiceURL_EU {
@@ -172,10 +172,10 @@
     serverAPI.automaticallyEnableTrackingDomain = NO;
     serverAPI.useEUServers = YES;
 
-    NSURL *url = [serverAPI linkServiceURL];
+    NSString *url = [serverAPI linkServiceURL];
     NSString *expectedUrlStr = @"https://api3-eu.branch.io/v1/url";
     
-    XCTAssertTrue([url isEqual:[NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 - (void)testInstallServiceURL_EUTracking {
@@ -184,10 +184,10 @@
     serverAPI.useEUServers = YES;
     serverAPI.useTrackingDomain = YES;
     
-    NSURL *url = [serverAPI installServiceURL];
+    NSString *url = [serverAPI installServiceURL];
     NSString *expectedUrlStr = @"https://api-safetrack-eu.branch.io/v1/install";
     
-    XCTAssertTrue([url isEqual:[NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 - (void)testOpenServiceURL_EUTracking {
@@ -196,10 +196,10 @@
     serverAPI.useEUServers = YES;
     serverAPI.useTrackingDomain = YES;
 
-    NSURL *url = [serverAPI openServiceURL];
+    NSString *url = [serverAPI openServiceURL];
     NSString *expectedUrlStr = @"https://api-safetrack-eu.branch.io/v1/open";
     
-    XCTAssertTrue([url isEqual:[NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 - (void)testStandardEventServiceURL_EUTracking {
@@ -208,10 +208,10 @@
     serverAPI.useEUServers = YES;
     serverAPI.useTrackingDomain = YES;
 
-    NSURL *url = [serverAPI standardEventServiceURL];
+    NSString *url = [serverAPI standardEventServiceURL];
     NSString *expectedUrlStr = @"https://api-safetrack-eu.branch.io/v2/event/standard";
     
-    XCTAssertTrue([url isEqual:[NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 - (void)testCustomEventServiceURL_EUTracking {
@@ -220,10 +220,10 @@
     serverAPI.useEUServers = YES;
     serverAPI.useTrackingDomain = YES;
 
-    NSURL *url = [serverAPI customEventServiceURL];
+    NSString *url = [serverAPI customEventServiceURL];
     NSString *expectedUrlStr = @"https://api-safetrack-eu.branch.io/v2/event/custom";
     
-    XCTAssertTrue([url isEqual:[NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 - (void)testLinkServiceURL_EUTracking {
@@ -232,10 +232,10 @@
     serverAPI.useEUServers = YES;
     serverAPI.useTrackingDomain = YES;
 
-    NSURL *url = [serverAPI linkServiceURL];
+    NSString *url = [serverAPI linkServiceURL];
     NSString *expectedUrlStr = @"https://api3-eu.branch.io/v1/url";
     
-    XCTAssertTrue([url isEqual:[NSURL URLWithString:expectedUrlStr]]);
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
 
 @end

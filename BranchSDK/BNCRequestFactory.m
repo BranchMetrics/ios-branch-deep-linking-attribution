@@ -39,7 +39,6 @@
 
 @property (nonatomic, strong, readwrite) NSString *branchKey;
 
-// Data sources singletons, makes it easier to mock them out for testing
 @property (nonatomic, strong, readwrite) BNCDeviceInfo *deviceInfo;
 @property (nonatomic, strong, readwrite) BNCPreferenceHelper *preferenceHelper;
 @property (nonatomic, strong, readwrite) BNCPartnerParameters *partnerParameters;
@@ -51,12 +50,6 @@
 
 @end
 
-/**
- BNCRequestFactory
- 
- Collates general device and app data for request JSONs.
- Enforces privacy controls on data within request JSONs.
- */
 @implementation BNCRequestFactory
 
 - (instancetype)initWithBranchKey:(NSString *)key {
@@ -157,7 +150,7 @@
     return json;
 }
 
-// The event data dictionary is NOT checked
+// The event data dictionary is NOT checked or changed
 - (NSDictionary *)dataForEventWithEventDictionary:(NSMutableDictionary *)dictionary {
     
     // Event requests are not valid when tracking is disabled
@@ -185,7 +178,7 @@
     return json;
 }
 
-// The short URL link data dictionary is NOT checked
+// The short URL link data dictionary is NOT checked or changed
 - (NSDictionary *)dataForShortURLWithLinkDataDictionary:(NSMutableDictionary *)dictionary isSpotlightRequest:(BOOL)isSpotlightRequest {
     NSMutableDictionary *json = dictionary ? dictionary : [NSMutableDictionary new];
     
@@ -276,6 +269,8 @@
     [self safeSetValue:self.preferenceHelper.spotlightIdentifier forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:json];
     [self safeSetValue:self.preferenceHelper.universalLinkUrl forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
     [self safeSetValue:self.preferenceHelper.initialReferrer forKey:BRANCH_REQUEST_KEY_INITIAL_REFERRER onDict:json];
+    
+    // This was only on opens before, cause it can't exist on install.
     [self safeSetValue:self.preferenceHelper.externalIntentURI forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:json];
 }
 
@@ -309,6 +304,10 @@
 }
 
 - (void)addPartnerParametersToJSON:(NSMutableDictionary *)json {
+    // Partner parameters are not valid when tracking is disabled
+    if ([self isTrackingDisabled]) {
+        return;
+    }
     NSDictionary *partnerParameters = [[BNCPartnerParameters shared] parameterJson];
     if (partnerParameters.count > 0) {
         [self safeSetValue:partnerParameters forKey:BRANCH_REQUEST_KEY_PARTNER_PARAMETERS onDict:json];
@@ -352,6 +351,7 @@
     }
 }
 
+// TODO: consider moving this to an in memory value in BNCPasteboard.
 - (void)clearLocalURLFromStorage {
     self.preferenceHelper.localUrl = nil;
 #if !TARGET_OS_TV

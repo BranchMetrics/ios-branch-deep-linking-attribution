@@ -10,6 +10,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*
+ BNCRequestFactory
+ 
+ Collates general device and app data for request JSONs.
+ Enforces privacy controls on data within request JSONs.
+ 
+ Endpoint specific data is passed in and not edited by this class.
+ */
 @interface BNCRequestFactory : NSObject
 
 - (instancetype)initWithBranchKey:(NSString *)key NS_DESIGNATED_INITIALIZER;
@@ -17,11 +25,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSDictionary *)dataForInstall;
 - (NSDictionary *)dataForOpen;
+
+// Event data is passed in
 - (NSDictionary *)dataForEventWithEventDictionary:(NSMutableDictionary *)dictionary;
 
-// BranchShortUrlRequest, BranchShortUrlSyncRequest and BranchSpotlightUrlRequest
+// Link payload is passed in
 - (NSDictionary *)dataForShortURLWithLinkDataDictionary:(NSMutableDictionary *)dictionary isSpotlightRequest:(BOOL)isSpotlightRequest;
 
+// LATD attribution window is passed in
 - (NSDictionary *)dataForLATDWithDataDictionary:(NSMutableDictionary *)dictionary;
 
 @end

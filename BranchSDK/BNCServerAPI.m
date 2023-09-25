@@ -34,24 +34,24 @@
     return self;
 }
 
-- (NSURL *)installServiceURL{
-    return [NSURL URLWithString: [[self getBaseURL] stringByAppendingString: @"/v1/install"]];
+- (NSString *)installServiceURL{
+    return [[self getBaseURL] stringByAppendingString: @"/v1/install"];
 }
 
-- (NSURL *)openServiceURL {
-    return [NSURL URLWithString: [[self getBaseURL] stringByAppendingString: @"/v1/open"]];
+- (NSString *)openServiceURL {
+    return [[self getBaseURL] stringByAppendingString: @"/v1/open"];
 }
 
-- (NSURL *)standardEventServiceURL{
-    return [NSURL URLWithString: [[self getBaseURL] stringByAppendingString: @"/v2/event/standard"]];
+- (NSString *)standardEventServiceURL{
+    return [[self getBaseURL] stringByAppendingString: @"/v2/event/standard"];
 }
 
-- (NSURL *)customEventServiceURL{
-    return [NSURL URLWithString: [[self getBaseURL] stringByAppendingString: @"/v2/event/custom"]];
+- (NSString *)customEventServiceURL{
+    return [[self getBaseURL] stringByAppendingString: @"/v2/event/custom"];
 }
 
-- (NSURL *)linkServiceURL {
-    return [NSURL URLWithString: [[self getBaseURLForLinkingEndpoints] stringByAppendingString: @"/v1/url"]];
+- (NSString *)linkServiceURL {
+    return [[self getBaseURLForLinkingEndpoints] stringByAppendingString: @"/v1/url"];
 }
 
 // Currently we switch to tracking domains if we detect IDFA, indicating that Ad Tracking is enabled

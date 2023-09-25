@@ -669,6 +669,7 @@
 		4D16837A2098C901008819E3 /* Branch-SDK-Tests */ = {
 			isa = PBXGroup;
 			children = (
+				E7A728BC2AA9A112009343B7 /* BNCAPIServerTest.m */,
 				5FC7326F22DD1F93006E6FBC /* BNCAppleReceiptTests.m */,
 				4D1683972098C901008819E3 /* BNCApplication.Test.m */,
 				4D7881FB209CF2D4002B750F /* BNCApplication+BNCTest.h */,
@@ -694,6 +695,7 @@
 				4D1683A02098C901008819E3 /* BNCPreferenceHelperTests.m */,
 				5F92B23323835FEB00CA909B /* BNCReachabilityTests.m */,
 				C1CC888129BAAFC000BDD2B5 /* BNCReferringURLUtilityTests.m */,
+				5FC20E722A93D85F00D9E1C8 /* BNCRequestFactoryTests.m */,
 				4D16837E2098C901008819E3 /* BNCServerInterface.Test.m */,
 				4D16837D2098C901008819E3 /* BNCServerRequestQueueOldTests.m */,
 				5FB6CC12264F0C7C0020E478 /* BNCServerRequestQueueTests.m */,
@@ -703,8 +705,8 @@
 				4D16838D2098C901008819E3 /* BNCTestCase.m */,
 				4D7881F9209CF2D4002B750F /* BNCTestCase.strings */,
 				4D7881FA209CF2D4002B750F /* BNCTestCase.Test.m */,
-				4D16838C2098C901008819E3 /* BNCURLFilterTests.m */,
 				5FCF7EAC29DC96A7008D629E /* BNCURLFilterSkiplistUpgradeTests.m */,
+				4D16838C2098C901008819E3 /* BNCURLFilterTests.m */,
 				5F205D022318641700C776D1 /* BNCUserAgentCollectorTests.m */,
 				4D1683812098C901008819E3 /* Branch-SDK-Tests-Bridging-Header.h */,
 				4D1683922098C901008819E3 /* BranchDelegate.Test.m */,
@@ -724,8 +726,6 @@
 				4D16839F2098C901008819E3 /* Info.plist */,
 				5F892EC4236116CC0023AEC1 /* NSErrorBranchCategoryTests.m */,
 				4D16839E2098C901008819E3 /* NSString+Branch.Test.m */,
-				5FC20E722A93D85F00D9E1C8 /* BNCRequestFactoryTests.m */,
-				E7A728BC2AA9A112009343B7 /* BNCAPIServerTest.m */,
 			);
 			path = "Branch-SDK-Tests";
 			sourceTree = "<group>";
@@ -885,12 +885,12 @@
 				E2B947491D15D73900F2270D /* BNCCallbacks.h */,
 				7E6ACAF919E324120066913E /* BNCConfig.h */,
 				4D3FA94A1DFF31EB00E2B6A9 /* BNCConfig.m */,
-				E7CBC3972AA9403100B2D0D9 /* BNCServerAPI.h */,
-				E7CBC3982AA9403100B2D0D9 /* BNCServerAPI.m */,
 				466D5A0F1B5991E3009DB845 /* BNCContentDiscoveryManager.h */,
 				466D5A101B5991E3009DB845 /* BNCContentDiscoveryManager.m */,
 				7B18DF471F1F00E200C25C84 /* BNCCrashlyticsWrapper.h */,
 				7B18DF481F1F00E200C25C84 /* BNCCrashlyticsWrapper.m */,
+				C17394622A8C2282006068F2 /* BNCCurrency.h */,
+				C17394632A8C228D006068F2 /* BNCCurrency.m */,
 				F1D3591E1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h */,
 				F1D3591F1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m */,
 				7D5882301CA1BEEA00FF6358 /* BNCDeviceInfo.h */,
@@ -927,6 +927,8 @@
 				5F4101F426851DC7003699AD /* BNCPasteboard.m */,
 				670016C11946309100A9E103 /* BNCPreferenceHelper.h */,
 				670016C21946309100A9E103 /* BNCPreferenceHelper.m */,
+				C173945E2A8AEDFB006068F2 /* BNCProductCategory.h */,
+				C173945F2A8AEE0E006068F2 /* BNCProductCategory.m */,
 				C10C61AB28248E5A00761D7E /* BNCQRCodeCache.h */,
 				C10C61AC28248E5A00761D7E /* BNCQRCodeCache.m */,
 				5F92B22F23834AFD00CA909B /* BNCReachability.h */,
@@ -935,6 +937,8 @@
 				C1CC887E29BAA06600BDD2B5 /* BNCReferringURLUtility.m */,
 				5F5335C12A8D92C5006CF171 /* BNCRequestFactory.h */,
 				5F5335C22A8D92C5006CF171 /* BNCRequestFactory.m */,
+				E7CBC3972AA9403100B2D0D9 /* BNCServerAPI.h */,
+				E7CBC3982AA9403100B2D0D9 /* BNCServerAPI.m */,
 				5F3801EB24DCC2E400E6FAFD /* BNCServerInterface.h */,
 				5F38020724DCC2E700E6FAFD /* BNCServerInterface.m */,
 				5F38020824DCC2E700E6FAFD /* BNCServerRequest.h */,
@@ -1016,10 +1020,6 @@
 				4DA577211E67B28700A43BDD /* NSString+Branch.m */,
 				4D9607F21FBF9472008AB3C2 /* UIViewController+Branch.h */,
 				4D9607F31FBF9473008AB3C2 /* UIViewController+Branch.m */,
-				C173945E2A8AEDFB006068F2 /* BNCProductCategory.h */,
-				C173945F2A8AEE0E006068F2 /* BNCProductCategory.m */,
-				C17394622A8C2282006068F2 /* BNCCurrency.h */,
-				C17394632A8C228D006068F2 /* BNCCurrency.m */,
 			);
 			name = BranchSDK;
 			path = ../BranchSDK;

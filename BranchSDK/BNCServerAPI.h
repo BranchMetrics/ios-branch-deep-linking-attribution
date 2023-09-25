@@ -18,11 +18,11 @@ NS_ASSUME_NONNULL_BEGIN
 + (BNCServerAPI *)sharedInstance;
 
 // BNCServerInterface takes a NSString and is using url.absoluteString
-- (NSURL *)installServiceURL;
-- (NSURL *)openServiceURL;
-- (NSURL *)standardEventServiceURL;
-- (NSURL *)customEventServiceURL;
-- (NSURL *)linkServiceURL;
+- (NSString *)installServiceURL;
+- (NSString *)openServiceURL;
+- (NSString *)standardEventServiceURL;
+- (NSString *)customEventServiceURL;
+- (NSString *)linkServiceURL;
 
 @property (nonatomic, assign, readwrite) BOOL useTrackingDomain;
 @property (nonatomic, assign, readwrite) BOOL useEUServers;

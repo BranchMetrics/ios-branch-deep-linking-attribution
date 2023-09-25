@@ -56,7 +56,7 @@
     NSDictionary *json = [factory dataForShortURLWithLinkDataDictionary:[self.linkData.data mutableCopy] isSpotlightRequest:NO];
 
     return [serverInterface postRequestSynchronous:json
-		url:[[BNCServerAPI sharedInstance] linkServiceURL].absoluteString
+		url:[[BNCServerAPI sharedInstance] linkServiceURL]
 		key:key];
 }
 
