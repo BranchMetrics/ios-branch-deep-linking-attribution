@@ -60,7 +60,9 @@
 }
 
 - (void)postRequest:(NSDictionary *)post url:(NSString *)url retryNumber:(NSInteger)retryNumber key:(NSString *)key callback:(BNCServerCallback)callback {
-    self.requestEndpoint = [self.preferenceHelper getEndpointFromURL:url];
+    
+    // TODO: confirm it's ok to send full URL instead of with the domain trimmed off
+    self.requestEndpoint = url;
     NSURLRequest *request = [self preparePostRequest:post url:url key:key retryNumber:retryNumber];
     
     [self genericHTTPRequest:request

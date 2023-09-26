@@ -6,7 +6,6 @@
 //
 
 #import "BNCServerAPI.h"
-#import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BNCConfig.h"
 #import "BranchConstants.h"
@@ -52,6 +51,18 @@
 
 - (NSString *)linkServiceURL {
     return [[self getBaseURLForLinkingEndpoints] stringByAppendingString: @"/v1/url"];
+}
+
+- (NSString *)qrcodeServiceURL {
+    return [[self getBaseURLForLinkingEndpoints] stringByAppendingString: @"/v1/qr-code"];
+}
+
+- (NSString *)latdServiceURL {
+    return [[self getBaseURL] stringByAppendingString: @"/v1/cpid/latd"];
+}
+
+- (NSString *)validationServiceURL {
+    return [[self getBaseURLForLinkingEndpoints] stringByAppendingString: @"/v1/app-link-settings"];
 }
 
 // Currently we switch to tracking domains if we detect IDFA, indicating that Ad Tracking is enabled

@@ -53,22 +53,23 @@
 }
 
 #pragma mark - Server URL methods
+// TODO: rethink these APIs. As currently written they do not work properly.
 
+// Overrides base API URL
 + (void)setAPIUrl:(NSString *)url {
     if([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
         [[BNCPreferenceHelper sharedInstance] setBranchAPIURL:url];
     } else {
-        BNCLogWarning([NSString stringWithFormat:@"Not setting url - %@. Its invalid.", url]);
-        [[BNCPreferenceHelper sharedInstance] setBranchAPIURL:BNC_API_BASE_URL];
+        BNCLogWarning(@"Ignoring invalid custom API URL");
     }
 }
 
+// Overrides base CDN URL
 + (void)setCDNBaseUrl:(NSString *)url {
     if([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
         [[BNCPreferenceHelper sharedInstance] setPatternListURL:url];
     } else {
-        BNCLogWarning([NSString stringWithFormat:@"Not setting url - %@. Its invalid.", url]);
-        [[BNCPreferenceHelper sharedInstance] setPatternListURL:BNC_CDN_URL];
+        BNCLogWarning(@"Ignoring invalid custom CDN URL");
     }
 }
 

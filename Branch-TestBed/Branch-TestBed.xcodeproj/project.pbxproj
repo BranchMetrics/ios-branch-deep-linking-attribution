@@ -179,22 +179,12 @@
 		5FC20E732A93D85F00D9E1C8 /* BNCRequestFactoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC20E722A93D85F00D9E1C8 /* BNCRequestFactoryTests.m */; };
 		5FC4CF8C24860C440001E701 /* latd.json in Resources */ = {isa = PBXBuildFile; fileRef = 5FC4CF7E24860C320001E701 /* latd.json */; };
 		5FC4CF8D24860C440001E701 /* latd_missing_window.json in Resources */ = {isa = PBXBuildFile; fileRef = 5FC4CF7F24860C320001E701 /* latd_missing_window.json */; };
-		5FC4CF8E24860C440001E701 /* cpid.json in Resources */ = {isa = PBXBuildFile; fileRef = 5FC4CF8024860C320001E701 /* cpid.json */; };
-		5FC4CF8F24860C440001E701 /* cpid_missing_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 5FC4CF8124860C320001E701 /* cpid_missing_id.json */; };
 		5FC4CF9024860C440001E701 /* example.json in Resources */ = {isa = PBXBuildFile; fileRef = 5FC4CF8224860C320001E701 /* example.json */; };
 		5FC4CF9124860C440001E701 /* latd_empty_data.json in Resources */ = {isa = PBXBuildFile; fileRef = 5FC4CF8324860C320001E701 /* latd_empty_data.json */; };
 		5FC4CF9224860C440001E701 /* latd_missing_data.json in Resources */ = {isa = PBXBuildFile; fileRef = 5FC4CF8424860C320001E701 /* latd_missing_data.json */; };
-		5FC4CF9324860C440001E701 /* cpid_empty_prob.json in Resources */ = {isa = PBXBuildFile; fileRef = 5FC4CF8524860C320001E701 /* cpid_empty_prob.json */; };
-		5FC4CF9424860C440001E701 /* cpid_empty_dev_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 5FC4CF8624860C320001E701 /* cpid_empty_dev_id.json */; };
-		5FC4CF9524860C440001E701 /* cpid_missing_past.json in Resources */ = {isa = PBXBuildFile; fileRef = 5FC4CF8724860C320001E701 /* cpid_missing_past.json */; };
-		5FC4CF9624860C440001E701 /* cpid_empty_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 5FC4CF8824860C320001E701 /* cpid_empty_id.json */; };
-		5FC4CF9724860C440001E701 /* cpid_empty_past.json in Resources */ = {isa = PBXBuildFile; fileRef = 5FC4CF8924860C320001E701 /* cpid_empty_past.json */; };
-		5FC4CF9824860C440001E701 /* cpid_missing_prob.json in Resources */ = {isa = PBXBuildFile; fileRef = 5FC4CF8A24860C320001E701 /* cpid_missing_prob.json */; };
-		5FC4CF9924860C440001E701 /* cpid_missing_dev_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 5FC4CF8B24860C320001E701 /* cpid_missing_dev_id.json */; };
 		5FC7326822D81002006E6FBC /* BNCAppleReceipt.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FC7326622D81002006E6FBC /* BNCAppleReceipt.h */; };
 		5FC7326922D81002006E6FBC /* BNCAppleReceipt.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC7326722D81002006E6FBC /* BNCAppleReceipt.m */; };
 		5FC7327022DD1F93006E6FBC /* BNCAppleReceiptTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC7326F22DD1F93006E6FBC /* BNCAppleReceiptTests.m */; };
-		5FC7327722DE9A44006E6FBC /* BNCServerInterfaceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC7327622DE9A44006E6FBC /* BNCServerInterfaceTests.m */; };
 		5FCF7EAD29DC96A7008D629E /* BNCURLFilterSkiplistUpgradeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FCF7EAC29DC96A7008D629E /* BNCURLFilterSkiplistUpgradeTests.m */; };
 		5FD1786E26DEE49D009696E3 /* BNCPasteboardTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FD1786D26DEE49C009696E3 /* BNCPasteboardTests.m */; };
 		5FDB04ED24E4D23300F2F267 /* BNCSKAdNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FDB04EB24E4D23300F2F267 /* BNCSKAdNetwork.h */; };
@@ -480,22 +470,12 @@
 		5FC20E722A93D85F00D9E1C8 /* BNCRequestFactoryTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCRequestFactoryTests.m; sourceTree = "<group>"; };
 		5FC4CF7E24860C320001E701 /* latd.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = latd.json; sourceTree = "<group>"; };
 		5FC4CF7F24860C320001E701 /* latd_missing_window.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = latd_missing_window.json; sourceTree = "<group>"; };
-		5FC4CF8024860C320001E701 /* cpid.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cpid.json; sourceTree = "<group>"; };
-		5FC4CF8124860C320001E701 /* cpid_missing_id.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cpid_missing_id.json; sourceTree = "<group>"; };
 		5FC4CF8224860C320001E701 /* example.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = example.json; sourceTree = "<group>"; };
 		5FC4CF8324860C320001E701 /* latd_empty_data.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = latd_empty_data.json; sourceTree = "<group>"; };
 		5FC4CF8424860C320001E701 /* latd_missing_data.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = latd_missing_data.json; sourceTree = "<group>"; };
-		5FC4CF8524860C320001E701 /* cpid_empty_prob.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cpid_empty_prob.json; sourceTree = "<group>"; };
-		5FC4CF8624860C320001E701 /* cpid_empty_dev_id.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cpid_empty_dev_id.json; sourceTree = "<group>"; };
-		5FC4CF8724860C320001E701 /* cpid_missing_past.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cpid_missing_past.json; sourceTree = "<group>"; };
-		5FC4CF8824860C320001E701 /* cpid_empty_id.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cpid_empty_id.json; sourceTree = "<group>"; };
-		5FC4CF8924860C320001E701 /* cpid_empty_past.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cpid_empty_past.json; sourceTree = "<group>"; };
-		5FC4CF8A24860C320001E701 /* cpid_missing_prob.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cpid_missing_prob.json; sourceTree = "<group>"; };
-		5FC4CF8B24860C320001E701 /* cpid_missing_dev_id.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cpid_missing_dev_id.json; sourceTree = "<group>"; };
 		5FC7326622D81002006E6FBC /* BNCAppleReceipt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCAppleReceipt.h; sourceTree = "<group>"; };
 		5FC7326722D81002006E6FBC /* BNCAppleReceipt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCAppleReceipt.m; sourceTree = "<group>"; };
 		5FC7326F22DD1F93006E6FBC /* BNCAppleReceiptTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCAppleReceiptTests.m; sourceTree = "<group>"; };
-		5FC7327622DE9A44006E6FBC /* BNCServerInterfaceTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCServerInterfaceTests.m; sourceTree = "<group>"; };
 		5FCF7EAC29DC96A7008D629E /* BNCURLFilterSkiplistUpgradeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCURLFilterSkiplistUpgradeTests.m; sourceTree = "<group>"; };
 		5FD1786D26DEE49C009696E3 /* BNCPasteboardTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCPasteboardTests.m; sourceTree = "<group>"; };
 		5FDB04EB24E4D23300F2F267 /* BNCSKAdNetwork.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCSKAdNetwork.h; sourceTree = "<group>"; };
@@ -738,7 +718,6 @@
 		5F8B7B3C21B5F5CD009CE0A6 /* Branch-SDK-Unhosted-Tests */ = {
 			isa = PBXGroup;
 			children = (
-				5FC7327622DE9A44006E6FBC /* BNCServerInterfaceTests.m */,
 				5F67F48D228F535500067429 /* BNCEncodingUtilsTests.m */,
 				5F8B7B4621B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m */,
 				5F8B7B3F21B5F5CD009CE0A6 /* Info.plist */,
@@ -751,18 +730,9 @@
 			children = (
 				5FC4CF7E24860C320001E701 /* latd.json */,
 				5FC4CF7F24860C320001E701 /* latd_missing_window.json */,
-				5FC4CF8024860C320001E701 /* cpid.json */,
-				5FC4CF8124860C320001E701 /* cpid_missing_id.json */,
 				5FC4CF8224860C320001E701 /* example.json */,
 				5FC4CF8324860C320001E701 /* latd_empty_data.json */,
 				5FC4CF8424860C320001E701 /* latd_missing_data.json */,
-				5FC4CF8524860C320001E701 /* cpid_empty_prob.json */,
-				5FC4CF8624860C320001E701 /* cpid_empty_dev_id.json */,
-				5FC4CF8724860C320001E701 /* cpid_missing_past.json */,
-				5FC4CF8824860C320001E701 /* cpid_empty_id.json */,
-				5FC4CF8924860C320001E701 /* cpid_empty_past.json */,
-				5FC4CF8A24860C320001E701 /* cpid_missing_prob.json */,
-				5FC4CF8B24860C320001E701 /* cpid_missing_dev_id.json */,
 			);
 			path = cannedData;
 			sourceTree = "<group>";
@@ -1293,18 +1263,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				5FC4CF9124860C440001E701 /* latd_empty_data.json in Resources */,
-				5FC4CF8F24860C440001E701 /* cpid_missing_id.json in Resources */,
 				5FC4CF8C24860C440001E701 /* latd.json in Resources */,
-				5FC4CF9824860C440001E701 /* cpid_missing_prob.json in Resources */,
 				5FC4CF9024860C440001E701 /* example.json in Resources */,
-				5FC4CF9724860C440001E701 /* cpid_empty_past.json in Resources */,
-				5FC4CF9924860C440001E701 /* cpid_missing_dev_id.json in Resources */,
-				5FC4CF9424860C440001E701 /* cpid_empty_dev_id.json in Resources */,
-				5FC4CF8E24860C440001E701 /* cpid.json in Resources */,
-				5FC4CF9524860C440001E701 /* cpid_missing_past.json in Resources */,
 				5FC4CF9224860C440001E701 /* latd_missing_data.json in Resources */,
-				5FC4CF9624860C440001E701 /* cpid_empty_id.json in Resources */,
-				5FC4CF9324860C440001E701 /* cpid_empty_prob.json in Resources */,
 				4D7881FD209CF2D4002B750F /* BNCTestCase.strings in Resources */,
 				5FC4CF8D24860C440001E701 /* latd_missing_window.json in Resources */,
 			);
@@ -1446,7 +1407,6 @@
 				5F67F48E228F535500067429 /* BNCEncodingUtilsTests.m in Sources */,
 				5F8B7B4721B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m in Sources */,
 				5F3D671C233062FD00454FF1 /* BNCJsonLoader.m in Sources */,
-				5FC7327722DE9A44006E6FBC /* BNCServerInterfaceTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

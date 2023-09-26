@@ -149,7 +149,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 #pragma mark - API methods
 
-// TODO: figure out if we can support custom domains for proxying with Apple's Tracking domains.
 - (void)setBranchAPIURL:(NSString*)branchAPIURL_ {
     @synchronized (self) {
         _branchAPIURL = [branchAPIURL_ copy];
@@ -162,49 +161,21 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         if (!_branchAPIURL) {
             _branchAPIURL = [self readStringFromDefaults:BRANCH_PREFS_KEY_API_URL];
         }
-        if (_branchAPIURL == nil || [_branchAPIURL isEqualToString:@""]) {
-            _branchAPIURL = [BNC_API_BASE_URL copy];
-            [self writeObjectToDefaults:BRANCH_PREFS_KEY_API_URL value:_branchAPIURL];
-        }
         return _branchAPIURL;
     }
 }
 
-- (NSString *)getAPIBaseURL {
-    @synchronized (self) {
-        return [NSString stringWithFormat:@"%@/%@/", self.branchAPIURL, BNC_API_VERSION];
-    }
-}
-
-- (NSString *)getAPIURL:(NSString *) endpoint {
-    return [[self getAPIBaseURL] stringByAppendingString:endpoint];
-}
-
-// TODO: reconsider this API, it's used to identify the behavior of referring URL query param handling
-- (NSString *)getEndpointFromURL:(NSString *)url {
-    NSString *APIBase = self.branchAPIURL;
-    if ([url hasPrefix:APIBase]) {
-        NSUInteger index = APIBase.length;
-        return [url substringFromIndex:index];
-    }
-    return @"";
-}
-
-- (void) setPatternListURL:(NSString*)url {
+- (void)setPatternListURL:(NSString*)url {
     @synchronized (self) {
         _patternListURL = url;
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_PATTERN_LIST_URL value:url];
     }
 }
 
-- (NSString*) patternListURL {
+- (NSString *)patternListURL {
     @synchronized (self) {
         if (!_patternListURL) {
             _patternListURL =  [self readStringFromDefaults:BRANCH_PREFS_KEY_PATTERN_LIST_URL];
-        }
-        if (_patternListURL == nil || [_patternListURL isEqualToString:@""]) {
-            _patternListURL = BNC_CDN_URL;
-            [self writeObjectToDefaults:BRANCH_PREFS_KEY_PATTERN_LIST_URL value:_patternListURL];
         }
         return _patternListURL;
     }

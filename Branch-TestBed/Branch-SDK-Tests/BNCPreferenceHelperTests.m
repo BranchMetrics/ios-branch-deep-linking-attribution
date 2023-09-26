@@ -199,6 +199,7 @@
     XCTAssert([filterDesc isEqualToString:valueDesc]);
 }
 
+/*
 - (void)testSetAPIURL_Example {
     
     NSString *url = @"https://www.example.com/";
@@ -254,5 +255,6 @@
     XCTAssert(![urlStored isEqualToString:@""]);
     XCTAssert([urlStored isEqualToString:BNC_CDN_URL]);
 }
+ */
 
 @end

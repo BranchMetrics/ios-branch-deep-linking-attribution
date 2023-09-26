@@ -14,6 +14,7 @@
 #import "NSError+Branch.h"
 #import "UIViewController+Branch.h"
 #import "BNCLog.h"
+#import "BNCServerAPI.h"
 
 @interface BranchQRCode()
 @property (nonatomic, copy, readwrite) NSString *buoTitle;
@@ -125,8 +126,7 @@
            completion:(void(^)(NSData * _Nullable qrCode, NSError * _Nullable error))completion {
     
     NSError *error;
-    NSString *branchAPIURL = [BNC_API_BASE_URL copy];
-    NSString *urlString = [NSString stringWithFormat: @"%@/v1/qr-code", branchAPIURL];
+    NSString *urlString = [[BNCServerAPI sharedInstance] qrcodeServiceURL];
     NSURL *url = [NSURL URLWithString: urlString];
     NSURLSession *session = [NSURLSession sharedSession];
     

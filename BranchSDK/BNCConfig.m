@@ -8,13 +8,11 @@
 
 #include "BNCConfig.h"
 
-NSString * const BNC_API_BASE_URL    = @"https://api2.branch.io";
-NSString * const BNC_API_VERSION     = @"v1";
-NSString * const BNC_LINK_URL        = @"https://bnc.lt";
-NSString * const BNC_SDK_VERSION     = @"2.2.1";
-NSString * const BNC_CDN_URL         = @"https://cdn.branch.io";
+NSString * const BNC_SDK_VERSION  = @"2.2.1";
+NSString * const BNC_LINK_URL = @"https://bnc.lt";
+NSString * const BNC_CDN_URL = @"https://cdn.branch.io";
 
-NSString*  const BNC_API_URL                = @"https://api3.branch.io";
-NSString*  const BNC_SAFETRACK_API_URL      = @"https://api-safetrack.branch.io";
-NSString*  const BNC_EU_API_URL             = @"https://api3-eu.branch.io";
-NSString*  const BNC_SAFETRACK_EU_API_URL   = @"https://api-safetrack-eu.branch.io";
+NSString * const BNC_API_URL = @"https://api3.branch.io";
+NSString * const BNC_SAFETRACK_API_URL = @"https://api-safetrack.branch.io";
+NSString * const BNC_EU_API_URL = @"https://api3-eu.branch.io";
+NSString * const BNC_SAFETRACK_EU_API_URL = @"https://api-safetrack-eu.branch.io";

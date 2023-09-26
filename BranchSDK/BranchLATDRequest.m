@@ -9,6 +9,7 @@
 #import "BranchLATDRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
+#import "BNCServerAPI.h"
 #import "BNCRequestFactory.h"
 
 @implementation BranchLATDRequest
@@ -22,7 +23,7 @@
 }
 
 - (NSString *)serverURL {
-    return [[BNCPreferenceHelper sharedInstance] getAPIURL:BRANCH_REQUEST_ENDPOINT_LATD];
+    return [[BNCServerAPI sharedInstance] latdServiceURL];
 }
 
 - (NSMutableDictionary *)dataDictionary {
