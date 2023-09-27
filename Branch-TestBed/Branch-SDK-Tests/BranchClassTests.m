@@ -168,7 +168,6 @@
 
 - (void)testGetLatestReferringParams {
     NSString *sessionParamsString = @"{\"+clicked_branch_link\":true,\"+is_first_session\":false}";
-    // Assume setSessionParams: exists or use a method to mock sessionParams
     [[BNCPreferenceHelper sharedInstance] setSessionParams:sessionParamsString];
 
     NSDictionary *result = [self.branch getLatestReferringParams];
@@ -177,7 +176,6 @@
 
 - (void)testGetLatestReferringParamsSynchronous {
     NSString *sessionParamsString = @"{\"+clicked_branch_link\":true,\"+is_first_session\":false}";
-    // Assume setSessionParams: exists or use a method to mock sessionParams
     [[BNCPreferenceHelper sharedInstance] setSessionParams:sessionParamsString];
 
     NSDictionary *result = [self.branch getLatestReferringParamsSynchronous];
