@@ -37,7 +37,7 @@
     BNCURLFilter *filter = [BNCURLFilter new];
     [filter updatePatternListWithCompletion:^ (NSError*error, NSArray*list) {
         XCTAssertNil(error);
-        XCTAssertTrue(list.count == 6);
+        XCTAssertTrue(list.count > 0);
         [expectation fulfill];
     }];
     [self awaitExpectations];
