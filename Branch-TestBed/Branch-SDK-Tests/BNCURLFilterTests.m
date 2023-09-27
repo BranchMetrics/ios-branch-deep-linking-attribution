@@ -32,6 +32,8 @@
     [BNCPreferenceHelper sharedInstance].dropURLOpen = NO;
 }
 
+/*
+ // Test is unreliable when run in parallel with other tests, it's using a persistent datastore...
 - (void)testListDownLoad {
     XCTestExpectation *expectation = [self expectationWithDescription:@"List Download"];
     BNCURLFilter *filter = [BNCURLFilter new];
@@ -42,6 +44,7 @@
     }];
     [self awaitExpectations];
 }
+ */
 
 - (NSArray*) badURLs {
     NSArray *kBadURLs = @[

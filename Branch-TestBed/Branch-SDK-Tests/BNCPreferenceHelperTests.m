@@ -53,6 +53,7 @@
 }
 
 /*
+ // This test is not reliable when run concurrently with other tests that set the patterListURL
 - (void)testURLFilter {
     XCTAssertTrue([@"https://cdn.branch.io" isEqualToString:self.prefHelper.patternListURL]);
     

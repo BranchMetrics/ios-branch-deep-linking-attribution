@@ -156,11 +156,19 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
 }
 
+// TODO: This method is not used with the Tracking domain change. See SDK-2118
 - (NSString *)branchAPIURL {
     @synchronized (self) {
         if (!_branchAPIURL) {
             _branchAPIURL = [self readStringFromDefaults:BRANCH_PREFS_KEY_API_URL];
         }
+        
+        // return the default URL in the event there's nothing in storage
+        if (_branchAPIURL == nil || [_branchAPIURL isEqualToString:@""]) {
+            _branchAPIURL = [BNC_API_URL copy];
+            [self writeObjectToDefaults:BRANCH_PREFS_KEY_API_URL value:_branchAPIURL];
+        }
+
         return _branchAPIURL;
     }
 }
@@ -177,6 +185,12 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         if (!_patternListURL) {
             _patternListURL =  [self readStringFromDefaults:BRANCH_PREFS_KEY_PATTERN_LIST_URL];
         }
+
+        // When no custom URL is found, return the default
+        if (_patternListURL == nil || [_patternListURL isEqualToString:@""]) {
+            _patternListURL = BNC_CDN_URL;
+        }
+
         return _patternListURL;
     }
 }
