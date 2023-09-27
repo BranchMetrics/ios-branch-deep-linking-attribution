@@ -73,7 +73,8 @@
     XCTAssertNotNil([json objectForKey:@"ios_vendor_id"]);
     
     // Present only on opens. Assumes test runs after the host app completes an install.
-    XCTAssertNotNil([json objectForKey:@"randomized_bundle_token"]);
+    // This is not a reliable assumption on test runners
+    //XCTAssertNotNil([json objectForKey:@"randomized_bundle_token"]);
 }
 
 - (void)testDataForEvent {

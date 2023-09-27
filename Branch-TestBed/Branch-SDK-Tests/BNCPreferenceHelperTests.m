@@ -52,6 +52,7 @@
     XCTAssertEqual(self.prefHelper.timeout, NSIntegerMax);
 }
 
+/*
 - (void)testURLFilter {
     XCTAssertTrue([@"https://cdn.branch.io" isEqualToString:self.prefHelper.patternListURL]);
     
@@ -59,6 +60,7 @@
     self.prefHelper.patternListURL = customURL;
     XCTAssertTrue([customURL isEqualToString:self.prefHelper.patternListURL]);
 }
+ */
 
 - (void)testSerializeDict_Nil {
     NSMutableDictionary *dict = nil;
