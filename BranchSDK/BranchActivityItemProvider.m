@@ -98,7 +98,6 @@
 - (id)item {
     NSString *channel = [BranchActivityItemProvider humanReadableChannelWithActivityType:self.activityType];
 
-
     // Allow for overrides specific to channel
     NSDictionary *params = [self paramsForChannel:channel];
     NSArray *tags = [self tagsForChannel:channel];

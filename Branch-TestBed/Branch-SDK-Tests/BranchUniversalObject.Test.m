@@ -278,4 +278,32 @@
     [self waitForExpectationsWithTimeout:2.0 handler:nil];
 }
 
+- (void) testInitWithTitle {
+    BranchUniversalObject *buo = [[BranchUniversalObject new] initWithTitle:@"buoTitle"];
+    XCTAssertEqual(buo.title, @"buoTitle");
+}
+
+- (void)testGetShortURLWithParams {
+    BranchUniversalObject *buo = [[BranchUniversalObject new] initWithTitle:@"buoTitle"];
+    BranchLinkProperties *lp = [BranchLinkProperties new];
+    NSString *randomAlias = [[NSUUID UUID] UUIDString];
+    lp.alias = randomAlias;
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Fetching URL"];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        [buo getShortUrlWithLinkProperties:lp andCallback:^(NSString * _Nullable url, NSError * _Nullable error) {
+            NSString *expectedURL = [NSString stringWithFormat:@"https://bnctestbed.app.link/%@", randomAlias];
+            XCTAssertEqualObjects(url, expectedURL, @"URL should match the expected format");
+            [expectation fulfill];
+        }];
+    });
+
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError *error) {
+        if (error) {
+            NSLog(@"Timeout Error: %@", error);
+        }
+    }];
+}
+
 @end

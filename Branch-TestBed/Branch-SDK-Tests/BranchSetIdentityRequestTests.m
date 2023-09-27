@@ -50,8 +50,6 @@ static NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
         
         [self waitForExpectationsWithTimeout:5 handler:nil];
     }];
-    
-
 }
 
 - (void)testSetIdentityWithUserId {
@@ -64,7 +62,8 @@ static NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
 
         XCTAssertEqualObjects(@"testUserId", preferenceHelper.userIdentity);
     }];
-
 }
+
+
 
 @end
