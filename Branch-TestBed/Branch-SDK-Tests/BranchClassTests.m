@@ -29,11 +29,6 @@
     [super tearDown];
 }
 
-- (void)testResetUserSession {
-    [self.branch resetUserSession];
-    //XCTAssertEqual([BNCPreferenceHelper sharedInstance]., BNCInitStatusUninitialized, @"Initialization status should be BNCInitStatusUninitialized");
-}
-
 - (void)testIsUserIdentified {
     [self.branch setIdentity: @"userId"];
     XCTAssertTrue([self.branch isUserIdentified], @"User should be identified");
@@ -66,31 +61,14 @@
 }
 
 - (void)testSetTrackingDisabled {
-    // Initial state
     XCTAssertFalse([BNCPreferenceHelper sharedInstance].trackingDisabled);
 
-    // Set tracking to disabled
     [Branch setTrackingDisabled:YES];
     XCTAssertTrue([BNCPreferenceHelper sharedInstance].trackingDisabled);
 
-    // Revert tracking to enabled
     [Branch setTrackingDisabled:NO];
     XCTAssertFalse([BNCPreferenceHelper sharedInstance].trackingDisabled);
 }
-
-//- (void)testSetReferrerGbraidValidityWindow {
-//    // Initial state, should be nil or non-existing
-//    XCTAssertNil([BNCPreferenceHelper sharedInstance].referringURLQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID][BRANCH_URL_QUERY_PARAMETERS_VALIDITY_WINDOW_KEY]);
-//
-//    // Set validity window
-//    NSTimeInterval validityWindow = 1592000.0;
-//    [Branch setReferrerGbraidValidityWindow:validityWindow];
-//    [NSThread sleepForTimeInterval:1.0];
-//    NSLog(@"After setting 2: %@", [BNCPreferenceHelper sharedInstance].referringURLQueryParameters);
-//
-//    // Check if it's set correctly
-//    XCTAssertEqual([BNCPreferenceHelper sharedInstance].referrerGBRAIDValidityWindow, validityWindow);
-//}
 
 - (void)testCheckPasteboardOnInstall {
     [self.branch checkPasteboardOnInstall];
