@@ -57,8 +57,9 @@
     return [[self getBaseURLForLinkingEndpoints] stringByAppendingString: @"/v1/qr-code"];
 }
 
+// LATD endpoint is not a data collection endpoint and will be treated like linking endpoints
 - (NSString *)latdServiceURL {
-    return [[self getBaseURL] stringByAppendingString: @"/v1/cpid/latd"];
+    return [[self getBaseURLForLinkingEndpoints] stringByAppendingString: @"/v1/cpid/latd"];
 }
 
 - (NSString *)validationServiceURL {

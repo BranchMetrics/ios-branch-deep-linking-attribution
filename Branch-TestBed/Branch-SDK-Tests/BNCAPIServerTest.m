@@ -170,7 +170,7 @@
     serverAPI.useTrackingDomain = YES;
 
     NSString *url = [serverAPI latdServiceURL];
-    NSString *expectedUrlStr = @"https://api-safetrack.branch.io/v1/cpid/latd";
+    NSString *expectedUrlStr = @"https://api3.branch.io/v1/cpid/latd";
     
     XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
@@ -353,7 +353,7 @@
     serverAPI.useTrackingDomain = YES;
 
     NSString *url = [serverAPI latdServiceURL];
-    NSString *expectedUrlStr = @"https://api-safetrack-eu.branch.io/v1/cpid/latd";
+    NSString *expectedUrlStr = @"https://api3-eu.branch.io/v1/cpid/latd";
     
     XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
