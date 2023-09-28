@@ -53,8 +53,8 @@
 }
 
 #pragma mark - Server URL methods
-// TODO: rethink these APIs. As currently written they do not work properly.
 
+// With the change to support Apple's tracking domain feature, this API no longer works. See SDK-2118
 // Overrides base API URL
 + (void)setAPIUrl:(NSString *)url {
     if([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){

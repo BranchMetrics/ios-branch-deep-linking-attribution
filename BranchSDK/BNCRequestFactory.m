@@ -325,7 +325,6 @@
         if (@available(iOS 16.0, macCatalyst 16.0, *)) {
             NSString *localURLString = [self.preferenceHelper localUrl];
             if (localURLString){
-                // TODO: url was found in storage, remember to clear it
                 pasteboardURL = [[NSURL alloc] initWithString:localURLString];
             } else {
                 pasteboardURL = [[BNCPasteboard sharedInstance] checkForBranchLink];
@@ -346,7 +345,6 @@
     if (@available(iOS 16.0, macCatalyst 16.0, *)) {
         NSString *localURLString = [[BNCPreferenceHelper sharedInstance] localUrl];
         if (localURLString){
-            // TODO: url was found in storage, remember to clear it
             NSURL *pasteboardURL = [[NSURL alloc] initWithString:localURLString];
             if (pasteboardURL) {
                 [self safeSetValue:pasteboardURL.absoluteString forKey:BRANCH_REQUEST_KEY_LOCAL_URL onDict:json];
@@ -356,7 +354,6 @@
     }
 }
 
-// TODO: consider moving this to an in memory value in BNCPasteboard.
 - (void)clearLocalURLFromStorage {
     self.preferenceHelper.localUrl = nil;
 #if !TARGET_OS_TV
@@ -408,8 +405,7 @@
     NSMutableDictionary *metadata = [[NSMutableDictionary alloc] init];
     [metadata bnc_safeAddEntriesFromDictionary:self.preferenceHelper.requestMetadataDictionary];
     
-    // TODO: confirm this call does nothing with the new design.
-    // copies existing metadata keys, believe there's only one pass on this so it should be empty.
+    // copies existing metadata keys, believe there's only one pass now so this may be unnecessary
     [metadata bnc_safeAddEntriesFromDictionary:json[BRANCH_REQUEST_KEY_STATE]];
     
     if (metadata.count) {
@@ -446,7 +442,6 @@
     }
 }
 
-// TODO: android is looking to remove this, confirm with server team
 // POST requests include instrumentation
 - (void)addInstrumentationToJSON:(NSMutableDictionary *)json {
     NSDictionary *instrumentationDictionary = self.preferenceHelper.instrumentationParameters;
@@ -568,7 +563,6 @@
             }
         }
         
-        // TODO: if tracking is disabled can we drop most of these?
         [self safeSetValue:self.deviceInfo.osName forKey:BRANCH_REQUEST_KEY_OS onDict:dict];
         [self safeSetValue:self.deviceInfo.osVersion forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:dict];
         [self safeSetValue:self.deviceInfo.osBuildVersion forKey:@"build" onDict:dict];
@@ -597,7 +591,6 @@
     }
 }
 
-// TODO: consider moving to BNCSystemObserver where the other IDFA code lives
 // Do not send first_opt_in, if the install is older than 30 days
 - (BOOL)installDateIsRecent {
     //NSTimeInterval maxTimeSinceInstall = 60.0;
@@ -617,14 +610,6 @@
     } else {
         return YES;
     }
-}
-
-// TODO: consider moving to BNCSystemObserver where other NSBundle checks live
-- (BOOL)isAppExtension {
-    if ([[[NSBundle mainBundle] executablePath] containsString:@".appex/"]) {
-        return YES;
-    }
-    return NO;
 }
 
 // Low value helper method, ignores nils. Also redundant with the category on NSMutableDictionary.
