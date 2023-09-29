@@ -12,7 +12,6 @@
 @interface BranchOpenRequest : BNCServerRequest
 
 @property (nonatomic, copy) callbackWithStatus callback;
-@property (assign, nonatomic) BOOL clearLocalURL;
 
 + (void) waitForOpenResponseLock;
 + (void) releaseOpenResponseLock;
@@ -20,6 +19,5 @@
 
 - (id)initWithCallback:(callbackWithStatus)callback;
 - (id)initWithCallback:(callbackWithStatus)callback isInstall:(BOOL)isInstall;
-+ (NSNumber*) appUpdateState;
 
 @end

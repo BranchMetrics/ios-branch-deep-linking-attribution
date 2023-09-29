@@ -11,6 +11,8 @@
 #import "BNCEncodingUtils.h"
 #import "BranchConstants.h"
 #import "BNCConfig.h"
+#import "BNCRequestFactory.h"
+#import "BNCServerAPI.h"
 
 @interface BranchShortUrlRequest ()
 
@@ -54,18 +56,12 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface
                 key:(NSString *)key
            callback:(BNCServerCallback)callback {
-    NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:self.linkData.data];
+    
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key];
+    NSDictionary *json = [factory dataForShortURLWithLinkDataDictionary:[self.linkData.data mutableCopy] isSpotlightRequest:self.isSpotlightRequest];
 
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
-    if (!preferenceHelper.trackingDisabled) {
-        params[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = preferenceHelper.randomizedDeviceToken;
-        if (!_isSpotlightRequest)
-            params[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = preferenceHelper.randomizedBundleToken;
-        params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
-    }
-
-    [serverInterface postRequest:params
-        url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL]
+    [serverInterface postRequest:json
+        url:[[BNCServerAPI sharedInstance] linkServiceURL]
         key:key
         callback:callback];
 }

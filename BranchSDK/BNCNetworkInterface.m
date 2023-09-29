@@ -65,9 +65,6 @@ typedef NS_ENUM(NSInteger, BNCNetworkAddressType) {
             continue;
         }
 
-        // TODO: Check ifdata too.
-        // struct if_data *ifdata = interface->ifa_data;
-
         const struct sockaddr_in *addr = (const struct sockaddr_in*)interface->ifa_addr;
         if (!addr) continue;
 

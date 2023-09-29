@@ -9,7 +9,6 @@
 #import <XCTest/XCTest.h>
 #import "BNCServerRequestQueue.h"
 #import "BNCServerRequest.h"
-#import "BranchCloseRequest.h"
 
 // Analytics requests
 #import "BranchInstallRequest.h"

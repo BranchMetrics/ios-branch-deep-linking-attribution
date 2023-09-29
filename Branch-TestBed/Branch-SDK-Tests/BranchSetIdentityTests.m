@@ -14,10 +14,10 @@
 
 static NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
 
-@interface BranchSetIdentityRequestTests : BNCTestCase
+@interface BranchSetIdentityTests : BNCTestCase
 @end
 
-@implementation BranchSetIdentityRequestTests
+@implementation BranchSetIdentityTests
 
 #pragma mark -  setIdentity Tests
 - (void)testSetIdentityWithCallback {
