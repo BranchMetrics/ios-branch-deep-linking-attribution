@@ -6,6 +6,8 @@
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
+// TODO: Add documentation
+
 #if __has_feature(modules)
 @import Foundation;
 #else

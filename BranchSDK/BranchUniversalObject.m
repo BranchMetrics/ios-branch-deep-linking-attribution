@@ -519,6 +519,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 #pragma mark - Dictionary Methods
 
 - (NSDictionary *)getParamsForServerRequestWithAddedLinkProperties:(BranchLinkProperties *)linkProperties {
+    // TODO: Add warnings if controlParams contains non-control params
     NSMutableDictionary *temp = self.dictionary;
     [temp addEntriesFromDictionary:[linkProperties.controlParams copy]];
     return temp;
