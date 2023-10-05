@@ -420,7 +420,7 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)useEUEndpoints {
-    [[BNCServerAPI sharedInstance] useEUServers];
+    [BNCServerAPI sharedInstance].useEUServers = YES;
 }
 
 - (void)setDebug {
