@@ -348,52 +348,6 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 }
 
 //==================================================================================
-// TEST 09
-// Test certifcate pinning functionality.
-
-// We do NOT pin by default anymore.
-//- (void) testCertificatePinning {
-//
-//    [OHHTTPStubs removeAllStubs];
-//    BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-//
-//    XCTestExpectation* pinSuccess = [self expectationWithDescription:@"PinSuccess1"];
-//    [serverInterface getRequest:[NSDictionary new]
-//        url:@"https://branch.io"
-//        key:@""
-//        callback:^ (BNCServerResponse*response, NSError*error) {
-//            XCTAssertEqualObjects(response.statusCode, @200);
-//            [pinSuccess fulfill];
-//        }];
-//
-//    XCTestExpectation* pinFail1 = [self expectationWithDescription:@"PinFail1"];
-//    [serverInterface getRequest:[NSDictionary new]
-//        url:@"https://google.com"
-//        key:@""
-//        callback:^ (BNCServerResponse*response, NSError*error) {
-//            XCTAssertEqualObjects(response.statusCode, @-999);
-//            [pinFail1 fulfill];
-//        }];
-//
-//#if 0
-//    // TODO: Fix so the end point so the test works on external (outside the Branch office) networks.
-//
-//    XCTestExpectation* pinFail2 = [self expectationWithDescription:@"PinFail2"];
-//    [serverInterface getRequest:[NSDictionary new]
-//        url:@"https://internal-cert-pinning-test-470549067.us-west-1.elb.amazonaws.com/"
-//        key:@""
-//        callback:^ (BNCServerResponse*response, NSError*error) {
-//            XCTAssertEqualObjects(response.statusCode, @-999);
-//            //XCTAssertEqualObjects(response.statusCode, @200);
-//            [pinFail2 fulfill];
-//        }];
-//#endif
-//
-//  [self waitForExpectationsWithTimeout:10.0 handler:nil];
-//}
-
-
-//==================================================================================
 // TEST 10
 // Test mapping of X-Branch-Request-Id to [BNCServerResponse requestId]
 

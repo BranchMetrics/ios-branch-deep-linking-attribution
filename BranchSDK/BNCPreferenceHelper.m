@@ -111,8 +111,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     highestConversionValueSent = _highestConversionValueSent,
     referringURLQueryParameters = _referringURLQueryParameters,
     anonID = _anonID,
-    patternListURL = _patternListURL,
-    useEUServers = _useEUServers;
+    patternListURL = _patternListURL;
 
 + (BNCPreferenceHelper *)sharedInstance {
     static BNCPreferenceHelper *preferenceHelper;
@@ -150,61 +149,48 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 #pragma mark - API methods
 
-- (void) setBranchAPIURL:(NSString*)branchAPIURL_ {
+- (void)setBranchAPIURL:(NSString*)branchAPIURL_ {
     @synchronized (self) {
         _branchAPIURL = [branchAPIURL_ copy];
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_API_URL value:_branchAPIURL];
     }
 }
 
-- (NSString*) branchAPIURL {
+// TODO: This method is not used with the Tracking domain change. See SDK-2118
+- (NSString *)branchAPIURL {
     @synchronized (self) {
         if (!_branchAPIURL) {
             _branchAPIURL = [self readStringFromDefaults:BRANCH_PREFS_KEY_API_URL];
         }
+        
+        // return the default URL in the event there's nothing in storage
         if (_branchAPIURL == nil || [_branchAPIURL isEqualToString:@""]) {
-            _branchAPIURL = [BNC_API_BASE_URL copy];
+            _branchAPIURL = [BNC_API_URL copy];
             [self writeObjectToDefaults:BRANCH_PREFS_KEY_API_URL value:_branchAPIURL];
         }
+
         return _branchAPIURL;
     }
 }
 
-- (NSString *)getAPIBaseURL {
-    @synchronized (self) {
-        return [NSString stringWithFormat:@"%@/%@/", self.branchAPIURL, BNC_API_VERSION];
-    }
-}
-
-- (NSString *)getAPIURL:(NSString *) endpoint {
-    return [[self getAPIBaseURL] stringByAppendingString:endpoint];
-}
-
-- (NSString *)getEndpointFromURL:(NSString *)url {
-    NSString *APIBase = self.branchAPIURL;
-    if ([url hasPrefix:APIBase]) {
-        NSUInteger index = APIBase.length;
-        return [url substringFromIndex:index];
-    }
-    return @"";
-}
-
-- (void) setPatternListURL:(NSString*)url {
+- (void)setPatternListURL:(NSString*)url {
     @synchronized (self) {
         _patternListURL = url;
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_PATTERN_LIST_URL value:url];
     }
 }
 
-- (NSString*) patternListURL {
+- (NSString *)patternListURL {
     @synchronized (self) {
         if (!_patternListURL) {
             _patternListURL =  [self readStringFromDefaults:BRANCH_PREFS_KEY_PATTERN_LIST_URL];
         }
+
+        // When no custom URL is found, return the default
         if (_patternListURL == nil || [_patternListURL isEqualToString:@""]) {
             _patternListURL = BNC_CDN_URL;
-            [self writeObjectToDefaults:BRANCH_PREFS_KEY_PATTERN_LIST_URL value:_patternListURL];
         }
+
         return _patternListURL;
     }
 }
@@ -398,6 +384,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (void)setInitialReferrer:(NSString *)initialReferrer {
     [self writeObjectToDefaults:BRANCH_REQUEST_KEY_INITIAL_REFERRER value:initialReferrer];
 }
+
 - (NSString *)sessionParams {
     @synchronized (self) {
         if (!_sessionParams) {
@@ -663,22 +650,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
 }
 
-- (BOOL)sendCloseRequests {
-    @synchronized(self) {
-        NSNumber *b = (id) [self readObjectFromDefaults:@"sendCloseRequests"];
-        if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
-        
-        // by default, we do not send close events
-        return NO;
-    }
-}
-
-- (void)setSendCloseRequests:(BOOL)disabled {
-    @synchronized(self) {
-        [self writeObjectToDefaults:@"sendCloseRequests" value:@(disabled)];
-    }
-}
-
 - (void)setReferringURLQueryParameters:(NSMutableDictionary *)parameters {
     @synchronized(self) {
         _referringURLQueryParameters = parameters;
@@ -802,23 +773,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     @synchronized(self) {
         NSNumber *b = [NSNumber numberWithBool:invoke];
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_SKAN_INVOKE_REGISTER_APP value:b];
-    }
-}
-
-- (BOOL) useEUServers {
-    @synchronized(self) {
-        NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_USE_EU_SERVERS];
-        if ([b isKindOfClass:NSNumber.class])
-            return [b boolValue];
-        return false;
-    }
-}
-
-- (void)setUseEUServers:(BOOL)useEUServers {
-    @synchronized(self) {
-        NSNumber *b = [NSNumber numberWithBool:useEUServers];
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_USE_EU_SERVERS value:b];
-
     }
 }
 
