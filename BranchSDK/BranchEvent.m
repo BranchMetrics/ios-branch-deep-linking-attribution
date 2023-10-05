@@ -16,6 +16,8 @@
 #import "BNCPartnerParameters.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCEventUtils.h"
+#import "BNCRequestFactory.h"
+#import "BNCServerAPI.h"
 
 #pragma mark BranchStandardEvents
 
@@ -73,10 +75,11 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
 - (void)makeRequest:(BNCServerInterface *)serverInterface
 			    key:(NSString *)key
            callback:(BNCServerCallback)callback {
-    [serverInterface postRequest:self.eventDictionary
-							 url:[self.serverURL absoluteString]
-							 key:key
-						callback:callback];
+    
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key];
+    NSDictionary *json = [factory dataForEventWithEventDictionary:[self.eventDictionary mutableCopy]];
+    
+    [serverInterface postRequest:json url:[self.serverURL absoluteString] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse*)response error:(NSError*)error {
@@ -302,13 +305,11 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
     [self logEventWithCompletion:nil];
 }
 
-- (BranchEventRequest *)buildRequestWithEventDictionary:(NSDictionary *)eventDictionary {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
-    
+- (BranchEventRequest *)buildRequestWithEventDictionary:(NSDictionary *)eventDictionary {    
     NSString *serverURL =
     ([self.class.standardEvents containsObject:self.eventName])
-    ? [NSString stringWithFormat:@"%@/%@", preferenceHelper.branchAPIURL, @"v2/event/standard"]
-    : [NSString stringWithFormat:@"%@/%@", preferenceHelper.branchAPIURL, @"v2/event/custom"];
+    ? [[BNCServerAPI sharedInstance] standardEventServiceURL]
+    : [[BNCServerAPI sharedInstance] customEventServiceURL];
 
     BranchEventRequest *request =
     [[BranchEventRequest alloc]
@@ -349,19 +350,6 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
     NSDictionary *partnerParameters = [[BNCPartnerParameters shared] parameterJson];
     if (partnerParameters.count > 0) {
         eventDictionary[BRANCH_REQUEST_KEY_PARTNER_PARAMETERS] = partnerParameters;
-    }
-    
-    if (@available(iOS 16.1, macCatalyst 16.1, *)){
-        if ([BNCPreferenceHelper sharedInstance].invokeRegisterApp) {
-            int currentWindow = [[BNCSKAdNetwork sharedInstance] calculateSKANWindowForTime:[NSDate date]];
-            if (currentWindow == BranchSkanWindowFirst){
-                eventDictionary[BRANCH_REQUEST_KEY_SKAN_POSTBACK_INDEX] = BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_0;
-            } else if (currentWindow == BranchSkanWindowSecond) {
-                eventDictionary[BRANCH_REQUEST_KEY_SKAN_POSTBACK_INDEX] = BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_1;
-            } else if (currentWindow == BranchSkanWindowThird) {
-                eventDictionary[BRANCH_REQUEST_KEY_SKAN_POSTBACK_INDEX] = BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_2;
-            }
-        }
     }
     
     return eventDictionary;
