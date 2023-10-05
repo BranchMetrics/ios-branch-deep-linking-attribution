@@ -170,14 +170,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 ///--------------------------------
 
 /**
- Gets the global, test Branch instance.
-
- @warning This method is not meant to be used in production!
-*/
-+ (Branch *)getTestInstance __attribute__((deprecated(("Use `Branch.useTestBranchKey = YES;` instead."))));
-
-
-/**
  Gets the global, live Branch instance.
  */
 + (Branch *)getInstance;
@@ -548,8 +540,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 /// @name Deep Link Controller
 ///---------------------------
 
-- (void)registerDeepLinkController:(nullable UIViewController <BranchDeepLinkingController> *)controller forKey:(nullable NSString *)key __attribute__((deprecated(("This API is deprecated. Please use registerDeepLinkController: forKey: withOption:"))));
-
 /**
  Allow Branch to handle a view controller with options to push, present or show.
  Note:
@@ -567,15 +557,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Enable debug messages to NSLog.
  */
 - (void)enableLogging;
-
-/**
- setDebug is deprecated and all functionality has been disabled.
- 
- If you wish to enable logging, please invoke enableLogging.
-
- If you wish to simulate installs, please see add a Test Device (https://help.branch.io/using-branch/docs/adding-test-devices) then reset your test device's data (https://help.branch.io/using-branch/docs/adding-test-devices#section-resetting-your-test-device-data).
- */
-- (void)setDebug __attribute__((deprecated(("setDebug is replaced by enableLogging and test devices. https://help.branch.io/using-branch/docs/adding-test-devices"))));
 
 /**
   @brief        Use the `validateSDKIntegration` method as a debugging aid to assure that you've
@@ -678,13 +659,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  */
 - (void)handleATTAuthorizationStatus:(NSUInteger)status;
 
-/**
- Set time window for SKAdNetwork callouts.  By default, Branch limits calls to SKAdNetwork to within 24 hours after first install.
- 
- Note: Branch does not automatically call SKAdNetwork unless configured on the dashboard.
- */
-- (void)setSKAdNetworkCalloutMaxTimeSinceInstall:(NSTimeInterval)maxTimeInterval __attribute__((deprecated(("This is no longer supported for iOS 16.1+ - SKAN4.0"))));
-
 /*
  Add a Partner Parameter for Facebook.
  Once set, this parameter is attached to install, opens and events until cleared or the app restarts.
@@ -735,30 +709,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 - (void)disableAdNetworkCallouts:(BOOL)disableCallouts;
 
 /**
- Specify that Branch should NOT use an invisible SFSafariViewController to attempt cookie-based matching upon install.
- If you call this method, we will fall back to using our pool of cookie-IDFA pairs for matching.
- */
-- (void)disableCookieBasedMatching __attribute__((deprecated(("Feature removed.  Did not work on iOS 11+"))));
-
-/**
- TL;DR: If you're using a version of the Facebook SDK that prevents application:didFinishLaunchingWithOptions: from
- returning YES/true when a Universal Link is clicked, you should enable this option.
-
- Long explanation: in application:didFinishLaunchingWithOptions: you should choose one of the following:
-
- 1. Always `return YES;`, and do *not* invoke `[[Branch getInstance] accountForFacebookSDKPreventingAppLaunch];`
- 2. Allow the Facebook SDK to determine whether `application:didFinishLaunchingWithOptions:` returns `YES` or `NO`,
-    and invoke `[[Branch getInstance] accountForFacebookSDKPreventingAppLaunch];`
-
- The reason for this second option is that the Facebook SDK will return `NO` if a Universal Link opens the app
- but that UL is not a Facebook UL. Some developers prefer not to modify
- `application:didFinishLaunchingWithOptions:` to always return `YES` and should use this method instead.
- */
-- (void)accountForFacebookSDKPreventingAppLaunch __attribute__((deprecated(("Please ensure application:didFinishLaunchingWithOptions: always returns YES/true instead of using this method. It will be removed in a future release."))));
-
-- (void)suppressWarningLogs __attribute__((deprecated(("suppressWarningLogs is deprecated and all functionality has been disabled. If you wish to turn off all logging, please invoke BNCLogSetDisplayLevel(BNCLogLevelNone)."))));
-
-/**
  For use by other Branch SDKs
  
  @param name Plugin name.  For example, Unity or React Native
@@ -782,16 +732,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  @param value Object to be included in request metadata
  */
 - (void)setRequestMetadataKey:(NSString *)key value:(nullable id)value;
-
-- (void)enableDelayedInit __attribute__((deprecated(("No longer valid with new init process"))));
-
-- (void)disableDelayedInit __attribute__((deprecated(("No longer valid with new init process"))));
-
-- (nullable NSURL *)getUrlForOnboardingWithRedirectUrl:(nullable NSString *)redirectUrl __attribute__((deprecated(("Feature removed.  Did not work on iOS 11+"))));;
-
-- (void)resumeInit __attribute__((deprecated(("Feature removed.  Did not work on iOS 11+"))));
-
-- (void)setInstallRequestDelay:(NSInteger)installRequestDelay __attribute__((deprecated(("No longer valid with new init process"))));
 
 /**
  Disables the Branch SDK from tracking the user. This is useful for GDPR privacy compliance.
@@ -1669,35 +1609,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  */
 - (id)initWithInterface:(BNCServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache preferenceHelper:(BNCPreferenceHelper *)preferenceHelper key:(NSString *)key;
 
-/**
- Method used by BranchUniversalObject to register a view on content
- 
- This method should only be invoked after initSession completes, either within the callback or after a delay.
- If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
-
- @warning This is meant for use internally only and should not be used by apps.
- */
-- (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback
-    __attribute__((deprecated(("This API is deprecated. Please use BranchEvent:BranchStandardEventViewItem instead."))));
-
 - (void) sendServerRequest:(BNCServerRequest*)request;
-- (void) sendServerRequestWithoutSession:(BNCServerRequest*)request __attribute__((deprecated(("This API is deprecated. Please use sendServerRequest instead."))));
-
-/**
- This is the block that is called each time a new Branch session is started. It is automatically set
- when Branch is initialized with `initSessionWithLaunchOptions:andRegisterDeepLinkHandler`.
- */
-@property (copy, nonatomic) void(^ sessionInitWithParamsCallback) (NSDictionary * _Nullable params, NSError * _Nullable error) DEPRECATED_ATTRIBUTE;
-
-/**
- This is the block that is called each time a new Branch session is started. It is automatically set
- when Branch is initialized with `initSessionWithLaunchOptions:andRegisterDeepLinkHandlerUsingBranchUniversalObject`.
-
- The difference with this callback from `sessionInitWithParamsCallback` is that it is called with a
- BranchUniversalObject.
- */
-@property (copy, nonatomic) void (^ sessionInitWithBranchUniversalObjectCallback) (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) DEPRECATED_ATTRIBUTE;
 
 // Read-only property exposed for unit testing.
 @property (strong, readonly) BNCServerInterface* serverInterface;

@@ -162,12 +162,6 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 
 #pragma mark - GetInstance methods
 
-// deprecated
-+ (Branch *)getTestInstance {
-    Branch.useTestBranchKey = YES;
-    return [Branch getInstance];
-}
-
 + (Branch *)getInstance {
     return [Branch getInstanceInternal:self.class.branchKey];
 }
@@ -419,15 +413,6 @@ static NSString *bnc_branchKey = nil;
     BNCLogSetDisplayLevel(BNCLogLevelDebug);
 }
 
-- (void)setDebug {
-    NSLog(@"Branch setDebug is deprecated and all functionality has been disabled. "
-          "If you wish to enable logging, please invoke enableLogging. "
-          "If you wish to simulate installs, please see add a Test Device "
-          "(https://help.branch.io/using-branch/docs/adding-test-devices) "
-          "then reset your test device's data "
-          "(https://help.branch.io/using-branch/docs/adding-test-devices#section-resetting-your-test-device-data).");
-}
-
 - (void)validateSDKIntegration {
     [self validateSDKIntegrationCore];
 }
@@ -458,42 +443,8 @@ static NSString *bnc_branchKey = nil;
     self.preferenceHelper.retryInterval = retryInterval;
 }
 
-- (void)disableCookieBasedMatching {
-    // deprecated
-}
-
-- (void)accountForFacebookSDKPreventingAppLaunch {
-    // deprecated
-}
-
-- (void)suppressWarningLogs {
-    NSLog(@"suppressWarningLogs is deprecated and all functionality has been disabled. "
-          "If you wish to turn off all logging, please invoke BNCLogSetDisplayLevel(BNCLogLevelNone).");
-}
-
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value {
     [self.preferenceHelper setRequestMetadataKey:key value:value];
-}
-
-- (void)enableDelayedInit {
-    // deprecated
-}
-
-- (void)disableDelayedInit {
-    // deprecated
-}
-
-- (NSURL *)getUrlForOnboardingWithRedirectUrl:(NSString *)redirectUrl {
-    // deprecated
-    return nil;
-}
-
-- (void)resumeInit {
-    // deprecated
-}
-
-- (void)setInstallRequestDelay:(NSInteger)installRequestDelay {
-    // deprecated
 }
 
 + (BOOL)trackingDisabled {
@@ -950,14 +901,6 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
-- (void)setSKAdNetworkCalloutMaxTimeSinceInstall:(NSTimeInterval)maxTimeInterval {
-    if (@available(iOS 16.1, macCatalyst 16.1, *)) {
-        BNCLogDebug(@"This is no longer supported for iOS 16.1+ - SKAN4.0");
-    } else {
-        [BNCSKAdNetwork sharedInstance].maxTimeSinceInstall = maxTimeInterval;
-    }
-}
-
 #pragma mark - Partner Parameters
 
 - (void)clearPartnerParameters {
@@ -983,10 +926,6 @@ static NSString *bnc_branchKey = nil;
 }
 
 #pragma mark - Deep Link Controller methods
-
-- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key {
-    self.deepLinkControllers[key] = controller;
-}
 
 - (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key withPresentation:(BNCViewControllerPresentationOption)option{
 
@@ -1046,11 +985,6 @@ static NSString *bnc_branchKey = nil;
         [self.requestQueue enqueue:request];
         [self processNextQueueItem];
     });
-}
-
-// deprecated, use sendServerRequest
-- (void)sendServerRequestWithoutSession:(BNCServerRequest*)request {
-    [self sendServerRequest:request];
 }
 
 - (BranchUniversalObject *)getFirstReferringBranchUniversalObject {
