@@ -260,4 +260,192 @@
 }
  */
 
+- (void)testSetPatternListURL {
+    NSString *expectedURL = @"https://example.com";
+    [[BNCPreferenceHelper sharedInstance] setPatternListURL: expectedURL];
+    
+    NSString *patternListURL = [BNCPreferenceHelper sharedInstance].patternListURL;
+    XCTAssert([patternListURL isEqualToString: expectedURL]);
+}
+
+- (void)testSetLastStrongMatchDate {
+    NSDate *expectedDate = [NSDate date];
+    [[BNCPreferenceHelper sharedInstance] setLastStrongMatchDate: expectedDate];
+    
+    NSDate *actualDate = [[BNCPreferenceHelper sharedInstance] lastStrongMatchDate];
+    XCTAssertEqualObjects(expectedDate, actualDate);
+}
+
+- (void)testSetAppVersion {
+    NSString *expectedVersion = @"1.0.0";
+    [[BNCPreferenceHelper sharedInstance] setAppVersion: expectedVersion];
+    
+    NSString *actualVersion = [[BNCPreferenceHelper sharedInstance] appVersion];
+    XCTAssertEqualObjects(expectedVersion, actualVersion);
+}
+
+- (void)testSetLocalUrl {
+    NSString *expectedLocalURL = @"https://local.example.com";
+    [[BNCPreferenceHelper sharedInstance] setLocalUrl:expectedLocalURL];
+    
+    NSString *localURL = [[BNCPreferenceHelper sharedInstance] localUrl];
+    XCTAssertEqualObjects(localURL, expectedLocalURL);
+}
+
+- (void)testSetInitialReferrer {
+    NSString *expectedReferrer = @"referrer.example.com";
+    [[BNCPreferenceHelper sharedInstance] setInitialReferrer:expectedReferrer];
+    
+    NSString *actualReferrer = [[BNCPreferenceHelper sharedInstance] initialReferrer];
+    XCTAssertEqualObjects(actualReferrer, expectedReferrer);
+}
+
+- (void)testSetAppleAttributionTokenChecked {
+    BOOL expectedValue = YES;
+    [[BNCPreferenceHelper sharedInstance] setAppleAttributionTokenChecked:expectedValue];
+    
+    BOOL actualValue = [[BNCPreferenceHelper sharedInstance] appleAttributionTokenChecked];
+    XCTAssertEqual(expectedValue, actualValue);
+}
+
+- (void)testSetHasOptedInBefore {
+    BOOL expectedValue = YES;
+    [[BNCPreferenceHelper sharedInstance] setHasOptedInBefore:expectedValue];
+    
+    BOOL actualValue = [[BNCPreferenceHelper sharedInstance] hasOptedInBefore];
+    XCTAssertEqual(expectedValue, actualValue);
+}
+
+- (void)testSetHasCalledHandleATTAuthorizationStatus {
+    BOOL expectedValue = YES;
+    [[BNCPreferenceHelper sharedInstance] setHasCalledHandleATTAuthorizationStatus:expectedValue];
+    
+    BOOL actualValue = [[BNCPreferenceHelper sharedInstance] hasCalledHandleATTAuthorizationStatus];
+    XCTAssertEqual(expectedValue, actualValue);
+}
+
+- (void)testSetRequestMetadataKeyValidKeyValue {
+    NSString *key = @"testKey";
+    NSString *value = @"testValue";
+    
+    [[BNCPreferenceHelper sharedInstance] setRequestMetadataKey:key value:value];
+    
+    NSObject *retrievedValue = [[BNCPreferenceHelper sharedInstance].requestMetadataDictionary objectForKey:key];
+    XCTAssertEqualObjects(retrievedValue, value);
+}
+
+- (void)testSetRequestMetadataKeyValidKeyNilValue {
+    NSString *key = @"testKey";
+    NSString *value = @"testValue";
+    
+    [[BNCPreferenceHelper sharedInstance].requestMetadataDictionary setObject:value forKey:key];
+    
+    [[BNCPreferenceHelper sharedInstance] setRequestMetadataKey:key value:nil];
+    
+    NSObject *retrievedValue = [[BNCPreferenceHelper sharedInstance].requestMetadataDictionary objectForKey:key];
+    XCTAssertNil(retrievedValue);
+}
+
+- (void)testSetRequestMetadataKeyValidKeyNilValueKeyNotExists {
+    NSString *key = @"testKeyNotExists";
+    
+    NSUInteger initialDictCount = [[BNCPreferenceHelper sharedInstance].requestMetadataDictionary count];
+    
+    [[BNCPreferenceHelper sharedInstance] setRequestMetadataKey:key value:nil];
+    
+    NSUInteger postActionDictCount = [[BNCPreferenceHelper sharedInstance].requestMetadataDictionary count];
+    XCTAssertEqual(initialDictCount, postActionDictCount);
+}
+
+- (void)testSetRequestMetadataKeyNilKey {
+    NSString *value = @"testValue";
+    NSUInteger initialDictCount = [[BNCPreferenceHelper sharedInstance].requestMetadataDictionary count];
+    
+    [[BNCPreferenceHelper sharedInstance] setRequestMetadataKey:nil value:value];
+    
+    NSUInteger postActionDictCount = [[BNCPreferenceHelper sharedInstance].requestMetadataDictionary count];
+    XCTAssertEqual(initialDictCount, postActionDictCount);
+}
+
+- (void)testSetLimitFacebookTracking {
+    BOOL expectedValue = YES;
+    
+    [[BNCPreferenceHelper sharedInstance] setLimitFacebookTracking:expectedValue];
+    
+    BOOL storedValue = [[BNCPreferenceHelper sharedInstance] limitFacebookTracking];
+    
+    XCTAssertEqual(expectedValue, storedValue);
+}
+
+- (void)testSetTrackingDisabled_YES {
+    [[BNCPreferenceHelper sharedInstance] setTrackingDisabled:YES];
+
+    BOOL storedValue = [[BNCPreferenceHelper sharedInstance] trackingDisabled];
+    XCTAssertTrue(storedValue);
+}
+
+- (void)testSetTrackingDisabled_NO {
+    [[BNCPreferenceHelper sharedInstance] setTrackingDisabled:NO];
+    
+    BOOL storedValue = [[BNCPreferenceHelper sharedInstance] trackingDisabled];
+    XCTAssertFalse(storedValue);
+}
+
+- (void)testClearTrackingInformation {
+    [[BNCPreferenceHelper sharedInstance] clearTrackingInformation];
+    
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].sessionID);
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].linkClickIdentifier);
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].spotlightIdentifier);
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].referringURL);
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].universalLinkUrl);
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].initialReferrer);
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].installParams);
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].sessionParams);
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].externalIntentURI);
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].savedAnalyticsData);
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].previousAppBuildDate);
+    XCTAssertEqual([BNCPreferenceHelper sharedInstance].requestMetadataDictionary.count, 0);
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].lastStrongMatchDate);
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].userIdentity);
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].referringURLQueryParameters);
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].anonID);
+}
+
+- (void)testSaveBranchAnalyticsData {
+    NSString *dummySessionID = @"testSession123";
+    NSDictionary *dummyAnalyticsData = @{ @"key1": @"value1", @"key2": @"value2" };
+    
+    // Assuming there's a method or property to set the sessionID
+    [BNCPreferenceHelper sharedInstance].sessionID = dummySessionID;
+    
+    [[BNCPreferenceHelper sharedInstance] saveBranchAnalyticsData:dummyAnalyticsData];
+    
+    NSMutableDictionary *retrievedData = [[BNCPreferenceHelper sharedInstance] getBranchAnalyticsData];
+    
+    NSArray *viewDataArray = [retrievedData objectForKey:dummySessionID];
+    XCTAssertNotNil(viewDataArray);
+    XCTAssertEqual(viewDataArray.count, 1);
+    XCTAssertEqualObjects(viewDataArray.firstObject, dummyAnalyticsData);
+}
+
+- (void)testClearBranchAnalyticsData {
+    [[BNCPreferenceHelper sharedInstance] clearBranchAnalyticsData];
+    
+    NSMutableDictionary *retrievedData = [[BNCPreferenceHelper sharedInstance] getBranchAnalyticsData];
+    XCTAssertEqual(retrievedData.count, 0);
+}
+
+- (void)testSaveContentAnalyticsManifest {
+    NSDictionary *dummyManifest = @{ @"manifestKey1": @"manifestValue1", @"manifestKey2": @"manifestValue2" };
+    
+    [[BNCPreferenceHelper sharedInstance] saveContentAnalyticsManifest:dummyManifest];
+    
+    NSDictionary *retrievedManifest = [[BNCPreferenceHelper sharedInstance] getContentAnalyticsManifest];
+    
+    XCTAssertEqualObjects(retrievedManifest, dummyManifest);
+}
+
+
+
 @end
