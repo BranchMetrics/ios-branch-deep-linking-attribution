@@ -1,0 +1,98 @@
+name: Update Version History on ReadMe
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Format and publish release notes to version history doc
+      id: update
+      run: |
+        # Get release name, body, and date from the release event
+        release_name="${{ github.event.release.tag_name }}"
+        release_body="${{ github.event.release.body }}"
+        release_date=$(date -d "${{ github.event.release.published_at }}" +"%Y-%B-%d")
+
+        # Format release notes
+        formatted_notes="## v$release_name\n\n**($release_date)**\n\n$release_body"
+        
+        # Get existing version history page
+        existing_content=$(curl --request GET \
+            --url https://dash.readme.com/api/v1/docs/ios-version-history \
+            --header 'accept: application/json' \
+            --header "authorization: Basic ${{ secrets.readme_api_key_base64 }}" \
+            | jq -r '.body')
+    
+        # Prepend new release notes to existing content
+        new_content=$(echo -e "$formatted_notes\n\n$existing_content")
+        payload=$(jq -n --arg nc "$new_content" '{"body": $nc}')
+
+        # Update version history page with new release notes
+        curl --request PUT \
+            --url https://dash.readme.com/api/v1/docs/ios-version-history \
+            --header 'accept: application/json' \
+            --header "authorization: Basic ${{ secrets.readme_api_key_base64 }}" \
+            --header 'content-type: application/json' \
+            --data "$payload"
+
+    - name: Announce New Release in Slack
+      uses: slackapi/slack-github-action@v1.24.0
+      with:
+        channel-id: "CDFGXRM9S"
+        payload: |
+            {
+                "text": "New Release: Branch iOS SDK v${{ github.event.release.tag_name }}",
+                "blocks": [
+                    {
+                        "type": "header",
+                        "text": {
+                            "type": "plain_text",
+                            "text": ":rocket: New Release: Branch iOS SDK v${{ github.event.release.tag_name }}",                            
+                            "emoji": true
+                        }
+                    },
+                    {
+                        "type": "divider"
+                    },
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": ":star: *What's New*"
+                        }
+                    },
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": ${{ toJSON(github.event.release.body) }}
+                        }
+                	},
+                    {
+                        "type": "divider"
+                    },
+                    {
+                        "type": "actions",
+                        "elements": [
+                            {
+                                "type": "button",
+                                "text": {
+                                    "type": "plain_text",
+                                    "text": ":git: GitHub Release",
+                                    "emoji": true
+                                },
+                                "value": "github",
+                                "action_id": "github",
+                                "url": "${{ github.event.release.html_url }}"
+                            }
+                        ]
+                    }
+                ]
+            }
+    env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_SDK_BOT_TOKEN }}
+          
