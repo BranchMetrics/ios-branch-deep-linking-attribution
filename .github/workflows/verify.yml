@@ -11,10 +11,10 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-      - name: Set up Ruby 3.0
+      - name: Set up Ruby 2.7
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.0'
+          ruby-version: '2.7'
       - name: Restore cache
         uses: actions/cache@v3
         with:
@@ -32,7 +32,7 @@ jobs:
       # makes it easier to keep track of installation time via GHA without
       # adding execution time to the next step.
       - name: Install CocoaPods dependencies
-        run: bundle update && bundle exec fastlane prepare_pods --verbose
+        run: bundle exec fastlane prepare_pods
       - name: Run unit tests
         run: bundle exec fastlane unit_tests
       - name: Upload test results
