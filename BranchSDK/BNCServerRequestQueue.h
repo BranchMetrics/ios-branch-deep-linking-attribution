@@ -23,6 +23,7 @@
 
 - (BOOL)containsInstallOrOpen;
 - (BOOL)removeInstallOrOpen;
+- (BOOL)containsClose;
 - (BranchOpenRequest *)moveInstallOrOpenToFront:(NSInteger)networkCount;
 
 - (void)persistEventually;

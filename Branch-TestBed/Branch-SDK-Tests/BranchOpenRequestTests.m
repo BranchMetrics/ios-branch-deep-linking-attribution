@@ -32,6 +32,153 @@
     [preferenceHelper synchronize];
 }
 
+- (void)testRequestBodyWithNoDeviceToken {
+    NSString * const HARDWARE_ID = @"foo-hardware-id";
+    NSNumber * const AD_TRACKING_SAFE = @YES;
+    NSNumber * const IS_DEBUG = @YES;
+    NSString * const BUNDLE_ID = @"foo-bundle-id";
+    NSString * const APP_VERSION = @"foo-app-version";
+    NSString * const OS = @"foo-os";
+    NSString * const OS_VERSION = @"foo-os-version";
+    NSString * const URI_SCHEME = @"foo-uri-scheme";
+    NSString * const LINK_IDENTIFIER = @"foo-link-id";
+    NSString * const RANDOMIZED_BUNDLE_TOKEN = @"foo-bundle-token";
+    NSString * hardwareType = nil;
+
+    BNCLogSetDisplayLevel(BNCLogLevelAll);
+    
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    id systemObserverMock = OCMClassMock([BNCSystemObserver class]);
+    [[[systemObserverMock stub] andReturnValue:AD_TRACKING_SAFE] adTrackingEnabled];
+    [[[systemObserverMock stub] andReturn:BUNDLE_ID] bundleIdentifier];
+    [[[systemObserverMock stub] andReturn:APP_VERSION] applicationVersion];
+    [[[systemObserverMock stub] andReturn:OS] osName];
+    [[[systemObserverMock stub] andReturn:OS_VERSION] osVersion];
+    [[[systemObserverMock stub] andReturn:URI_SCHEME] defaultURIScheme];
+
+    preferenceHelper.isDebug = [IS_DEBUG boolValue];
+    preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
+    preferenceHelper.randomizedDeviceToken = nil;
+    preferenceHelper.randomizedBundleToken = RANDOMIZED_BUNDLE_TOKEN;
+
+    NSTimeInterval kOneDayAgo = -1.0*24.0*60.0*60.0;
+    NSDate *installDate = [NSDate dateWithTimeIntervalSinceNow:2.0*kOneDayAgo];
+    NSDate *updateDate  = [NSDate dateWithTimeIntervalSinceNow:1.0*kOneDayAgo];
+    [[BNCApplication currentApplication]
+        setAppOriginalInstallDate:installDate
+        firstInstallDate:installDate
+        lastUpdateDate:installDate];
+    [preferenceHelper setPreviousAppBuildDate:updateDate];
+
+    NSMutableDictionary *expectedParams = [NSMutableDictionary dictionaryWithDictionary:@{
+        @"app_version": APP_VERSION,
+        @"cd": @{
+            @"mv": @"-1",
+            @"pn": BUNDLE_ID
+        },
+        @"debug":                       IS_DEBUG,
+        @"randomized_bundle_token":     RANDOMIZED_BUNDLE_TOKEN,
+        @"ios_bundle_id":               BUNDLE_ID,
+        @"ios_team_id":                 @"R63EM248DP",
+        @"link_identifier":             LINK_IDENTIFIER,
+        @"uri_scheme":                  URI_SCHEME,
+
+        @"latest_install_time":         BNCWireFormatFromDate(installDate),
+        @"lastest_update_time":         BNCWireFormatFromDate(installDate),
+        @"first_install_time":          BNCWireFormatFromDate(installDate),
+        @"previous_update_time":        BNCWireFormatFromDate(updateDate),
+        @"update":                      @0,
+        @"apple_testflight":            @0
+    }];
+    if (!self.class.isApplication) expectedParams[@"ios_team_id"] = nil;
+
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
+    [[serverInterfaceMock expect]
+        postRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+            XCTAssertEqualObjects(obj, expectedParams);
+            return YES;
+        }]
+        url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_OPEN]
+        key:[OCMArg any]
+        callback:[OCMArg any]];
+    
+    BranchOpenRequest *request = [[BranchOpenRequest alloc] init];
+    [request makeRequest:serverInterfaceMock key:nil callback:NULL];
+    [serverInterfaceMock verify];
+}
+
+- (void)testRequestBodyWithDeviceToken {
+    NSString * const HARDWARE_ID = @"foo-hardware-id";
+    NSNumber * const AD_TRACKING_SAFE = @YES;
+    NSNumber * const IS_DEBUG = @YES;
+    NSString * const BUNDLE_ID = @"foo-bundle-id";
+    NSString * const APP_VERSION = @"foo-app-version";
+    NSString * const OS = @"foo-os";
+    NSString * const OS_VERSION = @"foo-os-version";
+    NSString * const URI_SCHEME = @"foo-uri-scheme";
+    NSString * const LINK_IDENTIFIER = @"foo-link-id";
+    NSString * const DEVICE_TOKEN = @"foo-token";
+    NSString * const RANDOMIZED_BUNDLE_TOKEN = @"foo-bundle-token";
+    NSString * hardwareType = nil;
+
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    id systemObserverMock = OCMClassMock([BNCSystemObserver class]);
+    [[[systemObserverMock stub] andReturnValue:AD_TRACKING_SAFE] adTrackingEnabled];
+    [[[systemObserverMock stub] andReturn:BUNDLE_ID] bundleIdentifier];
+    [[[systemObserverMock stub] andReturn:APP_VERSION] applicationVersion];
+    [[[systemObserverMock stub] andReturn:OS] osName];
+    [[[systemObserverMock stub] andReturn:OS_VERSION] osVersion];
+    [[[systemObserverMock stub] andReturn:URI_SCHEME] defaultURIScheme];
+
+    preferenceHelper.isDebug = [IS_DEBUG boolValue];
+    preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
+    preferenceHelper.randomizedDeviceToken = DEVICE_TOKEN;
+    preferenceHelper.randomizedBundleToken = RANDOMIZED_BUNDLE_TOKEN;
+
+    NSTimeInterval kOneDayAgo = -1.0*24.0*60.0*60.0;
+    NSDate *installDate = [NSDate dateWithTimeIntervalSinceNow:2.0*kOneDayAgo];
+    NSDate *updateDate  = [NSDate dateWithTimeIntervalSinceNow:1.0*kOneDayAgo];
+    [[BNCApplication currentApplication]
+        setAppOriginalInstallDate:installDate
+        firstInstallDate:installDate
+        lastUpdateDate:installDate];
+    [preferenceHelper setPreviousAppBuildDate:updateDate];
+
+    NSMutableDictionary *expectedParams = [NSMutableDictionary dictionaryWithDictionary:@{
+        @"app_version": APP_VERSION,      
+        @"cd": @{
+            @"mv": @"-1",
+            @"pn": BUNDLE_ID
+        },
+        @"debug":                       IS_DEBUG,
+        @"randomized_device_token":     DEVICE_TOKEN,
+        @"randomized_bundle_token":     RANDOMIZED_BUNDLE_TOKEN,
+        @"ios_bundle_id":               BUNDLE_ID,
+        @"ios_team_id":                 @"R63EM248DP",
+        @"link_identifier":             LINK_IDENTIFIER,
+        @"uri_scheme":                  URI_SCHEME,
+
+        @"latest_install_time":         BNCWireFormatFromDate(installDate),
+        @"lastest_update_time":         BNCWireFormatFromDate(installDate),
+        @"first_install_time":          BNCWireFormatFromDate(installDate),
+        @"previous_update_time":        BNCWireFormatFromDate(updateDate),
+        @"update":                      @0,
+        @"apple_testflight":            @0
+    }];
+    if (!self.class.isApplication) expectedParams[@"ios_team_id"] = nil;
+
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
+    [[serverInterfaceMock expect]
+        postRequest:expectedParams
+        url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_OPEN]
+        key:[OCMArg any]
+        callback:[OCMArg any]];
+    
+    BranchOpenRequest *request = [[BranchOpenRequest alloc] init];
+    [request makeRequest:serverInterfaceMock key:nil callback:NULL];
+    [serverInterfaceMock verify];
+}
+
 - (void)testSuccessWithAllKeysAndIsReferrable {
     NSString * const DEVICE_TOKEN = @"foo-token";
     NSString * const USER_URL = @"http://foo";

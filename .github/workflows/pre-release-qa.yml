@@ -7,7 +7,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install pod, build project and run tests
         run: |
             echo "branch=${{ github.ref }}" >> $GITHUB_OUTPUT
@@ -20,7 +20,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Create Cart File, run carthage command, build project and run tests
         env:
             BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
@@ -36,7 +36,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: build project and run tests
         run: |
             ./scripts/getSimulator
@@ -47,7 +47,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: build xcframework, then build project and run tests
         run: |
             ./scripts/getSimulator
@@ -59,7 +59,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: build static xcframework, then build project and run tests
         run: |
             ./scripts/getSimulator
@@ -71,7 +71,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install pod, build project and run tests
         run: |
             ./scripts/getSimulator
@@ -83,7 +83,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Verify Integration using Carthage for tvOS
         run: |
             ./scripts/getSimulator
@@ -94,7 +94,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: build xcframework, then build project and run tests
         run: |
             ./scripts/getSimulator

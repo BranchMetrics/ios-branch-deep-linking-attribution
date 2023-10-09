@@ -28,6 +28,7 @@
 + (NSNumber *)screenHeight;
 + (NSNumber *)screenScale;
 + (BOOL)isSimulator;
++ (BOOL)adTrackingEnabled;
 + (NSString *)advertiserIdentifier;
 + (NSString *)attOptedInStatus;
 + (NSString *)appleAttributionToken;
