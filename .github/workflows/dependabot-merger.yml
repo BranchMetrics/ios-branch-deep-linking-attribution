@@ -10,6 +10,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Get current on-call
+        id: on-call
+        run: |
+          now=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          end_time=$(date -u -d '+24 hour' +%Y-%m-%dT%H:%M:%SZ)
+          
+          oncall=$(curl --request GET \
+              --url "https://api.pagerduty.com/oncalls?since=$now&until=$end_time&schedule_ids[]=PQLHTOP" \
+              --header 'Accept: application/vnd.pagerduty+json;version=2' \
+              --header "Authorization: Token token=${{ secrets.PAGERDUTY_TOKEN }}" \
+              --header 'Content-Type: application/json' )
+          
+          engineer_name=$(echo "$oncall" | jq -r '.oncalls[0].user.summary')
+
+          declare -A engineer_to_slackid
+          engineer_to_slackid=(
+              ["Nipun Singh"]="U02AMC70R6E"
+              ["Jagadeesh Karicherla"]="U038BDE0XUZ"
+              ["Gabe De Luna"]="U02MDA0PHK5"
+              ["Ernest Cho"]="UCV77QDSL"
+              ["Nidhi Dixit"]="U02GDFBP88N"
+          )
+          
+          slack_id=${engineer_to_slackid["$engineer_name"]}          
+          echo "oncall_slack_id=$slack_id" >> $GITHUB_OUTPUT
+
       - name: Create PR
         uses: actions/github-script@v6
         id: create-pr
@@ -108,7 +134,7 @@ jobs:
                     "type": "section",
                     "text": {
                     "type": "mrkdwn",
-                    "text": "*Included PRs:*\n${{ steps.create-pr.outputs.pr_list }}"
+                    "text": "*Included PRs:*\n${{ steps.create-pr.outputs.pr_list }}\n\n\nCurrent On-Call: *<${{ steps.on-call.outputs.oncall_slack_id }}>*"
                     }
                 },
                 {
@@ -118,7 +144,7 @@ jobs:
                           "type": "button",
                           "text": {
                             "type": "plain_text",
-                            "text": "github-pull-request-open:  View Combined PR",
+                            "text": ":github-pull-request-open:  View Combined PR",
                             "emoji": true
                           },
                           "value": "pr-button",
