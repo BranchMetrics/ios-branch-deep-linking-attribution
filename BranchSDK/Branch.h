@@ -569,6 +569,13 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 - (void)enableLogging;
 
 /**
+ Send requests to EU endpoints.
+ 
+ This feature must also be enabled on the server side, otherwise the server will drop requests. Contact your account manager for details.
+ */
+- (void)useEUEndpoints;
+
+/**
  setDebug is deprecated and all functionality has been disabled.
  
  If you wish to enable logging, please invoke enableLogging.

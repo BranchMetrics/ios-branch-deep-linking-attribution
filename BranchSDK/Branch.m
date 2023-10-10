@@ -419,6 +419,10 @@ static NSString *bnc_branchKey = nil;
     BNCLogSetDisplayLevel(BNCLogLevelDebug);
 }
 
+- (void)useEUEndpoints {
+    [BNCServerAPI sharedInstance].useEUServers = YES;
+}
+
 - (void)setDebug {
     NSLog(@"Branch setDebug is deprecated and all functionality has been disabled. "
           "If you wish to enable logging, please invoke enableLogging. "
