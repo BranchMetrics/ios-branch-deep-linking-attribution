@@ -61,6 +61,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) NSInteger savedURLPatternListVersion;
 @property (assign, nonatomic) BOOL dropURLOpen;
 
+@property (assign, nonatomic) BOOL sendCloseRequests;
+
 @property (assign, nonatomic) BOOL trackingDisabled;
 
 @property (copy, nonatomic) NSString *referrerGBRAID;
@@ -73,12 +75,18 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (strong, nonatomic) NSDate   *firstAppLaunchTime;
 @property (assign, nonatomic) BOOL invokeRegisterApp;
 
+@property (assign, nonatomic) BOOL useEUServers;
+
 - (void) clearTrackingInformation;
 
 + (BNCPreferenceHelper *)sharedInstance;
 
-- (void)setBranchAPIURL:(NSString*)branchAPIURL;
-- (void)setPatternListURL:(NSString*)cdnURL;
+- (NSString *)getAPIBaseURL;
+- (NSString *)getAPIURL:(NSString *)endpoint;
+- (NSString *)getEndpointFromURL:(NSString *)url;
+
+- (void) setBranchAPIURL:(NSString*)branchAPIURL;
+- (void) setPatternListURL:(NSString*)cdnURL;
 
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value;
 - (NSMutableDictionary *)requestMetadataDictionary;

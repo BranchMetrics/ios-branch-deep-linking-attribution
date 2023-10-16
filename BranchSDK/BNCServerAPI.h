@@ -17,22 +17,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (BNCServerAPI *)sharedInstance;
 
-- (NSString *)installServiceURL;
-- (NSString *)openServiceURL;
-- (NSString *)standardEventServiceURL;
-- (NSString *)customEventServiceURL;
-- (NSString *)linkServiceURL;
-- (NSString *)qrcodeServiceURL;
-- (NSString *)latdServiceURL;
-- (NSString *)validationServiceURL;
+// retrieves appropriate service URL
+- (NSURL *)installServiceURL;
+- (NSURL *)openServiceURL;
+- (NSURL *)eventServiceURL;
+- (NSURL *)linkServiceURL;
 
-@property (nonatomic, assign, readwrite) BOOL useTrackingDomain;
-@property (nonatomic, assign, readwrite) BOOL useEUServers;
+// initially set when IDFA is allowed
+- (BOOL)useTrackingDomain;
 
-// Enable tracking domains based on IDFA authorization. YES by default
-// Used to enable unit tests without regard for ATT authorization status
-@property (nonatomic, assign, readwrite) BOOL automaticallyEnableTrackingDomain;
+// TODO : Add a config or public API to expose this to clients
+// Enable/Disable EU domains
+- (void)setUseEUServers:(BOOL)useEUServers;
 
+- (BOOL)useEUServers;
+
+- (NSString *) getBaseURLWithVersion;
 @end
 
 NS_ASSUME_NONNULL_END

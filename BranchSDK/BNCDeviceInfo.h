@@ -20,6 +20,8 @@
 
 - (void)registerPluginName:(NSString *)name version:(NSString *)version;
 
+- (NSDictionary *) v2dictionary;
+
 /*
  Thread safety is the callee's responsibility!
  
@@ -37,6 +39,7 @@
 @property (nonatomic, copy, readwrite) NSString *vendorId;
 @property (nonatomic, copy, readwrite) NSString *optedInStatus;
 @property (nonatomic, assign, readwrite) BOOL isFirstOptIn;
+@property (nonatomic, assign, readwrite) BOOL isAdTrackingEnabled;
 - (NSString *)localIPAddress;
 - (NSString *)connectionType;
 
