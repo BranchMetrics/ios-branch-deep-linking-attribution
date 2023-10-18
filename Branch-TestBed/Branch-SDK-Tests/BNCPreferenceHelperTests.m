@@ -416,7 +416,6 @@
     NSString *dummySessionID = @"testSession123";
     NSDictionary *dummyAnalyticsData = @{ @"key1": @"value1", @"key2": @"value2" };
     
-    // Assuming there's a method or property to set the sessionID
     [BNCPreferenceHelper sharedInstance].sessionID = dummySessionID;
     
     [[BNCPreferenceHelper sharedInstance] saveBranchAnalyticsData:dummyAnalyticsData];
