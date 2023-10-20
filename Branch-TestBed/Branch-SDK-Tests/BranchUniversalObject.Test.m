@@ -283,16 +283,17 @@
     XCTAssertEqual(buo.title, @"buoTitle");
 }
 
-- (void)testGetShortURLWithParams {
+- (void)testGetShortURLWithLP {
     BranchUniversalObject *buo = [[BranchUniversalObject new] initWithTitle:@"buoTitle"];
     BranchLinkProperties *lp = [BranchLinkProperties new];
     NSString *randomAlias = [[NSUUID UUID] UUIDString];
     lp.alias = randomAlias;
-    
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Fetching URL"];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Fetching URL With LP"];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        
+        NSLog(@"Got HERE");
         [buo getShortUrlWithLinkProperties:lp andCallback:^(NSString * _Nullable url, NSError * _Nullable error) {
+            NSLog(@"Got HERE 2");
             NSString *expectedURL = [NSString stringWithFormat:@"https://bnctestbed.app.link/%@", randomAlias];
             XCTAssertEqualObjects(url, expectedURL, @"URL should match the expected format");
             [expectation fulfill];
