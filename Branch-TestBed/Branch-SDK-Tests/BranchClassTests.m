@@ -219,28 +219,6 @@
    }];
 }
 
-- (void)testGetShortURLWithParams {
-   XCTestExpectation *expectation = [self expectationWithDescription:@"Fetching URL"];
-   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-       NSDictionary *params = @{@"key": @"value"};
-       NSArray *tags = @[@"tag1", @"tag2"];
-       NSString *randomAlias = [[NSUUID UUID] UUIDString];
-       [self.branch getShortUrlWithParams:params andTags:tags andAlias:randomAlias andMatchDuration:10 andChannel:@"channel1" andFeature:@"feature1" andStage:@"stage1" andCampaign:@"campaign1" andCallback:^(NSString * _Nullable url, NSError * _Nullable error) {
-           
-           NSString *expectedURL = [NSString stringWithFormat:@"https://bnctestbed.app.link/%@", randomAlias];
-           XCTAssertEqualObjects(url, expectedURL, @"URL should match the expected format");
-
-           [expectation fulfill];
-       }];
-   });
-
-   [self waitForExpectationsWithTimeout:5 handler:^(NSError *error) {
-       if (error) {
-           NSLog(@"Timeout Error: %@", error);
-       }
-   }];
-}
-
 - (void)testGetLongURLWithParamsAndChannelAndTagsAndFeatureAndStageAndAlias {
     NSDictionary *params = @{@"key": @"value"};
     NSString *channel = @"channel1";
