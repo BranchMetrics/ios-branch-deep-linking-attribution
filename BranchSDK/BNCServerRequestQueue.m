@@ -9,6 +9,7 @@
 
 #import "BNCServerRequestQueue.h"
 #import "BNCPreferenceHelper.h"
+#import "BranchCloseRequest.h"
 
 // Analytics requests
 #import "BranchInstallRequest.h"
@@ -214,6 +215,18 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     }
 }
 
+- (BOOL)containsClose {
+    @synchronized (self) {
+        for (NSUInteger i = 0; i < self.queue.count; i++) {
+            BNCServerRequest *req = [self.queue objectAtIndex:i];
+            if ([req isKindOfClass:[BranchCloseRequest class]]) {
+                return YES;
+            }
+        }
+        return NO;
+    }
+}
+
 #pragma mark - Private Methods
 
 - (void)persistEventually {
@@ -293,9 +306,13 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     NSMutableArray<NSData *> *archivedRequests = [NSMutableArray<NSData *> new];
     for (BNCServerRequest *request in queue) {
         
-        // archive every request
-        NSData *encodedRequest = [self archiveObject:request];
-        [archivedRequests addObject:encodedRequest];
+        // only close requests were ignored
+        if (![BranchCloseRequest.class isEqual:request.class]) {
+            
+            // archive every request
+            NSData *encodedRequest = [self archiveObject:request];
+            [archivedRequests addObject:encodedRequest];
+        }
     }
     return [self archiveObject:archivedRequests];
 }

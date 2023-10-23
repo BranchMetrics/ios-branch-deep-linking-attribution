@@ -25,8 +25,7 @@
 
 - (void)testReceiptOnSimulator {
     BNCAppleReceipt *receipt = [[BNCAppleReceipt alloc] init];
-    // Appears the simulator can have a receipt
-    //XCTAssertNil([receipt installReceipt]);
+    XCTAssertNil([receipt installReceipt]);
     XCTAssertFalse([receipt isTestFlight]);
 }
 

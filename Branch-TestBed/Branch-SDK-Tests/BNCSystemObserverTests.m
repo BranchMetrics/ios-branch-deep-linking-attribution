@@ -77,6 +77,10 @@
     XCTAssert([BNCSystemObserver isSimulator]);
 }
 
+- (void)testAdTrackingEnabled {
+    XCTAssert(![BNCSystemObserver adTrackingEnabled]);
+}
+
 - (void)testAdvertiserIdentifier_NoATTPrompt {
     XCTAssertNil([BNCSystemObserver advertiserIdentifier]);
 }

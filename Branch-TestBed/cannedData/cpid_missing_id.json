@@ -1,0 +1,14 @@
+{
+    "user_data": {
+        "developer_identity": "test@branch.io",
+        "past_cross_platform_ids": [
+            "a0bd175fd2c45b1cad81df45d5f1ddb117eadc98e61b85bb49f8f13e88ceff20"
+        ],
+        "prob_cross_platform_ids": [
+            {
+                "id": "88ce973fead4b23bca482725a7ac8d6e5198f0d2c70ec3c511472633c645de42",
+                "probability": 0.95
+            }
+        ]
+    }
+}

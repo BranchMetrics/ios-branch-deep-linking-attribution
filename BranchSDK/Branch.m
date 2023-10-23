@@ -18,6 +18,7 @@
 #import "BNCServerRequestQueue.h"
 #import "BNCServerResponse.h"
 #import "BNCSystemObserver.h"
+#import "BranchCloseRequest.h"
 #import "BranchConstants.h"
 #import "BranchInstallRequest.h"
 #import "BranchJsonConfig.h"
@@ -417,10 +418,6 @@ static NSString *bnc_branchKey = nil;
 
 - (void)enableLogging {
     BNCLogSetDisplayLevel(BNCLogLevelDebug);
-}
-
-- (void)useEUEndpoints {
-    [BNCServerAPI sharedInstance].useEUServers = YES;
 }
 
 - (void)setDebug {
@@ -1122,6 +1119,13 @@ static NSString *bnc_branchKey = nil;
 
 #pragma mark - Query methods
 
+- (void)crossPlatformIdDataWithCompletion:(void(^) (BranchCrossPlatformID * _Nullable cpid))completion {
+    [self initSafetyCheck];
+    dispatch_async(self.isolationQueue, ^(){
+        [BranchCrossPlatformID requestCrossPlatformIdData:self.serverInterface key:self.class.branchKey completion:completion];
+    });
+}
+
 - (void)lastAttributedTouchDataWithAttributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData * _Nullable latd, NSError * _Nullable error))completion {
     [self initSafetyCheck];
     dispatch_async(self.isolationQueue, ^(){
@@ -1738,9 +1742,28 @@ static NSString *bnc_branchKey = nil;
 
 - (void)applicationWillResignActive {
     if (!Branch.trackingDisabled) {
+        [self callClose];
         [self.requestQueue persistImmediately];
         [BranchOpenRequest setWaitNeededForOpenResponseLock];
         BNCLogDebugSDK(@"Application resigned active.");
+    }
+}
+
+- (void)callClose {
+    if (self.initializationStatus != BNCInitStatusUninitialized) {
+        self.initializationStatus = BNCInitStatusUninitialized;
+
+#if !TARGET_OS_TV
+        BranchContentDiscoverer *contentDiscoverer = [BranchContentDiscoverer getInstance];
+        if (contentDiscoverer) [contentDiscoverer stopDiscoveryTask];
+#endif
+        
+        BOOL sendCloseRequests = [[BNCPreferenceHelper sharedInstance] sendCloseRequests];
+        if (sendCloseRequests && self.preferenceHelper.sessionID && ![self.requestQueue containsClose]) {
+            BranchCloseRequest *req = [[BranchCloseRequest alloc] init];
+            [self.requestQueue enqueue:req];
+            [self processNextQueueItem];
+        }
     }
 }
 
@@ -2107,7 +2130,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
-// TODO: can we deprecate and remove this, it doesn't work well.
 // UI code, must run on main
 - (void)automaticallyDeeplinkWithReferringParams:(NSDictionary *)latestReferringParams {
     // Find any matched keys, then launch any controllers that match

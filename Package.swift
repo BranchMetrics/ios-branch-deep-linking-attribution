@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.2
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 import PackageDescription
 
@@ -13,15 +13,10 @@ let package = Package(
             name: "BranchSDK",
             targets: ["BranchSDK"]),
     ],
-    dependencies: [
-    ],
     targets: [
         .target(
             name: "BranchSDK",
             path: "BranchSDK",
-            resources: [
-                .copy("PrivacyInfo.xcprivacy"),
-            ],
             publicHeadersPath: "",
             linkerSettings: [
                 .linkedFramework("CoreServices"),
