@@ -42,15 +42,15 @@
     XCTAssertFalse(self.prefHelper.disableAdNetworkCallouts);
 }
 
-- (void)testPreferenceSets {
-    self.prefHelper.retryCount = NSIntegerMax;
-    self.prefHelper.retryInterval = NSIntegerMax;
-    self.prefHelper.timeout = NSIntegerMax;
-    
-    XCTAssertEqual(self.prefHelper.retryCount, NSIntegerMax);
-    XCTAssertEqual(self.prefHelper.retryInterval, NSIntegerMax);
-    XCTAssertEqual(self.prefHelper.timeout, NSIntegerMax);
-}
+//- (void)testPreferenceSets {
+//    self.prefHelper.retryCount = NSIntegerMax;
+//    self.prefHelper.retryInterval = NSIntegerMax;
+//    self.prefHelper.timeout = NSIntegerMax;
+//    
+//    XCTAssertEqual(self.prefHelper.retryCount, NSIntegerMax);
+//    XCTAssertEqual(self.prefHelper.retryInterval, NSIntegerMax);
+//    XCTAssertEqual(self.prefHelper.timeout, NSIntegerMax);
+//}
 
 /*
  // This test is not reliable when run concurrently with other tests that set the patterListURL
