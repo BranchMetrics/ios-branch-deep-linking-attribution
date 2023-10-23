@@ -200,23 +200,10 @@
     XCTAssertEqualObjects(result.campaign, @"latest campaign");
 }
 
-- (void)testGetShortURL {
-   XCTestExpectation *expectation = [self expectationWithDescription:@"Fetching URL"];
-      
-   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-       NSString *shortURL = [self.branch getShortURL];
-       
-       XCTAssertNotNil(shortURL, @"URL should not be nil");
-       XCTAssertTrue([shortURL hasPrefix:@"https://"], @"URL should start with 'https://'");
-       
-       [expectation fulfill];
-   });
-
-   [self waitForExpectationsWithTimeout:10 handler:^(NSError *error) {
-       if (error) {
-           NSLog(@"Timeout Error: %@", error);
-       }
-   }];
+- (void)testGetShortURL {      
+    NSString *shortURL = [self.branch getShortURL];
+    XCTAssertNotNil(shortURL, @"URL should not be nil");
+    XCTAssertTrue([shortURL hasPrefix:@"https://"], @"URL should start with 'https://'");
 }
 
 - (void)testGetLongURLWithParamsAndChannelAndTagsAndFeatureAndStageAndAlias {
