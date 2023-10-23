@@ -33,5 +33,6 @@
 + (NSString *)appleAttributionToken;
 + (NSString *)environment;
 + (BOOL)isAppClip;
++ (BOOL)compareUriSchemes:(NSString *) serverUriScheme;
 
 @end
