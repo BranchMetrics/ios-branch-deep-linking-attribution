@@ -15,13 +15,13 @@ jobs:
         run: |
           now=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           end_time=$(date -u -d '+24 hour' +%Y-%m-%dT%H:%M:%SZ)
-          
+
           oncall=$(curl --request GET \
               --url "https://api.pagerduty.com/oncalls?since=$now&until=$end_time&schedule_ids[]=PQLHTOP" \
               --header 'Accept: application/vnd.pagerduty+json;version=2' \
               --header "Authorization: Token token=${{ secrets.PAGERDUTY_TOKEN }}" \
               --header 'Content-Type: application/json' )
-          
+
           engineer_name=$(echo "$oncall" | jq -r '.oncalls[0].user.summary')
 
           declare -A engineer_to_slackid
@@ -32,7 +32,7 @@ jobs:
               ["Ernest Cho"]="UCV77QDSL"
               ["Nidhi Dixit"]="U02GDFBP88N"
           )
-          
+
           slack_id=${engineer_to_slackid["$engineer_name"]}          
           echo "oncall_slack_id=$slack_id" >> $GITHUB_OUTPUT
 
@@ -134,7 +134,7 @@ jobs:
                     "type": "section",
                     "text": {
                     "type": "mrkdwn",
-                    "text": "*Included PRs:*\n${{ steps.create-pr.outputs.pr_list }}\n\n\nCurrent On-Call: *<${{ steps.on-call.outputs.oncall_slack_id }}>*"
+                    "text": "*Included PRs:*\n${{ toJSON(steps.create-pr.outputs.pr_list) }}\n\n\nCurrent On-Call: *<${{ steps.on-call.outputs.oncall_slack_id }}>*"
                     }
                 },
                 {
