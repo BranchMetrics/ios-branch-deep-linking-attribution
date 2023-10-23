@@ -382,6 +382,7 @@
 
     BOOL storedValue = [[BNCPreferenceHelper sharedInstance] trackingDisabled];
     XCTAssertTrue(storedValue);
+    [[BNCPreferenceHelper sharedInstance] setTrackingDisabled:NO];
 }
 
 - (void)testSetTrackingDisabled_NO {
