@@ -54,21 +54,22 @@
 
 #pragma mark - Server URL methods
 
+// With the change to support Apple's tracking domain feature, this API no longer works. See SDK-2118
+// Overrides base API URL
 + (void)setAPIUrl:(NSString *)url {
     if([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
         [[BNCPreferenceHelper sharedInstance] setBranchAPIURL:url];
     } else {
-        BNCLogWarning([NSString stringWithFormat:@"Not setting url - %@. Its invalid.", url]);
-        [[BNCPreferenceHelper sharedInstance] setBranchAPIURL:BNC_API_BASE_URL];
+        BNCLogWarning(@"Ignoring invalid custom API URL");
     }
 }
 
+// Overrides base CDN URL
 + (void)setCDNBaseUrl:(NSString *)url {
     if([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
         [[BNCPreferenceHelper sharedInstance] setPatternListURL:url];
     } else {
-        BNCLogWarning([NSString stringWithFormat:@"Not setting url - %@. Its invalid.", url]);
-        [[BNCPreferenceHelper sharedInstance] setPatternListURL:BNC_CDN_URL];
+        BNCLogWarning(@"Ignoring invalid custom CDN URL");
     }
 }
 

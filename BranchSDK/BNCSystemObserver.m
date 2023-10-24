@@ -122,24 +122,6 @@
     return statusString;
 }
 
-// this value is deprecated on iOS 14+
-+ (BOOL)adTrackingEnabled {
-    #ifdef BRANCH_EXCLUDE_IDFA_CODE
-    return NO;
-    
-    #else
-    Class ASIdentifierManagerClass = NSClassFromString(@"ASIdentifierManager");
-    if (ASIdentifierManagerClass) {
-        SEL sharedManagerSelector = NSSelectorFromString(@"sharedManager");
-        id sharedManager = ((id (*)(id, SEL))[ASIdentifierManagerClass methodForSelector:sharedManagerSelector])(ASIdentifierManagerClass, sharedManagerSelector);
-        SEL advertisingEnabledSelector = NSSelectorFromString(@"isAdvertisingTrackingEnabled");
-        BOOL enabled = ((BOOL (*)(id, SEL))[sharedManager methodForSelector:advertisingEnabledSelector])(sharedManager, advertisingEnabledSelector);
-        return enabled;
-    }
-    return NO;
-    #endif
-}
-
 + (NSString *)defaultURIScheme {
     NSArray *urlTypes = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"];
 

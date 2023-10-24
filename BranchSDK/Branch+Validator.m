@@ -11,6 +11,7 @@
 #import "BranchConstants.h"
 #import "BNCApplication.h"
 #import "BNCEncodingUtils.h"
+#import "BNCServerAPI.h"
 #import "UIViewController+Branch.h"
 
 void BNCForceBranchValidatorCategoryToLoad(void) {
@@ -41,19 +42,16 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
 
 - (void) startValidation {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
-    NSString *endpoint =
-        [BRANCH_REQUEST_ENDPOINT_APP_LINK_SETTINGS stringByAppendingPathComponent:preferenceHelper.lastRunBranchKey];
-    [[[BNCServerInterface alloc] init]
-        getRequest:nil
-        url:[preferenceHelper getAPIURL:endpoint]
-        key:nil
-        callback:^ (BNCServerResponse *response, NSError *error) {
-            if (error) {
-                [self showAlertWithTitle:@"Error" message:error.localizedDescription];
-            } else {
-                [self validateIntegrationWithServerResponse:response];
-            }
-        }];
+    NSString *serverURL = [[BNCServerAPI sharedInstance] validationServiceURL];
+    NSString *endpoint = [serverURL stringByAppendingPathComponent:preferenceHelper.lastRunBranchKey];
+    
+    [[[BNCServerInterface alloc] init] getRequest:nil url:endpoint key:nil callback:^ (BNCServerResponse *response, NSError *error) {
+        if (error) {
+            [self showAlertWithTitle:@"Error" message:error.localizedDescription];
+        } else {
+            [self validateIntegrationWithServerResponse:response];
+        }
+    }];
 }
 
 - (void) validateIntegrationWithServerResponse:(BNCServerResponse*)response {
