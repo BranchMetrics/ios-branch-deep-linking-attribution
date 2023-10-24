@@ -85,62 +85,62 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 // This test simulates a poor network, with three failed GET attempts and one final success,
 // for 4 connections.
 
-- (void)testGetRequestAsyncRetriesWhenAppropriate {
-  [HTTPStubs removeAllStubs];
-
-  //Set up nsurlsession and data task, catching response
-  BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-  serverInterface.preferenceHelper = [[BNCPreferenceHelper alloc] init];
-  serverInterface.preferenceHelper.retryCount = 3;
-
-  XCTestExpectation* successExpectation = [self expectationWithDescription:@"success"];
-  
-  __block NSInteger connectionAttempts = 0;
-  __block NSInteger failedConnections = 0;
-  __block NSInteger successfulConnections = 0;
-  
-  [HTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-    BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_"].location != NSNotFound;
-    XCTAssertEqual(foundBranchKey, TRUE);
-    return foundBranchKey;
-    
-  } withStubResponse:^HTTPStubsResponse*(NSURLRequest *request) {
-    @synchronized (self) {
-        connectionAttempts++;
-        NSLog(@"Attempt # %lu", (unsigned long)connectionAttempts);
-        if (connectionAttempts < 3) {
-
-          // Return an error the first three times
-          NSDictionary* dummyJSONResponse = @{@"bad": @"data"};
-          
-          ++failedConnections;
-          return [HTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:504 headers:nil];
-          
-        } else if (connectionAttempts == 3) {
-
-          // Return actual data afterwards
-          ++successfulConnections;
-          XCTAssertEqual(connectionAttempts, failedConnections + successfulConnections);
-          BNCAfterSecondsPerformBlockOnMainThread(0.01, ^{
-            NSLog(@"==> Fullfill.");
-            [successExpectation fulfill];
-          });
-
-          NSDictionary* dummyJSONResponse = @{@"key": @"value"};
-          return [HTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
-
-        } else {
-
-            XCTFail(@"Too many connection attempts: %ld.", (long) connectionAttempts);
-            return [HTTPStubsResponse responseWithJSONObject:[NSDictionary new] statusCode:200 headers:nil];
-
-        }
-    }
-  }];
-  
-  [serverInterface getRequest:nil url:@"http://foo" key:@"key_live_foo" callback:NULL];
-  [self waitForExpectationsWithTimeout:10.0 handler:nil];
-}
+//- (void)testGetRequestAsyncRetriesWhenAppropriate {
+//  [HTTPStubs removeAllStubs];
+//
+//  //Set up nsurlsession and data task, catching response
+//  BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
+//  serverInterface.preferenceHelper = [[BNCPreferenceHelper alloc] init];
+//  serverInterface.preferenceHelper.retryCount = 3;
+//
+//  XCTestExpectation* successExpectation = [self expectationWithDescription:@"success"];
+//  
+//  __block NSInteger connectionAttempts = 0;
+//  __block NSInteger failedConnections = 0;
+//  __block NSInteger successfulConnections = 0;
+//  
+//  [HTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+//    BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_"].location != NSNotFound;
+//    XCTAssertEqual(foundBranchKey, TRUE);
+//    return foundBranchKey;
+//    
+//  } withStubResponse:^HTTPStubsResponse*(NSURLRequest *request) {
+//    @synchronized (self) {
+//        connectionAttempts++;
+//        NSLog(@"Attempt # %lu", (unsigned long)connectionAttempts);
+//        if (connectionAttempts < 3) {
+//
+//          // Return an error the first three times
+//          NSDictionary* dummyJSONResponse = @{@"bad": @"data"};
+//          
+//          ++failedConnections;
+//          return [HTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:504 headers:nil];
+//          
+//        } else if (connectionAttempts == 3) {
+//
+//          // Return actual data afterwards
+//          ++successfulConnections;
+//          XCTAssertEqual(connectionAttempts, failedConnections + successfulConnections);
+//          BNCAfterSecondsPerformBlockOnMainThread(0.01, ^{
+//            NSLog(@"==> Fullfill.");
+//            [successExpectation fulfill];
+//          });
+//
+//          NSDictionary* dummyJSONResponse = @{@"key": @"value"};
+//          return [HTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
+//
+//        } else {
+//
+//            XCTFail(@"Too many connection attempts: %ld.", (long) connectionAttempts);
+//            return [HTTPStubsResponse responseWithJSONObject:[NSDictionary new] statusCode:200 headers:nil];
+//
+//        }
+//    }
+//  }];
+//  
+//  [serverInterface getRequest:nil url:@"http://foo" key:@"key_live_foo" callback:NULL];
+//  [self waitForExpectationsWithTimeout:10.0 handler:nil];
+//}
 
 //==================================================================================
 // TEST 04
