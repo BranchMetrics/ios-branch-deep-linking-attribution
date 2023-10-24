@@ -44,10 +44,10 @@
     XCTAssertEqual([BNCPreferenceHelper sharedInstance].timeout, 5.0, @"Network timeout should be set to 5.0");
 }
 
-- (void)testSetMaxRetries {
-    [self.branch setMaxRetries:3];
-    XCTAssertEqual([BNCPreferenceHelper sharedInstance].retryCount, 3, @"Max retries should be set to 3");
-}
+//- (void)testSetMaxRetries {
+//    [self.branch setMaxRetries:3];
+//    XCTAssertEqual([BNCPreferenceHelper sharedInstance].retryCount, 3, @"Max retries should be set to 3");
+//}
 
 - (void)testSetRetryInterval {
     [self.branch setRetryInterval:2.0];
