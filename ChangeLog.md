@@ -1,5 +1,26 @@
 Branch iOS SDK Change Log
 
+V.3.0.0
+
+- Add a Privacy Manifest for the Branch SDK. App developers may need add an App level Privacy Manifest for data they collect and pass into the Branch SDK.
+    - Known Issue: When using cocoapods without the `use_frameworks!` option, the build can fail with a duplicate privacy manifest error. Workaround is to manually merge privacy manifests.
+- Add support for a tracking domain. When Ads tracking is enabled, the SDK sends event calls to a tracking domain.
+- iOS 12 is now the min version
+- Xcode 15 is now the min version
+- Fix short URL creation via a sharesheet when tracking is disabled
+- Add macCatalyst checks
+- SetIdentity and Logout are now handled device side
+- Remove deprecated code and some data minimization
+    - Cross Platform ID
+    - Credits and Referrals
+    - Close requests
+    - Facebook App Links
+    - pre-iOS 14 tracking status. This is always `false` on recent iOS versions.
+    - Tune data upgrade check
+    - v1 Branch Events, all events are now v2 Branch Events
+    - pre-iOS 10 locale support
+    - Device carrier. This was used for fraud analysis, but is no longer available on new iOS versions.
+
 V.2.2.1
  
 Branch iOS SDK 2.2.1 adds parameter for current SKAN 4.0 Window in /v1/open and /v2/event requests.

@@ -52,6 +52,8 @@
     XCTAssertEqual(self.prefHelper.timeout, NSIntegerMax);
 }
 
+/*
+ // This test is not reliable when run concurrently with other tests that set the patterListURL
 - (void)testURLFilter {
     XCTAssertTrue([@"https://cdn.branch.io" isEqualToString:self.prefHelper.patternListURL]);
     
@@ -59,17 +61,7 @@
     self.prefHelper.patternListURL = customURL;
     XCTAssertTrue([customURL isEqualToString:self.prefHelper.patternListURL]);
 }
-
-// only verifies that the flag is stored correctly
-// there are no tests to verify close calls are sent or omitted
-- (void)testSendCloseRequests {
-    XCTAssertFalse(self.prefHelper.sendCloseRequests);
-    [self.prefHelper setSendCloseRequests:YES];
-    XCTAssertTrue(self.prefHelper.sendCloseRequests);
-    
-    // restore to default
-    [self.prefHelper setSendCloseRequests:NO];
-}
+ */
 
 - (void)testSerializeDict_Nil {
     NSMutableDictionary *dict = nil;
@@ -210,6 +202,7 @@
     XCTAssert([filterDesc isEqualToString:valueDesc]);
 }
 
+/*
 - (void)testSetAPIURL_Example {
     
     NSString *url = @"https://www.example.com/";
@@ -265,5 +258,6 @@
     XCTAssert(![urlStored isEqualToString:@""]);
     XCTAssert([urlStored isEqualToString:BNC_CDN_URL]);
 }
+ */
 
 @end

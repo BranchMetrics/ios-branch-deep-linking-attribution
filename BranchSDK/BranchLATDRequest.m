@@ -9,6 +9,8 @@
 #import "BranchLATDRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
+#import "BNCServerAPI.h"
+#import "BNCRequestFactory.h"
 
 @implementation BranchLATDRequest
 
@@ -21,18 +23,19 @@
 }
 
 - (NSString *)serverURL {
-    return [[BNCPreferenceHelper sharedInstance] getAPIURL:BRANCH_REQUEST_ENDPOINT_LATD];
+    return [[BNCServerAPI sharedInstance] latdServiceURL];
 }
 
-- (NSMutableDictionary *)buildRequestParams {
+- (NSMutableDictionary *)dataDictionary {
     NSMutableDictionary *params = [NSMutableDictionary new];
     [params setObject:@(self.attributionWindow) forKey:@"attribution_window"];
     return params;
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
-    NSDictionary *params = [self buildRequestParams];
-    [serverInterface postRequest:params url:[self serverURL] key:key callback:callback];
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key];
+    NSDictionary *json = [factory dataForLATDWithDataDictionary:[self dataDictionary]];
+    [serverInterface postRequest:json url:[self serverURL] key:key callback:callback];
 }
 
 // unused, callee handles parsing the json response

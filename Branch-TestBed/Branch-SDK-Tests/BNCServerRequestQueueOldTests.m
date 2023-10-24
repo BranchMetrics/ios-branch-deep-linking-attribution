@@ -9,7 +9,6 @@
 #import "BNCTestCase.h"
 #import "BNCServerRequestQueue.h"
 #import "BranchOpenRequest.h"
-#import "BranchCloseRequest.h"
 #import <OCMock/OCMock.h>
 #import "Branch.h"
 

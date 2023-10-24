@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BranchPluginSupport : NSObject
 
 + (BranchPluginSupport *)instance;
+
 /**
 Sets a custom base URL for all calls to the Branch API.
 @param url  Base URL that the Branch API will use.
@@ -20,7 +21,7 @@ Sets a custom base URL for all calls to the Branch API.
 + (void)setAPIUrl:(NSString *)url;
 
 /**
-Sets a custom CDN base URL
+Sets a custom CDN base URL.
 @param url Base URL for CDN endpoints.
 */
 + (void)setCDNBaseUrl:(NSString *)url;

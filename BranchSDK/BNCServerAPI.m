@@ -6,7 +6,6 @@
 //
 
 #import "BNCServerAPI.h"
-#import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BNCConfig.h"
 #import "BranchConstants.h"
@@ -24,53 +23,87 @@
     return serverAPI;
 }
 
-- (NSURL *)installServiceURL{
-    return [NSURL URLWithString: [[self getBaseURLWithVersion] stringByAppendingString: BRANCH_REQUEST_ENDPOINT_INSTALL]];
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.useTrackingDomain = NO;
+        self.useEUServers = NO;
+        self.automaticallyEnableTrackingDomain = YES;
+    }
+    return self;
 }
 
-- (NSURL *)openServiceURL {
-    return [NSURL URLWithString: [[self getBaseURLWithVersion] stringByAppendingString: BRANCH_REQUEST_ENDPOINT_OPEN]];
+- (NSString *)installServiceURL{
+    return [[self getBaseURL] stringByAppendingString: @"/v1/install"];
 }
 
-- (NSURL *)eventServiceURL{
-    return [NSURL URLWithString: [[self getBaseURLWithVersion] stringByAppendingString: BRANCH_REQUEST_ENDPOINT_USER_COMPLETED_ACTION]];
+- (NSString *)openServiceURL {
+    return [[self getBaseURL] stringByAppendingString: @"/v1/open"];
 }
 
-- (NSURL *)linkServiceURL {
-    return [NSURL URLWithString: [[self getBaseURLWithVersion] stringByAppendingString: BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL]];
+- (NSString *)standardEventServiceURL{
+    return [[self getBaseURL] stringByAppendingString: @"/v2/event/standard"];
 }
 
-- (BOOL)useTrackingDomain {
+- (NSString *)customEventServiceURL{
+    return [[self getBaseURL] stringByAppendingString: @"/v2/event/custom"];
+}
+
+- (NSString *)linkServiceURL {
+    return [[self getBaseURLForLinkingEndpoints] stringByAppendingString: @"/v1/url"];
+}
+
+- (NSString *)qrcodeServiceURL {
+    return [[self getBaseURLForLinkingEndpoints] stringByAppendingString: @"/v1/qr-code"];
+}
+
+// LATD endpoint is not a data collection endpoint and will be treated like linking endpoints
+- (NSString *)latdServiceURL {
+    return [[self getBaseURLForLinkingEndpoints] stringByAppendingString: @"/v1/cpid/latd"];
+}
+
+- (NSString *)validationServiceURL {
+    return [[self getBaseURLForLinkingEndpoints] stringByAppendingString: @"/v1/app-link-settings"];
+}
+
+// Currently we switch to tracking domains if we detect IDFA, indicating that Ad Tracking is enabled
+- (BOOL)optedIntoIDFA {
     NSString* optedInStatus = [BNCSystemObserver attOptedInStatus];
-    
     if ([optedInStatus isEqualToString:@"authorized"]){
         return TRUE;
     }
     return FALSE;
 }
 
-- (void)setUseEUServers:(BOOL)useEUServers {
-    [[BNCPreferenceHelper sharedInstance] setUseEUServers: useEUServers];
-}
-
-- (BOOL)useEUServers {
-    return [[BNCPreferenceHelper sharedInstance] useEUServers];
-}
-
-- (NSString *) getBaseURLWithVersion {
+// Linking endpoints are not used for Ads tracking
+- (NSString *)getBaseURLForLinkingEndpoints {
     NSString * urlString;
-    
-    if ([self useTrackingDomain] && [ self useEUServers]){
-        urlString = BNC_SAFETRACK_EU_API_URL;
-    } else if ([self useTrackingDomain]) {
-        urlString = BNC_SAFETRACK_API_URL;
-    } else if ([self useEUServers]){
+    if (self.useEUServers){
         urlString = BNC_EU_API_URL;
     } else {
         urlString = BNC_API_URL;
     }
     
-    urlString = [urlString stringByAppendingFormat:@"/%@/", BNC_API_VERSION_3];
+    return urlString;
+}
+
+- (NSString *)getBaseURL {
+    if (self.automaticallyEnableTrackingDomain) {
+        self.useTrackingDomain = [self optedIntoIDFA];
+    }
+    
+    NSString * urlString;
+    
+    if (self.useTrackingDomain && self.useEUServers){
+        urlString = BNC_SAFETRACK_EU_API_URL;
+    } else if (self.useTrackingDomain) {
+        urlString = BNC_SAFETRACK_API_URL;
+    } else if (self.useEUServers){
+        urlString = BNC_EU_API_URL;
+    } else {
+        urlString = BNC_API_URL;
+    }
+    
     return urlString;
 }
 
