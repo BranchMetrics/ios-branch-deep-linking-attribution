@@ -278,4 +278,9 @@
     [self waitForExpectationsWithTimeout:2.0 handler:nil];
 }
 
+- (void) testInitWithTitle {
+    BranchUniversalObject *buo = [[BranchUniversalObject new] initWithTitle:@"buoTitle"];
+    XCTAssertEqual(buo.title, @"buoTitle");
+}
+
 @end

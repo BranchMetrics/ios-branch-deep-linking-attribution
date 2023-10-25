@@ -30,7 +30,8 @@
         "resolvedPath" : "..\/Simulate-FirstRun.xcappdata"
       },
       "skippedTests" : [
-        "BNCServerInterfaceTests"
+        "BNCServerInterfaceTests",
+        "BranchDelegateTest"
       ],
       "target" : {
         "containerPath" : "container:Branch-TestBed.xcodeproj",

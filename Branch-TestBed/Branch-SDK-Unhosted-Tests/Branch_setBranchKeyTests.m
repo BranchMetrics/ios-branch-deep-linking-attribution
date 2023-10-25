@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "Branch.h"
+#import "NSError+Branch.h"
 
 // expose private methods used by tests
 @interface Branch()
@@ -95,5 +96,38 @@
     XCTAssert([error.localizedFailureReason isEqualToString:@"Branch key can only be set once."]);
     XCTAssert([[Branch branchKey] isEqualToString:testKey]);
 }
+
+- (void)testResetBranchKey {
+    NSString *testKey = @"key_live_foo";
+    [Branch setBranchKey:testKey];
+    
+    XCTAssert([[Branch branchKey] isEqualToString:testKey]);
+
+    [Branch resetBranchKey];
+    XCTAssertNil([Branch branchKey], @"Branch key should be reset to nil");
+}
+
+- (void)testSetBranchKey_Error_InvalidKeyType {
+    NSError *error = nil;
+    NSNumber *invalidKey = @123;
+
+    [Branch setBranchKey:(NSString *)invalidKey error:&error];
+    XCTAssertNotNil(error);
+    XCTAssertEqual(error.code, BNCInitError);
+    XCTAssertEqualObjects(error.localizedFailureReason, @"Invalid Branch key of type '__NSCFNumber'.");
+}
+
+- (void)testSetBranchKey_Error_InvalidKeyFormat {
+    NSError *error = nil;
+    NSString *invalidFormatKey = @"invalid_format";
+
+    [Branch setBranchKey:invalidFormatKey error:&error];
+    XCTAssertNotNil(error);
+    XCTAssertEqual(error.code, BNCInitError);
+    XCTAssertEqualObjects(error.localizedFailureReason, @"Invalid Branch key format. Did you add your Branch key to your Info.plist? Passed key is 'invalid_format'.");
+}
+
+
+
 
 @end
