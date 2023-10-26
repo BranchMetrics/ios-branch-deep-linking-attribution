@@ -117,7 +117,8 @@ jobs:
         uses: slackapi/slack-github-action@v1.24.0
         id: slack
         with:
-          channel-id: "C03RTLRKJQP"
+          channel-id: C04E69NEDAT
+          #"C03RTLRKJQP"
           payload: |
             {
                 "text": "iOS: New Dependabot PR Awaiting Review",
