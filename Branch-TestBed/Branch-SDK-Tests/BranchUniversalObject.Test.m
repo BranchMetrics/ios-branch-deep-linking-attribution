@@ -172,45 +172,6 @@
     XCTAssertTrue([s bnc_isEqualToMaskedString:mask]);
 }
 
-- (void) testDeprecations {
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-
-    BranchUniversalObject *buo = [BranchUniversalObject new];
-    buo.price = 10.00;
-    buo.currency = BNCCurrencyUSD;
-    buo.type = @"Purchase";
-    buo.contentIndexMode = BranchContentIndexModePublic;
-    buo.metadata = @{ @"Key1": @"Value1" };
-    buo.automaticallyListOnSpotlight = YES;
-
-    XCTAssertEqualObjects(buo.contentMetadata.price, [NSDecimalNumber decimalNumberWithString:@"10.00"]);
-    XCTAssertEqualObjects(buo.contentMetadata.currency, BNCCurrencyUSD);
-    XCTAssertEqualObjects(buo.contentMetadata.contentSchema, @"Purchase");
-    XCTAssertEqual(buo.locallyIndex, YES);
-    XCTAssertEqual(buo.publiclyIndex, YES);
-    XCTAssertEqualObjects(buo.contentMetadata.customMetadata, @{ @"Key1": @"Value1" } );
-
-    XCTAssertEqual(buo.price, 10.00);
-    XCTAssertEqualObjects(buo.currency, BNCCurrencyUSD);
-    XCTAssertEqualObjects(buo.type, @"Purchase");;
-    XCTAssertEqual(buo.contentIndexMode, BranchContentIndexModePublic);
-    XCTAssertEqualObjects(buo.metadata, @{ @"Key1": @"Value1" });
-    XCTAssertEqual(buo.automaticallyListOnSpotlight, YES);
-
-    buo.contentMetadata.customMetadata = (NSMutableDictionary*) @{ @"Key2": @"Value2" };
-    buo.contentMetadata.customMetadata[@"Key3"] = @"Value3";
-    [buo addMetadataKey:@"Key4" value:@"Value4"];
-    NSDictionary *d = @{
-        @"Key2": @"Value2",
-        @"Key3": @"Value3",
-        @"Key4": @"Value4",
-    };
-    XCTAssertEqualObjects(buo.metadata, d);
-
-    #pragma clang diagnostic pop
-}
-
 - (void) testDictionary {
     NSDictionary *d = nil;
     BranchUniversalObject *buo = [BranchUniversalObject new];
