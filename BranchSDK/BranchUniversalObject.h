@@ -190,22 +190,9 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
 - (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
                             andShareText:(nullable NSString *)shareText
                       fromViewController:(nullable UIViewController *)viewController
-                              completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed))completion;
-
-/// Returns with activityError as well
-- (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
-                            andShareText:(nullable NSString *)shareText
-                      fromViewController:(nullable UIViewController *)viewController
                      completionWithError:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed, NSError*_Nullable error))completion;
 
-// iPad
-- (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
-                            andShareText:(nullable NSString *)shareText
-                      fromViewController:(nullable UIViewController *)viewController
-                                  anchor:(nullable UIBarButtonItem *)anchor
-                              completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed))completion;
-
-// Returns with activityError as well
+// iPad needs an anchor
 - (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
                             andShareText:(nullable NSString *)shareText
                       fromViewController:(nullable UIViewController *)viewController
