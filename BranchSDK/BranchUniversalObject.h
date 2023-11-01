@@ -112,20 +112,56 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
 @property (nonatomic, nullable, copy) NSString *title;
 @property (nonatomic, nullable, copy) NSString *contentDescription;
 @property (nonatomic, nullable, copy) NSString *imageUrl;
-@property (nonatomic, strong, nullable) NSArray<NSString *> *keywords;
-@property (nonatomic, strong, nullable) NSDate *creationDate;
-@property (nonatomic, strong, nullable) NSDate *expirationDate;
-@property (nonatomic, assign) BOOL locallyIndex; //!< Index on Spotlight.
-@property (nonatomic, assign) BOOL publiclyIndex; //!< Index on Google, Branch, etc.
+@property (nonatomic, strong, nullable) NSArray<NSString*> *keywords;
+@property (nonatomic, strong, nullable) NSDate   *creationDate;
+@property (nonatomic, strong, nullable) NSDate   *expirationDate;
+@property (nonatomic, assign)           BOOL      locallyIndex;     //!< Index on Spotlight.
+@property (nonatomic, assign)           BOOL      publiclyIndex;    //!< Index on Google, Branch, etc.
 
 @property (nonatomic, strong, nonnull) BranchContentMetadata *contentMetadata;
 
+///@name Deprecated Properties
+
+@property (nonatomic, strong, nullable)
+    __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.customMetadata` instead."))))
+    NSDictionary *metadata;
+
+- (void)addMetadataKey:(nonnull NSString *)key value:(nonnull NSString *)value
+    __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.customMetadata` instead."))));
+
+@property (nonatomic, strong, nullable)
+    __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.contentSchema` instead."))))
+    NSString *type;
+
+@property (nonatomic, assign)
+    __attribute__((deprecated(("Use `BranchUniversalObject.locallyIndex and BranchUniversalObject.publiclyIndex` instead."))))
+    BranchContentIndexMode contentIndexMode;
+
+@property (nonatomic, strong, nullable)
+    __attribute__((deprecated(("Not used due to iOS 10.0 Spotlight changes."))))
+    NSString *spotlightIdentifier;
+
+@property (nonatomic, assign)
+    __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.price` instead."))))
+    CGFloat price;
+
+@property (nonatomic, strong, nullable)
+    __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.currency` instead."))))
+    NSString *currency;
+
+@property (nonatomic, assign)
+    __attribute__((deprecated(("Use `BranchUniversalObject.locallyIndex` instead."))))
+    BOOL automaticallyListOnSpotlight;
+
+
 /// @name Log a User Content View Event
+
 
 - (void)registerView;
 - (void)registerViewWithCallback:(void (^_Nullable)(NSDictionary * _Nullable params, NSError * _Nullable error))callback;
 
 /// @name Short Links
+
 
 /// Returns a Branch short URL to the content item with the passed link properties.
 - (nullable NSString *)getShortUrlWithLinkProperties:(nonnull BranchLinkProperties *)linkProperties;
@@ -148,12 +184,19 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
 /// @name Share Sheet Handling
 #if !TARGET_OS_TV
 
-- (void)showShareSheetWithShareText:(nullable NSString *)shareText completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed))completion;
+- (void)showShareSheetWithShareText:(nullable NSString *)shareText
+                         completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed))completion;
 
 - (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
                             andShareText:(nullable NSString *)shareText
                       fromViewController:(nullable UIViewController *)viewController
-                     completionWithError:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed, NSError * _Nullable error))completion;
+                              completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed))completion;
+
+/// Returns with activityError as well
+- (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
+                            andShareText:(nullable NSString *)shareText
+                      fromViewController:(nullable UIViewController *)viewController
+                     completionWithError:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed, NSError*_Nullable error))completion;
 
 // iPad
 - (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
@@ -162,30 +205,41 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
                                   anchor:(nullable UIBarButtonItem *)anchor
                               completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed))completion;
 
+// Returns with activityError as well
 - (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
                             andShareText:(nullable NSString *)shareText
                       fromViewController:(nullable UIViewController *)viewController
                                   anchor:(nullable UIBarButtonItem *)anchor
-                     completionWithError:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed, NSError * _Nullable error))completion;
+                     completionWithError:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed, NSError*_Nullable error))completion;
 
 
 /// @name List items on Spotlight
 
+
 - (void)listOnSpotlight;
 - (void)listOnSpotlightWithCallback:(void (^_Nullable)(NSString * _Nullable url, NSError * _Nullable error))callback;
 
-- (void)listOnSpotlightWithLinkProperties:(BranchLinkProperties*_Nullable)linkproperties callback:(void (^_Nullable)(NSString * _Nullable url, NSError * _Nullable error))completion;
+- (void)listOnSpotlightWithIdentifierCallback:(void (^_Nullable)(NSString * _Nullable url,
+                                                                 NSString * _Nullable spotlightIdentifier,
+                                                                 NSError * _Nullable error))spotlightCallback
+    __attribute__((deprecated((
+    "iOS 10 has changed how Spotlight indexing works and we’ve updated the SDK to reflect this. "
+    "Please see https://dev.branch.io/features/spotlight-indexing/overview/ for instructions on migration."))));
+
+- (void)listOnSpotlightWithLinkProperties:(BranchLinkProperties*_Nullable)linkproperties
+                                 callback:(void (^_Nullable)(NSString * _Nullable url,
+                                                            NSError * _Nullable error))completion;
 
 - (void)removeFromSpotlightWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion;
 
 #endif
 
-- (NSDictionary * _Nonnull)getDictionaryWithCompleteLinkProperties:(BranchLinkProperties * _Nonnull)linkProperties;
-- (NSDictionary * _Nonnull)getParamsForServerRequestWithAddedLinkProperties:(BranchLinkProperties * _Nonnull)linkProperties;
+- (NSDictionary*_Nonnull)getDictionaryWithCompleteLinkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
+- (NSDictionary*_Nonnull)getParamsForServerRequestWithAddedLinkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
 
 /// Convenience method for initSession methods that return BranchUniversalObject, but can be used safely by anyone.
-- (NSMutableDictionary * _Nonnull) dictionary;
-+ (BranchUniversalObject * _Nonnull) objectWithDictionary:(NSDictionary * _Null_unspecified)dictionary;
+- (NSMutableDictionary*_Nonnull) dictionary;
++ (BranchUniversalObject*_Nonnull) objectWithDictionary:(NSDictionary*_Null_unspecified)dictionary;
 
-- (NSString * _Nonnull) description;
+- (NSString*_Nonnull) description;
 @end
