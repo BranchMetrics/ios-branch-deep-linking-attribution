@@ -49,7 +49,7 @@
 		4D1683C02098C902008819E3 /* BranchUniversalObject.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1683962098C901008819E3 /* BranchUniversalObject.Test.m */; };
 		4D1683C12098C902008819E3 /* BNCApplicationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1683972098C901008819E3 /* BNCApplicationTests.m */; };
 		4D1683C62098C902008819E3 /* BranchEvent.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16839C2098C901008819E3 /* BranchEvent.Test.m */; };
-		4D1683C72098C902008819E3 /* BNCCrashlyticsWrapper.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16839D2098C901008819E3 /* BNCCrashlyticsWrapper.Test.m */; };
+		4D1683C72098C902008819E3 /* BNCCrashlyticsWrapperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16839D2098C901008819E3 /* BNCCrashlyticsWrapperTests.m */; };
 		4D1683C82098C902008819E3 /* NSStringBranchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16839E2098C901008819E3 /* NSStringBranchTests.m */; };
 		4D1683CA2098C902008819E3 /* BNCPreferenceHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1683A02098C901008819E3 /* BNCPreferenceHelperTests.m */; };
 		4D1851C120180F3300E48994 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1851BF20180F0600E48994 /* Security.framework */; };
@@ -345,7 +345,7 @@
 		4D1683962098C901008819E3 /* BranchUniversalObject.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchUniversalObject.Test.m; sourceTree = "<group>"; };
 		4D1683972098C901008819E3 /* BNCApplicationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCApplicationTests.m; sourceTree = "<group>"; };
 		4D16839C2098C901008819E3 /* BranchEvent.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchEvent.Test.m; sourceTree = "<group>"; };
-		4D16839D2098C901008819E3 /* BNCCrashlyticsWrapper.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCCrashlyticsWrapper.Test.m; sourceTree = "<group>"; };
+		4D16839D2098C901008819E3 /* BNCCrashlyticsWrapperTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCCrashlyticsWrapperTests.m; sourceTree = "<group>"; };
 		4D16839E2098C901008819E3 /* NSStringBranchTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringBranchTests.m; sourceTree = "<group>"; };
 		4D16839F2098C901008819E3 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4D1683A02098C901008819E3 /* BNCPreferenceHelperTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCPreferenceHelperTests.m; sourceTree = "<group>"; };
@@ -642,7 +642,7 @@
 				4D7881FB209CF2D4002B750F /* BNCApplication+BNCTest.h */,
 				4D7881FC209CF2D4002B750F /* BNCApplication+BNCTest.m */,
 				5FE694372405FA2700E3AEE2 /* BNCCallbackMapTests.m */,
-				4D16839D2098C901008819E3 /* BNCCrashlyticsWrapper.Test.m */,
+				4D16839D2098C901008819E3 /* BNCCrashlyticsWrapperTests.m */,
 				5F92B241238752A500CA909B /* BNCDeviceInfoTests.m */,
 				5F437E3F237E1A560052064B /* BNCDeviceSystemTests.m */,
 				5F2035CB240DDE90004FDC3E /* BNCDisableAdNetworkCalloutsTests.m */,
@@ -1443,7 +1443,7 @@
 				C10C61AA282481FB00761D7E /* BranchShareLinkTests.m in Sources */,
 				5F437E40237E1A560052064B /* BNCDeviceSystemTests.m in Sources */,
 				4D1683AC2098C902008819E3 /* BranchInstallRequestTests.m in Sources */,
-				4D1683C72098C902008819E3 /* BNCCrashlyticsWrapper.Test.m in Sources */,
+				4D1683C72098C902008819E3 /* BNCCrashlyticsWrapperTests.m in Sources */,
 				5FDF91592581CDF4009BE5A3 /* BNCPartnerParametersTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
