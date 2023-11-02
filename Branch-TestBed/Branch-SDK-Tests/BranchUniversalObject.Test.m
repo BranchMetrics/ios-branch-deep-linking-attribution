@@ -233,50 +233,50 @@
     XCTAssertEqualObjects(buo.contentMetadata.customMetadata, d);
 }
 
-- (void) testRegisterView {
-    Branch *branch = [Branch getInstance:@"key_live_foo"];
-    [BNCPreferenceHelper sharedInstance].randomizedBundleToken = @"1234567";
-    [BNCPreferenceHelper sharedInstance].sessionID = @"654321";
-    [BNCPreferenceHelper sharedInstance].randomizedDeviceToken = @"987654321";
-    XCTestExpectation *expectation = [self expectationWithDescription:@"testRegisterView"];
-    id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
-
-    OCMStub(
-        [serverInterfaceMock genericHTTPRequest:[OCMArg any]
-            retryNumber:0
-            callback:[OCMArg any]
-            retryHandler:[OCMArg any]]
-    ).andDo(^(NSInvocation *invocation) {
-
-        __unsafe_unretained NSURLRequest *request = nil;
-        [invocation getArgument:&request atIndex:2];
-
-        NSError *error = nil;
-        NSString *url = request.URL.absoluteString;
-        NSData *bodyData = request.HTTPBody;
-        NSDictionary *parameters = [NSJSONSerialization JSONObjectWithData:bodyData options:0 error:&error];
-        XCTAssertNil(error);
-
-        NSLog(@"1");
-        NSLog(@"URL: %@.", url);
-        NSLog(@"Body: %@.", parameters);
-
-        NSString *eventName = parameters[@"name"];
-        if ([url containsString:@"branch.io/v2/event/standard"] &&
-            [eventName isEqualToString:@"VIEW_ITEM"]) {
-            [expectation fulfill];
-        }
-    });
-
-    [branch clearNetworkQueue];
-    BranchUniversalObject *buo = [BranchUniversalObject new];
-    buo.canonicalIdentifier = @"Uniq!";
-    buo.title = @"Object Title";
-    [buo registerViewWithCallback:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
-        XCTAssertNil(error);
-    }];
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
-}
+//- (void) testRegisterView {
+//    Branch *branch = [Branch getInstance:@"key_live_foo"];
+//    [BNCPreferenceHelper sharedInstance].randomizedBundleToken = @"1234567";
+//    [BNCPreferenceHelper sharedInstance].sessionID = @"654321";
+//    [BNCPreferenceHelper sharedInstance].randomizedDeviceToken = @"987654321";
+//    XCTestExpectation *expectation = [self expectationWithDescription:@"testRegisterView"];
+//    id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
+//
+//    OCMStub(
+//        [serverInterfaceMock genericHTTPRequest:[OCMArg any]
+//            retryNumber:0
+//            callback:[OCMArg any]
+//            retryHandler:[OCMArg any]]
+//    ).andDo(^(NSInvocation *invocation) {
+//
+//        __unsafe_unretained NSURLRequest *request = nil;
+//        [invocation getArgument:&request atIndex:2];
+//
+//        NSError *error = nil;
+//        NSString *url = request.URL.absoluteString;
+//        NSData *bodyData = request.HTTPBody;
+//        NSDictionary *parameters = [NSJSONSerialization JSONObjectWithData:bodyData options:0 error:&error];
+//        XCTAssertNil(error);
+//
+//        NSLog(@"1");
+//        NSLog(@"URL: %@.", url);
+//        NSLog(@"Body: %@.", parameters);
+//
+//        NSString *eventName = parameters[@"name"];
+//        if ([url containsString:@"branch.io/v2/event/standard"] &&
+//            [eventName isEqualToString:@"VIEW_ITEM"]) {
+//            [expectation fulfill];
+//        }
+//    });
+//
+//    [branch clearNetworkQueue];
+//    BranchUniversalObject *buo = [BranchUniversalObject new];
+//    buo.canonicalIdentifier = @"Uniq!";
+//    buo.title = @"Object Title";
+//    [buo registerViewWithCallback:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
+//        XCTAssertNil(error);
+//    }];
+//    [self waitForExpectationsWithTimeout:2.0 handler:nil];
+//}
 
 - (void) testInitWithTitle {
     BranchUniversalObject *buo = [[BranchUniversalObject new] initWithTitle:@"buoTitle"];

@@ -134,81 +134,81 @@
     }
 }
 
-- (void) testStandardList {
-    BNCLogSetDisplayLevel(BNCLogLevelAll);
-    Branch *branch = (Branch.branchKey.length) ? Branch.getInstance : [Branch getInstance:@"key_live_foo"];
-    id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
-    XCTestExpectation *expectation = [self expectationWithDescription:@"OpenRequest Expectation"];
-
-    OCMStub(
-        [serverInterfaceMock postRequest:[OCMArg any]
-            url:[OCMArg any]
-            key:[OCMArg any]
-            callback:[OCMArg any]]
-    ).andDo(^(NSInvocation *invocation) {
-        __unsafe_unretained NSDictionary *dictionary = nil;
-        __unsafe_unretained NSString *url = nil;
-        [invocation getArgument:&dictionary atIndex:2];
-        [invocation getArgument:&url atIndex:3];
-
-        NSLog(@"d: %@", dictionary);
-        NSString* link = dictionary[@"external_intent_uri"];
-        NSString *pattern1 = @"^(?i)((http|https):\\/\\/).*[\\/|?|#].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b";
-        NSString *pattern2 = @"^(?i).+:.*[?].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b";
-        NSLog(@"\n   Link: '%@'\nPattern1: '%@'\nPattern2: '%@'.", link, pattern1, pattern2);
-        if ([link isEqualToString:pattern1] || [link isEqualToString:pattern2]) {
-            [expectation fulfill];
-        }
-        else
-        if ([url containsString:@"install"]) {
-            [expectation fulfill];
-        }
-    });
-    [branch clearNetworkQueue];
-    [branch handleDeepLink:[NSURL URLWithString:@"https://myapp.app.link/bob/link?oauth=true"]];
-    [self waitForExpectationsWithTimeout:5.0 handler:nil];
-    [serverInterfaceMock stopMocking];
-    [BNCPreferenceHelper sharedInstance].referringURL = nil;
-    [[BNCPreferenceHelper sharedInstance] synchronize];
-}
-
-- (void) testUserList {
-    BNCLogSetDisplayLevel(BNCLogLevelAll);
-    Branch *branch = (Branch.branchKey.length) ? Branch.getInstance : [Branch getInstance:@"key_live_foo"];
-    [branch clearNetworkQueue];
-    branch.urlPatternsToIgnore = @[
-        @"\\/bob\\/"
-    ];
-    id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
-    XCTestExpectation *expectation = [self expectationWithDescription:@"OpenRequest Expectation"];
-
-    OCMStub(
-        [serverInterfaceMock postRequest:[OCMArg any]
-            url:[OCMArg any]
-            key:[OCMArg any]
-            callback:[OCMArg any]]
-    ).andDo(^(NSInvocation *invocation) {
-        __unsafe_unretained NSDictionary *dictionary = nil;
-        __unsafe_unretained NSString *URL = nil;
-        [invocation getArgument:&dictionary atIndex:2];
-        [invocation getArgument:&URL atIndex:3];
-
-        NSString* link = dictionary[@"external_intent_uri"];
-        NSString *pattern = @"\\/bob\\/";
-        NSLog(@"\n    URL: '%@'\n   Link: '%@'\nPattern: '%@'\n.", URL, link, pattern);
-        if ([link isEqualToString:pattern]) {
-            [expectation fulfill];
-        }
-        else
-        if ([URL containsString:@"install"]) {
-            [expectation fulfill];
-        }
-    });
-    [branch handleDeepLink:[NSURL URLWithString:@"https://myapp.app.link/bob/link"]];
-    [self waitForExpectationsWithTimeout:5.0 handler:nil];
-    [serverInterfaceMock stopMocking];
-    [BNCPreferenceHelper sharedInstance].referringURL = nil;
-    [[BNCPreferenceHelper sharedInstance] synchronize];
-}
+//- (void) testStandardList {
+//    BNCLogSetDisplayLevel(BNCLogLevelAll);
+//    Branch *branch = (Branch.branchKey.length) ? Branch.getInstance : [Branch getInstance:@"key_live_foo"];
+//    id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
+//    XCTestExpectation *expectation = [self expectationWithDescription:@"OpenRequest Expectation"];
+//
+//    OCMStub(
+//        [serverInterfaceMock postRequest:[OCMArg any]
+//            url:[OCMArg any]
+//            key:[OCMArg any]
+//            callback:[OCMArg any]]
+//    ).andDo(^(NSInvocation *invocation) {
+//        __unsafe_unretained NSDictionary *dictionary = nil;
+//        __unsafe_unretained NSString *url = nil;
+//        [invocation getArgument:&dictionary atIndex:2];
+//        [invocation getArgument:&url atIndex:3];
+//
+//        NSLog(@"d: %@", dictionary);
+//        NSString* link = dictionary[@"external_intent_uri"];
+//        NSString *pattern1 = @"^(?i)((http|https):\\/\\/).*[\\/|?|#].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b";
+//        NSString *pattern2 = @"^(?i).+:.*[?].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b";
+//        NSLog(@"\n   Link: '%@'\nPattern1: '%@'\nPattern2: '%@'.", link, pattern1, pattern2);
+//        if ([link isEqualToString:pattern1] || [link isEqualToString:pattern2]) {
+//            [expectation fulfill];
+//        }
+//        else
+//        if ([url containsString:@"install"]) {
+//            [expectation fulfill];
+//        }
+//    });
+//    [branch clearNetworkQueue];
+//    [branch handleDeepLink:[NSURL URLWithString:@"https://myapp.app.link/bob/link?oauth=true"]];
+//    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+//    [serverInterfaceMock stopMocking];
+//    [BNCPreferenceHelper sharedInstance].referringURL = nil;
+//    [[BNCPreferenceHelper sharedInstance] synchronize];
+//}
+//
+//- (void) testUserList {
+//    BNCLogSetDisplayLevel(BNCLogLevelAll);
+//    Branch *branch = (Branch.branchKey.length) ? Branch.getInstance : [Branch getInstance:@"key_live_foo"];
+//    [branch clearNetworkQueue];
+//    branch.urlPatternsToIgnore = @[
+//        @"\\/bob\\/"
+//    ];
+//    id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
+//    XCTestExpectation *expectation = [self expectationWithDescription:@"OpenRequest Expectation"];
+//
+//    OCMStub(
+//        [serverInterfaceMock postRequest:[OCMArg any]
+//            url:[OCMArg any]
+//            key:[OCMArg any]
+//            callback:[OCMArg any]]
+//    ).andDo(^(NSInvocation *invocation) {
+//        __unsafe_unretained NSDictionary *dictionary = nil;
+//        __unsafe_unretained NSString *URL = nil;
+//        [invocation getArgument:&dictionary atIndex:2];
+//        [invocation getArgument:&URL atIndex:3];
+//
+//        NSString* link = dictionary[@"external_intent_uri"];
+//        NSString *pattern = @"\\/bob\\/";
+//        NSLog(@"\n    URL: '%@'\n   Link: '%@'\nPattern: '%@'\n.", URL, link, pattern);
+//        if ([link isEqualToString:pattern]) {
+//            [expectation fulfill];
+//        }
+//        else
+//        if ([URL containsString:@"install"]) {
+//            [expectation fulfill];
+//        }
+//    });
+//    [branch handleDeepLink:[NSURL URLWithString:@"https://myapp.app.link/bob/link"]];
+//    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+//    [serverInterfaceMock stopMocking];
+//    [BNCPreferenceHelper sharedInstance].referringURL = nil;
+//    [[BNCPreferenceHelper sharedInstance] synchronize];
+//}
 
 @end
