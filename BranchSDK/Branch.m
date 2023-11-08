@@ -122,7 +122,6 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 
 @interface Branch() <BranchDeepLinkingControllerCompletionDelegate> {
     NSInteger _networkCount;
-    BNCURLFilter *_userURLFilter;
 }
 
 // This isolation queue protects branch initialization and ensures things are processed in order.
@@ -141,6 +140,8 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (strong, nonatomic) NSDictionary *deepLinkDebugParams;
 @property (strong, nonatomic) NSMutableArray *allowedSchemeList;
 @property (strong, nonatomic) BNCURLFilter *urlFilter;
+@property (strong, nonatomic, readwrite) BNCURLFilter *userURLFilter;
+
 @property (strong, nonatomic) BNCServerAPI *serverAPI;
 
 #if !TARGET_OS_TV
@@ -207,6 +208,8 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 
     self.class.branchKey = key;
     self.urlFilter = [BNCURLFilter new];
+    [self.urlFilter useSavedPatternList];
+    self.userURLFilter = nil;
 
     [BranchOpenRequest setWaitNeededForOpenResponseLock];
 
@@ -670,16 +673,8 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)setUrlPatternsToIgnore:(NSArray<NSString*>*)urlsToIgnore {
-    @synchronized (self) {
-        _userURLFilter = [[BNCURLFilter alloc] init];
-        _userURLFilter.patternList = urlsToIgnore;
-    }
-}
-
-- (NSArray<NSString *> *)urlPatternsToIgnore {
-    @synchronized (self) {
-        return _userURLFilter.patternList;
-    }
+    self.userURLFilter = [[BNCURLFilter alloc] init];
+    [self.userURLFilter useCustomPatternList:urlsToIgnore];
 }
 
 // This is currently the same as handleDeeplink
@@ -704,7 +699,7 @@ static NSString *bnc_branchKey = nil;
     NSString *pattern = nil;
     pattern = [self.urlFilter patternMatchingURL:url];
     if (!pattern) {
-        pattern = [_userURLFilter patternMatchingURL:url];
+        pattern = [self.userURLFilter patternMatchingURL:url];
     }
     if (pattern) {
         self.preferenceHelper.dropURLOpen = YES;
@@ -2095,10 +2090,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
     [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
 
-    
-    if (!self.urlFilter.hasUpdatedPatternList) {
-        [self.urlFilter updatePatternListWithCompletion:nil];
-    }
+    [self.urlFilter updatePatternListFromServerWithCompletion:nil];
 
     if (self.shouldAutomaticallyDeepLink) {
         dispatch_async(dispatch_get_main_queue(), ^ {
