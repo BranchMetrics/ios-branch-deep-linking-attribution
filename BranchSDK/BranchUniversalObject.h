@@ -185,33 +185,18 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
 #if !TARGET_OS_TV
 
 - (void)showShareSheetWithShareText:(nullable NSString *)shareText
-                         completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed))completion;
+                         completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed, NSError*_Nullable error))completion;
 
-- (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
-                            andShareText:(nullable NSString *)shareText
-                      fromViewController:(nullable UIViewController *)viewController
-                              completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed))completion;
-
-/// Returns with activityError as well
 - (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
                             andShareText:(nullable NSString *)shareText
                       fromViewController:(nullable UIViewController *)viewController
                      completionWithError:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed, NSError*_Nullable error))completion;
 
-// iPad
-- (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
-                            andShareText:(nullable NSString *)shareText
-                      fromViewController:(nullable UIViewController *)viewController
-                                  anchor:(nullable UIBarButtonItem *)anchor
-                              completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed))completion;
-
-// Returns with activityError as well
 - (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
                             andShareText:(nullable NSString *)shareText
                       fromViewController:(nullable UIViewController *)viewController
                                   anchor:(nullable UIBarButtonItem *)anchor
                      completionWithError:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed, NSError*_Nullable error))completion;
-
 
 /// @name List items on Spotlight
 

@@ -103,11 +103,9 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     if (completed && !error) {
         [[BranchEvent customEventWithName:BNCShareCompletedEvent contentItem:self.universalObject] logEvent];
     }
-    if (self.completion)
-        self.completion(self.activityType, completed);
-    else
-        if (self.completionError)
-            self.completionError(self.activityType, completed, error);
+    if (self.completionError) {
+        self.completionError(self.activityType, completed, error);
+    }
 }
 
 - (NSArray<UIActivityItemProvider*>*_Nonnull) activityItems {
@@ -116,19 +114,14 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     }
 
     // Make sure we can share
-
-    if (!(self.universalObject.canonicalIdentifier ||
-          self.universalObject.canonicalUrl ||
-          self.universalObject.title)) {
+    if (!(self.universalObject.canonicalIdentifier || self.universalObject.canonicalUrl || self.universalObject.title)) {
         BNCLogWarning(@"A canonicalIdentifier, canonicalURL, or title are required to uniquely"
                " identify content. In order to not break the end user experience with sharing,"
                " Branch SDK will proceed to create a URL, but content analytics may not properly"
                " include this URL.");
     }
     
-    self.serverParameters =
-        [[self.universalObject getParamsForServerRequestWithAddedLinkProperties:self.linkProperties]
-            mutableCopy];
+    self.serverParameters = [[self.universalObject getParamsForServerRequestWithAddedLinkProperties:self.linkProperties] mutableCopy];
     if (self.linkProperties.matchDuration) {
         self.serverParameters[BRANCH_REQUEST_KEY_URL_DURATION] = @(self.linkProperties.matchDuration);
     }
