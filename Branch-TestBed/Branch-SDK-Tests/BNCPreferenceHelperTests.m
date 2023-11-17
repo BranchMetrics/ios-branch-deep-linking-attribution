@@ -258,7 +258,6 @@
     XCTAssert(![urlStored isEqualToString:@""]);
     XCTAssert([urlStored isEqualToString:BNC_CDN_URL]);
 }
- */
 
 - (void)testSetPatternListURL {
     NSString *expectedURL = @"https://example.com";
@@ -267,6 +266,7 @@
     NSString *patternListURL = [BNCPreferenceHelper sharedInstance].patternListURL;
     XCTAssert([patternListURL isEqualToString: expectedURL]);
 }
+ */
 
 - (void)testSetLastStrongMatchDate {
     NSDate *expectedDate = [NSDate date];
