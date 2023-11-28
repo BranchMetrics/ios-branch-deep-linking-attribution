@@ -1,6 +1,9 @@
 Branch iOS SDK Change Log
 
-V.3.0.0
+v.3.0.1
+- Fix organic open when app is already running in background.
+
+v.3.0.0
 
 - Add a Privacy Manifest for the Branch SDK. App developers may need add an App level Privacy Manifest for data they collect and pass into the Branch SDK.
     - Known Issue: When using cocoapods without the `use_frameworks!` option, the build can fail with a duplicate privacy manifest error. Workaround is to manually merge privacy manifests.
@@ -21,13 +24,13 @@ V.3.0.0
     - pre-iOS 10 locale support
     - Device carrier. This was used for fraud analysis, but is no longer available on new iOS versions.
 
-V.2.2.1
+v.2.2.1
  
 Branch iOS SDK 2.2.1 adds parameter for current SKAN 4.0 Window in /v1/open and /v2/event requests.
 
 - SDK-1982 - SKAN Simplification DB updates
 
-V.2.2.0
+v.2.2.0
  
 Branch iOS SDK 2.2.0 adds the ability to include developer ID in installs and a new method to change the Branch API base URL.
 
@@ -35,7 +38,7 @@ Branch iOS SDK 2.2.0 adds the ability to include developer ID in installs and a 
 - SDK-1755 - Remove old Apple Search Ads APIs
 - SDK-1934 - Expose a public method to change the Branch API base url
 
-V.2.1.2
+v.2.1.2
 
 Branch iOS SDK 2.1.2 adds additional support for Meta AEM links. It also includes some bug fixes and debugging improvements.
 
