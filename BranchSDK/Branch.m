@@ -1738,6 +1738,7 @@ static NSString *bnc_branchKey = nil;
 
 - (void)applicationWillResignActive {
     if (!Branch.trackingDisabled) {
+        self.initializationStatus = BNCInitStatusUninitialized;
         [self.requestQueue persistImmediately];
         [BranchOpenRequest setWaitNeededForOpenResponseLock];
         BNCLogDebugSDK(@"Application resigned active.");
