@@ -1,6 +1,11 @@
 Branch iOS SDK Change Log
 
-V.2.1.2
+v.2.1.3
+This version is for a hotfix on Xamarin, it will not ship as a general iOS release.
+
+- SDK-2179 Fix LinkPresentation linker issue causing crash on Xamarin when run on iOS 12 or iOS 13. Thanks @LeadAssimilator.
+
+v.2.1.2
 Branch iOS SDK 2.1.2 adds additional support for Meta AEM links. It also includes some bug fixes and debugging improvements.
 
 - SDK-1796, SDK-1797 and SDK-1906 additional support for Meta AEM links
