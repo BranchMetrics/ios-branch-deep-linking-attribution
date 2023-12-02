@@ -1954,6 +1954,10 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 3.0.1;
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					LinkPresentation,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.BranchSDK;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1985,6 +1989,10 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 3.0.1;
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					LinkPresentation,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.BranchSDK;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2187,6 +2195,10 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MARKETING_VERSION = 3.0.1;
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					LinkPresentation,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.BranchSDK;
 				PRODUCT_MODULE_NAME = BranchSDK;
 				PRODUCT_NAME = BranchSDK;
@@ -2222,6 +2234,10 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MARKETING_VERSION = 3.0.1;
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					LinkPresentation,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.BranchSDK;
 				PRODUCT_MODULE_NAME = BranchSDK;
 				PRODUCT_NAME = BranchSDK;
@@ -2255,6 +2271,10 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 3.0.1;
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					LinkPresentation,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.BranchSDK;
 				PRODUCT_NAME = BranchSDK;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2286,6 +2306,10 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 3.0.1;
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					LinkPresentation,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.BranchSDK;
 				PRODUCT_NAME = BranchSDK;
 				PROVISIONING_PROFILE_SPECIFIER = "";

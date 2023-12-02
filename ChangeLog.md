@@ -24,6 +24,11 @@ v.3.0.0
     - pre-iOS 10 locale support
     - Device carrier. This was used for fraud analysis, but is no longer available on new iOS versions.
 
+v.2.3.1
+This version is for a hotfix on Xamarin, it will not ship as a general iOS release.
+
+- SDK-2179 Fix LinkPresentation linker issue causing crash on Xamarin when run on iOS 12 or iOS 13. Thanks @LeadAssimilator.
+
 v.2.2.1
  
 Branch iOS SDK 2.2.1 adds parameter for current SKAN 4.0 Window in /v1/open and /v2/event requests.
