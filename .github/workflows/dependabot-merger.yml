@@ -37,7 +37,7 @@ jobs:
           echo "oncall_slack_id=$slack_id" >> $GITHUB_OUTPUT
 
       - name: Create PR
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         id: create-pr
         with:
           script: |

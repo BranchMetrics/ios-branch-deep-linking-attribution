@@ -6,7 +6,8 @@
 	<true/>
 	<key>NSPrivacyTrackingDomains</key>
 	<array>
-		<string>https://api-safetrack.branch.io</string>
+		<string>api-safetrack.branch.io</string>
+		<string>api-safetrack-eu.branch.io</string>
 	</array>
 	<key>NSPrivacyCollectedDataTypes</key>
 	<array>
