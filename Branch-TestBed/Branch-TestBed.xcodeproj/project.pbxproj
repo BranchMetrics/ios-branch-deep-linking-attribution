@@ -43,7 +43,6 @@
 		4D1683B82098C902008819E3 /* BNCEncodingUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16838E2098C901008819E3 /* BNCEncodingUtilsTests.m */; };
 		4D1683B92098C902008819E3 /* BNCSystemObserverTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16838F2098C901008819E3 /* BNCSystemObserverTests.m */; };
 		4D1683BA2098C902008819E3 /* BNCLogTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1683902098C901008819E3 /* BNCLogTests.m */; };
-		4D1683BD2098C902008819E3 /* BranchNetworkScenario.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1683932098C901008819E3 /* BranchNetworkScenario.Test.m */; };
 		4D1683C02098C902008819E3 /* BranchUniversalObjectTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1683962098C901008819E3 /* BranchUniversalObjectTests.m */; };
 		4D1683C12098C902008819E3 /* BNCApplicationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1683972098C901008819E3 /* BNCApplicationTests.m */; };
 		4D1683C62098C902008819E3 /* BranchEvent.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16839C2098C901008819E3 /* BranchEvent.Test.m */; };
@@ -336,7 +335,6 @@
 		4D16838E2098C901008819E3 /* BNCEncodingUtilsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtilsTests.m; sourceTree = "<group>"; };
 		4D16838F2098C901008819E3 /* BNCSystemObserverTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSystemObserverTests.m; sourceTree = "<group>"; };
 		4D1683902098C901008819E3 /* BNCLogTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLogTests.m; sourceTree = "<group>"; };
-		4D1683932098C901008819E3 /* BranchNetworkScenario.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchNetworkScenario.Test.m; sourceTree = "<group>"; };
 		4D1683952098C901008819E3 /* BranchEvent.Test.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BranchEvent.Test.swift; sourceTree = "<group>"; };
 		4D1683962098C901008819E3 /* BranchUniversalObjectTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchUniversalObjectTests.m; sourceTree = "<group>"; };
 		4D1683972098C901008819E3 /* BNCApplicationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCApplicationTests.m; sourceTree = "<group>"; };
@@ -673,7 +671,6 @@
 				4D1683952098C901008819E3 /* BranchEvent.Test.swift */,
 				4D1683822098C901008819E3 /* BranchInstallRequestTests.m */,
 				5F909B712332BEF600A774D2 /* BranchLastAttributedTouchDataTests.m */,
-				4D1683932098C901008819E3 /* BranchNetworkScenario.Test.m */,
 				4D16837F2098C901008819E3 /* BranchOpenRequestTests.m */,
 				C10F393927A0872800BF5D36 /* BranchPluginSupportTests.m */,
 				C12320B42808DB90007771C0 /* BranchQRCodeTests.m */,
@@ -1418,7 +1415,6 @@
 				5FB6CC13264F0C7C0020E478 /* BNCServerRequestQueueTests.m in Sources */,
 				4D1683BA2098C902008819E3 /* BNCLogTests.m in Sources */,
 				4D1683AE2098C902008819E3 /* BNCLinkDataTests.m in Sources */,
-				4D1683BD2098C902008819E3 /* BranchNetworkScenario.Test.m in Sources */,
 				4D7881FF209CF2D4002B750F /* BNCApplication+BNCTest.m in Sources */,
 				C15CC9E02ABCF8C8003CC339 /* BranchActivityItemTests.m in Sources */,
 				5F92B23423835FEB00CA909B /* BNCReachabilityTests.m in Sources */,
