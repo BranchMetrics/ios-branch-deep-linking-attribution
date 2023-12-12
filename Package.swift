@@ -22,7 +22,7 @@ let package = Package(
             resources: [
                 .copy("PrivacyInfo.xcprivacy"),
             ],
-            publicHeadersPath: "",
+            publicHeadersPath: ".",
             linkerSettings: [
                 .linkedFramework("CoreServices"),
                 .linkedFramework("SystemConfiguration"),
