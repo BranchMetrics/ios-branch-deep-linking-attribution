@@ -21,7 +21,7 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
 }
 
 // Legacy error messages
-+ (NSString *) messageForCode:(BNCErrorCode)code {
++ (NSString *)messageForCode:(BNCErrorCode)code {
     static NSMutableDictionary<NSNumber *, NSString *> *messages;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -49,7 +49,7 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
     return errorMessage;
 }
 
-+ (NSError *) branchErrorWithCode:(BNCErrorCode)errorCode error:(NSError*)error localizedMessage:(NSString*_Nullable)message {
++ (NSError *)branchErrorWithCode:(BNCErrorCode)errorCode error:(NSError *)error localizedMessage:(NSString * _Nullable)message {
     NSMutableDictionary *userInfo = [NSMutableDictionary new];
 
     NSString *localizedString = [self messageForCode:errorCode];
@@ -75,11 +75,11 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
     return [NSError branchErrorWithCode:errorCode error:nil localizedMessage:nil];
 }
 
-+ (NSError *) branchErrorWithCode:(BNCErrorCode)errorCode error:(NSError *_Nullable)error {
++ (NSError *) branchErrorWithCode:(BNCErrorCode)errorCode error:(NSError * _Nullable)error {
     return [NSError branchErrorWithCode:errorCode error:error localizedMessage:nil];
 }
 
-+ (NSError *) branchErrorWithCode:(BNCErrorCode)errorCode localizedMessage:(NSString *_Nullable)message {
++ (NSError *) branchErrorWithCode:(BNCErrorCode)errorCode localizedMessage:(NSString * _Nullable)message {
     return [NSError branchErrorWithCode:errorCode error:nil localizedMessage:message];
 }
 

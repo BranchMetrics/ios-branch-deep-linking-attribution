@@ -77,8 +77,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 
 + (BNCPreferenceHelper *)sharedInstance;
 
-- (void)setBranchAPIURL:(NSString*)branchAPIURL;
-- (void)setPatternListURL:(NSString*)cdnURL;
+- (void)setBranchAPIURL:(NSString *)url;
+- (void)setPatternListURL:(NSString *)url;
 
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value;
 - (NSMutableDictionary *)requestMetadataDictionary;
