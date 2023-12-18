@@ -42,7 +42,7 @@ jobs:
     - name: Announce New Release in Slack
       uses: slackapi/slack-github-action@v1.24.0
       with:
-        channel-id: "CDFGXRM9S"
+        channel-id: "C063MQJMKJN" #sdk-releases
         payload: |
             {
                 "text": "New Release: Branch iOS SDK v${{ github.event.release.tag_name }}",

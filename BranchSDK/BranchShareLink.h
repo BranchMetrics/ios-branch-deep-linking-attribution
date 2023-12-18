@@ -125,7 +125,6 @@ Presents a UIActivityViewController that shares the Branch link.
 ///The delegate. See 'BranchShareLinkDelegate' above for a description.
 @property (nonatomic, weak)   id<BranchShareLinkDelegate>_Nullable delegate;
 
-@property void (^ _Nullable completion)(NSString * _Nullable activityType, BOOL completed);
 @property void (^ _Nullable completionError)(NSString * _Nullable activityType, BOOL completed, NSError*_Nullable error);
 
 /**

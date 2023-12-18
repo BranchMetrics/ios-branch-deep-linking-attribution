@@ -392,55 +392,26 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 #if !TARGET_OS_TV
 
 - (void)showShareSheetWithShareText:(NSString *)shareText
-                         completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed))completion {
-    [self showShareSheetWithLinkProperties:nil andShareText:shareText fromViewController:nil completion:completion];
-}
-
-- (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties
-                            andShareText:(NSString *)shareText
-                      fromViewController:(UIViewController *)viewController
-                              completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed))completion {
-    [self showShareSheetWithLinkProperties:linkProperties andShareText:shareText
-        fromViewController:viewController anchor:nil completion:completion orCompletionWithError:nil];
+                         completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed, NSError*_Nullable error))completion {
+    [self showShareSheetWithLinkProperties:nil andShareText:shareText fromViewController:nil completionWithError:completion];
 }
 
 - (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties
                             andShareText:(NSString *)shareText
                       fromViewController:(UIViewController *)viewController
                      completionWithError:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed, NSError*_Nullable error))completion {
-    [self showShareSheetWithLinkProperties:linkProperties andShareText:shareText
-        fromViewController:viewController anchor:nil completion:nil orCompletionWithError:completion];
-}
-
-- (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
-                            andShareText:(nullable NSString *)shareText
-                      fromViewController:(nullable UIViewController *)viewController
-                                  anchor:(nullable id)anchor
-                              completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed))completion {
-    [self showShareSheetWithLinkProperties:linkProperties andShareText:shareText
-        fromViewController:viewController anchor:anchor completion:completion orCompletionWithError:nil];
-}
-
-- (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
-                            andShareText:(nullable NSString *)shareText
-                      fromViewController:(nullable UIViewController *)viewController
-                                  anchor:(nullable id)anchor
-                     completionWithError:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed, NSError*_Nullable error))completion {
-    [self showShareSheetWithLinkProperties:linkProperties andShareText:shareText
-        fromViewController:viewController anchor:anchor completion:nil orCompletionWithError:completion];
+    [self showShareSheetWithLinkProperties:linkProperties andShareText:shareText fromViewController:viewController anchor:nil completionWithError:completion];
 }
 
 - (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties
                             andShareText:(NSString *)shareText
                       fromViewController:(UIViewController *)viewController
                                   anchor:(nullable id)anchorViewOrButtonItem
-                              completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed))completion
-                   orCompletionWithError:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed, NSError*_Nullable error))completionError {
+                   completionWithError:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed, NSError*_Nullable error))completion {
     
     BranchShareLink *shareLink = [[BranchShareLink alloc] initWithUniversalObject:self linkProperties:linkProperties];
     shareLink.shareText = shareText;
-    shareLink.completion = completion;
-    shareLink.completionError = completionError;
+    shareLink.completionError = completion;
     [shareLink presentActivityViewControllerFromViewController:viewController anchor:anchorViewOrButtonItem];
 }
 
@@ -464,8 +435,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     BOOL publiclyIndexable;
     if (self.contentIndexMode == BranchContentIndexModePrivate) {
         publiclyIndexable = NO;
-    }
-    else {
+    } else {
         publiclyIndexable = YES;
     }
     
@@ -500,17 +470,15 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         }];
 }
 
-- (void) removeFromSpotlightWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion{
+- (void)removeFromSpotlightWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion {
     if (self.locallyIndex) {
-        [[Branch getInstance] removeSearchableItemWithBranchUniversalObject:self
-                                                                   callback:^(NSError *error) {
-                                                                       if (completion) {
-                                                                           completion(error);
-                                                                       }
-                                                                   }];
+        [[Branch getInstance] removeSearchableItemWithBranchUniversalObject:self callback:^(NSError *error) {
+            if (completion) {
+                completion(error);
+            }
+        }];
     } else {
-        NSError *error = [NSError branchErrorWithCode:BNCSpotlightPublicIndexError
-                                     localizedMessage:@"Publically indexed cannot be removed from Spotlight"];
+        NSError *error = [NSError branchErrorWithCode:BNCSpotlightPublicIndexError localizedMessage:@"Publically indexed cannot be removed from Spotlight"];
         if (completion) completion(error);
     }
 }
