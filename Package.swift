@@ -29,9 +29,6 @@ let package = Package(
                 .linkedFramework("WebKit", .when(platforms: [.iOS])),
                 .linkedFramework("CoreSpotlight", .when(platforms: [.iOS])),
                 .linkedFramework("AdServices", .when(platforms: [.iOS]))
-            ],
-            resources: [
-                .copy("PrivacyInfo.xcprivacy"),
             ]
         ),
     ]
