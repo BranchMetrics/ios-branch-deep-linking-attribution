@@ -22,6 +22,9 @@ let package = Package(
             sources: [
                 "BranchSDK/"
             ],
+            resources: [
+                .copy("PrivacyInfo.xcprivacy"),
+            ],
             publicHeadersPath: "BranchSDK/Public/",
             linkerSettings: [
                 .linkedFramework("CoreServices"),
@@ -29,9 +32,6 @@ let package = Package(
                 .linkedFramework("WebKit", .when(platforms: [.iOS])),
                 .linkedFramework("CoreSpotlight", .when(platforms: [.iOS])),
                 .linkedFramework("AdServices", .when(platforms: [.iOS]))
-            ],
-            resources: [
-                .copy("PrivacyInfo.xcprivacy"),
             ]
         ),
     ]
