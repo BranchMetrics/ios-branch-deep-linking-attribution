@@ -6,14 +6,22 @@
 //  Copyright © 2018 Branch, Inc. All rights reserved.
 //
 
-#import "BNCTestCase.h"
+#import <XCTest/XCTest.h>
 #import "BNCApplication.h"
 #import "BNCKeyChain.h"
 
-@interface BNCApplicationTest : BNCTestCase
+@interface BNCApplicationTests : XCTestCase
 @end
 
-@implementation BNCApplicationTest
+@implementation BNCApplicationTests
+
+- (void)setUp {
+    // Put setup code here. This method is called before the invocation of each test method in the class.
+}
+
+- (void)tearDown {
+    // Put teardown code here. This method is called after the invocation of each test method in the class.
+}
 
 - (void)testApplication {
     // Test general info:

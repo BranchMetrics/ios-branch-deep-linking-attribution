@@ -9,13 +9,6 @@
 #import <XCTest/XCTest.h>
 #import "BNCURLFilter.h"
 
-@interface BNCURLFilter(Test)
-
-// BNCURLFilter defines this as an ivar with a setter & getter, redefine it as a property
-@property (nonatomic, strong, readwrite) NSArray<NSString *> *patternList;
-@property (assign, nonatomic) NSInteger listVersion;
-@end
-
 @interface BNCURLFilterSkiplistUpgradeTests : XCTestCase
 
 @end
@@ -77,26 +70,24 @@
 
 - (BNCURLFilter *)filterWithV0List {
     BNCURLFilter *filter = [BNCURLFilter new];
-    [self migrateFilter:filter patternList:[self v1PatternList] version:1];
+    [self migrateFilter:filter patternList:[self v1PatternList]];
     return filter;
 }
 
 - (BNCURLFilter *)filterWithV1List {
     BNCURLFilter *filter = [BNCURLFilter new];
-    [self migrateFilter:filter patternList:[self v1PatternList] version:1];
+    [self migrateFilter:filter patternList:[self v1PatternList]];
     return filter;
 }
 
 - (BNCURLFilter *)filterWithV2List {
     BNCURLFilter *filter = [BNCURLFilter new];
-    [self migrateFilter:filter patternList:[self v2PatternList] version:2];
+    [self migrateFilter:filter patternList:[self v2PatternList]];
     return filter;
 }
 
-- (void)migrateFilter:(BNCURLFilter *)filter patternList:(NSArray<NSString *> *)patternList version:(NSInteger)version {
-    // BNCURLFilter updates the global storage when these are set
-    filter.patternList = patternList;
-    filter.listVersion = version;
+- (void)migrateFilter:(BNCURLFilter *)filter patternList:(NSArray<NSString *> *)patternList {
+    [filter useCustomPatternList:patternList];
 }
 
 - (NSArray *)badURLs {

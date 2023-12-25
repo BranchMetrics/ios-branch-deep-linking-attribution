@@ -6,8 +6,8 @@
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
+#import <XCTest/XCTest.h>
 #import "BNCCrashlyticsWrapper.h"
-#import "BNCTestCase.h"
 
 #pragma mark Crashlytics SDK Stand-In
 
@@ -42,13 +42,20 @@
 
 #pragma mark - BNCCrashlyticsWrapperTest
 
-@interface BNCCrashlyticsWrapperTest : BNCTestCase
+@interface BNCCrashlyticsWrapperTests : XCTestCase
 @end
 
-@implementation BNCCrashlyticsWrapperTest
+@implementation BNCCrashlyticsWrapperTests
 
-- (void) testSetValue {
+- (void)setUp {
+    // Put setup code here. This method is called before the invocation of each test method in the class.
+}
 
+- (void)tearDown {
+    // Put teardown code here. This method is called after the invocation of each test method in the class.
+}
+
+- (void)testSetValue {
     BNCCrashlyticsWrapper *wrapper = [BNCCrashlyticsWrapper wrapper];
     NSString *value = @"TestString";
     NSString *key = @"TestKey";
