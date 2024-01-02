@@ -14,50 +14,50 @@ FOUNDATION_EXPORT double BranchSDKVersionNumber;
 FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <BranchSDK/PublicHeader.h>
-#import <BranchSDK/Branch.h>
-#import <BranchSDK/BranchPluginSupport.h>
+#import "Branch.h"
+#import "BranchPluginSupport.h"
 
-#import <BranchSDK/BranchScene.h>
-#import <BranchSDK/BranchDelegate.h>
+#import "BranchScene.h"
+#import "BranchDelegate.h"
 
-#import <BranchSDK/BranchEvent.h>
-#import <BranchSDK/BranchLinkProperties.h>
-#import <BranchSDK/BranchUniversalObject.h>
-#import <BranchSDK/BranchQRCode.h>
+#import "BranchEvent.h"
+#import "BranchLinkProperties.h"
+#import "BranchUniversalObject.h"
+#import "BranchQRCode.h"
 
-#import <BranchSDK/BranchLastAttributedTouchData.h>
+#import "BranchLastAttributedTouchData.h"
 
-#import <BranchSDK/BranchDeepLinkingController.h>
+#import "BranchDeepLinkingController.h"
 
 #if !TARGET_OS_TV
 // tvOS does not support these features
-#import <BranchSDK/BranchShareLink.h>
-#import <BranchSDK/BranchCSSearchableItemAttributeSet.h>
-#import <BranchSDK/BranchActivityItemProvider.h>
+#import "BranchShareLink.h"
+#import "BranchCSSearchableItemAttributeSet.h"
+#import "BranchActivityItemProvider.h"
 
-#import <BranchSDK/BranchPasteControl.h>
+#import "BranchPasteControl.h"
 #endif
 
 // Used by Branch.h for debug and testing APIs. Need to move these.
-#import <BranchSDK/BNCInitSessionResponse.h>
-#import <BranchSDK/BNCCallbacks.h>
-#import <BranchSDK/BNCLinkCache.h>
-#import <BranchSDK/BNCPreferenceHelper.h>
-#import <BranchSDK/BNCServerInterface.h>
-#import <BranchSDK/BNCServerRequestQueue.h>
+#import "BNCInitSessionResponse.h"
+#import "BNCCallbacks.h"
+#import "BNCLinkCache.h"
+#import "BNCPreferenceHelper.h"
+#import "BNCServerInterface.h"
+#import "BNCServerRequestQueue.h"
 
 // Cascading public headers...
 
 // BranchUniversalObject uses constants defined in BNCCurrency.h and BNCProductCategory.h
-#import <BranchSDK/BNCCurrency.h>
-#import <BranchSDK/BNCProductCategory.h>
+#import "BNCCurrency.h"
+#import "BNCProductCategory.h"
 
-#import <BranchSDK/BNCServerRequest.h>
+#import "BNCServerRequest.h"
 // BNCServerRequest includes BNCServerInterface.h
-//#import <BranchSDK/BNCServerInterface.h>
+//#import "BNCServerInterface.h"
 // BNCServerInterface.h includes BNCServerResponse.h and BNCPreferenceHelper.h
-#import <BranchSDK/BNCServerResponse.h>
-//#import <BranchSDK/BNCPreferenceHelper.h>
+#import "BNCServerResponse.h"
+//#import "BNCPreferenceHelper.h"
 
 // BNCLinkCache.h uses BNCLinkData.h
-#import <BranchSDK/BNCLinkData.h>
+#import "BNCLinkData.h"
