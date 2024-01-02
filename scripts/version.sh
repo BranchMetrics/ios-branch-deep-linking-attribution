@@ -30,7 +30,7 @@ Options:
 USAGE
 }
 
-version=3.0.1
+version=3.1.1
 prev_version="$version"
 
 if (( $# == 0 )); then
@@ -101,7 +101,7 @@ fi
 if [[ $update ]]; then
 
     # Update the SDK version:
-    sed -i '' -e "/BNC_SDK_VERSION/ {s/\".*\"/\"$version\"/; }" ../BranchSDK/BNCConfig.m
+    sed -i '' -e "/BNC_SDK_VERSION/ {s/\".*\"/\"$version\"/; }" ../Sources/BranchSDK/BNCConfig.m
 
     # Update the Podspec version:
     sed -i '' -e "/^[[:space:]]*s\.version/ {s/\".*\"/\"$version\"/; }" ../BranchSDK.podspec

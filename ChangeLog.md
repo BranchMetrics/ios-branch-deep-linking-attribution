@@ -1,5 +1,13 @@
 Branch iOS SDK Change Log
 
+v.3.1.1
+- Update cocoapods, frameworks and tests to use SPM layout.
+
+v.3.1.0
+- Fix tuist SPM integration when using external by switching to a more typical SPM layout.
+
+Note this release is only being deployed to the SPM repo to unblock tuist users. A follow up release will address compatibility between this bugfix and other integration methods. 
+
 v.3.0.1
 - Fix organic open when app is already running in background.
 
@@ -23,11 +31,6 @@ v.3.0.0
     - v1 Branch Events, all events are now v2 Branch Events
     - pre-iOS 10 locale support
     - Device carrier. This was used for fraud analysis, but is no longer available on new iOS versions.
-
-v.2.3.1
-This version is for a hotfix on Xamarin, it will not ship as a general iOS release.
-
-- SDK-2179 Fix LinkPresentation linker issue causing crash on Xamarin when run on iOS 12 or iOS 13. Thanks @LeadAssimilator.
 
 v.2.2.1
  
