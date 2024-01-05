@@ -18,19 +18,19 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.ios.deployment_target = '12.0'
   s.tvos.deployment_target = '12.0'
 
-  s.resources = ["BranchSDK/*.{xcprivacy}"]
-  s.ios.source_files = "BranchSDK/*.{h,m}"
+  s.resource = "Sources/Resources/PrivacyInfo.xcprivacy"
+  s.ios.source_files = "Sources/BranchSDK/**/*.{h,m}"
 
-  s.tvos.source_files = "BranchSDK/*.{h,m}"
-  s.tvos.exclude_files = "BranchSDK/BNCAdClient.{h,m}",
-	"BranchSDK/BNCAppleSearchAds.{h,m}",
-	"BranchSDK/BNCContentDiscoveryManager.{h,m}",
-	"BranchSDK/BNCUserAgentCollector.{h,m}",
-	"BranchSDK/BNCSpotlightService.{h,m}",
-	"BranchSDK/BranchActivityItemProvider.{h,m}",
-	"BranchSDK/BranchCSSearchableItemAttributeSet.{h,m}",
-	"BranchSDK/BranchShareLink.{h,m}",
-	"BranchSDK/BranchPasteControl.{h,m}"
+  s.tvos.source_files = "Sources/BranchSDK/**/*.{h,m}"
+  s.tvos.exclude_files = "Sources/BranchSDK/**/BNCAdClient.{h,m}",
+	"Sources/BranchSDK/**/BNCAppleSearchAds.{h,m}",
+	"Sources/BranchSDK/**/BNCContentDiscoveryManager.{h,m}",
+	"Sources/BranchSDK/**/BNCUserAgentCollector.{h,m}",
+	"Sources/BranchSDK/**/BNCSpotlightService.{h,m}",
+	"Sources/BranchSDK/**/BranchActivityItemProvider.{h,m}",
+	"Sources/BranchSDK/**/BranchCSSearchableItemAttributeSet.{h,m}",
+	"Sources/BranchSDK/**/BranchShareLink.{h,m}",
+	"Sources/BranchSDK/**/BranchPasteControl.{h,m}"
 
   s.frameworks = 'CoreServices', 'SystemConfiguration'
   s.weak_framework = 'LinkPresentation'
