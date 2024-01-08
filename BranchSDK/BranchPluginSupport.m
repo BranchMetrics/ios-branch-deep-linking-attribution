@@ -57,20 +57,12 @@
 // With the change to support Apple's tracking domain feature, this API no longer works. See SDK-2118
 // Overrides base API URL
 + (void)setAPIUrl:(NSString *)url {
-    if([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
-        [[BNCPreferenceHelper sharedInstance] setBranchAPIURL:url];
-    } else {
-        BNCLogWarning(@"Ignoring invalid custom API URL");
-    }
+    [[BNCPreferenceHelper sharedInstance] setBranchAPIURL:url];
 }
 
 // Overrides base CDN URL
 + (void)setCDNBaseUrl:(NSString *)url {
-    if([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
-        [[BNCPreferenceHelper sharedInstance] setPatternListURL:url];
-    } else {
-        BNCLogWarning(@"Ignoring invalid custom CDN URL");
-    }
+    [[BNCPreferenceHelper sharedInstance] setPatternListURL:url];
 }
 
 @end

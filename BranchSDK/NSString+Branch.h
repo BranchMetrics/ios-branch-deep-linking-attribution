@@ -20,7 +20,7 @@
 /// ignored for purposes of the compare.
 ///
 ///@return YES if string (ignoring any masked characters) is equal to the receiver.
-- (BOOL) bnc_isEqualToMaskedString:(NSString*_Nullable)string;
+- (BOOL)bnc_isEqualToMaskedString:(NSString * _Nullable)string;
 
 @end
 

@@ -76,6 +76,9 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 @property (strong, nonatomic) NSMutableDictionary *requestMetadataDictionary;
 @property (strong, nonatomic) NSMutableDictionary *instrumentationDictionary;
 
+// unit tests run in parallel, causing issues with data stored to disk
+@property (nonatomic, assign, readwrite) BOOL useStorage;
+
 @end
 
 @implementation BNCPreferenceHelper
@@ -119,6 +122,9 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     
     dispatch_once(&onceToken, ^{
         preferenceHelper = [[BNCPreferenceHelper alloc] init];
+        
+        // the shared version read/writes data to storage
+        preferenceHelper.useStorage = YES;
     });
     
     return preferenceHelper;
@@ -135,6 +141,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         _persistPrefsQueue.maxConcurrentOperationCount = 1;
 
         self.disableAdNetworkCallouts = NO;
+        self.useStorage = NO;
     }
     return self;
 }
@@ -149,10 +156,14 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 #pragma mark - API methods
 
-- (void)setBranchAPIURL:(NSString*)branchAPIURL_ {
-    @synchronized (self) {
-        _branchAPIURL = [branchAPIURL_ copy];
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_API_URL value:_branchAPIURL];
+- (void)setBranchAPIURL:(NSString *)url {
+    if ([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
+        @synchronized (self) {
+            _branchAPIURL = [url copy];
+            [self writeObjectToDefaults:BRANCH_PREFS_KEY_API_URL value:_branchAPIURL];
+        }
+    } else {
+        BNCLogWarning(@"Ignoring invalid custom API URL");
     }
 }
 
@@ -173,10 +184,14 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
 }
 
-- (void)setPatternListURL:(NSString*)url {
-    @synchronized (self) {
-        _patternListURL = url;
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_PATTERN_LIST_URL value:url];
+- (void)setPatternListURL:(NSString *)url {
+    if ([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
+        @synchronized (self) {
+            _patternListURL = url;
+            [self writeObjectToDefaults:BRANCH_PREFS_KEY_PATTERN_LIST_URL value:url];
+        }
+    } else {
+        BNCLogWarning(@"Ignoring invalid custom CDN URL");
     }
 }
 
@@ -857,8 +872,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     @synchronized (self) {
         if (value) {
             self.persistenceDict[key] = value;
-        }
-        else {
+        } else {
             [self.persistenceDict removeObjectForKey:key];
         }
         [self persistPrefsToDisk];
@@ -866,21 +880,23 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 }
 
 - (void)persistPrefsToDisk {
-    @synchronized (self) {
-        if (!self.persistenceDict) return;
-
-        NSData *data = [self serializePrefDict:self.persistenceDict];
-        if (!data) return;
-        
-        NSURL *prefsURL = [self.class.URLForPrefsFile copy];
-        NSBlockOperation *newPersistOp = [NSBlockOperation blockOperationWithBlock:^ {
-            NSError *error = nil;
-            [data writeToURL:prefsURL options:NSDataWritingAtomic error:&error];
-            if (error) {
-                BNCLogWarning([NSString stringWithFormat:@"Failed to persist preferences: %@.", error]);
-            }
-        }];
-        [_persistPrefsQueue addOperation:newPersistOp];
+    if (self.useStorage) {
+        @synchronized (self) {
+            if (!self.persistenceDict) return;
+            
+            NSData *data = [self serializePrefDict:self.persistenceDict];
+            if (!data) return;
+            
+            NSURL *prefsURL = [self.class.URLForPrefsFile copy];
+            NSBlockOperation *newPersistOp = [NSBlockOperation blockOperationWithBlock:^ {
+                NSError *error = nil;
+                [data writeToURL:prefsURL options:NSDataWritingAtomic error:&error];
+                if (error) {
+                    BNCLogWarning([NSString stringWithFormat:@"Failed to persist preferences: %@.", error]);
+                }
+            }];
+            [_persistPrefsQueue addOperation:newPersistOp];
+        }
     }
 }
 
@@ -906,7 +922,11 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (NSMutableDictionary *)persistenceDict {
     @synchronized(self) {
         if (!_persistenceDict) {
-            _persistenceDict = [self deserializePrefDictFromData:[self loadPrefData]];
+            if (self.useStorage) {
+                _persistenceDict = [self deserializePrefDictFromData:[self loadPrefData]];
+            } else {
+                _persistenceDict = [[NSMutableDictionary alloc] init];
+            }
         }
         return _persistenceDict;
     }
@@ -942,6 +962,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     if (dict && [dict isKindOfClass:[NSDictionary class]]) {
         return [dict mutableCopy];
     } else {
+        
+        // if nothing was loaded, default to an empty dictionary
         return [[NSMutableDictionary alloc] init];
     }
 }
