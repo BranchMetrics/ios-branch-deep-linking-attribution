@@ -8,7 +8,7 @@
 
 #include "BNCConfig.h"
 
-NSString * const BNC_SDK_VERSION  = @"3.0.0";
+NSString * const BNC_SDK_VERSION  = @"3.0.1";
 NSString * const BNC_LINK_URL = @"https://bnc.lt";
 NSString * const BNC_CDN_URL = @"https://cdn.branch.io";
 

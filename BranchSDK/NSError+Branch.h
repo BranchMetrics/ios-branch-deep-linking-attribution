@@ -35,7 +35,6 @@ typedef NS_ENUM(NSInteger, BNCErrorCode) {
     BNCHighestError
 };
 
-// This should be renamed.  It's actually a category and not a class.
 @interface NSError (Branch)
 
 + (NSString *)bncErrorDomain;

@@ -8,17 +8,17 @@
  @copyright     Copyright © 2017 Branch. All rights reserved.
 */
 
+#import <XCTest/XCTest.h>
 #import "NSString+Branch.h"
-#import "BNCTestCase.h"
 
 #define _countof(array)  (sizeof(array)/sizeof(array[0]))
 
-@interface NSStringBranchTest : BNCTestCase
+@interface NSStringBranchTests : XCTestCase
 @end
 
-@implementation NSStringBranchTest
+@implementation NSStringBranchTests
 
-- (void) testMaskEqual {
+- (void)testMaskEqual {
     XCTAssertTrue([@"0123" bnc_isEqualToMaskedString:@"0123"]);
     XCTAssertFalse([@"0123" bnc_isEqualToMaskedString:@"012"]);
     XCTAssertFalse([@"0123" bnc_isEqualToMaskedString:@"01234"]);
