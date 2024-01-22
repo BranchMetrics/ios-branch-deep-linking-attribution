@@ -1,8 +1,0 @@
-source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '8.0'
-
-target 'Branch-SDK-Tests' do
-  project 'Branch-TestBed'
-  pod 'OCMock', :inhibit_warnings => true
-  pod 'OHHTTPStubs'
-end
