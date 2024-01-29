@@ -150,7 +150,7 @@ jobs:
           bundle config set --local path vendor
           bundle check || bundle install
       - name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       - name: Publish to CocoaPods
         run: |
           # TODO: Authenticate using repo secret
