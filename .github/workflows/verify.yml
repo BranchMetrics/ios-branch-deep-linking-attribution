@@ -31,8 +31,8 @@ jobs:
       # This happens automatically with the unit_tests lane, but adding it here
       # makes it easier to keep track of installation time via GHA without
       # adding execution time to the next step.
-      - name: Install CocoaPods dependencies
-        run: bundle exec fastlane prepare_pods
+      #- name: Install CocoaPods dependencies
+      #  run: bundle exec fastlane prepare_pods
       - name: Run unit tests
         run: bundle exec fastlane unit_tests
       - name: Upload test results

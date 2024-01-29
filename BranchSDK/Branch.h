@@ -644,7 +644,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
             These are ICU standard regular expressions.
 */
-@property (copy, nullable) NSArray<NSString*>/*_Nullable*/* urlPatternsToIgnore;
+- (void)setUrlPatternsToIgnore:(NSArray<NSString *> *)urlsToIgnore;
 
 /**
  Checks the pasteboard (clipboard) for a Branch Link on App Install.
