@@ -18,6 +18,7 @@
 #import "BNCEventUtils.h"
 #import "BNCRequestFactory.h"
 #import "BNCServerAPI.h"
+#import "NSMutableDictionary+Branch.h"
 
 #pragma mark BranchStandardEvents
 
@@ -219,22 +220,17 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
 - (NSDictionary*) dictionary {
     NSMutableDictionary *dictionary = [NSMutableDictionary new];
     
-    #define BNCFieldDefinesDictionaryFromSelf
-    #include "BNCFieldDefines.h"
-
-    addString(transactionID,    transaction_id);
-    addString(currency,         currency);
-    addDecimal(revenue,         revenue);
-    addDecimal(shipping,        shipping);
-    addDecimal(tax,             tax);
-    addString(coupon,           coupon);
-    addString(affiliation,      affiliation);
-    addString(eventDescription, description);
-    addString(searchQuery,      search_query);
-    addDictionary(customData,   custom_data);
+    [dictionary bnc_addString:self.transactionID forKey:@"transaction_id"];
+    [dictionary bnc_addString:self.currency forKey:@"currency"];
+    [dictionary bnc_addDecimal:self.revenue forKey:@"revenue"];
+    [dictionary bnc_addDecimal:self.shipping forKey:@"shipping"];
+    [dictionary bnc_addDecimal:self.tax forKey:@"tax"];
+    [dictionary bnc_addString:self.coupon forKey:@"coupon"];
+    [dictionary bnc_addString:self.affiliation forKey:@"affiliation"];
+    [dictionary bnc_addString:self.eventDescription forKey:@"description"];
+    [dictionary bnc_addString:self.searchQuery forKey:@"search_query"];
+    [dictionary bnc_addDictionary:self.customData forKey:@"custom_data"];
     
-    #include "BNCFieldDefines.h"
-
     NSString *adTypeString = [self jsonStringForAdType:self.adType];
     if (adTypeString.length > 0) {
         [dictionary setObject:adTypeString forKey:@"ad_type"];
