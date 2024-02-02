@@ -73,6 +73,10 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (strong, nonatomic) NSDate   *firstAppLaunchTime;
 @property (assign, nonatomic) BOOL invokeRegisterApp;
 
+@property (assign, nonatomic) BOOL eeaRegion;
+@property (assign, nonatomic) BOOL adPersonalizationConsent;
+@property (assign, nonatomic) BOOL adUserDataUsageConsent;
+
 - (void) clearTrackingInformation;
 
 + (BNCPreferenceHelper *)sharedInstance;
@@ -97,5 +101,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 - (NSMutableString*) sanitizedMutableBaseURL:(NSString*)baseUrl;
 - (void) synchronize;  //  Flushes preference queue to persistence.
 + (void) clearAll;
+- (BOOL) eeaRegionInitialized;
 
 @end

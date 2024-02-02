@@ -834,6 +834,16 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  */
 + (void) setReferrerGbraidValidityWindow:(NSTimeInterval) validityWindow;
 
+/*
+ 
+ Sets the value of parameters required by Google Conversion APIs for DMA Compliance in EEA region.
+ 
+ @param eeaRegion -(BOOL) If the user is in EEA region
+ @param adPersonalizationConsent - (BOOL) if user has given consent for ad personalization
+ @param adUserDataUsageConsent - (BOOL) if user has given consent for using user data for advertisement purpose.
+ */
++ (void) setDMAParamsForEEA:(BOOL) eeaRegion AdPersonalizationConsent:(BOOL) adPersonalizationConsent AdUserDataUsageConsent:(BOOL) adUserDataUsageConsent;
+
 #pragma mark - Session Item methods
 
 ///--------------------

@@ -110,6 +110,9 @@
     // TODO: refactor to simply request values for install
     [self addReferringURLsToJSON:json forEndpoint:@"/v1/install"];
     
+    // Add DMA Compliance Params for Google
+    [self addDMAConsentParamsToJSON:json];
+    
     return json;
 }
 
@@ -150,6 +153,9 @@
     // TODO: refactor to simply request values for open
     [self addReferringURLsToJSON:json forEndpoint:@"/v1/open"];
     
+    // Add DMA Compliance Params for Google
+    [self addDMAConsentParamsToJSON:json];
+    
     return json;
 }
 
@@ -180,6 +186,9 @@
     
     // TODO: refactor to simply request values for event
     [self addReferringURLsToJSON:json forEndpoint:@"/v2/event"];
+    
+    // Add DMA Compliance Params for Google
+    [self addDMAConsentParamsToJSON:json];
     
     return json;
 }
@@ -318,6 +327,34 @@
         [self safeSetValue:partnerParameters forKey:BRANCH_REQUEST_KEY_PARTNER_PARAMETERS onDict:json];
     }
 }
+
+- (void)addDMAConsentParamsToJSON:(NSMutableDictionary *)json {
+   
+    if([self.preferenceHelper eeaRegionInitialized]){
+    
+        BOOL isEEARegion = [self.preferenceHelper eeaRegion];
+        BOOL hasAdPersonalizationConsent = [self.preferenceHelper adPersonalizationConsent];
+        BOOL hasAdUserDataUsageConsent = [self.preferenceHelper adUserDataUsageConsent];
+        
+        [self safeSetValue:@(isEEARegion) forKey:BRANCH_REQUEST_KEY_EEA_REGION onDict:json];
+        
+        // Send adPersonalizationConsent and adUserDataUsageConsent only if
+        // eeaRegion is true OR
+        // eeaRegion is false but adPersonalizationConsent/adUserDataUsageConsent is also false
+        if (isEEARegion) {
+            [self safeSetValue:@(hasAdPersonalizationConsent) forKey:BRANCH_REQUEST_KEY_AD_PEROSALIZATION_CONSENT onDict:json];
+            [self safeSetValue:@(hasAdUserDataUsageConsent) forKey:BRANCH_REQUEST_KEY_AD_USER_DATA_USAGE_CONSENT onDict:json];
+        } else {
+            if (!hasAdPersonalizationConsent) {
+                [self safeSetValue:@(hasAdPersonalizationConsent) forKey:BRANCH_REQUEST_KEY_AD_PEROSALIZATION_CONSENT onDict:json];
+            }
+            if (!hasAdUserDataUsageConsent) {
+                [self safeSetValue:@(hasAdUserDataUsageConsent) forKey:BRANCH_REQUEST_KEY_AD_USER_DATA_USAGE_CONSENT onDict:json];
+            }
+        }
+    }
+}
+
 
 - (void)addLocalURLToInstallJSON:(NSMutableDictionary *)json {
     if ([BNCPasteboard sharedInstance].checkOnInstall) {

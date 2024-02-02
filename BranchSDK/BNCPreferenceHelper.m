@@ -61,6 +61,10 @@ static NSString * const BRANCH_PREFS_KEY_REFFERING_URL_QUERY_PARAMETERS = @"bnc_
 
 static NSString * const BRANCH_PREFS_KEY_LOG_IAP_AS_EVENTS = @"bnc_log_iap_as_events";
 
+static NSString * const BRANCH_PREFS_KEY_EEA_REGION = @"bnc_eea_region";
+static NSString * const BRANCH_PREFS_KEY_AD_PEROSALIZATION_CONSENT = @"bnc_ad_personalization_consent";
+static NSString * const BRANCH_PREFS_KEY_AD_USER_DATA_USAGE_CONSENT = @"bnc_ad_user_data_usage_consent";
+
 
 NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
@@ -114,7 +118,10 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     highestConversionValueSent = _highestConversionValueSent,
     referringURLQueryParameters = _referringURLQueryParameters,
     anonID = _anonID,
-    patternListURL = _patternListURL;
+    patternListURL = _patternListURL,
+    eeaRegion = _eeaRegion,
+    adPersonalizationConsent = _adPersonalizationConsent,
+    adUserDataUsageConsent = _adUserDataUsageConsent;
 
 + (BNCPreferenceHelper *)sharedInstance {
     static BNCPreferenceHelper *preferenceHelper;
@@ -790,6 +797,60 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_SKAN_INVOKE_REGISTER_APP value:b];
     }
 }
+
+- (BOOL) eeaRegionInitialized {
+    @synchronized(self) {
+        if([self readObjectFromDefaults:BRANCH_PREFS_KEY_EEA_REGION])
+            return true;
+        return false;
+    }
+}
+
+- (BOOL) eeaRegion {
+    @synchronized(self) {
+        NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_EEA_REGION];
+        if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
+        return false;
+    }
+}
+
+- (void) setEeaRegion:(BOOL)isEEARegion {
+    @synchronized(self) {
+        NSNumber *b = [NSNumber numberWithBool:isEEARegion];
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_EEA_REGION value:b];
+    }
+}
+
+- (BOOL) adPersonalizationConsent {
+    @synchronized(self) {
+        NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_AD_PEROSALIZATION_CONSENT];
+        if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
+        return false;
+    }
+}
+
+- (void) setAdPersonalizationConsent:(BOOL)hasConsent {
+    @synchronized(self) {
+        NSNumber *b = [NSNumber numberWithBool:hasConsent];
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_AD_PEROSALIZATION_CONSENT value:b];
+    }
+}
+
+- (BOOL) adUserDataUsageConsent {
+    @synchronized(self) {
+        NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_AD_USER_DATA_USAGE_CONSENT];
+        if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
+        return false;
+    }
+}
+
+- (void) setAdUserDataUsageConsent:(BOOL)hasConsent {
+    @synchronized(self) {
+        NSNumber *b = [NSNumber numberWithBool:hasConsent];
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_AD_USER_DATA_USAGE_CONSENT value:b];
+    }
+}
+
 
 - (void) clearTrackingInformation {
     @synchronized(self) {
