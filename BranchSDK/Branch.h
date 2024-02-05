@@ -838,9 +838,9 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  
  Sets the value of parameters required by Google Conversion APIs for DMA Compliance in EEA region.
  
- @param eeaRegion -(BOOL) If the user is in EEA region
- @param adPersonalizationConsent - (BOOL) if user has given consent for ad personalization
- @param adUserDataUsageConsent - (BOOL) if user has given consent for using user data for advertisement purpose.
+ @param eeaRegion -(BOOL) If European regulations, including the DMA, apply to this user and conversion.
+ @param adPersonalizationConsent - (BOOL) If End user has granted/denied ads personalization consent.
+ @param adUserDataUsageConsent - (BOOL) If User has granted/denied consent for 3P transmission of user level data for ads
  */
 + (void) setDMAParamsForEEA:(BOOL) eeaRegion AdPersonalizationConsent:(BOOL) adPersonalizationConsent AdUserDataUsageConsent:(BOOL) adUserDataUsageConsent;
 
