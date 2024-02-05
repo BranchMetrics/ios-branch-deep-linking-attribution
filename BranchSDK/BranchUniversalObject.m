@@ -106,7 +106,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 }
 
 + (BranchContentMetadata*_Nonnull) contentMetadataWithDictionary:(NSDictionary*_Nullable)dictionary {
-    BranchContentMetadata*object = [BranchContentMetadata new];
+    BranchContentMetadata *object = [BranchContentMetadata new];
     if (!dictionary) return object;
 
     #define BNCFieldDefinesObjectFromDictionary
@@ -136,6 +136,49 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     addStringArray(imageCaptions,$image_captions);
 
     #include "BNCFieldDefines.h"
+    
+    NSSet *fieldsAdded = [NSSet setWithArray:@[
+        @"$canonical_identifier",
+        @"$canonical_url",
+        @"$creation_timestamp",
+        @"$exp_date",
+        @"$keywords",
+        @"$locally_indexable",
+        @"$og_description",
+        @"$og_image_url",
+        @"$og_title",
+        @"$publicly_indexable",
+        @"$content_schema",
+        @"$quantity",
+        @"$price",
+        @"$currency",
+        @"$sku",
+        @"$product_name",
+        @"$product_brand",
+        @"$product_category",
+        @"$product_variant",
+        @"$condition",
+        @"$rating_average",
+        @"$rating_count",
+        @"$rating_max",
+        @"$rating",
+        @"$address_street",
+        @"$address_city",
+        @"$address_region",
+        @"$address_country",
+        @"$address_postal_code",
+        @"$latitude",
+        @"$longitude",
+        @"$image_captions",
+        @"$custom_fields",
+    ]];
+
+    // Add any extra fields to the content object.contentMetadata.customMetadata
+    for (NSString *key in dictionary.keyEnumerator) {
+        if (![fieldsAdded containsObject:key]) {
+            object.customMetadata[key] = dictionary[key];
+        }
+    }
 
     return object;
 }
@@ -505,6 +548,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 
     return [temp copy];
 }
+
 - (void)safeSetValue:(NSObject *)value forKey:(NSString *)key onDict:(NSMutableDictionary *)dict {
     if (value) {
         dict[key] = value;
@@ -532,50 +576,6 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 
     BranchContentMetadata *data = [BranchContentMetadata contentMetadataWithDictionary:dictionary];
     object.contentMetadata = data;
-
-    NSSet *fieldsAdded = [NSSet setWithArray:@[
-        @"$canonical_identifier",
-        @"$canonical_url",
-        @"$creation_timestamp",
-        @"$exp_date",
-        @"$keywords",
-        @"$locally_indexable",
-        @"$og_description",
-        @"$og_image_url",
-        @"$og_title",
-        @"$publicly_indexable",
-        @"$content_schema",
-        @"$quantity",
-        @"$price",
-        @"$currency",
-        @"$sku",
-        @"$product_name",
-        @"$product_brand",
-        @"$product_category",
-        @"$product_variant",
-        @"$condition",
-        @"$rating_average",
-        @"$rating_count",
-        @"$rating_max",
-        @"$rating",
-        @"$address_street",
-        @"$address_city",
-        @"$address_region",
-        @"$address_country",
-        @"$address_postal_code",
-        @"$latitude",
-        @"$longitude",
-        @"$image_captions",
-        @"$custom_fields",
-    ]];
-
-    // Add any extra fields to the content object.contentMetadata.customMetadata
-
-    for (NSString* key in dictionary.keyEnumerator) {
-        if (![fieldsAdded containsObject:key]) {
-            object.contentMetadata.customMetadata[key] = dictionary[key];
-        }
-    }
 
     return object;
 }
