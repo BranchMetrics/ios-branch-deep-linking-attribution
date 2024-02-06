@@ -23,8 +23,6 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BNCLogLevel level, NSString*_
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     appDelegate = self;
-    BNCLogSetOutputFunction(APPLogHookFunction);
-    BNCLogSetDisplayLevel(BNCLogLevelAll);
 
     /*
        Set Branch.useTestBranchKey = YES; to have Branch use the test key that's in the app's
@@ -38,10 +36,15 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // test pre init support
     //[self testDispatchToIsolationQueue:branch]
 
-    // Comment out (for match guarantee testing) / or un-comment to toggle debugging:
-    // Note: Unit tests will fail if 'setDebug' is set.
-    // [branch setDebug];
-     [branch enableLogging];
+    [branch enableLoggingAtLevel:BranchLogLevelVerbose];
+//    [BranchLogger shared].logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+//         // Handle the log message and error here. For example, printing to the console:
+//         if (error) {
+//             NSLog(@"[BranchLog] Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription);
+//         } else {
+//             NSLog(@"[BranchLog] Level: %lu, Message: %@", (unsigned long)logLevel, message);
+//         }
+//     };
     
     // Comment out in production. Un-comment to test your Branch SDK Integration:
     //[branch validateSDKIntegration];

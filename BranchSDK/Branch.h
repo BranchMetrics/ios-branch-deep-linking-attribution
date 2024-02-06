@@ -39,6 +39,7 @@
 #import "BNCServerInterface.h"
 #import "BNCServerRequestQueue.h"
 
+#import "BranchLogger.h"
 // Not used by Branch singleton public API
 //#import "BranchEvent.h"
 //#import "BranchScene.h"
@@ -564,9 +565,10 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 ///--------------------
 
 /**
- Enable debug messages to NSLog.
+ Enable debug messages to os_log.
  */
 - (void)enableLogging;
+- (void)enableLoggingAtLevel:(BranchLogLevel)logLevel;
 
 /**
  Send requests to EU endpoints.
@@ -574,15 +576,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  This feature must also be enabled on the server side, otherwise the server will drop requests. Contact your account manager for details.
  */
 - (void)useEUEndpoints;
-
-/**
- setDebug is deprecated and all functionality has been disabled.
- 
- If you wish to enable logging, please invoke enableLogging.
-
- If you wish to simulate installs, please see add a Test Device (https://help.branch.io/using-branch/docs/adding-test-devices) then reset your test device's data (https://help.branch.io/using-branch/docs/adding-test-devices#section-resetting-your-test-device-data).
- */
-- (void)setDebug __attribute__((deprecated(("setDebug is replaced by enableLogging and test devices. https://help.branch.io/using-branch/docs/adding-test-devices"))));
 
 /**
   @brief        Use the `validateSDKIntegration` method as a debugging aid to assure that you've

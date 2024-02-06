@@ -43,6 +43,7 @@
 #import "UIViewController+Branch.h"
 #import "BNCReferringURLUtility.h"
 #import "BNCServerAPI.h"
+#import "BranchLogger.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
@@ -419,20 +420,17 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)enableLogging {
-    BNCLogSetDisplayLevel(BNCLogLevelDebug);
+    [self enableLoggingAtLevel:BranchLogLevelDebug];
+}
+
+- (void)enableLoggingAtLevel:(BranchLogLevel)logLevel {
+    BranchLogger *logger = [BranchLogger shared];
+    logger.loggingEnabled = YES;
+    logger.logLevelThreshold = logLevel;
 }
 
 - (void)useEUEndpoints {
     [BNCServerAPI sharedInstance].useEUServers = YES;
-}
-
-- (void)setDebug {
-    NSLog(@"Branch setDebug is deprecated and all functionality has been disabled. "
-          "If you wish to enable logging, please invoke enableLogging. "
-          "If you wish to simulate installs, please see add a Test Device "
-          "(https://help.branch.io/using-branch/docs/adding-test-devices) "
-          "then reset your test device's data "
-          "(https://help.branch.io/using-branch/docs/adding-test-devices#section-resetting-your-test-device-data).");
 }
 
 - (void)validateSDKIntegration {

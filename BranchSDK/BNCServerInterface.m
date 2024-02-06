@@ -16,6 +16,7 @@
 #import "Branch.h"
 #import "BNCSKAdNetwork.h"
 #import "BNCReferringURLUtility.h"
+#import "BranchLogger.h"
 
 @interface BNCServerInterface ()
 @property (copy, nonatomic) NSString *requestEndpoint;
@@ -329,8 +330,9 @@
         serverResponse.data = error.userInfo;
         serverResponse.requestId = requestId;
     }
+    
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Server returned: %@.", serverResponse]];
 
-    BNCLogDebug([NSString stringWithFormat:@"Server returned: %@.", serverResponse]);
     return serverResponse;
 }
 

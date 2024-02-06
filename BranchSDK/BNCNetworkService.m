@@ -10,6 +10,7 @@
 #import "BNCEncodingUtils.h"
 #import "BNCLog.h"
 #import "NSError+Branch.h"
+#import "BranchLogger.h"
 
 #pragma mark BNCNetworkOperation
 
@@ -204,7 +205,9 @@
                 if (operation.completionBlock)
                     operation.completionBlock(operation);
             }];
-    BNCLogDebug([NSString stringWithFormat:@"Network start operation %@.", operation.request.URL]);
+
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Network start operation %@.", operation.request.URL]];
+    
     [operation.sessionTask resume];
 }
 
