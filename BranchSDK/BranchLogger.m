@@ -63,7 +63,7 @@ static BranchLogLevel _logLevelThreshold = BranchLogLevelDebug;
     } else {
         os_log_t log = os_log_create("io.branch.sdk", "BranchSDK");
         os_log_type_t osLogType = [self osLogTypeForBranchLogLevel:level];
-        os_log_with_type(log, osLogType, "%{public}@", fullMessage);
+        os_log_with_type(log, osLogType, "%{private}@", fullMessage);
     }
 }
 
