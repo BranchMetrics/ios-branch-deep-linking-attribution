@@ -49,9 +49,10 @@ static BranchLogLevel _logLevelThreshold = BranchLogLevelDebug;
         return;
     }
     
+    NSString *callerDetails = [self callingClass];
     NSString *logLevelString = [self stringForLogLevel:level];
     NSString *logTag = [NSString stringWithFormat:@"[BranchSDK][%@]", logLevelString];
-    NSMutableString *fullMessage = [NSMutableString stringWithFormat:@"%@ %@", logTag, message];
+    NSMutableString *fullMessage = [NSMutableString stringWithFormat:@"%@%@ %@", logTag, callerDetails, message];
     
     if (error) {
         [fullMessage appendFormat:@", Error: %@ (Domain: %@, Code: %ld)", error.localizedDescription, error.domain, (long)error.code];
@@ -66,6 +67,7 @@ static BranchLogLevel _logLevelThreshold = BranchLogLevelDebug;
     }
 }
 
+//MARK: Helper Methods
 - (os_log_type_t)osLogTypeForBranchLogLevel:(BranchLogLevel)level {
     switch (level) {
         case BranchLogLevelError: return OS_LOG_TYPE_FAULT;
@@ -86,6 +88,20 @@ static BranchLogLevel _logLevelThreshold = BranchLogLevelDebug;
         case BranchLogLevelError: return @"Error";
         default: return @"Unknown";
     }
+}
+
+- (NSString *)callingClass {
+    NSArray<NSString *> *stackSymbols = [NSThread callStackSymbols];
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"\\[([^\\]]+)\\]" options:0 error:nil];
+    if (stackSymbols.count > 3 && regex) {
+        NSString *callSite = stackSymbols[3];
+        NSTextCheckingResult *match = [regex firstMatchInString:callSite options:0 range:NSMakeRange(0, [callSite length])];
+        if (match && match.range.location != NSNotFound) {
+            NSString *callerDetails = [callSite substringWithRange:[match rangeAtIndex:0]];
+            return callerDetails;
+        }
+    }
+    return @"";
 }
 
 @end

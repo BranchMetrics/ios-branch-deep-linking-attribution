@@ -37,7 +37,7 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"Log callback expectation for message that should pass the threshold"];
 
     [BranchLogger shared].logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
-        if ([message isEqualToString:@"[BranchSDK][Debug] This message should trigger the log callback."] && logLevel >= BranchLogLevelDebug) {
+        if ([message isEqualToString:@"[BranchSDK][Debug][BranchLoggerTests testLogLevelThresholdBlocksLowerLevels] This message should trigger the log callback."] && logLevel >= BranchLogLevelDebug) {
             [expectation fulfill];
         }
     };
@@ -50,7 +50,7 @@
 
 - (void)testLogCallbackExecutesWithCorrectParameters {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Log callback expectation"];
-    NSString *expectedMessage = @"[BranchSDK][Info] Test message";
+    NSString *expectedMessage = @"[BranchSDK][Info][BranchLoggerTests testLogCallbackExecutesWithCorrectParameters] Test message";
     BranchLogLevel expectedLevel = BranchLogLevelInfo;
 
     [BranchLogger shared].logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
