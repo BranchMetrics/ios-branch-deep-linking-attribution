@@ -162,7 +162,7 @@ NSString * const BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_0 = @"postback
 NSString * const BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_1 = @"postback-sequence-index-1";
 NSString * const BRANCH_REQUEST_KEY_VALUE_POSTBACK_SEQUENCE_INDEX_2 = @"postback-sequence-index-2";
 
-NSString * const BRANCH_REQUEST_KEY_EEA_REGION = @"eea_region";
-NSString * const BRANCH_REQUEST_KEY_AD_PEROSALIZATION_CONSENT = @"ad_personalization_consent";
-NSString * const BRANCH_REQUEST_KEY_AD_USER_DATA_USAGE_CONSENT = @"ad_user_data_usage_consent";
+NSString * const BRANCH_REQUEST_KEY_EEA_REGION = @"dma_eea_region";
+NSString * const BRANCH_REQUEST_KEY_AD_PEROSALIZATION_CONSENT = @"dma_ad_personalization_consent";
+NSString * const BRANCH_REQUEST_KEY_AD_USER_DATA_USAGE_CONSENT = @"dma_ad_user_data_usage_consent";
 

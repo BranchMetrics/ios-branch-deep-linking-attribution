@@ -187,8 +187,6 @@
     // TODO: refactor to simply request values for event
     [self addReferringURLsToJSON:json forEndpoint:@"/v2/event"];
     
-    // Add DMA Compliance Params for Google
-    [self addDMAConsentParamsToJSON:json];
     
     return json;
 }
@@ -560,6 +558,9 @@
         dictionary[@"sdk"] = @"ios";
     }
 
+    // Add DMA Compliance Params for Google
+    [self addDMAConsentParamsToJSON:dictionary];
+    
     return dictionary;
 }
 
