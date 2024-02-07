@@ -11,7 +11,14 @@
 
 @implementation BranchLogger
 
-static BranchLogLevel _logLevelThreshold = BranchLogLevelDebug;
+- (instancetype)init {
+    if ((self = [super init])) {
+        _loggingEnabled = NO;
+        _logLevelThreshold = BranchLogLevelDebug;
+        _includeCallerDetails = YES;
+    }
+    return self;
+}
 
 + (instancetype)shared {
     static BranchLogger *sharedInstance = nil;
@@ -20,8 +27,13 @@ static BranchLogLevel _logLevelThreshold = BranchLogLevelDebug;
         sharedInstance = [[BranchLogger alloc] init];
         sharedInstance.loggingEnabled = NO;
         sharedInstance.logLevelThreshold = BranchLogLevelDebug;
+        sharedInstance.includeCallerDetails = YES;
     });
     return sharedInstance;
+}
+
+- (void)disableCallerDetails {
+    self.includeCallerDetails = NO;
 }
 
 - (void)logError:(NSString *)message error:(NSError *_Nullable)error {
@@ -49,7 +61,7 @@ static BranchLogLevel _logLevelThreshold = BranchLogLevelDebug;
         return;
     }
     
-    NSString *callerDetails = [self callingClass];
+    NSString *callerDetails = self.includeCallerDetails ? [self callingClass] : @"";
     NSString *logLevelString = [self stringForLogLevel:level];
     NSString *logTag = [NSString stringWithFormat:@"[BranchSDK][%@]", logLevelString];
     NSMutableString *fullMessage = [NSMutableString stringWithFormat:@"%@%@ %@", logTag, callerDetails, message];
