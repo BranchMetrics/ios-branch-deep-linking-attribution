@@ -11,7 +11,6 @@
 #import "BNCDeviceInfo.h"
 #import "BNCPreferenceHelper.h"
 #import "Branch.h"
-#import "BNCLog.h"
 #import "BNCConfig.h"
 
 @implementation BranchPluginSupport

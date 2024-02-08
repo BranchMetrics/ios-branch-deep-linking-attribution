@@ -47,7 +47,6 @@
 //#import "BranchQRCode.h"
 //#import "BNCConfig.h"
 //#import "NSError+Branch.h"
-//#import "BNCLog.h"
 //#import "BranchConstants.h"
 //#import "UIViewController+Branch.h"
 
@@ -755,8 +754,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  `application:didFinishLaunchingWithOptions:` to always return `YES` and should use this method instead.
  */
 - (void)accountForFacebookSDKPreventingAppLaunch __attribute__((deprecated(("Please ensure application:didFinishLaunchingWithOptions: always returns YES/true instead of using this method. It will be removed in a future release."))));
-
-- (void)suppressWarningLogs __attribute__((deprecated(("suppressWarningLogs is deprecated and all functionality has been disabled. If you wish to turn off all logging, please invoke BNCLogSetDisplayLevel(BNCLogLevelNone)."))));
 
 /**
  For use by other Branch SDKs

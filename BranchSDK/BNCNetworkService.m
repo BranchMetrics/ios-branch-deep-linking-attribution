@@ -8,7 +8,7 @@
 
 #import "BNCNetworkService.h"
 #import "BNCEncodingUtils.h"
-#import "BNCLog.h"
+#import "BranchLogger.h"
 #import "NSError+Branch.h"
 #import "BranchLogger.h"
 
@@ -153,7 +153,7 @@
 
     BNCNetworkOperation *operation = [BNCNetworkOperation new];
     if (![request isKindOfClass:[NSMutableURLRequest class]]) {
-        BNCLogError(@"A `NSMutableURLRequest` request parameter was expected.");
+        [[BranchLogger shared] logError:@"A `NSMutableURLRequest` request parameter was expected." error:nil];
         return nil;
     }
     operation.request = request;
@@ -167,45 +167,42 @@
     if (!operation.startDate) {
         operation.startDate = [NSDate date];
     }
+    
     if (!operation.timeoutDate) {
         NSTimeInterval timeoutInterval = operation.request.timeoutInterval;
         if (timeoutInterval < 0.0)
             timeoutInterval = self.defaultTimeoutInterval;
         operation.timeoutDate =
-            [[operation startDate] dateByAddingTimeInterval:timeoutInterval];
+        [[operation startDate] dateByAddingTimeInterval:timeoutInterval];
     }
+    
     if ([operation.request isKindOfClass:[NSMutableURLRequest class]]) {
         ((NSMutableURLRequest*)operation.request).timeoutInterval =
-            [operation.timeoutDate timeIntervalSinceDate:[NSDate date]];
+        [operation.timeoutDate timeIntervalSinceDate:[NSDate date]];
     } else {
-        BNCLogError(@"SDK logic error. Expected mutable request in `start` method.");
+        [[BranchLogger shared] logError:@"SDK logic error. Expected mutable request in `start` method." error:nil];
     }
+    
     operation.sessionTask =
-        [self.session dataTaskWithRequest:operation.request
-            completionHandler:
-            ^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-                operation.responseData = data;
-                operation.response = (NSHTTPURLResponse*) response;
-                operation.error = error;
-                if (operation.response.statusCode == 404) {
-                    /* Don't print 404 messages because they look like an error.
-                    BNCLogDebugSDK(@"Network finish operation %@ %1.3fs. Status %ld.",
-                        operation.request.URL.absoluteString,
-                        [[NSDate date] timeIntervalSinceDate:operation.startDate],
-                        (long)operation.response.statusCode);
-                    */
-                } else {
-                    BNCLogDebug([NSString stringWithFormat:@"Network finish operation %@ %1.3fs. Status %ld error %@.\n%@.",
-                        operation.request.URL.absoluteString,
-                        [[NSDate date] timeIntervalSinceDate:operation.startDate],
-                        (long)operation.response.statusCode,
-                        operation.error,
-                        operation.stringFromResponseData]);
-                }
-                if (operation.completionBlock)
-                    operation.completionBlock(operation);
-            }];
-
+    [self.session dataTaskWithRequest:operation.request
+                    completionHandler:
+     ^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        operation.responseData = data;
+        operation.response = (NSHTTPURLResponse*) response;
+        operation.error = error;
+        
+        if (operation.response.statusCode != 404) {
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Network finish operation %@ %1.3fs. Status %ld error %@.\n%@.",
+                                             operation.request.URL.absoluteString,
+                                             [[NSDate date] timeIntervalSinceDate:operation.startDate],
+                                             (long)operation.response.statusCode,
+                                             operation.error,
+                                             operation.stringFromResponseData]];
+        }
+        if (operation.completionBlock)
+            operation.completionBlock(operation);
+    }];
+    
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Network start operation %@.", operation.request.URL]];
     
     [operation.sessionTask resume];

@@ -10,7 +10,7 @@
 #import "NSError+Branch.h"
 #import "BranchConstants.h"
 #import "BranchConstants.h"
-#import "BNCLog.h"
+#import "BranchLogger.h"
 
 #import "Branch.h"
 #import "BNCSystemObserver.h"
@@ -45,7 +45,7 @@
 
 - (void)setIdentifier:(NSString *)identifier {
     if (![identifier hasPrefix:BRANCH_SPOTLIGHT_PREFIX]) {
-        BNCLogWarning(@"Do not set BranchCSSearchableItemAttributeSet's identifier. It will be overwritten.");
+        [[BranchLogger shared] logWarning:@"Do not set BranchCSSearchableItemAttributeSet's identifier. It will be overwritten."];
     }
 }
 

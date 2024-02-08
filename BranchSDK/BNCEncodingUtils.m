@@ -8,8 +8,8 @@
 
 #import "BNCEncodingUtils.h"
 #import "BNCPreferenceHelper.h"
-#import "BNCLog.h"
 #import <CommonCrypto/CommonDigest.h>
+#import "BranchLogger.h"
 
 #pragma mark BNCWireFormat
 
@@ -167,7 +167,7 @@ NSString* BNCWireFormatFromString(NSString *string) {
         
         // protect against non-string keys
         if (![key isKindOfClass:[NSString class]]) {
-            BNCLogError([NSString stringWithFormat:@"Unexpected key type %@. Skipping key.", [key class]]);
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Unexpected key type %@. Skipping key.", [key class]] error:nil];
             continue;
         }
         
@@ -208,7 +208,7 @@ NSString* BNCWireFormatFromString(NSString *string) {
         }
         else {
             // If this type is not a known type, don't attempt to encode it.
-            BNCLogError([NSString stringWithFormat:@"Cannot encode value for key %@. The value is not an accepted type.", key]);
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Cannot encode value for key %@. The value is not an accepted type.", key] error:nil];
             continue;
         }
         
@@ -230,7 +230,7 @@ NSString* BNCWireFormatFromString(NSString *string) {
 
     [encodedDictionary appendString:@"}"];
 
-    BNCLogDebugSDK([NSString stringWithFormat:@"Encoded dictionary: %@.", encodedDictionary]);
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Encoded dictionary: %@.", encodedDictionary]];
     return encodedDictionary;
 }
 
@@ -272,7 +272,7 @@ NSString* BNCWireFormatFromString(NSString *string) {
         }
         else {
             // If this type is not a known type, don't attempt to encode it.
-            BNCLogError([NSString stringWithFormat:@"Cannot encode value %@. The value is not an accepted type.", obj]);
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Cannot encode value %@. The value is not an accepted type.", obj] error:nil];
             continue;
         }
         
@@ -290,7 +290,8 @@ NSString* BNCWireFormatFromString(NSString *string) {
     [encodedArray deleteCharactersInRange:NSMakeRange([encodedArray length] - 1, 1)];
     [encodedArray appendString:@"]"];
     
-    BNCLogDebugSDK([NSString stringWithFormat:@"Encoded array: %@.", encodedArray]);
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Encoded array: %@.", encodedArray]];
+
     return encodedArray;
 }
 
@@ -323,7 +324,7 @@ NSString* BNCWireFormatFromString(NSString *string) {
             }
             else {
                 // If this type is not a known type, don't attempt to encode it.
-                BNCLogError([NSString stringWithFormat:@"Cannot encode value %@. The value is not an accepted type.", obj]);
+                [[BranchLogger shared] logError:[NSString stringWithFormat:@"Cannot encode value %@. The value is not an accepted type.", obj] error:nil];
                 continue;
             }
             

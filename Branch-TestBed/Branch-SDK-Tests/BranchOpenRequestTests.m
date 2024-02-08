@@ -8,7 +8,6 @@
 
 #import "BNCTestCase.h"
 #import "Branch.h"
-#import "BNCLog.h"
 #import "BNCApplication+BNCTest.h"
 #import "BranchOpenRequest.h"
 #import "BranchConstants.h"

@@ -15,7 +15,7 @@
 #import "BranchOpenRequest.h"
 #import "BranchEvent.h"
 
-#import "BNCLog.h"
+#import "BranchLogger.h"
 
 
 static NSString * const BRANCH_QUEUE_FILE = @"BNCServerRequestQueue";
@@ -68,7 +68,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 - (void)insert:(BNCServerRequest *)request at:(NSUInteger)index {
     @synchronized (self) {
         if (index > self.queue.count) {
-            BNCLogError(@"Invalid queue operation: index out of bound!");
+            [[BranchLogger shared] logError:@"Invalid queue operation: index out of bound!" error:nil];
             return;
         }
         if (request) {
@@ -94,7 +94,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     @synchronized (self) {
         BNCServerRequest *request = nil;
         if (index >= self.queue.count) {
-            BNCLogError(@"Invalid queue operation: index out of bound!");
+            [[BranchLogger shared] logError:@"Invalid queue operation: index out of bound!" error:nil];
             return nil;
         }
         request = [self.queue objectAtIndex:index];
@@ -120,7 +120,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 - (BNCServerRequest *)peekAt:(NSUInteger)index {
     @synchronized (self) {
         if (index >= self.queue.count) {
-            BNCLogError(@"Invalid queue operation: index out of bound!");
+            [[BranchLogger shared] logError:@"Invalid queue operation: index out of bound!" error:nil];
             return nil;
         }
         BNCServerRequest *request = nil;
@@ -167,7 +167,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             BNCServerRequest *request = [self.queue objectAtIndex:i];
             // Install extends open, so only need to check open.
             if ([request isKindOfClass:[BranchOpenRequest class]]) {
-                BNCLogDebugSDK(@"Removing open request.");
+                [[BranchLogger shared] logDebug:@"Removing open request."];
                 ((BranchOpenRequest *)request).callback = nil;
                 [self remove:request];
                 return YES;
@@ -199,7 +199,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
         }
         
         if (!openOrInstallRequest) {
-            BNCLogError(@"No install or open request in queue while trying to move it to the front.");
+            [[BranchLogger shared] logError:@"No install or open request in queue while trying to move it to the front." error:nil];
             return nil;
         }
         
@@ -265,10 +265,10 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             [data writeToURL:self.class.URLForQueueFile options:NSDataWritingAtomic error:&error];
             
             if (error) {
-                BNCLogError([NSString stringWithFormat:@"Failed to persist queue to disk: %@.", error]);
+                [[BranchLogger shared] logError:[NSString stringWithFormat:@"Failed to persist queue to disk: %@.", error] error:error];
             }
         } else {
-            BNCLogError([NSString stringWithFormat:@"Failed to encode queue."]);
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Failed to encode queue."] error:nil];
         }
     }
 }
@@ -306,7 +306,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:YES error:&error];
     
     if (!data && error) {
-        BNCLogWarning([NSString stringWithFormat:@"Failed to archive: %@", error]);
+        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Failed to archive: %@", error]];
     }
     return data;
 }
@@ -356,7 +356,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     id object = [NSKeyedUnarchiver unarchivedObjectOfClasses:[BNCServerRequestQueue encodableClasses] fromData:data error:&error];
     
     if (error) {
-        BNCLogWarning([NSString stringWithFormat:@"Failed to unarchive: %@", error]);
+        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Failed to unarchive: %@", error]];
     }
     
     return object;
@@ -412,7 +412,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     dispatch_once(&onceToken, ^ {
         sharedQueue = [[BNCServerRequestQueue alloc] init];
         [sharedQueue retrieve];
-        BNCLogDebugSDK([NSString stringWithFormat:@"Retrieved from storage: %@.", sharedQueue]);
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Retrieved from storage: %@.", sharedQueue]];
     });
     return sharedQueue;
 }

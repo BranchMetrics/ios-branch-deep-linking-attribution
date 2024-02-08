@@ -12,7 +12,7 @@
 #import "NSError+Branch.h"
 #import "BranchConstants.h"
 #import "NSMutableDictionary+Branch.h"
-#import "BNCLog.h"
+#import "BranchLogger.h"
 #import "Branch.h"
 #import "BNCSKAdNetwork.h"
 #import "BNCReferringURLUtility.h"
@@ -118,7 +118,7 @@
                     dispatch_time(DISPATCH_TIME_NOW, self.preferenceHelper.retryInterval * NSEC_PER_SEC);
                 dispatch_after(dispatchTime, dispatch_get_main_queue(), ^{
                     if (retryHandler) {
-                        BNCLogDebug([NSString stringWithFormat:@"Retrying request with url %@", request.URL.relativePath]);
+                        [[BranchLogger shared] logDebug: [NSString stringWithFormat:@"Retrying request with url %@", request.URL.relativePath]];
                         // Create the next request
                         NSURLRequest *retryRequest = retryHandler(retryNumber);
                         [self genericHTTPRequest:retryRequest
@@ -155,8 +155,7 @@
             }
 
             if (branchError) {
-                BNCLogError([NSString stringWithFormat:@"An error prevented request to %@ from completing: %@",
-                    request.URL.absoluteString, branchError]);
+                [[BranchLogger shared] logError:[NSString stringWithFormat:@"An error prevented request to %@ from completing: %@", request.URL.absoluteString, branchError] error:branchError];
             }
             
             //	Don't call on the main queue since it might be blocked.
@@ -171,7 +170,7 @@
         if (![self isLinkingRelatedRequest:endpoint]) {
             [[BNCPreferenceHelper sharedInstance] clearTrackingInformation];
             NSError *error = [NSError branchErrorWithCode:BNCTrackingDisabledError];
-            BNCLogWarning([NSString stringWithFormat:@"Dropping Request %@: - %@", endpoint, error]);
+            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Dropping Request %@: - %@", endpoint, error]];
             if (callback) {
                 callback(nil, error);
             }
@@ -184,7 +183,7 @@
     [operation start];
     NSError *error = [self verifyNetworkOperation:operation];
     if (error) {
-        BNCLogError([NSString stringWithFormat:@"Network service error: %@.", error]);
+        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Network service error: %@.", error] error:error];
         if (callback) {
             callback(nil, error);
         }
@@ -279,8 +278,7 @@
 
     NSDictionary *tmp = [self addRetryCount:retryNumber toJSON:params];
     NSString *requestUrlString = [NSString stringWithFormat:@"%@%@", url, [BNCEncodingUtils encodeDictionaryToQueryString:tmp]];
-    BNCLogDebug([NSString stringWithFormat:@"URL: %@", requestUrlString]);
-
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"URL: %@", requestUrlString]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:requestUrlString]
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:self.preferenceHelper.timeout];
@@ -297,11 +295,10 @@
     NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:tmp];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
 
-    BNCLogDebug([NSString stringWithFormat:@"URL: %@.\n", url]);
-    BNCLogDebug([NSString stringWithFormat:@"Body: %@\nJSON: %@.",
-        params,
-        [[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding]]
-    );
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"URL: %@.\n", url]];
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Body: %@\nJSON: %@.",
+                                     params,
+                                     [[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding]]];
     
     NSMutableURLRequest *request =
         [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]

@@ -10,7 +10,7 @@
 #import "BNCEncodingUtils.h"
 #import "BNCConfig.h"
 #import "Branch.h"
-#import "BNCLog.h"
+#import "BranchLogger.h"
 #import "BranchConstants.h"
 #import "NSString+Branch.h"
 #import "BNCSKAdNetwork.h"
@@ -163,7 +163,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
             [self writeObjectToDefaults:BRANCH_PREFS_KEY_API_URL value:_branchAPIURL];
         }
     } else {
-        BNCLogWarning(@"Ignoring invalid custom API URL");
+        [[BranchLogger shared] logWarning:@"Ignoring invalid custom API URL"];
     }
 }
 
@@ -191,7 +191,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
             [self writeObjectToDefaults:BRANCH_PREFS_KEY_PATTERN_LIST_URL value:url];
         }
     } else {
-        BNCLogWarning(@"Ignoring invalid custom CDN URL");
+        [[BranchLogger shared] logWarning:@"Ignoring invalid custom CDN URL"];
     }
 }
 
@@ -892,7 +892,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
                 NSError *error = nil;
                 [data writeToURL:prefsURL options:NSDataWritingAtomic error:&error];
                 if (error) {
-                    BNCLogWarning([NSString stringWithFormat:@"Failed to persist preferences: %@.", error]);
+                    [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Failed to persist preferences: %@.", error]];
                 }
             }];
             [_persistPrefsQueue addOperation:newPersistOp];
@@ -907,7 +907,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     @try {
         data = [NSKeyedArchiver archivedDataWithRootObject:dict requiringSecureCoding:YES error:NULL];
     } @catch (id exception) {
-        BNCLogWarning([NSString stringWithFormat:@"Exception serializing preferences dict: %@.", exception]);
+        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Exception serializing preferences dict: %@.", exception]];
     }
     return data;
 }
@@ -938,10 +938,10 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         NSError *error = nil;
         data = [NSData dataWithContentsOfURL:self.class.URLForPrefsFile options:0 error:&error];
         if (error || !data) {
-            BNCLogWarning(@"Failed to load preferences from storage.");
+            [[BranchLogger shared] logWarning:@"Failed to load preferences from storage."];
         }
     } @catch (NSException *) {
-        BNCLogWarning(@"Failed to load preferences from storage.");
+        [[BranchLogger shared] logWarning:@"Failed to load preferences from storage."];
     }
     return data;
 }
@@ -954,7 +954,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
         dict = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes fromData:data error:&error];
         if (error) {
-            BNCLogWarning(@"Failed to load preferences from storage.");
+            [[BranchLogger shared] logWarning:@"Failed to load preferences from storage."];
         }
     }
     
@@ -1054,8 +1054,7 @@ NSURL* _Null_unspecified BNCCreateDirectoryForBranchURLWithSearchPath_Unthreaded
         if (success) {
             return branchURL;
         } else  {
-            // BNCLog is dependent on BNCCreateDirectoryForBranchURLWithSearchPath_Unthreaded and cannot be used to log errors from it.
-            NSLog(@"CreateBranchURL failed: %@ URL: %@.", error, branchURL);
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"CreateBranchURL failed: %@ URL: %@.", error, branchURL] error:error];
         }
     }
     return nil;
@@ -1094,8 +1093,7 @@ NSURL* _Nonnull BNCURLForBranchDirectory_Unthreaded(void) {
             attributes:nil
             error:&error];
     if (!success) {
-        // BNCLog is dependent on BNCURLForBranchDirectory_Unthreaded and cannot be used to log errors from it.
-        NSLog(@"Worst case CreateBranchURL error was: %@ URL: %@.", error, branchURL);
+        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Worst case CreateBranchURL error was: %@ URL: %@.", error, branchURL] error:error];
     }
     return branchURL;
 }
