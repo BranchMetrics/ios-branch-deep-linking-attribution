@@ -87,8 +87,120 @@
     }
 }
 
-@end
+#pragma mark BNCFieldDefinesObjectFromDictionary replacement methods
 
+// checks for NSNumber or NSString representations of an int
+- (int)bnc_getIntForKey:(NSString *)key {
+    int returnValue = 0;
+    
+    id tmp = [self objectForKey:key];
+    if ([tmp isKindOfClass:[NSNumber class]]) {
+        NSNumber *number = (NSNumber *)tmp;
+        returnValue = [number intValue];
+    } else if ([tmp isKindOfClass:[NSString class]]) {
+        NSString *numberAsString = (NSString *)tmp;
+        returnValue = [numberAsString intValue];
+    }
+    
+    return returnValue;
+}
+
+// checks for NSNumber or NSString representations of a double
+- (double)bnc_getDoubleForKey:(NSString *)key {
+    double returnValue = 0;
+    
+    id tmp = [self objectForKey:key];
+    if ([tmp isKindOfClass:[NSNumber class]]) {
+        NSNumber *number = (NSNumber *)tmp;
+        returnValue = [number doubleValue];
+    } else if ([tmp isKindOfClass:[NSString class]]) {
+        NSString *numberAsString = (NSString *)tmp;
+        returnValue = [numberAsString doubleValue];
+    }
+    
+    return returnValue;
+}
+
+- (NSString *)bnc_getStringForKey:(NSString *)key {
+    NSString *returnValue = nil;
+    
+    id tmp = [self objectForKey:key];
+    if ([tmp isKindOfClass:[NSString class]]) {
+        returnValue = (NSString *)tmp;
+    }
+    
+    return returnValue;
+}
+
+// checks for NSNumber or NSString representations of the date
+- (NSDate *)bnc_getDateForKey:(NSString *)key {
+    NSDate *returnValue = nil;
+    NSTimeInterval timeInterval = [self bnc_getDoubleForKey:key];
+    if (timeInterval > 0) {
+        returnValue = [NSDate dateWithTimeIntervalSince1970:timeInterval/1000.0];
+    }
+    return returnValue;
+}
+
+// checks for NSNumber or NSString representations of the decimal
+- (NSDecimalNumber *)bnc_getDecimalForKey:(NSString *)key {
+    NSDecimalNumber *returnValue = nil;
+    
+    id tmp = [self objectForKey:key];
+    if ([tmp isKindOfClass:[NSNumber class]]) {
+        NSNumber *number = (NSNumber *)tmp;
+        
+        // previous implementation converts the NSNumber to a string then to a NSDecimalNumber. lets maintain that behavior
+        returnValue = [NSDecimalNumber decimalNumberWithString:[number description]];
+    } else if ([tmp isKindOfClass:[NSString class]]) {
+        NSString *numberAsString = (NSString *)tmp;
+        returnValue = [NSDecimalNumber decimalNumberWithString:numberAsString];
+    }
+    
+    return returnValue;
+}
+
+// checks for NSArray or NSString,
+- (NSMutableArray *)bnc_getArrayForKey:(NSString *)key {
+    NSMutableArray *returnValue = nil;
+    
+    id tmp = [self objectForKey:key];
+    if ([tmp isKindOfClass:[NSArray class]]) {
+        returnValue = [NSMutableArray new];
+        
+        NSArray *array = (NSArray *)tmp;
+        for (id item in array) {
+            if ([item isKindOfClass:[NSString class]]) {
+                [returnValue addObject:item];
+            }
+        }
+        
+    } else if ([tmp isKindOfClass:[NSString class]]) {
+        returnValue = [NSMutableArray arrayWithObject:tmp];
+    } else {
+        returnValue = [NSMutableArray new];
+    }
+    
+    return returnValue;
+}
+
+// checks for NSNumber or NSString representations of the boolean
+- (BOOL)bnc_getBooleanForKey:(NSString *)key {
+    BOOL returnValue = NO;
+    
+    id tmp = [self objectForKey:key];
+    if ([tmp isKindOfClass:[NSNumber class]]) {
+        NSNumber *number = (NSNumber *)tmp;
+        returnValue = [number boolValue];
+    } else if ([tmp isKindOfClass:[NSString class]]) {
+        NSString *numberAsString = (NSString *)tmp;
+        returnValue = [numberAsString doubleValue];
+    }
+    
+    return returnValue;
+}
+
+@end
 
 __attribute__((constructor)) void BNCForceNSMutableDictionaryCategoryToLoad(void) {
     //  Does nothing.  But will force the linker to include this category.
