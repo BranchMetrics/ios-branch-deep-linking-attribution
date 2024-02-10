@@ -20,10 +20,8 @@
 
 - (void)bnc_safeAddEntriesFromDictionary:(NSDictionary<id<NSCopying>,id> *)otherDictionary {
     if ([otherDictionary isKindOfClass:[NSDictionary class]]) {
-        NSDictionary *deepCopy =
-            [[NSDictionary alloc]
-                initWithDictionary:otherDictionary
-                copyItems:YES];
+        // This is a one layer deep copy
+        NSDictionary *deepCopy = [[NSDictionary alloc] initWithDictionary:otherDictionary copyItems:YES];
         [self addEntriesFromDictionary:deepCopy];
     }
 }
