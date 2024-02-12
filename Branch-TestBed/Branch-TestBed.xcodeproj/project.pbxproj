@@ -132,7 +132,6 @@
 		5F644C052B7AA811000DCD78 /* BNCJSONUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F644B742B7AA810000DCD78 /* BNCJSONUtility.h */; };
 		5F644C062B7AA811000DCD78 /* UIViewController+Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F644B752B7AA810000DCD78 /* UIViewController+Branch.h */; };
 		5F644C072B7AA811000DCD78 /* BNCAppGroupsData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F644B762B7AA810000DCD78 /* BNCAppGroupsData.h */; };
-		5F644C082B7AA811000DCD78 /* BNCFieldDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F644B772B7AA810000DCD78 /* BNCFieldDefines.h */; };
 		5F644C092B7AA811000DCD78 /* BNCServerAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F644B782B7AA810000DCD78 /* BNCServerAPI.h */; };
 		5F644C0A2B7AA811000DCD78 /* BNCSpotlightService.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F644B792B7AA810000DCD78 /* BNCSpotlightService.h */; };
 		5F644C0B2B7AA811000DCD78 /* BNCEventUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F644B7A2B7AA811000DCD78 /* BNCEventUtils.h */; };
@@ -435,7 +434,6 @@
 		5F644B742B7AA810000DCD78 /* BNCJSONUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCJSONUtility.h; sourceTree = "<group>"; };
 		5F644B752B7AA810000DCD78 /* UIViewController+Branch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Branch.h"; sourceTree = "<group>"; };
 		5F644B762B7AA810000DCD78 /* BNCAppGroupsData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCAppGroupsData.h; sourceTree = "<group>"; };
-		5F644B772B7AA810000DCD78 /* BNCFieldDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCFieldDefines.h; sourceTree = "<group>"; };
 		5F644B782B7AA810000DCD78 /* BNCServerAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCServerAPI.h; sourceTree = "<group>"; };
 		5F644B792B7AA810000DCD78 /* BNCSpotlightService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCSpotlightService.h; sourceTree = "<group>"; };
 		5F644B7A2B7AA811000DCD78 /* BNCEventUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCEventUtils.h; sourceTree = "<group>"; };
@@ -837,7 +835,6 @@
 				5F644B832B7AA811000DCD78 /* BNCDeviceSystem.h */,
 				5F644B852B7AA811000DCD78 /* BNCEncodingUtils.h */,
 				5F644B7A2B7AA811000DCD78 /* BNCEventUtils.h */,
-				5F644B772B7AA810000DCD78 /* BNCFieldDefines.h */,
 				5F644B742B7AA810000DCD78 /* BNCJSONUtility.h */,
 				5F644B6F2B7AA810000DCD78 /* BNCKeyChain.h */,
 				5F644B912B7AA811000DCD78 /* BNCLog.h */,
@@ -1028,7 +1025,6 @@
 				5F644C122B7AA811000DCD78 /* BNCApplication.h in Headers */,
 				5F644C102B7AA811000DCD78 /* BranchShortUrlRequest.h in Headers */,
 				5F644C232B7AA811000DCD78 /* BranchContentDiscoverer.h in Headers */,
-				5F644C082B7AA811000DCD78 /* BNCFieldDefines.h in Headers */,
 				5F644C032B7AA811000DCD78 /* BranchContentPathProperties.h in Headers */,
 				5F644C042B7AA811000DCD78 /* BNCSKAdNetwork.h in Headers */,
 				5F644C0E2B7AA811000DCD78 /* BNCQRCodeCache.h in Headers */,
