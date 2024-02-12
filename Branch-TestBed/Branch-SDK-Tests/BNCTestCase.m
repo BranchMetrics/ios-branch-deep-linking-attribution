@@ -65,19 +65,6 @@ BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex) {
     }];
 }
 
-- (id)stringMatchingPattern:(NSString *)pattern {
-    NSRegularExpression *regex =
-        [[NSRegularExpression alloc]
-            initWithPattern:pattern
-            options:NSRegularExpressionCaseInsensitive
-            error:nil];
-
-    return [OCMArg checkWithBlock:^BOOL(NSString *param) {
-        return [regex numberOfMatchesInString:param
-            options:kNilOptions range:NSMakeRange(0, param.length)] > 0;
-    }];
-}
-
 - (NSString*) stringFromBundleWithKey:(NSString*)key {
     NSString *const kItemNotFound = @"<Item-Not-Found>";
     NSString *resource =
