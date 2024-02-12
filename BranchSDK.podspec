@@ -22,9 +22,7 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.ios.source_files = "Sources/BranchSDK/**/*.{h,m}"
 
   s.tvos.source_files = "Sources/BranchSDK/**/*.{h,m}"
-  s.tvos.exclude_files = "Sources/BranchSDK/**/BNCAdClient.{h,m}",
-	"Sources/BranchSDK/**/BNCAppleSearchAds.{h,m}",
-	"Sources/BranchSDK/**/BNCContentDiscoveryManager.{h,m}",
+  s.tvos.exclude_files = "Sources/BranchSDK/**/BNCContentDiscoveryManager.{h,m}",
 	"Sources/BranchSDK/**/BNCUserAgentCollector.{h,m}",
 	"Sources/BranchSDK/**/BNCSpotlightService.{h,m}",
 	"Sources/BranchSDK/**/BranchActivityItemProvider.{h,m}",

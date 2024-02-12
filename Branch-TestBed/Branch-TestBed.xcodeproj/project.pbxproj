@@ -71,7 +71,6 @@
 		5F644BC82B7AA811000DCD78 /* BranchPluginSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F644B352B7AA810000DCD78 /* BranchPluginSupport.m */; };
 		5F644BC92B7AA811000DCD78 /* NSString+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F644B362B7AA810000DCD78 /* NSString+Branch.m */; };
 		5F644BCA2B7AA811000DCD78 /* BNCSystemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F644B372B7AA810000DCD78 /* BNCSystemObserver.m */; };
-		5F644BCB2B7AA811000DCD78 /* BNCThreads.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F644B382B7AA810000DCD78 /* BNCThreads.m */; };
 		5F644BCC2B7AA811000DCD78 /* BNCURLFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F644B392B7AA810000DCD78 /* BNCURLFilter.m */; };
 		5F644BCD2B7AA811000DCD78 /* BNCServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F644B3A2B7AA810000DCD78 /* BNCServerRequest.m */; };
 		5F644BCE2B7AA811000DCD78 /* BNCNetworkInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F644B3B2B7AA810000DCD78 /* BNCNetworkInterface.m */; };
@@ -149,7 +148,6 @@
 		5F644C172B7AA811000DCD78 /* NSError+Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F644B862B7AA811000DCD78 /* NSError+Branch.h */; };
 		5F644C182B7AA811000DCD78 /* BNCURLFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F644B872B7AA811000DCD78 /* BNCURLFilter.h */; };
 		5F644C192B7AA811000DCD78 /* BNCNetworkInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F644B882B7AA811000DCD78 /* BNCNetworkInterface.h */; };
-		5F644C1A2B7AA811000DCD78 /* BNCThreads.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F644B892B7AA811000DCD78 /* BNCThreads.h */; };
 		5F644C1B2B7AA811000DCD78 /* BNCSystemObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F644B8A2B7AA811000DCD78 /* BNCSystemObserver.h */; };
 		5F644C1C2B7AA811000DCD78 /* NSString+Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F644B8B2B7AA811000DCD78 /* NSString+Branch.h */; };
 		5F644C1D2B7AA811000DCD78 /* BranchInstallRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F644B8C2B7AA811000DCD78 /* BranchInstallRequest.h */; };
@@ -373,7 +371,6 @@
 		5F644B352B7AA810000DCD78 /* BranchPluginSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchPluginSupport.m; sourceTree = "<group>"; };
 		5F644B362B7AA810000DCD78 /* NSString+Branch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Branch.m"; sourceTree = "<group>"; };
 		5F644B372B7AA810000DCD78 /* BNCSystemObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSystemObserver.m; sourceTree = "<group>"; };
-		5F644B382B7AA810000DCD78 /* BNCThreads.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCThreads.m; sourceTree = "<group>"; };
 		5F644B392B7AA810000DCD78 /* BNCURLFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCURLFilter.m; sourceTree = "<group>"; };
 		5F644B3A2B7AA810000DCD78 /* BNCServerRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerRequest.m; sourceTree = "<group>"; };
 		5F644B3B2B7AA810000DCD78 /* BNCNetworkInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCNetworkInterface.m; sourceTree = "<group>"; };
@@ -451,7 +448,6 @@
 		5F644B862B7AA811000DCD78 /* NSError+Branch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+Branch.h"; sourceTree = "<group>"; };
 		5F644B872B7AA811000DCD78 /* BNCURLFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCURLFilter.h; sourceTree = "<group>"; };
 		5F644B882B7AA811000DCD78 /* BNCNetworkInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCNetworkInterface.h; sourceTree = "<group>"; };
-		5F644B892B7AA811000DCD78 /* BNCThreads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCThreads.h; sourceTree = "<group>"; };
 		5F644B8A2B7AA811000DCD78 /* BNCSystemObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCSystemObserver.h; sourceTree = "<group>"; };
 		5F644B8B2B7AA811000DCD78 /* NSString+Branch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Branch.h"; sourceTree = "<group>"; };
 		5F644B8C2B7AA811000DCD78 /* BranchInstallRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchInstallRequest.h; sourceTree = "<group>"; };
@@ -746,7 +742,6 @@
 				5F644BA52B7AA811000DCD78 /* BNCSKAdNetwork.m */,
 				5F644BAC2B7AA811000DCD78 /* BNCSpotlightService.m */,
 				5F644B372B7AA810000DCD78 /* BNCSystemObserver.m */,
-				5F644B382B7AA810000DCD78 /* BNCThreads.m */,
 				5F644B392B7AA810000DCD78 /* BNCURLFilter.m */,
 				5F644B2F2B7AA810000DCD78 /* BNCUrlQueryParameter.m */,
 				5F644B272B7AA810000DCD78 /* BNCUserAgentCollector.m */,
@@ -850,7 +845,6 @@
 				5F644B732B7AA810000DCD78 /* BNCSKAdNetwork.h */,
 				5F644B792B7AA810000DCD78 /* BNCSpotlightService.h */,
 				5F644B8A2B7AA811000DCD78 /* BNCSystemObserver.h */,
-				5F644B892B7AA811000DCD78 /* BNCThreads.h */,
 				5F644B872B7AA811000DCD78 /* BNCURLFilter.h */,
 				5F644B802B7AA811000DCD78 /* BNCUrlQueryParameter.h */,
 				5F644B842B7AA811000DCD78 /* BNCUserAgentCollector.h */,
@@ -1045,7 +1039,6 @@
 				5F644C1D2B7AA811000DCD78 /* BranchInstallRequest.h in Headers */,
 				5F644C0D2B7AA811000DCD78 /* BranchShortUrlSyncRequest.h in Headers */,
 				5F644C152B7AA811000DCD78 /* BNCUserAgentCollector.h in Headers */,
-				5F644C1A2B7AA811000DCD78 /* BNCThreads.h in Headers */,
 				5F644C262B7AA811000DCD78 /* BNCConfig.h in Headers */,
 				5F644C092B7AA811000DCD78 /* BNCServerAPI.h in Headers */,
 				5F644C202B7AA811000DCD78 /* BNCContentDiscoveryManager.h in Headers */,
@@ -1365,7 +1358,6 @@
 				5F644C392B7AA811000DCD78 /* BNCAppleReceipt.m in Sources */,
 				5F644BDA2B7AA811000DCD78 /* BNCReferringURLUtility.m in Sources */,
 				5F644C422B7AA811000DCD78 /* BNCServerResponse.m in Sources */,
-				5F644BCB2B7AA811000DCD78 /* BNCThreads.m in Sources */,
 				5F644C3B2B7AA811000DCD78 /* BNCInitSessionResponse.m in Sources */,
 				5F644BCF2B7AA811000DCD78 /* BNCPreferenceHelper.m in Sources */,
 				5F644C372B7AA811000DCD78 /* BranchContentPathProperties.m in Sources */,
