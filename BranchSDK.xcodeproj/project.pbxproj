@@ -67,6 +67,7 @@
 		5F6DD24C2894AF5E00AE9FB0 /* NSURLSession+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6DD24A2894AF5E00AE9FB0 /* NSURLSession+Branch.m */; };
 		5F73EBFA28ECE65400608601 /* BranchSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F73EBF428ECE65400608601 /* BranchSDK.framework */; };
 		5F73EBFB28ECE65400608601 /* BranchSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5F73EBF428ECE65400608601 /* BranchSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5FA71BA82B7AE6B2008009CA /* Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3A22B7AC6A100EAF29F /* Branch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FC446652ACCB97000FF1C87 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5FC446642ACCB96000FF1C87 /* PrivacyInfo.xcprivacy */; };
 		5FC446662ACCB97100FF1C87 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5FC446642ACCB96000FF1C87 /* PrivacyInfo.xcprivacy */; };
 		5FC446672ACCB97200FF1C87 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5FC446642ACCB96000FF1C87 /* PrivacyInfo.xcprivacy */; };
@@ -1073,6 +1074,7 @@
 				5FCDD53A2B7AC6A300EAF29F /* BNCLog.h in Headers */,
 				5FCDD5102B7AC6A300EAF29F /* BNCDeviceSystem.h in Headers */,
 				5FCDD51F2B7AC6A300EAF29F /* BNCNetworkInterface.h in Headers */,
+				5FA71BA82B7AE6B2008009CA /* Branch.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
