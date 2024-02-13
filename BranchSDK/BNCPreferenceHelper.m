@@ -61,9 +61,9 @@ static NSString * const BRANCH_PREFS_KEY_REFFERING_URL_QUERY_PARAMETERS = @"bnc_
 
 static NSString * const BRANCH_PREFS_KEY_LOG_IAP_AS_EVENTS = @"bnc_log_iap_as_events";
 
-static NSString * const BRANCH_PREFS_KEY_EEA_REGION = @"bnc_eea_region";
-static NSString * const BRANCH_PREFS_KEY_AD_PEROSALIZATION_CONSENT = @"bnc_ad_personalization_consent";
-static NSString * const BRANCH_PREFS_KEY_AD_USER_DATA_USAGE_CONSENT = @"bnc_ad_user_data_usage_consent";
+static NSString * const BRANCH_PREFS_KEY_DMA_EEA = @"bnc_dma_eea";
+static NSString * const BRANCH_PREFS_KEY_DMA_AD_PEROSALIZATION = @"bnc_dma_ad_personalization";
+static NSString * const BRANCH_PREFS_KEY_DMA_AD_USER_DATA = @"bnc_dma_ad_user_data";
 
 
 NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
@@ -800,7 +800,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 - (BOOL) eeaRegionInitialized {
     @synchronized(self) {
-        if([self readObjectFromDefaults:BRANCH_PREFS_KEY_EEA_REGION])
+        if([self readObjectFromDefaults:BRANCH_PREFS_KEY_DMA_EEA])
             return true;
         return false;
     }
@@ -808,7 +808,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 - (BOOL) eeaRegion {
     @synchronized(self) {
-        NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_EEA_REGION];
+        NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_DMA_EEA];
         if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
         return false;
     }
@@ -817,13 +817,13 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (void) setEeaRegion:(BOOL)isEEARegion {
     @synchronized(self) {
         NSNumber *b = [NSNumber numberWithBool:isEEARegion];
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_EEA_REGION value:b];
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_DMA_EEA value:b];
     }
 }
 
 - (BOOL) adPersonalizationConsent {
     @synchronized(self) {
-        NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_AD_PEROSALIZATION_CONSENT];
+        NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_DMA_AD_PEROSALIZATION];
         if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
         return false;
     }
@@ -832,13 +832,13 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (void) setAdPersonalizationConsent:(BOOL)hasConsent {
     @synchronized(self) {
         NSNumber *b = [NSNumber numberWithBool:hasConsent];
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_AD_PEROSALIZATION_CONSENT value:b];
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_DMA_AD_PEROSALIZATION value:b];
     }
 }
 
 - (BOOL) adUserDataUsageConsent {
     @synchronized(self) {
-        NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_AD_USER_DATA_USAGE_CONSENT];
+        NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_DMA_AD_USER_DATA];
         if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
         return false;
     }
@@ -847,7 +847,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (void) setAdUserDataUsageConsent:(BOOL)hasConsent {
     @synchronized(self) {
         NSNumber *b = [NSNumber numberWithBool:hasConsent];
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_AD_USER_DATA_USAGE_CONSENT value:b];
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_DMA_AD_USER_DATA value:b];
     }
 }
 

@@ -329,27 +329,9 @@
 - (void)addDMAConsentParamsToJSON:(NSMutableDictionary *)json {
    
     if([self.preferenceHelper eeaRegionInitialized]){
-    
-        BOOL isEEARegion = [self.preferenceHelper eeaRegion];
-        BOOL hasAdPersonalizationConsent = [self.preferenceHelper adPersonalizationConsent];
-        BOOL hasAdUserDataUsageConsent = [self.preferenceHelper adUserDataUsageConsent];
-        
-        [self safeSetValue:@(isEEARegion) forKey:BRANCH_REQUEST_KEY_EEA_REGION onDict:json];
-        
-        // Send adPersonalizationConsent and adUserDataUsageConsent only if
-        // eeaRegion is true OR
-        // eeaRegion is false but adPersonalizationConsent/adUserDataUsageConsent is also false
-        if (isEEARegion) {
-            [self safeSetValue:@(hasAdPersonalizationConsent) forKey:BRANCH_REQUEST_KEY_AD_PEROSALIZATION_CONSENT onDict:json];
-            [self safeSetValue:@(hasAdUserDataUsageConsent) forKey:BRANCH_REQUEST_KEY_AD_USER_DATA_USAGE_CONSENT onDict:json];
-        } else {
-            if (!hasAdPersonalizationConsent) {
-                [self safeSetValue:@(hasAdPersonalizationConsent) forKey:BRANCH_REQUEST_KEY_AD_PEROSALIZATION_CONSENT onDict:json];
-            }
-            if (!hasAdUserDataUsageConsent) {
-                [self safeSetValue:@(hasAdUserDataUsageConsent) forKey:BRANCH_REQUEST_KEY_AD_USER_DATA_USAGE_CONSENT onDict:json];
-            }
-        }
+        [self safeSetValue:@([self.preferenceHelper eeaRegion]) forKey:BRANCH_REQUEST_KEY_DMA_EEA onDict:json];
+        [self safeSetValue:@([self.preferenceHelper adPersonalizationConsent]) forKey:BRANCH_REQUEST_KEY_DMA_AD_PEROSALIZATION onDict:json];
+        [self safeSetValue:@([self.preferenceHelper adUserDataUsageConsent]) forKey:BRANCH_REQUEST_KEY_DMA_AD_USER_DATA onDict:json];        
     }
 }
 
