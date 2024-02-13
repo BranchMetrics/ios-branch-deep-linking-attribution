@@ -9,6 +9,7 @@
 #import "BNCSystemObserver.h"
 #import "BNCConfig.h"
 #import "BranchConstants.h"
+#import "BNCPreferenceHelper.h"
 
 @implementation BNCServerAPI
 
@@ -88,6 +89,12 @@
 }
 
 - (NSString *)getBaseURL {
+    //Check if user has set a custom API base URL
+    NSString *url = [[BNCPreferenceHelper sharedInstance] branchAPIURL];
+    if (url && ![url isEqualToString:BNC_API_URL]) {
+        return url;
+    }
+    
     if (self.automaticallyEnableTrackingDomain) {
         self.useTrackingDomain = [self optedIntoIDFA];
     }
