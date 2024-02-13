@@ -54,11 +54,6 @@
 
 #pragma mark - Server URL methods
 
-// Overrides base API URL
-+ (void)setAPIUrl:(NSString *)url {
-    [[BNCPreferenceHelper sharedInstance] setBranchAPIURL:url];
-}
-
 // Overrides base CDN URL
 + (void)setCDNBaseUrl:(NSString *)url {
     [[BNCPreferenceHelper sharedInstance] setPatternListURL:url];
