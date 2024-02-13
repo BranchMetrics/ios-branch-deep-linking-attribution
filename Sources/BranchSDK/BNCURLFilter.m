@@ -168,9 +168,11 @@
     if ([self foundUpdatedURLList:operation]) {
         NSDictionary *json = [self parseJSONFromData:operation.responseData];
         if (json) {
+            NSNumber *version = json[@"version"];
+            
             self.hasUpdatedPatternList = YES;
             self.patternList = json[@"uri_skip_list"];
-            self.listVersion = (long)json[@"version"];
+            self.listVersion = [version longValue];
             self.ignoredURLRegex = [self compileRegexArray:self.patternList];
 
             [BNCPreferenceHelper sharedInstance].savedURLPatternList = self.patternList;
