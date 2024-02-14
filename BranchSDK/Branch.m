@@ -418,13 +418,9 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)enableLogging {
-    [self enableLoggingAtLevel:BranchLogLevelDebug];
-}
-
-- (void)enableLoggingAtLevel:(BranchLogLevel)logLevel {
     BranchLogger *logger = [BranchLogger shared];
     logger.loggingEnabled = YES;
-    logger.logLevelThreshold = logLevel;
+    logger.logLevelThreshold = BranchLogLevelDebug;
 }
 
 - (void)enableLoggingAtLevel:(BranchLogLevel)logLevel withCallback:(nullable BranchLogCallback)callback {

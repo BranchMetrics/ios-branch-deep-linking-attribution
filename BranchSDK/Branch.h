@@ -567,7 +567,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Enable debug messages to os_log.
  */
 - (void)enableLogging;
-- (void)enableLoggingAtLevel:(BranchLogLevel)logLevel;
 - (void)enableLoggingAtLevel:(BranchLogLevel)logLevel withCallback:(nullable BranchLogCallback)callback;
 
 /**
