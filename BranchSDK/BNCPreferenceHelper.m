@@ -801,8 +801,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (BOOL) eeaRegionInitialized {
     @synchronized(self) {
         if([self readObjectFromDefaults:BRANCH_PREFS_KEY_DMA_EEA])
-            return true;
-        return false;
+            return YES;
+        return NO;
     }
 }
 
@@ -810,7 +810,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     @synchronized(self) {
         NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_DMA_EEA];
         if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
-        return false;
+        return NO;
     }
 }
 
@@ -825,7 +825,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     @synchronized(self) {
         NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_DMA_AD_PERSONALIZATION];
         if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
-        return false;
+        return NO;
     }
 }
 
@@ -840,7 +840,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     @synchronized(self) {
         NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_DMA_AD_USER_DATA];
         if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
-        return false;
+        return NO;
     }
 }
 
