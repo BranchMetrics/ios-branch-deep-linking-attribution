@@ -30,6 +30,8 @@
     logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
         if ([message isEqualToString:@"[BranchSDK][Debug][BranchLoggerTests testLogLevelThresholdBlocksLowerLevels] This message should trigger the log callback."] && logLevel >= BranchLogLevelDebug) {
             [expectation fulfill];
+        } else if (logLevel == BranchLogLevelVerbose) {
+            XCTFail();
         }
     };
     

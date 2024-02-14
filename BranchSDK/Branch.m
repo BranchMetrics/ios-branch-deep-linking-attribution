@@ -427,6 +427,13 @@ static NSString *bnc_branchKey = nil;
     logger.logLevelThreshold = logLevel;
 }
 
+- (void)enableLoggingAtLevel:(BranchLogLevel)logLevel withCallback:(nullable BranchLogCallback)callback {
+    BranchLogger *logger = [BranchLogger shared];
+    logger.loggingEnabled = YES;
+    logger.logLevelThreshold = logLevel;
+    logger.logCallback = callback;
+}
+
 - (void)useEUEndpoints {
     [BNCServerAPI sharedInstance].useEUServers = YES;
 }

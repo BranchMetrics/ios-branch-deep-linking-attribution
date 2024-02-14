@@ -35,15 +35,14 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // test pre init support
     //[self testDispatchToIsolationQueue:branch]
 
-    [branch enableLoggingAtLevel:BranchLogLevelVerbose];
-//    [BranchLogger shared].logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
-//         // Handle the log message and error here. For example, printing to the console:
-//         if (error) {
-//             NSLog(@"[BranchLog] Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription);
-//         } else {
-//             NSLog(@"[BranchLog] Level: %lu, Message: %@", (unsigned long)logLevel, message);
-//         }
-//     };
+    [branch enableLoggingAtLevel:BranchLogLevelVerbose withCallback:^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+        // Handle the log message and error here. For example, printing to the console:
+        if (error) {
+            NSLog(@"[BranchLog] Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription);
+        } else {
+            NSLog(@"[BranchLog] Level: %lu, Message: %@", (unsigned long)logLevel, message);
+        }
+    }];
     
     // Comment out in production. Un-comment to test your Branch SDK Integration:
     //[branch validateSDKIntegration];

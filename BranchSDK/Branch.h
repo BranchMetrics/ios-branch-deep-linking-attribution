@@ -568,6 +568,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  */
 - (void)enableLogging;
 - (void)enableLoggingAtLevel:(BranchLogLevel)logLevel;
+- (void)enableLoggingAtLevel:(BranchLogLevel)logLevel withCallback:(nullable BranchLogCallback)callback;
 
 /**
  Send requests to EU endpoints.
