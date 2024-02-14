@@ -426,8 +426,12 @@ static NSString *bnc_branchKey = nil;
     [BNCServerAPI sharedInstance].useEUServers = YES;
 }
 
-- (void)setAPIUrl:(NSString *)url {
-    [[BNCPreferenceHelper sharedInstance] setBranchAPIURL:url];
++ (void)setAPIUrl:(NSString *)url {
+    if ([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
+        [BNCServerAPI sharedInstance].customAPIURL = url;
+    } else {
+        BNCLogWarning(@"Ignoring invalid custom API URL");
+    }
 }
 
 - (void)setDebug {

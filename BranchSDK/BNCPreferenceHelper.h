@@ -51,7 +51,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (copy, nonatomic) NSString *lastSystemBuildVersion;
 @property (copy, nonatomic) NSString *browserUserAgentString;
 @property (copy, nonatomic) NSString *referringURL;
-@property (copy, nonatomic) NSString *branchAPIURL;
 @property (assign, nonatomic) BOOL limitFacebookTracking;
 @property (strong, nonatomic) NSDate *previousAppBuildDate;
 @property (assign, nonatomic, readwrite) BOOL disableAdNetworkCallouts;
@@ -77,7 +76,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 
 + (BNCPreferenceHelper *)sharedInstance;
 
-- (void)setBranchAPIURL:(NSString *)url;
 - (void)setPatternListURL:(NSString *)url;
 
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value;

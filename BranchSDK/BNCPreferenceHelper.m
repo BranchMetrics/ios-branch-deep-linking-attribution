@@ -26,7 +26,6 @@ static NSString * const BRANCH_PREFS_KEY_APP_VERSION = @"bnc_app_version";
 static NSString * const BRANCH_PREFS_KEY_LAST_RUN_BRANCH_KEY = @"bnc_last_run_branch_key";
 static NSString * const BRANCH_PREFS_KEY_LAST_STRONG_MATCH_DATE = @"bnc_strong_match_created_date";
 
-static NSString * const BRANCH_PREFS_KEY_CUSTOM_API_URL = @"bnc_custom_api_url";
 static NSString * const BRANCH_PREFS_KEY_PATTERN_LIST_URL = @"bnc_pattern_list_url";
 
 static NSString * const BRANCH_PREFS_KEY_RANDOMIZED_DEVICE_TOKEN = @"bnc_randomized_device_token";
@@ -68,7 +67,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     NSOperationQueue *_persistPrefsQueue;
     NSString         *_lastSystemBuildVersion;
     NSString         *_browserUserAgentString;
-    NSString         *_branchAPIURL;
     NSString         *_referringURL;
 }
 
@@ -155,33 +153,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 }
 
 #pragma mark - API methods
-
-- (void)setBranchAPIURL:(NSString *)url {
-    if ([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
-        @synchronized (self) {
-            _branchAPIURL = [url copy];
-            [self writeObjectToDefaults:BRANCH_PREFS_KEY_CUSTOM_API_URL value:_branchAPIURL];
-        }
-    } else {
-        BNCLogWarning(@"Ignoring invalid custom API URL");
-    }
-}
-
-- (NSString *)branchAPIURL {
-    @synchronized (self) {
-        if (!_branchAPIURL) {
-            _branchAPIURL = [self readStringFromDefaults:BRANCH_PREFS_KEY_CUSTOM_API_URL];
-        }
-        
-        // return the default URL in the event there's nothing in storage
-        if (_branchAPIURL == nil || [_branchAPIURL isEqualToString:@""]) {
-            _branchAPIURL = [BNC_API_URL copy];
-            [self writeObjectToDefaults:BRANCH_PREFS_KEY_CUSTOM_API_URL value:_branchAPIURL];
-        }
-
-        return _branchAPIURL;
-    }
-}
 
 - (void)setPatternListURL:(NSString *)url {
     if ([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){

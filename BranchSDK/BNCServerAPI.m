@@ -30,6 +30,7 @@
         self.useTrackingDomain = NO;
         self.useEUServers = NO;
         self.automaticallyEnableTrackingDomain = YES;
+        self.customAPIURL = NULL;
     }
     return self;
 }
@@ -78,6 +79,10 @@
 
 // Linking endpoints are not used for Ads tracking
 - (NSString *)getBaseURLForLinkingEndpoints {
+    if (self.customAPIURL) {
+        return self.customAPIURL;
+    }
+    
     NSString * urlString;
     if (self.useEUServers){
         urlString = BNC_EU_API_URL;
@@ -90,9 +95,8 @@
 
 - (NSString *)getBaseURL {
     //Check if user has set a custom API base URL
-    NSString *url = [[BNCPreferenceHelper sharedInstance] branchAPIURL];
-    if (url && ![url isEqualToString:BNC_API_URL]) {
-        return url;
+    if (self.customAPIURL) {
+        return self.customAPIURL;
     }
     
     if (self.automaticallyEnableTrackingDomain) {
