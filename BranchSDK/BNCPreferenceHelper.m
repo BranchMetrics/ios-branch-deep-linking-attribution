@@ -62,7 +62,7 @@ static NSString * const BRANCH_PREFS_KEY_REFFERING_URL_QUERY_PARAMETERS = @"bnc_
 static NSString * const BRANCH_PREFS_KEY_LOG_IAP_AS_EVENTS = @"bnc_log_iap_as_events";
 
 static NSString * const BRANCH_PREFS_KEY_DMA_EEA = @"bnc_dma_eea";
-static NSString * const BRANCH_PREFS_KEY_DMA_AD_PEROSALIZATION = @"bnc_dma_ad_personalization";
+static NSString * const BRANCH_PREFS_KEY_DMA_AD_PERSONALIZATION = @"bnc_dma_ad_personalization";
 static NSString * const BRANCH_PREFS_KEY_DMA_AD_USER_DATA = @"bnc_dma_ad_user_data";
 
 
@@ -823,7 +823,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 - (BOOL) adPersonalizationConsent {
     @synchronized(self) {
-        NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_DMA_AD_PEROSALIZATION];
+        NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_DMA_AD_PERSONALIZATION];
         if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
         return false;
     }
@@ -832,7 +832,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (void) setAdPersonalizationConsent:(BOOL)hasConsent {
     @synchronized(self) {
         NSNumber *b = [NSNumber numberWithBool:hasConsent];
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_DMA_AD_PEROSALIZATION value:b];
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_DMA_AD_PERSONALIZATION value:b];
     }
 }
 
