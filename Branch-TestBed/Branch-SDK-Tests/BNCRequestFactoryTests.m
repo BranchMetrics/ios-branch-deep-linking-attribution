@@ -25,7 +25,7 @@
 
 - (void)testInitWithBranchKeyNil {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:nil];
-    NSDictionary *json = [factory dataForInstall];
+    NSDictionary *json = [factory dataForInstallWithURLString:@"https://branch.io"];
     XCTAssertNotNil(json);
     
     // key is omitted when nil
@@ -34,7 +34,7 @@
 
 - (void)testInitWithBranchKeyEmpty {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@""];
-    NSDictionary *json = [factory dataForInstall];
+    NSDictionary *json = [factory dataForInstallWithURLString:@"https://branch.io"];
     XCTAssertNotNil(json);
     
     // empty string is allowed
@@ -43,14 +43,14 @@
 
 - (void)testInitWithBranchKey {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd"];
-    NSDictionary *json = [factory dataForInstall];
+    NSDictionary *json = [factory dataForInstallWithURLString:@"https://branch.io"];
     XCTAssertNotNil(json);
     XCTAssertTrue([@"key_abcd" isEqualToString:[json objectForKey:@"branch_key"]]);
 }
 
 - (void)testDataForInstall {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd"];
-    NSDictionary *json = [factory dataForInstall];
+    NSDictionary *json = [factory dataForInstallWithURLString:@"https://branch.io"];
     XCTAssertNotNil(json);
     
     XCTAssertTrue([@"key_abcd" isEqualToString:[json objectForKey:@"branch_key"]]);
@@ -64,7 +64,7 @@
 
 - (void)testDataForOpen {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd"];
-    NSDictionary *json = [factory dataForOpen];
+    NSDictionary *json = [factory dataForOpenWithURLString:@"https://branch.io"];
     XCTAssertNotNil(json);
     
     XCTAssertTrue([@"key_abcd" isEqualToString:[json objectForKey:@"branch_key"]]);
@@ -182,13 +182,13 @@
 
 - (void)testDataForShortURL {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd"];
-    NSDictionary *json = [factory dataForInstall];
+    NSDictionary *json = [factory dataForShortURLWithLinkDataDictionary:@{}.mutableCopy isSpotlightRequest:NO];
     XCTAssertNotNil(json);
 }
 
 - (void)testDataForLATD {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd"];
-    NSDictionary *json = [factory dataForInstall];
+    NSDictionary *json = [factory dataForLATDWithDataDictionary:@{}.mutableCopy];
     XCTAssertNotNil(json);
 }
 

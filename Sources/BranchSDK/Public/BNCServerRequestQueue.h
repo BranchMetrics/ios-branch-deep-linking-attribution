@@ -22,8 +22,8 @@
 - (NSInteger)queueDepth;
 
 - (BOOL)containsInstallOrOpen;
-- (BOOL)removeInstallOrOpen;
-- (BranchOpenRequest *)moveInstallOrOpenToFront:(NSInteger)networkCount;
+
+- (BranchOpenRequest *)findExistingInstallOrOpen;
 
 - (void)persistEventually;
 - (void)persistImmediately;

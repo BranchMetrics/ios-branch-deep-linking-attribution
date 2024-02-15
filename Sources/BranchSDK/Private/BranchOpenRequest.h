@@ -11,6 +11,9 @@
 
 @interface BranchOpenRequest : BNCServerRequest
 
+// URL that triggered this install or open event
+@property (nonatomic, copy, readwrite) NSString *urlString;
+
 @property (nonatomic, copy) callbackWithStatus callback;
 
 + (void) waitForOpenResponseLock;

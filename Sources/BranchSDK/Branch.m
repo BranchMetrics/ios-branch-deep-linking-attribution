@@ -473,38 +473,11 @@ static NSString *bnc_branchKey = nil;
     self.preferenceHelper.retryInterval = retryInterval;
 }
 
-- (void)disableCookieBasedMatching {
-    // deprecated
-}
-
-- (void)accountForFacebookSDKPreventingAppLaunch {
-    // deprecated
-}
 
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value {
     [self.preferenceHelper setRequestMetadataKey:key value:value];
 }
 
-- (void)enableDelayedInit {
-    // deprecated
-}
-
-- (void)disableDelayedInit {
-    // deprecated
-}
-
-- (NSURL *)getUrlForOnboardingWithRedirectUrl:(NSString *)redirectUrl {
-    // deprecated
-    return nil;
-}
-
-- (void)resumeInit {
-    // deprecated
-}
-
-- (void)setInstallRequestDelay:(NSInteger)installRequestDelay {
-    // deprecated
-}
 
 + (BOOL)trackingDisabled {
     @synchronized(self) {
@@ -532,7 +505,7 @@ static NSString *bnc_branchKey = nil;
             // Set the flag:
             [BNCPreferenceHelper sharedInstance].trackingDisabled = NO;
             // Initialize a Branch session:
-            [Branch.getInstance initUserSessionAndCallCallback:NO sceneIdentifier:nil];
+            [Branch.getInstance initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil];
         }
     }
 }
@@ -639,7 +612,7 @@ static NSString *bnc_branchKey = nil;
 
     // If the SDK is already initialized, this means that initSession was called after other lifecycle calls.
     if (self.initializationStatus == BNCInitStatusInitialized) {
-        [self initUserSessionAndCallCallback:YES sceneIdentifier:nil];
+        [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:nil];
         return;
     }
 
@@ -656,16 +629,8 @@ static NSString *bnc_branchKey = nil;
 
     // Handle case where there's no URI scheme or Universal Link.
     if (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
-
-        // queue up async attribution checks
-        [self checkAttributionStatusAndInitialize];
+        [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:nil];
     }
-}
-
-- (void)checkAttributionStatusAndInitialize {
-    dispatch_async(self.isolationQueue, ^(){
-        [self initUserSessionAndCallCallback:YES sceneIdentifier:nil];
-    });
 }
 
 //these params will be added
@@ -715,7 +680,7 @@ static NSString *bnc_branchKey = nil;
         self.preferenceHelper.externalIntentURI = pattern;
         self.preferenceHelper.referringURL = pattern;
 
-        [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier];
+        [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:nil];
         return NO;
     }
 
@@ -759,7 +724,7 @@ static NSString *bnc_branchKey = nil;
             self.preferenceHelper.linkClickIdentifier = params[@"link_click_id"];
         }
     }
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier];
+    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:url.absoluteString];
     return handled;
 }
 
@@ -793,7 +758,7 @@ static NSString *bnc_branchKey = nil;
         self.preferenceHelper.referringURL = urlString;
     }
 
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier];
+    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:urlString];
 
     return [Branch isBranchLink:urlString];
 }
@@ -803,6 +768,7 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier {
+
     if (userActivity.referrerURL) {
         self.preferenceHelper.initialReferrer = userActivity.referrerURL.absoluteString;
     }
@@ -833,7 +799,7 @@ static NSString *bnc_branchKey = nil;
     }
     #endif
 
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier];
+    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:userActivity.webpageURL.absoluteString];
 
     return spotlightIdentifier != nil;
 }
@@ -867,17 +833,10 @@ static NSString *bnc_branchKey = nil;
 #pragma mark - Push Notification support
 
 - (void)handlePushNotification:(NSDictionary *)userInfo {
-    // look for a branch shortlink in the payload (shortlink because iOS7 only supports 256 bytes)
     NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
-    if (urlStr.length) {
-        // reusing this field, so as not to create yet another url slot on prefshelper
-        self.preferenceHelper.universalLinkUrl = urlStr;
-        self.preferenceHelper.referringURL = urlStr;
-    }
 
     // If app is active, then close out the session and start a new one.
     // Else the URL will be handled by `applicationDidBecomeActive`.
-
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
     if (urlStr && [[UIApplicationClass sharedApplication] applicationState] == UIApplicationStateActive) {
         NSURL *url = [NSURL URLWithString:urlStr];
@@ -1733,20 +1692,23 @@ static NSString *bnc_branchKey = nil;
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
-    if (!Branch.trackingDisabled &&
-        self.initializationStatus != BNCInitStatusInitialized &&
-        ![self.requestQueue containsInstallOrOpen]) {
-        [self initUserSessionAndCallCallback:YES sceneIdentifier:nil];
-    }
+    dispatch_async(self.isolationQueue, ^(){
+        //  if necessary, creates a new organic open
+        BOOL installOrOpenInQueue = [self.requestQueue containsInstallOrOpen];
+        if (!Branch.trackingDisabled && self.initializationStatus != BNCInitStatusInitialized && !installOrOpenInQueue) {
+            [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:nil];
+        }
+    });
 }
 
 - (void)applicationWillResignActive {
-    if (!Branch.trackingDisabled) {
-        self.initializationStatus = BNCInitStatusUninitialized;
-        [self.requestQueue persistImmediately];
-        [BranchOpenRequest setWaitNeededForOpenResponseLock];
-        [[BranchLogger shared] logDebug:@"Application resigned active."];
-    }
+    dispatch_async(self.isolationQueue, ^(){
+        if (!Branch.trackingDisabled) {
+            self.initializationStatus = BNCInitStatusUninitialized;
+            [self.requestQueue persistImmediately];
+            [BranchOpenRequest setWaitNeededForOpenResponseLock];
+        }
+    });
 }
 
 #pragma mark - Queue management
@@ -1766,8 +1728,7 @@ static NSString *bnc_branchKey = nil;
 - (void)insertRequestAtFront:(BNCServerRequest *)req {
     if (self.networkCount == 0) {
         [self.requestQueue insert:req at:0];
-    }
-    else {
+    } else {
         [self.requestQueue insert:req at:1];
     }
 }
@@ -1805,7 +1766,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
         [self.requestQueue dequeue];
         self.networkCount = 0;
-        [self processNextQueueItem];
+        dispatch_async(self.isolationQueue, ^{
+            [self processNextQueueItem];
+        });
     }
     // On network problems, or Branch down, call the other callbacks and stop processing.
     else {
@@ -1953,34 +1916,28 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 - (void)initSafetyCheck {
     if (self.initializationStatus == BNCInitStatusUninitialized) {
         [[BranchLogger shared] logDebug:@"Branch avoided an error by preemptively initializing."];
-        [self initUserSessionAndCallCallback:NO sceneIdentifier:nil];
+        [self initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil];
     }
 }
 
-- (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
+- (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString {
     
     // ignore lifecycle calls while waiting for a plugin runtime.
     @synchronized (self) {
         if (self.deferInitForPluginRuntime) {
+            [[BranchLogger shared] logDebug:@"Branch init is deferred, ignoring init call."];
             return;
         }
     }
     
     dispatch_async(self.isolationQueue, ^(){
-        NSString *urlstring = nil;
-        if (self.preferenceHelper.universalLinkUrl.length) {
-            urlstring = self.preferenceHelper.universalLinkUrl;
-        } else if (self.preferenceHelper.externalIntentURI.length) {
-            urlstring = self.preferenceHelper.externalIntentURI;
-        }
 
         // If the session is not yet initialized
         if (self.initializationStatus == BNCInitStatusUninitialized) {
-            [self initializeSessionAndCallCallback:callCallback sceneIdentifier:sceneIdentifier];
+            [self initializeSessionAndCallCallback:callCallback sceneIdentifier:sceneIdentifier urlString:urlString];
         }
         // If the session was initialized, but callCallback was specified, do so.
         else if (callCallback && self.initializationStatus == BNCInitStatusInitialized) {
-
             // callback on main, this is generally what the client expects and maintains our previous behavior
             dispatch_async(dispatch_get_main_queue(), ^ {
                 if (self.sceneSessionInitWithCallback) {
@@ -1989,6 +1946,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                     response.universalObject = [self getLatestReferringBranchUniversalObject];
                     response.linkProperties = [self getLatestReferringBranchLinkProperties];
                     response.sceneIdentifier = sceneIdentifier;
+
                     self.sceneSessionInitWithCallback(response, nil);
                 }
             });
@@ -1997,61 +1955,74 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 // only called from initUserSessionAndCallCallback!
-- (void)initializeSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
-	Class clazz = [BranchInstallRequest class];
-	if (self.preferenceHelper.randomizedBundleToken) {
-		clazz = [BranchOpenRequest class];
-	}
+- (void)initializeSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString {
 
-    callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
-        // callback on main, this is generally what the client expects and maintains our previous behavior
-		dispatch_async(dispatch_get_main_queue(), ^ {
-			if (error) {
-				[self handleInitFailure:error callCallback:callCallback sceneIdentifier:(NSString *)sceneIdentifier];
-			} else {
-				[self handleInitSuccessAndCallCallback:callCallback sceneIdentifier:(NSString *)sceneIdentifier];
-			}
-		});
-    };
-
-    // Notify everyone --
-
-    NSURL *URL =
-        (self.preferenceHelper.referringURL.length)
-        ? [NSURL URLWithString:self.preferenceHelper.referringURL]
-        : nil;
-
-    if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)])
+	// BranchDelegate willStartSessionWithURL notification
+    NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;
+    if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)]) {
         [self.delegate branch:self willStartSessionWithURL:URL];
+    }
 
+    // BranchWilLStartSession NSNotification
     NSMutableDictionary *userInfo = [NSMutableDictionary new];
     userInfo[BranchURLKey] = URL;
-    [[NSNotificationCenter defaultCenter]
-        postNotificationName:BranchWillStartSessionNotification
-        object:self
-        userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:BranchWillStartSessionNotification object:self userInfo:userInfo];
+    
+    // Prepare callback block
+    callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
+        // callback on main, this is generally what the client expects and maintains our previous behavior
+        dispatch_async(dispatch_get_main_queue(), ^ {
+            if (error) {
+                [self handleInitFailure:error callCallback:callCallback sceneIdentifier:(NSString *)sceneIdentifier];
+            } else {
+                [self handleInitSuccessAndCallCallback:callCallback sceneIdentifier:(NSString *)sceneIdentifier];
+            }
+        });
+    };
 
-    // Fix the queue order and open --
+    @synchronized (self) {
+        dispatch_async(self.isolationQueue, ^(){
+            [BranchOpenRequest setWaitNeededForOpenResponseLock];
+            BranchOpenRequest *req = [self.requestQueue findExistingInstallOrOpen];
+            
+            // nothing on queue, we need an new install or open. This may have link data
+            if (!req) {
+                if (self.preferenceHelper.randomizedBundleToken) {
+                    req = [[BranchOpenRequest alloc] initWithCallback:initSessionCallback];
+                } else {
+                    req = [[BranchInstallRequest alloc] initWithCallback:initSessionCallback];
+                }
+                req.callback = initSessionCallback;
+                req.urlString = urlString;
+                
+                [self.requestQueue insert:req at:0];
+                
+                NSString *message = [NSString stringWithFormat:@"request %@ callback %@ link %@", req, req.callback, req.urlString];
+                [[BranchLogger shared] logDebug:message];
 
-	@synchronized (self) {
-        [self removeInstallOrOpen];
-		[BranchOpenRequest setWaitNeededForOpenResponseLock];
-		BranchOpenRequest *req = [[clazz alloc] initWithCallback:initSessionCallback];
-		[self insertRequestAtFront:req];
-        self.initializationStatus = BNCInitStatusInitializing;
-		[self processNextQueueItem];
+            } else {
+                
+                // new link arrival but an install or open is already on queue? need a new open for link resolution.
+                if (urlString) {
+                    req = [[BranchOpenRequest alloc] initWithCallback:initSessionCallback];
+                    req.callback = initSessionCallback;
+                    req.urlString = urlString;
+                    
+                    // put it behind the one that's already on queue
+                    [self.requestQueue insert:req at:1];
+
+                    [[BranchLogger shared] logDebug:@"Link resolution request"];
+                    NSString *message = [NSString stringWithFormat:@"request %@ callback %@ link %@", req, req.callback, req.urlString];
+                    [[BranchLogger shared] logDebug:message];
+                }
+            }
+            
+            self.initializationStatus = BNCInitStatusInitializing;
+            [self processNextQueueItem];
+        });
 	}
 }
 
-- (BOOL)removeInstallOrOpen {
-	@synchronized (self) {
-		if ([self.requestQueue removeInstallOrOpen]) {
-			self.networkCount = 0;
-            return YES;
-        }
-        return NO;
-    }
-}
 
 - (void)handleInitSuccessAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
 

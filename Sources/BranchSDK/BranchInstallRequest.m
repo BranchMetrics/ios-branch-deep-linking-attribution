@@ -20,7 +20,7 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key];
-    NSDictionary *params = [factory dataForInstall];
+    NSDictionary *params = [factory dataForInstallWithURLString:self.urlString];
 
     [serverInterface postRequest:params url:[[BNCServerAPI sharedInstance] installServiceURL] key:key callback:callback];
 }

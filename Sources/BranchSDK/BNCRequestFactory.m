@@ -76,7 +76,7 @@
     return Branch.trackingDisabled;
 }
 
-- (NSDictionary *)dataForInstall {
+- (NSDictionary *)dataForInstallWithURLString:(NSString *)urlString {
     NSMutableDictionary *json = [NSMutableDictionary new];
     
     // All requests
@@ -100,6 +100,10 @@
     [self addAppleReceiptSourceToJSON:json];
     [self addTimestampsToJSON:json];
     
+    if (urlString) {
+        [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
+    }
+    
     [self addAppleAttributionTokenToJSON:json];
 
     // Install Only
@@ -116,7 +120,7 @@
     return json;
 }
 
-- (NSDictionary *)dataForOpen {
+- (NSDictionary *)dataForOpenWithURLString:(NSString *)urlString {
     NSMutableDictionary *json = [NSMutableDictionary new];
     
     // All requests
@@ -142,6 +146,10 @@
     [self addPartnerParametersToJSON:json];
     [self addAppleReceiptSourceToJSON:json];
     [self addTimestampsToJSON:json];
+    
+    if (urlString) {
+        [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
+    }
     
     // Usually sent with install, but retry on open if it didn't get sent
     [self addAppleAttributionTokenToJSON:json];
@@ -279,7 +287,6 @@
 
     [self safeSetValue:self.preferenceHelper.linkClickIdentifier forKey:BRANCH_REQUEST_KEY_LINK_IDENTIFIER onDict:json];
     [self safeSetValue:self.preferenceHelper.spotlightIdentifier forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:json];
-    [self safeSetValue:self.preferenceHelper.universalLinkUrl forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
     [self safeSetValue:self.preferenceHelper.initialReferrer forKey:BRANCH_REQUEST_KEY_INITIAL_REFERRER onDict:json];
     
     // This was only on opens before, cause it can't exist on install.

@@ -161,56 +161,17 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     }
 }
 
-- (BOOL)removeInstallOrOpen {
+- (BranchOpenRequest *)findExistingInstallOrOpen {
     @synchronized (self) {
         for (NSUInteger i = 0; i < self.queue.count; i++) {
             BNCServerRequest *request = [self.queue objectAtIndex:i];
-            // Install extends open, so only need to check open.
+
+            // Install subclasses open, so only need to check open
             if ([request isKindOfClass:[BranchOpenRequest class]]) {
-                [[BranchLogger shared] logDebug:@"Removing open request."];
-                ((BranchOpenRequest *)request).callback = nil;
-                [self remove:request];
-                return YES;
+                return (BranchOpenRequest *)request;
             }
         }
-        return NO;
-    }
-}
-
-- (BranchOpenRequest *)moveInstallOrOpenToFront:(NSInteger)networkCount {
-    @synchronized (self) {
-
-        BOOL requestAlreadyInProgress = networkCount > 0;
-
-        BNCServerRequest *openOrInstallRequest;
-        for (NSUInteger i = 0; i < self.queue.count; i++) {
-            BNCServerRequest *req = [self.queue objectAtIndex:i];
-            if ([req isKindOfClass:[BranchOpenRequest class]]) {
-                
-                // Already in front, nothing to do
-                if (i == 0 || (i == 1 && requestAlreadyInProgress)) {
-                    return (BranchOpenRequest *)req;
-                }
-
-                // Otherwise, pull this request out and stop early
-                openOrInstallRequest = [self removeAt:i];
-                break;
-            }
-        }
-        
-        if (!openOrInstallRequest) {
-            [[BranchLogger shared] logError:@"No install or open request in queue while trying to move it to the front." error:nil];
-            return nil;
-        }
-        
-        if (!requestAlreadyInProgress || !self.queue.count) {
-            [self insert:openOrInstallRequest at:0];
-        }
-        else {
-            [self insert:openOrInstallRequest at:1];
-        }
-        
-        return (BranchOpenRequest *)openOrInstallRequest;
+        return nil;
     }
 }
 
