@@ -443,9 +443,9 @@
 		5FF9DEE528EE797400D62DE1 /* NSString+Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2210582894A33F00C5B190 /* NSString+Branch.h */; };
 		5FF9DEE628EE797400D62DE1 /* UIViewController+Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F22107B2894A33F00C5B190 /* UIViewController+Branch.h */; };
 		5FF9DEE728EE7A7F00D62DE1 /* BranchSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FF2AFDF28E7C22100393216 /* BranchSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C16B97A92B7D980F00FB0631 /* BranchLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = C16B97A72B7D980F00FB0631 /* BranchLogger.h */; };
-		C16B97AA2B7D980F00FB0631 /* BranchLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = C16B97A72B7D980F00FB0631 /* BranchLogger.h */; };
-		C16B97AB2B7D980F00FB0631 /* BranchLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = C16B97A72B7D980F00FB0631 /* BranchLogger.h */; };
+		C16B97A92B7D980F00FB0631 /* BranchLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = C16B97A72B7D980F00FB0631 /* BranchLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C16B97AA2B7D980F00FB0631 /* BranchLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = C16B97A72B7D980F00FB0631 /* BranchLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C16B97AB2B7D980F00FB0631 /* BranchLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = C16B97A72B7D980F00FB0631 /* BranchLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C16B97AC2B7D980F00FB0631 /* BranchLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = C16B97A82B7D980F00FB0631 /* BranchLogger.m */; };
 		C16B97AD2B7D980F00FB0631 /* BranchLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = C16B97A82B7D980F00FB0631 /* BranchLogger.m */; };
 		C16B97AE2B7D980F00FB0631 /* BranchLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = C16B97A82B7D980F00FB0631 /* BranchLogger.m */; };
