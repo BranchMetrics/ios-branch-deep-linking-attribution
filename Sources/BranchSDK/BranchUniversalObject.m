@@ -13,6 +13,7 @@
 #import "BNCEncodingUtils.h"
 #import "Branch.h"
 #import "BranchEvent.h"
+#import "NSMutableDictionary+Branch.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
@@ -74,68 +75,61 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         dictionary[key] = value;
     }
 
-    #define BNCFieldDefinesDictionaryFromSelf
-    #include "BNCFieldDefines.h"
-
-    addString(contentSchema,    $content_schema);
-    addDouble(quantity,         $quantity);
-    addDecimal(price,           $price);
-    addString(currency,         $currency);
-    addString(sku,              $sku);
-    addString(productName,      $product_name);
-    addString(productBrand,     $product_brand);
-    addString(productCategory,  $product_category);
-    addString(productVariant,   $product_variant);
-    addString(condition,        $condition);
-    addDouble(ratingAverage,    $rating_average);
-    addInteger(ratingCount,     $rating_count);
-    addDouble(ratingMax,        $rating_max);
-    addDouble(rating,           $rating);
-    addString(addressStreet,    $address_street);
-    addString(addressCity,      $address_city);
-    addString(addressRegion,    $address_region);
-    addString(addressCountry,   $address_country);
-    addString(addressPostalCode,$address_postal_code);
-    addDouble(latitude,         $latitude);
-    addDouble(longitude,        $longitude);
-    addStringArray(imageCaptions,$image_captions);
-
-    #include "BNCFieldDefines.h"
-
+    [dictionary bnc_addString:self.contentSchema forKey:@"$content_schema"];
+    [dictionary bnc_addDouble:self.quantity forKey:@"$quantity"];
+    [dictionary bnc_addDecimal:self.price forKey:@"$price"];
+    [dictionary bnc_addString:self.currency forKey:@"$currency"];
+    [dictionary bnc_addString:self.sku forKey:@"$sku"];
+    [dictionary bnc_addString:self.productName forKey:@"$product_name"];
+    [dictionary bnc_addString:self.productBrand forKey:@"$product_brand"];
+    [dictionary bnc_addString:self.productCategory forKey:@"$product_category"];
+    [dictionary bnc_addString:self.productVariant forKey:@"$product_variant"];
+    [dictionary bnc_addString:self.condition forKey:@"$condition"];
+    [dictionary bnc_addDouble:self.ratingAverage forKey:@"$rating_average"];
+    [dictionary bnc_addInteger:self.ratingCount forKey:@"$rating_count"];
+    [dictionary bnc_addDouble:self.ratingMax forKey:@"$rating_max"];
+    [dictionary bnc_addDouble:self.rating forKey:@"$rating"];
+    [dictionary bnc_addString:self.addressStreet forKey:@"$address_street"];
+    [dictionary bnc_addString:self.addressCity forKey:@"$address_city"];
+    [dictionary bnc_addString:self.addressRegion forKey:@"$address_region"];
+    [dictionary bnc_addString:self.addressCountry forKey:@"$address_country"];
+    [dictionary bnc_addString:self.addressPostalCode forKey:@"$address_postal_code"];
+    [dictionary bnc_addDouble:self.latitude forKey:@"$latitude"];
+    [dictionary bnc_addDouble:self.longitude forKey:@"$longitude"];
+    [dictionary bnc_addStringArray:self.imageCaptions forKey:@"$image_captions"];
+    
     return dictionary;
 }
 
 + (BranchContentMetadata*_Nonnull) contentMetadataWithDictionary:(NSDictionary*_Nullable)dictionary {
     BranchContentMetadata *object = [BranchContentMetadata new];
     if (!dictionary) return object;
+    
+    // category is on NSMutableDictionary. If dictionary is already mutable, it just returns. Otherwise it does a shallow copy.
+    NSMutableDictionary *dict = [dictionary mutableCopy];
 
-    #define BNCFieldDefinesObjectFromDictionary
-    #include "BNCFieldDefines.h"
-
-    addString(contentSchema,    $content_schema);
-    addDouble(quantity,         $quantity);
-    addDecimal(price,           $price);
-    addString(currency,         $currency);
-    addString(sku,              $sku);
-    addString(productName,      $product_name);
-    addString(productBrand,     $product_brand);
-    addString(productCategory,  $product_category);
-    addString(productVariant,   $product_variant);
-    addString(condition,        $condition);
-    addDouble(ratingAverage,    $rating_average);
-    addInteger(ratingCount,     $rating_count);
-    addDouble(ratingMax,        $rating_max);
-    addDouble(rating,           $rating);
-    addString(addressStreet,    $address_street);
-    addString(addressCity,      $address_city);
-    addString(addressRegion,    $address_region);
-    addString(addressCountry,   $address_country);
-    addString(addressPostalCode,$address_postal_code);
-    addDouble(latitude,         $latitude);
-    addDouble(longitude,        $longitude);
-    addStringArray(imageCaptions,$image_captions);
-
-    #include "BNCFieldDefines.h"
+    object.contentSchema = [dict bnc_getStringForKey:@"$content_schema"];
+    object.quantity = [dict bnc_getDoubleForKey:@"$quantity"];
+    object.price = [dict bnc_getDecimalForKey:@"$price"];
+    object.currency = [dict bnc_getStringForKey:@"$currency"];
+    object.sku = [dict bnc_getStringForKey:@"$sku"];
+    object.productName = [dict bnc_getStringForKey:@"$product_name"];
+    object.productBrand = [dict bnc_getStringForKey:@"$product_brand"];
+    object.productCategory = [dict bnc_getStringForKey:@"$product_category"];
+    object.productVariant = [dict bnc_getStringForKey:@"$product_variant"];
+    object.condition = [dict bnc_getStringForKey:@"$condition"];
+    object.ratingAverage = [dict bnc_getDoubleForKey:@"$rating_average"];
+    object.ratingCount = [dict bnc_getIntForKey:@"$rating_count"];
+    object.ratingMax = [dict bnc_getDoubleForKey:@"$rating_max"];
+    object.rating = [dict bnc_getDoubleForKey:@"$rating"];
+    object.addressStreet = [dict bnc_getStringForKey:@"$address_street"];
+    object.addressCity = [dict bnc_getStringForKey:@"$address_city"];
+    object.addressRegion = [dict bnc_getStringForKey:@"$address_region"];
+    object.addressCountry = [dict bnc_getStringForKey:@"$address_country"];
+    object.addressPostalCode = [dict bnc_getStringForKey:@"$address_postal_code"];
+    object.latitude = [dict bnc_getDoubleForKey:@"$latitude"];
+    object.longitude = [dict bnc_getDoubleForKey:@"$longitude"];
+    object.imageCaptions = [dict bnc_getArrayForKey:@"$image_captions"];
     
     NSSet *fieldsAdded = [NSSet setWithArray:@[
         @"$canonical_identifier",
@@ -558,22 +552,20 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 
 + (BranchUniversalObject*_Nonnull) objectWithDictionary:(NSDictionary*_Null_unspecified)dictionary {
     BranchUniversalObject *object = [BranchUniversalObject new];
-
-    #define BNCFieldDefinesObjectFromDictionary
-    #include "BNCFieldDefines.h"
-
-    addString(canonicalIdentifier,          $canonical_identifier);
-    addString(canonicalUrl,                 $canonical_url);
-    addDate(creationDate,                   $creation_timestamp);
-    addDate(expirationDate,                 $exp_date);
-    addStringArray(keywords,                $keywords);
-    addBoolean(locallyIndex,                $locally_indexable);
-    addString(contentDescription,           $og_description);
-    addString(imageUrl,                     $og_image_url);
-    addString(title,                        $og_title);
-    addBoolean(publiclyIndex,               $publicly_indexable);
-
-    #include "BNCFieldDefines.h"
+    
+    // category is on NSMutableDictionary. If dictionary is already mutable, it just returns. Otherwise it does a shallow copy.
+    NSMutableDictionary *dict = [dictionary mutableCopy];
+    
+    object.canonicalIdentifier = [dict bnc_getStringForKey:@"$canonical_identifier"];
+    object.canonicalUrl = [dict bnc_getStringForKey:@"$canonical_url"];
+    object.creationDate = [dict bnc_getDateForKey:@"$creation_timestamp"];
+    object.expirationDate = [dict bnc_getDateForKey:@"$exp_date"];
+    object.keywords = [dict bnc_getArrayForKey:@"$keywords"];
+    object.locallyIndex = [dict bnc_getBooleanForKey:@"$locally_indexable"];
+    object.contentDescription = [dict bnc_getStringForKey:@"$og_description"];
+    object.imageUrl = [dict bnc_getStringForKey:@"$og_image_url"];
+    object.title = [dict bnc_getStringForKey:@"$og_title"];
+    object.publiclyIndex = [dict bnc_getBooleanForKey:@"$publicly_indexable"];
 
     BranchContentMetadata *data = [BranchContentMetadata contentMetadataWithDictionary:dictionary];
     object.contentMetadata = data;
@@ -587,22 +579,17 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 
     NSDictionary *contentDictionary = [self.contentMetadata dictionary];
     if (contentDictionary.count) [dictionary addEntriesFromDictionary:contentDictionary];
-
-    #define BNCFieldDefinesDictionaryFromSelf
-    #include "BNCFieldDefines.h"
-
-    addString(canonicalIdentifier,          $canonical_identifier);
-    addString(canonicalUrl,                 $canonical_url);
-    addDate(creationDate,                   $creation_timestamp);
-    addDate(expirationDate,                 $exp_date);
-    addStringArray(keywords,                $keywords);
-    addBoolean(locallyIndex,                $locally_indexable);
-    addString(contentDescription,           $og_description);
-    addString(imageUrl,                     $og_image_url);
-    addString(title,                        $og_title);
-    addBoolean(publiclyIndex,               $publicly_indexable);
-
-    #include "BNCFieldDefines.h"
+    
+    [dictionary bnc_addString:self.canonicalIdentifier forKey:@"$canonical_identifier"];
+    [dictionary bnc_addString:self.canonicalUrl forKey:@"$canonical_url"];
+    [dictionary bnc_addDate:self.creationDate forKey:@"$creation_timestamp"];
+    [dictionary bnc_addDate:self.expirationDate forKey:@"$exp_date"];
+    [dictionary bnc_addStringArray:self.keywords forKey:@"$keywords"];
+    [dictionary bnc_addBoolean:self.locallyIndex forKey:@"$locally_indexable"];
+    [dictionary bnc_addString:self.contentDescription forKey:@"$og_description"];
+    [dictionary bnc_addString:self.imageUrl forKey:@"$og_image_url"];
+    [dictionary bnc_addString:self.title forKey:@"$og_title"];
+    [dictionary bnc_addBoolean:self.publiclyIndex forKey:@"$publicly_indexable"];
 
     return dictionary;
 }

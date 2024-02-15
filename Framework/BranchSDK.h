@@ -55,10 +55,10 @@ FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 
 #import <BranchSDK/BNCServerRequest.h>
 // BNCServerRequest includes BNCServerInterface.h
-#import <BranchSDK/BNCServerInterface.h>
+//#import <BranchSDK/BNCServerInterface.h>
 // BNCServerInterface.h includes BNCServerResponse.h and BNCPreferenceHelper.h
 #import <BranchSDK/BNCServerResponse.h>
-#import <BranchSDK/BNCPreferenceHelper.h>
+//#import <BranchSDK/BNCPreferenceHelper.h>
 
 // BNCLinkCache.h uses BNCLinkData.h
 #import <BranchSDK/BNCLinkData.h>

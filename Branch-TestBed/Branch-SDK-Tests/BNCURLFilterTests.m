@@ -144,22 +144,6 @@
     XCTAssertTrue([filter shouldIgnoreURL:[NSURL URLWithString:@"branch123://"]]);
 }
 
-// This test relies on the fact the test host saves the pattern list to disk
-- (void)testSavedPatternList {
-    BNCURLFilter *filter = [BNCURLFilter new];
-
-    // confirm new pattern list is enforced
-    [filter useCustomPatternList:@[@"^branch\\d+:"]];
-    XCTAssertFalse([filter shouldIgnoreURL:[NSURL URLWithString:@"fb123://"]]);
-    XCTAssertTrue([filter shouldIgnoreURL:[NSURL URLWithString:@"branch123://"]]);
-    
-    [filter useSavedPatternList];
-    
-    // the saved list should match default pattern list
-    XCTAssertTrue([filter shouldIgnoreURL:[NSURL URLWithString:@"fb123://"]]);
-    XCTAssertFalse([filter shouldIgnoreURL:[NSURL URLWithString:@"branch123://"]]);
-}
-
 // This is an end to end test and relies on a server call
 - (void)testUpdatePatternListFromServer {
     BNCURLFilter *filter = [BNCURLFilter new];

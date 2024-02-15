@@ -12,7 +12,6 @@
 #import "BNCConfig.h"
 #import "BNCNetworkInterface.h"
 #import "BNCReachability.h"
-#import "NSMutableDictionary+Branch.h"
 #import "BNCDeviceSystem.h"
 
 #if !TARGET_OS_TV

@@ -43,6 +43,7 @@
 #import "UIViewController+Branch.h"
 #import "BNCReferringURLUtility.h"
 #import "BNCServerAPI.h"
+#import "BranchPluginSupport.h"
 #import "BranchLogger.h"
 
 #if !TARGET_OS_TV
@@ -1488,6 +1489,9 @@ static NSString *bnc_branchKey = nil;
                     cache:[[BNCLinkCache alloc] init]
                     preferenceHelper:preferenceHelper
                     key:key];
+            
+            // Workaround for testbed not linking BranchPluginSupport, which prevents unit tests from finding it
+            [BranchPluginSupport instance];
         });
         return branch;
     }
