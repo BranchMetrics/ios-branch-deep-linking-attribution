@@ -199,34 +199,6 @@
     XCTAssert([filterDesc isEqualToString:valueDesc]);
 }
 
-- (void)testSetAPIURL_Example {
-    
-    NSString *url = @"https://www.example.com/";
-    [self.prefHelper setBranchAPIURL:url] ;
-    
-    NSString *urlStored = self.prefHelper.branchAPIURL ;
-    XCTAssert([url isEqualToString:urlStored]);
-}
-
-- (void)testSetAPIURL_InvalidHttp {
-    
-    NSString *url = @"Invalid://www.example.com/";
-    [self.prefHelper setBranchAPIURL:url] ;
-    
-    NSString *urlStored = self.prefHelper.branchAPIURL ;
-    XCTAssert(![url isEqualToString:urlStored]);
-    XCTAssert([urlStored isEqualToString:BNC_API_URL]);
-}
-
-- (void)testSetAPIURL_InvalidEmpty {
-    
-    [self.prefHelper setBranchAPIURL:@""] ;
-    
-    NSString *urlStored = self.prefHelper.branchAPIURL ;
-    XCTAssert(![urlStored isEqualToString:@""]);
-    XCTAssert([urlStored isEqualToString:BNC_API_URL]);
-}
-
 - (void)testSetCDNBaseURL_Example {
     
     NSString *url = @"https://www.example.com/";

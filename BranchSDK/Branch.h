@@ -576,6 +576,12 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 - (void)useEUEndpoints;
 
 /**
+Sets a custom base URL for all calls to the Branch API.
+@param url  Base URL that the Branch API will use.
+*/
++ (void)setAPIUrl:(NSString *)url;
+
+/**
  setDebug is deprecated and all functionality has been disabled.
  
  If you wish to enable logging, please invoke enableLogging.

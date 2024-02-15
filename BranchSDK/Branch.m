@@ -426,6 +426,14 @@ static NSString *bnc_branchKey = nil;
     [BNCServerAPI sharedInstance].useEUServers = YES;
 }
 
++ (void)setAPIUrl:(NSString *)url {
+    if ([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
+        [BNCServerAPI sharedInstance].customAPIURL = url;
+    } else {
+        BNCLogWarning(@"Ignoring invalid custom API URL");
+    }
+}
+
 - (void)setDebug {
     NSLog(@"Branch setDebug is deprecated and all functionality has been disabled. "
           "If you wish to enable logging, please invoke enableLogging. "
