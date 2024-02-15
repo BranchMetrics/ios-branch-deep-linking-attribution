@@ -30,7 +30,7 @@
         self.useTrackingDomain = NO;
         self.useEUServers = NO;
         self.automaticallyEnableTrackingDomain = YES;
-        self.customAPIURL = NULL;
+        self.customAPIURL = nil;
     }
     return self;
 }
