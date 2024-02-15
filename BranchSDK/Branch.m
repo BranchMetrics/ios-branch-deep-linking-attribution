@@ -434,6 +434,14 @@ static NSString *bnc_branchKey = nil;
     [BNCServerAPI sharedInstance].useEUServers = YES;
 }
 
++ (void)setAPIUrl:(NSString *)url {
+    if ([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
+        [BNCServerAPI sharedInstance].customAPIURL = url;
+    } else {
+        [[BranchLogger shared] logWarning:(@"Ignoring invalid custom API URL")];
+    }
+}
+
 - (void)validateSDKIntegration {
     [self validateSDKIntegrationCore];
 }

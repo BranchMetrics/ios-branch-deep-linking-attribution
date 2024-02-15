@@ -577,6 +577,12 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 - (void)useEUEndpoints;
 
 /**
+Sets a custom base URL for all calls to the Branch API.
+@param url  Base URL that the Branch API will use.
+*/
++ (void)setAPIUrl:(NSString *)url;
+
+/**
   @brief        Use the `validateSDKIntegration` method as a debugging aid to assure that you've
                 integrated the Branch SDK correctly.
 
