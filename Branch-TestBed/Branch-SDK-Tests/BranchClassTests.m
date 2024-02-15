@@ -220,4 +220,15 @@
     XCTAssertEqualObjects(generatedURL, expectedURL, @"URL should match the expected format");
 }
 
+- (void)testSetDMAParamsForEEA {
+    
+    XCTAssertFalse([[BNCPreferenceHelper sharedInstance] eeaRegionInitialized]);
+    [Branch setDMAParamsForEEA:FALSE AdPersonalizationConsent:TRUE AdUserDataUsageConsent:TRUE];
+    XCTAssertTrue([[BNCPreferenceHelper sharedInstance] eeaRegionInitialized]);
+    XCTAssertFalse([BNCPreferenceHelper sharedInstance].eeaRegion);
+    XCTAssertTrue([BNCPreferenceHelper sharedInstance].adPersonalizationConsent);
+    XCTAssertTrue([BNCPreferenceHelper sharedInstance].adUserDataUsageConsent);
+
+}
+
 @end

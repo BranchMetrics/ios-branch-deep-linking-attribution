@@ -540,6 +540,12 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
++ (void) setDMAParamsForEEA:(BOOL)eeaRegion AdPersonalizationConsent:(BOOL)adPersonalizationConsent AdUserDataUsageConsent:(BOOL)adUserDataUsageConsent{
+    [BNCPreferenceHelper sharedInstance].eeaRegion = eeaRegion;
+    [BNCPreferenceHelper sharedInstance].adPersonalizationConsent = adPersonalizationConsent;
+    [BNCPreferenceHelper sharedInstance].adUserDataUsageConsent = adUserDataUsageConsent;
+}
+
 #pragma mark - InitSession Permutation methods
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options {
