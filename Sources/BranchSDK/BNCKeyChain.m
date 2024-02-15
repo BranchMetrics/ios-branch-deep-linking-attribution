@@ -9,7 +9,7 @@
 */
 
 #import "BNCKeyChain.h"
-#import "BNCLog.h"
+#import "BranchLogger.h"
 
 // Apple Keychain Reference:
 // https://developer.apple.com/library/content/documentation/Conceptual/
@@ -57,7 +57,7 @@
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)dictionary, (CFTypeRef *)&valueData);
     if (status != errSecSuccess) {
         NSError *localError = [self errorWithKey:key OSStatus:status];
-        BNCLogDebugSDK([NSString stringWithFormat:@"Can't retrieve key: %@.", localError]);
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Can't retrieve key: %@.", localError]];
         if (error) *error = localError;
         if (valueData) CFRelease(valueData);
         return nil;
@@ -106,7 +106,7 @@
     OSStatus status = SecItemDelete((__bridge CFDictionaryRef)dictionary);
     if (status != errSecSuccess && status != errSecItemNotFound) {
         NSError *error = [self errorWithKey:key OSStatus:status];
-        BNCLogDebugSDK([NSString stringWithFormat:@"Can't clear to store key: %@.", error]);
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Can't clear to store key: %@.", error]];
     }
 
     dictionary[(__bridge id)kSecValueData] = valueData;
@@ -122,7 +122,7 @@
     status = SecItemAdd((__bridge CFDictionaryRef)dictionary, NULL);
     if (status) {
         NSError *error = [self errorWithKey:key OSStatus:status];
-        BNCLogDebugSDK([NSString stringWithFormat:@"Can't store key: %@.", error]);
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Can't store key: %@.", error]];
         return error;
     }
     return nil;
@@ -140,7 +140,7 @@
     if (status == errSecItemNotFound) status = errSecSuccess;
     if (status) {
         NSError *error = [self errorWithKey:key OSStatus:status];
-        BNCLogDebugSDK([NSString stringWithFormat:@"Can't remove key: %@.", error]);
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Can't remove key: %@.", error]];
         return error;
     }
     return nil;
@@ -154,8 +154,8 @@
 
         // First store a value:
         NSError *error = [self storeDate:[NSDate date] forService:@"BranchKeychainService" key:@"Temp" cloudAccessGroup:nil];
-        if (error) BNCLogDebugSDK([NSString stringWithFormat:@"Error storing temp value: %@.", error]);
-        
+        if (error) [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Error storing temp value: %@.", error]];
+
         NSDictionary* dictionary = @{
             (__bridge id)kSecClass:                 (__bridge id)kSecClassGenericPassword,
             (__bridge id)kSecAttrService:           @"BranchKeychainService",
@@ -167,8 +167,8 @@
         OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)dictionary, (CFTypeRef*)&resultDictionary);
         if (status == errSecItemNotFound) return nil;
         if (status != errSecSuccess) {
-            BNCLogDebugSDK([NSString stringWithFormat:@"Get securityAccessGroup returned(%ld): %@.",
-                (long) status, [self errorWithKey:nil OSStatus:status]]);
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Get securityAccessGroup returned(%ld): %@.",
+                                             (long) status, [self errorWithKey:nil OSStatus:status]]];
             return nil;
         }
         NSString*group =

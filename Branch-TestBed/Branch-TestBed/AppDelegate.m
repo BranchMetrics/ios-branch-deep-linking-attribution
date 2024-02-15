@@ -12,10 +12,9 @@
 #import "ViewController.h"
 #import "Branch.h"
 #import "BNCEncodingUtils.h"
-#import "BNCLog.h"
 
 AppDelegate* appDelegate = nil;
-void APPLogHookFunction(NSDate*_Nonnull timestamp, BNCLogLevel level, NSString*_Nullable message);
+void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSString*_Nullable message);
 
 @implementation AppDelegate
 
@@ -23,8 +22,6 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BNCLogLevel level, NSString*_
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     appDelegate = self;
-    BNCLogSetOutputFunction(APPLogHookFunction);
-    BNCLogSetDisplayLevel(BNCLogLevelAll);
 
     /*
        Set Branch.useTestBranchKey = YES; to have Branch use the test key that's in the app's
@@ -34,14 +31,20 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
     Branch *branch = [Branch getInstance];
-        
+    
+    // Change the Branch base API URL
+    //[Branch setAPIUrl:@"https://api3.branch.io"];
+    
     // test pre init support
     //[self testDispatchToIsolationQueue:branch]
-
-    // Comment out (for match guarantee testing) / or un-comment to toggle debugging:
-    // Note: Unit tests will fail if 'setDebug' is set.
-    // [branch setDebug];
-     [branch enableLogging];
+    [branch enableLoggingAtLevel:BranchLogLevelVerbose withCallback:^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+        // Handle the log message and error here. For example, printing to the console:
+        if (error) {
+            NSLog(@"[BranchLog] Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription);
+        } else {
+            NSLog(@"[BranchLog] Level: %lu, Message: %@", (unsigned long)logLevel, message);
+        }
+    }];
     
     // Comment out in production. Un-comment to test your Branch SDK Integration:
     //[branch validateSDKIntegration];
@@ -209,7 +212,7 @@ didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
  */
 
 // hook Function for SDK - Its for taking control of Logging messages.
-void APPLogHookFunction(NSDate*_Nonnull timestamp, BNCLogLevel level, NSString*_Nullable message) {
+void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSString*_Nullable message) {
     [appDelegate processLogMessage:message];
 }
 

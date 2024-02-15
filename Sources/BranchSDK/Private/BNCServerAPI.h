@@ -33,6 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 // Used to enable unit tests without regard for ATT authorization status
 @property (nonatomic, assign, readwrite) BOOL automaticallyEnableTrackingDomain;
 
+@property (nonatomic, copy, readwrite, nullable) NSString *customAPIURL;
+
 @end
 
 NS_ASSUME_NONNULL_END

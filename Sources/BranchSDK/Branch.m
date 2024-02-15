@@ -39,11 +39,12 @@
 #import "BranchEvent.h"
 #import "BNCPasteboard.h"
 #import "NSError+Branch.h"
-#import "BNCLog.h"
+#import "BranchLogger.h"
 #import "UIViewController+Branch.h"
 #import "BNCReferringURLUtility.h"
 #import "BNCServerAPI.h"
 #import "BranchPluginSupport.h"
+#import "BranchLogger.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
@@ -81,7 +82,6 @@ NSString * const BNCPurchasedEvent = @"Purchased";
 NSString * const BNCShareInitiatedEvent = @"Share Started";
 NSString * const BNCShareCompletedEvent = @"Share Completed";
 
-static NSString * const BNCLogLevelKey = @"io.branch.sdk.BNCLogLevel";
 NSString * const BNCSpotlightFeature = @"spotlight";
 
 #ifndef CSSearchableItemActivityIdentifier
@@ -251,14 +251,14 @@ static Class bnc_networkServiceClass = NULL;
 + (void)setNetworkServiceClass:(Class)networkServiceClass {
     @synchronized ([Branch class]) {
         if (bnc_networkServiceClass) {
-            BNCLogError(@"The Branch network service class is already set. It can be set only once.");
+            [[BranchLogger shared] logError:@"The Branch network service class is already set. It can be set only once." error:nil];
             return;
         }
         if (![networkServiceClass conformsToProtocol:@protocol(BNCNetworkServiceProtocol)]) {
-            BNCLogError([NSString stringWithFormat:@"Class '%@' doesn't conform to protocol '%@'.",
-                NSStringFromClass(networkServiceClass),
-                NSStringFromProtocol(@protocol(BNCNetworkServiceProtocol))]
-            );
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Class '%@' doesn't conform to protocol '%@'.",
+                                             NSStringFromClass(networkServiceClass),
+                                             NSStringFromProtocol(@protocol(BNCNetworkServiceProtocol))] error:nil];
+
             return;
         }
         bnc_networkServiceClass = networkServiceClass;
@@ -317,7 +317,7 @@ static NSString *bnc_branchKey = nil;
 + (void)setUseTestBranchKey:(BOOL)useTestKey {
     @synchronized (self) {
         if (bnc_branchKey && !!useTestKey != !!bnc_useTestBranchKey) {
-            BNCLogError(@"Can't switch the Branch key once it's in use.");
+            [[BranchLogger shared] logError:@"Can't switch the Branch key once it's in use." error:nil];
             return;
         }
         bnc_useTestBranchKey = useTestKey;
@@ -335,7 +335,7 @@ static NSString *bnc_branchKey = nil;
     [self setBranchKey:branchKey error:&error];
 
     if (error) {
-        BNCLogError([NSString stringWithFormat:@"Branch init error: %@", error.localizedDescription]);
+        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Branch init error: %@", error.localizedDescription] error:error];
     }
 }
 
@@ -350,6 +350,8 @@ static NSString *bnc_branchKey = nil;
 
             NSString *errorMessage = [NSString stringWithFormat:@"Branch key can only be set once."];
             *error = [NSError branchErrorWithCode:BNCInitError localizedMessage:errorMessage];
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Branch key can only be set once."] error:*error];
+
             return;
         }
 
@@ -358,15 +360,13 @@ static NSString *bnc_branchKey = nil;
 
             NSString *errorMessage = [NSString stringWithFormat:@"Invalid Branch key of type '%@'.", typeName];
             *error = [NSError branchErrorWithCode:BNCInitError localizedMessage:errorMessage];
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Invalid Branch key of type '%@'.", typeName] error:*error];
             return;
         }
 
         if ([branchKey hasPrefix:@"key_test"]) {
             bnc_useTestBranchKey = YES;
-            BNCLogWarning(
-                @"You are using your test app's Branch Key. "
-                 "Remember to change it to live Branch Key for production deployment."
-            );
+            [[BranchLogger shared] logWarning: @"You are using your test app's Branch Key. Remember to change it to live Branch Key for production deployment."];
 
         } else if ([branchKey hasPrefix:@"key_live"]) {
             bnc_useTestBranchKey = NO;
@@ -374,6 +374,7 @@ static NSString *bnc_branchKey = nil;
         } else {
             NSString *errorMessage = [NSString stringWithFormat:@"Invalid Branch key format. Did you add your Branch key to your Info.plist? Passed key is '%@'.", branchKey];
             *error = [NSError branchErrorWithCode:BNCInitError localizedMessage:errorMessage];
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Invalid Branch key format. Did you add your Branch key to your Info.plist? Passed key is '%@'.", branchKey] error:*error];
             return;
         }
 
@@ -405,9 +406,7 @@ static NSString *bnc_branchKey = nil;
 
         self.branchKey = branchKey;
         if (!bnc_branchKey) {
-            BNCLogError(@"Your Branch key is not set in your Info.plist file. See "
-                "https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/#configure-xcode-project"
-                " for configuration instructions.");
+            [[BranchLogger shared] logError:@"Your Branch key is not set in your Info.plist file. See https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/#configure-xcode-project for configuration instructions." error:nil];
         }
         return bnc_branchKey;
     }
@@ -420,20 +419,28 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)enableLogging {
-    BNCLogSetDisplayLevel(BNCLogLevelDebug);
+    BranchLogger *logger = [BranchLogger shared];
+    logger.loggingEnabled = YES;
+    logger.logLevelThreshold = BranchLogLevelDebug;
+}
+
+- (void)enableLoggingAtLevel:(BranchLogLevel)logLevel withCallback:(nullable BranchLogCallback)callback {
+    BranchLogger *logger = [BranchLogger shared];
+    logger.loggingEnabled = YES;
+    logger.logLevelThreshold = logLevel;
+    logger.logCallback = callback;
 }
 
 - (void)useEUEndpoints {
     [BNCServerAPI sharedInstance].useEUServers = YES;
 }
 
-- (void)setDebug {
-    NSLog(@"Branch setDebug is deprecated and all functionality has been disabled. "
-          "If you wish to enable logging, please invoke enableLogging. "
-          "If you wish to simulate installs, please see add a Test Device "
-          "(https://help.branch.io/using-branch/docs/adding-test-devices) "
-          "then reset your test device's data "
-          "(https://help.branch.io/using-branch/docs/adding-test-devices#section-resetting-your-test-device-data).");
++ (void)setAPIUrl:(NSString *)url {
+    if ([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
+        [BNCServerAPI sharedInstance].customAPIURL = url;
+    } else {
+        [[BranchLogger shared] logWarning:(@"Ignoring invalid custom API URL")];
+    }
 }
 
 - (void)validateSDKIntegration {
@@ -472,11 +479,6 @@ static NSString *bnc_branchKey = nil;
 
 - (void)accountForFacebookSDKPreventingAppLaunch {
     // deprecated
-}
-
-- (void)suppressWarningLogs {
-    NSLog(@"suppressWarningLogs is deprecated and all functionality has been disabled. "
-          "If you wish to turn off all logging, please invoke BNCLogSetDisplayLevel(BNCLogLevelNone).");
 }
 
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value {
@@ -539,6 +541,12 @@ static NSString *bnc_branchKey = nil;
     @synchronized(self) {
         [BNCPreferenceHelper sharedInstance].referringURLQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID][BRANCH_URL_QUERY_PARAMETERS_VALIDITY_WINDOW_KEY] = @(validityWindow);
     }
+}
+
++ (void) setDMAParamsForEEA:(BOOL)eeaRegion AdPersonalizationConsent:(BOOL)adPersonalizationConsent AdUserDataUsageConsent:(BOOL)adUserDataUsageConsent{
+    [BNCPreferenceHelper sharedInstance].eeaRegion = eeaRegion;
+    [BNCPreferenceHelper sharedInstance].adPersonalizationConsent = adPersonalizationConsent;
+    [BNCPreferenceHelper sharedInstance].adUserDataUsageConsent = adUserDataUsageConsent;
 }
 
 #pragma mark - InitSession Permutation methods
@@ -795,8 +803,6 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier {
-    BNCLogDebugSDK(@"continueUserActivity:");
-
     if (userActivity.referrerURL) {
         self.preferenceHelper.initialReferrer = userActivity.referrerURL.absoluteString;
     }
@@ -952,7 +958,7 @@ static NSString *bnc_branchKey = nil;
 
 - (void)setSKAdNetworkCalloutMaxTimeSinceInstall:(NSTimeInterval)maxTimeInterval {
     if (@available(iOS 16.1, macCatalyst 16.1, *)) {
-        BNCLogDebug(@"This is no longer supported for iOS 16.1+ - SKAN4.0");
+        [[BranchLogger shared] logDebug:@"This is no longer supported for iOS 16.1+ - SKAN4.0"];
     } else {
         [BNCSKAdNetwork sharedInstance].maxTimeSinceInstall = maxTimeInterval;
     }
@@ -1024,7 +1030,7 @@ static NSString *bnc_branchKey = nil;
             (Branch.trackingDisabled)
             ? [NSError branchErrorWithCode:BNCTrackingDisabledError]
             : [NSError branchErrorWithCode:BNCInitError];
-        BNCLogError(@"Branch is not initialized, cannot logout.");
+        [[BranchLogger shared] logError:@"Branch is not initialized, cannot logout." error:error];
         if (callback) {callback(NO, error);}
         return;
     }
@@ -1434,7 +1440,7 @@ static NSString *bnc_branchKey = nil;
             // 2. Check if URL is branch URL and if yes -> store it.
             [item loadItemForTypeIdentifier:UTTypeURL.identifier options:NULL completionHandler:^(NSURL *url, NSError * _Null_unspecified error) {
                 if (error) {
-                    BNCLogError([NSString stringWithFormat:@"%@", error]);
+                    [[BranchLogger shared] logError:[NSString stringWithFormat:@"%@", error] error:error];
                 }
                 else if ([Branch isBranchLink:url.absoluteString]) {
                     [self.preferenceHelper setLocalUrl:[url absoluteString]];
@@ -1460,8 +1466,7 @@ static NSString *bnc_branchKey = nil;
             // If there was stored key and it isn't the same as the currently used (or doesn't exist), we need to clean up
             // Note: Link Click Identifier is not cleared because of the potential for that to mess up a deep link
             if (preferenceHelper.lastRunBranchKey && ![key isEqualToString:preferenceHelper.lastRunBranchKey]) {
-                BNCLogWarning(@"The Branch Key has changed, clearing relevant items.");
-
+                [[BranchLogger shared] logWarning:@"The Branch Key has changed, clearing relevant items."];
                 preferenceHelper.appVersion = nil;
                 preferenceHelper.randomizedDeviceToken = nil;
                 preferenceHelper.sessionID = nil;
@@ -1590,7 +1595,7 @@ static NSString *bnc_branchKey = nil;
          linkData:linkData
          linkCache:self.linkCache];
         
-        BNCLogDebug(@"Creating a custom URL synchronously.");
+        [[BranchLogger shared] logDebug:@"Creating a custom URL synchronously."];
         BNCServerResponse *serverResponse = [req makeRequest:self.serverInterface key:self.class.branchKey];
         shortURL = [req processResponse:serverResponse];
         
@@ -1740,7 +1745,7 @@ static NSString *bnc_branchKey = nil;
         self.initializationStatus = BNCInitStatusUninitialized;
         [self.requestQueue persistImmediately];
         [BranchOpenRequest setWaitNeededForOpenResponseLock];
-        BNCLogDebugSDK(@"Application resigned active.");
+        [[BranchLogger shared] logDebug:@"Application resigned active."];
     }
 }
 
@@ -1804,8 +1809,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
     // On network problems, or Branch down, call the other callbacks and stop processing.
     else {
-        BNCLogDebugSDK(@"Network error: failing queued requests.");
-
+        [[BranchLogger shared] logDebug:@"Network error: failing queued requests."];
         // First, gather all the requests to fail
         NSMutableArray *requestsToFail = [[NSMutableArray alloc] init];
         for (int i = 0; i < self.requestQueue.queueDepth; i++) {
@@ -1877,7 +1881,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             // If tracking is disabled, then do not check for install event.  It won't exist.
             if (!Branch.trackingDisabled) {
                 if (![req isKindOfClass:[BranchInstallRequest class]] && !self.preferenceHelper.randomizedBundleToken) {
-                    BNCLogError(@"User session has not been initialized!");
+                    [[BranchLogger shared] logError:@"User session has not been initialized!" error:nil];
                     BNCPerformBlockOnMainThreadSync(^{
                         [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
                     });
@@ -1885,7 +1889,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
                 } else if (![req isKindOfClass:[BranchOpenRequest class]] &&
                     (!self.preferenceHelper.randomizedDeviceToken || !self.preferenceHelper.sessionID)) {
-                    BNCLogError(@"Missing session items!");
+                    [[BranchLogger shared] logError:@"Missing session items!" error:nil];
                     BNCPerformBlockOnMainThreadSync(^{
                         [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
                     });
@@ -1948,7 +1952,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 // Some methods require init before they are called.  Instead of returning an error, we try to fix the situation by calling init ourselves.
 - (void)initSafetyCheck {
     if (self.initializationStatus == BNCInitStatusUninitialized) {
-        BNCLogDebug(@"Branch avoided an error by preemptively initializing.");
+        [[BranchLogger shared] logDebug:@"Branch avoided an error by preemptively initializing."];
         [self initUserSessionAndCallCallback:NO sceneIdentifier:nil];
     }
 }
@@ -1958,8 +1962,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // ignore lifecycle calls while waiting for a plugin runtime.
     @synchronized (self) {
         if (self.deferInitForPluginRuntime) {
-            //NSString *debug = [NSString stringWithFormat:@"Init is deferred, ignoring call: %@", NSThread.callStackSymbols];
-            //BNCLogDebug(debug);
             return;
         }
     }
@@ -1970,18 +1972,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             urlstring = self.preferenceHelper.universalLinkUrl;
         } else if (self.preferenceHelper.externalIntentURI.length) {
             urlstring = self.preferenceHelper.externalIntentURI;
-        }
-
-        if (urlstring.length) {
-            NSArray<BNCKeyValue*> *queryItems = [BNCEncodingUtils queryItems:[NSURL URLWithString:urlstring]];
-            for (BNCKeyValue*item in queryItems) {
-                if ([item.key isEqualToString:@"BranchLogLevel"]) {
-                    BNCLogLevel logLevel = BNCLogLevelFromString(item.value);
-                    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInteger:logLevel] forKey:BNCLogLevelKey];
-                    BNCLogSetDisplayLevel(logLevel);
-                    NSLog(@"[io.branch.sdk] BNCLogLevel set to %ld.", (long) logLevel);
-                }
-            }
         }
 
         // If the session is not yet initialized
@@ -2121,8 +2111,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             [branchSharingController configureControlWithData:latestReferringParams];
         }
         else {
-            BNCLogWarning([NSString stringWithFormat:@"The automatic deeplink view controller '%@' for key '%@' does not implement 'configureControlWithData:'.",
-                branchSharingController, key]);
+            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"The automatic deeplink view controller '%@' for key '%@' does not implement 'configureControlWithData:'.", branchSharingController, key]];
         }
 
         self.deepLinkPresentingController = [UIViewController bnc_currentViewController];
@@ -2134,7 +2123,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 [branchSharingController configureControlWithData:latestReferringParams];
             }
             else {
-                BNCLogWarning(@"View controller does not implement configureControlWithData:");
+                [[BranchLogger shared] logWarning:@"View controller does not implement configureControlWithData:"];
             }
             branchSharingController.deepLinkingCompletionDelegate = self;
             switch (deepLinkInstance.option) {
@@ -2196,7 +2185,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 [branchSharingController configureControlWithData:latestReferringParams];
             }
             else {
-                BNCLogWarning(@"View controller does not implement configureControlWithData:");
+                [[BranchLogger shared] logWarning:@"View controller does not implement configureControlWithData:"];
             }
             branchSharingController.deepLinkingCompletionDelegate = self;
             if ([self.deepLinkPresentingController presentedViewController]) {

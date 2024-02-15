@@ -9,6 +9,7 @@
 #import "BNCSystemObserver.h"
 #import "BNCConfig.h"
 #import "BranchConstants.h"
+#import "BNCPreferenceHelper.h"
 
 @implementation BNCServerAPI
 
@@ -29,6 +30,7 @@
         self.useTrackingDomain = NO;
         self.useEUServers = NO;
         self.automaticallyEnableTrackingDomain = YES;
+        self.customAPIURL = nil;
     }
     return self;
 }
@@ -77,6 +79,10 @@
 
 // Linking endpoints are not used for Ads tracking
 - (NSString *)getBaseURLForLinkingEndpoints {
+    if (self.customAPIURL) {
+        return self.customAPIURL;
+    }
+    
     NSString * urlString;
     if (self.useEUServers){
         urlString = BNC_EU_API_URL;
@@ -88,6 +94,11 @@
 }
 
 - (NSString *)getBaseURL {
+    //Check if user has set a custom API base URL
+    if (self.customAPIURL) {
+        return self.customAPIURL;
+    }
+    
     if (self.automaticallyEnableTrackingDomain) {
         self.useTrackingDomain = [self optedIntoIDFA];
     }

@@ -9,7 +9,7 @@
 #import "BranchEvent.h"
 #import "BranchConstants.h"
 #import "NSError+Branch.h"
-#import "BNCLog.h"
+#import "BranchLogger.h"
 #import "BNCCallbackMap.h"
 #import "BNCReachability.h"
 #import "BNCSKAdNetwork.h"
@@ -97,14 +97,13 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
                 BOOL lockWin = [[BNCSKAdNetwork sharedInstance] getLockedStatusFromDataResponse:dictionary];
                 BOOL shouldCallUpdatePostback = [[BNCSKAdNetwork sharedInstance] shouldCallPostbackForDataResponse:dictionary];
             
-                BNCLogDebug([NSString stringWithFormat:@"SKAN 4.0 params - conversionValue:%@ coarseValue:%@, locked:%d, shouldCallPostback:%d, currentWindow:%d, firstAppLaunchTime: %@", conversionValue, coarseConversionValue, lockWin, shouldCallUpdatePostback, (int)[BNCPreferenceHelper sharedInstance].skanCurrentWindow, [BNCPreferenceHelper sharedInstance].firstAppLaunchTime]);
-                
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"SKAN 4.0 params - conversionValue:%@ coarseValue:%@, locked:%d, shouldCallPostback:%d, currentWindow:%d, firstAppLaunchTime: %@", conversionValue, coarseConversionValue, lockWin, shouldCallUpdatePostback, (int)[BNCPreferenceHelper sharedInstance].skanCurrentWindow, [BNCPreferenceHelper sharedInstance].firstAppLaunchTime]];
                 if(shouldCallUpdatePostback){
                     [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue: conversionValue.longValue coarseValue:coarseConversionValue lockWindow:lockWin completionHandler:^(NSError * _Nullable error) {
                         if (error) {
-                            BNCLogError([NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]]);
+                            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
                         } else {
-                            BNCLogDebug([NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue]);
+                            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue]];
                         }
                     }];
                 }
@@ -112,9 +111,9 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
             } else if (@available(iOS 15.4, macCatalyst 15.4, *)) {
                 [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:conversionValue.intValue completionHandler: ^(NSError *error){
                     if (error) {
-                        BNCLogError([NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]]);
+                        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
                     } else {
-                        BNCLogDebug([NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue]);
+                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue]];
                     }
                 }];
             } else {
@@ -273,7 +272,8 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
 
 - (void)logEventWithCompletion:(void (^_Nullable)(BOOL success, NSError * _Nullable error))completion {
     if (![_eventName isKindOfClass:[NSString class]] || _eventName.length == 0) {
-        BNCLogError([NSString stringWithFormat:@"Invalid event type '%@' or empty string.", NSStringFromClass(_eventName.class)]);
+        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Invalid event type '%@' or empty string.", NSStringFromClass(_eventName.class)] error:nil];
+
         if (completion) {
             NSError *error = [NSError branchErrorWithCode:BNCGeneralError localizedMessage: @"Invalid event type"];
             completion(NO, error);
@@ -449,15 +449,15 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
             }
             
             [self logEvent];
-            BNCLogDebug([NSString stringWithFormat:@"Created and logged event from transaction: %@", self.description]);
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Created and logged event from transaction: %@", self.description]];
         } else {
-            BNCLogError([NSString stringWithFormat:@"Unable to log Branch event from transaction. No products were found with the product ID."]);
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Unable to log Branch event from transaction. No products were found with the product ID."] error:nil];
         }
     });
 }
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
-    BNCLogError([NSString stringWithFormat:@"Product request failed: %@", error]);
+    [[BranchLogger shared] logError:[NSString stringWithFormat:@"Product request failed: %@", error] error:error];
     [[BNCEventUtils shared] removeEvent:self];
 }
 

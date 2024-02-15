@@ -13,6 +13,11 @@
 #import "BNCAppGroupsData.h"
 #import "BNCPartnerParameters.h"
 
+@interface BNCPreferenceHelper(Test)
+// Expose internal private method to clear EEA data
+- (void)writeObjectToDefaults:(NSString *)key value:(NSObject *)value;
+@end
+
 @interface BranchClassTests : XCTestCase
 @property (nonatomic, strong) Branch *branch;
 @end
@@ -218,6 +223,22 @@
     NSString *expectedURL = @"https://bnc.lt/a/key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB?tags=tag1&tags=tag2&alias=alias1&feature=feature1&stage=stage1&source=ios&data=eyJrZXkiOiJ2YWx1ZSJ9";
     
     XCTAssertEqualObjects(generatedURL, expectedURL, @"URL should match the expected format");
+}
+
+- (void)testSetDMAParamsForEEA {
+    XCTAssertFalse([[BNCPreferenceHelper sharedInstance] eeaRegionInitialized]);
+    
+    [Branch setDMAParamsForEEA:FALSE AdPersonalizationConsent:TRUE AdUserDataUsageConsent:TRUE];
+    XCTAssertTrue([[BNCPreferenceHelper sharedInstance] eeaRegionInitialized]);
+    XCTAssertFalse([BNCPreferenceHelper sharedInstance].eeaRegion);
+    XCTAssertTrue([BNCPreferenceHelper sharedInstance].adPersonalizationConsent);
+    XCTAssertTrue([BNCPreferenceHelper sharedInstance].adUserDataUsageConsent);
+
+    // Manually clear values after testing
+    // By design, this API is meant to be set once and always set. However, in a test scenario it needs to be cleared.
+    [[BNCPreferenceHelper sharedInstance] writeObjectToDefaults:@"bnc_dma_eea" value:nil];
+    [[BNCPreferenceHelper sharedInstance] writeObjectToDefaults:@"bnc_dma_ad_personalization" value:nil];
+    [[BNCPreferenceHelper sharedInstance] writeObjectToDefaults:@"bnc_dma_ad_user_data" value:nil];
 }
 
 @end

@@ -8,7 +8,7 @@
 
 #import "BranchScene.h"
 #import "Branch.h"
-#import "BNCLog.h"
+#import "BranchLogger.h"
 
 @implementation BranchScene
 
@@ -40,7 +40,7 @@
 
 - (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts NS_EXTENSION_UNAVAILABLE("BranchScene does not support Extensions") {
     if (URLContexts.count != 1) {
-        BNCLogWarning(@"Branch only supports a single URLContext");
+        [[BranchLogger shared] logWarning:@"Branch only supports a single URLContext"];
     }
     
     UIOpenURLContext *context = [URLContexts allObjects].firstObject;

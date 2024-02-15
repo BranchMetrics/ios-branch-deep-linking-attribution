@@ -9,7 +9,6 @@
 #import "BNCDeviceInfo.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
-#import "BNCLog.h"
 #import "BNCConfig.h"
 #import "BNCNetworkInterface.h"
 #import "BNCReachability.h"

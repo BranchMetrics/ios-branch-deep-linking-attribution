@@ -6,7 +6,7 @@
 //
 //
 
-#import "BNCLog.h"
+#import "BranchLogger.h"
 #import "BranchJsonConfig.h"
 
 NSString * _Nonnull const BranchJsonConfigDebugModeOption = @"debugMode";
@@ -56,12 +56,13 @@ NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPast
     NSError *error;
     id object = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
     if (!object || error) {
-        BNCLogError([NSString stringWithFormat:@"Failed to parse branch.json. Error: %@", error.localizedDescription]);
+        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Failed to parse branch.json. Error: %@", error.localizedDescription] error:error];
         return;
     }
 
     if (![object isKindOfClass:NSDictionary.class]) {
-        BNCLogError(@"Contents of branch.json should be a JSON object.");
+        [[BranchLogger shared] logError:@"Contents of branch.json should be a JSON object." error:nil];
+
         return;
     }
 
@@ -71,12 +72,11 @@ NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPast
 - (NSData *)configFileContents
 {
     if (!self.configFileURL) return nil;
-    BNCLogDebug([NSString stringWithFormat:@"Loading %@", self.configFileURL.pathComponents.lastObject]);
-
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Loading %@", self.configFileURL.pathComponents.lastObject]];
     NSError *error;
     NSData *data = [NSData dataWithContentsOfURL:self.configFileURL options:0 error:&error];
     if (!data || error) {
-        BNCLogError([NSString stringWithFormat:@"Failed to load %@. Error: %@", self.configFileURL, error.localizedDescription]);
+        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Failed to load %@. Error: %@", self.configFileURL, error.localizedDescription] error:error];
         return nil;
     }
     return data;
@@ -109,7 +109,7 @@ NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPast
     }
     
     if (!configFileURL) {
-        BNCLogDebug(@"No branch.json in app bundle.");
+        [[BranchLogger shared] logDebug:@"No branch.json in app bundle."];
         return;
     }
 

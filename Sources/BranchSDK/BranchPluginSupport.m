@@ -11,7 +11,6 @@
 #import "BNCDeviceInfo.h"
 #import "BNCPreferenceHelper.h"
 #import "Branch.h"
-#import "BNCLog.h"
 #import "BNCConfig.h"
 
 @implementation BranchPluginSupport
@@ -53,12 +52,6 @@
 }
 
 #pragma mark - Server URL methods
-
-// With the change to support Apple's tracking domain feature, this API no longer works. See SDK-2118
-// Overrides base API URL
-+ (void)setAPIUrl:(NSString *)url {
-    [[BNCPreferenceHelper sharedInstance] setBranchAPIURL:url];
-}
 
 // Overrides base CDN URL
 + (void)setCDNBaseUrl:(NSString *)url {

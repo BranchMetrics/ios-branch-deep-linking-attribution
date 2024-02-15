@@ -7,7 +7,7 @@
 //
 
 #import "BNCNetworkInterface.h"
-#import "BNCLog.h"
+#import "BranchLogger.h"
 
 #import <net/if.h>
 #import <ifaddrs.h>
@@ -49,16 +49,14 @@ typedef NS_ENUM(NSInteger, BNCNetworkAddressType) {
     // Retrieve the current interfaces - returns 0 on success
     if (getifaddrs(&interfaces) != 0) {
         int e = errno;
-        BNCLogError([NSString stringWithFormat:@"Can't read ip address: (%d): %s.", e, strerror(e)]);
+        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Can't read ip address: (%d): %s.", e, strerror(e)] error:nil];
         goto exit;
     }
 
     // Loop through linked list of interfaces --
     struct ifaddrs *interface = NULL;
     for (interface=interfaces; interface; interface=interface->ifa_next) {
-        
-        // BNCLogDebugSDK(@"Found %s: %x.", interface->ifa_name, interface->ifa_flags);
-        
+                
         // Check the state: IFF_RUNNING, IFF_UP, IFF_LOOPBACK, etc.
         if ((interface->ifa_flags & IFF_UP) && (interface->ifa_flags & IFF_RUNNING) && !(interface->ifa_flags & IFF_LOOPBACK)) {
         } else {

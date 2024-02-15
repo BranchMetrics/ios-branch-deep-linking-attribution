@@ -28,6 +28,7 @@ FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 #import "BranchLastAttributedTouchData.h"
 
 #import "BranchDeepLinkingController.h"
+#import "BranchLogger.h"
 
 #if !TARGET_OS_TV
 // tvOS does not support these features

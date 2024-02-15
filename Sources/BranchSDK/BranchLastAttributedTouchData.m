@@ -9,7 +9,7 @@
 #import "BranchLastAttributedTouchData.h"
 #import "BranchLATDRequest.h"
 #import "BNCJSONUtility.h"
-#import "BNCLog.h"
+#import "BranchLogger.h"
 
 @implementation BranchLastAttributedTouchData
 
@@ -33,7 +33,7 @@
     if (window > -1 && window < 365) {
         request.attributionWindow = window;
     } else {
-        BNCLogWarning(@"Attribution window is outside the expected range, using 30 days.");
+        [[BranchLogger shared] logWarning:@"Attribution window is outside the expected range, using 30 days."];
     }
     
     [request makeRequest:serverInterface key:key callback:^(BNCServerResponse *response, NSError *error) {

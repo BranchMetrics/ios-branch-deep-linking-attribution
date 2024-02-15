@@ -9,7 +9,6 @@
 */
 
 #import "BNCTestCase.h"
-#import "BNCLog.h"
 #import "Branch.h"
 #import "BNCApplication+BNCTest.h"
 
@@ -96,7 +95,6 @@ static NSString* savedRandomizedBundleToken = nil;
 
 + (void) initialize {
     if (self != [BNCTestCase self]) return;
-    BNCLogSetDisplayLevel(BNCLogLevelAll);
 
     savedRandomizedBundleToken = [BNCPreferenceHelper sharedInstance].randomizedBundleToken;
     [Branch clearAll];

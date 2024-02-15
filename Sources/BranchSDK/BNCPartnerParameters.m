@@ -7,7 +7,7 @@
 //
 
 #import "BNCPartnerParameters.h"
-#import "BNCLog.h"
+#import "BranchLogger.h"
 
 @interface BNCPartnerParameters()
 @property (nonatomic, strong, readwrite) NSMutableDictionary<NSString *, NSMutableDictionary<NSString *, NSString *> *> *parameters;
@@ -54,7 +54,7 @@
     if ([self sha256HashSanityCheckValue:value]) {
         [self addParameterWithName:name value:value partnerName:@"fb"];
     } else {
-        BNCLogWarning(@"Partner parameter does not appear to be SHA256 hashed. Dropping the parameter.");
+        [[BranchLogger shared] logWarning:@"Partner parameter does not appear to be SHA256 hashed. Dropping the parameter."];
     }
 }
 
@@ -62,7 +62,7 @@
     if ([self sha256HashSanityCheckValue:value]) {
         [self addParameterWithName:name value:value partnerName:@"snap"];
     } else {
-        BNCLogWarning(@"Partner parameter does not appear to be SHA256 hashed. Dropping the parameter.");
+        [[BranchLogger shared] logWarning:@"Partner parameter does not appear to be SHA256 hashed. Dropping the parameter."];
     }
 }
 
