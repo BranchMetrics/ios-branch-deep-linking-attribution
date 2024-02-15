@@ -9,7 +9,7 @@
 #import "BranchUniversalObject.h"
 #import "NSError+Branch.h"
 #import "BranchConstants.h"
-#import "BNCLog.h"
+#import "BranchLogger.h"
 #import "BNCEncodingUtils.h"
 #import "Branch.h"
 #import "BranchEvent.h"
@@ -337,7 +337,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     if (!self.canonicalIdentifier && !self.title) {
         NSString *message = @"Could not register view.";
         NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError localizedMessage:message];
-        BNCLogWarning([NSString stringWithFormat:@"%@", error]);
+        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"%@", error]];
         if (callback) callback([[NSDictionary alloc] init], error);
         return;
     }
@@ -356,7 +356,8 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 
 - (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties {
     if (!self.canonicalIdentifier && !self.title) {
-        BNCLogWarning(@"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL.");
+        [[BranchLogger shared] logWarning:@"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL."];
+
         return nil;
     }
     
@@ -374,7 +375,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     if (!self.canonicalIdentifier && !self.title) {
         NSString *message = @"Could not generate a URL.";
         NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError localizedMessage:message];
-        BNCLogWarning([NSString stringWithFormat:@"%@", error]);
+        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"%@", error]];
         if (callback) callback([BNCPreferenceHelper sharedInstance].userUrl, error);
         return;
     }
@@ -394,7 +395,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     if (!self.canonicalIdentifier && !self.title) {
         NSString *message = @"Could not generate a URL.";
         NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError localizedMessage:message];
-        BNCLogWarning([NSString stringWithFormat:@"%@", error]);
+        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"%@", error]];
         return nil;
     }
     

@@ -39,6 +39,7 @@
 #import "BNCServerInterface.h"
 #import "BNCServerRequestQueue.h"
 
+#import "BranchLogger.h"
 // Not used by Branch singleton public API
 //#import "BranchEvent.h"
 //#import "BranchScene.h"
@@ -46,7 +47,6 @@
 //#import "BranchQRCode.h"
 //#import "BNCConfig.h"
 //#import "NSError+Branch.h"
-//#import "BNCLog.h"
 //#import "BranchConstants.h"
 //#import "UIViewController+Branch.h"
 
@@ -564,9 +564,10 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 ///--------------------
 
 /**
- Enable debug messages to NSLog.
+ Enable debug messages to os_log.
  */
 - (void)enableLogging;
+- (void)enableLoggingAtLevel:(BranchLogLevel)logLevel withCallback:(nullable BranchLogCallback)callback;
 
 /**
  Send requests to EU endpoints.
@@ -580,15 +581,6 @@ Sets a custom base URL for all calls to the Branch API.
 @param url  Base URL that the Branch API will use.
 */
 + (void)setAPIUrl:(NSString *)url;
-
-/**
- setDebug is deprecated and all functionality has been disabled.
- 
- If you wish to enable logging, please invoke enableLogging.
-
- If you wish to simulate installs, please see add a Test Device (https://help.branch.io/using-branch/docs/adding-test-devices) then reset your test device's data (https://help.branch.io/using-branch/docs/adding-test-devices#section-resetting-your-test-device-data).
- */
-- (void)setDebug __attribute__((deprecated(("setDebug is replaced by enableLogging and test devices. https://help.branch.io/using-branch/docs/adding-test-devices"))));
 
 /**
   @brief        Use the `validateSDKIntegration` method as a debugging aid to assure that you've
@@ -768,8 +760,6 @@ Sets a custom base URL for all calls to the Branch API.
  `application:didFinishLaunchingWithOptions:` to always return `YES` and should use this method instead.
  */
 - (void)accountForFacebookSDKPreventingAppLaunch __attribute__((deprecated(("Please ensure application:didFinishLaunchingWithOptions: always returns YES/true instead of using this method. It will be removed in a future release."))));
-
-- (void)suppressWarningLogs __attribute__((deprecated(("suppressWarningLogs is deprecated and all functionality has been disabled. If you wish to turn off all logging, please invoke BNCLogSetDisplayLevel(BNCLogLevelNone)."))));
 
 /**
  For use by other Branch SDKs

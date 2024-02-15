@@ -13,7 +13,7 @@
 #import "BranchConstants.h"
 #import "NSError+Branch.h"
 #import "UIViewController+Branch.h"
-#import "BNCLog.h"
+#import "BranchLogger.h"
 #import "BNCServerAPI.h"
 
 @interface BranchQRCode()
@@ -35,11 +35,11 @@
 - (void) setMargin:(NSNumber *)margin {
     if (margin.intValue > 20) {
         margin = @(20);
-        BNCLogWarning(@"Margin was reduced to the maximum of 20.");
+        [[BranchLogger shared] logWarning:@"QR code margin was reduced to the maximum of 20."];
     }
     if (margin.intValue < 1) {
         margin = @(1);
-        BNCLogWarning(@"Margin was increased to the minimum of 1.");
+        [[BranchLogger shared] logWarning:@"QR code margin was increased to the minimum of 1."];
     }
     _margin = margin;
 }
@@ -47,11 +47,11 @@
 - (void) setWidth:(NSNumber *)width {
     if (width.intValue > 2000) {
         width = @(2000);
-        BNCLogWarning(@"Width was reduced to the maximum of 2000.");
+        [[BranchLogger shared] logWarning:@"QR code width was reduced to the maximum of 2000."];
     }
     if (width.intValue < 300) {
         width = @(300);
-        BNCLogWarning(@"Width was increased to the minimum of 500.");
+        [[BranchLogger shared] logWarning:@"QR code width was increased to the minimum of 500."];
     }
     _width = width;
 }
@@ -73,7 +73,7 @@
         NSData *data=[NSData dataWithContentsOfURL:[NSURL URLWithString: self.centerLogo]];
         UIImage *image=[UIImage imageWithData:data];
         if (image == nil) {
-            BNCLogWarning(@"QR code center logo was an invalid URL string.");
+            [[BranchLogger shared] logWarning:@"QR code center logo was an invalid URL string."];
         } else {
             settings[@"center_logo_url"] = self.centerLogo;
         }
@@ -137,14 +137,13 @@
     NSData *postData = [NSJSONSerialization dataWithJSONObject:params options:0 error:&error];
     [request setHTTPBody:postData];
     
-    BNCLogDebug([NSString stringWithFormat:@"Network start operation %@.", request.URL.absoluteString]);
-
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Network start operation %@.", request.URL.absoluteString]];
     NSDate *startDate = [NSDate date];
     
     NSURLSessionDataTask *postDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         
         if (error) {
-            BNCLogError([NSString stringWithFormat:@"QR Code Post Request Error: %@", [error localizedDescription]]);
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"QR Code Post Request Error: %@", [error localizedDescription]] error:error];
             completion(nil, error);
             return;
         }
@@ -153,25 +152,23 @@
         
         if (httpResponse.statusCode == 200) {
             
-            BNCLogDebug([NSString stringWithFormat:@"Network finish operation %@ %1.3fs. Status %ld.",
-                request.URL.absoluteString,
-                [[NSDate date] timeIntervalSinceDate:startDate],
-                (long)httpResponse.statusCode]);
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Network finish operation %@ %1.3fs. Status %ld.",
+                                                        request.URL.absoluteString,
+                                                        [[NSDate date] timeIntervalSinceDate:startDate],
+                                             (long)httpResponse.statusCode]];
             
             completion(data, nil);
         } else {
             
             NSDictionary *responseDictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
             
-            BNCLogError([NSString stringWithFormat:@"Network finish operation %@ %1.3fs. Status %ld error %@.\n%@.",
-                         request.URL.absoluteString,
-                         [[NSDate date] timeIntervalSinceDate:startDate],
-                         (long)httpResponse.statusCode,
-                         error,
-                         responseDictionary]);
-            
             error = [NSError branchErrorWithCode: BNCBadRequestError localizedMessage: responseDictionary[@"message"]];
-            
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Network finish operation %@ %1.3fs. Status %ld error %@.\n%@.",
+                                                        request.URL.absoluteString,
+                                                        [[NSDate date] timeIntervalSinceDate:startDate],
+                                                        (long)httpResponse.statusCode,
+                                                        error,
+                                             responseDictionary] error:error];
             completion(nil, error);
         }
     }];
@@ -208,7 +205,7 @@
                     }
 
                     if (!presentingViewController) {
-                        BNCLogError(@"No view controller is present to show the share sheet. Not showing sheet.");
+                        [[BranchLogger shared] logError:@"No view controller is present to show the share sheet. Not showing sheet." error:nil];
                         return;
                     }
 

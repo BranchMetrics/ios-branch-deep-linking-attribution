@@ -10,7 +10,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
 #import "BNCUrlQueryParameter.h"
-#import "BNCLog.h"
+#import "BranchLogger.h"
 #import <UIKit/UIKit.h>
 
 @interface BNCReferringURLUtility()
@@ -286,7 +286,7 @@
         self.preferenceHelper.referrerGBRAIDValidityWindow = 0;
         self.preferenceHelper.referrerGBRAIDInitDate = nil;
         
-        BNCLogDebug(@"Updated old Gbraid to new BNCUrlQueryParameter");
+        [[BranchLogger shared] logDebug:@"Updated old Gbraid to new BNCUrlQueryParameter"];
     }
 }
 

@@ -7,8 +7,6 @@
 //
 
 #import "BNCAppGroupsData.h"
-
-#import "BNCLog.h"
 #import "BNCApplication.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"

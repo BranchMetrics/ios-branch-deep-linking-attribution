@@ -9,7 +9,7 @@
 #import "BranchShareLink.h"
 #import "BranchConstants.h"
 #import "BranchActivityItemProvider.h"
-#import "BNCLog.h"
+#import "BranchLogger.h"
 #import "Branch.h"
 #import "BranchEvent.h"
 #import "UIViewController+Branch.h"
@@ -115,10 +115,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 
     // Make sure we can share
     if (!(self.universalObject.canonicalIdentifier || self.universalObject.canonicalUrl || self.universalObject.title)) {
-        BNCLogWarning(@"A canonicalIdentifier, canonicalURL, or title are required to uniquely"
-               " identify content. In order to not break the end user experience with sharing,"
-               " Branch SDK will proceed to create a URL, but content analytics may not properly"
-               " include this URL.");
+        [[BranchLogger shared] logWarning:@"A canonicalIdentifier, canonicalURL, or title are required to uniquely identify content. In order to not break the end user experience with sharing, Branch SDK will proceed to create a URL, but content analytics may not properly include this URL."];
     }
     
     self.serverParameters = [[self.universalObject getParamsForServerRequestWithAddedLinkProperties:self.linkProperties] mutableCopy];
@@ -204,9 +201,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
             [shareViewController setValue:emailSubject forKey:@"subject"];
         }
         @catch (NSException*) {
-            BNCLogWarning(
-                @"Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController."
-            );
+            [[BranchLogger shared] logWarning:  @"Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController."];
         }
     }
 
@@ -221,7 +216,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     }
 
     if (!presentingViewController) {
-        BNCLogError(@"No view controller is present to show the share sheet. Not showing sheet.");
+        [[BranchLogger shared] logError:@"No view controller is present to show the share sheet. Not showing sheet." error:nil];
         return;
     }
 

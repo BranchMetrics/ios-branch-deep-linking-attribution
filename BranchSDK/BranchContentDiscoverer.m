@@ -13,7 +13,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
-#import "BNCLog.h"
+#import "BranchLogger.h"
 #import "UIViewController+Branch.h"
 
 @interface BranchContentDiscoverer ()
@@ -51,7 +51,7 @@
 
 - (void)startDiscoveryTask {
     if (![NSThread isMainThread]) {
-        BNCLogError(@"Discovery should be called on main thread.");
+        [[BranchLogger shared] logError:@"Discovery should be called on main thread." error:nil];
     }
     [_contentDiscoveryTimer invalidate];
     _contentDiscoveryTimer =
