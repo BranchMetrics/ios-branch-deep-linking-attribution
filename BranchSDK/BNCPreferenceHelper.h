@@ -51,7 +51,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (copy, nonatomic) NSString *lastSystemBuildVersion;
 @property (copy, nonatomic) NSString *browserUserAgentString;
 @property (copy, nonatomic) NSString *referringURL;
-@property (copy, nonatomic) NSString *branchAPIURL;
 @property (assign, nonatomic) BOOL limitFacebookTracking;
 @property (strong, nonatomic) NSDate *previousAppBuildDate;
 @property (assign, nonatomic, readwrite) BOOL disableAdNetworkCallouts;
@@ -73,11 +72,14 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (strong, nonatomic) NSDate   *firstAppLaunchTime;
 @property (assign, nonatomic) BOOL invokeRegisterApp;
 
+@property (assign, nonatomic) BOOL eeaRegion;
+@property (assign, nonatomic) BOOL adPersonalizationConsent;
+@property (assign, nonatomic) BOOL adUserDataUsageConsent;
+
 - (void) clearTrackingInformation;
 
 + (BNCPreferenceHelper *)sharedInstance;
 
-- (void)setBranchAPIURL:(NSString *)url;
 - (void)setPatternListURL:(NSString *)url;
 
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value;
@@ -97,5 +99,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 - (NSMutableString*) sanitizedMutableBaseURL:(NSString*)baseUrl;
 - (void) synchronize;  //  Flushes preference queue to persistence.
 + (void) clearAll;
+- (BOOL) eeaRegionInitialized;
 
 @end

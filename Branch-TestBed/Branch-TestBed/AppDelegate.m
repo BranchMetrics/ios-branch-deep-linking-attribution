@@ -31,7 +31,10 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
     Branch *branch = [Branch getInstance];
-        
+    
+    // Change the Branch base API URL
+    //[Branch setAPIUrl:@"https://api3.branch.io"];
+    
     // test pre init support
     //[self testDispatchToIsolationQueue:branch]
     [branch enableLoggingAtLevel:BranchLogLevelVerbose withCallback:^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {

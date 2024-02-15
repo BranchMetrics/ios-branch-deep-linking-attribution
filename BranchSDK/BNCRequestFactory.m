@@ -110,6 +110,9 @@
     // TODO: refactor to simply request values for install
     [self addReferringURLsToJSON:json forEndpoint:@"/v1/install"];
     
+    // Add DMA Compliance Params for Google
+    [self addDMAConsentParamsToJSON:json];
+    
     return json;
 }
 
@@ -150,6 +153,9 @@
     // TODO: refactor to simply request values for open
     [self addReferringURLsToJSON:json forEndpoint:@"/v1/open"];
     
+    // Add DMA Compliance Params for Google
+    [self addDMAConsentParamsToJSON:json];
+    
     return json;
 }
 
@@ -180,6 +186,7 @@
     
     // TODO: refactor to simply request values for event
     [self addReferringURLsToJSON:json forEndpoint:@"/v2/event"];
+    
     
     return json;
 }
@@ -318,6 +325,16 @@
         [self safeSetValue:partnerParameters forKey:BRANCH_REQUEST_KEY_PARTNER_PARAMETERS onDict:json];
     }
 }
+
+- (void)addDMAConsentParamsToJSON:(NSMutableDictionary *)json {
+   
+    if([self.preferenceHelper eeaRegionInitialized]){
+        [self safeSetValue:@([self.preferenceHelper eeaRegion]) forKey:BRANCH_REQUEST_KEY_DMA_EEA onDict:json];
+        [self safeSetValue:@([self.preferenceHelper adPersonalizationConsent]) forKey:BRANCH_REQUEST_KEY_DMA_AD_PEROSALIZATION onDict:json];
+        [self safeSetValue:@([self.preferenceHelper adUserDataUsageConsent]) forKey:BRANCH_REQUEST_KEY_DMA_AD_USER_DATA onDict:json];        
+    }
+}
+
 
 - (void)addLocalURLToInstallJSON:(NSMutableDictionary *)json {
     if ([BNCPasteboard sharedInstance].checkOnInstall) {
@@ -523,6 +540,9 @@
         dictionary[@"sdk"] = @"ios";
     }
 
+    // Add DMA Compliance Params for Google
+    [self addDMAConsentParamsToJSON:dictionary];
+    
     return dictionary;
 }
 

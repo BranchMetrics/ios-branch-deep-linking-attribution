@@ -26,7 +26,6 @@ static NSString * const BRANCH_PREFS_KEY_APP_VERSION = @"bnc_app_version";
 static NSString * const BRANCH_PREFS_KEY_LAST_RUN_BRANCH_KEY = @"bnc_last_run_branch_key";
 static NSString * const BRANCH_PREFS_KEY_LAST_STRONG_MATCH_DATE = @"bnc_strong_match_created_date";
 
-static NSString * const BRANCH_PREFS_KEY_API_URL = @"bnc_api_url";
 static NSString * const BRANCH_PREFS_KEY_PATTERN_LIST_URL = @"bnc_pattern_list_url";
 
 static NSString * const BRANCH_PREFS_KEY_RANDOMIZED_DEVICE_TOKEN = @"bnc_randomized_device_token";
@@ -61,6 +60,10 @@ static NSString * const BRANCH_PREFS_KEY_REFFERING_URL_QUERY_PARAMETERS = @"bnc_
 
 static NSString * const BRANCH_PREFS_KEY_LOG_IAP_AS_EVENTS = @"bnc_log_iap_as_events";
 
+static NSString * const BRANCH_PREFS_KEY_DMA_EEA = @"bnc_dma_eea";
+static NSString * const BRANCH_PREFS_KEY_DMA_AD_PERSONALIZATION = @"bnc_dma_ad_personalization";
+static NSString * const BRANCH_PREFS_KEY_DMA_AD_USER_DATA = @"bnc_dma_ad_user_data";
+
 
 NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
@@ -68,7 +71,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     NSOperationQueue *_persistPrefsQueue;
     NSString         *_lastSystemBuildVersion;
     NSString         *_browserUserAgentString;
-    NSString         *_branchAPIURL;
     NSString         *_referringURL;
 }
 
@@ -114,7 +116,10 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     highestConversionValueSent = _highestConversionValueSent,
     referringURLQueryParameters = _referringURLQueryParameters,
     anonID = _anonID,
-    patternListURL = _patternListURL;
+    patternListURL = _patternListURL,
+    eeaRegion = _eeaRegion,
+    adPersonalizationConsent = _adPersonalizationConsent,
+    adUserDataUsageConsent = _adUserDataUsageConsent;
 
 + (BNCPreferenceHelper *)sharedInstance {
     static BNCPreferenceHelper *preferenceHelper;
@@ -155,34 +160,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 }
 
 #pragma mark - API methods
-
-- (void)setBranchAPIURL:(NSString *)url {
-    if ([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
-        @synchronized (self) {
-            _branchAPIURL = [url copy];
-            [self writeObjectToDefaults:BRANCH_PREFS_KEY_API_URL value:_branchAPIURL];
-        }
-    } else {
-        [[BranchLogger shared] logWarning:@"Ignoring invalid custom API URL"];
-    }
-}
-
-// TODO: This method is not used with the Tracking domain change. See SDK-2118
-- (NSString *)branchAPIURL {
-    @synchronized (self) {
-        if (!_branchAPIURL) {
-            _branchAPIURL = [self readStringFromDefaults:BRANCH_PREFS_KEY_API_URL];
-        }
-        
-        // return the default URL in the event there's nothing in storage
-        if (_branchAPIURL == nil || [_branchAPIURL isEqualToString:@""]) {
-            _branchAPIURL = [BNC_API_URL copy];
-            [self writeObjectToDefaults:BRANCH_PREFS_KEY_API_URL value:_branchAPIURL];
-        }
-
-        return _branchAPIURL;
-    }
-}
 
 - (void)setPatternListURL:(NSString *)url {
     if ([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
@@ -790,6 +767,60 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_SKAN_INVOKE_REGISTER_APP value:b];
     }
 }
+
+- (BOOL) eeaRegionInitialized {
+    @synchronized(self) {
+        if([self readObjectFromDefaults:BRANCH_PREFS_KEY_DMA_EEA])
+            return YES;
+        return NO;
+    }
+}
+
+- (BOOL) eeaRegion {
+    @synchronized(self) {
+        NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_DMA_EEA];
+        if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
+        return NO;
+    }
+}
+
+- (void) setEeaRegion:(BOOL)isEEARegion {
+    @synchronized(self) {
+        NSNumber *b = [NSNumber numberWithBool:isEEARegion];
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_DMA_EEA value:b];
+    }
+}
+
+- (BOOL) adPersonalizationConsent {
+    @synchronized(self) {
+        NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_DMA_AD_PERSONALIZATION];
+        if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
+        return NO;
+    }
+}
+
+- (void) setAdPersonalizationConsent:(BOOL)hasConsent {
+    @synchronized(self) {
+        NSNumber *b = [NSNumber numberWithBool:hasConsent];
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_DMA_AD_PERSONALIZATION value:b];
+    }
+}
+
+- (BOOL) adUserDataUsageConsent {
+    @synchronized(self) {
+        NSNumber *b = (id) [self readObjectFromDefaults:BRANCH_PREFS_KEY_DMA_AD_USER_DATA];
+        if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
+        return NO;
+    }
+}
+
+- (void) setAdUserDataUsageConsent:(BOOL)hasConsent {
+    @synchronized(self) {
+        NSNumber *b = [NSNumber numberWithBool:hasConsent];
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_DMA_AD_USER_DATA value:b];
+    }
+}
+
 
 - (void) clearTrackingInformation {
     @synchronized(self) {
