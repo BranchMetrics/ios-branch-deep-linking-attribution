@@ -740,28 +740,6 @@ Sets a custom base URL for all calls to the Branch API.
 - (void)disableAdNetworkCallouts:(BOOL)disableCallouts;
 
 /**
- Specify that Branch should NOT use an invisible SFSafariViewController to attempt cookie-based matching upon install.
- If you call this method, we will fall back to using our pool of cookie-IDFA pairs for matching.
- */
-- (void)disableCookieBasedMatching __attribute__((deprecated(("Feature removed.  Did not work on iOS 11+"))));
-
-/**
- TL;DR: If you're using a version of the Facebook SDK that prevents application:didFinishLaunchingWithOptions: from
- returning YES/true when a Universal Link is clicked, you should enable this option.
-
- Long explanation: in application:didFinishLaunchingWithOptions: you should choose one of the following:
-
- 1. Always `return YES;`, and do *not* invoke `[[Branch getInstance] accountForFacebookSDKPreventingAppLaunch];`
- 2. Allow the Facebook SDK to determine whether `application:didFinishLaunchingWithOptions:` returns `YES` or `NO`,
-    and invoke `[[Branch getInstance] accountForFacebookSDKPreventingAppLaunch];`
-
- The reason for this second option is that the Facebook SDK will return `NO` if a Universal Link opens the app
- but that UL is not a Facebook UL. Some developers prefer not to modify
- `application:didFinishLaunchingWithOptions:` to always return `YES` and should use this method instead.
- */
-- (void)accountForFacebookSDKPreventingAppLaunch __attribute__((deprecated(("Please ensure application:didFinishLaunchingWithOptions: always returns YES/true instead of using this method. It will be removed in a future release."))));
-
-/**
  For use by other Branch SDKs
  
  @param name Plugin name.  For example, Unity or React Native
@@ -785,16 +763,6 @@ Sets a custom base URL for all calls to the Branch API.
  @param value Object to be included in request metadata
  */
 - (void)setRequestMetadataKey:(NSString *)key value:(nullable id)value;
-
-- (void)enableDelayedInit __attribute__((deprecated(("No longer valid with new init process"))));
-
-- (void)disableDelayedInit __attribute__((deprecated(("No longer valid with new init process"))));
-
-- (nullable NSURL *)getUrlForOnboardingWithRedirectUrl:(nullable NSString *)redirectUrl __attribute__((deprecated(("Feature removed.  Did not work on iOS 11+"))));;
-
-- (void)resumeInit __attribute__((deprecated(("Feature removed.  Did not work on iOS 11+"))));
-
-- (void)setInstallRequestDelay:(NSInteger)installRequestDelay __attribute__((deprecated(("No longer valid with new init process"))));
 
 /**
  Disables the Branch SDK from tracking the user. This is useful for GDPR privacy compliance.

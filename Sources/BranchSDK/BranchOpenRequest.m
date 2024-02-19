@@ -47,7 +47,7 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key];
-    NSDictionary *params = [factory dataForOpen];
+    NSDictionary *params = [factory dataForOpenWithURLString:self.urlString];
 
     [serverInterface postRequest:params
         url:[[BNCServerAPI sharedInstance] openServiceURL]
@@ -140,13 +140,9 @@
     }
 
     NSString *referringURL = nil;
-    if (preferenceHelper.universalLinkUrl.length) {
-        referringURL = preferenceHelper.universalLinkUrl;
-    }
-    else if (preferenceHelper.externalIntentURI.length) {
-        referringURL = preferenceHelper.externalIntentURI;
-    }
-    else {
+    if (self.urlString.length > 0) {
+        referringURL = self.urlString;
+    } else {
         NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
         NSString *link = sessionDataDict[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK];
         if ([link isKindOfClass:[NSString class]]) {
