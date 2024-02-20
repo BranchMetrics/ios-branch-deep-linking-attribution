@@ -1,5 +1,10 @@
 Branch iOS SDK Change Log
 
+v.3.3.0
+- SDK behavior change to fix a race condition when opening a closed app with a link. In some apps, this race condition could cause the occasional loss of link data.
+ 
+When opening a closed app with a link, the Branch SDK will no longer attempt to merge the app open and link arrival lifecycle events. Apps will now get called on "app open" and on "link arrival", which are often very close together. If your app ignores callbacks with no link data, then this change should be transparent.
+
 v.3.2.0
 - Add support for setting DMA compliance parameters.
 - Update logging to allow a custom callback so clients may reroute Branch Logs to their logging infrastructure.
