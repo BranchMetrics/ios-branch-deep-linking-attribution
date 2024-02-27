@@ -363,12 +363,13 @@
         @"bool2" : @(0),
         @"bool3" : @"1", // valid bool
         @"bool4" : @"0", // valid bool
-        @"bool5" : @"YES", // invalid bool, server expects a number. treated as false
-        @"bool6" : @"NO", // invalid bool, server expects a number. treated as false
+        @"bool5" : @"YES",
+        @"bool6" : @"NO",
         @"bool7" : @(-1), // all non-zero numbers are true
         @"bool8" : @(1234), // all non-zero numbers are true
-        @"bool9" : @[ ] // invalid bool, treated as false
-
+        @"bool9" : @[ ], // invalid bool, treated as false
+        @"bool10": @"true",
+        @"bool11": @"false"
     };
     NSMutableDictionary *dict = [tmp mutableCopy];
     
@@ -376,11 +377,13 @@
     XCTAssertFalse([dict bnc_getBooleanForKey:@"bool2"]);
     XCTAssertTrue([dict bnc_getBooleanForKey:@"bool3"]);
     XCTAssertFalse([dict bnc_getBooleanForKey:@"bool4"]);
-    XCTAssertFalse([dict bnc_getBooleanForKey:@"bool5"]);
+    XCTAssertTrue([dict bnc_getBooleanForKey:@"bool5"]);
     XCTAssertFalse([dict bnc_getBooleanForKey:@"bool6"]);
     XCTAssertTrue([dict bnc_getBooleanForKey:@"bool7"]);
     XCTAssertTrue([dict bnc_getBooleanForKey:@"bool8"]);
     XCTAssertFalse([dict bnc_getBooleanForKey:@"bool9"]);
+    XCTAssertTrue([dict bnc_getBooleanForKey:@"bool10"]);
+    XCTAssertFalse([dict bnc_getBooleanForKey:@"bool11"]);
 }
 
 @end

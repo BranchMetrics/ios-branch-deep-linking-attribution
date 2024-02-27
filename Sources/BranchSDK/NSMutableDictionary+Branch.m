@@ -192,7 +192,7 @@
         returnValue = [number boolValue];
     } else if ([tmp isKindOfClass:[NSString class]]) {
         NSString *numberAsString = (NSString *)tmp;
-        returnValue = [numberAsString doubleValue];
+        returnValue = [numberAsString boolValue];
     }
     
     return returnValue;
