@@ -72,7 +72,7 @@ NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPast
 - (NSData *)configFileContents
 {
     if (!self.configFileURL) return nil;
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Loading %@", self.configFileURL.pathComponents.lastObject]];
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Loading %@", self.configFileURL.pathComponents.lastObject] error:nil];
     NSError *error;
     NSData *data = [NSData dataWithContentsOfURL:self.configFileURL options:0 error:&error];
     if (!data || error) {
@@ -109,7 +109,7 @@ NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPast
     }
     
     if (!configFileURL) {
-        [[BranchLogger shared] logDebug:@"No branch.json in app bundle."];
+        [[BranchLogger shared] logDebug:@"No branch.json in app bundle." error:nil];
         return;
     }
 

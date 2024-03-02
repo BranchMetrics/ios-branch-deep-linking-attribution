@@ -286,7 +286,7 @@
         self.preferenceHelper.referrerGBRAIDValidityWindow = 0;
         self.preferenceHelper.referrerGBRAIDInitDate = nil;
         
-        [[BranchLogger shared] logDebug:@"Updated old Gbraid to new BNCUrlQueryParameter"];
+        [[BranchLogger shared] logDebug:@"Updated old Gbraid to new BNCUrlQueryParameter" error:nil];
     }
 }
 

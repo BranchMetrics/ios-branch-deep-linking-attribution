@@ -125,7 +125,7 @@ static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstIns
     #endif
     
     if (installDate == nil || [installDate timeIntervalSince1970] <= 0.0) {
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Invalid install date, using [NSDate date]."]];
+        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Invalid install date, using [NSDate date]."] error:nil];
     }
     return installDate;
 }

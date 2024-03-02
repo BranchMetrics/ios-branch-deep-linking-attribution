@@ -45,7 +45,7 @@
 
 - (void)setIdentifier:(NSString *)identifier {
     if (![identifier hasPrefix:BRANCH_SPOTLIGHT_PREFIX]) {
-        [[BranchLogger shared] logWarning:@"Do not set BranchCSSearchableItemAttributeSet's identifier. It will be overwritten."];
+        [[BranchLogger shared] logWarning:@"Do not set BranchCSSearchableItemAttributeSet's identifier. It will be overwritten." error:nil];
     }
 }
 

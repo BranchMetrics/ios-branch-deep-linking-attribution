@@ -40,20 +40,16 @@
     [self logMessage:message withLevel:BranchLogLevelError error:error];
 }
 
-- (void)logWarning:(NSString *)message {
-    [self logMessage:message withLevel:BranchLogLevelWarning error:nil];
+- (void)logWarning:(NSString *)message error:(NSError *_Nullable)error {
+    [self logMessage:message withLevel:BranchLogLevelWarning error:error];
 }
 
-- (void)logInfo:(NSString *)message {
-    [self logMessage:message withLevel:BranchLogLevelInfo error:nil];
+- (void)logDebug:(NSString *)message error:(NSError *_Nullable)error {
+    [self logMessage:message withLevel:BranchLogLevelDebug error:error];
 }
 
-- (void)logDebug:(NSString *)message {
-    [self logMessage:message withLevel:BranchLogLevelDebug error:nil];
-}
-
-- (void)logVerbose:(NSString *)message {
-    [self logMessage:message withLevel:BranchLogLevelVerbose error:nil];
+- (void)logVerbose:(NSString *)message error:(NSError *_Nullable)error {
+    [self logMessage:message withLevel:BranchLogLevelVerbose error:error];
 }
 
 - (void)logMessage:(NSString *)message withLevel:(BranchLogLevel)level error:(NSError *_Nullable)error {
@@ -79,14 +75,14 @@
     }
 }
 
-//MARK: Helper Methods
+// Map the Branch log level to a similar Apple log level
 - (os_log_type_t)osLogTypeForBranchLogLevel:(BranchLogLevel)level {
     switch (level) {
-        case BranchLogLevelError: return OS_LOG_TYPE_FAULT;
-        case BranchLogLevelWarning: return OS_LOG_TYPE_ERROR;
-        case BranchLogLevelInfo: return OS_LOG_TYPE_INFO;
-        case BranchLogLevelDebug: return OS_LOG_TYPE_DEBUG;
-        case BranchLogLevelVerbose: return OS_LOG_TYPE_DEFAULT;
+        // TODO: confirm these mappings make sense
+        case BranchLogLevelError: return OS_LOG_TYPE_ERROR; // "report process-level errors"
+        case BranchLogLevelWarning: return OS_LOG_TYPE_DEFAULT; // "things that might result in a failure"
+        case BranchLogLevelDebug: return OS_LOG_TYPE_INFO; // "helpful, but not essential, for troubleshooting errors"
+        case BranchLogLevelVerbose: return OS_LOG_TYPE_DEBUG; // "useful during development or while troubleshooting a specific problem"
         default: return OS_LOG_TYPE_DEFAULT;
     }
 }
@@ -95,7 +91,6 @@
     switch (level) {
         case BranchLogLevelVerbose: return @"Verbose";
         case BranchLogLevelDebug: return @"Debug";
-        case BranchLogLevelInfo: return @"Info";
         case BranchLogLevelWarning: return @"Warning";
         case BranchLogLevelError: return @"Error";
         default: return @"Unknown";

@@ -168,7 +168,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
             [self writeObjectToDefaults:BRANCH_PREFS_KEY_PATTERN_LIST_URL value:url];
         }
     } else {
-        [[BranchLogger shared] logWarning:@"Ignoring invalid custom CDN URL"];
+        [[BranchLogger shared] logWarning:@"Ignoring invalid custom CDN URL" error:nil];
     }
 }
 
@@ -923,7 +923,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
                 NSError *error = nil;
                 [data writeToURL:prefsURL options:NSDataWritingAtomic error:&error];
                 if (error) {
-                    [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Failed to persist preferences: %@.", error]];
+                    [[BranchLogger shared] logWarning:@"Failed to persist preferences" error:error];
                 }
             }];
             [_persistPrefsQueue addOperation:newPersistOp];
@@ -938,7 +938,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     @try {
         data = [NSKeyedArchiver archivedDataWithRootObject:dict requiringSecureCoding:YES error:NULL];
     } @catch (id exception) {
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Exception serializing preferences dict: %@.", exception]];
+        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Exception serializing preferences dict: %@.", exception] error:nil];
     }
     return data;
 }
@@ -969,10 +969,10 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         NSError *error = nil;
         data = [NSData dataWithContentsOfURL:self.class.URLForPrefsFile options:0 error:&error];
         if (error || !data) {
-            [[BranchLogger shared] logWarning:@"Failed to load preferences from storage."];
+            [[BranchLogger shared] logWarning:@"Failed to load preferences from storage." error:error];
         }
     } @catch (NSException *) {
-        [[BranchLogger shared] logWarning:@"Failed to load preferences from storage."];
+        [[BranchLogger shared] logWarning:@"Failed to load preferences from storage." error:nil];
     }
     return data;
 }
@@ -985,7 +985,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
         dict = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes fromData:data error:&error];
         if (error) {
-            [[BranchLogger shared] logWarning:@"Failed to load preferences from storage."];
+            [[BranchLogger shared] logWarning:@"Failed to load preferences from storage." error:error];
         }
     }
     

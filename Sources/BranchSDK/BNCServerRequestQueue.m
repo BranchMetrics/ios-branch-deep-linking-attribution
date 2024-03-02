@@ -267,7 +267,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:YES error:&error];
     
     if (!data && error) {
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Failed to archive: %@", error]];
+        [[BranchLogger shared] logWarning:@"Failed to archive: %@" error:error];
     }
     return data;
 }
@@ -317,7 +317,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     id object = [NSKeyedUnarchiver unarchivedObjectOfClasses:[BNCServerRequestQueue encodableClasses] fromData:data error:&error];
     
     if (error) {
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Failed to unarchive: %@", error]];
+        [[BranchLogger shared] logWarning:@"Failed to unarchive: %@" error:error];
     }
     
     return object;
@@ -373,7 +373,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     dispatch_once(&onceToken, ^ {
         sharedQueue = [[BNCServerRequestQueue alloc] init];
         [sharedQueue retrieve];
-        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Retrieved from storage: %@.", sharedQueue]];
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Retrieved from storage: %@.", sharedQueue] error:nil];
     });
     return sharedQueue;
 }

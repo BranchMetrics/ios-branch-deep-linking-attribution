@@ -230,7 +230,7 @@ NSString* BNCWireFormatFromString(NSString *string) {
 
     [encodedDictionary appendString:@"}"];
 
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Encoded dictionary: %@.", encodedDictionary]];
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Encoded dictionary: %@.", encodedDictionary] error:nil];
     return encodedDictionary;
 }
 
@@ -290,7 +290,7 @@ NSString* BNCWireFormatFromString(NSString *string) {
     [encodedArray deleteCharactersInRange:NSMakeRange([encodedArray length] - 1, 1)];
     [encodedArray appendString:@"]"];
     
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Encoded array: %@.", encodedArray]];
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Encoded array: %@.", encodedArray] error:nil];
 
     return encodedArray;
 }

@@ -197,13 +197,14 @@
                                              [[NSDate date] timeIntervalSinceDate:operation.startDate],
                                              (long)operation.response.statusCode,
                                              operation.error,
-                                             operation.stringFromResponseData]];
+                                             operation.stringFromResponseData] error:nil];
         }
-        if (operation.completionBlock)
+        if (operation.completionBlock) {
             operation.completionBlock(operation);
+        }
     }];
     
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Network start operation %@.", operation.request.URL]];
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Network start operation %@.", operation.request.URL] error:nil];
     
     [operation.sessionTask resume];
 }

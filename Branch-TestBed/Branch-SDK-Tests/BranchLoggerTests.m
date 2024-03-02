@@ -35,31 +35,33 @@
         }
     };
     
-    [logger logVerbose:@"This verbose message should not trigger the log callback."];
-    [logger logDebug:@"This message should trigger the log callback."];
+    [logger logVerbose:@"This verbose message should not trigger the log callback." error:nil];
+    [logger logDebug:@"This message should trigger the log callback." error:nil];
 
     [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testLogCallbackExecutesWithCorrectParameters {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Log callback expectation"];
-    NSString *expectedMessage = @"[BranchSDK][Info][BranchLoggerTests testLogCallbackExecutesWithCorrectParameters] Test message";
-    BranchLogLevel expectedLevel = BranchLogLevelInfo;
-
-    BranchLogger *logger = [BranchLogger new];
-
-    logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
-        XCTAssertEqualObjects(message, expectedMessage, "Logged message does not match expected message.");
-        XCTAssertEqual(logLevel, expectedLevel, "Logged level does not match expected level.");
-        XCTAssertNil(error, "Error should be nil.");
-        [expectation fulfill];
-    };
+    // TODO: replace this test as info has been removed
     
-    logger.loggingEnabled = YES;
-    logger.logLevelThreshold = BranchLogLevelInfo;
-    [logger logInfo:@"Test message"];
-
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+//    XCTestExpectation *expectation = [self expectationWithDescription:@"Log callback expectation"];
+//    NSString *expectedMessage = @"[BranchSDK][Info][BranchLoggerTests testLogCallbackExecutesWithCorrectParameters] Test message";
+//    BranchLogLevel expectedLevel = BranchLogLevelInfo;
+//
+//    BranchLogger *logger = [BranchLogger new];
+//
+//    logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+//        XCTAssertEqualObjects(message, expectedMessage, "Logged message does not match expected message.");
+//        XCTAssertEqual(logLevel, expectedLevel, "Logged level does not match expected level.");
+//        XCTAssertNil(error, "Error should be nil.");
+//        [expectation fulfill];
+//    };
+//    
+//    logger.loggingEnabled = YES;
+//    logger.logLevelThreshold = BranchLogLevelInfo;
+//    [logger logInfo:@"Test message"];
+//
+//    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testLogLevelSpecificityFiltersLowerLevels {
@@ -81,7 +83,7 @@
         callbackCount++;
     };
     
-    [logger logVerbose:@"This should not be logged due to log level threshold."];
+    [logger logVerbose:@"This should not be logged due to log level threshold." error:nil];
     [logger logError:@"This should be logged" error:nil];
     
     [self waitForExpectations:@[verboseExpectation, errorExpectation] timeout:2];

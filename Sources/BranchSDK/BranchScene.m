@@ -40,7 +40,7 @@
 
 - (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts NS_EXTENSION_UNAVAILABLE("BranchScene does not support Extensions") {
     if (URLContexts.count != 1) {
-        [[BranchLogger shared] logWarning:@"Branch only supports a single URLContext"];
+        [[BranchLogger shared] logWarning:@"Branch only supports a single URLContext" error:nil];
     }
     
     UIOpenURLContext *context = [URLContexts allObjects].firstObject;

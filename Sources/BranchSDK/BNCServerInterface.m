@@ -118,7 +118,7 @@
                     dispatch_time(DISPATCH_TIME_NOW, self.preferenceHelper.retryInterval * NSEC_PER_SEC);
                 dispatch_after(dispatchTime, dispatch_get_main_queue(), ^{
                     if (retryHandler) {
-                        [[BranchLogger shared] logDebug: [NSString stringWithFormat:@"Retrying request with url %@", request.URL.relativePath]];
+                        [[BranchLogger shared] logDebug: [NSString stringWithFormat:@"Retrying request with url %@", request.URL.relativePath] error:nil];
                         // Create the next request
                         NSURLRequest *retryRequest = retryHandler(retryNumber);
                         [self genericHTTPRequest:retryRequest
@@ -170,7 +170,7 @@
         if (![self isLinkingRelatedRequest:endpoint]) {
             [[BNCPreferenceHelper sharedInstance] clearTrackingInformation];
             NSError *error = [NSError branchErrorWithCode:BNCTrackingDisabledError];
-            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Dropping Request %@: - %@", endpoint, error]];
+            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Dropping Request %@: - %@", endpoint, error] error:nil];
             if (callback) {
                 callback(nil, error);
             }
@@ -278,7 +278,7 @@
 
     NSDictionary *tmp = [self addRetryCount:retryNumber toJSON:params];
     NSString *requestUrlString = [NSString stringWithFormat:@"%@%@", url, [BNCEncodingUtils encodeDictionaryToQueryString:tmp]];
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"URL: %@", requestUrlString]];
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"URL: %@", requestUrlString] error:nil];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:requestUrlString]
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:self.preferenceHelper.timeout];
@@ -295,10 +295,10 @@
     NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:tmp];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
 
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"URL: %@.\n", url]];
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"URL: %@.\n", url] error:nil];
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Body: %@\nJSON: %@.",
                                      params,
-                                     [[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding]]];
+                                     [[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding]] error:nil];
     
     NSMutableURLRequest *request =
         [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]
@@ -328,7 +328,7 @@
         serverResponse.requestId = requestId;
     }
     
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Server returned: %@.", serverResponse]];
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Server returned: %@.", serverResponse] error:nil];
 
     return serverResponse;
 }

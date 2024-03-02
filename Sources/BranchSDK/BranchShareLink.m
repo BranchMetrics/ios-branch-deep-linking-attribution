@@ -115,7 +115,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 
     // Make sure we can share
     if (!(self.universalObject.canonicalIdentifier || self.universalObject.canonicalUrl || self.universalObject.title)) {
-        [[BranchLogger shared] logWarning:@"A canonicalIdentifier, canonicalURL, or title are required to uniquely identify content. In order to not break the end user experience with sharing, Branch SDK will proceed to create a URL, but content analytics may not properly include this URL."];
+        [[BranchLogger shared] logWarning:@"A canonicalIdentifier, canonicalURL, or title are required to uniquely identify content. In order to not break the end user experience with sharing, Branch SDK will proceed to create a URL, but content analytics may not properly include this URL." error:nil];
     }
     
     self.serverParameters = [[self.universalObject getParamsForServerRequestWithAddedLinkProperties:self.linkProperties] mutableCopy];
@@ -201,7 +201,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
             [shareViewController setValue:emailSubject forKey:@"subject"];
         }
         @catch (NSException*) {
-            [[BranchLogger shared] logWarning:  @"Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController."];
+            [[BranchLogger shared] logWarning:  @"Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController." error:nil];
         }
     }
 
