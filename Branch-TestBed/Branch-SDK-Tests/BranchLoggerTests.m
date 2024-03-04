@@ -11,101 +11,258 @@
 #import "Branch.h"
 
 @interface BranchLoggerTests : XCTestCase
+
 @end
 
 @implementation BranchLoggerTests
 
+// public API test
 - (void)testEnableLoggingSetsCorrectDefaultLevel {
     [[Branch getInstance] enableLogging];
     XCTAssertEqual([BranchLogger shared].logLevelThreshold, BranchLogLevelDebug, "Default log level should be Debug.");
 }
 
-- (void)testLogLevelThresholdBlocksLowerLevels {
+- (void)testLoggingEnabled_NOByDefault {
     BranchLogger *logger = [BranchLogger new];
-    logger.loggingEnabled = true;
-    logger.logLevelThreshold = BranchLogLevelDebug;
     
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Log callback expectation for message that should pass the threshold"];
-
+    __block int count = 0;
     logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
-        if ([message isEqualToString:@"[BranchSDK][Debug][BranchLoggerTests testLogLevelThresholdBlocksLowerLevels] This message should trigger the log callback."] && logLevel >= BranchLogLevelDebug) {
-            [expectation fulfill];
-        } else if (logLevel == BranchLogLevelVerbose) {
-            XCTFail();
-        }
+        count++;
+    };
+    [logger logError:@"msg" error:nil];
+    
+    XCTAssertTrue(count == 0);
+}
+
+- (void)testLoggingEnabled_Yes {
+    BranchLogger *logger = [BranchLogger new];
+    logger.loggingEnabled = YES;
+    
+    __block int count = 0;
+    logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+        count++;
     };
     
-    [logger logVerbose:@"This verbose message should not trigger the log callback." error:nil];
-    [logger logDebug:@"This message should trigger the log callback." error:nil];
-
-    [self waitForExpectationsWithTimeout:1 handler:nil];
-}
-
-- (void)testLogCallbackExecutesWithCorrectParameters {
-    // TODO: replace this test as info has been removed
+    [logger logError:@"msg" error:nil];
+    XCTAssertTrue(count == 1);
     
-//    XCTestExpectation *expectation = [self expectationWithDescription:@"Log callback expectation"];
-//    NSString *expectedMessage = @"[BranchSDK][Info][BranchLoggerTests testLogCallbackExecutesWithCorrectParameters] Test message";
-//    BranchLogLevel expectedLevel = BranchLogLevelInfo;
-//
-//    BranchLogger *logger = [BranchLogger new];
-//
-//    logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
-//        XCTAssertEqualObjects(message, expectedMessage, "Logged message does not match expected message.");
-//        XCTAssertEqual(logLevel, expectedLevel, "Logged level does not match expected level.");
-//        XCTAssertNil(error, "Error should be nil.");
-//        [expectation fulfill];
-//    };
-//    
-//    logger.loggingEnabled = YES;
-//    logger.logLevelThreshold = BranchLogLevelInfo;
-//    [logger logInfo:@"Test message"];
-//
-//    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [logger logError:@"msg" error:nil];
+    XCTAssertTrue(count == 2);
 }
 
-- (void)testLogLevelSpecificityFiltersLowerLevels {
+- (void)testLoggingIgnoresNil {
+    BranchLogger *logger = [BranchLogger new];
+    logger.loggingEnabled = YES;
+    
+    __block int count = 0;
+    logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+        count++;
+    };
+    
+    [logger logError:nil error:nil];
+    XCTAssertTrue(count == 0);
+}
+
+- (void)testLoggingIgnoresEmptyString {
+    BranchLogger *logger = [BranchLogger new];
+    logger.loggingEnabled = YES;
+    
+    __block int count = 0;
+    logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+        count++;
+    };
+    
+    [logger logError:@"" error:nil];
+    XCTAssertTrue(count == 0);
+}
+
+- (void)testLoggingEnabled_YesThenNo {
+    BranchLogger *logger = [BranchLogger new];
+    logger.loggingEnabled = YES;
+    
+    __block int count = 0;
+    logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+        count = count + 1;
+    };
+    
+    // one call
+    [logger logError:@"msg" error:nil];
+    XCTAssertTrue(count == 1);
+    
+    // disable, second call is ignored
+    logger.loggingEnabled = NO;
+    [logger logError:@"msg" error:nil];
+    XCTAssertTrue(count == 1);
+}
+
+- (void)testLogLevel_DebugByDefault {
+    BranchLogger *logger = [BranchLogger new];
+    logger.loggingEnabled = YES;
+    
+    __block int count = 0;
+    logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+        count = count + 1;
+    };
+    
+    [logger logError:@"msg" error:nil];
+    XCTAssertTrue(count == 1);
+    [logger logWarning:@"msg" error:nil];
+    XCTAssertTrue(count == 2);
+    [logger logDebug:@"msg" error:nil];
+    XCTAssertTrue(count == 3);
+    
+    // this should be ignored
+    [logger logVerbose:@"msg" error:nil];
+    XCTAssertTrue(count == 3);
+}
+
+- (void)testLogLevel_Error {
+    BranchLogger *logger = [BranchLogger new];
+    logger.loggingEnabled = YES;
+    logger.logLevelThreshold = BranchLogLevelError;
+    
+    
+    __block int count = 0;
+    logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+        count = count + 1;
+    };
+    
+    [logger logError:@"msg" error:nil];
+    XCTAssertTrue(count == 1);
+    
+    // this should be ignored
+    [logger logWarning:@"msg" error:nil];
+    XCTAssertTrue(count == 1);
+    [logger logDebug:@"msg" error:nil];
+    XCTAssertTrue(count == 1);
+    [logger logVerbose:@"msg" error:nil];
+    XCTAssertTrue(count == 1);
+}
+
+- (void)testLogLevel_Warning {
     BranchLogger *logger = [BranchLogger new];
     logger.loggingEnabled = YES;
     logger.logLevelThreshold = BranchLogLevelWarning;
     
-    XCTestExpectation *verboseExpectation = [self expectationWithDescription:@"Verbose log callback"];
-    verboseExpectation.inverted = YES;
-    XCTestExpectation *errorExpectation = [self expectationWithDescription:@"Error log callback"];
     
-    __block NSUInteger callbackCount = 0;
+    __block int count = 0;
     logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
-        if (logLevel == BranchLogLevelVerbose) {
-            [verboseExpectation fulfill];
-        } else if (logLevel == BranchLogLevelError) {
-            [errorExpectation fulfill];
-        }
-        callbackCount++;
+        count = count + 1;
     };
     
-    [logger logVerbose:@"This should not be logged due to log level threshold." error:nil];
-    [logger logError:@"This should be logged" error:nil];
+    [logger logError:@"msg" error:nil];
+    XCTAssertTrue(count == 1);
+    [logger logWarning:@"msg" error:nil];
+    XCTAssertTrue(count == 2);
     
-    [self waitForExpectations:@[verboseExpectation, errorExpectation] timeout:2];
-    XCTAssertEqual(callbackCount, 1, "Only one log callback should have been invoked.");
+    // this should be ignored
+    [logger logDebug:@"msg" error:nil];
+    XCTAssertTrue(count == 2);
+    [logger logVerbose:@"msg" error:nil];
+    XCTAssertTrue(count == 2);
 }
 
-- (void)testErrorLoggingIncludesErrorDetails {
+- (void)testLogLevel_Verbose {
+    BranchLogger *logger = [BranchLogger new];
+    logger.loggingEnabled = YES;
+    logger.logLevelThreshold = BranchLogLevelVerbose;
+    
+    
+    __block int count = 0;
+    logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+        count = count + 1;
+    };
+    
+    [logger logError:@"msg" error:nil];
+    XCTAssertTrue(count == 1);
+    [logger logWarning:@"msg" error:nil];
+    XCTAssertTrue(count == 2);
+    [logger logDebug:@"msg" error:nil];
+    XCTAssertTrue(count == 3);
+    [logger logVerbose:@"msg" error:nil];
+    XCTAssertTrue(count == 4);
+}
+
+- (void)testLogFormat_Default {
     BranchLogger *logger = [BranchLogger new];
     logger.loggingEnabled = YES;
     
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Error log includes error details"];
-    
-    NSError *testError = [NSError errorWithDomain:@"TestDomain" code:42 userInfo:@{NSLocalizedDescriptionKey: @"Test error description"}];
     logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
-        if ([message containsString:@"Test error description"] && error == testError) {
-            [expectation fulfill];
-        }
+        NSString *expectedMessage = @"[BranchLoggerTests testLogFormat_Default] msg";
+        
+        XCTAssertTrue([expectedMessage isEqualToString:message]);
+        XCTAssertTrue(logLevel == BranchLogLevelError);
+        XCTAssertNil(error);
     };
     
-    [logger logError:@"Testing error logging" error:testError];
+    [logger logError:@"msg" error:nil];
+}
 
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+- (void)testLogFormat_NSError {
+    __block NSError *originalError = [NSError errorWithDomain:@"com.domain.test" code:200 userInfo:@{@"Error Message": @"Test Error"}];
+    
+    BranchLogger *logger = [BranchLogger new];
+    logger.loggingEnabled = YES;
+    
+    logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+        NSString *expectedMessage = @"[BranchLoggerTests testLogFormat_NSError] msg";
+        
+        XCTAssertTrue([expectedMessage isEqualToString:message]);
+        XCTAssertTrue(logLevel == BranchLogLevelError);
+        XCTAssertTrue(originalError == error);
+    };
+    
+    [logger logError:@"msg" error:originalError];
+}
+
+- (void)testLogFormat_includeCallerDetailsNO {
+    BranchLogger *logger = [BranchLogger new];
+    logger.loggingEnabled = YES;
+    logger.includeCallerDetails = NO;
+    
+    logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+        NSString *expectedMessage = @"msg";
+        
+        XCTAssertTrue([expectedMessage isEqualToString:message]);
+        XCTAssertTrue(logLevel == BranchLogLevelError);
+        XCTAssertNil(error);
+    };
+    
+    [logger logError:@"msg" error:nil];
+}
+
+- (void)testLogFormat_includeCallerDetailsNO_NSError {
+    __block NSError *originalError = [NSError errorWithDomain:@"com.domain.test" code:200 userInfo:@{@"Error Message": @"Test Error"}];
+    
+    BranchLogger *logger = [BranchLogger new];
+    logger.loggingEnabled = YES;
+    logger.includeCallerDetails = NO;
+
+    logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+        NSString *expectedMessage = @"msg";
+        
+        XCTAssertTrue([expectedMessage isEqualToString:message]);
+        XCTAssertTrue(logLevel == BranchLogLevelError);
+        XCTAssertTrue(originalError == error);
+    };
+    
+    [logger logError:@"msg" error:originalError];
+}
+
+- (void)testDefaultBranchLogFormat {
+    __block NSError *originalError = [NSError errorWithDomain:@"com.domain.test" code:200 userInfo:@{@"Error Message": @"Test Error"}];
+    
+    BranchLogger *logger = [BranchLogger new];
+    logger.loggingEnabled = YES;
+
+    logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+        NSString *expectedMessage = @"[BranchSDK][Error][BranchLoggerTests testDefaultBranchLogFormat] msg NSError: The operation couldn’t be completed. (com.domain.test error 200.)";
+        NSString *formattedMessage = [BranchLogger formatMessage:message logLevel:logLevel error:error];
+        
+        XCTAssertTrue([expectedMessage isEqualToString:formattedMessage]);
+    };
+    
+    [logger logError:@"msg" error:originalError];
 }
 
 @end

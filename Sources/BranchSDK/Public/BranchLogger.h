@@ -35,6 +35,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)logDebug:(NSString * _Nonnull)message error:(NSError * _Nullable)error;
 - (void)logVerbose:(NSString * _Nonnull)message error:(NSError * _Nullable)error;
 
+// default Branch log format
++ (NSString *)formatMessage:(NSString *)message logLevel:(BranchLogLevel)logLevel error:(NSError *)error;
+
 @end
 
 NS_ASSUME_NONNULL_END
