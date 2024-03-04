@@ -137,7 +137,7 @@ jobs:
       # Bring in the Ruby deps from the cache for quick availability of
       # pod command. Not using cached Pods folder.
       - name: Restore cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             vendor
