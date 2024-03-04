@@ -61,7 +61,7 @@ jobs:
         run: |
             ./scripts/prep_xcframework.sh
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: release_framework
           path: |
@@ -79,7 +79,7 @@ jobs:
         run: |
             ./scripts/prep_xcframework_noidfa.sh
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: framework-noidfa
           path: |
@@ -97,7 +97,7 @@ jobs:
         run: |
             ./scripts/prep_static_xcframework.sh
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: static-framework
           path: |
@@ -115,7 +115,7 @@ jobs:
         run: |
             ./scripts/prep_static_xcframework_noidfa.sh
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: static-framework-noidfa
           path: |
