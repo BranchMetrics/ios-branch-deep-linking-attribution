@@ -1,9 +1,6 @@
 name: Unit tests
 
-on:
-  pull_request:
-    branches:
-      - master
+on: push
 
 jobs:
   verify:
