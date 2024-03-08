@@ -69,64 +69,66 @@ static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstIns
     return application;
 }
 
-+ (NSDate*) currentBuildDate {
++ (NSDate *)currentBuildDate {
     NSURL *appURL = nil;
     NSURL *bundleURL = [NSBundle mainBundle].bundleURL;
     NSDictionary *info = [NSBundle mainBundle].infoDictionary;
-    NSString *appName = info[(__bridge NSString*)kCFBundleExecutableKey];
+    NSString *appName = info[(__bridge NSString *)kCFBundleExecutableKey];
     if (appName.length > 0 && bundleURL) {
         appURL = [bundleURL URLByAppendingPathComponent:appName];
     } else {
         NSString *path = [[NSProcessInfo processInfo].arguments firstObject];
-        if (path) appURL = [NSURL fileURLWithPath:path];
+        if (path) {
+            appURL = [NSURL fileURLWithPath:path];
+        }
     }
-    if (appURL == nil)
+    if (appURL == nil) {
+        [[BranchLogger shared] logWarning:@"Failed to get build date, app path is nil" error:nil];
         return nil;
+    }
 
     NSError *error = nil;
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSDictionary *attributes = [fileManager attributesOfItemAtPath:appURL.path error:&error];
     if (error) {
-        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Can't get build date: %@.", error] error:error];
+        [[BranchLogger shared] logWarning:@"Failed to get build date" error:error];
         return nil;
     }
-    NSDate * buildDate = [attributes fileCreationDate];
+    NSDate *buildDate = [attributes fileCreationDate];
     if (buildDate == nil || [buildDate timeIntervalSince1970] <= 0.0) {
-        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Invalid build date: %@.", buildDate] error:nil];
+        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Invalid build date: %@", buildDate] error:nil];
     }
     return buildDate;
 }
 
-+ (NSDate*) firstInstallBuildDate {
++ (NSDate *)firstInstallBuildDate {
     NSError *error = nil;
-    NSDate *firstBuildDate =
-        [BNCKeyChain retrieveDateForService:kBranchKeychainService
-            key:kBranchKeychainFirstBuildKey
-            error:&error];
-    if (firstBuildDate)
+    NSDate *firstBuildDate = [BNCKeyChain retrieveDateForService:kBranchKeychainService key:kBranchKeychainFirstBuildKey error:&error];
+    if (firstBuildDate) {
         return firstBuildDate;
-
+    }
+    
     firstBuildDate = [self currentBuildDate];
-    error = [BNCKeyChain storeDate:firstBuildDate
-        forService:kBranchKeychainService
-        key:kBranchKeychainFirstBuildKey
-        cloudAccessGroup:nil];
-    if (error) [[BranchLogger shared] logError:[NSString stringWithFormat:@"Keychain store: %@.", error] error:error];
-
+    error = [BNCKeyChain storeDate:firstBuildDate forService:kBranchKeychainService key:kBranchKeychainFirstBuildKey cloudAccessGroup:nil];
+    if (error) {
+        [[BranchLogger shared] logWarning:@"Error while saving build date" error:error];
+    }
     return firstBuildDate;
 }
 
-+ (NSDate *) currentInstallDate {
++ (NSDate *)currentInstallDate {
     NSDate *installDate = [NSDate date];
     
     #if !TARGET_OS_TV
     // tvOS always returns a creation date of Unix epoch 0 on device
     installDate = [self creationDateForLibraryDirectory];
-    #endif
-    
     if (installDate == nil || [installDate timeIntervalSince1970] <= 0.0) {
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Invalid install date, using [NSDate date]."] error:nil];
+        [[BranchLogger shared] logWarning:@"Invalid install date, using [NSDate date]" error:nil];
     }
+    #else
+    [[BranchLogger shared] logWarning:@"File system creation date not supported on tvOS, using [NSDate date]" error:nil];
+    #endif
+
     return installDate;
 }
 
@@ -136,13 +138,13 @@ static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstIns
     NSURL *directoryURL = [[fileManager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
     NSDictionary *attributes = [fileManager attributesOfItemAtPath:directoryURL.path error:&error];
     if (error) {
-        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Can't get creation date for Library directory: %@", error] error:error];
-       return nil;
+        [[BranchLogger shared] logWarning:@"Failed to get creation date for Library directory" error:error];
+        return nil;
     }
     return [attributes fileCreationDate];
 }
 
-+ (NSDate*) firstInstallDate {
++ (NSDate *)firstInstallDate {
     // check keychain for stored install date, on iOS this is lost on app deletion.
     NSError *error = nil;
     NSDate* firstInstallDate = [BNCKeyChain retrieveDateForService:kBranchKeychainService key:kBranchKeychainFirstInstalldKey error:&error];
@@ -156,7 +158,7 @@ static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstIns
     // save filesystem time to keychain
     error = [BNCKeyChain storeDate:firstInstallDate forService:kBranchKeychainService key:kBranchKeychainFirstInstalldKey cloudAccessGroup:nil];
     if (error) {
-        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Keychain store: %@.", error] error:error];
+        [[BranchLogger shared] logWarning:@"Error while saving install date" error:error];
     }
     return firstInstallDate;
 }

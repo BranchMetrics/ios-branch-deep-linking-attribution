@@ -143,7 +143,7 @@
     NSURLSessionDataTask *postDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         
         if (error) {
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"QR Code Post Request Error: %@", [error localizedDescription]] error:error];
+            [[BranchLogger shared] logError:@"QR Code request failed" error:error];
             completion(nil, error);
             return;
         }
@@ -151,7 +151,6 @@
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
         
         if (httpResponse.statusCode == 200) {
-            
             [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Network finish operation %@ %1.3fs. Status %ld.",
                                                         request.URL.absoluteString,
                                                         [[NSDate date] timeIntervalSinceDate:startDate],
