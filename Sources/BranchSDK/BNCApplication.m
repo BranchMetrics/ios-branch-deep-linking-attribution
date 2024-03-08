@@ -21,7 +21,7 @@ static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstIns
 @implementation BNCApplication
 
 // BNCApplication checks a few values in keychain
-// Checking keychain from main thread early in the app lifecycle can deadlock.  INTENG-7291
+// Checking keychain from main thread early in the app lifecycle can deadlock. INTENG-7291
 + (void)loadCurrentApplicationWithCompletion:(void (^)(BNCApplication *application))completion {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         BNCApplication *tmp = [BNCApplication currentApplication];
@@ -78,7 +78,7 @@ static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstIns
         // path to the app on device. file:///private/var/containers/Bundle/Application/GUID
         appURL = [bundleURL URLByAppendingPathComponent:appName];
     } else {
-        // This else block is probably no longer necessary
+        // TODO: Why is this fallback necessary? The NSBundle approach has been available since iOS 2.0
         // path to old app location, this symlinks to the new location. file:///var/containers/Bundle/Application/GUID
         NSString *path = [[NSProcessInfo processInfo].arguments firstObject];
         if (path) {
