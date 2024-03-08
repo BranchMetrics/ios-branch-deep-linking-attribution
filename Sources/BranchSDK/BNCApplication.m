@@ -75,15 +75,18 @@ static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstIns
     NSDictionary *info = [NSBundle mainBundle].infoDictionary;
     NSString *appName = info[(__bridge NSString *)kCFBundleExecutableKey];
     if (appName.length > 0 && bundleURL) {
+        // path to the app on device. file:///private/var/containers/Bundle/Application/GUID
         appURL = [bundleURL URLByAppendingPathComponent:appName];
     } else {
+        // This else block is probably no longer necessary
+        // path to old app location, this symlinks to the new location. file:///var/containers/Bundle/Application/GUID
         NSString *path = [[NSProcessInfo processInfo].arguments firstObject];
         if (path) {
             appURL = [NSURL fileURLWithPath:path];
         }
     }
     if (appURL == nil) {
-        [[BranchLogger shared] logWarning:@"Failed to get build date, app path is nil" error:nil];
+        [[BranchLogger shared] logError:@"Failed to get build date, app path is nil" error:nil];
         return nil;
     }
 
@@ -91,27 +94,29 @@ static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstIns
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSDictionary *attributes = [fileManager attributesOfItemAtPath:appURL.path error:&error];
     if (error) {
-        [[BranchLogger shared] logWarning:@"Failed to get build date" error:error];
+        [[BranchLogger shared] logError:@"Failed to get build date" error:error];
         return nil;
     }
     NSDate *buildDate = [attributes fileCreationDate];
     if (buildDate == nil || [buildDate timeIntervalSince1970] <= 0.0) {
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Invalid build date: %@", buildDate] error:nil];
+        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Invalid build date: %@", buildDate] error:nil];
     }
     return buildDate;
 }
 
 + (NSDate *)firstInstallBuildDate {
+    // check for stored build date
     NSError *error = nil;
     NSDate *firstBuildDate = [BNCKeyChain retrieveDateForService:kBranchKeychainService key:kBranchKeychainFirstBuildKey error:&error];
     if (firstBuildDate) {
         return firstBuildDate;
     }
     
+    // get current build date and store it
     firstBuildDate = [self currentBuildDate];
     error = [BNCKeyChain storeDate:firstBuildDate forService:kBranchKeychainService key:kBranchKeychainFirstBuildKey cloudAccessGroup:nil];
     if (error) {
-        [[BranchLogger shared] logWarning:@"Error while saving build date" error:error];
+        [[BranchLogger shared] logError:@"Error saving build date" error:error];
     }
     return firstBuildDate;
 }
@@ -123,7 +128,7 @@ static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstIns
     // tvOS always returns a creation date of Unix epoch 0 on device
     installDate = [self creationDateForLibraryDirectory];
     if (installDate == nil || [installDate timeIntervalSince1970] <= 0.0) {
-        [[BranchLogger shared] logWarning:@"Invalid install date, using [NSDate date]" error:nil];
+        [[BranchLogger shared] logError:@"Invalid install date, using [NSDate date]" error:nil];
     }
     #else
     [[BranchLogger shared] logWarning:@"File system creation date not supported on tvOS, using [NSDate date]" error:nil];
@@ -138,7 +143,7 @@ static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstIns
     NSURL *directoryURL = [[fileManager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
     NSDictionary *attributes = [fileManager attributesOfItemAtPath:directoryURL.path error:&error];
     if (error) {
-        [[BranchLogger shared] logWarning:@"Failed to get creation date for Library directory" error:error];
+        [[BranchLogger shared] logWarning:@"Failed to get creation date for NSLibraryDirectory" error:error];
         return nil;
     }
     return [attributes fileCreationDate];
@@ -164,16 +169,3 @@ static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstIns
 }
 
 @end
-
-@implementation BNCApplication (BNCTest)
-
-- (void) setAppOriginalInstallDate:(NSDate*)originalInstallDate
-        firstInstallDate:(NSDate*)firstInstallDate
-        lastUpdateDate:(NSDate*)lastUpdateDate {
-    self->_currentInstallDate = firstInstallDate;        // latest_install_time
-    self->_firstInstallDate = originalInstallDate;       // first_install_time
-    self->_currentBuildDate = lastUpdateDate;            // lastest_update_time
-}
-
-@end
-
