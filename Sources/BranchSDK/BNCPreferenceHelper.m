@@ -1083,9 +1083,10 @@ NSURL* _Null_unspecified BNCCreateDirectoryForBranchURLWithSearchPath_Unthreaded
                 attributes:nil
                 error:&error];
         if (success) {
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Using storage URL %@", branchURL] error:error];
             return branchURL;
         } else  {
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"CreateBranchURL failed: %@ URL: %@.", error, branchURL] error:error];
+            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Failed to create URL %@", branchURL] error:error];
         }
     }
     return nil;
@@ -1123,8 +1124,11 @@ NSURL* _Nonnull BNCURLForBranchDirectory_Unthreaded(void) {
             withIntermediateDirectories:YES
             attributes:nil
             error:&error];
-    if (!success) {
-        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Worst case CreateBranchURL error was: %@ URL: %@.", error, branchURL] error:error];
+    if (success) {
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Using storage URL %@", branchURL] error:error];
+    } else {
+        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Failed to create URL %@", branchURL] error:error];
+        [[BranchLogger shared] logError:@"Failed all attempts to create URLs to BNCPreferenceHelper storage." error:nil];
     }
     return branchURL;
 }

@@ -107,7 +107,7 @@ NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPast
     }
     
     if (!configFileURL) {
-        [[BranchLogger shared] logDebug:@"No branch.json in app bundle" error:nil];
+        [[BranchLogger shared] logVerbose:@"No branch.json in app bundle" error:nil];
         return;
     }
 

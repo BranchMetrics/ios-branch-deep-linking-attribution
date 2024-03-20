@@ -318,6 +318,22 @@ NSString* BNCWireFormatFromString(NSString *string) {
     return [string stringByAddingPercentEncodingWithAllowedCharacters: [NSCharacterSet URLQueryAllowedCharacterSet]];
 }
 
++ (NSString *)prettyPrintJSON:(NSDictionary *)json {
+    if (![NSJSONSerialization isValidJSONObject:json]) {
+        [[BranchLogger shared] logWarning:@"Dictionary is not a valid JSON" error:nil];
+        return nil;
+    }
+    
+    NSError *error;
+    NSData *data = [NSJSONSerialization dataWithJSONObject:json options:NSJSONWritingSortedKeys | NSJSONWritingPrettyPrinted error:&error];
+    
+    if (!data || error) {
+        [[BranchLogger shared] logWarning:@"Failed to pretty print JSON" error:error];
+        return nil;
+    }
+    return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+}
+
 #pragma mark - Param Decoding Methods
 
 + (NSDictionary *)decodeJsonDataToDictionary:(NSData *)jsonData {

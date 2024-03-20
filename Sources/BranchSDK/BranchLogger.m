@@ -41,6 +41,13 @@
     return sharedInstance;
 }
 
+- (BOOL)shouldLog:(BranchLogLevel)level {
+    if (!self.loggingEnabled || level < self.logLevelThreshold) {
+        return NO;
+    }
+    return YES;
+}
+
 - (void)disableCallerDetails {
     self.includeCallerDetails = NO;
 }
@@ -95,7 +102,7 @@
     NSString *logTag = [NSString stringWithFormat:@"[BranchSDK][%@]", logLevelString];
     NSMutableString *fullMessage = [NSMutableString stringWithFormat:@"%@%@", logTag, message];
     if (error) {
-        [fullMessage appendFormat:@" NSError: %@", error.localizedDescription];
+        [fullMessage appendFormat:@" NSError: %@", error];
     }
     return fullMessage;
 }

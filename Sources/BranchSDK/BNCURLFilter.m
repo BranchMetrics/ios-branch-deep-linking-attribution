@@ -142,19 +142,21 @@
     NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
 
     if (error) {
-        [[BranchLogger shared] logError:@"Failed to parse uri_skip_list" error:error];
+        [[BranchLogger shared] logWarning:@"Failed to parse uri_skip_list" error:error];
         return nil;
     }
     
+    // Given the way this is currently designed, the server will return formats that will fail this check.
+    // Making this a verbose log until we have a chance to refactor this design.
     NSArray *urls = dictionary[@"uri_skip_list"];
     if (![urls isKindOfClass:NSArray.class]) {
-        [[BranchLogger shared] logError:@"Failed to parse uri_skip_list is not a NSArray" error:nil];
+        [[BranchLogger shared] logVerbose:@"Failed to parse uri_skip_list is not a NSArray" error:nil];
         return nil;
     }
     
     NSNumber *version = dictionary[@"version"];
     if (![version isKindOfClass:NSNumber.class]) {
-        [[BranchLogger shared] logError:@"Failed to parse uri_skip_list, version is not a NSNumber." error:nil];
+        [[BranchLogger shared] logWarning:@"Failed to parse uri_skip_list, version is not a NSNumber." error:nil];
         return nil;
     }
     

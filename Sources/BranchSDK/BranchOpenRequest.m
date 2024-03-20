@@ -277,7 +277,7 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
 + (void) setWaitNeededForOpenResponseLock {
     @synchronized (self) {
         if (!openRequestWaitQueueIsSuspended) {
-            [[BranchLogger shared] logDebug:@"Suspended for openRequestWaitQueue." error:nil];
+            [[BranchLogger shared] logVerbose:@"Suspended for openRequestWaitQueue." error:nil];
             openRequestWaitQueueIsSuspended = YES;
             dispatch_suspend(openRequestWaitQueue);
         }
@@ -285,16 +285,16 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
 }
 
 + (void) waitForOpenResponseLock {
-    [[BranchLogger shared] logDebug:@"Waiting for openRequestWaitQueue." error:nil];
+    [[BranchLogger shared] logVerbose:@"Waiting for openRequestWaitQueue." error:nil];
     dispatch_sync(openRequestWaitQueue, ^ {
-        [[BranchLogger shared] logDebug:@"Finished waitForOpenResponseLock." error:nil];
+        [[BranchLogger shared] logVerbose:@"Finished waitForOpenResponseLock." error:nil];
     });
 }
 
 + (void) releaseOpenResponseLock {
     @synchronized (self) {
         if (openRequestWaitQueueIsSuspended) {
-            [[BranchLogger shared] logDebug:@"Resuming openRequestWaitQueue." error:nil];
+            [[BranchLogger shared] logVerbose:@"Resuming openRequestWaitQueue." error:nil];
             openRequestWaitQueueIsSuspended = NO;
             dispatch_resume(openRequestWaitQueue);
         }

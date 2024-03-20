@@ -28,6 +28,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype _Nonnull)shared;
 
+// For expensive Log messages, check if it's even worth building the log message
+- (BOOL)shouldLog:(BranchLogLevel)level;
+
+// Caller details are relatively expensive, option to disable if the cost is too high.
 - (void)disableCallerDetails;
 
 - (void)logError:(NSString * _Nonnull)message error:(NSError * _Nullable)error;

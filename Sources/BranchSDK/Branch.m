@@ -90,6 +90,8 @@ NSString * const BNCSpotlightFeature = @"spotlight";
 
 #pragma mark - Load Categories
 
+// Depending on linker settings, static compilation can omit ObjC categories leading to a runtime error.
+// These no-op static initializers force the category to load.
 void ForceCategoriesToLoad(void);
 void ForceCategoriesToLoad(void) {
     BNCForceNSErrorCategoryToLoad();
@@ -236,7 +238,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
     
     if (config.enableLogging) {
-        [self enableLogging];
+        [Branch enableLogging];
     }
     
     if (config.checkPasteboardOnInstall) {
@@ -251,7 +253,7 @@ static Class bnc_networkServiceClass = NULL;
 + (void)setNetworkServiceClass:(Class)networkServiceClass {
     @synchronized ([Branch class]) {
         if (bnc_networkServiceClass) {
-            [[BranchLogger shared] logError:@"The Branch network service class is already set. It can be set only once." error:nil];
+            [[BranchLogger shared] logError:@"The Branch network service class is already set. Ignoring attempt to set it again." error:nil];
             return;
         }
         if (![networkServiceClass conformsToProtocol:@protocol(BNCNetworkServiceProtocol)]) {
@@ -335,7 +337,7 @@ static NSString *bnc_branchKey = nil;
     [self setBranchKey:branchKey error:&error];
 
     if (error) {
-        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Branch init error: %@", error.localizedDescription] error:error];
+        [[BranchLogger shared] logError:@"Failed to set Branch Key" error:error];
     }
 }
 
@@ -419,16 +421,26 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)enableLogging {
+    [Branch enableLogging];
+}
+
+- (void)enableLoggingAtLevel:(BranchLogLevel)logLevel withCallback:(nullable BranchLogCallback)callback {
+    [Branch enableLoggingAtLevel:logLevel withCallback:callback];
+}
+
++ (void)enableLogging {
     BranchLogger *logger = [BranchLogger shared];
     logger.loggingEnabled = YES;
     logger.logLevelThreshold = BranchLogLevelDebug;
 }
 
-- (void)enableLoggingAtLevel:(BranchLogLevel)logLevel withCallback:(nullable BranchLogCallback)callback {
++ (void)enableLoggingAtLevel:(BranchLogLevel)logLevel withCallback:(nullable BranchLogCallback)callback {
     BranchLogger *logger = [BranchLogger shared];
     logger.loggingEnabled = YES;
     logger.logLevelThreshold = logLevel;
-    logger.logCallback = callback;
+    if (callback) {
+        logger.logCallback = callback;
+    }
 }
 
 - (void)useEUEndpoints {
@@ -566,8 +578,7 @@ static NSString *bnc_branchKey = nil;
 
 #pragma mark - Actual Init Session
 
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController registerDeepLinkHandlerUsingBranchUniversalObject:(callbackWithBranchUniversalObject)callback {
-
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController registerDeepLinkHandlerUsingBranchUniversalObject:(callbackWithBranchUniversalObject)callback {    
     [self initSceneSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController
                     registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
         if (callback) {
@@ -581,7 +592,6 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController registerDeepLinkHandler:(callbackWithParams)callback {
-
     [self initSceneSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController
                     registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
         if (callback) {
@@ -633,7 +643,6 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
-//these params will be added
 - (void)setDeepLinkDebugMode:(NSDictionary *)debugParams {
     self.deepLinkDebugParams = debugParams;
 }
@@ -746,7 +755,6 @@ static NSString *bnc_branchKey = nil;
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
-
     NSString *source = options[UIApplicationOpenURLOptionsSourceApplicationKey];
     NSString *annotation = options[UIApplicationOpenURLOptionsAnnotationKey];
     return [self application:application openURL:url sourceApplication:source annotation:annotation];
@@ -768,7 +776,6 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier {
-
     if (userActivity.referrerURL) {
         self.preferenceHelper.initialReferrer = userActivity.referrerURL.absoluteString;
     }
@@ -917,7 +924,7 @@ static NSString *bnc_branchKey = nil;
 
 - (void)setSKAdNetworkCalloutMaxTimeSinceInstall:(NSTimeInterval)maxTimeInterval {
     if (@available(iOS 16.1, macCatalyst 16.1, *)) {
-        [[BranchLogger shared] logDebug:@"This is no longer supported for iOS 16.1+ - SKAN4.0" error:nil];
+        [[BranchLogger shared] logDebug:@"Not supported SKAN 4.0+, iOS 16.1+" error:nil];
     } else {
         [BNCSKAdNetwork sharedInstance].maxTimeSinceInstall = maxTimeInterval;
     }
@@ -989,7 +996,7 @@ static NSString *bnc_branchKey = nil;
             (Branch.trackingDisabled)
             ? [NSError branchErrorWithCode:BNCTrackingDisabledError]
             : [NSError branchErrorWithCode:BNCInitError];
-        [[BranchLogger shared] logError:@"Branch is not initialized, cannot logout." error:error];
+        [[BranchLogger shared] logWarning:@"Branch is not initialized, cannot logout." error:error];
         if (callback) {callback(NO, error);}
         return;
     }
@@ -1399,7 +1406,7 @@ static NSString *bnc_branchKey = nil;
             // 2. Check if URL is branch URL and if yes -> store it.
             [item loadItemForTypeIdentifier:UTTypeURL.identifier options:NULL completionHandler:^(NSURL *url, NSError * _Null_unspecified error) {
                 if (error) {
-                    [[BranchLogger shared] logError:[NSString stringWithFormat:@"%@", error] error:error];
+                    [[BranchLogger shared] logWarning:@"Failed to load URL from Pasteboard" error:error];
                 }
                 else if ([Branch isBranchLink:url.absoluteString]) {
                     [self.preferenceHelper setLocalUrl:[url absoluteString]];
@@ -1538,6 +1545,8 @@ static NSString *bnc_branchKey = nil;
     // If an ignore UA string is present, we always get a new url.
     // Otherwise, if we've already seen this request, use the cached version.
     if (!ignoreUAString && [self.linkCache objectForKey:linkData]) {
+        [[BranchLogger shared] logVerbose:@"Returning cached Branch Link" error:nil];
+
         shortURL = [self.linkCache objectForKey:linkData];
     } else {
         BranchShortUrlSyncRequest *req =
@@ -1554,7 +1563,7 @@ static NSString *bnc_branchKey = nil;
          linkData:linkData
          linkCache:self.linkCache];
         
-        [[BranchLogger shared] logDebug:@"Creating a custom URL synchronously." error:nil];
+        [[BranchLogger shared] logVerbose:@"Requesting Branch Link synchronously" error:nil];
         BNCServerResponse *serverResponse = [req makeRequest:self.serverInterface key:self.class.branchKey];
         shortURL = [req processResponse:serverResponse];
         
@@ -1888,11 +1897,13 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     BOOL deferred = NO;
     @synchronized (self) {
         if (self.deferInitForPluginRuntime) {
+            [[BranchLogger shared] logDebug:@"Deferring SDK init until notifyNativeToInit is called" error:nil];
             self.cachedInitBlock = block;
             deferred = YES;
         }
     }
     
+    // handle default non-deferred state
     if (!deferred && block) {
         block();
     }
@@ -1902,6 +1913,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 // Releases deferred init block
 - (void)notifyNativeToInit {
     @synchronized (self) {
+        [[BranchLogger shared] logDebug:@"Unlocking Deferred SDK init" error:nil];
         self.deferInitForPluginRuntime = NO;
     }
     
@@ -1997,7 +2009,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 
                 [self.requestQueue insert:req at:0];
                 
-                NSString *message = [NSString stringWithFormat:@"request %@ callback %@ link %@", req, req.callback, req.urlString];
+                NSString *message = [NSString stringWithFormat:@"Request %@ callback %@ link %@", req, req.callback, req.urlString];
                 [[BranchLogger shared] logDebug:message error:nil];
 
             } else {
@@ -2012,7 +2024,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                     [self.requestQueue insert:req at:1];
 
                     [[BranchLogger shared] logDebug:@"Link resolution request" error:nil];
-                    NSString *message = [NSString stringWithFormat:@"request %@ callback %@ link %@", req, req.callback, req.urlString];
+                    NSString *message = [NSString stringWithFormat:@"Request %@ callback %@ link %@", req, req.callback, req.urlString];
                     [[BranchLogger shared] logDebug:message error:nil];
                 }
             }
