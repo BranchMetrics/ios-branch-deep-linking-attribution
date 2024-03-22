@@ -19,12 +19,16 @@ class HomeViewController: UITableViewController {
     @IBOutlet weak var btnNavigateToContent: UIButton!
     @IBOutlet weak var btnDisplayContent: UIButton!
     @IBOutlet weak var btnReadLog: UIButton!
+    @IBOutlet weak var btnSetDMAParams: UIButton!
+    @IBOutlet weak var btnSendV2Event: UIButton!
     
     @IBOutlet weak var switchControl: UISwitch!
     
     @IBOutlet weak var labelStatus: UILabel!
     
     let branchObj:Branch! = nil
+    var logData: String! = ""
+    var branchSDKInitialized = false;
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,6 +45,8 @@ class HomeViewController: UITableViewController {
         btnNavigateToContent.layer.cornerRadius = 8.0
         btnReadLog.layer.cornerRadius = 8.0
         btnLoadWebView.layer.cornerRadius = 8.0
+        btnSetDMAParams.layer.cornerRadius = 8.0
+        btnSendV2Event.layer.cornerRadius = 8.0
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.methodOfReceivedNotification(notification:)), name: Notification.Name("NotificationIdentifier"), object: nil)
         
@@ -65,28 +71,37 @@ class HomeViewController: UITableViewController {
         CommonMethod.sharedInstance.contentMetaData = nil
         reachability = Reachability()!
         reachability!.whenReachable = { reachability in
-            
+            Branch.setBranchKey("key_test_om2EWe1WBeBYmpz9Z1mdpopouDmoN72T")
             DispatchQueue.main.async {
                 if textValue == "displayContent" {
+                    self.initBranch()
                     self.launchBUOVC(mode: 8)
                 } else if textValue == "navigatetoContent" {
+                    self.initBranch()
                     self.launchBUOVC(mode: 3)
                 } else if textValue == "sendNotification" {
+                    self.initBranch()
                     self.launchBUOVC(mode: 6)
                 } else if textValue == "loadUrlInWeb" {
+                    self.initBranch()
                     self.launchBUOVC(mode: 4)
                 } else if textValue == "createDeep" {
+                    self.initBranch()
                     self.launchBUOVC(mode: 5)
                 } else if textValue == "shareDeeplinking" {
+                    self.initBranch()
                     self.launchBUOVC(mode: 2)
                 } else if textValue == "readDeeplinking" {
+                    self.initBranch()
                     self.launchBUOVC(mode: 1)
                 } else if textValue == "trackContent" {
+                    self.initBranch()
                     let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
                     if let vc = storyBoard.instantiateViewController(withIdentifier: "TrackContentVC") as? TrackContentVC {
                         self.navigationController?.pushViewController(vc, animated: true)
                     }
                 } else if textValue == "trackUser" {
+                    self.initBranch()
                     Branch.getInstance().setIdentity("qentelli_test_user") { params, error in
                         
                         if let referringParams = params as? [String :AnyObject] {
@@ -104,13 +119,84 @@ class HomeViewController: UITableViewController {
                 } else if textValue == "swichAction" {
                     
                 } else if textValue == "createObject" {
+                    self.initBranch()
                     self.launchBUOVC(mode: 0)
                 } else if textValue == "readSystemLog" {
+                    self.initBranch()
                     let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
                     if let vc = storyBoard.instantiateViewController(withIdentifier: "LogFileListViewController") as? LogFileListViewController {
                         self.navigationController?.pushViewController(vc, animated: true)
                     }
-                }
+                } else if textValue == "setDMAParams" {
+                    self.logData = "Error: Missing testData.\n"
+                    
+                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                    let vc = storyBoard.instantiateViewController(withIdentifier: "TextViewController") as? TextViewController
+                    vc?.isSetDMAParams = true
+                    
+                    do {
+                        let argCount = ProcessInfo.processInfo.arguments.count
+                        if  argCount >= 2 {
+                            
+                            for i in (1 ..< argCount) {
+                                let data = ProcessInfo.processInfo.arguments[i].data(using: .utf8)!
+                                
+                                if let jsonObject = try JSONSerialization.jsonObject(with: data, options : .allowFragments) as? [String:AnyObject]
+                                {
+                                    if ((jsonObject["dma_eea"] != nil) && (jsonObject["dma_eea"] != nil) && (jsonObject["dma_eea"] != nil)) {
+                                        let dma_eea = (jsonObject["dma_eea"] as! String).lowercased() == "yes" ? true : false
+                                        let dma_ad_personalization = (jsonObject["dma_ad_personalization"] as! String).lowercased() == "yes" ? true : false
+                                        let dma_ad_user_data = (jsonObject["dma_ad_user_data"] as! String).lowercased() == "yes" ? true : false
+                                        self.logData = ""
+                                        self.enableBranchLogging(){(msg:String,msg2:BranchLogLevel,msg3:Error?)->() in
+                                            if (msg.contains("BranchSDK")){
+                                                self.logData = self.logData + msg + "\n"
+                                            }
+                                            vc?.updateText(msg: self.logData)
+                                        }
+                                        if(self.branchSDKInitialized){
+                                            Branch.getInstance().resetUserSession()
+                                        }
+                                        
+                                        Branch.setDMAParamsForEEA(dma_eea, adPersonalizationConsent: dma_ad_personalization, adUserDataUsageConsent: dma_ad_user_data)
+                                        AppDelegate.shared.getBranchData(AppDelegate.shared.launchOption)
+                                        self.branchSDKInitialized = true
+                                    } else {
+                                        self.logData = "Missing params from JSON Object: \n" + jsonObject.description
+                                    }
+                                } else {
+                                    self.logData = "Bad JSON : \n" + ProcessInfo.processInfo.arguments[i]
+                                }
+                            }
+
+                            
+                        }
+                    } catch let error as NSError {
+                        print(error)
+                        self.logData += error.localizedDescription
+                    }
+                    vc?.updateText(msg: self.logData)
+                    self.navigationController?.pushViewController(vc!, animated: true)
+                    
+               } else if textValue == "sendV2Event" {
+                   self.logData = ""
+                   
+                   let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                   let vc = storyBoard.instantiateViewController(withIdentifier: "TextViewController") as? TextViewController
+                   
+                   self.enableBranchLogging(){(msg:String,msg2:BranchLogLevel,msg3:Error?)->() in
+                       if (msg.contains("BranchSDK")){
+                           self.logData = self.logData + msg + "\n"
+                           vc?.updateText(msg: self.logData)
+                       }
+                   }
+                   self.logEvent()
+                   self.navigationController?.pushViewController(vc!, animated: true)
+                   vc?.isSendV2Event = true
+                   vc?.updateText(msg: self.logData)
+                   self.branchSDKInitialized = true
+              
+              }
             }
         }
         
@@ -135,6 +221,38 @@ class HomeViewController: UITableViewController {
     
     func networkError() {
         CommonAlert.shared.showActionAlertView(title: "Failure", message: "Your internet/network connection appears to be offline. Please check your internet/network connection.", actions: [], preferredStyle: .alert, viewController: self)
+    }
+    
+    func enableBranchLogging(callback: @escaping BranchLogCallback){
+        BranchLogger.shared().loggingEnabled =  true
+        BranchLogger.shared().logLevelThreshold = .verbose
+        BranchLogger.shared().logCallback = callback
+    }
+    func initBranch(){
+        if branchSDKInitialized {
+            return
+        }
+        Branch.getInstance().enableLogging()
+        AppDelegate.shared.getBranchData(AppDelegate.shared.launchOption)
+        branchSDKInitialized = true
+    }
+    
+    func logEvent(){
+        let event = BranchEvent.standardEvent(.purchase)
+        // Add a populated `BranchUniversalObject` to the event
+        let buo = BranchUniversalObject(canonicalIdentifier: "item/12345")
+        event.contentItems     = [ buo ]
+        // Add additional event data
+        event.alias = "my custom alias"
+        event.transactionID = "12344555"
+        event.eventDescription = "event_description"
+        event.searchQuery = "item 123"
+        event.customData = [
+            "Custom_Event_Property_Key1": "Custom_Event_Property_val1",
+            "Custom_Event_Property_Key2": "Custom_Event_Property_val2"
+        ]
+        // Log the event
+        event.logEvent()
     }
     
     @IBAction func sendNotificationAction(_ sender: Any) {
@@ -229,6 +347,14 @@ class HomeViewController: UITableViewController {
         reachabilityCheck(textValue: "readSystemLog")
         
         
+    }
+    
+    @IBAction func setDMAParams(){
+        reachabilityCheck(textValue: "setDMAParams")
+    }
+    
+    @IBAction func sendV2Event(){
+        reachabilityCheck(textValue: "sendV2Event")
     }
 }
 

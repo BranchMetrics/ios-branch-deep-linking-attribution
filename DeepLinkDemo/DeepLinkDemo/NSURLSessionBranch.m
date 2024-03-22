@@ -7,6 +7,7 @@
 
 #import "NSURLSessionBranch.h"
 #import <objc/runtime.h>
+#import "BranchLogger.h"
 
 @implementation NSURLSession (Branch)
 
@@ -29,29 +30,31 @@
 }
 
 - (void)logNetworkTrafficRequest:(NSURLRequest *)request data:(NSData *)data response:(NSURLResponse *)response {
-    NSLog(@"BranchSDK API LOG START OF FILE");
-    NSLog(@"[LogEntryStart]\n\n");
-    NSLog(@"---------------------------------------------------------------------BranchSDK LOG START ---------------------------------------------------------------------" );
-    NSLog(@"[LogEntryStart]\n\n");
-    NSLog(@"BranchSDK Request log: %@", request);
+    [[BranchLogger shared] logDebug: @"BranchSDK API LOG START OF FILE"];
+   
+    [[BranchLogger shared] logDebug:(@"[LogEntryStart]\n\n")];
+     [[BranchLogger shared] logDebug:(@"---------------------------------------------------------------------BranchSDK LOG START ---------------------------------------------------------------------" )];
+      [[BranchLogger shared] logDebug:(@"[LogEntryStart]\n\n")];
+       [[BranchLogger shared] logDebug:([NSString stringWithFormat: @"BranchSDK Request log: %@", request])];
     
     NSData *body = [request HTTPBody];
     if (body) {
-        NSLog(@"[LogEntryStart]\n\n");
-        NSLog(@"BranchSDK Request Body: %@", [NSString stringWithUTF8String:body.bytes]);
+        [[BranchLogger shared] logDebug:(@"[LogEntryStart]\n\n")];
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"BranchSDK Request Body: %@", [NSString stringWithUTF8String:body.bytes]]];
     }
     
-    NSLog(@"[LogEntryStart]\n\n");
-    NSLog(@"BranchSDK  Response: %@", response);
+        [[BranchLogger shared] logDebug:(@"[LogEntryStart]\n\n")];
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"BranchSDK  Response: %@", response]];
 
     if (data.bytes) {
-        NSLog(@"\n\n");
-        NSLog(@"BranchSDK Response Data: %@", [NSString stringWithUTF8String:data.bytes]);
+        [[BranchLogger shared] logDebug:(@"\n\n")];
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"BranchSDK Response Data: %@", [NSString stringWithUTF8String:data.bytes]]];
     }
-    NSLog(@"[LogEntryStart]\n\n");
-    NSLog(@"---------------------------------------------------------------------BranchSDK LOG END ---------------------------------------------------------------------" );
-    NSLog(@"[LogEntryStart]\n\n");
-    NSLog(@"BranchSDK API LOG END OF FILE");
+          [[BranchLogger shared] logDebug:(@"[LogEntryStart]\n\n")];
+           [[BranchLogger shared] logDebug:(@"---------------------------------------------------------------------BranchSDK LOG END ---------------------------------------------------------------------" )];
+            [[BranchLogger shared] logDebug:(@"[LogEntryStart]\n\n")];
+             [[BranchLogger shared] logDebug:(@"BranchSDK API LOG END OF FILE")];
+   
 }
 
 // replacement method for dataTaskWithRequest

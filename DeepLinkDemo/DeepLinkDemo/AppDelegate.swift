@@ -42,9 +42,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         IQKeyboardManager.shared().isEnabled = true
         StartupOptionsData.setActiveSetDebugEnabled(true)
         StartupOptionsData.setPendingSetDebugEnabled(true)
-        Branch.setBranchKey("key_test_om2EWe1WBeBYmpz9Z1mdpopouDmoN72T")
-        Branch.getInstance().enableLogging()
-        getBranchData(launchOptions)
         Utils.shared.setLogFile("AppDelegate")
         return true
     }
@@ -145,7 +142,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     
     
-    fileprivate func getBranchData(_ launchOptions: [UIApplication.LaunchOptionsKey : Any]?) {
+    func getBranchData(_ launchOptions: [UIApplication.LaunchOptionsKey : Any]?) {
         
         Branch.getInstance().initSession(
             launchOptions: launchOptions,

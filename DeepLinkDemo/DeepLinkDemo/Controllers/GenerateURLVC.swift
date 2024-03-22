@@ -185,12 +185,21 @@ class GenerateURLVC: ParentViewController {
         }
         
         
-        CommonMethod.sharedInstance.branchUniversalObject.getShortUrl(with: linkProperties, andCallback: {[weak self] url, error in
+        CommonMethod.sharedInstance.branchUniversalObject.getShortUrl(with: linkProperties, andCallback: {url, error in
+            var strDes = error?.localizedDescription
+            let alert = UIAlertController(title: "Error", message: strDes, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
+                UserDefaults.standard.set("buo", forKey: "isStatus")
+                UserDefaults.standard.set(true, forKey: "isCreatedBUO")
+               // self.handleOkBtnAction(dict: dict, alertMessage: "")
+            }))
+            //self.present(alert, animated: true, completion: nil)
             if error == nil {
-                self?.responseStatus = "Success"
-                self?.processShortURLGenerated(url)
+                self.responseStatus = "Success"
+                self.present(alert, animated: true, completion: nil)
+                self.processShortURLGenerated(url)
             } else {
-                self?.responseStatus = "Failure"
+                self.responseStatus = "Failure"
             }
         })
         
