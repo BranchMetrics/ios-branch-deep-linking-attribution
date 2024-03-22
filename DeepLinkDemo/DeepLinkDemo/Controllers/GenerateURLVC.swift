@@ -88,7 +88,6 @@ class GenerateURLVC: ParentViewController {
             UserDefaults.standard.set("createdeeplinking", forKey: "isStatus")
             UserDefaults.standard.set(true, forKey: "isCreatedDeepLink")
             UserDefaults.standard.set("\(url ?? "")", forKey: "link")
-            
             if self.forNotification == true {
                 self.fireLocalNotification(linkurl: "\(url ?? "")")
                 self.launchTextViewController(url: "\(url ?? "")", message: alertMessage, forNotification: true)
