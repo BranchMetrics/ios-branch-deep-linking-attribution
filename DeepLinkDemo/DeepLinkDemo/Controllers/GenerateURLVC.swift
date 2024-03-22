@@ -88,6 +88,7 @@ class GenerateURLVC: ParentViewController {
             UserDefaults.standard.set("createdeeplinking", forKey: "isStatus")
             UserDefaults.standard.set(true, forKey: "isCreatedDeepLink")
             UserDefaults.standard.set("\(url ?? "")", forKey: "link")
+            
             if self.forNotification == true {
                 self.fireLocalNotification(linkurl: "\(url ?? "")")
                 self.launchTextViewController(url: "\(url ?? "")", message: alertMessage, forNotification: true)
@@ -186,13 +187,13 @@ class GenerateURLVC: ParentViewController {
         }
         
         
-        CommonMethod.sharedInstance.branchUniversalObject.getShortUrl(with: linkProperties, andCallback: {url, error in
+        CommonMethod.sharedInstance.branchUniversalObject.getShortUrl(with: linkProperties, andCallback: {[weak self] url, error in
             
             if error == nil {
-                self.responseStatus = "Success"
-                self.processShortURLGenerated(url)
+                self?.responseStatus = "Success"
+                self?.processShortURLGenerated(url)
             } else {
-                self.responseStatus = "Failure"
+                self?.responseStatus = "Failure"
             }
         })
         
