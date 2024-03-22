@@ -88,14 +88,6 @@ class GenerateURLVC: ParentViewController {
             UserDefaults.standard.set("createdeeplinking", forKey: "isStatus")
             UserDefaults.standard.set(true, forKey: "isCreatedDeepLink")
             UserDefaults.standard.set("\(url ?? "")", forKey: "link")
-            var strDes = "processShortURLGenerated"
-            let alert = UIAlertController(title: "Error", message: strDes, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
-                UserDefaults.standard.set("buo", forKey: "isStatus")
-                UserDefaults.standard.set(true, forKey: "isCreatedBUO")
-               // self.handleOkBtnAction(dict: dict, alertMessage: "")
-            }))
-            self.present(alert, animated: true, completion: nil)
             if self.forNotification == true {
                 self.fireLocalNotification(linkurl: "\(url ?? "")")
                 self.launchTextViewController(url: "\(url ?? "")", message: alertMessage, forNotification: true)
@@ -161,8 +153,10 @@ class GenerateURLVC: ParentViewController {
         if let fileContent = self.loadTextWithFileName(fileName), !fileContent.isEmpty {
             let startlocation = fileContent.range(of: "BranchSDK API LOG START OF FILE")
             let endlocation = fileContent.range(of: "BranchSDK API LOG END OF FILE")
-            let apiResponse = fileContent[startlocation!.lowerBound..<endlocation!.lowerBound]
-            alertMessage = alertMessage + apiResponse
+            if ((startlocation?.lowerBound != startlocation?.upperBound) && (endlocation?.lowerBound != endlocation?.upperBound)){
+                let apiResponse = fileContent[startlocation!.lowerBound..<endlocation!.lowerBound]
+                alertMessage = alertMessage + apiResponse
+            }
         }
         return alertMessage
     }
