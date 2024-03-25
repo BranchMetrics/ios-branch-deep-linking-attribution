@@ -35,7 +35,7 @@ jobs:
       - name: Run integration tests
         run: bundle exec fastlane integration_tests
       - name: Upload test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always() # even if tests fail
         with:
           name: test-results
