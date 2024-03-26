@@ -969,7 +969,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         NSError *error = nil;
         data = [NSData dataWithContentsOfURL:self.class.URLForPrefsFile options:0 error:&error];
         if (error || !data) {
-            [[BranchLogger shared] logWarning:@"Failed to load preferences from storage." error:error];
+            [[BranchLogger shared] logWarning:@"Failed to load preferences from storage. This is expected on first run." error:error];
         }
     } @catch (NSException *) {
         [[BranchLogger shared] logWarning:@"Failed to load preferences from storage." error:nil];
