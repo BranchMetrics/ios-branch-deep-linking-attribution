@@ -317,7 +317,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     id object = [NSKeyedUnarchiver unarchivedObjectOfClasses:[BNCServerRequestQueue encodableClasses] fromData:data error:&error];
     
     if (error) {
-        [[BranchLogger shared] logWarning:@"Failed to unarchive: %@" error:error];
+        [[BranchLogger shared] logWarning:@"Failed to unarchive" error:error];
     }
     
     return object;
