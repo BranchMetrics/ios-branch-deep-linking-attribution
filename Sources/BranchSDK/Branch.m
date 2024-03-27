@@ -1935,9 +1935,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         } else {
             if (!urlString && self.cachedURLString) {
                 urlString = self.cachedURLString;
-                self.cachedURLString = nil;
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Using cached link: %@", urlString]];
             }
+            self.cachedURLString = nil;
         }
     }
     
