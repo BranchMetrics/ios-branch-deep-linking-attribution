@@ -122,7 +122,11 @@
                 
             } else {
                 if (status != 200) {
-                    [[BranchLogger shared] logWarning: [NSString stringWithFormat:@"Giving up on request with HTTP status code %ld", (long)status] error:underlyingError];
+                    if ([NSError branchDNSBlockingError:underlyingError]) {
+                        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Possible DNS Ad Blocker. Giving up on request with HTTP status code %ld", (long)status] error:underlyingError];
+                    } else {
+                        [[BranchLogger shared] logWarning: [NSString stringWithFormat:@"Giving up on request with HTTP status code %ld", (long)status] error:underlyingError];
+                    }
                 }
 
                 // Don't call on the main queue since it might be blocked.
@@ -301,7 +305,7 @@
         serverResponse.requestId = requestId;
         
         if ([[BranchLogger shared] shouldLog:BranchLogLevelDebug]) {
-            [[BranchLogger shared] logWarning:@"Request failed with NSError" error:error];
+            [[BranchLogger shared] logDebug:@"Request failed with NSError" error:error];
         }
     }
     

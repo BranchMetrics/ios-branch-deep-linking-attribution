@@ -11,6 +11,7 @@
 #import "BNCURLFilter.h"
 #import "Branch.h"
 #import "BranchLogger.h"
+#import "NSError+Branch.h"
 
 @interface BNCURLFilter ()
 
@@ -130,7 +131,11 @@
         [[BranchLogger shared] logDebug:@"No update for URL ignore list found." error:nil];
         return NO;
     } else if (statusCode != 200 || error != nil || jsonString == nil) {
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Failed to update URL ignore list. error: %@ status: %ld", operation.error, (long)operation.response.statusCode] error:operation.error];
+        if ([NSError branchDNSBlockingError:error]) {
+            [[BranchLogger shared] logWarning:@"Possible DNS Ad Blocker" error:error];
+        } else {
+            [[BranchLogger shared] logWarning:@"Failed to update URL ignore list" error:operation.error];
+        }
         return NO;
     } else {
         return YES;
