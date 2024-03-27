@@ -155,6 +155,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 // This is enabled by setting deferInitForPluginRuntime to true in branch.json
 @property (nonatomic, assign, readwrite) BOOL deferInitForPluginRuntime;
 @property (nonatomic, copy, nullable) void (^cachedInitBlock)(void);
+@property (nonatomic, copy, readwrite) NSString *cachedURLString;
 
 @end
 
@@ -1922,11 +1923,21 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 - (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString {
     
-    // ignore lifecycle calls while waiting for a plugin runtime.
     @synchronized (self) {
         if (self.deferInitForPluginRuntime) {
-            [[BranchLogger shared] logDebug:@"Branch init is deferred, ignoring init call."];
+            if (urlString) {
+                [[BranchLogger shared] logDebug:@"Branch init is deferred, caching link"];
+                self.cachedURLString = urlString;
+            } else {
+                [[BranchLogger shared] logDebug:@"Branch init is deferred, ignoring lifecycle call without a link"];
+            }
             return;
+        } else {
+            if (!urlString && self.cachedURLString) {
+                urlString = self.cachedURLString;
+                self.cachedURLString = nil;
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Using cached link: %@", urlString]];
+            }
         }
     }
     
