@@ -361,7 +361,6 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
         NSMutableArray *tmp = [NSMutableArray new];
         [tmp addObject:[NSArray class]]; // root object
         [tmp addObject:[NSData class]]; // legacy format compatibility
-        [tmp addObject:[NSURL class]];
         
         // add all replayable request objects
         [tmp addObjectsFromArray: [[BNCServerRequestQueue replayableRequestClasses] allObjects]];
