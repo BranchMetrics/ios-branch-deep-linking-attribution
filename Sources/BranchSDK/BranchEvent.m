@@ -134,8 +134,11 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
     self = [super initWithCoder:decoder];
 	if (!self) return self;
 
-	self.serverURL = [decoder decodeObjectOfClass:NSURL.class forKey:@"serverURL"];
-	self.eventDictionary = [decoder decodeObjectOfClass:NSDictionary.class forKey:@"eventDictionary"];
+    self.serverURL = [decoder decodeObjectOfClass:NSURL.class forKey:@"serverURL"];
+    
+    NSSet *classes = [NSSet setWithArray:@[NSDictionary.class, NSArray.class, NSString.class, NSNumber.class]];
+    self.eventDictionary = [decoder decodeObjectOfClasses:classes forKey:@"eventDictionary"];
+    
     return self;
 }
 
