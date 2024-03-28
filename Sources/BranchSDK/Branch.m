@@ -235,6 +235,10 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     BranchJsonConfig *config = BranchJsonConfig.instance;
     self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
     
+    if (config.apiUrl) {
+        [Branch setAPIUrl:config.apiUrl];
+    }
+    
     if (config.enableLogging) {
         [self enableLogging];
     }

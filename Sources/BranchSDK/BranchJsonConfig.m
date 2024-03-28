@@ -17,6 +17,8 @@ NSString * _Nonnull const BranchJsonConfigUseTestInstanceOption = @"useTestInsta
 NSString * _Nonnull const BranchJsonConfigDeferInitForPluginRuntimeOption = @"deferInitForPluginRuntime";
 NSString * _Nonnull const BranchJsonConfigEnableLogging = @"enableLogging";
 NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPasteboardOnInstall";
+NSString * _Nonnull const BranchJsonConfigAPIUrl = @"apiUrl";
+
 
 @interface BranchJsonConfig()
 @property (nonatomic, strong) NSDictionary *configuration;
@@ -159,6 +161,11 @@ NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPast
 - (NSString *)testKey
 {
     return self[BranchJsonConfigTestKeyOption];
+}
+
+- (NSString *)apiUrl
+{
+    return self[BranchJsonConfigAPIUrl];
 }
 
 - (id)objectForKey:(NSString *)key
