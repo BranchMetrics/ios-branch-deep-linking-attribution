@@ -197,11 +197,12 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     NSString *emailSubject = self.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT];
     if (emailSubject.length <= 0) emailSubject = self.emailSubject;
     if (emailSubject.length) {
+        // Key value coding to set email subject
+        // https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/KeyValueCoding/SearchImplementation.html#//apple_ref/doc/uid/20000955
         @try {
             [shareViewController setValue:emailSubject forKey:@"subject"];
-        }
-        @catch (NSException*) {
-            [[BranchLogger shared] logWarning:  @"Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController." error:nil];
+        } @catch (NSException *exception) {
+            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Exception to setValue 'emailSubject' forKey 'subject' on UIActivityViewController: %@.", exception] error:nil];
         }
     }
 

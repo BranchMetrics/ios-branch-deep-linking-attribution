@@ -937,8 +937,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     NSData *data = nil;
     @try {
         data = [NSKeyedArchiver archivedDataWithRootObject:dict requiringSecureCoding:YES error:NULL];
-    } @catch (id exception) {
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Exception serializing preferences dict: %@.", exception] error:nil];
+    } @catch (NSException *exception) {
+        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Exception serializing preferences dict: %@.", exception] error:nil];
     }
     return data;
 }
@@ -971,8 +971,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         if (error || !data) {
             [[BranchLogger shared] logWarning:@"Failed to load preferences from storage. This is expected on first run." error:error];
         }
-    } @catch (NSException *) {
-        [[BranchLogger shared] logWarning:@"Failed to load preferences from storage." error:nil];
+    } @catch (NSException *exception) {
+        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Exception loading preferences dict: %@.", exception] error:nil];
     }
     return data;
 }

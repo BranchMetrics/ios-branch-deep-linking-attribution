@@ -52,9 +52,7 @@ typedef NS_ENUM(NSInteger, BNCNetworkAddressType) {
         int e = errno;
         [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Failed to read IP Address: (%d): %s", e, strerror(e)] error:nil];
         
-        // Error handling in C code is one case where goto can improve readability.
-        // https://www.kernel.org/doc/html/v4.19/process/coding-style.html
-        goto err_free_interfaces;
+        goto exit;
     }
 
     // Loop through linked list of interfaces --
@@ -96,7 +94,9 @@ typedef NS_ENUM(NSInteger, BNCNetworkAddressType) {
         }
     }
 
-err_free_interfaces:
+    // Error handling in C code is one case where goto can improve readability.
+    // https://www.kernel.org/doc/html/v4.19/process/coding-style.html
+exit:
     if (interfaces) freeifaddrs(interfaces);
     return currentInterfaces;
 }

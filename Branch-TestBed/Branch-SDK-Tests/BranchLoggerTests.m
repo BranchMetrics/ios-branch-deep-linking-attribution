@@ -250,19 +250,12 @@
 }
 
 - (void)testDefaultBranchLogFormat {
-    __block NSError *originalError = [NSError errorWithDomain:@"com.domain.test" code:200 userInfo:@{@"Error Message": @"Test Error"}];
+    NSError *error = [NSError errorWithDomain:@"com.domain.test" code:200 userInfo:@{@"Error Message": @"Test Error"}];
     
-    BranchLogger *logger = [BranchLogger new];
-    logger.loggingEnabled = YES;
-
-    logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
-        NSString *expectedMessage = @"[BranchSDK][Error][BranchLoggerTests testDefaultBranchLogFormat] msg NSError: The operation couldn’t be completed. (com.domain.test error 200.)";
-        NSString *formattedMessage = [BranchLogger formatMessage:message logLevel:logLevel error:error];
-        
-        XCTAssertTrue([expectedMessage isEqualToString:formattedMessage]);
-    };
+    NSString *expectedMessage = @"[BranchSDK][Error]msg NSError: Error Domain=com.domain.test Code=200 \"(null)\" UserInfo={Error Message=Test Error}";
+    NSString *formattedMessage = [BranchLogger formatMessage:@"msg" logLevel:BranchLogLevelError error:error];
     
-    [logger logError:@"msg" error:originalError];
+    XCTAssertTrue([expectedMessage isEqualToString:formattedMessage]);
 }
 
 @end

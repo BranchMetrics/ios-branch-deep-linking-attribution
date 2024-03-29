@@ -11,8 +11,8 @@
 typedef NS_ENUM(NSUInteger, BranchLogLevel) {
     BranchLogLevelVerbose, // development
     BranchLogLevelDebug,   // validation and troubleshooting
-    BranchLogLevelWarning, // potential errors and attempts at recovery
-    BranchLogLevelError,   // unexpected or unhandled errors
+    BranchLogLevelWarning, // potential errors and attempts at recovery. SDK may be in a bad state.
+    BranchLogLevelError,   // severe errors. SDK is probably in a bad state.
 };
 
 typedef void(^BranchLogCallback)(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error);

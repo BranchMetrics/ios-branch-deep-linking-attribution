@@ -462,6 +462,8 @@ NSString* BNCWireFormatFromString(NSString *string) {
         data = [NSData dataWithBytes:bytes length:b-bytes];
     }
 
+    // Error handling in C code is one case where goto can improve readability.
+    // https://www.kernel.org/doc/html/v4.19/process/coding-style.html
 exit:
     if (bytes) {
         free(bytes);

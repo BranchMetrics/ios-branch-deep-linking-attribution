@@ -68,8 +68,7 @@
     if (valueData) {
         @try {
             value = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSDate class] fromData:(__bridge NSData*)valueData error:NULL];
-        }
-        @catch (id) {
+        } @catch (NSException *exception) {
             value = nil;
             NSError *localError = [self errorWithKey:key OSStatus:errSecDecode];
             if (error) *error = localError;
@@ -91,8 +90,7 @@
     NSData* valueData = nil;
     @try {
         valueData = [NSKeyedArchiver archivedDataWithRootObject:date requiringSecureCoding:YES error:NULL];
-    }
-    @catch(id) {
+    } @catch (NSException *exception) {
         valueData = nil;
     }
     if (!valueData) {
