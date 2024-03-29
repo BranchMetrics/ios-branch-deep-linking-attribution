@@ -16,6 +16,10 @@
 - (NSDictionary *)buildEventDictionary;
 @end
 
+@interface BranchOpenRequest()
+- (NSString *)getActionName;
+@end
+
 @interface BNCClassSerializationTests : XCTestCase
 
 @end
@@ -84,9 +88,9 @@
     XCTAssertTrue([object isKindOfClass:BranchOpenRequest.class]);
     BranchOpenRequest *unarchivedRequest = (BranchOpenRequest *)object;
     
-    // Should the urlString be restored? Probably not.
-    //XCTAssertTrue([request.urlString isEqualToString:unarchivedRequest.urlString]);
+    XCTAssertTrue([request.urlString isEqualToString:unarchivedRequest.urlString]);
     XCTAssertNil(unarchivedRequest.callback);
+    XCTAssertTrue([@"open" isEqualToString:[unarchivedRequest getActionName]]);
 }
 
 - (void)testBranchInstallRequestArchive {
@@ -108,8 +112,7 @@
     XCTAssertTrue([object isKindOfClass:BranchInstallRequest.class]);
     BranchInstallRequest *unarchivedRequest = (BranchInstallRequest *)object;
     
-    // Should the urlString be restored? Probably not.
-    //XCTAssertTrue([request.urlString isEqualToString:unarchivedRequest.urlString]);
+    XCTAssertTrue([request.urlString isEqualToString:unarchivedRequest.urlString]);
     XCTAssertNil(unarchivedRequest.callback);
     XCTAssertTrue([@"install" isEqualToString:[unarchivedRequest getActionName]]);
 }
