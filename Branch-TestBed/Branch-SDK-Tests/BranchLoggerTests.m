@@ -111,7 +111,7 @@
     [logger logDebug:@"msg" error:nil];
     XCTAssertTrue(count == 3);
     
-    // this should be ignored
+    // this should be ignored and the counter not incremented
     [logger logVerbose:@"msg" error:nil];
     XCTAssertTrue(count == 3);
 }
@@ -130,7 +130,7 @@
     [logger logError:@"msg" error:nil];
     XCTAssertTrue(count == 1);
     
-    // this should be ignored
+    // these should be ignored and the counter not incremented
     [logger logWarning:@"msg" error:nil];
     XCTAssertTrue(count == 1);
     [logger logDebug:@"msg" error:nil];
@@ -155,7 +155,7 @@
     [logger logWarning:@"msg" error:nil];
     XCTAssertTrue(count == 2);
     
-    // this should be ignored
+    // this should be ignored and the counter not incremented
     [logger logDebug:@"msg" error:nil];
     XCTAssertTrue(count == 2);
     [logger logVerbose:@"msg" error:nil];
