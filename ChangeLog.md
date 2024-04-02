@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.3.4.0
+- Added support for setting the Branch API base URL through the `branch.json` file.
+
 v.3.3.0
 - SDK behavior change to fix a race condition when opening a closed app with a link. In some apps, this race condition could cause the occasional loss of link data.
  

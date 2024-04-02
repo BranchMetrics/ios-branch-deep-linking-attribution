@@ -168,7 +168,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
             [self writeObjectToDefaults:BRANCH_PREFS_KEY_PATTERN_LIST_URL value:url];
         }
     } else {
-        [[BranchLogger shared] logWarning:@"Ignoring invalid custom CDN URL"];
+        [[BranchLogger shared] logWarning:@"Ignoring invalid custom CDN URL" error:nil];
     }
 }
 
@@ -923,7 +923,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
                 NSError *error = nil;
                 [data writeToURL:prefsURL options:NSDataWritingAtomic error:&error];
                 if (error) {
-                    [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Failed to persist preferences: %@.", error]];
+                    [[BranchLogger shared] logWarning:@"Failed to persist preferences" error:error];
                 }
             }];
             [_persistPrefsQueue addOperation:newPersistOp];
@@ -937,8 +937,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     NSData *data = nil;
     @try {
         data = [NSKeyedArchiver archivedDataWithRootObject:dict requiringSecureCoding:YES error:NULL];
-    } @catch (id exception) {
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Exception serializing preferences dict: %@.", exception]];
+    } @catch (NSException *exception) {
+        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Exception serializing preferences dict: %@.", exception] error:nil];
     }
     return data;
 }
@@ -969,10 +969,10 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         NSError *error = nil;
         data = [NSData dataWithContentsOfURL:self.class.URLForPrefsFile options:0 error:&error];
         if (error || !data) {
-            [[BranchLogger shared] logWarning:@"Failed to load preferences from storage."];
+            [[BranchLogger shared] logWarning:@"Failed to load preferences from storage. This is expected on first run." error:error];
         }
-    } @catch (NSException *) {
-        [[BranchLogger shared] logWarning:@"Failed to load preferences from storage."];
+    } @catch (NSException *exception) {
+        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Exception loading preferences dict: %@.", exception] error:nil];
     }
     return data;
 }
@@ -985,7 +985,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
         dict = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes fromData:data error:&error];
         if (error) {
-            [[BranchLogger shared] logWarning:@"Failed to load preferences from storage."];
+            [[BranchLogger shared] logWarning:@"Failed to load preferences from storage." error:error];
         }
     }
     
@@ -1083,9 +1083,10 @@ NSURL* _Null_unspecified BNCCreateDirectoryForBranchURLWithSearchPath_Unthreaded
                 attributes:nil
                 error:&error];
         if (success) {
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Using storage URL %@", branchURL] error:error];
             return branchURL;
         } else  {
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"CreateBranchURL failed: %@ URL: %@.", error, branchURL] error:error];
+            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Failed to create URL %@", branchURL] error:error];
         }
     }
     return nil;
@@ -1123,8 +1124,11 @@ NSURL* _Nonnull BNCURLForBranchDirectory_Unthreaded(void) {
             withIntermediateDirectories:YES
             attributes:nil
             error:&error];
-    if (!success) {
-        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Worst case CreateBranchURL error was: %@ URL: %@.", error, branchURL] error:error];
+    if (success) {
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Using storage URL %@", branchURL] error:error];
+    } else {
+        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Failed to create URL %@", branchURL] error:error];
+        [[BranchLogger shared] logError:@"Failed all attempts to create URLs to BNCPreferenceHelper storage." error:nil];
     }
     return branchURL;
 }
