@@ -27,7 +27,7 @@
     
     __block int count = 0;
     logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
-        count++;
+        count = count + 1;
     };
     [logger logError:@"msg" error:nil];
     
@@ -40,7 +40,7 @@
     
     __block int count = 0;
     logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
-        count++;
+        count = count + 1;
     };
     
     [logger logError:@"msg" error:nil];
@@ -56,7 +56,7 @@
     
     __block int count = 0;
     logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
-        count++;
+        count = count + 1;
     };
     
     [logger logError:nil error:nil];
@@ -69,7 +69,7 @@
     
     __block int count = 0;
     logger.logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
-        count++;
+        count = count + 1;
     };
     
     [logger logError:@"" error:nil];
