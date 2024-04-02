@@ -58,13 +58,12 @@ NSString * _Nonnull const BranchJsonConfigAPIUrl = @"apiUrl";
     NSError *error;
     id object = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
     if (!object || error) {
-        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Failed to parse branch.json. Error: %@", error.localizedDescription] error:error];
+        [[BranchLogger shared] logError:@"Failed to parse branch.json" error:error];
         return;
     }
 
     if (![object isKindOfClass:NSDictionary.class]) {
         [[BranchLogger shared] logError:@"Contents of branch.json should be a JSON object." error:nil];
-
         return;
     }
 
@@ -74,11 +73,10 @@ NSString * _Nonnull const BranchJsonConfigAPIUrl = @"apiUrl";
 - (NSData *)configFileContents
 {
     if (!self.configFileURL) return nil;
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Loading %@", self.configFileURL.pathComponents.lastObject]];
     NSError *error;
     NSData *data = [NSData dataWithContentsOfURL:self.configFileURL options:0 error:&error];
     if (!data || error) {
-        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Failed to load %@. Error: %@", self.configFileURL, error.localizedDescription] error:error];
+        [[BranchLogger shared] logError:@"Failed to load branch.json" error:error];
         return nil;
     }
     return data;
@@ -111,7 +109,7 @@ NSString * _Nonnull const BranchJsonConfigAPIUrl = @"apiUrl";
     }
     
     if (!configFileURL) {
-        [[BranchLogger shared] logDebug:@"No branch.json in app bundle."];
+        [[BranchLogger shared] logVerbose:@"No branch.json in app bundle" error:nil];
         return;
     }
 

@@ -64,4 +64,7 @@ extern NSString* BNCWireFormatFromString(NSString *string);
 
 + (NSArray<BNCKeyValue*>*) queryItems:(NSURL*)URL;
 
+// For JSON logging
++ (NSString *)prettyPrintJSON:(NSDictionary *)json;
+
 @end
