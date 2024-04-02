@@ -1942,16 +1942,16 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     @synchronized (self) {
         if (self.deferInitForPluginRuntime) {
             if (urlString) {
-                [[BranchLogger shared] logDebug:@"Branch init is deferred, caching link"];
+                [[BranchLogger shared] logDebug:@"Branch init is deferred, caching link" error:nil];
                 self.cachedURLString = urlString;
             } else {
-                [[BranchLogger shared] logDebug:@"Branch init is deferred, ignoring lifecycle call without a link"];
+                [[BranchLogger shared] logDebug:@"Branch init is deferred, ignoring lifecycle call without a link" error:nil];
             }
             return;
         } else {
             if (!urlString && self.cachedURLString) {
                 urlString = self.cachedURLString;
-                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Using cached link: %@", urlString]];
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Using cached link: %@", urlString] error:nil];
             }
             self.cachedURLString = nil;
         }
