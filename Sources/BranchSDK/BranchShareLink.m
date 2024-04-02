@@ -115,7 +115,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 
     // Make sure we can share
     if (!(self.universalObject.canonicalIdentifier || self.universalObject.canonicalUrl || self.universalObject.title)) {
-        [[BranchLogger shared] logWarning:@"A canonicalIdentifier, canonicalURL, or title are required to uniquely identify content. In order to not break the end user experience with sharing, Branch SDK will proceed to create a URL, but content analytics may not properly include this URL."];
+        [[BranchLogger shared] logWarning:@"A canonicalIdentifier, canonicalURL, or title are required to uniquely identify content. In order to not break the end user experience with sharing, Branch SDK will proceed to create a URL, but content analytics may not properly include this URL." error:nil];
     }
     
     self.serverParameters = [[self.universalObject getParamsForServerRequestWithAddedLinkProperties:self.linkProperties] mutableCopy];
@@ -197,11 +197,12 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     NSString *emailSubject = self.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT];
     if (emailSubject.length <= 0) emailSubject = self.emailSubject;
     if (emailSubject.length) {
+        // Key value coding to set email subject
+        // https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/KeyValueCoding/SearchImplementation.html#//apple_ref/doc/uid/20000955
         @try {
             [shareViewController setValue:emailSubject forKey:@"subject"];
-        }
-        @catch (NSException*) {
-            [[BranchLogger shared] logWarning:  @"Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController."];
+        } @catch (NSException *exception) {
+            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Exception to setValue 'emailSubject' forKey 'subject' on UIActivityViewController: %@.", exception] error:nil];
         }
     }
 
