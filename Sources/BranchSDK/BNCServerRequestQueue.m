@@ -284,6 +284,19 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     }
 }
 
+// It's been reported that unarchive can fail in some situations. In that case, remove the queued requests file.
+- (void)removeSaveFile {
+    NSURL *fileURL = [BNCServerRequestQueue URLForQueueFile];
+    if (fileURL) {
+        NSError *error;
+        [NSFileManager.defaultManager removeItemAtURL:fileURL error:&error];
+        
+        if (error) {
+            [[BranchLogger shared] logError:@"Failed to remove archived queue" error:error];
+        }
+    }
+}
+
 - (NSMutableArray<BNCServerRequest *> *)unarchiveQueueFromData:(NSData *)data {
     NSMutableArray<BNCServerRequest *> *queue = [NSMutableArray new];
     
@@ -317,7 +330,8 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     id object = [NSKeyedUnarchiver unarchivedObjectOfClasses:[BNCServerRequestQueue encodableClasses] fromData:data error:&error];
     
     if (error) {
-        [[BranchLogger shared] logWarning:@"Failed to unarchive" error:error];
+        [[BranchLogger shared] logError:@"Failed to unarchive" error:error];
+        [self removeSaveFile];
     }
     
     return object;
@@ -331,7 +345,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
         NSArray *tmp = @[
             [BranchOpenRequest class],
             [BranchInstallRequest class],
-            [BranchEventRequest class],
+            [BranchEventRequest class]
         ];
         requestClasses = [NSSet setWithArray:tmp];
     });

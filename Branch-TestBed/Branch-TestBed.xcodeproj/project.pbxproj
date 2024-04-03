@@ -187,6 +187,8 @@
 		5F644C482B7AA811000DCD78 /* BNCCallbackMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F644BB72B7AA811000DCD78 /* BNCCallbackMap.m */; };
 		5F644C492B7AA811000DCD78 /* BNCEventUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F644BB82B7AA811000DCD78 /* BNCEventUtils.m */; };
 		5F67F48E228F535500067429 /* BNCEncodingUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F67F48D228F535500067429 /* BNCEncodingUtilsTests.m */; };
+		5F6D86D92BB5E9650068B536 /* BNCClassSerializationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6D86D82BB5E9650068B536 /* BNCClassSerializationTests.m */; };
+		5F83B9ED2433BAAA0054A022 /* BNCServerInterface.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16837E2098C901008819E3 /* BNCServerInterface.Test.m */; };
 		5F86501A2B76DA3200364BDE /* NSMutableDictionaryBranchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F8650192B76DA3200364BDE /* NSMutableDictionaryBranchTests.m */; };
 		5F892EC5236116CD0023AEC1 /* NSErrorBranchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F892EC4236116CC0023AEC1 /* NSErrorBranchTests.m */; };
 		5F8B7B4021B5F5CD009CE0A6 /* libBranch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 466B58381B17773000A69EDE /* libBranch.a */; };
@@ -475,6 +477,7 @@
 		5F644BB72B7AA811000DCD78 /* BNCCallbackMap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCCallbackMap.m; sourceTree = "<group>"; };
 		5F644BB82B7AA811000DCD78 /* BNCEventUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEventUtils.m; sourceTree = "<group>"; };
 		5F67F48D228F535500067429 /* BNCEncodingUtilsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtilsTests.m; sourceTree = "<group>"; };
+		5F6D86D82BB5E9650068B536 /* BNCClassSerializationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCClassSerializationTests.m; sourceTree = "<group>"; };
 		5F73FC8023314697000EBD32 /* BNCJSONUtilityTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCJSONUtilityTests.m; sourceTree = "<group>"; };
 		5F8650192B76DA3200364BDE /* NSMutableDictionaryBranchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSMutableDictionaryBranchTests.m; sourceTree = "<group>"; };
 		5F892EC4236116CC0023AEC1 /* NSErrorBranchTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSErrorBranchTests.m; sourceTree = "<group>"; };
@@ -648,6 +651,7 @@
 				5F892EC4236116CC0023AEC1 /* NSErrorBranchTests.m */,
 				5F8650192B76DA3200364BDE /* NSMutableDictionaryBranchTests.m */,
 				4D16839E2098C901008819E3 /* NSStringBranchTests.m */,
+				5F6D86D82BB5E9650068B536 /* BNCClassSerializationTests.m */,
 			);
 			path = "Branch-SDK-Tests";
 			sourceTree = "<group>";
@@ -1371,6 +1375,7 @@
 				C15CC9DE2ABCB549003CC339 /* BNCCurrencyTests.m in Sources */,
 				5F205D0823186AF700C776D1 /* BNCUserAgentCollectorTests.m in Sources */,
 				5FCF7EAD29DC96A7008D629E /* BNCURLFilterSkiplistUpgradeTests.m in Sources */,
+				5F6D86D92BB5E9650068B536 /* BNCClassSerializationTests.m in Sources */,
 				E7A728BD2AA9A112009343B7 /* BNCAPIServerTest.m in Sources */,
 				4D1683C12098C902008819E3 /* BNCApplicationTests.m in Sources */,
 				4D1683B92098C902008819E3 /* BNCSystemObserverTests.m in Sources */,
