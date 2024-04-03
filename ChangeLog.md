@@ -1,6 +1,6 @@
 Branch iOS SDK Change Log
 
-v.3.4.0
+v.3.4.1
 - Fix cold link launch when using deferred initialization and an AppDelegate only app.
 - Fix cocoapods privacy manifest collision.
 - Fix error recovery serialization.
