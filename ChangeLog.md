@@ -1,5 +1,12 @@
 Branch iOS SDK Change Log
 
+v.3.4.1
+- Fix cold link launch when using deferred initialization and an AppDelegate only app.
+- Fix cocoapods privacy manifest collision.
+- Fix error recovery serialization.
+- Update logs with more appropriate log levels.
+- Pass back underlying Network NSErrors that cause the SDK to give up.
+
 v.3.4.0
 - Added support for setting the Branch API base URL through the `branch.json` file.
 
