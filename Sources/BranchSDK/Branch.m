@@ -157,6 +157,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 // This is enabled by setting deferInitForPluginRuntime to true in branch.json
 @property (nonatomic, assign, readwrite) BOOL deferInitForPluginRuntime;
 @property (nonatomic, copy, nullable) void (^cachedInitBlock)(void);
+@property (nonatomic, copy, readwrite) NSString *cachedURLString;
 
 @end
 
@@ -624,27 +625,20 @@ static NSString *bnc_branchKey = nil;
     [self.class addBranchSDKVersionToCrashlyticsReport];
     self.shouldAutomaticallyDeepLink = automaticallyDisplayController;
 
-    // If the SDK is already initialized, this means that initSession was called after other lifecycle calls.
-    if (self.initializationStatus == BNCInitStatusInitialized) {
-        [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:nil];
-        return;
-    }
-
-    // Save data from push notification on app launch
+    // Check for Branch link in a push payload
+    NSString *pushURL = nil;
     #if !TARGET_OS_TV
     if ([options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
         id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
         if ([branchUrlFromPush isKindOfClass:[NSString class]]) {
             self.preferenceHelper.universalLinkUrl = branchUrlFromPush;
             self.preferenceHelper.referringURL = branchUrlFromPush;
+            pushURL = (NSString *)branchUrlFromPush;
         }
     }
     #endif
 
-    // Handle case where there's no URI scheme or Universal Link.
-    if (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
-        [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:nil];
-    }
+    [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:pushURL];
 }
 
 - (void)setDeepLinkDebugMode:(NSDictionary *)debugParams {
@@ -1938,11 +1932,21 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 - (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString {
     
-    // ignore lifecycle calls while waiting for a plugin runtime.
     @synchronized (self) {
         if (self.deferInitForPluginRuntime) {
-            [[BranchLogger shared] logDebug:@"Branch init is deferred, ignoring init call." error:nil];
+            if (urlString) {
+                [[BranchLogger shared] logDebug:@"Branch init is deferred, caching link" error:nil];
+                self.cachedURLString = urlString;
+            } else {
+                [[BranchLogger shared] logDebug:@"Branch init is deferred, ignoring lifecycle call without a link" error:nil];
+            }
             return;
+        } else {
+            if (!urlString && self.cachedURLString) {
+                urlString = self.cachedURLString;
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Using cached link: %@", urlString] error:nil];
+            }
+            self.cachedURLString = nil;
         }
     }
     
