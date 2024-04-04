@@ -19,6 +19,22 @@ let package = Package(
         .target(
             name: "BranchSDK",
             path: "Sources",
+            exclude: [
+                "Sources/BranchSDK/Private/BNCContentDiscoveryManager.h",
+                "Sources/BranchSDK/BNCContentDiscoveryManager.m",
+	            "Sources/BranchSDK/Private/BNCUserAgentCollector.h",
+	            "Sources/BranchSDK/BNCUserAgentCollector.m",
+	            "Sources/BranchSDK/Private/BNCSpotlightService.h",
+	            "Sources/BranchSDK/BNCSpotlightService.m",
+	            "Sources/BranchSDK/Public/BranchActivityItemProvider.h",
+	            "Sources/BranchSDK/BranchActivityItemProvider.m",
+	            "Sources/BranchSDK/Public/BranchCSSearchableItemAttributeSet.h",
+	            "Sources/BranchSDK/BranchCSSearchableItemAttributeSet.m",
+	            "Sources/BranchSDK/Public/BranchShareLink.h",
+                "Sources/BranchSDK/BranchShareLink.m",
+	            "Sources/BranchSDK/Public/BranchPasteControl.h",
+                "Sources/BranchSDK/BranchPasteControl.m"
+            ],
             sources: [
                 "BranchSDK/"
             ],
@@ -35,22 +51,6 @@ let package = Package(
                 .linkedFramework("WebKit", .when(platforms: [.iOS])),
                 .linkedFramework("CoreSpotlight", .when(platforms: [.iOS])),
                 .linkedFramework("AdServices", .when(platforms: [.iOS]))
-            ],
-            exclude: [
-                "Sources/BranchSDK/Private/BNCContentDiscoveryManager.h",
-                "Sources/BranchSDK/BNCContentDiscoveryManager.m",
-	            "Sources/BranchSDK/Private/BNCUserAgentCollector.h",
-	            "Sources/BranchSDK/BNCUserAgentCollector.m",
-	            "Sources/BranchSDK/Private/BNCSpotlightService.h",
-	            "Sources/BranchSDK/BNCSpotlightService.m",
-	            "Sources/BranchSDK/Public/BranchActivityItemProvider.h",
-	            "Sources/BranchSDK/BranchActivityItemProvider.m",
-	            "Sources/BranchSDK/Public/BranchCSSearchableItemAttributeSet.h",
-	            "Sources/BranchSDK/BranchCSSearchableItemAttributeSet.m",
-	            "Sources/BranchSDK/Public/BranchShareLink.h",
-                "Sources/BranchSDK/BranchShareLink.m",
-	            "Sources/BranchSDK/Public/BranchPasteControl.h",
-                "Sources/BranchSDK/BranchPasteControl.m"
             ]
         ),
     ]
