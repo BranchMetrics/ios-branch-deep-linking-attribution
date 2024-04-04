@@ -19,22 +19,6 @@ let package = Package(
         .target(
             name: "BranchSDK",
             path: "Sources",
-            exclude: [
-                "BranchSDK/Private/BNCContentDiscoveryManager.h",
-                "BranchSDK/BNCContentDiscoveryManager.m",
-	            "BranchSDK/Private/BNCUserAgentCollector.h",
-	            "BranchSDK/BNCUserAgentCollector.m",
-	            "BranchSDK/Private/BNCSpotlightService.h",
-	            "BranchSDK/BNCSpotlightService.m",
-	            "BranchSDK/Public/BranchActivityItemProvider.h",
-	            "BranchSDK/BranchActivityItemProvider.m",
-	            "BranchSDK/Public/BranchCSSearchableItemAttributeSet.h",
-	            "BranchSDK/BranchCSSearchableItemAttributeSet.m",
-	            "BranchSDK/Public/BranchShareLink.h",
-                "BranchSDK/BranchShareLink.m",
-	            "BranchSDK/Public/BranchPasteControl.h",
-                "BranchSDK/BranchPasteControl.m"
-            ],
             sources: [
                 "BranchSDK/"
             ],
