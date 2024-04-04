@@ -6,7 +6,6 @@
 //  Copyright © 2022 Branch, Inc. All rights reserved.
 //
 
-#if !TARGET_OS_TV
 #import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -21,4 +20,3 @@ API_AVAILABLE(ios(16.0), macCatalyst(16.0))
 
 @end
 NS_ASSUME_NONNULL_END
-#endif

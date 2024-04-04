@@ -6,9 +6,6 @@
 //  Copyright © 2022 Branch, Inc. All rights reserved.
 //
 
-// workaround for SPM not excluding this file
-#if !TARGET_OS_TV
-
 #import "BranchPasteControl.h"
 #import "Branch.h"
 
@@ -53,4 +50,3 @@
 }
 
 @end
-#endif
