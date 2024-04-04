@@ -122,8 +122,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     adUserDataUsageConsent = _adUserDataUsageConsent;
 
 + (BNCPreferenceHelper *)sharedInstance {
-    static BNCPreferenceHelper *preferenceHelper;
-    static dispatch_once_t onceToken;
+    static BNCPreferenceHelper *preferenceHelper = nil;
+    static dispatch_once_t onceToken = 0;
     
     dispatch_once(&onceToken, ^{
         preferenceHelper = [[BNCPreferenceHelper alloc] init];

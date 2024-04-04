@@ -14,8 +14,8 @@
 @implementation BNCServerAPI
 
 + (BNCServerAPI *)sharedInstance {
-    static BNCServerAPI *serverAPI;
-    static dispatch_once_t onceToken;
+    static BNCServerAPI *serverAPI = nil;
+    static dispatch_once_t onceToken = 0;
     
     dispatch_once(&onceToken, ^{
         serverAPI = [[BNCServerAPI alloc] init];

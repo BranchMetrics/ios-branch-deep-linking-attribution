@@ -27,8 +27,8 @@
 @implementation BNCSKAdNetwork
 
 + (BNCSKAdNetwork *)sharedInstance {
-    static BNCSKAdNetwork *singleton;
-    static dispatch_once_t onceToken;
+    static BNCSKAdNetwork *singleton = nil;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
         singleton = [[BNCSKAdNetwork alloc] init];
     });

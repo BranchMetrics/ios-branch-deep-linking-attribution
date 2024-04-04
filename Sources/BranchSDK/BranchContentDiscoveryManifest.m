@@ -34,8 +34,8 @@
 }
 
 + (BranchContentDiscoveryManifest *)getInstance {
-    static BranchContentDiscoveryManifest *sharedInstance;
-    static dispatch_once_t onceToken;
+    static BranchContentDiscoveryManifest *sharedInstance = nil;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
         sharedInstance = [BranchContentDiscoveryManifest new];
     });

@@ -15,8 +15,8 @@
 @implementation BNCCallbackMap
 
 + (instancetype)shared {
-    static BNCCallbackMap *map;
-    static dispatch_once_t onceToken;
+    static BNCCallbackMap *map = nil;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
         map = [BNCCallbackMap new];
     });

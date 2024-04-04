@@ -340,7 +340,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 // only replay analytics requests, the others are time sensitive
 + (NSSet<Class> *)replayableRequestClasses {
     static NSSet<Class> *requestClasses = nil;
-    static dispatch_once_t onceToken;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^ {
         NSArray *tmp = @[
             [BranchOpenRequest class],
@@ -356,7 +356,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 // encodable classes also includes NSArray and NSData
 + (NSSet<Class> *)encodableClasses {
     static NSSet<Class> *classes = nil;
-    static dispatch_once_t onceToken;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^ {
         NSMutableArray *tmp = [NSMutableArray new];
         [tmp addObject:[NSArray class]]; // root object
@@ -373,7 +373,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 
 + (NSURL * _Nonnull) URLForQueueFile {
     static NSURL *URL = nil;
-    static dispatch_once_t onceToken;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^ {
         URL = BNCURLForBranchDirectory();
         URL = [URL URLByAppendingPathComponent:BRANCH_QUEUE_FILE isDirectory:NO];
@@ -383,7 +383,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 
 + (instancetype)getInstance {
     static BNCServerRequestQueue *sharedQueue = nil;
-    static dispatch_once_t onceToken;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^ {
         sharedQueue = [[BNCServerRequestQueue alloc] init];
         [sharedQueue retrieve];

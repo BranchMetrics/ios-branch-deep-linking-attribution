@@ -18,8 +18,8 @@
 @implementation BNCAppGroupsData
 
 + (instancetype)shared {
-    static BNCAppGroupsData *appGroupsData;
-    static dispatch_once_t onceToken;
+    static BNCAppGroupsData *appGroupsData = nil;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
         appGroupsData = [BNCAppGroupsData new];
     });

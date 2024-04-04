@@ -13,8 +13,8 @@
 @implementation BNCPasteboard
 
 + (BNCPasteboard *)sharedInstance {
-    static BNCPasteboard *pasteboard;
-    static dispatch_once_t onceToken;
+    static BNCPasteboard *pasteboard = nil;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
         pasteboard = [BNCPasteboard new];
     });

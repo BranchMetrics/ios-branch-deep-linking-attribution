@@ -26,8 +26,8 @@
 @implementation BranchContentDiscoverer
 
 + (BranchContentDiscoverer *)getInstance {
-    static BranchContentDiscoverer *sharedInstance;
-    static dispatch_once_t onceToken;
+    static BranchContentDiscoverer *sharedInstance = nil;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
         sharedInstance = [BranchContentDiscoverer new];
     });

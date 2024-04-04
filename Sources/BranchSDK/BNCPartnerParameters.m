@@ -16,8 +16,8 @@
 @implementation BNCPartnerParameters
 
 + (instancetype)shared {
-    static BNCPartnerParameters *partnerParameters;
-    static dispatch_once_t onceToken;
+    static BNCPartnerParameters *partnerParameters = nil;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
         partnerParameters = [BNCPartnerParameters new];
     });

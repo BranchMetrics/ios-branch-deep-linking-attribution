@@ -13,8 +13,8 @@
 @implementation BranchScene
 
 + (BranchScene *)shared NS_EXTENSION_UNAVAILABLE("BranchScene does not support Extensions") {
-    static BranchScene *bscene;
-    static dispatch_once_t onceToken;
+    static BranchScene *bscene = nil;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
         bscene = [BranchScene new];
     });
