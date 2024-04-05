@@ -5,6 +5,7 @@
 //  Created by Derrick Staten on 9/8/15.
 //  Copyright © 2015 Branch Metrics. All rights reserved.
 //
+#if !TARGET_OS_TV
 
 #import "BranchCSSearchableItemAttributeSet.h"
 #import "NSError+Branch.h"
@@ -157,3 +158,4 @@
 }
 
 @end
+#endif
