@@ -8,6 +8,7 @@
 //  Copyright © 2019 Branch, Inc. All rights reserved.
 //
 
+#if !TARGET_OS_TV
 #if __has_feature(modules)
 @import Foundation;
 #else
@@ -28,3 +29,4 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+#endif

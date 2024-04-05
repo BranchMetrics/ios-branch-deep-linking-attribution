@@ -6,6 +6,8 @@
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
+#if !TARGET_OS_TV
+
 #import "BNCSpotlightService.h"
 #import "Branch.h"
 #import "BNCSystemObserver.h"
@@ -487,3 +489,4 @@ static NSString* const kDomainIdentifier = @"io.branch.sdk.spotlight";
     #undef IndexingNotAvalable
 }
 @end
+#endif

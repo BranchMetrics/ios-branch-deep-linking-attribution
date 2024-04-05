@@ -6,6 +6,7 @@
 //  Copyright © 2019 Branch, Inc. All rights reserved.
 //
 
+#if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCDeviceSystem.h"
@@ -108,3 +109,4 @@
 }
 
 @end
+#endif
