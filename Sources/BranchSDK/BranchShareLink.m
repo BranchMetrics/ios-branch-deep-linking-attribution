@@ -5,6 +5,7 @@
 //  Created by Edward Smith on 3/13/17.
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
+#if !TARGET_OS_TV
 
 #import "BranchShareLink.h"
 #import "BranchConstants.h"
@@ -330,3 +331,4 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 }
 
 @end
+#endif

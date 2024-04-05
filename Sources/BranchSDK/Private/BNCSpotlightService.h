@@ -6,6 +6,8 @@
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
+#if !TARGET_OS_TV
+
 #if __has_feature(modules)
 @import Foundation;
 #else
@@ -36,3 +38,4 @@
 
 - (void)removeAllBranchSearchableItemsWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion;
 @end
+#endif
