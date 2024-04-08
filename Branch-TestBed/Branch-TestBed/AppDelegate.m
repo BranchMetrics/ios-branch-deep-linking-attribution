@@ -33,7 +33,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     Branch *branch = [Branch getInstance];
     
     // Change the Branch base API URL
-    //[Branch setAPIUrl:@"https://api3.branch.io"];
+    [Branch setAPIUrl:@"https://api.stage.branch.io"];
     
     // test pre init support
     //[self testDispatchToIsolationQueue:branch]
