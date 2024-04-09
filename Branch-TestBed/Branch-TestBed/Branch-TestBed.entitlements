@@ -6,10 +6,8 @@
 	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:bnc.lt</string>
-		<string>applinks:bnctestbed.app.link</string>
-		<string>applinks:bnctestbed.test-app.link</string>
-		<string>applinks:bnctestbed-alternate.app.link</string>
+		<string>applinks:853fd-brice.branchbeta.link</string>
+		<string>applinks:853fd-alternate-brice.branchbeta.link</string>
 	</array>
 </dict>
 </plist>

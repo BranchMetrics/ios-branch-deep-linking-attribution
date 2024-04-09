@@ -58,10 +58,8 @@
 	</dict>
 	<key>branch_universal_link_domains</key>
 	<array>
-		<string>bnctestbed.app.link</string>
-		<string>bnctestbed.test-app.link</string>
-		<string>bnctestbed-alternate.app.link</string>
-		<string>bnc.lt</string>
+		<string>853fd-brice.branchbeta.link</string>
+		<string>853fd-alternate-brice.branchbeta.link</string>
 	</array>
 </dict>
 </plist>

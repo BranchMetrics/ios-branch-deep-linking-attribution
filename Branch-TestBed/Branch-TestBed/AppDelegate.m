@@ -35,6 +35,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Change the Branch base API URL
     [Branch setAPIUrl:@"https://api.stage.branch.io"];
     
+    //[[Branch getInstance] validateSDKIntegration];
+    
     // test pre init support
     //[self testDispatchToIsolationQueue:branch]
     [branch enableLoggingAtLevel:BranchLogLevelVerbose withCallback:^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
