@@ -1,7 +1,7 @@
 Branch iOS SDK Change Log
 
 v.3.4.2
-- Fix tvOS when using SPM or source builds
+- Fix tvOS when using SPM
 
 v.3.4.1
 - Fix cold link launch when using deferred initialization and an AppDelegate only app.
