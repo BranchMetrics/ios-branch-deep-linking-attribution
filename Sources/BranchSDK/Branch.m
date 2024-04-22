@@ -837,8 +837,16 @@ static NSString *bnc_branchKey = nil;
 
 #pragma mark - Push Notification support
 
+// TODO: is there any benefit to the extra checks in this method over directly calling handleDeeplink?
 - (void)handlePushNotification:(NSDictionary *)userInfo {
     NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
+    
+    // Saves URL into global storage for `applicationDidBecomeActive`
+    if (urlStr.length) {
+        // reusing this field, so as not to create yet another url slot on prefshelper
+        self.preferenceHelper.universalLinkUrl = urlStr;
+        self.preferenceHelper.referringURL = urlStr;
+    }
 
     // If app is active, then close out the session and start a new one.
     // Else the URL will be handled by `applicationDidBecomeActive`.

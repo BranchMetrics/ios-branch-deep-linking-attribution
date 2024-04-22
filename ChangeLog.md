@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.3.4.3
+- Fix push notifications when app is backgrounded and the app uses `handlePushNotification` instead of `handleDeeplink`
+
 v.3.4.2
 - Fix tvOS when using SPM
 
