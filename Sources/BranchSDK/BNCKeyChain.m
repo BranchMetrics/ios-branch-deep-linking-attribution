@@ -150,7 +150,7 @@
 // The security access group string is prefixed with the Apple Developer Team ID
 + (NSString * _Nullable)securityAccessGroup {
     static NSString *_securityAccessGroup = nil;
-    static dispatch_once_t onceToken;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
         
         // The keychain cannot be empty prior to requesting the security access group string. Add a tmp variable.
