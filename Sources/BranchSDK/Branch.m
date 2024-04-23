@@ -839,11 +839,8 @@ static NSString *bnc_branchKey = nil;
 
 - (void)handlePushNotification:(NSDictionary *)userInfo {
     NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
-
-    // If app is active, then close out the session and start a new one.
-    // Else the URL will be handled by `applicationDidBecomeActive`.
-    Class UIApplicationClass = NSClassFromString(@"UIApplication");
-    if (urlStr && [[UIApplicationClass sharedApplication] applicationState] == UIApplicationStateActive) {
+    
+    if (urlStr.length) {
         NSURL *url = [NSURL URLWithString:urlStr];
         if (url)  {
             [self handleDeepLink:url sceneIdentifier:nil];
