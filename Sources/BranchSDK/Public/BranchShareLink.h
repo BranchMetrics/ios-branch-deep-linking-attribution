@@ -6,6 +6,8 @@
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
+#if !TARGET_OS_TV
+
 #import "BranchUniversalObject.h"
 #import <LinkPresentation/LinkPresentation.h>
 @class BranchShareLink;
@@ -137,3 +139,4 @@ Creates and attaches an LPLinkMetadata using the provided title and icon. This m
 - (void) addLPLinkMetadata:(NSString *_Nullable)title icon:(UIImage *_Nullable)icon API_AVAILABLE(ios(13.0), macCatalyst(13.1));
 
 @end
+#endif

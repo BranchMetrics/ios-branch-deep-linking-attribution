@@ -16,6 +16,15 @@
         _loggingEnabled = NO;
         _logLevelThreshold = BranchLogLevelDebug;
         _includeCallerDetails = YES;
+        
+        // default callback sends logs to os_log
+        _logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+            NSString *formattedMessage = [BranchLogger formatMessage:message logLevel:logLevel error:error];
+            
+            os_log_t log = os_log_create("io.branch.sdk", "BranchSDK");
+            os_log_type_t osLogType = [BranchLogger osLogTypeForBranchLogLevel:logLevel];
+            os_log_with_type(log, osLogType, "%{private}@", formattedMessage);
+        };
     }
     return self;
 }
@@ -32,6 +41,13 @@
     return sharedInstance;
 }
 
+- (BOOL)shouldLog:(BranchLogLevel)level {
+    if (!self.loggingEnabled || level < self.logLevelThreshold) {
+        return NO;
+    }
+    return YES;
+}
+
 - (void)disableCallerDetails {
     self.includeCallerDetails = NO;
 }
@@ -40,65 +56,30 @@
     [self logMessage:message withLevel:BranchLogLevelError error:error];
 }
 
-- (void)logWarning:(NSString *)message {
-    [self logMessage:message withLevel:BranchLogLevelWarning error:nil];
+- (void)logWarning:(NSString *)message error:(NSError *_Nullable)error {
+    [self logMessage:message withLevel:BranchLogLevelWarning error:error];
 }
 
-- (void)logInfo:(NSString *)message {
-    [self logMessage:message withLevel:BranchLogLevelInfo error:nil];
+- (void)logDebug:(NSString *)message error:(NSError *_Nullable)error {
+    [self logMessage:message withLevel:BranchLogLevelDebug error:error];
 }
 
-- (void)logDebug:(NSString *)message {
-    [self logMessage:message withLevel:BranchLogLevelDebug error:nil];
-}
-
-- (void)logVerbose:(NSString *)message {
-    [self logMessage:message withLevel:BranchLogLevelVerbose error:nil];
+- (void)logVerbose:(NSString *)message error:(NSError *_Nullable)error {
+    [self logMessage:message withLevel:BranchLogLevelVerbose error:error];
 }
 
 - (void)logMessage:(NSString *)message withLevel:(BranchLogLevel)level error:(NSError *_Nullable)error {
-    if (!self.loggingEnabled || message.length == 0 || level < self.logLevelThreshold) {
+    if (!self.loggingEnabled || level < self.logLevelThreshold || message.length == 0) {
         return;
     }
     
-    NSString *callerDetails = self.includeCallerDetails ? [self callingClass] : @"";
-    NSString *logLevelString = [self stringForLogLevel:level];
-    NSString *logTag = [NSString stringWithFormat:@"[BranchSDK][%@]", logLevelString];
-    NSMutableString *fullMessage = [NSMutableString stringWithFormat:@"%@%@ %@", logTag, callerDetails, message];
-    
-    if (error) {
-        [fullMessage appendFormat:@", Error: %@ (Domain: %@, Code: %ld)", error.localizedDescription, error.domain, (long)error.code];
+    NSString *formattedMessage = message;
+    if (self.includeCallerDetails) {
+        formattedMessage = [NSString stringWithFormat:@"%@ %@", [self callingClass], message];
     }
 
     if (self.logCallback) {
-        self.logCallback(fullMessage, level, error);
-    } else {
-        os_log_t log = os_log_create("io.branch.sdk", "BranchSDK");
-        os_log_type_t osLogType = [self osLogTypeForBranchLogLevel:level];
-        os_log_with_type(log, osLogType, "%{private}@", fullMessage);
-    }
-}
-
-//MARK: Helper Methods
-- (os_log_type_t)osLogTypeForBranchLogLevel:(BranchLogLevel)level {
-    switch (level) {
-        case BranchLogLevelError: return OS_LOG_TYPE_FAULT;
-        case BranchLogLevelWarning: return OS_LOG_TYPE_ERROR;
-        case BranchLogLevelInfo: return OS_LOG_TYPE_INFO;
-        case BranchLogLevelDebug: return OS_LOG_TYPE_DEBUG;
-        case BranchLogLevelVerbose: return OS_LOG_TYPE_DEFAULT;
-        default: return OS_LOG_TYPE_DEFAULT;
-    }
-}
-
-- (NSString *)stringForLogLevel:(BranchLogLevel)level {
-    switch (level) {
-        case BranchLogLevelVerbose: return @"Verbose";
-        case BranchLogLevelDebug: return @"Debug";
-        case BranchLogLevelInfo: return @"Info";
-        case BranchLogLevelWarning: return @"Warning";
-        case BranchLogLevelError: return @"Error";
-        default: return @"Unknown";
+        self.logCallback(formattedMessage, level, error);
     }
 }
 
@@ -114,6 +95,37 @@
         }
     }
     return @"";
+}
+
++ (NSString *)formatMessage:(NSString *)message logLevel:(BranchLogLevel)logLevel error:(NSError *)error {
+    NSString *logLevelString = [BranchLogger stringForLogLevel:logLevel];
+    NSString *logTag = [NSString stringWithFormat:@"[BranchSDK][%@]", logLevelString];
+    NSMutableString *fullMessage = [NSMutableString stringWithFormat:@"%@%@", logTag, message];
+    if (error) {
+        [fullMessage appendFormat:@" NSError: %@", error];
+    }
+    return fullMessage;
+}
+
++ (NSString *)stringForLogLevel:(BranchLogLevel)level {
+    switch (level) {
+        case BranchLogLevelVerbose: return @"Verbose";
+        case BranchLogLevelDebug: return @"Debug";
+        case BranchLogLevelWarning: return @"Warning";
+        case BranchLogLevelError: return @"Error";
+        default: return @"Unknown";
+    }
+}
+
+// Map the Branch log level to a similar Apple log level
++ (os_log_type_t)osLogTypeForBranchLogLevel:(BranchLogLevel)level {
+    switch (level) {
+        case BranchLogLevelError: return OS_LOG_TYPE_ERROR; // "report process-level errors"
+        case BranchLogLevelWarning: return OS_LOG_TYPE_DEFAULT; // "things that might result in a failure"
+        case BranchLogLevelDebug: return OS_LOG_TYPE_INFO; // "helpful, but not essential, for troubleshooting errors"
+        case BranchLogLevelVerbose: return OS_LOG_TYPE_DEBUG; // "useful during development or while troubleshooting a specific problem"
+        default: return OS_LOG_TYPE_DEFAULT;
+    }
 }
 
 @end
