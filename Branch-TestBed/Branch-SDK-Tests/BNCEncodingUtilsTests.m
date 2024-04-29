@@ -291,8 +291,8 @@
 #pragma mark - Test Util methods
 
 - (NSString *)stringForDate:(NSDate *)date {
-    static NSDateFormatter *dateFormatter;
-    static dispatch_once_t onceToken;
+    static NSDateFormatter *dateFormatter = nil;
+    static dispatch_once_t onceToken = 0;
     
     dispatch_once(&onceToken, ^{
         dateFormatter = [[NSDateFormatter alloc] init];

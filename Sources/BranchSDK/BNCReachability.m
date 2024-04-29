@@ -28,8 +28,8 @@ typedef NS_ENUM(NSInteger, BNCNetworkStatus) {
 @implementation BNCReachability
 
 + (BNCReachability *)shared {
-    static BNCReachability *reachability;
-    static dispatch_once_t onceToken;
+    static BNCReachability *reachability = nil;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
         reachability = [BNCReachability new];
     });

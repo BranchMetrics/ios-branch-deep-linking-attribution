@@ -23,8 +23,8 @@
 @implementation BNCAppleReceipt
 
 + (BNCAppleReceipt *)sharedInstance {
-    static BNCAppleReceipt *singleton;
-    static dispatch_once_t onceToken;
+    static BNCAppleReceipt *singleton = nil;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
         singleton = [BNCAppleReceipt new];
     });

@@ -27,8 +27,8 @@
 @implementation BNCUserAgentCollector
 
 + (BNCUserAgentCollector *)instance {
-    static BNCUserAgentCollector *collector;
-    static dispatch_once_t onceToken;
+    static BNCUserAgentCollector *collector = nil;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
         collector = [BNCUserAgentCollector new];
     });

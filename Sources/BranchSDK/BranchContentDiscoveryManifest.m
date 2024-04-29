@@ -34,13 +34,12 @@
 }
 
 + (BranchContentDiscoveryManifest *)getInstance {
-    @synchronized (self) {
-        static BranchContentDiscoveryManifest *contentDiscoveryManifest = nil;
-        if (!contentDiscoveryManifest) {
-            contentDiscoveryManifest = [[BranchContentDiscoveryManifest alloc] init];
-        }
-        return contentDiscoveryManifest;
-    }
+    static BranchContentDiscoveryManifest *sharedInstance = nil;
+    static dispatch_once_t onceToken = 0;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [BranchContentDiscoveryManifest new];
+    });
+    return sharedInstance;
 }
 
 - (void)onBranchInitialised:(NSDictionary *)branchInitDict withUrl:(NSString *)referringURL {

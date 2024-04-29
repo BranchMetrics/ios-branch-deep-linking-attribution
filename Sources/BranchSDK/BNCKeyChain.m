@@ -149,9 +149,9 @@
 
 // The security access group string is prefixed with the Apple Developer Team ID
 + (NSString * _Nullable)securityAccessGroup {
-    @synchronized(self) {
-        static NSString *_securityAccessGroup = nil;
-        if (_securityAccessGroup) return _securityAccessGroup;
+    static NSString *_securityAccessGroup = nil;
+    static dispatch_once_t onceToken = 0;
+    dispatch_once(&onceToken, ^{
         
         // The keychain cannot be empty prior to requesting the security access group string. Add a tmp variable.
         NSError *error = [self storeDate:[NSDate date] forService:@"BranchKeychainService" key:@"Temp" cloudAccessGroup:nil];
@@ -168,18 +168,23 @@
         };
         CFDictionaryRef resultDictionary = NULL;
         OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)dictionary, (CFTypeRef*)&resultDictionary);
-        if (status == errSecItemNotFound) return nil;
+        
+        if (status == errSecItemNotFound) { 
+            return;
+        }
         if (status != errSecSuccess) {
             [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Failed to retrieve security access group"] error:[self errorWithKey:nil OSStatus:status]];
-            return nil;
+            return;
         }
         NSString *group = [(__bridge NSDictionary *)resultDictionary objectForKey:(__bridge NSString *)kSecAttrAccessGroup];
         if (group.length > 0) {
             _securityAccessGroup = [group copy];
         }
         CFRelease(resultDictionary);
-        return _securityAccessGroup;
-    }
+    });
+    
+    return _securityAccessGroup;
+
 }
 
 @end

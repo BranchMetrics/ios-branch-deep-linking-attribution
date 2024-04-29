@@ -16,8 +16,8 @@
 @implementation BranchPluginSupport
 
 + (BranchPluginSupport *)instance {
-    static BranchPluginSupport *pluginSupport;
-    static dispatch_once_t onceToken;
+    static BranchPluginSupport *pluginSupport = nil;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
         pluginSupport = [BranchPluginSupport new];
     });

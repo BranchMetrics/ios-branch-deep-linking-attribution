@@ -22,8 +22,8 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
 
 // Legacy error messages
 + (NSString *)messageForCode:(BNCErrorCode)code {
-    static NSMutableDictionary<NSNumber *, NSString *> *messages;
-    static dispatch_once_t onceToken;
+    static NSMutableDictionary<NSNumber *, NSString *> *messages = nil;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
         messages = [NSMutableDictionary<NSNumber *, NSString *> new];
         [messages setObject:@"The Branch user session has not been initialized." forKey:@(BNCInitError)];

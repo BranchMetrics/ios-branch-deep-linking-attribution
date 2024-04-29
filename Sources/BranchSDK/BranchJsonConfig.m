@@ -28,16 +28,13 @@ NSString * _Nonnull const BranchJsonConfigAPIUrl = @"apiUrl";
 
 @implementation BranchJsonConfig
 
-+ (BranchJsonConfig * _Nonnull)instance
-{
-    @synchronized(self) {
-        static BranchJsonConfig *_instance;
-        static dispatch_once_t once = 0;
-        dispatch_once(&once, ^{
-            _instance = [[BranchJsonConfig alloc] init];
-        });
-        return _instance;
-    }
++ (BranchJsonConfig * _Nonnull)instance {
+    static BranchJsonConfig *instance = nil;
+    static dispatch_once_t once = 0;
+    dispatch_once(&once, ^{
+        instance = [BranchJsonConfig new];
+    });
+    return instance;
 }
 
 - (instancetype)init

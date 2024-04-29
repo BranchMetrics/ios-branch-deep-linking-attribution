@@ -16,8 +16,8 @@
 
 //Can only hold one QR code in cache. Just used to debounce.
 + (BNCQRCodeCache *) sharedInstance {
-    static BNCQRCodeCache *singleton;
-    static dispatch_once_t onceToken;
+    static BNCQRCodeCache *singleton = nil;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
         singleton = [BNCQRCodeCache new];
     });

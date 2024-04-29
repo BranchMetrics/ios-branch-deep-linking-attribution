@@ -27,12 +27,11 @@
 
 + (BranchContentDiscoverer *)getInstance {
     static BranchContentDiscoverer *sharedInstance = nil;
-    @synchronized (self) {
-        if (!sharedInstance) {
-            sharedInstance = [[BranchContentDiscoverer alloc] init];
-        }
+    static dispatch_once_t onceToken = 0;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [BranchContentDiscoverer new];
+    });
     return sharedInstance;
-    }
 }
 
 - (void) dealloc {

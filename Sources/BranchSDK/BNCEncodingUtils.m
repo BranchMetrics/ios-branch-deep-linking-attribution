@@ -129,9 +129,8 @@ NSString* BNCWireFormatFromString(NSString *string) {
 #pragma mark - Param Encoding methods
 
 + (NSString *)iso8601StringFromDate:(NSDate *)date {
-    static NSDateFormatter *dateFormatter;
-    static dispatch_once_t onceToken;
-    
+    static NSDateFormatter *dateFormatter = nil;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
         dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]]; // POSIX to avoid weird issues
