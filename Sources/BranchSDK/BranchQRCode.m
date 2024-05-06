@@ -35,11 +35,11 @@
 - (void) setMargin:(NSNumber *)margin {
     if (margin.intValue > 20) {
         margin = @(20);
-        [[BranchLogger shared] logWarning:@"QR code margin was reduced to the maximum of 20."];
+        [[BranchLogger shared] logWarning:@"QR code margin was reduced to the maximum of 20." error:nil];
     }
     if (margin.intValue < 1) {
         margin = @(1);
-        [[BranchLogger shared] logWarning:@"QR code margin was increased to the minimum of 1."];
+        [[BranchLogger shared] logWarning:@"QR code margin was increased to the minimum of 1." error:nil];
     }
     _margin = margin;
 }
@@ -47,11 +47,11 @@
 - (void) setWidth:(NSNumber *)width {
     if (width.intValue > 2000) {
         width = @(2000);
-        [[BranchLogger shared] logWarning:@"QR code width was reduced to the maximum of 2000."];
+        [[BranchLogger shared] logWarning:@"QR code width was reduced to the maximum of 2000." error:nil];
     }
     if (width.intValue < 300) {
         width = @(300);
-        [[BranchLogger shared] logWarning:@"QR code width was increased to the minimum of 500."];
+        [[BranchLogger shared] logWarning:@"QR code width was increased to the minimum of 500." error:nil];
     }
     _width = width;
 }
@@ -73,7 +73,7 @@
         NSData *data=[NSData dataWithContentsOfURL:[NSURL URLWithString: self.centerLogo]];
         UIImage *image=[UIImage imageWithData:data];
         if (image == nil) {
-            [[BranchLogger shared] logWarning:@"QR code center logo was an invalid URL string."];
+            [[BranchLogger shared] logWarning:@"QR code center logo was an invalid URL string." error:nil];
         } else {
             settings[@"center_logo_url"] = self.centerLogo;
         }
@@ -137,25 +137,28 @@
     NSData *postData = [NSJSONSerialization dataWithJSONObject:params options:0 error:&error];
     [request setHTTPBody:postData];
     
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Network start operation %@.", request.URL.absoluteString]];
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Network start operation %@.", request.URL.absoluteString] error:nil];
     NSDate *startDate = [NSDate date];
     
     NSURLSessionDataTask *postDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         
         if (error) {
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"QR Code Post Request Error: %@", [error localizedDescription]] error:error];
-            completion(nil, error);
+            if ([NSError branchDNSBlockingError:error]) {
+                [[BranchLogger shared] logWarning:@"Possible DNS Ad Blocker" error:error];
+            } else {
+                [[BranchLogger shared] logError:@"QR Code request failed" error:error];
+                completion(nil, error);
+            }
             return;
         }
         
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
         
         if (httpResponse.statusCode == 200) {
-            
             [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Network finish operation %@ %1.3fs. Status %ld.",
                                                         request.URL.absoluteString,
                                                         [[NSDate date] timeIntervalSinceDate:startDate],
-                                             (long)httpResponse.statusCode]];
+                                             (long)httpResponse.statusCode] error:nil];
             
             completion(data, nil);
         } else {

@@ -41,6 +41,7 @@ typedef NS_ENUM(NSInteger, BNCNetworkAddressType) {
     ];
 }
 
+// Reads network interface information to the device IP address
 + (NSArray<BNCNetworkInterface *> *)currentInterfaces {
 
     struct ifaddrs *interfaces = NULL;
@@ -49,7 +50,8 @@ typedef NS_ENUM(NSInteger, BNCNetworkAddressType) {
     // Retrieve the current interfaces - returns 0 on success
     if (getifaddrs(&interfaces) != 0) {
         int e = errno;
-        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Can't read ip address: (%d): %s.", e, strerror(e)] error:nil];
+        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Failed to read IP Address: (%d): %s", e, strerror(e)] error:nil];
+        
         goto exit;
     }
 
@@ -92,6 +94,8 @@ typedef NS_ENUM(NSInteger, BNCNetworkAddressType) {
         }
     }
 
+    // Error handling in C code is one case where goto can improve readability.
+    // https://www.kernel.org/doc/html/v4.19/process/coding-style.html
 exit:
     if (interfaces) freeifaddrs(interfaces);
     return currentInterfaces;

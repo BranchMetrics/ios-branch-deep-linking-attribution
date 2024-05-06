@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "BranchSDK"
-  s.version          = "3.3.0"
+  s.version          = "3.4.2"
   s.summary          = "Create an HTTP URL for any piece of content in your app"
   s.description      = <<-DESC
 - Want the highest possible conversions on your sharing feature?
@@ -18,7 +18,7 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.ios.deployment_target = '12.0'
   s.tvos.deployment_target = '12.0'
 
-  s.resource = "Sources/Resources/PrivacyInfo.xcprivacy"
+  s.resource_bundles = { 'BranchSDK' => 'Sources/Resources/*.xcprivacy' }
   s.ios.source_files = "Sources/BranchSDK/**/*.{h,m}"
 
   s.tvos.source_files = "Sources/BranchSDK/**/*.{h,m}"
