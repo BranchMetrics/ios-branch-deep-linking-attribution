@@ -128,74 +128,9 @@ class HomeViewController: UITableViewController {
                         self.navigationController?.pushViewController(vc, animated: true)
                     }
                 } else if textValue == "setDMAParams" {
-                    self.logData = "Error: Missing testData.\n"
-                    
-                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                    let vc = storyBoard.instantiateViewController(withIdentifier: "TextViewController") as? TextViewController
-                    vc?.isSetDMAParams = true
-                    
-                    do {
-                        let argCount = ProcessInfo.processInfo.arguments.count
-                        if  argCount >= 2 {
-                            
-                            for i in (1 ..< argCount) {
-                                let data = ProcessInfo.processInfo.arguments[i].data(using: .utf8)!
-                                
-                                if let jsonObject = try JSONSerialization.jsonObject(with: data, options : .allowFragments) as? [String:AnyObject]
-                                {
-                                    if ((jsonObject["dma_eea"] != nil) && (jsonObject["dma_eea"] != nil) && (jsonObject["dma_eea"] != nil)) {
-                                        let dma_eea = (jsonObject["dma_eea"] as! String).lowercased() == "yes" ? true : false
-                                        let dma_ad_personalization = (jsonObject["dma_ad_personalization"] as! String).lowercased() == "yes" ? true : false
-                                        let dma_ad_user_data = (jsonObject["dma_ad_user_data"] as! String).lowercased() == "yes" ? true : false
-                                        self.logData = ""
-                                        self.enableBranchLogging(){(msg:String,msg2:BranchLogLevel,msg3:Error?)->() in
-                                            if (msg.contains("BranchSDK")){
-                                                self.logData = self.logData + msg + "\n"
-                                            }
-                                            vc?.updateText(msg: self.logData)
-                                        }
-                                        if(self.branchSDKInitialized){
-                                            Branch.getInstance().resetUserSession()
-                                        }
-                                        
-                                        Branch.setDMAParamsForEEA(dma_eea, adPersonalizationConsent: dma_ad_personalization, adUserDataUsageConsent: dma_ad_user_data)
-                                        AppDelegate.shared.getBranchData(AppDelegate.shared.launchOption)
-                                        self.branchSDKInitialized = true
-                                    } else {
-                                        self.logData = "Missing params from JSON Object: \n" + jsonObject.description
-                                    }
-                                } else {
-                                    self.logData = "Bad JSON : \n" + ProcessInfo.processInfo.arguments[i]
-                                }
-                            }
-
-                            
-                        }
-                    } catch let error as NSError {
-                        print(error)
-                        self.logData += error.localizedDescription
-                    }
-                    vc?.updateText(msg: self.logData)
-                    self.navigationController?.pushViewController(vc!, animated: true)
-                    
+                    self.setDMAParams()
                } else if textValue == "sendV2Event" {
-                   self.logData = ""
-                   
-                   let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                   let vc = storyBoard.instantiateViewController(withIdentifier: "TextViewController") as? TextViewController
-                   
-                   self.enableBranchLogging(){(msg:String,msg2:BranchLogLevel,msg3:Error?)->() in
-                       if (msg.contains("BranchSDK")){
-                           self.logData = self.logData + msg + "\n"
-                           vc?.updateText(msg: self.logData)
-                       }
-                   }
-                   self.logEvent()
-                   self.navigationController?.pushViewController(vc!, animated: true)
-                   vc?.isSendV2Event = true
-                   vc?.updateText(msg: self.logData)
-                   self.branchSDKInitialized = true
-              
+                   self.sendV2EventWrapper()
               }
             }
         }
@@ -253,6 +188,77 @@ class HomeViewController: UITableViewController {
         ]
         // Log the event
         event.logEvent()
+    }
+    
+    func setDMAParamsWrapper() {
+        self.logData = "Error: Missing testData.\n"
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let vc = storyBoard.instantiateViewController(withIdentifier: "TextViewController") as? TextViewController
+        vc?.isSetDMAParams = true
+        
+        do {
+            let argCount = ProcessInfo.processInfo.arguments.count
+            if  argCount >= 2 {
+                
+                for i in (1 ..< argCount) {
+                    let data = ProcessInfo.processInfo.arguments[i].data(using: .utf8)!
+                    
+                    if let jsonObject = try JSONSerialization.jsonObject(with: data, options : .allowFragments) as? [String:AnyObject]
+                    {
+                        if ((jsonObject["dma_eea"] != nil) && (jsonObject["dma_eea"] != nil) && (jsonObject["dma_eea"] != nil)) {
+                            let dma_eea = (jsonObject["dma_eea"] as! String).lowercased() == "yes" ? true : false
+                            let dma_ad_personalization = (jsonObject["dma_ad_personalization"] as! String).lowercased() == "yes" ? true : false
+                            let dma_ad_user_data = (jsonObject["dma_ad_user_data"] as! String).lowercased() == "yes" ? true : false
+                            self.logData = ""
+                            self.enableBranchLogging(){(msg:String,msg2:BranchLogLevel,msg3:Error?)->() in
+                                if (msg.contains("BranchSDK")){
+                                    self.logData = self.logData + msg + "\n"
+                                }
+                                vc?.updateText(msg: self.logData)
+                            }
+                            if(self.branchSDKInitialized){
+                                Branch.getInstance().resetUserSession()
+                            }
+                            
+                            Branch.setDMAParamsForEEA(dma_eea, adPersonalizationConsent: dma_ad_personalization, adUserDataUsageConsent: dma_ad_user_data)
+                            AppDelegate.shared.getBranchData(AppDelegate.shared.launchOption)
+                            self.branchSDKInitialized = true
+                        } else {
+                            self.logData = "Missing params from JSON Object: \n" + jsonObject.description
+                        }
+                    } else {
+                        self.logData = "Bad JSON : \n" + ProcessInfo.processInfo.arguments[i]
+                    }
+                }
+
+                
+            }
+        } catch let error as NSError {
+            print(error)
+            self.logData += error.localizedDescription
+        }
+        vc?.updateText(msg: self.logData)
+        self.navigationController?.pushViewController(vc!, animated: true)
+    }
+    
+    func sendV2EventWrapper(){
+        self.logData = ""
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let vc = storyBoard.instantiateViewController(withIdentifier: "TextViewController") as? TextViewController
+        
+        self.enableBranchLogging(){(msg:String,msg2:BranchLogLevel,msg3:Error?)->() in
+            if (msg.contains("BranchSDK")){
+                self.logData = self.logData + msg + "\n"
+                vc?.updateText(msg: self.logData)
+            }
+        }
+        self.logEvent()
+        self.navigationController?.pushViewController(vc!, animated: true)
+        vc?.isSendV2Event = true
+        vc?.updateText(msg: self.logData)
+        self.branchSDKInitialized = true
     }
     
     @IBAction func sendNotificationAction(_ sender: Any) {
