@@ -30,30 +30,30 @@
 }
 
 - (void)logNetworkTrafficRequest:(NSURLRequest *)request data:(NSData *)data response:(NSURLResponse *)response {
-    [[BranchLogger shared] logDebug: @"BranchSDK API LOG START OF FILE"];
+    [[BranchLogger shared] logDebug: @"BranchSDK API LOG START OF FILE" error:nil];
    
-    [[BranchLogger shared] logDebug:(@"[LogEntryStart]\n\n")];
-     [[BranchLogger shared] logDebug:(@"---------------------------------------------------------------------BranchSDK LOG START ---------------------------------------------------------------------" )];
-      [[BranchLogger shared] logDebug:(@"[LogEntryStart]\n\n")];
-       [[BranchLogger shared] logDebug:([NSString stringWithFormat: @"BranchSDK Request log: %@", request])];
+    [[BranchLogger shared] logDebug:(@"[LogEntryStart]\n\n") error:nil];
+     [[BranchLogger shared] logDebug:(@"---------------------------------------------------------------------BranchSDK LOG START ---------------------------------------------------------------------" ) error:nil];
+      [[BranchLogger shared] logDebug:(@"[LogEntryStart]\n\n") error:nil];
+       [[BranchLogger shared] logDebug:([NSString stringWithFormat: @"BranchSDK Request log: %@", request]) error:nil];
     
     NSData *body = [request HTTPBody];
     if (body) {
-        [[BranchLogger shared] logDebug:(@"[LogEntryStart]\n\n")];
-        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"BranchSDK Request Body: %@", [NSString stringWithUTF8String:body.bytes]]];
+        [[BranchLogger shared] logDebug:(@"[LogEntryStart]\n\n") error:nil];
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"BranchSDK Request Body: %@", [NSString stringWithUTF8String:body.bytes]] error:nil];
     }
     
-        [[BranchLogger shared] logDebug:(@"[LogEntryStart]\n\n")];
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"BranchSDK  Response: %@", response]];
+        [[BranchLogger shared] logDebug:(@"[LogEntryStart]\n\n") error:nil];
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"BranchSDK  Response: %@", response] error:nil];
 
     if (data.bytes) {
-        [[BranchLogger shared] logDebug:(@"\n\n")];
-        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"BranchSDK Response Data: %@", [NSString stringWithUTF8String:data.bytes]]];
+        [[BranchLogger shared] logDebug:(@"\n\n") error:nil];
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"BranchSDK Response Data: %@", [NSString stringWithUTF8String:data.bytes]] error:nil];
     }
-          [[BranchLogger shared] logDebug:(@"[LogEntryStart]\n\n")];
-           [[BranchLogger shared] logDebug:(@"---------------------------------------------------------------------BranchSDK LOG END ---------------------------------------------------------------------" )];
-            [[BranchLogger shared] logDebug:(@"[LogEntryStart]\n\n")];
-             [[BranchLogger shared] logDebug:(@"BranchSDK API LOG END OF FILE")];
+          [[BranchLogger shared] logDebug:(@"[LogEntryStart]\n\n") error:nil];
+           [[BranchLogger shared] logDebug:(@"---------------------------------------------------------------------BranchSDK LOG END ---------------------------------------------------------------------" ) error:nil];
+            [[BranchLogger shared] logDebug:(@"[LogEntryStart]\n\n") error:nil];
+             [[BranchLogger shared] logDebug:(@"BranchSDK API LOG END OF FILE") error:nil];
    
 }
 
