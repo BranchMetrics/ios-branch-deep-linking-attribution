@@ -267,7 +267,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:YES error:&error];
     
     if (!data && error) {
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Failed to archive: %@", error]];
+        [[BranchLogger shared] logWarning:@"Failed to archive: %@" error:error];
     }
     return data;
 }
@@ -280,6 +280,19 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
         if (!error && data) {
             NSMutableArray *decodedQueue = [self unarchiveQueueFromData:data];
             self.queue = decodedQueue;
+        }
+    }
+}
+
+// It's been reported that unarchive can fail in some situations. In that case, remove the queued requests file.
+- (void)removeSaveFile {
+    NSURL *fileURL = [BNCServerRequestQueue URLForQueueFile];
+    if (fileURL) {
+        NSError *error;
+        [NSFileManager.defaultManager removeItemAtURL:fileURL error:&error];
+        
+        if (error) {
+            [[BranchLogger shared] logError:@"Failed to remove archived queue" error:error];
         }
     }
 }
@@ -317,7 +330,8 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     id object = [NSKeyedUnarchiver unarchivedObjectOfClasses:[BNCServerRequestQueue encodableClasses] fromData:data error:&error];
     
     if (error) {
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Failed to unarchive: %@", error]];
+        [[BranchLogger shared] logError:@"Failed to unarchive" error:error];
+        [self removeSaveFile];
     }
     
     return object;
@@ -326,12 +340,12 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 // only replay analytics requests, the others are time sensitive
 + (NSSet<Class> *)replayableRequestClasses {
     static NSSet<Class> *requestClasses = nil;
-    static dispatch_once_t onceToken;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^ {
         NSArray *tmp = @[
             [BranchOpenRequest class],
             [BranchInstallRequest class],
-            [BranchEventRequest class],
+            [BranchEventRequest class]
         ];
         requestClasses = [NSSet setWithArray:tmp];
     });
@@ -342,7 +356,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 // encodable classes also includes NSArray and NSData
 + (NSSet<Class> *)encodableClasses {
     static NSSet<Class> *classes = nil;
-    static dispatch_once_t onceToken;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^ {
         NSMutableArray *tmp = [NSMutableArray new];
         [tmp addObject:[NSArray class]]; // root object
@@ -359,7 +373,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 
 + (NSURL * _Nonnull) URLForQueueFile {
     static NSURL *URL = nil;
-    static dispatch_once_t onceToken;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^ {
         URL = BNCURLForBranchDirectory();
         URL = [URL URLByAppendingPathComponent:BRANCH_QUEUE_FILE isDirectory:NO];
@@ -369,11 +383,11 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 
 + (instancetype)getInstance {
     static BNCServerRequestQueue *sharedQueue = nil;
-    static dispatch_once_t onceToken;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^ {
         sharedQueue = [[BNCServerRequestQueue alloc] init];
         [sharedQueue retrieve];
-        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Retrieved from storage: %@.", sharedQueue]];
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Retrieved from storage: %@.", sharedQueue] error:nil];
     });
     return sharedQueue;
 }

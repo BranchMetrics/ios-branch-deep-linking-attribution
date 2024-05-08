@@ -15,8 +15,8 @@
 @implementation BNCEventUtils
 
 + (instancetype)shared {
-    static BNCEventUtils *set;
-    static dispatch_once_t onceToken;
+    static BNCEventUtils *set = nil;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
         set = [BNCEventUtils new];
     });

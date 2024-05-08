@@ -1,5 +1,21 @@
 Branch iOS SDK Change Log
 
+v.3.4.3
+- Fix push notifications when app is backgrounded and the app uses `handlePushNotification` instead of `handleDeeplink`
+
+v.3.4.2
+- Fix tvOS when using SPM
+
+v.3.4.1
+- Fix cold link launch when using deferred initialization and an AppDelegate only app.
+- Fix cocoapods privacy manifest collision.
+- Fix error recovery serialization.
+- Update logs with more appropriate log levels.
+- Pass back underlying Network NSErrors that cause the SDK to give up.
+
+v.3.4.0
+- Added support for setting the Branch API base URL through the `branch.json` file.
+
 v.3.3.0
 - SDK behavior change to fix a race condition when opening a closed app with a link. In some apps, this race condition could cause the occasional loss of link data.
  

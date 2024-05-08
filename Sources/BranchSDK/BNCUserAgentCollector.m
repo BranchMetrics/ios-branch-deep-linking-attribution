@@ -6,6 +6,7 @@
 //  Copyright © 2019 Branch, Inc. All rights reserved.
 //
 
+#if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCDeviceSystem.h"
@@ -26,8 +27,8 @@
 @implementation BNCUserAgentCollector
 
 + (BNCUserAgentCollector *)instance {
-    static BNCUserAgentCollector *collector;
-    static dispatch_once_t onceToken;
+    static BNCUserAgentCollector *collector = nil;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
         collector = [BNCUserAgentCollector new];
     });
@@ -108,3 +109,4 @@
 }
 
 @end
+#endif

@@ -31,6 +31,7 @@
 + (NSString *)appleAttributionToken {
     // token is not available on simulator
     if ([self isSimulator]) {
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"AppleAttributionToken not available on simulator"] error:nil];
         return nil;
     }
     
@@ -54,7 +55,7 @@
         // Apple said this API should respond within 50ms, lets give up after 500 ms
         dispatch_semaphore_wait(semaphore, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(500 * NSEC_PER_MSEC)));
         if (token == nil) {
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"AppleAttributionToken request timed out"]];
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"AppleAttributionToken request timed out"] error:nil];
         }
     }
 #endif
@@ -64,6 +65,7 @@
 
 + (NSString *)advertiserIdentifier {
     #ifdef BRANCH_EXCLUDE_IDFA_CODE
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"BRANCH_EXCLUDE_IDFA_CODE flag enabled. IDFA is not available"] error:nil];
     return nil;
     
     #else
@@ -80,6 +82,7 @@
                 (sharedManager, advertisingIdentifierSelector);
         uid = [uuid UUIDString];
         if ([uid isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"IDFA is all 0's. Probably running on a simulator or an App Clip."] error:nil];
             uid = nil;
         }
     }
@@ -92,6 +95,7 @@
     NSString *statusString = @"unavailable";
 
     #ifdef BRANCH_EXCLUDE_ATT_STATUS_CODE
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"BRANCH_EXCLUDE_IDFA_CODE flag enabled. ATT opt in status unavailable"] error:nil];
     #else
 
     Class ATTrackingManagerClass = NSClassFromString(@"ATTrackingManager");
@@ -128,6 +132,8 @@
     for (NSDictionary *urlType in urlTypes) {
         NSArray *urlSchemes = [urlType objectForKey:@"CFBundleURLSchemes"];
         for (NSString *uriScheme in urlSchemes) {
+            
+            // TODO: Add a log to indicate that a URI was ignored due to a match with a known URI format
             if ([uriScheme hasPrefix:@"fb"]) continue;  // Facebook
             if ([uriScheme hasPrefix:@"db"]) continue;  // DB?
             if ([uriScheme hasPrefix:@"twitterkit-"]) continue; // Twitter
@@ -151,6 +157,8 @@
     if (teamWithDot.length) {
         return [teamWithDot substringToIndex:([teamWithDot length] - 1)];
     }
+    
+    [[BranchLogger shared] logVerbose:@"AppIdentifierPrefix not found in mainBundle" error:nil];
     return nil;
 }
 

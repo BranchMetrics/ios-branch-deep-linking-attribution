@@ -6,6 +6,8 @@
 //  Copyright © 2015 Branch Metrics. All rights reserved.
 //
 
+#if !TARGET_OS_TV
+
 #if __has_feature(modules)
 @import Foundation;
 #else
@@ -60,3 +62,4 @@
             spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
 
 @end
+#endif
