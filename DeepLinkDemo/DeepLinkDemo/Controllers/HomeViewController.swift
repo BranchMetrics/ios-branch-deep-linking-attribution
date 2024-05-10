@@ -128,7 +128,6 @@ class HomeViewController: UITableViewController {
                         self.navigationController?.pushViewController(vc, animated: true)
                     }
                 } else if textValue == "setDMAParams" {
-                    self.setDMAParams()
                     self.setDMAParamsWrapper()
                } else if textValue == "sendV2Event" {
                    self.sendV2EventWrapper()
@@ -209,9 +208,9 @@ class HomeViewController: UITableViewController {
                     if let jsonObject = try JSONSerialization.jsonObject(with: data, options : .allowFragments) as? [String:AnyObject]
                     {
                         if ((jsonObject["dma_eea"] != nil) && (jsonObject["dma_eea"] != nil) && (jsonObject["dma_eea"] != nil)) {
-                            let dma_eea = (jsonObject["dma_eea"] as! String).lowercased() == "yes" ? true : false
-                            let dma_ad_personalization = (jsonObject["dma_ad_personalization"] as! String).lowercased() == "yes" ? true : false
-                            let dma_ad_user_data = (jsonObject["dma_ad_user_data"] as! String).lowercased() == "yes" ? true : false
+                            let dma_eea = jsonObject["dma_eea"] as! Bool
+                            let dma_ad_personalization = jsonObject["dma_ad_personalization"] as! Bool
+                            let dma_ad_user_data = jsonObject["dma_ad_user_data"] as! Bool
                             self.logData = ""
                             self.enableBranchLogging(){(msg:String,msg2:BranchLogLevel,msg3:Error?)->() in
                                 if (msg.contains("BranchSDK")){
