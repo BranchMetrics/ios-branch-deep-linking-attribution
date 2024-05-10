@@ -129,6 +129,7 @@ class HomeViewController: UITableViewController {
                     }
                 } else if textValue == "setDMAParams" {
                     self.setDMAParams()
+                    self.setDMAParamsWrapper()
                } else if textValue == "sendV2Event" {
                    self.sendV2EventWrapper()
               }
@@ -167,7 +168,8 @@ class HomeViewController: UITableViewController {
         if branchSDKInitialized {
             return
         }
-        Branch.getInstance().enableLogging()
+        Branch.enableLogging();
+        Branch.getInstance();
         AppDelegate.shared.getBranchData(AppDelegate.shared.launchOption)
         branchSDKInitialized = true
     }
