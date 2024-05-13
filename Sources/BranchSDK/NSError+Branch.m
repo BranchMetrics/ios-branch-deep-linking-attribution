@@ -83,4 +83,36 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
     return [NSError branchErrorWithCode:errorCode error:nil localizedMessage:message];
 }
 
++ (BOOL)branchDNSBlockingError:(NSError *)error {
+    if (error) {
+        NSError *underlyingError = error.userInfo[@"NSUnderlyingError"];
+        if (underlyingError) {
+
+            /**
+             Check if an NSError was likely caused by a DNS sinkhole, such as Pi-hole.
+             The OS level logs will show that the IP address that failed is all 0's, however App level logs will not contain that information.
+              
+             `Domain=kCFErrorDomainCFNetwork Code=-1000` - Connection failed due to a malformed URL. A bit misleading since Ad blockers DNS resolve the URL as 0.0.0.0.
+             https://developer.apple.com/documentation/cfnetwork/cfnetworkerrors/kcfurlerrorbadurl?language=objc
+             
+             `_kCFStreamErrorDomainKey=1` Error domain is a POSIX error.
+             https://opensource.apple.com/source/CF/CF-550.13/CFStream.h.auto.html
+                 
+             `_kCFStreamErrorCodeKey=22` POSIX error is invalid argument. In this case the IP address is 0.0.0.0, which is invalid.
+             https://opensource.apple.com/source/xnu/xnu-792/bsd/sys/errno.h.auto.html
+             */
+            BOOL isCFErrorDomainCFNetwork = [((NSString *)kCFErrorDomainCFNetwork) isEqualToString:underlyingError.domain];
+            BOOL isCodeMalFormedURL = [@(-1000) isEqual:@(underlyingError.code)];
+            
+            BOOL isErrorDomainPosix =  [@(1) isEqual:error.userInfo[@"_kCFStreamErrorDomainKey"]];
+            BOOL isPosixInvalidArgument = [@(22) isEqual:error.userInfo[@"_kCFStreamErrorCodeKey"]];
+            
+            if (isCFErrorDomainCFNetwork && isCodeMalFormedURL && isErrorDomainPosix && isPosixInvalidArgument) {
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
+
 @end

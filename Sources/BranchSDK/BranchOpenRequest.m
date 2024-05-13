@@ -102,11 +102,11 @@
     if (sessionData == nil || [sessionData isKindOfClass:[NSString class]]) {
     } else
     if ([sessionData isKindOfClass:[NSDictionary class]]) {
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Received session data of type '%@' data is '%@'.", NSStringFromClass(sessionData.class), sessionData]];
+        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Received session data of type '%@' data is '%@'.", NSStringFromClass(sessionData.class), sessionData] error:nil];
         sessionData = [BNCEncodingUtils encodeDictionaryToJsonString:(NSDictionary*)sessionData];
     } else
     if ([sessionData isKindOfClass:[NSArray class]]) {
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Received session data of type '%@' data is '%@'.", NSStringFromClass(sessionData.class), sessionData]];
+        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Received session data of type '%@' data is '%@'.", NSStringFromClass(sessionData.class), sessionData] error:nil];
         sessionData = [BNCEncodingUtils encodeArrayToJsonString:(NSArray*)sessionData];
     } else {
         [[BranchLogger shared] logError:[NSString stringWithFormat:@"Received session data of type '%@' data is '%@'.", NSStringFromClass(sessionData.class), sessionData] error:error];
@@ -188,7 +188,7 @@
                     if (error) {
                         [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
                     } else {
-                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful for INSTALL Event"]];
+                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful for INSTALL Event"] error:nil];
                     }
                 }];
             } else if (@available(iOS 15.4, macCatalyst 15.4, *)){
@@ -196,7 +196,7 @@
                     if (error) {
                         [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
                     } else {
-                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful for INSTALL Event"]];
+                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful for INSTALL Event"] error:nil];
                     }
                 }];
             }
@@ -218,14 +218,14 @@
                 BOOL lockWin = [[BNCSKAdNetwork sharedInstance] getLockedStatusFromDataResponse:data];
                 BOOL shouldCallUpdatePostback = [[BNCSKAdNetwork sharedInstance] shouldCallPostbackForDataResponse:data];
                 
-                [[BranchLogger shared] logDebug: [NSString stringWithFormat:@"SKAN 4.0 params - conversionValue:%@ coarseValue:%@, locked:%d, shouldCallPostback:%d, currentWindow:%d, firstAppLaunchTime: %@", conversionValue, coarseConversionValue, lockWin, shouldCallUpdatePostback, (int)preferenceHelper.skanCurrentWindow, preferenceHelper.firstAppLaunchTime]];
+                [[BranchLogger shared] logDebug: [NSString stringWithFormat:@"SKAN 4.0 params - conversionValue:%@ coarseValue:%@, locked:%d, shouldCallPostback:%d, currentWindow:%d, firstAppLaunchTime: %@", conversionValue, coarseConversionValue, lockWin, shouldCallUpdatePostback, (int)preferenceHelper.skanCurrentWindow, preferenceHelper.firstAppLaunchTime] error:nil];
                 
                 if(shouldCallUpdatePostback){
                     [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue: conversionValue.longValue coarseValue:coarseConversionValue lockWindow:lockWin completionHandler:^(NSError * _Nullable error) {
                         if (error) {
                             [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
                         } else {
-                            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue]];
+                            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue] error:nil];
                         }
                     }];
                 }
@@ -234,7 +234,7 @@
                     if (error) {
                         [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
                     } else {
-                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue]];
+                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue] error:nil];
                     }
                 }];
             } else {
@@ -253,6 +253,21 @@
     return @"open";
 }
 
+- (instancetype)initWithCoder:(NSCoder *)decoder {
+    self = [super initWithCoder:decoder];
+    if (!self) return self;
+    self.urlString = [decoder decodeObjectOfClass:NSString.class forKey:@"urlString"];
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [super encodeWithCoder:coder];
+    [coder encodeObject:self.urlString forKey:@"urlString"];
+}
+
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
 
 #pragma - Open Response Lock Handling
 
@@ -277,7 +292,7 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
 + (void) setWaitNeededForOpenResponseLock {
     @synchronized (self) {
         if (!openRequestWaitQueueIsSuspended) {
-            [[BranchLogger shared] logDebug:@"Suspended for openRequestWaitQueue."];
+            [[BranchLogger shared] logVerbose:@"Suspended for openRequestWaitQueue." error:nil];
             openRequestWaitQueueIsSuspended = YES;
             dispatch_suspend(openRequestWaitQueue);
         }
@@ -285,16 +300,16 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
 }
 
 + (void) waitForOpenResponseLock {
-    [[BranchLogger shared] logDebug:@"Waiting for openRequestWaitQueue."];
+    [[BranchLogger shared] logVerbose:@"Waiting for openRequestWaitQueue." error:nil];
     dispatch_sync(openRequestWaitQueue, ^ {
-        [[BranchLogger shared] logDebug:@"Finished waitForOpenResponseLock."];
+        [[BranchLogger shared] logVerbose:@"Finished waitForOpenResponseLock." error:nil];
     });
 }
 
 + (void) releaseOpenResponseLock {
     @synchronized (self) {
         if (openRequestWaitQueueIsSuspended) {
-            [[BranchLogger shared] logDebug:@"Resuming openRequestWaitQueue."];
+            [[BranchLogger shared] logVerbose:@"Resuming openRequestWaitQueue." error:nil];
             openRequestWaitQueueIsSuspended = NO;
             dispatch_resume(openRequestWaitQueue);
         }

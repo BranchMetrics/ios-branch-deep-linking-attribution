@@ -331,7 +331,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     if (!self.canonicalIdentifier && !self.title) {
         NSString *message = @"Could not register view.";
         NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError localizedMessage:message];
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"%@", error]];
+        [[BranchLogger shared] logWarning:@"TODO: replace this error" error:error];
         if (callback) callback([[NSDictionary alloc] init], error);
         return;
     }
@@ -350,7 +350,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 
 - (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties {
     if (!self.canonicalIdentifier && !self.title) {
-        [[BranchLogger shared] logWarning:@"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL."];
+        [[BranchLogger shared] logWarning:@"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL." error:nil];
 
         return nil;
     }
@@ -369,7 +369,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     if (!self.canonicalIdentifier && !self.title) {
         NSString *message = @"Could not generate a URL.";
         NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError localizedMessage:message];
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"%@", error]];
+        [[BranchLogger shared] logWarning:@"TODO: replace this error" error:error];
         if (callback) callback([BNCPreferenceHelper sharedInstance].userUrl, error);
         return;
     }
@@ -389,7 +389,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     if (!self.canonicalIdentifier && !self.title) {
         NSString *message = @"Could not generate a URL.";
         NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError localizedMessage:message];
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"%@", error]];
+        [[BranchLogger shared] logWarning:@"TODO: replace this error" error:error];
         return nil;
     }
     
