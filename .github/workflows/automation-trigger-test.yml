@@ -90,7 +90,7 @@ jobs:
         run: cat ${{ github.workspace }}/output.txt
       - name: Publishing test report
         if: always()        # run this step even if previous step failed
-        uses: actions/upload-artifact@v3  # upload test results
+        uses: actions/upload-artifact@v4  # upload test results
         with:
           name: test-results
           path: ${{ github.workspace }}/output.txt
