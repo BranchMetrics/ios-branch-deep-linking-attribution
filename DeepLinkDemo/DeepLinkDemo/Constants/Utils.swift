@@ -57,5 +57,28 @@ class Utils: NSObject {
         freopen(cstr, "a+", stderr)
 
     }
+    
+    func printLogMessage(_ message: String) {
+        do {
+            print(message) // print to console
+            
+            if !FileManager.default.fileExists(atPath: logFileName!) {   // does it exits?
+                FileManager.default.createFile(atPath: logFileName!, contents: nil)
+            }
+            
+            if let data = message.data(using: .utf8) {
+                let fileHandle = try FileHandle(forWritingTo: URL(fileURLWithPath: logFileName!))
+                if #available(iOS 13.4, *) {
+                    try fileHandle.seekToEnd()
+                    try fileHandle.write(contentsOf: data)
+                    try fileHandle.close()
+                } else {
+                    print("Unable to write log: iOS Version not supported")
+                }
+            }
+        } catch let error as NSError {                              // something wrong
+            print("Unable to write log: \(error.debugDescription)") // debug printout
+        }
+    }
 }
 

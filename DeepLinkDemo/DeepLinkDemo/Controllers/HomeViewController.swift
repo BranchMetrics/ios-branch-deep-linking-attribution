@@ -167,8 +167,12 @@ class HomeViewController: UITableViewController {
         if branchSDKInitialized {
             return
         }
-        Branch.enableLogging();
-        Branch.getInstance();
+        self.enableBranchLogging(){(message:String, loglevel:BranchLogLevel, error:Error?)->() in
+            if (message.contains("BranchSDK")){
+                self.logData = self.logData + message + "\n"
+                Utils.shared.printLogMessage(message + "\n")
+            }
+        }
         AppDelegate.shared.getBranchData(AppDelegate.shared.launchOption)
         branchSDKInitialized = true
     }
