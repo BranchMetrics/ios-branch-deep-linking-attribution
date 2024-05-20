@@ -52,7 +52,8 @@
     [self.sessionTask cancel];
 }
 
-- (NSString*) stringFromResponseData {
+// only used in logging? Consider removing
+- (NSString *)stringFromResponseData {
     NSString *string = nil;
     if ([self.responseData isKindOfClass:[NSData class]]) {
         string = [[NSString alloc] initWithData:(NSData*)self.responseData encoding:NSUTF8StringEncoding];
@@ -148,12 +149,12 @@
 
 #pragma mark - Operations
 
-- (BNCNetworkOperation*) networkOperationWithURLRequest:(NSMutableURLRequest*)request
+- (BNCNetworkOperation *) networkOperationWithURLRequest:(NSMutableURLRequest*)request
                 completion:(void (^)(id<BNCNetworkOperationProtocol>operation))completion {
 
     BNCNetworkOperation *operation = [BNCNetworkOperation new];
     if (![request isKindOfClass:[NSMutableURLRequest class]]) {
-        [[BranchLogger shared] logError:@"A `NSMutableURLRequest` request parameter was expected." error:nil];
+        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Expected NSMutableURLRequest, got %@", [request class]] error:nil];
         return nil;
     }
     operation.request = request;
@@ -162,7 +163,7 @@
     return operation;
 }
 
-- (void) startOperation:(BNCNetworkOperation*)operation {
+- (void)startOperation:(BNCNetworkOperation *)operation {
     operation.networkService = self;
     if (!operation.startDate) {
         operation.startDate = [NSDate date];
@@ -170,40 +171,28 @@
     
     if (!operation.timeoutDate) {
         NSTimeInterval timeoutInterval = operation.request.timeoutInterval;
-        if (timeoutInterval < 0.0)
+        if (timeoutInterval < 0.0) {
             timeoutInterval = self.defaultTimeoutInterval;
-        operation.timeoutDate =
-        [[operation startDate] dateByAddingTimeInterval:timeoutInterval];
+        }
+        operation.timeoutDate = [[operation startDate] dateByAddingTimeInterval:timeoutInterval];
     }
     
     if ([operation.request isKindOfClass:[NSMutableURLRequest class]]) {
         ((NSMutableURLRequest*)operation.request).timeoutInterval =
         [operation.timeoutDate timeIntervalSinceDate:[NSDate date]];
     } else {
-        [[BranchLogger shared] logError:@"SDK logic error. Expected mutable request in `start` method." error:nil];
+        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Expected NSMutableURLRequest, got %@", [operation.request class]] error:nil];
     }
     
-    operation.sessionTask =
-    [self.session dataTaskWithRequest:operation.request
-                    completionHandler:
-     ^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+    operation.sessionTask = [self.session dataTaskWithRequest:operation.request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         operation.responseData = data;
         operation.response = (NSHTTPURLResponse*) response;
         operation.error = error;
         
-        if (operation.response.statusCode != 404) {
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Network finish operation %@ %1.3fs. Status %ld error %@.\n%@.",
-                                             operation.request.URL.absoluteString,
-                                             [[NSDate date] timeIntervalSinceDate:operation.startDate],
-                                             (long)operation.response.statusCode,
-                                             operation.error,
-                                             operation.stringFromResponseData]];
-        }
-        if (operation.completionBlock)
+        if (operation.completionBlock) {
             operation.completionBlock(operation);
+        }
     }];
-    
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Network start operation %@.", operation.request.URL]];
     
     [operation.sessionTask resume];
 }

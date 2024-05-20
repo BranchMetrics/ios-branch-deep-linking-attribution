@@ -43,6 +43,9 @@ typedef NS_ENUM(NSInteger, BNCErrorCode) {
 + (NSError *) branchErrorWithCode:(BNCErrorCode)errorCode error:(NSError *_Nullable)error;
 + (NSError *) branchErrorWithCode:(BNCErrorCode)errorCode localizedMessage:(NSString *_Nullable)message;
 
+// Checks if an NSError looks like a DNS blocking error
++ (BOOL)branchDNSBlockingError:(NSError *)error;
+
 @end
 
 NS_ASSUME_NONNULL_END

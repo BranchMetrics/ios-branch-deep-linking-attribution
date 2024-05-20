@@ -79,6 +79,7 @@
         param.validityWindow = [self defaultValidityWindowForParam:name];
     }
     
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Parsed Referring URL: %@", param] error:nil];
     [self.urlQueryParameters setValue:param forKey:name];
 }
 
@@ -90,6 +91,8 @@
         param.timestamp = [NSDate date];
         param.isDeepLink = YES;
         param.validityWindow = [self defaultValidityWindowForParam:BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS];
+        
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Parsed Referring URL: %@", param] error:nil];
         [self.urlQueryParameters setValue:param forKey:BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS];
     }
 }
@@ -112,6 +115,8 @@
         NSDictionary *json = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
         if (!error) {
             return json;
+        } else {
+            [[BranchLogger shared] logError:@"Failed to parse Meta AEM JSON" error:error];
         }
     }
     return nil;
@@ -263,7 +268,6 @@
 }
 
 - (void)checkForAndMigrateOldGbraid {
-        
     if (self.preferenceHelper.referrerGBRAID != nil &&
         self.urlQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID].value == nil) {
         
@@ -286,7 +290,7 @@
         self.preferenceHelper.referrerGBRAIDValidityWindow = 0;
         self.preferenceHelper.referrerGBRAIDInitDate = nil;
         
-        [[BranchLogger shared] logDebug:@"Updated old Gbraid to new BNCUrlQueryParameter"];
+        [[BranchLogger shared] logVerbose:@"Migrated old Gbraid to a BNCUrlQueryParameter" error:nil];
     }
 }
 

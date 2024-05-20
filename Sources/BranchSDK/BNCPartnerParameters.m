@@ -54,7 +54,7 @@
     if ([self sha256HashSanityCheckValue:value]) {
         [self addParameterWithName:name value:value partnerName:@"fb"];
     } else {
-        [[BranchLogger shared] logWarning:@"Partner parameter does not appear to be SHA256 hashed. Dropping the parameter."];
+        [[BranchLogger shared] logWarning:@"Partner parameter does not appear to be SHA256 hashed. Dropping the parameter." error:nil];
     }
 }
 
@@ -62,7 +62,7 @@
     if ([self sha256HashSanityCheckValue:value]) {
         [self addParameterWithName:name value:value partnerName:@"snap"];
     } else {
-        [[BranchLogger shared] logWarning:@"Partner parameter does not appear to be SHA256 hashed. Dropping the parameter."];
+        [[BranchLogger shared] logWarning:@"Partner parameter does not appear to be SHA256 hashed. Dropping the parameter." error:nil];
     }
 }
 

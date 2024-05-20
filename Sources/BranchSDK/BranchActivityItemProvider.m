@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
+#if !TARGET_OS_TV
+
 #import "BranchActivityItemProvider.h"
 #import "Branch.h"
 #import "BranchConstants.h"
@@ -255,3 +257,4 @@
 }
 
 @end
+#endif

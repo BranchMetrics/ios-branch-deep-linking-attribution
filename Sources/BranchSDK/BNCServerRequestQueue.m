@@ -267,7 +267,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:YES error:&error];
     
     if (!data && error) {
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Failed to archive: %@", error]];
+        [[BranchLogger shared] logWarning:@"Failed to archive: %@" error:error];
     }
     return data;
 }
@@ -280,6 +280,19 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
         if (!error && data) {
             NSMutableArray *decodedQueue = [self unarchiveQueueFromData:data];
             self.queue = decodedQueue;
+        }
+    }
+}
+
+// It's been reported that unarchive can fail in some situations. In that case, remove the queued requests file.
+- (void)removeSaveFile {
+    NSURL *fileURL = [BNCServerRequestQueue URLForQueueFile];
+    if (fileURL) {
+        NSError *error;
+        [NSFileManager.defaultManager removeItemAtURL:fileURL error:&error];
+        
+        if (error) {
+            [[BranchLogger shared] logError:@"Failed to remove archived queue" error:error];
         }
     }
 }
@@ -317,7 +330,8 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     id object = [NSKeyedUnarchiver unarchivedObjectOfClasses:[BNCServerRequestQueue encodableClasses] fromData:data error:&error];
     
     if (error) {
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Failed to unarchive: %@", error]];
+        [[BranchLogger shared] logError:@"Failed to unarchive" error:error];
+        [self removeSaveFile];
     }
     
     return object;
@@ -331,7 +345,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
         NSArray *tmp = @[
             [BranchOpenRequest class],
             [BranchInstallRequest class],
-            [BranchEventRequest class],
+            [BranchEventRequest class]
         ];
         requestClasses = [NSSet setWithArray:tmp];
     });
@@ -373,7 +387,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     dispatch_once(&onceToken, ^ {
         sharedQueue = [[BNCServerRequestQueue alloc] init];
         [sharedQueue retrieve];
-        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Retrieved from storage: %@.", sharedQueue]];
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Retrieved from storage: %@.", sharedQueue] error:nil];
     });
     return sharedQueue;
 }

@@ -6,6 +6,7 @@
 //  Copyright © 2022 Branch, Inc. All rights reserved.
 //
 
+#if !TARGET_OS_TV
 #import "BranchPasteControl.h"
 #import "Branch.h"
 
@@ -50,3 +51,4 @@
 }
 
 @end
+#endif

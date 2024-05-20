@@ -11,6 +11,7 @@
 #import "BNCURLFilter.h"
 #import "Branch.h"
 #import "BranchLogger.h"
+#import "NSError+Branch.h"
 
 @interface BNCURLFilter ()
 
@@ -58,7 +59,7 @@
         if (regex && !regexError) {
             [array addObject:regex];
         } else {
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Invalid regular expression '%@': %@.", pattern, regexError] error:regexError];
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Invalid regular expression '%@'", pattern] error:regexError];
         }
     }
     return array;
@@ -127,15 +128,15 @@
     }
     
     if (statusCode == 404) {
-        [[BranchLogger shared] logDebug: [NSString stringWithFormat:@"No update for URL ignore list found."]];
+        [[BranchLogger shared] logDebug:@"No update for URL ignore list found." error:nil];
         return NO;
-        
     } else if (statusCode != 200 || error != nil || jsonString == nil) {
-        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Failed to update URL ignore list. error: %@ status: %ld", operation.error, (long)operation.response.statusCode] error:operation.error];
-        [[BranchLogger shared] logDebug: [NSString stringWithFormat:@"URL ignore JSON: %@", jsonString]];
-
+        if ([NSError branchDNSBlockingError:error]) {
+            [[BranchLogger shared] logWarning:@"Possible DNS Ad Blocker" error:error];
+        } else {
+            [[BranchLogger shared] logWarning:@"Failed to update URL ignore list" error:operation.error];
+        }
         return NO;
-        
     } else {
         return YES;
     }
@@ -146,19 +147,21 @@
     NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
 
     if (error) {
-        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Can't parse URL ignore JSON: %@.", error] error:error];
+        [[BranchLogger shared] logWarning:@"Failed to parse uri_skip_list" error:error];
         return nil;
     }
     
+    // Given the way this is currently designed, the server will return formats that will fail this check.
+    // Making this a verbose log until we have a chance to refactor this design.
     NSArray *urls = dictionary[@"uri_skip_list"];
     if (![urls isKindOfClass:NSArray.class]) {
-        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Can't parse URL ignore JSON, uri_skip_list is not a NSArray."] error:nil];
+        [[BranchLogger shared] logVerbose:@"Failed to parse uri_skip_list is not a NSArray" error:nil];
         return nil;
     }
     
     NSNumber *version = dictionary[@"version"];
     if (![version isKindOfClass:NSNumber.class]) {
-        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Can't parse URL ignore JSON, version is not a NSNumber."] error:nil];
+        [[BranchLogger shared] logWarning:@"Failed to parse uri_skip_list, version is not a NSNumber." error:nil];
         return nil;
     }
     

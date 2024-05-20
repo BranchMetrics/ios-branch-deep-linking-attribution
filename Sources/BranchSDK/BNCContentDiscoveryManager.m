@@ -6,6 +6,8 @@
 //  Copyright © 2015 Branch Metrics. All rights reserved.
 //
 
+#if !TARGET_OS_TV
+
 #import "BNCContentDiscoveryManager.h"
 #import "Branch.h"
 #import "BranchConstants.h"
@@ -396,3 +398,4 @@ static NSString* const kUTTypeGeneric = @"public.content";
 }
 
 @end
+#endif
