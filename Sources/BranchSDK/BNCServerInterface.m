@@ -9,14 +9,13 @@
 #import "BNCServerInterface.h"
 #import "BNCConfig.h"
 #import "BNCEncodingUtils.h"
-#import "NSError+Branch.h"
 #import "BranchConstants.h"
 #import "NSMutableDictionary+Branch.h"
 #import "BranchLogger.h"
 #import "Branch.h"
 #import "BNCSKAdNetwork.h"
 #import "BNCReferringURLUtility.h"
-#import "BranchLogger.h"
+#import "NSError+Branch.h"
 
 @interface BNCServerInterface ()
 @property (copy, nonatomic) NSString *requestEndpoint;
@@ -90,16 +89,12 @@
 }
 
 - (void)genericHTTPRequest:(NSURLRequest *)request retryNumber:(NSInteger)retryNumber callback:(BNCServerCallback)callback retryHandler:(NSURLRequest *(^)(NSInteger))retryHandler {
-
+    
     void (^completionHandler)(id<BNCNetworkOperationProtocol>operation) =
         ^void (id<BNCNetworkOperationProtocol>operation) {
 
-            BNCServerResponse *serverResponse =
-                [self processServerResponse:operation.response data:operation.responseData error:operation.error];
+            BNCServerResponse *serverResponse = [self processServerResponse:operation.response data:operation.responseData error:operation.error];
             [self collectInstrumentationMetricsWithOperation:operation];
-
-            NSError *underlyingError = operation.error;
-            NSInteger status = [serverResponse.statusCode integerValue];
 
             // If the phone is in a poor network condition,
             // iOS will return statuses such as -1001, -1003, -1200, -9806
@@ -109,68 +104,46 @@
             // Status 53 means the request was killed by the OS because we're still in the background.
             // This started happening in iOS 12 / Xcode 10 production when we're called from continueUserActivity:
             // but we're not fully out of the background yet.
-
-            BOOL isRetryableStatusCode = status >= 500 || status < 0 || status == 53;
             
-            // Retry the request if appropriate
+            NSInteger status = [serverResponse.statusCode integerValue];
+            NSError *underlyingError = operation.error;
+
+            // Retry request if appropriate
+            BOOL isRetryableStatusCode = status >= 500 || status < 0 || status == 53;
             if (retryNumber < self.preferenceHelper.retryCount && isRetryableStatusCode) {
-                dispatch_time_t dispatchTime =
-                    dispatch_time(DISPATCH_TIME_NOW, self.preferenceHelper.retryInterval * NSEC_PER_SEC);
+                dispatch_time_t dispatchTime = dispatch_time(DISPATCH_TIME_NOW, self.preferenceHelper.retryInterval * NSEC_PER_SEC);
                 dispatch_after(dispatchTime, dispatch_get_main_queue(), ^{
                     if (retryHandler) {
-                        [[BranchLogger shared] logDebug: [NSString stringWithFormat:@"Retrying request with url %@", request.URL.relativePath]];
-                        // Create the next request
+                        [[BranchLogger shared] logDebug: [NSString stringWithFormat:@"Retrying request with HTTP status code %ld", (long)status] error:underlyingError];
                         NSURLRequest *retryRequest = retryHandler(retryNumber);
-                        [self genericHTTPRequest:retryRequest
-                                     retryNumber:(retryNumber + 1)
-                                        callback:callback retryHandler:retryHandler];
+                        [self genericHTTPRequest:retryRequest retryNumber:(retryNumber + 1) callback:callback retryHandler:retryHandler];
                     }
                 });
                 
-                // Do not continue on if retrying, else the callback will be called incorrectly
-                return;
-            }
+            } else {
+                if (status != 200) {
+                    if ([NSError branchDNSBlockingError:underlyingError]) {
+                        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Possible DNS Ad Blocker. Giving up on request with HTTP status code %ld", (long)status] error:underlyingError];
+                    } else {
+                        [[BranchLogger shared] logWarning: [NSString stringWithFormat:@"Giving up on request with HTTP status code %ld", (long)status] error:underlyingError];
+                    }
+                }
 
-            NSError *branchError = nil;
-
-            // Wrap up bad statuses w/ specific error messages
-            if (status >= 500) {
-                branchError = [NSError branchErrorWithCode:BNCServerProblemError error:underlyingError];
+                // Don't call on the main queue since it might be blocked.
+                if (callback) {
+                    callback(serverResponse, underlyingError);
+                }
             }
-            else if (status == 409) {
-                branchError = [NSError branchErrorWithCode:BNCDuplicateResourceError error:underlyingError];
-            }
-            else if (status >= 400) {
-                NSString *errorString = [serverResponse.data objectForKey:@"error"];
-                if (![errorString isKindOfClass:[NSString class]])
-                    errorString = nil;
-                if (!errorString)
-                    errorString = underlyingError.localizedDescription;
-                if (!errorString)
-                    errorString = @"The request was invalid.";
-                branchError = [NSError branchErrorWithCode:BNCBadRequestError localizedMessage:errorString];
-            }
-            else if (underlyingError) {
-                branchError = [NSError branchErrorWithCode:BNCServerProblemError error:underlyingError];
-            }
-
-            if (branchError) {
-                [[BranchLogger shared] logError:[NSString stringWithFormat:@"An error prevented request to %@ from completing: %@", request.URL.absoluteString, branchError] error:branchError];
-            }
-            
-            //	Don't call on the main queue since it might be blocked.
-            if (callback)
-                callback(serverResponse, branchError);
         };
 
+    // Drops non-linking requests when tracking is disabled
     if (Branch.trackingDisabled) {
         NSString *endpoint = request.URL.absoluteString;
-        
-        // if endpoint is not linking related, fail it.
+    
         if (![self isLinkingRelatedRequest:endpoint]) {
             [[BNCPreferenceHelper sharedInstance] clearTrackingInformation];
             NSError *error = [NSError branchErrorWithCode:BNCTrackingDisabledError];
-            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Dropping Request %@: - %@", endpoint, error]];
+            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Dropping non-linking request"] error:error];
             if (callback) {
                 callback(nil, error);
             }
@@ -178,12 +151,13 @@
         }
     }
     
-    id<BNCNetworkOperationProtocol> operation =
-        [self.networkService networkOperationWithURLRequest:request.copy completion:completionHandler];
+    id<BNCNetworkOperationProtocol> operation = [self.networkService networkOperationWithURLRequest:request.copy completion:completionHandler];
     [operation start];
+    
+    // In the past we allowed clients to provide their own networking classes.
     NSError *error = [self verifyNetworkOperation:operation];
     if (error) {
-        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Network service error: %@.", error] error:error];
+        [[BranchLogger shared] logError:@"NetworkService returned an operation that failed validation" error:error];
         if (callback) {
             callback(nil, error);
         }
@@ -214,7 +188,6 @@
 }
 
 - (NSError *)verifyNetworkOperation:(id<BNCNetworkOperationProtocol>)operation {
-
     if (!operation) {
         NSString *message = @"A network operation instance is expected to be returned by the"
              " networkOperationWithURLRequest:completion: method.";
@@ -278,27 +251,23 @@
 
     NSDictionary *tmp = [self addRetryCount:retryNumber toJSON:params];
     NSString *requestUrlString = [NSString stringWithFormat:@"%@%@", url, [BNCEncodingUtils encodeDictionaryToQueryString:tmp]];
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"URL: %@", requestUrlString]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:requestUrlString]
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:self.preferenceHelper.timeout];
     [request setHTTPMethod:@"GET"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"%@\nHeaders %@", request, [request allHTTPHeaderFields]] error:nil];
+
     return request;
 }
 
 - (NSURLRequest *)preparePostRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key retryNumber:(NSInteger)retryNumber {
     
-    NSDictionary *tmp = [self addRetryCount:retryNumber toJSON:params];
+    NSDictionary *updatedParams = [self addRetryCount:retryNumber toJSON:params];
 
-    NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:tmp];
+    NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:updatedParams];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
-
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"URL: %@.\n", url]];
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Body: %@\nJSON: %@.",
-                                     params,
-                                     [[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding]]];
     
     NSMutableURLRequest *request =
         [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]
@@ -308,6 +277,10 @@
     [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     [request setHTTPBody:postData];
+    
+    if ([[BranchLogger shared] shouldLog:BranchLogLevelDebug]) {
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"%@\nHeaders %@\nBody %@", request, [request allHTTPHeaderFields], [BNCEncodingUtils prettyPrintJSON:updatedParams]] error:nil];
+    }
     
     return request;
 }
@@ -321,15 +294,21 @@
         serverResponse.statusCode = @([httpResponse statusCode]);
         serverResponse.data = [BNCEncodingUtils decodeJsonDataToDictionary:data];
         serverResponse.requestId = requestId;
-    }
-    else {
+     
+        if ([[BranchLogger shared] shouldLog:BranchLogLevelDebug]) {
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"%@\nBody %@", response, [BNCEncodingUtils prettyPrintJSON:serverResponse.data]] error:nil];
+        }
+        
+    } else {
         serverResponse.statusCode = @(error.code);
         serverResponse.data = error.userInfo;
         serverResponse.requestId = requestId;
+        
+        if ([[BranchLogger shared] shouldLog:BranchLogLevelDebug]) {
+            [[BranchLogger shared] logDebug:@"Request failed with NSError" error:error];
+        }
     }
     
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Server returned: %@.", serverResponse]];
-
     return serverResponse;
 }
 

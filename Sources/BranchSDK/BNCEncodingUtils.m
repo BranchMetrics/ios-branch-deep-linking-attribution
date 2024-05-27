@@ -165,9 +165,8 @@ NSString* BNCWireFormatFromString(NSString *string) {
     NSMutableString *encodedDictionary = [[NSMutableString alloc] initWithString:@"{"];
     for (NSString *key in dictionary) {
         
-        // protect against non-string keys
         if (![key isKindOfClass:[NSString class]]) {
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Unexpected key type %@. Skipping key.", [key class]] error:nil];
+            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Ignoring unexpected key type %@", [key class]] error:nil];
             continue;
         }
         
@@ -177,38 +176,30 @@ NSString* BNCWireFormatFromString(NSString *string) {
         id obj = dictionary[key];
         if ([obj isKindOfClass:[NSString class]]) {
             value = [BNCEncodingUtils sanitizedStringFromString:obj];
-        }
-        else if ([obj isKindOfClass:[NSURL class]]) {
+        } else if ([obj isKindOfClass:[NSURL class]]) {
             value = [obj absoluteString];
-        }
-        else if ([obj isKindOfClass:[NSDate class]]) {
+        } else if ([obj isKindOfClass:[NSDate class]]) {
             value = [BNCEncodingUtils iso8601StringFromDate:obj];
-        }
-        else if ([obj isKindOfClass:[NSArray class]]) {
+        } else if ([obj isKindOfClass:[NSArray class]]) {
             value = [BNCEncodingUtils encodeArrayToJsonString:obj];
             string = NO;
-        }
-        else if ([obj isKindOfClass:[NSDictionary class]] || [obj isKindOfClass:[NSMutableDictionary class]]) {
+        } else if ([obj isKindOfClass:[NSDictionary class]] || [obj isKindOfClass:[NSMutableDictionary class]]) {
             value = [BNCEncodingUtils encodeDictionaryToJsonString:obj];
             string = NO;
-        }
-        else if ([obj isKindOfClass:[NSNumber class]]) {
+        } else if ([obj isKindOfClass:[NSNumber class]]) {
             string = NO;
-            if (obj == (id)kCFBooleanFalse)
+            if (obj == (id)kCFBooleanFalse) {
                 value = @"false";
-            else
-            if (obj == (id)kCFBooleanTrue)
+            } else if (obj == (id)kCFBooleanTrue) {
                 value = @"true";
-            else
+            } else {
                 value = [obj stringValue];
-        }
-        else if ([obj isKindOfClass:[NSNull class]]) {
+            }
+        } else if ([obj isKindOfClass:[NSNull class]]) {
             value = @"null";
             string = NO;
-        }
-        else {
-            // If this type is not a known type, don't attempt to encode it.
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Cannot encode value for key %@. The value is not an accepted type.", key] error:nil];
+        } else {
+            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Ignoring unexpected value type %@", [obj class]] error:nil];
             continue;
         }
         
@@ -230,12 +221,11 @@ NSString* BNCWireFormatFromString(NSString *string) {
 
     [encodedDictionary appendString:@"}"];
 
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Encoded dictionary: %@.", encodedDictionary]];
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Encoded dictionary: %@.", encodedDictionary] error:nil];
     return encodedDictionary;
 }
 
 + (NSString *)encodeArrayToJsonString:(NSArray *)array {
-    // Empty array
     if (![array count]) {
         return @"[]";
     }
@@ -247,41 +237,31 @@ NSString* BNCWireFormatFromString(NSString *string) {
         
         if ([obj isKindOfClass:[NSString class]]) {
             value = [BNCEncodingUtils sanitizedStringFromString:obj];
-        }
-        else if ([obj isKindOfClass:[NSURL class]]) {
+        } else if ([obj isKindOfClass:[NSURL class]]) {
             value = [obj absoluteString];
-        }
-        else if ([obj isKindOfClass:[NSDate class]]) {
+        } else if ([obj isKindOfClass:[NSDate class]]) {
             value = [BNCEncodingUtils iso8601StringFromDate:obj];
-        }
-        else if ([obj isKindOfClass:[NSArray class]]) {
+        } else if ([obj isKindOfClass:[NSArray class]]) {
             value = [BNCEncodingUtils encodeArrayToJsonString:obj];
             string = NO;
-        }
-        else if ([obj isKindOfClass:[NSDictionary class]] || [obj isKindOfClass:[NSMutableDictionary class]]) {
+        } else if ([obj isKindOfClass:[NSDictionary class]] || [obj isKindOfClass:[NSMutableDictionary class]]) {
             value = [BNCEncodingUtils encodeDictionaryToJsonString:obj];
             string = NO;
-        }
-        else if ([obj isKindOfClass:[NSNumber class]]) {
+        } else if ([obj isKindOfClass:[NSNumber class]]) {
             value = [obj stringValue];
             string = NO;
-        }
-        else if ([obj isKindOfClass:[NSNull class]]) {
+        } else if ([obj isKindOfClass:[NSNull class]]) {
             value = @"null";
             string = NO;
-        }
-        else {
-            // If this type is not a known type, don't attempt to encode it.
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Cannot encode value %@. The value is not an accepted type.", obj] error:nil];
+        } else {
+            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Ignoring unexpected value type %@", [obj class]] error:nil];
             continue;
         }
         
-        // If this is a "string" object, wrap it in quotes
         if (string) {
+            // quote strings
             [encodedArray appendFormat:@"\"%@\",", value];
-        }
-        // Otherwise, just add the raw value after the colon
-        else {
+        } else {
             [encodedArray appendFormat:@"%@,", value];
         }
     }
@@ -290,8 +270,7 @@ NSString* BNCWireFormatFromString(NSString *string) {
     [encodedArray deleteCharactersInRange:NSMakeRange([encodedArray length] - 1, 1)];
     [encodedArray appendString:@"]"];
     
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Encoded array: %@.", encodedArray]];
-
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Encoded array: %@.", encodedArray] error:nil];
     return encodedArray;
 }
 
@@ -305,26 +284,20 @@ NSString* BNCWireFormatFromString(NSString *string) {
     NSMutableString *queryString = [[NSMutableString alloc] initWithString:@"?"];
 
     for (NSString *key in [dictionary allKeys]) {
-        // No empty keys, please.
         if (key.length) {
             id obj = dictionary[key];
             NSString *value;
             
             if ([obj isKindOfClass:[NSString class]]) {
                 value = [BNCEncodingUtils urlEncodedString:obj];
-            }
-            else if ([obj isKindOfClass:[NSURL class]]) {
+            } else if ([obj isKindOfClass:[NSURL class]]) {
                 value = [BNCEncodingUtils urlEncodedString:[obj absoluteString]];
-            }
-            else if ([obj isKindOfClass:[NSDate class]]) {
+            } else if ([obj isKindOfClass:[NSDate class]]) {
                 value = [BNCEncodingUtils iso8601StringFromDate:obj];
-            }
-            else if ([obj isKindOfClass:[NSNumber class]]) {
+            } else if ([obj isKindOfClass:[NSNumber class]]) {
                 value = [obj stringValue];
-            }
-            else {
-                // If this type is not a known type, don't attempt to encode it.
-                [[BranchLogger shared] logError:[NSString stringWithFormat:@"Cannot encode value %@. The value is not an accepted type.", obj] error:nil];
+            } else {
+                [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Ignoring unexpected value type %@", [obj class]] error:nil];
                 continue;
             }
             
@@ -334,29 +307,41 @@ NSString* BNCWireFormatFromString(NSString *string) {
 
     // Delete last character (either trailing & or ? if no params present)
     [queryString deleteCharactersInRange:NSMakeRange(queryString.length - 1, 1)];
-    
     return queryString;
 }
 
-+ (NSString*) stringByPercentDecodingString:(NSString *)string {
++ (NSString *)stringByPercentDecodingString:(NSString *)string {
     return [string stringByRemovingPercentEncoding];
 }
 
-+ (NSString*) stringByPercentEncodingStringForQuery:(NSString *)string {
-    return [string stringByAddingPercentEncodingWithAllowedCharacters:
-                [NSCharacterSet URLQueryAllowedCharacterSet]];
++ (NSString *)stringByPercentEncodingStringForQuery:(NSString *)string {
+    return [string stringByAddingPercentEncodingWithAllowedCharacters: [NSCharacterSet URLQueryAllowedCharacterSet]];
+}
+
++ (NSString *)prettyPrintJSON:(NSDictionary *)json {
+    if (![NSJSONSerialization isValidJSONObject:json]) {
+        [[BranchLogger shared] logWarning:@"Dictionary is not a valid JSON" error:nil];
+        return nil;
+    }
+    
+    NSError *error;
+    NSData *data = [NSJSONSerialization dataWithJSONObject:json options:NSJSONWritingSortedKeys | NSJSONWritingPrettyPrinted error:&error];
+    
+    if (!data || error) {
+        [[BranchLogger shared] logWarning:@"Failed to pretty print JSON" error:error];
+        return nil;
+    }
+    return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 }
 
 #pragma mark - Param Decoding Methods
 
 + (NSDictionary *)decodeJsonDataToDictionary:(NSData *)jsonData {
     NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    
     return [BNCEncodingUtils decodeJsonStringToDictionary:jsonString];
 }
 
 + (NSDictionary *)decodeJsonStringToDictionary:(NSString *)jsonString {
-    // Just a basic decode, easy enough
     NSData *tempData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
     if (!tempData) {
         return @{};
@@ -379,7 +364,6 @@ NSString* BNCWireFormatFromString(NSString *string) {
         return base64DecodedDictionary;
     }
 
-    // Apparently this data was not parsible into a dictionary, so we'll just return an empty one
     return @{};
 }
 
@@ -393,27 +377,29 @@ NSString* BNCWireFormatFromString(NSString *string) {
             NSString *key = kv[0];
             NSString *val = [kv[1] stringByRemovingPercentEncoding];
             
-            // Don't add empty items
             if (val.length) {
                 params[key] = val;
             }
         }
     }
-
     return params;
 }
 
 #pragma mark - Hex Strings
 
-+ (NSString *) hexStringFromData:(NSData*)data {
-
++ (NSString *)hexStringFromData:(NSData*)data {
     NSUInteger bytesCount = data.length;
-    if (bytesCount <= 0) return @"";
-
+    if (bytesCount <= 0) {
+        return @"";
+    }
+    
     const char *hexChars = "0123456789ABCDEF";
     const char *dataBuffer = data.bytes;
     char *chars = malloc(sizeof(char) * (bytesCount * 2 + 1));
-    if (!chars) return @"";
+    if (!chars) {
+        return @"";
+    }
+    
     char *s = chars;
     for (unsigned i = 0; i < bytesCount; ++i) {
         *s++ = hexChars[((*dataBuffer & 0xF0) >> 4)];
@@ -423,35 +409,39 @@ NSString* BNCWireFormatFromString(NSString *string) {
     *s = '\0';
 
     NSString *hexString = [NSString stringWithUTF8String:chars];
-    if (chars) free(chars);
+    if (chars) {
+        free(chars);
+    }
+    
     return hexString;
 }
 
-+ (NSData *) dataFromHexString:(NSString*)string {
-    if (!string) return nil;
-
++ (NSData *)dataFromHexString:(NSString*)string {
+    if (!string) {
+        return nil;
+    }
+    
     NSData *data = nil;
     NSData *inputData = [string dataUsingEncoding:NSUTF8StringEncoding];
 
     size_t length = (inputData.length+1)/2;
     uint8_t *bytes = malloc(length);
     uint8_t *b = bytes;
-    if (!bytes) goto exit;
-
+    if (!bytes) {
+        goto exit;
+    }
+    
     int highValue = -1;
     const uint8_t *p = (const uint8_t*) [inputData bytes];
     for (NSUInteger i = 0; i < inputData.length; ++i) {
         int value;
-        if (*p >= '0' && *p <= '9')
+        if (*p >= '0' && *p <= '9') {
             value = *p - '0';
-        else
-        if (*p >= 'A' && *p <= 'F')
+        } else if (*p >= 'A' && *p <= 'F') {
             value = *p - 'A' + 10;
-        else
-        if (*p >= 'a' && *p <= 'f')
+        } else if (*p >= 'a' && *p <= 'f') {
             value = *p - 'a' + 10;
-        else
-        if (isspace(*p)) {
+        } else if (isspace(*p)) {
             p++;
             continue;
         } else {
@@ -468,9 +458,12 @@ NSString* BNCWireFormatFromString(NSString *string) {
     }
 
     // If highValue != -1 then we got an odd number of hex values, which is an error.
-    if (highValue == -1)
+    if (highValue == -1) {
         data = [NSData dataWithBytes:bytes length:b-bytes];
+    }
 
+    // Error handling in C code is one case where goto can improve readability.
+    // https://www.kernel.org/doc/html/v4.19/process/coding-style.html
 exit:
     if (bytes) {
         free(bytes);
@@ -480,23 +473,27 @@ exit:
 
 #pragma mark - URL QueryItems
 
-+ (NSArray<BNCKeyValue*>*) queryItems:(NSURL*)URL {
-    NSMutableArray* keyValues = [NSMutableArray new];
-    if (!URL) return keyValues;
-
++ (NSArray<BNCKeyValue *> *)queryItems:(NSURL *)URL {
+    NSMutableArray *keyValues = [NSMutableArray new];
+    if (!URL) {
+        return keyValues;
+    }
+    
     NSArray *queryItems = [[URL query] componentsSeparatedByString:@"&"];
-    for (NSString* itemPair in queryItems) {
+    for (NSString *itemPair in queryItems) {
 
         BNCKeyValue *keyValue = [BNCKeyValue new];
         NSRange range = [itemPair rangeOfString:@"="];
         if (range.location == NSNotFound) {
-            if (itemPair.length)
+            if (itemPair.length) {
                 keyValue.key = itemPair;
+            }
         } else {
             keyValue.key = [itemPair substringWithRange:NSMakeRange(0, range.location)];
             NSRange r = NSMakeRange(range.location+1, itemPair.length-range.location-1);
-            if (r.length > 0)
+            if (r.length > 0) {
                 keyValue.value = [itemPair substringWithRange:r];
+            }
         }
 
         keyValue.key = [BNCEncodingUtils stringByPercentDecodingString:keyValue.key];
@@ -506,8 +503,13 @@ exit:
         keyValue.value = [keyValue.value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
         if (keyValue.key.length || keyValue.value.length) {
-            if (keyValue.key == nil) keyValue.key = @"";
-            if (keyValue.value == nil) keyValue.value = @"";
+            if (keyValue.key == nil) {
+                keyValue.key = @"";
+            }
+             
+            if (keyValue.value == nil) {
+                keyValue.value = @"";
+            }
             [keyValues addObject:keyValue];
         }
     }
