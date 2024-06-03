@@ -97,13 +97,13 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
                 BOOL lockWin = [[BNCSKAdNetwork sharedInstance] getLockedStatusFromDataResponse:dictionary];
                 BOOL shouldCallUpdatePostback = [[BNCSKAdNetwork sharedInstance] shouldCallPostbackForDataResponse:dictionary];
             
-                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"SKAN 4.0 params - conversionValue:%@ coarseValue:%@, locked:%d, shouldCallPostback:%d, currentWindow:%d, firstAppLaunchTime: %@", conversionValue, coarseConversionValue, lockWin, shouldCallUpdatePostback, (int)[BNCPreferenceHelper sharedInstance].skanCurrentWindow, [BNCPreferenceHelper sharedInstance].firstAppLaunchTime]];
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"SKAN 4.0 params - conversionValue:%@ coarseValue:%@, locked:%d, shouldCallPostback:%d, currentWindow:%d, firstAppLaunchTime: %@", conversionValue, coarseConversionValue, lockWin, shouldCallUpdatePostback, (int)[BNCPreferenceHelper sharedInstance].skanCurrentWindow, [BNCPreferenceHelper sharedInstance].firstAppLaunchTime] error:nil];
                 if(shouldCallUpdatePostback){
                     [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue: conversionValue.longValue coarseValue:coarseConversionValue lockWindow:lockWin completionHandler:^(NSError * _Nullable error) {
                         if (error) {
                             [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
                         } else {
-                            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue]];
+                            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue] error:nil];
                         }
                     }];
                 }
@@ -113,7 +113,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
                     if (error) {
                         [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
                     } else {
-                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue]];
+                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue] error:nil];
                     }
                 }];
             } else {
@@ -134,8 +134,11 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
     self = [super initWithCoder:decoder];
 	if (!self) return self;
 
-	self.serverURL = [decoder decodeObjectOfClass:NSString.class forKey:@"serverURL"];
-	self.eventDictionary = [decoder decodeObjectOfClass:NSDictionary.class forKey:@"eventDictionary"];
+    self.serverURL = [decoder decodeObjectOfClass:NSURL.class forKey:@"serverURL"];
+    
+    NSSet *classes = [NSSet setWithArray:@[NSDictionary.class, NSArray.class, NSString.class, NSNumber.class]];
+    self.eventDictionary = [decoder decodeObjectOfClasses:classes forKey:@"eventDictionary"];
+    
     return self;
 }
 
@@ -449,7 +452,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
             }
             
             [self logEvent];
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Created and logged event from transaction: %@", self.description]];
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Created and logged event from transaction: %@", self.description] error:nil];
         } else {
             [[BranchLogger shared] logError:[NSString stringWithFormat:@"Unable to log Branch event from transaction. No products were found with the product ID."] error:nil];
         }

@@ -53,7 +53,9 @@
                               key:(NSString * _Nonnull)key
                  cloudAccessGroup:(NSString * _Nullable)accessGroup;
 
-/// The default security access group for the app.
-+ (NSString*_Nullable) securityAccessGroup;
+/**
+ The security access group string is prefixed with the Apple Developer Team ID
+ */
++ (NSString * _Nullable) securityAccessGroup;
 
 @end
