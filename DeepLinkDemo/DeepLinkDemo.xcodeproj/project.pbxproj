@@ -15,6 +15,7 @@
 		1877918A283C8D2400229CD5 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18779189283C8D2400229CD5 /* Utils.swift */; };
 		1889ACED283BE1C9009E3601 /* NSURLSessionBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = 1889ACEC283BE1C9009E3601 /* NSURLSessionBranch.m */; };
 		18AC5ADE283F61430098736E /* LogFileListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18AC5ADD283F61430098736E /* LogFileListViewController.swift */; };
+		2A2347C154C6746FA55C3649 /* Pods_DeepLinkDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDBB5A837B0C008CA5BEC1EF /* Pods_DeepLinkDemo.framework */; };
 		7E1A39D42818289B002B302D /* DispalyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E1A39D32818289B002B302D /* DispalyVC.swift */; };
 		7E2AE639280ED92800142446 /* CreateObjectReferenceObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E2AE638280ED92800142446 /* CreateObjectReferenceObject.swift */; };
 		7E2AE63B280EE1F700142446 /* GenerateURLVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E2AE63A280EE1F700142446 /* GenerateURLVC.swift */; };
@@ -33,8 +34,6 @@
 		7EE84374281CDFAE00A1561C /* StartupOptionsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE84373281CDFAE00A1561C /* StartupOptionsData.swift */; };
 		7EF58D5B2812CF2300BA92D5 /* WebViewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EF58D5A2812CF2300BA92D5 /* WebViewVC.swift */; };
 		B7B7DC2A2859974E00D45FC5 /* TextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B7DC292859974E00D45FC5 /* TextViewController.swift */; };
-		E70E80C22A0E22C1008007B6 /* BranchSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E70E80C12A0E22C1008007B6 /* BranchSDK.xcframework */; };
-		E71086B529D2423100BDC598 /* Pods_DeepLinkDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA28D389F8D830715B437AAD /* Pods_DeepLinkDemo.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,8 +46,6 @@
 		1889ACEB283BE1C9009E3601 /* NSURLSessionBranch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSURLSessionBranch.h; sourceTree = "<group>"; };
 		1889ACEC283BE1C9009E3601 /* NSURLSessionBranch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSURLSessionBranch.m; sourceTree = "<group>"; };
 		18AC5ADD283F61430098736E /* LogFileListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogFileListViewController.swift; sourceTree = "<group>"; };
-		3ED981AAAEF5ECFF371D65F1 /* Pods-DeepLinkDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeepLinkDemo.debug.xcconfig"; path = "Target Support Files/Pods-DeepLinkDemo/Pods-DeepLinkDemo.debug.xcconfig"; sourceTree = "<group>"; };
-		7A19807506A47A88AF290FBF /* Pods-DeepLinkDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeepLinkDemo.release.xcconfig"; path = "Target Support Files/Pods-DeepLinkDemo/Pods-DeepLinkDemo.release.xcconfig"; sourceTree = "<group>"; };
 		7E1A39D32818289B002B302D /* DispalyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispalyVC.swift; sourceTree = "<group>"; };
 		7E2AE638280ED92800142446 /* CreateObjectReferenceObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateObjectReferenceObject.swift; sourceTree = "<group>"; };
 		7E2AE63A280EE1F700142446 /* GenerateURLVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateURLVC.swift; sourceTree = "<group>"; };
@@ -72,8 +69,10 @@
 		7EE84373281CDFAE00A1561C /* StartupOptionsData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartupOptionsData.swift; sourceTree = "<group>"; };
 		7EF58D5A2812CF2300BA92D5 /* WebViewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewVC.swift; sourceTree = "<group>"; };
 		7EF58D5C2816D14700BA92D5 /* DeepLinkDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DeepLinkDemo.entitlements; sourceTree = "<group>"; };
+		88EDCA13B444CE5565DC92FA /* Pods-DeepLinkDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeepLinkDemo.release.xcconfig"; path = "Target Support Files/Pods-DeepLinkDemo/Pods-DeepLinkDemo.release.xcconfig"; sourceTree = "<group>"; };
 		B7B7DC292859974E00D45FC5 /* TextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewController.swift; sourceTree = "<group>"; };
-		CA28D389F8D830715B437AAD /* Pods_DeepLinkDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DeepLinkDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C06885D21868B25319262FC1 /* Pods-DeepLinkDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeepLinkDemo.debug.xcconfig"; path = "Target Support Files/Pods-DeepLinkDemo/Pods-DeepLinkDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		DDBB5A837B0C008CA5BEC1EF /* Pods_DeepLinkDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DeepLinkDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E70E80C12A0E22C1008007B6 /* BranchSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = BranchSDK.xcframework; path = Framework/BranchSDK.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -82,8 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E70E80C22A0E22C1008007B6 /* BranchSDK.xcframework in Frameworks */,
-				E71086B529D2423100BDC598 /* Pods_DeepLinkDemo.framework in Frameworks */,
+				2A2347C154C6746FA55C3649 /* Pods_DeepLinkDemo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,7 +102,7 @@
 			isa = PBXGroup;
 			children = (
 				E70E80C12A0E22C1008007B6 /* BranchSDK.xcframework */,
-				CA28D389F8D830715B437AAD /* Pods_DeepLinkDemo.framework */,
+				DDBB5A837B0C008CA5BEC1EF /* Pods_DeepLinkDemo.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -183,8 +181,8 @@
 		DB9F65A595474F5DA261D89A /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3ED981AAAEF5ECFF371D65F1 /* Pods-DeepLinkDemo.debug.xcconfig */,
-				7A19807506A47A88AF290FBF /* Pods-DeepLinkDemo.release.xcconfig */,
+				C06885D21868B25319262FC1 /* Pods-DeepLinkDemo.debug.xcconfig */,
+				88EDCA13B444CE5565DC92FA /* Pods-DeepLinkDemo.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -196,11 +194,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7E7477DA2809C46D0088A7D3 /* Build configuration list for PBXNativeTarget "DeepLinkDemo" */;
 			buildPhases = (
-				4E20F2B3A080FBA467F97C22 /* [CP] Check Pods Manifest.lock */,
+				8C8C5B24F34C07814525F311 /* [CP] Check Pods Manifest.lock */,
 				7E7477C22809C46C0088A7D3 /* Sources */,
 				7E7477C32809C46C0088A7D3 /* Frameworks */,
 				7E7477C42809C46C0088A7D3 /* Resources */,
-				27F53A44E6856F363E13DC32 /* [CP] Embed Pods Frameworks */,
+				9086714B33BB3D176E3DED70 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -261,24 +259,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		27F53A44E6856F363E13DC32 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-DeepLinkDemo/Pods-DeepLinkDemo-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-DeepLinkDemo/Pods-DeepLinkDemo-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DeepLinkDemo/Pods-DeepLinkDemo-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		4E20F2B3A080FBA467F97C22 /* [CP] Check Pods Manifest.lock */ = {
+		8C8C5B24F34C07814525F311 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -298,6 +279,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9086714B33BB3D176E3DED70 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DeepLinkDemo/Pods-DeepLinkDemo-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DeepLinkDemo/Pods-DeepLinkDemo-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DeepLinkDemo/Pods-DeepLinkDemo-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -469,7 +467,7 @@
 		};
 		7E7477DB2809C46D0088A7D3 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3ED981AAAEF5ECFF371D65F1 /* Pods-DeepLinkDemo.debug.xcconfig */;
+			baseConfigurationReference = C06885D21868B25319262FC1 /* Pods-DeepLinkDemo.debug.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -517,7 +515,7 @@
 		};
 		7E7477DC2809C46D0088A7D3 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7A19807506A47A88AF290FBF /* Pods-DeepLinkDemo.release.xcconfig */;
+			baseConfigurationReference = 88EDCA13B444CE5565DC92FA /* Pods-DeepLinkDemo.release.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;

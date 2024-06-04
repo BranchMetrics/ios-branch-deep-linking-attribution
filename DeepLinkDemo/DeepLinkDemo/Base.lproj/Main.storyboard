@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="TLr-NB-K8U">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22154" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="TLr-NB-K8U">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment version="2320" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21504"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22130"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -887,11 +887,11 @@
                         <sections>
                             <tableViewSection id="6rv-hD-CqE">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="HomeCell" rowHeight="850" id="m37-Tr-h3j">
-                                        <rect key="frame" x="0.0" y="50" width="414" height="850"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="HomeCell" rowHeight="955" id="m37-Tr-h3j">
+                                        <rect key="frame" x="0.0" y="50" width="414" height="955"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="m37-Tr-h3j" id="4Wc-HE-Ebv">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="850"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="955"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hUG-wE-H4J">
@@ -981,35 +981,6 @@
                                                         <action selector="navigatetoContentBtnAction:" destination="Kai-J5-lja" eventType="touchUpInside" id="cnz-24-vld"/>
                                                     </connections>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MVL-sB-tjJ">
-                                                    <rect key="frame" x="24" y="697" width="366" height="45"/>
-                                                    <color key="backgroundColor" red="0.83921568629999999" green="0.84705882349999995" blue="0.84313725490000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="45" id="Naa-bk-etl"/>
-                                                    </constraints>
-                                                    <color key="tintColor" systemColor="linkColor"/>
-                                                    <state key="normal" title="Button"/>
-                                                    <buttonConfiguration key="configuration" style="plain" title="Tracking Enabled">
-                                                        <fontDescription key="titleFontDescription" type="system" pointSize="20"/>
-                                                        <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    </buttonConfiguration>
-                                                </button>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pwi-SB-Zpv">
-                                                    <rect key="frame" x="24" y="767" width="366" height="45"/>
-                                                    <color key="backgroundColor" red="0.34901960780000002" green="0.047058823530000002" blue="0.89411764709999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="45" id="XaW-i1-Udl"/>
-                                                    </constraints>
-                                                    <color key="tintColor" systemColor="linkColor"/>
-                                                    <state key="normal" title="Button"/>
-                                                    <buttonConfiguration key="configuration" style="plain" title="Read Log">
-                                                        <fontDescription key="titleFontDescription" type="system" pointSize="20"/>
-                                                        <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    </buttonConfiguration>
-                                                    <connections>
-                                                        <action selector="readSystemLog" destination="Kai-J5-lja" eventType="touchUpInside" id="dTK-mU-aCb"/>
-                                                    </connections>
-                                                </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lde-JW-Qgy">
                                                     <rect key="frame" x="24" y="632" width="366" height="45"/>
                                                     <color key="backgroundColor" red="0.34901960780000002" green="0.047058823530000002" blue="0.89411764709999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -1070,12 +1041,6 @@
                                                         <action selector="trackUserAction:" destination="Kai-J5-lja" eventType="touchUpInside" id="hHE-Oq-Txc"/>
                                                     </connections>
                                                 </button>
-                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1gY-OK-bKp">
-                                                    <rect key="frame" x="327" y="704" width="51" height="31"/>
-                                                    <connections>
-                                                        <action selector="swichAction:" destination="Kai-J5-lja" eventType="touchUpInside" id="6p3-I4-ott"/>
-                                                    </connections>
-                                                </switch>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AtW-Ld-qtb">
                                                     <rect key="frame" x="24" y="567" width="366" height="45"/>
                                                     <color key="backgroundColor" red="0.34901960780000002" green="0.047058823530000002" blue="0.89411764709999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -1092,37 +1057,98 @@
                                                         <action selector="sendNotificationAction:" destination="Kai-J5-lja" eventType="touchUpInside" id="AEa-Dg-Ytu"/>
                                                     </connections>
                                                 </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vRa-z4-SFu">
+                                                    <rect key="frame" x="24" y="696" width="366" height="45"/>
+                                                    <color key="backgroundColor" red="0.34901960780000002" green="0.047058823530000002" blue="0.89411764709999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="45" id="lDL-gV-E6R"/>
+                                                    </constraints>
+                                                    <color key="tintColor" systemColor="linkColor"/>
+                                                    <state key="normal" title="Button"/>
+                                                    <buttonConfiguration key="configuration" style="plain" title="Set DMA Params">
+                                                        <fontDescription key="titleFontDescription" type="system" pointSize="20"/>
+                                                        <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    </buttonConfiguration>
+                                                    <connections>
+                                                        <action selector="setDMAParams" destination="Kai-J5-lja" eventType="touchUpInside" id="4Oe-kE-U80"/>
+                                                    </connections>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B0T-qD-gTy">
+                                                    <rect key="frame" x="24" y="761" width="366" height="45"/>
+                                                    <color key="backgroundColor" red="0.34901960780000002" green="0.047058823530000002" blue="0.89411764709999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="45" id="r0L-4S-N3E"/>
+                                                    </constraints>
+                                                    <color key="tintColor" systemColor="linkColor"/>
+                                                    <state key="normal" title="Button"/>
+                                                    <buttonConfiguration key="configuration" style="plain" title="Send V2 Event">
+                                                        <fontDescription key="titleFontDescription" type="system" pointSize="20"/>
+                                                        <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    </buttonConfiguration>
+                                                    <connections>
+                                                        <action selector="sendV2Event" destination="Kai-J5-lja" eventType="touchUpInside" id="MnA-GG-6uE"/>
+                                                    </connections>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="MVL-sB-tjJ">
+                                                    <rect key="frame" x="24" y="824" width="366" height="45"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" red="0.83921568629999999" green="0.84705882349999995" blue="0.84313725490000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="tintColor" systemColor="linkColor"/>
+                                                    <state key="normal" title="Button"/>
+                                                    <buttonConfiguration key="configuration" style="plain" title="Tracking Enabled">
+                                                        <fontDescription key="titleFontDescription" type="system" pointSize="20"/>
+                                                        <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    </buttonConfiguration>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pwi-SB-Zpv">
+                                                    <rect key="frame" x="24" y="894" width="370" height="38"/>
+                                                    <color key="backgroundColor" red="0.34901960780000002" green="0.047058823530000002" blue="0.89411764709999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="tintColor" systemColor="linkColor"/>
+                                                    <state key="normal" title="Button"/>
+                                                    <buttonConfiguration key="configuration" style="plain" title="Read Log">
+                                                        <fontDescription key="titleFontDescription" type="system" pointSize="20"/>
+                                                        <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    </buttonConfiguration>
+                                                    <connections>
+                                                        <action selector="readSystemLog" destination="Kai-J5-lja" eventType="touchUpInside" id="dTK-mU-aCb"/>
+                                                    </connections>
+                                                </button>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1gY-OK-bKp">
+                                                    <rect key="frame" x="322" y="831" width="51" height="31"/>
+                                                    <connections>
+                                                        <action selector="swichAction:" destination="Kai-J5-lja" eventType="touchUpInside" id="6p3-I4-ott"/>
+                                                    </connections>
+                                                </switch>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="wIu-3I-nWe" firstAttribute="leading" secondItem="eFX-p5-pV0" secondAttribute="leading" id="0AI-kL-xB8"/>
-                                                <constraint firstItem="1gY-OK-bKp" firstAttribute="centerY" secondItem="MVL-sB-tjJ" secondAttribute="centerY" id="0sm-LX-Mqs"/>
                                                 <constraint firstItem="AtW-Ld-qtb" firstAttribute="leading" secondItem="qMW-kx-qhk" secondAttribute="leading" id="1i2-Cm-wMh"/>
+                                                <constraint firstAttribute="trailing" secondItem="B0T-qD-gTy" secondAttribute="trailing" constant="24" id="2NQ-T0-9sN"/>
                                                 <constraint firstItem="qMW-kx-qhk" firstAttribute="top" secondItem="eQQ-Zl-V98" secondAttribute="bottom" constant="20" id="2oe-Qt-0xG"/>
-                                                <constraint firstItem="MVL-sB-tjJ" firstAttribute="trailing" secondItem="693-49-6F6" secondAttribute="trailing" id="3hG-5h-wa8"/>
                                                 <constraint firstItem="AtW-Ld-qtb" firstAttribute="top" secondItem="qMW-kx-qhk" secondAttribute="bottom" constant="20" id="3pZ-bV-07n"/>
-                                                <constraint firstAttribute="trailing" secondItem="pwi-SB-Zpv" secondAttribute="trailing" constant="24" id="3yl-56-JKM"/>
-                                                <constraint firstItem="MVL-sB-tjJ" firstAttribute="top" secondItem="lde-JW-Qgy" secondAttribute="bottom" constant="20" id="5UV-7f-B9p"/>
-                                                <constraint firstItem="MVL-sB-tjJ" firstAttribute="leading" secondItem="693-49-6F6" secondAttribute="leading" id="6QY-hl-qd7"/>
                                                 <constraint firstItem="tJ3-4l-ZQX" firstAttribute="leading" secondItem="wIu-3I-nWe" secondAttribute="leading" id="AYl-CB-7DF"/>
                                                 <constraint firstItem="Lv7-9Z-qe9" firstAttribute="leading" secondItem="693-49-6F6" secondAttribute="leading" id="Auu-bf-1Em"/>
                                                 <constraint firstItem="AtW-Ld-qtb" firstAttribute="trailing" secondItem="qMW-kx-qhk" secondAttribute="trailing" id="But-dj-QVR"/>
                                                 <constraint firstItem="hUG-wE-H4J" firstAttribute="leading" secondItem="4Wc-HE-Ebv" secondAttribute="leading" constant="24" id="Cnu-u9-wcv"/>
-                                                <constraint firstAttribute="bottom" secondItem="pwi-SB-Zpv" secondAttribute="bottom" constant="38" id="FMp-ig-ybb"/>
+                                                <constraint firstItem="B0T-qD-gTy" firstAttribute="leading" secondItem="4Wc-HE-Ebv" secondAttribute="leading" constant="24" id="E3M-XV-TPj"/>
+                                                <constraint firstItem="lde-JW-Qgy" firstAttribute="trailing" secondItem="vRa-z4-SFu" secondAttribute="trailing" id="ESv-60-Pch"/>
                                                 <constraint firstItem="Wh7-y1-7cm" firstAttribute="leading" secondItem="4Wc-HE-Ebv" secondAttribute="leading" constant="24" id="GZe-aY-dG5"/>
                                                 <constraint firstAttribute="trailing" secondItem="hUG-wE-H4J" secondAttribute="trailing" constant="24" id="GfU-8z-PR7"/>
                                                 <constraint firstAttribute="trailing" secondItem="Wh7-y1-7cm" secondAttribute="trailing" constant="24" id="Hmu-kh-Qmx"/>
                                                 <constraint firstItem="lde-JW-Qgy" firstAttribute="trailing" secondItem="AtW-Ld-qtb" secondAttribute="trailing" id="Iuj-JK-MRk"/>
+                                                <constraint firstItem="vRa-z4-SFu" firstAttribute="top" secondItem="lde-JW-Qgy" secondAttribute="bottom" constant="19" id="KhH-mR-qwL"/>
                                                 <constraint firstItem="hUG-wE-H4J" firstAttribute="top" secondItem="Wh7-y1-7cm" secondAttribute="bottom" constant="20" id="M5N-dM-m7P"/>
                                                 <constraint firstItem="eFX-p5-pV0" firstAttribute="leading" secondItem="hUG-wE-H4J" secondAttribute="leading" id="MiT-6P-UL3"/>
                                                 <constraint firstItem="qMW-kx-qhk" firstAttribute="trailing" secondItem="eQQ-Zl-V98" secondAttribute="trailing" id="N6z-jk-XNn"/>
                                                 <constraint firstItem="lde-JW-Qgy" firstAttribute="leading" secondItem="AtW-Ld-qtb" secondAttribute="leading" id="N7I-Fh-jNI"/>
                                                 <constraint firstItem="eFX-p5-pV0" firstAttribute="top" secondItem="hUG-wE-H4J" secondAttribute="bottom" constant="21" id="P3H-bd-QOf"/>
                                                 <constraint firstItem="693-49-6F6" firstAttribute="trailing" secondItem="tJ3-4l-ZQX" secondAttribute="trailing" id="QfY-HL-GXq"/>
-                                                <constraint firstItem="1gY-OK-bKp" firstAttribute="leading" secondItem="MVL-sB-tjJ" secondAttribute="trailing" constant="-63" id="SPa-fx-NG8"/>
                                                 <constraint firstItem="tJ3-4l-ZQX" firstAttribute="top" secondItem="wIu-3I-nWe" secondAttribute="bottom" constant="20" id="Te3-Ml-BY3"/>
-                                                <constraint firstItem="pwi-SB-Zpv" firstAttribute="leading" secondItem="4Wc-HE-Ebv" secondAttribute="leading" constant="24" id="VWe-n9-McE"/>
                                                 <constraint firstItem="qMW-kx-qhk" firstAttribute="leading" secondItem="eQQ-Zl-V98" secondAttribute="leading" id="XbH-QM-JGm"/>
+                                                <constraint firstItem="B0T-qD-gTy" firstAttribute="top" secondItem="vRa-z4-SFu" secondAttribute="bottom" constant="20" id="Xsc-dP-pMX"/>
                                                 <constraint firstItem="tJ3-4l-ZQX" firstAttribute="trailing" secondItem="wIu-3I-nWe" secondAttribute="trailing" id="YMU-kT-eqe"/>
+                                                <constraint firstItem="pwi-SB-Zpv" firstAttribute="trailing" secondItem="4Wc-HE-Ebv" secondAttribute="trailingMargin" id="YWd-X8-5kr"/>
+                                                <constraint firstItem="pwi-SB-Zpv" firstAttribute="top" secondItem="MVL-sB-tjJ" secondAttribute="bottom" constant="25" id="YdT-2X-qDg"/>
                                                 <constraint firstItem="wIu-3I-nWe" firstAttribute="top" secondItem="eFX-p5-pV0" secondAttribute="bottom" constant="20" id="aZE-mD-njY"/>
                                                 <constraint firstItem="wIu-3I-nWe" firstAttribute="trailing" secondItem="eFX-p5-pV0" secondAttribute="trailing" id="aiP-Pc-bjW"/>
                                                 <constraint firstItem="Lv7-9Z-qe9" firstAttribute="top" secondItem="693-49-6F6" secondAttribute="bottom" constant="20" id="bLG-Rx-J90"/>
@@ -1131,11 +1157,18 @@
                                                 <constraint firstItem="eQQ-Zl-V98" firstAttribute="trailing" secondItem="Lv7-9Z-qe9" secondAttribute="trailing" id="gQw-AR-7bO"/>
                                                 <constraint firstItem="eFX-p5-pV0" firstAttribute="trailing" secondItem="hUG-wE-H4J" secondAttribute="trailing" id="h0n-GH-mch"/>
                                                 <constraint firstItem="Lv7-9Z-qe9" firstAttribute="trailing" secondItem="693-49-6F6" secondAttribute="trailing" id="hGV-j3-yq9"/>
+                                                <constraint firstItem="B0T-qD-gTy" firstAttribute="trailing" secondItem="MVL-sB-tjJ" secondAttribute="trailing" id="hfp-GP-Tl6"/>
+                                                <constraint firstItem="pwi-SB-Zpv" firstAttribute="leading" secondItem="MVL-sB-tjJ" secondAttribute="leading" id="lQW-q0-SL5"/>
+                                                <constraint firstItem="1gY-OK-bKp" firstAttribute="centerY" secondItem="MVL-sB-tjJ" secondAttribute="centerY" id="m7A-JC-YxO"/>
                                                 <constraint firstItem="693-49-6F6" firstAttribute="top" secondItem="tJ3-4l-ZQX" secondAttribute="bottom" constant="20" id="n0c-Uf-7F1"/>
                                                 <constraint firstItem="lde-JW-Qgy" firstAttribute="top" secondItem="AtW-Ld-qtb" secondAttribute="bottom" constant="20" id="nW6-bb-IYp"/>
                                                 <constraint firstItem="eQQ-Zl-V98" firstAttribute="leading" secondItem="Lv7-9Z-qe9" secondAttribute="leading" id="oIz-aU-mFs"/>
+                                                <constraint firstItem="lde-JW-Qgy" firstAttribute="leading" secondItem="vRa-z4-SFu" secondAttribute="leading" id="qAJ-hI-nZZ"/>
                                                 <constraint firstItem="693-49-6F6" firstAttribute="leading" secondItem="tJ3-4l-ZQX" secondAttribute="leading" id="s8R-JD-heF"/>
-                                                <constraint firstItem="pwi-SB-Zpv" firstAttribute="top" secondItem="MVL-sB-tjJ" secondAttribute="bottom" constant="25" id="uOm-RK-R61"/>
+                                                <constraint firstItem="B0T-qD-gTy" firstAttribute="leading" secondItem="MVL-sB-tjJ" secondAttribute="leading" id="sjZ-Il-V4i"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="1gY-OK-bKp" secondAttribute="trailing" constant="23" id="x7n-ug-Ldo"/>
+                                                <constraint firstItem="B0T-qD-gTy" firstAttribute="top" secondItem="vRa-z4-SFu" secondAttribute="bottom" constant="20" id="yYX-Eq-JfV"/>
+                                                <constraint firstItem="MVL-sB-tjJ" firstAttribute="top" secondItem="B0T-qD-gTy" secondAttribute="bottom" constant="18" id="zbO-QS-cgn"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1159,6 +1192,8 @@
                         <outlet property="btnNavigateToContent" destination="693-49-6F6" id="0IA-oh-24i"/>
                         <outlet property="btnReadLog" destination="pwi-SB-Zpv" id="Ax3-yX-BtK"/>
                         <outlet property="btnSendNotification" destination="AtW-Ld-qtb" id="iQp-FM-taz"/>
+                        <outlet property="btnSendV2Event" destination="B0T-qD-gTy" id="oG7-cQ-Ehc"/>
+                        <outlet property="btnSetDMAParams" destination="vRa-z4-SFu" id="Z2i-bN-itd"/>
                         <outlet property="btnShareLink" destination="wIu-3I-nWe" id="Kzw-6l-9bC"/>
                         <outlet property="btnTrackContent" destination="eQQ-Zl-V98" id="l9z-iP-rQj"/>
                         <outlet property="btnTrackUser" destination="qMW-kx-qhk" id="vsI-U6-goB"/>
@@ -1169,7 +1204,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GeZ-wj-r9X" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="394" y="-18"/>
+            <point key="canvasLocation" x="392.75362318840581" y="-18.080357142857142"/>
         </scene>
         <!--Create Object Reference Object-->
         <scene sceneID="Zmx-u3-1Ii">
@@ -2218,6 +2253,7 @@
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="n6R-9b-Yw8">
                                 <rect key="frame" x="0.0" y="135" width="414" height="664"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <accessibility key="accessibilityConfiguration" identifier="log_text_view"/>
                                 <color key="textColor" systemColor="labelColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -2610,7 +2646,7 @@
     <resources>
         <image name="back_img" width="33.333332061767578" height="33.333332061767578"/>
         <systemColor name="labelColor">
-            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="linkColor">
             <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

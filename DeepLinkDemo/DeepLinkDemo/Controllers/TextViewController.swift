@@ -21,6 +21,8 @@ class TextViewController: UIViewController {
     var isCreateDeepLink = false
     var forNotification = false
     var isTrackUser = false
+    var isSetDMAParams = false
+    var isSendV2Event = false
     
     var url = ""
     var responseStatus = ""
@@ -62,7 +64,12 @@ class TextViewController: UIViewController {
             launchWebView()
         } else if self.isNavigateToContent || self.isDisplayContent || self.handleLinkInWebview {
             launchReadVC()
-        } else {
+        } else if self.isSetDMAParams == true {
+            self.navigationController?.popToRootViewController(animated: true)
+        } else if self.isSendV2Event == true {
+            self.navigationController?.popToRootViewController(animated: true)
+        }
+        else {
             launchReadVC()
         }
     }
@@ -83,4 +90,9 @@ class TextViewController: UIViewController {
         }
     }
     
+    func updateText(msg: String) -> () {
+        DispatchQueue.main.async() {
+            self.logDataTextView?.text = msg
+        }
+    }
 }

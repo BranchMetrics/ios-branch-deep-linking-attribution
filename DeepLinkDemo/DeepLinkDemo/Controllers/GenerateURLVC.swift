@@ -88,7 +88,6 @@ class GenerateURLVC: ParentViewController {
             UserDefaults.standard.set("createdeeplinking", forKey: "isStatus")
             UserDefaults.standard.set(true, forKey: "isCreatedDeepLink")
             UserDefaults.standard.set("\(url ?? "")", forKey: "link")
-            
             if self.forNotification == true {
                 self.fireLocalNotification(linkurl: "\(url ?? "")")
                 self.launchTextViewController(url: "\(url ?? "")", message: alertMessage, forNotification: true)
@@ -154,8 +153,10 @@ class GenerateURLVC: ParentViewController {
         if let fileContent = self.loadTextWithFileName(fileName), !fileContent.isEmpty {
             let startlocation = fileContent.range(of: "BranchSDK API LOG START OF FILE")
             let endlocation = fileContent.range(of: "BranchSDK API LOG END OF FILE")
-            let apiResponse = fileContent[startlocation!.lowerBound..<endlocation!.lowerBound]
-            alertMessage = alertMessage + apiResponse
+            if ((startlocation?.lowerBound != startlocation?.upperBound) && (endlocation?.lowerBound != endlocation?.upperBound)){
+                let apiResponse = fileContent[startlocation!.lowerBound..<endlocation!.lowerBound]
+                alertMessage = alertMessage + apiResponse
+            }
         }
         return alertMessage
     }
@@ -186,6 +187,7 @@ class GenerateURLVC: ParentViewController {
         
         
         CommonMethod.sharedInstance.branchUniversalObject.getShortUrl(with: linkProperties, andCallback: {[weak self] url, error in
+            
             if error == nil {
                 self?.responseStatus = "Success"
                 self?.processShortURLGenerated(url)
