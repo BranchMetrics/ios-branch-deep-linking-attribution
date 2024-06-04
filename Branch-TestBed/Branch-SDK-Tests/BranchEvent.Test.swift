@@ -6,15 +6,22 @@
 //  Copyright © 2017 Branch, Inc. All rights reserved.
 //
 
-import Foundation
+import XCTest
 
-class BranchEventTestSwift : BNCTestCase {
+// TODO: fix this test class, requires modules which our testbed is not using
+final class BranchEventTestSwift : XCTestCase {
 
-    override func setUp() {
+    override func setUpWithError() throws {
+        // Put setup code here. This method is called before the invocation of each test method in the class.
+        
         Branch.getInstance("key_live_foo")
     }
 
-    func testBranchEvent() {
+    override func tearDownWithError() throws {
+        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    }
+    
+    func testBranchEvent() throws {
 
         // Set up the Branch Universal Object --
 
@@ -91,7 +98,7 @@ class BranchEventTestSwift : BNCTestCase {
         event.logEvent()
     }
 
-    func testExampleSyntaxSwift() {
+    func testExampleSyntaxSwift() throws {
         let contentItem = BranchUniversalObject.init()
         contentItem.canonicalIdentifier = "item/123"
         contentItem.canonicalUrl = "https://branch.io/item/123"

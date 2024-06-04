@@ -10,7 +10,6 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCEncodingUtils.h"
 #import "Branch.h"
-#import "BranchPluginSupport.h"
 #import "BNCConfig.h"
 
 @interface BNCPreferenceHelper()
@@ -32,7 +31,7 @@
 }
 
 - (void)tearDown {
-
+    
 }
 
 - (void)testPreferenceDefaults {
@@ -52,8 +51,7 @@
     XCTAssertEqual(self.prefHelper.timeout, NSIntegerMax);
 }
 
-/*
- // This test is not reliable when run concurrently with other tests that set the patterListURL
+// This test is not reliable when run concurrently with other tests that set the patterListURL
 - (void)testURLFilter {
     XCTAssertTrue([@"https://cdn.branch.io" isEqualToString:self.prefHelper.patternListURL]);
     
@@ -61,7 +59,6 @@
     self.prefHelper.patternListURL = customURL;
     XCTAssertTrue([customURL isEqualToString:self.prefHelper.patternListURL]);
 }
- */
 
 - (void)testSerializeDict_Nil {
     NSMutableDictionary *dict = nil;
@@ -202,62 +199,219 @@
     XCTAssert([filterDesc isEqualToString:valueDesc]);
 }
 
-/*
-- (void)testSetAPIURL_Example {
-    
-    NSString *url = @"https://www.example.com/";
-    [BranchPluginSupport setAPIUrl:url] ;
-    
-    NSString *urlStored = [BNCPreferenceHelper sharedInstance].branchAPIURL ;
-    XCTAssert([url isEqualToString:urlStored]);
-}
-
-- (void)testSetAPIURL_InvalidHttp {
-    
-    NSString *url = @"Invalid://www.example.com/";
-    [BranchPluginSupport setAPIUrl:url] ;
-    
-    NSString *urlStored = [BNCPreferenceHelper sharedInstance].branchAPIURL ;
-    XCTAssert(![url isEqualToString:urlStored]);
-    XCTAssert([urlStored isEqualToString:BNC_API_BASE_URL]);
-}
-
-- (void)testSetAPIURL_InvalidEmpty {
-    
-    [BranchPluginSupport setAPIUrl:@""] ;
-    
-    NSString *urlStored = [BNCPreferenceHelper sharedInstance].branchAPIURL ;
-    XCTAssert(![urlStored isEqualToString:@""]);
-    XCTAssert([urlStored isEqualToString:BNC_API_BASE_URL]);
-}
-
 - (void)testSetCDNBaseURL_Example {
     
     NSString *url = @"https://www.example.com/";
-    [BranchPluginSupport setCDNBaseUrl:url] ;
+    [self.prefHelper setPatternListURL:url];
     
-    NSString *urlStored = [BNCPreferenceHelper sharedInstance].patternListURL ;
+    NSString *urlStored = self.prefHelper.patternListURL ;
     XCTAssert([url isEqualToString:urlStored]);
 }
 
 - (void)testSetCDNBaseURL_InvalidHttp {
     
     NSString *url = @"Invalid://www.example.com/";
-    [BranchPluginSupport setCDNBaseUrl:url] ;
+    [self.prefHelper setPatternListURL:url] ;
     
-    NSString *urlStored = [BNCPreferenceHelper sharedInstance].patternListURL ;
+    NSString *urlStored = self.prefHelper.patternListURL ;
     XCTAssert(![url isEqualToString:urlStored]);
     XCTAssert([urlStored isEqualToString:BNC_CDN_URL]);
 }
 
 - (void)testSetCDNBaseURL_InvalidEmpty {
     
-    [BranchPluginSupport setCDNBaseUrl:@""] ;
+    [self.prefHelper setPatternListURL:@""] ;
     
-    NSString *urlStored = [BNCPreferenceHelper sharedInstance].patternListURL ;
+    NSString *urlStored = self.prefHelper.patternListURL ;
     XCTAssert(![urlStored isEqualToString:@""]);
     XCTAssert([urlStored isEqualToString:BNC_CDN_URL]);
 }
- */
+
+- (void)testSetPatternListURL {
+    NSString *expectedURL = @"https://example.com";
+    [self.prefHelper setPatternListURL:expectedURL];
+    
+    NSString *patternListURL = self.prefHelper.patternListURL;
+    XCTAssert([patternListURL isEqualToString: expectedURL]);
+}
+
+- (void)testSetLastStrongMatchDate {
+    NSDate *expectedDate = [NSDate date];
+    [self.prefHelper setLastStrongMatchDate: expectedDate];
+    
+    NSDate *actualDate = [self.prefHelper lastStrongMatchDate];
+    XCTAssertEqualObjects(expectedDate, actualDate);
+}
+
+- (void)testSetAppVersion {
+    NSString *expectedVersion = @"1.0.0";
+    [self.prefHelper setAppVersion: expectedVersion];
+    
+    NSString *actualVersion = [self.prefHelper appVersion];
+    XCTAssertEqualObjects(expectedVersion, actualVersion);
+}
+
+- (void)testSetLocalUrl {
+    NSString *expectedLocalURL = @"https://local.example.com";
+    [self.prefHelper setLocalUrl:expectedLocalURL];
+    
+    NSString *localURL = [self.prefHelper localUrl];
+    XCTAssertEqualObjects(localURL, expectedLocalURL);
+}
+
+- (void)testSetInitialReferrer {
+    NSString *expectedReferrer = @"referrer.example.com";
+    [self.prefHelper setInitialReferrer:expectedReferrer];
+    
+    NSString *actualReferrer = [self.prefHelper initialReferrer];
+    XCTAssertEqualObjects(actualReferrer, expectedReferrer);
+}
+
+- (void)testSetAppleAttributionTokenChecked {
+    BOOL expectedValue = YES;
+    [self.prefHelper setAppleAttributionTokenChecked:expectedValue];
+    
+    BOOL actualValue = [self.prefHelper appleAttributionTokenChecked];
+    XCTAssertEqual(expectedValue, actualValue);
+}
+
+- (void)testSetHasOptedInBefore {
+    BOOL expectedValue = YES;
+    [self.prefHelper setHasOptedInBefore:expectedValue];
+    
+    BOOL actualValue = [self.prefHelper hasOptedInBefore];
+    XCTAssertEqual(expectedValue, actualValue);
+}
+
+- (void)testSetHasCalledHandleATTAuthorizationStatus {
+    BOOL expectedValue = YES;
+    [self.prefHelper setHasCalledHandleATTAuthorizationStatus:expectedValue];
+    
+    BOOL actualValue = [self.prefHelper hasCalledHandleATTAuthorizationStatus];
+    XCTAssertEqual(expectedValue, actualValue);
+}
+
+- (void)testSetRequestMetadataKeyValidKeyValue {
+    NSString *key = @"testKey";
+    NSString *value = @"testValue";
+    
+    [self.prefHelper setRequestMetadataKey:key value:value];
+    
+    NSObject *retrievedValue = [self.prefHelper.requestMetadataDictionary objectForKey:key];
+    XCTAssertEqualObjects(retrievedValue, value);
+}
+
+- (void)testSetRequestMetadataKeyValidKeyNilValue {
+    NSString *key = @"testKey";
+    NSString *value = @"testValue";
+    
+    [self.prefHelper.requestMetadataDictionary setObject:value forKey:key];
+    
+    [self.prefHelper setRequestMetadataKey:key value:nil];
+    
+    NSObject *retrievedValue = [self.prefHelper.requestMetadataDictionary objectForKey:key];
+    XCTAssertNil(retrievedValue);
+}
+
+- (void)testSetRequestMetadataKeyValidKeyNilValueKeyNotExists {
+    NSString *key = @"testKeyNotExists";
+    
+    NSUInteger initialDictCount = [self.prefHelper.requestMetadataDictionary count];
+    
+    [self.prefHelper setRequestMetadataKey:key value:nil];
+    
+    NSUInteger postActionDictCount = [self.prefHelper.requestMetadataDictionary count];
+    XCTAssertEqual(initialDictCount, postActionDictCount);
+}
+
+- (void)testSetRequestMetadataKeyNilKey {
+    NSString *value = @"testValue";
+    NSUInteger initialDictCount = [self.prefHelper.requestMetadataDictionary count];
+    
+    [self.prefHelper setRequestMetadataKey:nil value:value];
+    
+    NSUInteger postActionDictCount = [self.prefHelper.requestMetadataDictionary count];
+    XCTAssertEqual(initialDictCount, postActionDictCount);
+}
+
+- (void)testSetLimitFacebookTracking {
+    BOOL expectedValue = YES;
+    
+    [self.prefHelper setLimitFacebookTracking:expectedValue];
+    
+    BOOL storedValue = [self.prefHelper limitFacebookTracking];
+    
+    XCTAssertEqual(expectedValue, storedValue);
+}
+
+- (void)testSetTrackingDisabled_YES {
+    [self.prefHelper setTrackingDisabled:YES];
+
+    BOOL storedValue = [self.prefHelper trackingDisabled];
+    XCTAssertTrue(storedValue);
+    [self.prefHelper setTrackingDisabled:NO];
+}
+
+- (void)testSetTrackingDisabled_NO {
+    [self.prefHelper setTrackingDisabled:NO];
+    
+    BOOL storedValue = [self.prefHelper trackingDisabled];
+    XCTAssertFalse(storedValue);
+}
+
+// TODO: rethink this test as these values are not set in a freshly instantiated prefHelper
+- (void)testClearTrackingInformation {
+    [self.prefHelper clearTrackingInformation];
+    
+    XCTAssertNil(self.prefHelper.sessionID);
+    XCTAssertNil(self.prefHelper.linkClickIdentifier);
+    XCTAssertNil(self.prefHelper.spotlightIdentifier);
+    XCTAssertNil(self.prefHelper.referringURL);
+    XCTAssertNil(self.prefHelper.universalLinkUrl);
+    XCTAssertNil(self.prefHelper.initialReferrer);
+    XCTAssertNil(self.prefHelper.installParams);
+    XCTAssertNil(self.prefHelper.sessionParams);
+    XCTAssertNil(self.prefHelper.externalIntentURI);
+    XCTAssertNil(self.prefHelper.savedAnalyticsData);
+    XCTAssertNil(self.prefHelper.previousAppBuildDate);
+    XCTAssertEqual(self.prefHelper.requestMetadataDictionary.count, 0);
+    XCTAssertNil(self.prefHelper.lastStrongMatchDate);
+    XCTAssertNil(self.prefHelper.userIdentity);
+    XCTAssertNil(self.prefHelper.referringURLQueryParameters);
+    XCTAssertNil(self.prefHelper.anonID);
+}
+
+- (void)testSaveBranchAnalyticsData {
+    NSString *dummySessionID = @"testSession123";
+    NSDictionary *dummyAnalyticsData = @{ @"key1": @"value1", @"key2": @"value2" };
+    
+    self.prefHelper.sessionID = dummySessionID;
+    
+    [self.prefHelper saveBranchAnalyticsData:dummyAnalyticsData];
+    
+    NSMutableDictionary *retrievedData = [self.prefHelper getBranchAnalyticsData];
+    
+    NSArray *viewDataArray = [retrievedData objectForKey:dummySessionID];
+    XCTAssertNotNil(viewDataArray);
+    XCTAssertEqual(viewDataArray.count, 1);
+    XCTAssertEqualObjects(viewDataArray.firstObject, dummyAnalyticsData);
+}
+
+- (void)testClearBranchAnalyticsData {
+    [self.prefHelper clearBranchAnalyticsData];
+    
+    NSMutableDictionary *retrievedData = [self.prefHelper getBranchAnalyticsData];
+    XCTAssertEqual(retrievedData.count, 0);
+}
+
+- (void)testSaveContentAnalyticsManifest {
+    NSDictionary *dummyManifest = @{ @"manifestKey1": @"manifestValue1", @"manifestKey2": @"manifestValue2" };
+    
+    [self.prefHelper saveContentAnalyticsManifest:dummyManifest];
+    
+    NSDictionary *retrievedManifest = [self.prefHelper getContentAnalyticsManifest];
+    
+    XCTAssertEqualObjects(retrievedManifest, dummyManifest);
+}
 
 @end

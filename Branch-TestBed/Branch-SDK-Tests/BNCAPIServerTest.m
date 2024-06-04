@@ -11,6 +11,7 @@
 #import "BNCSystemObserver.h"
 #import "BNCConfig.h"
 #import "BranchConstants.h"
+#import "Branch.h"
 
 @interface BNCAPIServerTest : XCTestCase
 
@@ -368,6 +369,44 @@
     NSString *expectedUrlPrefix= @"https://api3-eu.branch.io/v1/app-link-settings";
     
     XCTAssertTrue([url hasPrefix:expectedUrlPrefix]);
+}
+
+- (void)testDefaultAPIURL {
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    XCTAssertNil(serverAPI.customAPIURL);
+    
+    NSString *storedUrl = [[BNCServerAPI sharedInstance] installServiceURL];
+    NSString *expectedUrl = [BNC_API_URL stringByAppendingString: @"/v1/install"];
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+}
+
+- (void)testSetAPIURL_Example {
+    NSString *url = @"https://www.example.com";
+    [Branch setAPIUrl:url];
+    
+    NSString *storedUrl = [[BNCServerAPI sharedInstance] installServiceURL];
+    NSString *expectedUrl = [url stringByAppendingString: @"/v1/install"];
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    [Branch setAPIUrl:BNC_API_URL];
+}
+
+- (void)testSetAPIURL_InvalidHttp {
+    NSString *url = @"Invalid://www.example.com";
+    [Branch setAPIUrl:url];
+
+    NSString *storedUrl = [[BNCServerAPI sharedInstance] installServiceURL];
+    NSString *expectedUrl = [BNC_API_URL stringByAppendingString: @"/v1/install"];
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+}
+
+- (void)testSetAPIURL_InvalidEmpty {
+    NSString *url = @"";
+    [Branch setAPIUrl:url];
+    
+    NSString *storedUrl = [[BNCServerAPI sharedInstance] installServiceURL];
+    NSString *expectedUrl = [BNC_API_URL stringByAppendingString: @"/v1/install"];
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
 }
 
 @end

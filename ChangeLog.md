@@ -1,6 +1,44 @@
 Branch iOS SDK Change Log
 
-V.3.0.0
+v.3.4.3
+- Fix push notifications when app is backgrounded and the app uses `handlePushNotification` instead of `handleDeeplink`
+
+v.3.4.2
+- Fix tvOS when using SPM
+
+v.3.4.1
+- Fix cold link launch when using deferred initialization and an AppDelegate only app.
+- Fix cocoapods privacy manifest collision.
+- Fix error recovery serialization.
+- Update logs with more appropriate log levels.
+- Pass back underlying Network NSErrors that cause the SDK to give up.
+
+v.3.4.0
+- Added support for setting the Branch API base URL through the `branch.json` file.
+
+v.3.3.0
+- SDK behavior change to fix a race condition when opening a closed app with a link. In some apps, this race condition could cause the occasional loss of link data.
+ 
+When opening a closed app with a link, the Branch SDK will no longer attempt to merge the app open and link arrival lifecycle events. Apps will now get called on "app open" and on "link arrival", which are often very close together. If your app ignores callbacks with no link data, then this change should be transparent.
+
+v.3.2.0
+- Add support for setting DMA compliance parameters.
+- Update logging to allow a custom callback so clients may reroute Branch Logs to their logging infrastructure.
+- Update logging to use `os_log` private by default.
+- New custom server URL API. When set the SDK will always use this endpoint, the Privacy Manifest should be edited to match.
+- Update cocoapods, frameworks and tests to use SPM layout.
+- Fix crash when using pre-built xcframework on iOS 12
+- Improve Swift compatibility by removing API variations that differ only by an NSError.
+
+v.3.1.0
+- Fix tuist SPM integration when using external by switching to a more typical SPM layout.
+
+Note this release is only being deployed to the SPM repo to unblock tuist users. A follow up release will address compatibility between this bugfix and other integration methods. 
+
+v.3.0.1
+- Fix organic open when app is already running in background.
+
+v.3.0.0
 
 - Add a Privacy Manifest for the Branch SDK. App developers may need add an App level Privacy Manifest for data they collect and pass into the Branch SDK.
     - Known Issue: When using cocoapods without the `use_frameworks!` option, the build can fail with a duplicate privacy manifest error. Workaround is to manually merge privacy manifests.
@@ -21,13 +59,13 @@ V.3.0.0
     - pre-iOS 10 locale support
     - Device carrier. This was used for fraud analysis, but is no longer available on new iOS versions.
 
-V.2.2.1
+v.2.2.1
  
 Branch iOS SDK 2.2.1 adds parameter for current SKAN 4.0 Window in /v1/open and /v2/event requests.
 
 - SDK-1982 - SKAN Simplification DB updates
 
-V.2.2.0
+v.2.2.0
  
 Branch iOS SDK 2.2.0 adds the ability to include developer ID in installs and a new method to change the Branch API base URL.
 
@@ -35,7 +73,7 @@ Branch iOS SDK 2.2.0 adds the ability to include developer ID in installs and a 
 - SDK-1755 - Remove old Apple Search Ads APIs
 - SDK-1934 - Expose a public method to change the Branch API base url
 
-V.2.1.2
+v.2.1.2
 
 Branch iOS SDK 2.1.2 adds additional support for Meta AEM links. It also includes some bug fixes and debugging improvements.
 

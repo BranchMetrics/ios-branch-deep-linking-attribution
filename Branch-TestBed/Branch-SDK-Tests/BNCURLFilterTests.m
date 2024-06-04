@@ -8,207 +8,161 @@
  @copyright     Copyright © 2018 Branch. All rights reserved.
 */
 
-#import "BNCTestCase.h"
+#import <XCTest/XCTest.h>
 #import "BNCURLFilter.h"
-#import "Branch.h"
-#import "BNCLog.h"
 
-@interface BNCURLFilter ()
-@property (readwrite) NSURL *jsonURL;
-@end
-
-@interface BNCURLFilterTests : BNCTestCase
+@interface BNCURLFilterTests : XCTestCase
 @end
 
 @implementation BNCURLFilterTests
 
-- (void) setUp {
-    [BNCPreferenceHelper sharedInstance].savedURLPatternList = nil;
-    [BNCPreferenceHelper sharedInstance].savedURLPatternListVersion = 0;
-    [BNCPreferenceHelper sharedInstance].dropURLOpen = NO;
+- (void)setUp {
+    // Put setup code here. This method is called before the invocation of each test method in the class.
 }
 
-- (void) tearDown {
-    [BNCPreferenceHelper sharedInstance].dropURLOpen = NO;
+- (void)tearDown {
+    // Put teardown code here. This method is called after the invocation of each test method in the class.
 }
 
-/*
- // Test is unreliable when run in parallel with other tests, it's using a persistent datastore...
-- (void)testListDownLoad {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"List Download"];
+- (void)testPatternMatchingURL_nil {
     BNCURLFilter *filter = [BNCURLFilter new];
-    [filter updatePatternListWithCompletion:^ (NSError*error, NSArray*list) {
-        XCTAssertNil(error);
-        XCTAssertTrue(list.count > 0);
-        [expectation fulfill];
-    }];
-    [self awaitExpectations];
+    NSURL *url = nil;
+    NSString *matchingRegex = [filter patternMatchingURL:url];
+    XCTAssertNil(matchingRegex);
 }
- */
 
-- (NSArray*) badURLs {
-    NSArray *kBadURLs = @[
+- (void)testPatternMatchingURL_emptyString {
+    BNCURLFilter *filter = [BNCURLFilter new];
+    NSURL *url = [NSURL URLWithString:@""];
+    NSString *matchingRegex = [filter patternMatchingURL:url];
+    XCTAssertNil(matchingRegex);
+}
+
+- (void)testPatternMatchingURL_fbRegexMatches {
+    NSString *pattern = @"^fb\\d+:((?!campaign_ids).)*$";
+    NSString *sampleURL = @"fb12345://";
+    
+    BNCURLFilter *filter = [BNCURLFilter new];
+    NSURL *url = [NSURL URLWithString:sampleURL];
+    NSString *matchingRegex = [filter patternMatchingURL:url];
+    XCTAssertTrue([pattern isEqualToString:matchingRegex]);
+}
+
+- (void)testPatternMatchingURL_fbRegexDoesNotMatch {
+    NSString *pattern = @"^fb\\d+:((?!campaign_ids).)*$";
+    NSString *sampleURL = @"fb12345://campaign_ids";
+    
+    BNCURLFilter *filter = [BNCURLFilter new];
+    NSURL *url = [NSURL URLWithString:sampleURL];
+    NSString *matchingRegex = [filter patternMatchingURL:url];
+    XCTAssertFalse([pattern isEqualToString:matchingRegex]);
+}
+
+
+- (void)testIgnoredSuspectedAuthURLs {
+    NSArray *urls = @[
         @"fb123456:login/464646",
-        @"twitterkit-.4545:",
         @"shsh:oauth/login",
         @"https://myapp.app.link/oauth_token=fred",
         @"https://myapp.app.link/auth_token=fred",
         @"https://myapp.app.link/authtoken=fred",
         @"https://myapp.app.link/auth=fred",
-        @"fb1234:",
-        @"fb1234:/",
-        @"fb1234:/this-is-some-extra-info/?whatever",
-        @"fb1234:/this-is-some-extra-info/?whatever:andstuff",
         @"myscheme:path/to/resource?oauth=747474",
         @"myscheme:oauth=747474",
         @"myscheme:/oauth=747474",
         @"myscheme://oauth=747474",
         @"myscheme://path/oauth=747474",
         @"myscheme://path/:oauth=747474",
-        @"https://google.com/userprofile/devonbanks=oauth?",
+        @"https://google.com/userprofile/devonbanks=oauth?"
     ];
-    return kBadURLs;
+    
+    BNCURLFilter *filter = [BNCURLFilter new];
+    for (NSString *string in urls) {
+        NSURL *URL = [NSURL URLWithString:string];
+        XCTAssertTrue([filter shouldIgnoreURL:URL], @"Checking '%@'.", URL);
+    }
 }
 
-- (NSArray*) goodURLs {
-    NSArray *kGoodURLs = @[
+- (void)testAllowedURLsSimilarToAuthURLs {
+    NSArray *urls = @[
         @"shshs:/content/path",
         @"shshs:content/path",
         @"https://myapp.app.link/12345/link",
-        @"fb123x:/",
         @"https://myapp.app.link?authentic=true&tokemonsta=false",
-        @"myscheme://path/brauth=747474",
+        @"myscheme://path/brauth=747474"
     ];
-    return kGoodURLs;
-}
-
-- (void)testBadURLs {
-    // Test default list.
+    
     BNCURLFilter *filter = [BNCURLFilter new];
-    for (NSString *string in self.badURLs) {
-        NSURL *URL = [NSURL URLWithString:string];
-        XCTAssertTrue([filter shouldIgnoreURL:URL], @"Checking '%@'.", URL);
-    }
-}
-
-- (void) testDownloadBadURLs {
-    // Test download list.
-    XCTestExpectation *expectation = [self expectationWithDescription:@"List Download"];
-    BNCURLFilter *filter = [BNCURLFilter new];
-    filter.jsonURL = [NSURL URLWithString:@"https://cdn.branch.io/sdk/uriskiplist_tv1.json"];
-    [filter updatePatternListWithCompletion:^ (NSError*error, NSArray*list) {
-        XCTAssertNil(error);
-        XCTAssertTrue(list.count == 7);
-        [expectation fulfill];
-    }];
-    [self awaitExpectations];
-    for (NSString *string in self.badURLs) {
-        NSURL *URL = [NSURL URLWithString:string];
-        XCTAssertTrue([filter shouldIgnoreURL:URL], @"Checking '%@'.", URL);
-    }
-}
-
-- (void)testGoodURLs {
-    // Test default list.
-    BNCURLFilter *filter = [BNCURLFilter new];
-    for (NSString *string in self.goodURLs) {
+    for (NSString *string in urls) {
         NSURL *URL = [NSURL URLWithString:string];
         XCTAssertFalse([filter shouldIgnoreURL:URL], @"Checking '%@'", URL);
     }
 }
 
-- (void) testDownloadGoodURLs {
-    // Test download list.
-    XCTestExpectation *expectation = [self expectationWithDescription:@"List Download"];
+- (void)testIgnoredFacebookURLs {
+    // Most FB URIs are ignored
+    NSArray *urls = @[
+        @"fb123456://login/464646",
+        @"fb1234:",
+        @"fb1234:/",
+        @"fb1234:/this-is-some-extra-info/?whatever",
+        @"fb1234:/this-is-some-extra-info/?whatever:andstuff"
+    ];
+    
     BNCURLFilter *filter = [BNCURLFilter new];
-    filter.jsonURL = [NSURL URLWithString:@"https://cdn.branch.io/sdk/uriskiplist_tv1.json"];
-    [filter updatePatternListWithCompletion:^ (NSError*error, NSArray*list) {
-        XCTAssertNil(error);
-        XCTAssertTrue(list.count == 7);
-        [expectation fulfill];
-    }];
-    [self awaitExpectations];
-    for (NSString *string in self.goodURLs) {
+    for (NSString *string in urls) {
         NSURL *URL = [NSURL URLWithString:string];
-        XCTAssertFalse([filter shouldIgnoreURL:URL], @"Checking '%@'.", URL);
+        XCTAssertTrue([filter shouldIgnoreURL:URL], @"Checking '%@'.", URL);
     }
 }
 
-- (void) testStandardList {
-    BNCLogSetDisplayLevel(BNCLogLevelAll);
-    Branch *branch = (Branch.branchKey.length) ? Branch.getInstance : [Branch getInstance:@"key_live_foo"];
-    id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
-    XCTestExpectation *expectation = [self expectationWithDescription:@"OpenRequest Expectation"];
-
-    OCMStub(
-        [serverInterfaceMock postRequest:[OCMArg any]
-            url:[OCMArg any]
-            key:[OCMArg any]
-            callback:[OCMArg any]]
-    ).andDo(^(NSInvocation *invocation) {
-        __unsafe_unretained NSDictionary *dictionary = nil;
-        __unsafe_unretained NSString *url = nil;
-        [invocation getArgument:&dictionary atIndex:2];
-        [invocation getArgument:&url atIndex:3];
-
-        NSLog(@"d: %@", dictionary);
-        NSString* link = dictionary[@"external_intent_uri"];
-        NSString *pattern1 = @"^(?i)((http|https):\\/\\/).*[\\/|?|#].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b";
-        NSString *pattern2 = @"^(?i).+:.*[?].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b";
-        NSLog(@"\n   Link: '%@'\nPattern1: '%@'\nPattern2: '%@'.", link, pattern1, pattern2);
-        if ([link isEqualToString:pattern1] || [link isEqualToString:pattern2]) {
-            [expectation fulfill];
-        }
-        else
-        if ([url containsString:@"install"]) {
-            [expectation fulfill];
-        }
-    });
-    [branch clearNetworkQueue];
-    [branch handleDeepLink:[NSURL URLWithString:@"https://myapp.app.link/bob/link?oauth=true"]];
-    [self waitForExpectationsWithTimeout:5.0 handler:nil];
-    [serverInterfaceMock stopMocking];
-    [BNCPreferenceHelper sharedInstance].referringURL = nil;
-    [[BNCPreferenceHelper sharedInstance] synchronize];
+- (void)testAllowedFacebookURLs {
+    NSArray *urls = @[
+        // Facebook URIs do not contain letters other than an fb prefix
+        @"fb123x://",
+        // FB URIs with campaign ids are allowed
+        @"fb1234://helloworld?al_applink_data=%7B%22target_url%22%3A%22http%3A%5C%2F%5C%2Fitunes.apple.com%5C%2Fapp%5C%2Fid880047117%22%2C%22extras%22%3A%7B%22fb_app_id%22%3A2020399148181142%7D%2C%22referer_app_link%22%3A%7B%22url%22%3A%22fb%3A%5C%2F%5C%2F%5C%2F%3Fapp_id%3D2020399148181142%22%2C%22app_name%22%3A%22Facebook%22%7D%2C%22acs_token%22%3A%22debuggingtoken%22%2C%22campaign_ids%22%3A%22ARFUlbyOurYrHT2DsknR7VksCSgN4tiH8TzG8RIvVoUQoYog5bVCvADGJil5kFQC6tQm-fFJQH0w8wCi3NbOmEHHrtgCNglkXNY-bECEL0aUhj908hIxnBB0tchJCqwxHjorOUqyk2v4bTF75PyWvxOksZ6uTzBmr7wJq8XnOav0bA%22%2C%22test_deeplink%22%3A1%7D"
+    ];
+    
+    BNCURLFilter *filter = [BNCURLFilter new];
+    for (NSString *string in urls) {
+        NSURL *URL = [NSURL URLWithString:string];
+        XCTAssertFalse([filter shouldIgnoreURL:URL], @"Checking '%@'", URL);
+    }
 }
 
-- (void) testUserList {
-    BNCLogSetDisplayLevel(BNCLogLevelAll);
-    Branch *branch = (Branch.branchKey.length) ? Branch.getInstance : [Branch getInstance:@"key_live_foo"];
-    [branch clearNetworkQueue];
-    branch.urlPatternsToIgnore = @[
-        @"\\/bob\\/"
-    ];
-    id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
-    XCTestExpectation *expectation = [self expectationWithDescription:@"OpenRequest Expectation"];
+- (void)testCustomPatternList {
+    BNCURLFilter *filter = [BNCURLFilter new];
+    
+    // sanity check default pattern list
+    XCTAssertTrue([filter shouldIgnoreURL:[NSURL URLWithString:@"fb123://"]]);
+    XCTAssertFalse([filter shouldIgnoreURL:[NSURL URLWithString:@"branch123://"]]);
 
-    OCMStub(
-        [serverInterfaceMock postRequest:[OCMArg any]
-            url:[OCMArg any]
-            key:[OCMArg any]
-            callback:[OCMArg any]]
-    ).andDo(^(NSInvocation *invocation) {
-        __unsafe_unretained NSDictionary *dictionary = nil;
-        __unsafe_unretained NSString *URL = nil;
-        [invocation getArgument:&dictionary atIndex:2];
-        [invocation getArgument:&URL atIndex:3];
+    // confirm new pattern list is enforced
+    [filter useCustomPatternList:@[@"^branch\\d+:"]];
+    XCTAssertFalse([filter shouldIgnoreURL:[NSURL URLWithString:@"fb123://"]]);
+    XCTAssertTrue([filter shouldIgnoreURL:[NSURL URLWithString:@"branch123://"]]);
+}
 
-        NSString* link = dictionary[@"external_intent_uri"];
-        NSString *pattern = @"\\/bob\\/";
-        NSLog(@"\n    URL: '%@'\n   Link: '%@'\nPattern: '%@'\n.", URL, link, pattern);
-        if ([link isEqualToString:pattern]) {
-            [expectation fulfill];
-        }
-        else
-        if ([URL containsString:@"install"]) {
-            [expectation fulfill];
-        }
-    });
-    [branch handleDeepLink:[NSURL URLWithString:@"https://myapp.app.link/bob/link"]];
-    [self waitForExpectationsWithTimeout:5.0 handler:nil];
-    [serverInterfaceMock stopMocking];
-    [BNCPreferenceHelper sharedInstance].referringURL = nil;
-    [[BNCPreferenceHelper sharedInstance] synchronize];
+// This is an end to end test and relies on a server call
+- (void)testUpdatePatternListFromServer {
+    BNCURLFilter *filter = [BNCURLFilter new];
+
+    // confirm new pattern list is enforced
+    [filter useCustomPatternList:@[@"^branch\\d+:"]];
+    XCTAssertFalse([filter shouldIgnoreURL:[NSURL URLWithString:@"fb123://"]]);
+    XCTAssertTrue([filter shouldIgnoreURL:[NSURL URLWithString:@"branch123://"]]);
+    
+    __block XCTestExpectation *expectation = [self expectationWithDescription:@"List updated"];
+    [filter updatePatternListFromServerWithCompletion:^{
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError * _Nullable error) { }];
+    
+    // the retrieved list should match default pattern list
+    XCTAssertTrue([filter shouldIgnoreURL:[NSURL URLWithString:@"fb123://"]]);
+    XCTAssertFalse([filter shouldIgnoreURL:[NSURL URLWithString:@"branch123://"]]);
 }
 
 @end

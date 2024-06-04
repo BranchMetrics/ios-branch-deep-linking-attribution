@@ -114,8 +114,6 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       enableThreadSanitizer = "YES"
-      language = "ru"
-      region = "RU"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -145,7 +143,7 @@
          referenceType = "1">
       </LocationScenarioReference>
       <StoreKitConfigurationFileReference
-         identifier = "../Branch-TestBed/TestStoreKitConfig.storekit">
+         identifier = "../../Branch-TestBed/TestStoreKitConfig.storekit">
       </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction
