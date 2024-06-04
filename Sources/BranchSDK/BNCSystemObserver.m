@@ -148,6 +148,23 @@
     return nil;
 }
 
++ (BOOL)compareUriSchemes : (NSString *) serverUriScheme {
+    NSArray *urlTypes = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"];
+
+    for (NSDictionary *urlType in urlTypes) {
+
+        NSArray *urlSchemes = [urlType objectForKey:@"CFBundleURLSchemes"];
+        for (NSString *uriScheme in urlSchemes) {
+            NSString * serverUriSchemeWithoutSuffix = [serverUriScheme substringToIndex:[serverUriScheme length] - 3];
+            if ([uriScheme isEqualToString:serverUriSchemeWithoutSuffix]) {
+                return true; }
+        }
+        // If no Uri schemes match the one set on the dashboard
+        return false;
+    }
+    return false;
+}
+
 + (NSString *)bundleIdentifier {
     return [[NSBundle mainBundle] bundleIdentifier];
 }
