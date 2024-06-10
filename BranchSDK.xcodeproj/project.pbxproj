@@ -1526,7 +1526,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nScripts/build_static_xcframework.sh\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nScripts/build_static_xcframework_noidfa.sh\n";
 		};
 		5FF9DEFA28EE805C00D62DE1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1544,7 +1544,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nScripts/build_static_xcframework_noidfa.sh\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nScripts/build_static_xcframework.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

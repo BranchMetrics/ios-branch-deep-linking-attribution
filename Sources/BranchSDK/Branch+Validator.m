@@ -69,16 +69,13 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
 
     NSLog(@"------ Checking for URI scheme correctness ------");
     NSString *clientUriScheme = [NSString stringWithFormat:@"%@%@", [BNCSystemObserver defaultURIScheme], @"://"];
-    NSString *uriScheme = [serverUriScheme isEqualToString:clientUriScheme] ? passString : errorString;
-    NSString *uriSchemeMessage =
-        [NSString stringWithFormat:@"%@: Dashboard Link Settings page '%@' compared to client side '%@'",
-            uriScheme, serverUriScheme, clientUriScheme];
-    NSLog(@"%@",uriSchemeMessage);
+    NSString *uriScheme = [BNCSystemObserver compareUriSchemes:serverUriScheme] ? passString : errorString;
     NSLog(@"-------------------------------------------------");
 
     NSLog(@"-- Checking for bundle identifier correctness ---");
     NSString *clientBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier] ?: @"";
-    NSString *bundleIdentifier = [serverBundleID isEqualToString:clientBundleIdentifier] ? passString : errorString;
+    bool doUriSchemesMatch = [serverBundleID isEqualToString:clientBundleIdentifier];
+    NSString *bundleIdentifier = doUriSchemesMatch ? passString : errorString;
     NSString *bundleIdentifierMessage =
         [NSString stringWithFormat:@"%@: Dashboard Link Settings page '%@' compared to client side '%@'",
             bundleIdentifier, serverBundleID, clientBundleIdentifier];
@@ -113,7 +110,7 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
 
     // Build an alert string:
     NSString *alertString = @"\n";
-    if (serverUriScheme.length && [serverUriScheme isEqualToString:clientUriScheme]) {
+    if (serverUriScheme.length && doUriSchemesMatch) {
         alertString = [alertString stringByAppendingFormat:@"%@URI Scheme matches:\n\t'%@'\n",
             kPassMark,  serverUriScheme];
     } else {
