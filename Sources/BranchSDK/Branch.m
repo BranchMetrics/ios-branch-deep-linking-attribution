@@ -1768,7 +1768,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             }
         });
 
-        [self.requestQueue dequeue];
+        [self.requestQueue remove:req];
         self.networkCount = 0;
         dispatch_async(self.isolationQueue, ^{
             [self processNextQueueItem];
