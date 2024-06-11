@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+v.3.4.4
+- Fix for rare case where Branch events were duplicated
+- Fixed script in "Run Script" phase of static framework targets
+
 v.3.4.3
 - Fix push notifications when app is backgrounded and the app uses `handlePushNotification` instead of `handleDeeplink`
 
