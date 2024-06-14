@@ -53,8 +53,12 @@
 @implementation BNCRequestFactory
 
 - (instancetype)initWithBranchKey:(NSString *)key {
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initWithBranchKey key: %@", key] error:nil];
+
     self = [super init];
     if (self) {
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initWithBranchKey self: %@", self] error:nil];
+
         self.branchKey = key;
         
         self.deviceInfo = [BNCDeviceInfo getInstance];
@@ -77,6 +81,8 @@
 }
 
 - (NSDictionary *)dataForInstallWithURLString:(NSString *)urlString {
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"dataForInstallWithURLString urlString: %@", urlString] error:nil];
+     
     NSMutableDictionary *json = [NSMutableDictionary new];
     
     // All requests

@@ -1843,6 +1843,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         dispatch_semaphore_signal(self.processing_sema);
         BNCServerRequest *req = [self.requestQueue peek];
 
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"processNextQueueItem: %@.", req] error:nil];
         if (req) {
 
             // If tracking is disabled, then do not check for install event.  It won't exist.

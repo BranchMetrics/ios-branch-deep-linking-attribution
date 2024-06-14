@@ -128,18 +128,37 @@
 
 + (NSString *)defaultURIScheme {
     NSArray *urlTypes = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"];
-
     for (NSDictionary *urlType in urlTypes) {
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"urlType: %@", urlType] error:nil];
+
         NSArray *urlSchemes = [urlType objectForKey:@"CFBundleURLSchemes"];
         for (NSString *uriScheme in urlSchemes) {
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"uriScheme: %@", uriScheme] error:nil];
             
-            // TODO: Add a log to indicate that a URI was ignored due to a match with a known URI format
-            if ([uriScheme hasPrefix:@"fb"]) continue;  // Facebook
-            if ([uriScheme hasPrefix:@"db"]) continue;  // DB?
-            if ([uriScheme hasPrefix:@"twitterkit-"]) continue; // Twitter
-            if ([uriScheme hasPrefix:@"pdk"]) continue; // Pinterest
-            if ([uriScheme hasPrefix:@"pin"]) continue; // Pinterest
-            if ([uriScheme hasPrefix:@"com.googleusercontent.apps"]) continue; // Google
+            if ([uriScheme hasPrefix:@"fb"]){
+                [[BranchLogger shared] logVerbose:@"Ignoring uriScheme fb" error:nil];
+                continue;  // Facebook
+            }
+            if ([uriScheme hasPrefix:@"db"]){
+                [[BranchLogger shared] logVerbose:@"Ignoring uriScheme db" error:nil];
+                continue;  // DB?
+            }
+            if ([uriScheme hasPrefix:@"twitterkit-"]) {
+                [[BranchLogger shared] logVerbose:@"Ignoring uriScheme twitterkit-" error:nil];
+                continue; // Twitter
+            }
+            if ([uriScheme hasPrefix:@"pdk"]) {
+                [[BranchLogger shared] logVerbose:@"Ignoring uriScheme pdk" error:nil];
+                continue; // Pinterest
+            }
+            if ([uriScheme hasPrefix:@"pin"]) {
+                [[BranchLogger shared] logVerbose:@"Ignoring uriScheme pin" error:nil];
+                continue; // Pinterest
+            }
+            if ([uriScheme hasPrefix:@"com.googleusercontent.apps"]) {
+                [[BranchLogger shared] logVerbose:@"Ignoring uriScheme com.googleusercontent.apps" error:nil];
+                continue; // Google
+            }
 
             // Otherwise this must be it!
             return uriScheme;
