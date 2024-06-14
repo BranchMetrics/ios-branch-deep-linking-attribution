@@ -539,6 +539,10 @@ static NSString *bnc_branchKey = nil;
     [BNCPreferenceHelper sharedInstance].adUserDataUsageConsent = adUserDataUsageConsent;
 }
 
++ (void)setTrackingLevel:(BranchTrackingLevel)level {
+    [BNCPreferenceHelper sharedInstance].trackingLevel = level;
+}
+
 #pragma mark - InitSession Permutation methods
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options {

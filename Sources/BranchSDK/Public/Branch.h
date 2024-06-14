@@ -812,6 +812,23 @@ Sets a custom base URL for all calls to the Branch API.
  */
 + (void) setDMAParamsForEEA:(BOOL) eeaRegion AdPersonalizationConsent:(BOOL) adPersonalizationConsent AdUserDataUsageConsent:(BOOL) adUserDataUsageConsent;
 
+typedef NS_ENUM(NSUInteger, BranchTrackingLevel) {
+    BranchTrackingLevelFull,
+    BranchTrackingLevelPrivacy,
+    BranchTrackingLevelAnalytics,
+    BranchTrackingLevelNone
+};
+
+/**
+ Sets the tracking level for data collection.
+
+ @param level The desired tracking level, represented by the BranchTrackingLevel enum (Full, Privacy, Analytics, None).
+ @discussion This method allows you to control the amount and type of data collected and transmitted by the SDK.
+             Adjusting the tracking level can help you comply with privacy regulations and meet your data collection needs.
+ */
++ (void)setTrackingLevel:(BranchTrackingLevel)level;
+
+
 #pragma mark - Session Item methods
 
 ///--------------------

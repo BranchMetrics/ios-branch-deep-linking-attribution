@@ -76,6 +76,9 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) BOOL adPersonalizationConsent;
 @property (assign, nonatomic) BOOL adUserDataUsageConsent;
 
+@property (assign, nonatomic) NSInteger trackingLevel;
+
+
 - (void) clearTrackingInformation;
 
 + (BNCPreferenceHelper *)sharedInstance;
