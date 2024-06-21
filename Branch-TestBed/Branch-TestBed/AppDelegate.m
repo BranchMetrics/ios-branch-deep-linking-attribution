@@ -32,6 +32,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
     Branch *branch = [Branch getInstance];
     
+    [branch setConsumerProtectionPreference:BranchConsumerProtectionPreferenceNoAttribution];
+    
     // Change the Branch base API URL
     //[Branch setAPIUrl:@"https://api3.branch.io"];
     

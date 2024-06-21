@@ -414,10 +414,8 @@
 - (void)addDefaultRequestDataToJSON:(NSMutableDictionary *)json {
     json[@"branch_key"] = self.branchKey;
     
-    if (self.preferenceHelper.trackingLevel) {
-        json[@"tracking_level"] = @(self.preferenceHelper.trackingLevel);
-    } else {
-        json[@"tracking_level"] = @(0);
+    if (self.preferenceHelper.consumerProtectionPreference) {
+        json[@"consumer_protection_preference"] = @(self.preferenceHelper.consumerProtectionPreference);
     }
     
     // omit field if value is NO
