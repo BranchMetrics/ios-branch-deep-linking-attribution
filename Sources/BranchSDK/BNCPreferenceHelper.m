@@ -824,11 +824,15 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 }
 
 - (NSInteger)consumerProtectionPreference {
-    return [self readIntegerFromDefaults:BRANCH_PREFS_KEY_CONSUMER_PROTECTION_PREFERENCE];
+    @synchronized(self) {
+        return [self readIntegerFromDefaults:BRANCH_PREFS_KEY_CONSUMER_PROTECTION_PREFERENCE];
+    }
 }
 
 - (void)setConsumerProtectionPreference:(NSInteger)consumerProtectionPreference {
-    [self writeIntegerToDefaults:BRANCH_PREFS_KEY_CONSUMER_PROTECTION_PREFERENCE value:consumerProtectionPreference];
+    @synchronized(self) {
+        [self writeIntegerToDefaults:BRANCH_PREFS_KEY_CONSUMER_PROTECTION_PREFERENCE value:consumerProtectionPreference];
+    }
 }
 
 - (void) clearTrackingInformation {

@@ -539,8 +539,40 @@ static NSString *bnc_branchKey = nil;
     [BNCPreferenceHelper sharedInstance].adUserDataUsageConsent = adUserDataUsageConsent;
 }
 
-- (void)setConsumerProtectionPreference:(BranchConsumerProtectionPreference)consumerProtectionPreference {
-    self.preferenceHelper.consumerProtectionPreference = consumerProtectionPreference;
++ (void)setConsumerProtectionPreference:(BranchConsumerProtectionPreference)preference {
+    [BNCPreferenceHelper sharedInstance].consumerProtectionPreference = preference;
+    
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Setting Branch Consumer Protection Preference to %lu", (unsigned long)preference] error:nil];
+
+    //Set tracking to disabled if consumer protection preference is changed to "No Attribution". Otherwise, keep tracking enabled.
+    if (preference == BranchConsumerProtectionPreferenceNoAttribution) {
+        if ([Branch trackingDisabled] == false) {
+            //Disable Tracking
+            [[BranchLogger shared] logVerbose:@"Disabling tracking due to No Attribution consumer protection preference." error:nil];
+
+            // Clear partner parameters
+            [[BNCPartnerParameters shared] clearAllParameters];
+            
+            // Set the flag (which also clears the settings):
+            [BNCPreferenceHelper sharedInstance].trackingDisabled = YES;
+            Branch *branch = Branch.getInstance;
+            [branch clearNetworkQueue];
+            branch.initializationStatus = BNCInitStatusUninitialized;
+            [branch.linkCache clear];
+            // Release the lock in case it's locked:
+            [BranchOpenRequest releaseOpenResponseLock];
+        }
+    } else {
+        if ([Branch trackingDisabled]) {
+            //Enable Tracking
+            [[BranchLogger shared] logVerbose:@"Enabling tracking due to change in consumer protection preference." error:nil];
+
+            // Set the flag:
+            [BNCPreferenceHelper sharedInstance].trackingDisabled = NO;
+            // Initialize a Branch session:
+            [Branch.getInstance initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil];
+        }
+    }
 }
 
 #pragma mark - InitSession Permutation methods

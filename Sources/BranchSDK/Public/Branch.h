@@ -785,7 +785,7 @@ Sets a custom base URL for all calls to the Branch API.
  @param disabled    If set to `true` then tracking will be disabled.
  @warning This will prevent most of the Branch SDK functionality.
 */
-+ (void) setTrackingDisabled:(BOOL)disabled;
++ (void)setTrackingDisabled:(BOOL)disabled __attribute__((deprecated("This method has been deprecated. Use `setConsumerProtectionPreference:` instead.")));
 
 ///Returns the current tracking state.
 + (BOOL) trackingDisabled;
@@ -837,7 +837,7 @@ typedef NS_ENUM(NSUInteger, BranchConsumerProtectionPreference) {
  @discussion This method allows you to control the amount and type of data collected and transmitted by the SDK.
              Adjusting the consumer protection preference can help you comply with privacy regulations and meet your data collection needs.
  */
-- (void)setConsumerProtectionPreference:(BranchConsumerProtectionPreference)level;
++ (void)setConsumerProtectionPreference:(BranchConsumerProtectionPreference)level;
 
 
 #pragma mark - Session Item methods

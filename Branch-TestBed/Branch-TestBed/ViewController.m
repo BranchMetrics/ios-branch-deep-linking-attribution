@@ -156,6 +156,36 @@ bool hasSetPartnerParams = false;
                               sender:self];
 }
 
+- (IBAction)changeConsumerProtectionPreference:(id)sender {
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Select Consumer Protection Preference" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertAction *fullAction = [UIAlertAction actionWithTitle:@"Full" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [Branch setConsumerProtectionPreference:BranchConsumerProtectionPreferenceFull];
+    }];
+    
+    UIAlertAction *privacyOnlyAction = [UIAlertAction actionWithTitle:@"Privacy Only" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [Branch setConsumerProtectionPreference:BranchConsumerProtectionPreferencePrivacyOnly];
+    }];
+    
+    UIAlertAction *attributionOnlyAction = [UIAlertAction actionWithTitle:@"Attribution Only" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [Branch setConsumerProtectionPreference:BranchConsumerProtectionPreferenceAttributionOnly];
+    }];
+    
+    UIAlertAction *noAttributionAction = [UIAlertAction actionWithTitle:@"No Attribution" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [Branch setConsumerProtectionPreference:BranchConsumerProtectionPreferenceNoAttribution];
+    }];
+    
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+    
+    [actionSheet addAction:fullAction];
+    [actionSheet addAction:privacyOnlyAction];
+    [actionSheet addAction:attributionOnlyAction];
+    [actionSheet addAction:noAttributionAction];
+    [actionSheet addAction:cancelAction];
+    
+    [self presentViewController:actionSheet animated:YES completion:nil];
+}
+
 -(IBAction)showVersionAlert:(id)sender {
     NSString *versionString = [NSString stringWithFormat:@"Branch SDK v%@\nBundle Version %@\niOS %@",
                                BNC_SDK_VERSION,
