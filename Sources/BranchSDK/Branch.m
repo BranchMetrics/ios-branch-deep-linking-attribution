@@ -545,7 +545,7 @@ static NSString *bnc_branchKey = nil;
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Setting Branch Consumer Protection Preference to %lu", (unsigned long)preference] error:nil];
 
     //Set tracking to disabled if consumer protection preference is changed to "No Attribution". Otherwise, keep tracking enabled.
-    if (preference == BranchConsumerProtectionPreferenceNoAttribution) {
+    if (preference == BranchConsumerProtectionPreferenceTrackingDisabled) {
         if ([Branch trackingDisabled] == false) {
             //Disable Tracking
             [[BranchLogger shared] logVerbose:@"Disabling tracking due to No Attribution consumer protection preference." error:nil];

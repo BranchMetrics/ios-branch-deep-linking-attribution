@@ -241,4 +241,24 @@
     [[BNCPreferenceHelper sharedInstance] writeObjectToDefaults:@"bnc_dma_ad_user_data" value:nil];
 }
 
+- (void)testSetConsumerProtectionPreference {
+    // Set to Privacy Attribution and check
+    [Branch setConsumerProtectionPreference:BranchConsumerProtectionPreferencePrivacyAttribution];
+    XCTAssertEqual([BNCPreferenceHelper sharedInstance].consumerProtectionPreference, BranchConsumerProtectionPreferencePrivacyAttribution);
+    
+    // Set to Analytics Only and check
+    [Branch setConsumerProtectionPreference:BranchConsumerProtectionPreferenceAnalyticsOnly];
+    XCTAssertEqual([BNCPreferenceHelper sharedInstance].consumerProtectionPreference, BranchConsumerProtectionPreferenceAnalyticsOnly);
+    
+    // Set to Tracking Disabled and check
+    [Branch setConsumerProtectionPreference:BranchConsumerProtectionPreferenceTrackingDisabled];
+    XCTAssertEqual([BNCPreferenceHelper sharedInstance].consumerProtectionPreference, BranchConsumerProtectionPreferenceTrackingDisabled);
+    
+    // Set to Full Attribution and check
+    [Branch setConsumerProtectionPreference:BranchConsumerProtectionPreferenceFullAttribution];
+    XCTAssertEqual([BNCPreferenceHelper sharedInstance].consumerProtectionPreference, BranchConsumerProtectionPreferenceFullAttribution);
+    
+}
+
+
 @end

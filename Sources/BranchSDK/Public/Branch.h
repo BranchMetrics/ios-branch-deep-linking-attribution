@@ -816,19 +816,50 @@ Sets a custom base URL for all calls to the Branch API.
 /**
  * Enumeration representing different levels of consumer protection preferences
  * for tracking and attribution.
- *
- * Full:
- * Privacy Only:
- * Attribution Only:
- * No Attribution:
- *
  */
 typedef NS_ENUM(NSUInteger, BranchConsumerProtectionPreference) {
-    BranchConsumerProtectionPreferenceFull,
-    BranchConsumerProtectionPreferencePrivacyOnly,
-    BranchConsumerProtectionPreferenceAttributionOnly,
-    BranchConsumerProtectionPreferenceNoAttribution
+    /**
+     * Full Attribution:
+     * - Advertising Ids
+     * - Device Ids
+     * - Local IP
+     * - Persisted Non-Aggregate Ids
+     * - Persisted Aggregate Ids
+     * - Ads Postbacks / Webhooks
+     * - Data Integrations Webhooks
+     * - SAN Callouts
+     * - Privacy Frameworks
+     * - Deep Linking
+     */
+    BranchConsumerProtectionPreferenceFullAttribution,
+    
+    /**
+     * Privacy Attribution:
+     * - Device Ids
+     * - Local IP
+     * - Data Integrations Webhooks
+     * - Privacy Frameworks
+     * - Deep Linking
+     */
+    BranchConsumerProtectionPreferencePrivacyAttribution,
+    
+    /**
+     * Analytics Only:
+     * - Device Ids
+     * - Local IP
+     * - Data Integrations Webhooks
+     * - Deep Linking
+     */
+    BranchConsumerProtectionPreferenceAnalyticsOnly,
+    
+    /**
+     * Tracking Disabled:
+     * - Only Deterministic Deep Linking
+     * - Disables all other Branch requests
+     */
+    BranchConsumerProtectionPreferenceTrackingDisabled
 };
+
 
 /**
  Sets the consumer protection preference for tracking and attribution.

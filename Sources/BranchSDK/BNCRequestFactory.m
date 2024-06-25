@@ -415,7 +415,7 @@
     json[@"branch_key"] = self.branchKey;
     
     if (self.preferenceHelper.consumerProtectionPreference) {
-        json[@"consumer_protection_preference"] = @(self.preferenceHelper.consumerProtectionPreference);
+        json[@"protection_preference"] = @(self.preferenceHelper.consumerProtectionPreference);
     }
     
     // omit field if value is NO
