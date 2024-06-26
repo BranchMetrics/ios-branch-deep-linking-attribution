@@ -820,7 +820,7 @@
                                                         <color key="titleColor" systemColor="linkColor"/>
                                                     </state>
                                                     <connections>
-                                                        <action selector="changeConsumerProtectionPreference:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="eif-fe-3JM"/>
+                                                        <action selector="changeConsumerProtectionAttributionLevel:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="eif-fe-3JM"/>
                                                         <action selector="goToPasteControlPressed:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="oct-dQ-HLq"/>
                                                     </connections>
                                                 </button>

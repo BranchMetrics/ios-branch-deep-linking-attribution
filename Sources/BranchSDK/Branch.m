@@ -539,16 +539,16 @@ static NSString *bnc_branchKey = nil;
     [BNCPreferenceHelper sharedInstance].adUserDataUsageConsent = adUserDataUsageConsent;
 }
 
-+ (void)setConsumerProtectionPreference:(BranchConsumerProtectionPreference)preference {
-    [BNCPreferenceHelper sharedInstance].consumerProtectionPreference = preference;
++ (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level {
+    [BNCPreferenceHelper sharedInstance].attributionLevel = level;
     
-    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Setting Branch Consumer Protection Preference to %lu", (unsigned long)preference] error:nil];
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Setting Consumer Protection Attribution Level to %lu", (unsigned long)level] error:nil];
 
-    //Set tracking to disabled if consumer protection preference is changed to "No Attribution". Otherwise, keep tracking enabled.
-    if (preference == BranchConsumerProtectionPreferenceTrackingDisabled) {
+    //Set tracking to disabled if consumer protection attribution level is changed to BranchAttributionLevelNone. Otherwise, keep tracking enabled.
+    if (level == BranchAttributionLevelNone) {
         if ([Branch trackingDisabled] == false) {
             //Disable Tracking
-            [[BranchLogger shared] logVerbose:@"Disabling tracking due to No Attribution consumer protection preference." error:nil];
+            [[BranchLogger shared] logVerbose:@"Disabling tracking due to Consumer Protection Attribution Level being BranchAttributionLevelNone." error:nil];
 
             // Clear partner parameters
             [[BNCPartnerParameters shared] clearAllParameters];
@@ -565,7 +565,7 @@ static NSString *bnc_branchKey = nil;
     } else {
         if ([Branch trackingDisabled]) {
             //Enable Tracking
-            [[BranchLogger shared] logVerbose:@"Enabling tracking due to change in consumer protection preference." error:nil];
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enabling tracking due to Consumer Protection Attribution Level being %lu.", (unsigned long)level] error:nil];
 
             // Set the flag:
             [BNCPreferenceHelper sharedInstance].trackingDisabled = NO;

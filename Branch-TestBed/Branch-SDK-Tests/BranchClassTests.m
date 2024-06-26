@@ -241,22 +241,22 @@
     [[BNCPreferenceHelper sharedInstance] writeObjectToDefaults:@"bnc_dma_ad_user_data" value:nil];
 }
 
-- (void)testSetConsumerProtectionPreference {
-    // Set to Privacy Attribution and check
-    [Branch setConsumerProtectionPreference:BranchConsumerProtectionPreferencePrivacyAttribution];
-    XCTAssertEqual([BNCPreferenceHelper sharedInstance].consumerProtectionPreference, BranchConsumerProtectionPreferencePrivacyAttribution);
+- (void)testSetConsumerProtectionAttributionLevel {
+    // Set to Reduced and check
+    [Branch setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
+    XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelReduced);
     
-    // Set to Analytics Only and check
-    [Branch setConsumerProtectionPreference:BranchConsumerProtectionPreferenceAnalyticsOnly];
-    XCTAssertEqual([BNCPreferenceHelper sharedInstance].consumerProtectionPreference, BranchConsumerProtectionPreferenceAnalyticsOnly);
+    // Set to Minimal and check
+    [Branch setConsumerProtectionAttributionLevel:BranchAttributionLevelMinimal];
+    XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelMinimal);
     
-    // Set to Tracking Disabled and check
-    [Branch setConsumerProtectionPreference:BranchConsumerProtectionPreferenceTrackingDisabled];
-    XCTAssertEqual([BNCPreferenceHelper sharedInstance].consumerProtectionPreference, BranchConsumerProtectionPreferenceTrackingDisabled);
+    // Set to None and check
+    [Branch setConsumerProtectionAttributionLevel:BranchAttributionLevelNone];
+    XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelNone);
     
-    // Set to Full Attribution and check
-    [Branch setConsumerProtectionPreference:BranchConsumerProtectionPreferenceFullAttribution];
-    XCTAssertEqual([BNCPreferenceHelper sharedInstance].consumerProtectionPreference, BranchConsumerProtectionPreferenceFullAttribution);
+    // Set to Full and check
+    [Branch setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
+    XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelFull);
     
 }
 

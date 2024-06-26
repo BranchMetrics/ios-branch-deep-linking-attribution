@@ -785,7 +785,7 @@ Sets a custom base URL for all calls to the Branch API.
  @param disabled    If set to `true` then tracking will be disabled.
  @warning This will prevent most of the Branch SDK functionality.
 */
-+ (void)setTrackingDisabled:(BOOL)disabled __attribute__((deprecated("This method has been deprecated. Use `setConsumerProtectionPreference:` instead.")));
++ (void)setTrackingDisabled:(BOOL)disabled __attribute__((deprecated("This method has been deprecated. Use `setConsumerProtectionAttributionLevel:` instead.")));
 
 ///Returns the current tracking state.
 + (BOOL) trackingDisabled;
@@ -814,12 +814,11 @@ Sets a custom base URL for all calls to the Branch API.
 
 
 /**
- * Enumeration representing different levels of consumer protection preferences
- * for tracking and attribution.
+ * Enumeration representing different levels of consumer protection attribution levels
  */
-typedef NS_ENUM(NSUInteger, BranchConsumerProtectionPreference) {
+typedef NS_ENUM(NSUInteger, BranchAttributionLevel) {
     /**
-     * Full Attribution:
+     * Full:
      * - Advertising Ids
      * - Device Ids
      * - Local IP
@@ -831,44 +830,44 @@ typedef NS_ENUM(NSUInteger, BranchConsumerProtectionPreference) {
      * - Privacy Frameworks
      * - Deep Linking
      */
-    BranchConsumerProtectionPreferenceFullAttribution,
+    BranchAttributionLevelFull,
     
     /**
-     * Privacy Attribution:
+     * Reuced:
      * - Device Ids
      * - Local IP
      * - Data Integrations Webhooks
      * - Privacy Frameworks
      * - Deep Linking
      */
-    BranchConsumerProtectionPreferencePrivacyAttribution,
+    BranchAttributionLevelReduced,
     
     /**
-     * Analytics Only:
+     * Minimal:
      * - Device Ids
      * - Local IP
      * - Data Integrations Webhooks
      * - Deep Linking
      */
-    BranchConsumerProtectionPreferenceAnalyticsOnly,
+    BranchAttributionLevelMinimal,
     
     /**
-     * Tracking Disabled:
+     * None:
      * - Only Deterministic Deep Linking
      * - Disables all other Branch requests
      */
-    BranchConsumerProtectionPreferenceTrackingDisabled
+    BranchAttributionLevelNone
 };
 
 
 /**
- Sets the consumer protection preference for tracking and attribution.
+ Sets the consumer protection attribution level.
 
- @param level The desired consumer protection preference, represented by the BranchConsumerProtectionPreference enum (Full, Privacy Only, Attribution Only, No Attribution).
- @discussion This method allows you to control the amount and type of data collected and transmitted by the SDK.
-             Adjusting the consumer protection preference can help you comply with privacy regulations and meet your data collection needs.
+ @param level The desired consumer protection attribution level, represented by the BranchAttributionLevel enum (Full, Reduced, Minimal, None).
+ @discussion This method allows you to control the amount and type of data collected and transmitted by Branch.
+             Adjusting the consumer protection attribution level can help you comply with privacy regulations and meet your data collection needs.
  */
-+ (void)setConsumerProtectionPreference:(BranchConsumerProtectionPreference)level;
++ (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level;
 
 
 #pragma mark - Session Item methods

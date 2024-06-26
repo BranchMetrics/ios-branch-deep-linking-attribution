@@ -156,23 +156,23 @@ bool hasSetPartnerParams = false;
                               sender:self];
 }
 
-- (IBAction)changeConsumerProtectionPreference:(id)sender {
-    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Select Consumer Protection Preference" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+- (IBAction)changeConsumerProtectionAttributionLevel:(id)sender {
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Select Consumer Protection Attribution Level" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
-    UIAlertAction *fullAction = [UIAlertAction actionWithTitle:@"Full Attribution" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        [Branch setConsumerProtectionPreference:BranchConsumerProtectionPreferenceFullAttribution];
+    UIAlertAction *fullAction = [UIAlertAction actionWithTitle:@"Full" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [Branch setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
     }];
     
-    UIAlertAction *privacyOnlyAction = [UIAlertAction actionWithTitle:@"Privacy Attribution" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        [Branch setConsumerProtectionPreference:BranchConsumerProtectionPreferencePrivacyAttribution];
+    UIAlertAction *privacyOnlyAction = [UIAlertAction actionWithTitle:@"Reduced" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [Branch setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
     }];
     
-    UIAlertAction *attributionOnlyAction = [UIAlertAction actionWithTitle:@"Analytics Only" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        [Branch setConsumerProtectionPreference:BranchConsumerProtectionPreferenceAnalyticsOnly];
+    UIAlertAction *attributionOnlyAction = [UIAlertAction actionWithTitle:@"Minimal" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [Branch setConsumerProtectionAttributionLevel:BranchAttributionLevelMinimal];
     }];
     
-    UIAlertAction *noAttributionAction = [UIAlertAction actionWithTitle:@"Tracking Disabled" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        [Branch setConsumerProtectionPreference:BranchConsumerProtectionPreferenceTrackingDisabled];
+    UIAlertAction *noAttributionAction = [UIAlertAction actionWithTitle:@"None" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [Branch setConsumerProtectionAttributionLevel:BranchAttributionLevelNone];
     }];
     
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];

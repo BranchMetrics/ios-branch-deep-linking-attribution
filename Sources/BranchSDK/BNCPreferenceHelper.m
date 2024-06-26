@@ -64,7 +64,7 @@ static NSString * const BRANCH_PREFS_KEY_DMA_EEA = @"bnc_dma_eea";
 static NSString * const BRANCH_PREFS_KEY_DMA_AD_PERSONALIZATION = @"bnc_dma_ad_personalization";
 static NSString * const BRANCH_PREFS_KEY_DMA_AD_USER_DATA = @"bnc_dma_ad_user_data";
 
-static NSString * const BRANCH_PREFS_KEY_CONSUMER_PROTECTION_PREFERENCE = @"bnc_consumer_protection_preference";
+static NSString * const BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL = @"bnc_attribution_level";
 
 
 NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
@@ -122,7 +122,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     eeaRegion = _eeaRegion,
     adPersonalizationConsent = _adPersonalizationConsent,
     adUserDataUsageConsent = _adUserDataUsageConsent,
-    consumerProtectionPreference = _consumerProtectionPreference;
+    attributionLevel = _attributionLevel;
 
 + (BNCPreferenceHelper *)sharedInstance {
     static BNCPreferenceHelper *preferenceHelper = nil;
@@ -823,15 +823,15 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
 }
 
-- (NSInteger)consumerProtectionPreference {
+- (NSInteger)attributionLevel {
     @synchronized(self) {
-        return [self readIntegerFromDefaults:BRANCH_PREFS_KEY_CONSUMER_PROTECTION_PREFERENCE];
+        return [self readIntegerFromDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL];
     }
 }
 
-- (void)setConsumerProtectionPreference:(NSInteger)consumerProtectionPreference {
+- (void)attributionLevel:(NSInteger)level {
     @synchronized(self) {
-        [self writeIntegerToDefaults:BRANCH_PREFS_KEY_CONSUMER_PROTECTION_PREFERENCE value:consumerProtectionPreference];
+        [self writeIntegerToDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL value:level];
     }
 }
 
