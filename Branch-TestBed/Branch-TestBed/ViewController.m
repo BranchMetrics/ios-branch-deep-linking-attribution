@@ -157,22 +157,23 @@ bool hasSetPartnerParams = false;
 }
 
 - (IBAction)changeConsumerProtectionAttributionLevel:(id)sender {
+    Branch *branch = [Branch getInstance];
     UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Select Consumer Protection Attribution Level" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
     UIAlertAction *fullAction = [UIAlertAction actionWithTitle:@"Full" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        [Branch setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
+        [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
     }];
     
     UIAlertAction *privacyOnlyAction = [UIAlertAction actionWithTitle:@"Reduced" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        [Branch setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
+        [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
     }];
     
     UIAlertAction *attributionOnlyAction = [UIAlertAction actionWithTitle:@"Minimal" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        [Branch setConsumerProtectionAttributionLevel:BranchAttributionLevelMinimal];
+        [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelMinimal];
     }];
     
     UIAlertAction *noAttributionAction = [UIAlertAction actionWithTitle:@"None" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        [Branch setConsumerProtectionAttributionLevel:BranchAttributionLevelNone];
+        [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelNone];
     }];
     
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];

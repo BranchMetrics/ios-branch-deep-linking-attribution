@@ -539,17 +539,17 @@ static NSString *bnc_branchKey = nil;
     [BNCPreferenceHelper sharedInstance].adUserDataUsageConsent = adUserDataUsageConsent;
 }
 
-+ (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level {
-    [BNCPreferenceHelper sharedInstance].attributionLevel = level;
+- (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level {
+    self.preferenceHelper.attributionLevel = level;
     
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Setting Consumer Protection Attribution Level to %lu", (unsigned long)level] error:nil];
-
+    
     //Set tracking to disabled if consumer protection attribution level is changed to BranchAttributionLevelNone. Otherwise, keep tracking enabled.
     if (level == BranchAttributionLevelNone) {
         if ([Branch trackingDisabled] == false) {
             //Disable Tracking
             [[BranchLogger shared] logVerbose:@"Disabling attribution events due to Consumer Protection Attribution Level being BranchAttributionLevelNone." error:nil];
-
+            
             // Clear partner parameters
             [[BNCPartnerParameters shared] clearAllParameters];
             
@@ -566,13 +566,14 @@ static NSString *bnc_branchKey = nil;
         if ([Branch trackingDisabled]) {
             //Enable Tracking
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enabling attribution events due to Consumer Protection Attribution Level being %lu.", (unsigned long)level] error:nil];
-
+            
             // Set the flag:
             [BNCPreferenceHelper sharedInstance].trackingDisabled = NO;
             // Initialize a Branch session:
             [Branch.getInstance initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil];
         }
     }
+    
 }
 
 #pragma mark - InitSession Permutation methods

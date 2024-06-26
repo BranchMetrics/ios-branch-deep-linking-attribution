@@ -414,8 +414,8 @@
 - (void)addDefaultRequestDataToJSON:(NSMutableDictionary *)json {
     json[@"branch_key"] = self.branchKey;
     
-    if (self.preferenceHelper.attributionLevel) {
-        json[@"consumer_protection_attribution_level"] = @(self.preferenceHelper.attributionLevel);
+    if (self.preferenceHelper.attributionLevel != NSNotFound) {
+        [json bnc_safeSetObject:@(self.preferenceHelper.attributionLevel) forKey:@"consumer_protection_attribution_level"];
     }
     
     // omit field if value is NO

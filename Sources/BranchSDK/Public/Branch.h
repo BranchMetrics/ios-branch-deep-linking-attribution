@@ -830,17 +830,17 @@ typedef NS_ENUM(NSUInteger, BranchAttributionLevel) {
      * - Privacy Frameworks
      * - Deep Linking
      */
-    BranchAttributionLevelFull,
+    BranchAttributionLevelFull = 0,
     
     /**
-     * Reuced:
+     * Reduced:
      * - Device Ids
      * - Local IP
      * - Data Integrations Webhooks
      * - Privacy Frameworks
      * - Deep Linking
      */
-    BranchAttributionLevelReduced,
+    BranchAttributionLevelReduced = 1,
     
     /**
      * Minimal:
@@ -849,14 +849,14 @@ typedef NS_ENUM(NSUInteger, BranchAttributionLevel) {
      * - Data Integrations Webhooks
      * - Deep Linking
      */
-    BranchAttributionLevelMinimal,
+    BranchAttributionLevelMinimal = 2,
     
     /**
      * None:
      * - Only Deterministic Deep Linking
      * - Disables all other Branch requests
      */
-    BranchAttributionLevelNone
+    BranchAttributionLevelNone = 3
 };
 
 
@@ -867,7 +867,7 @@ typedef NS_ENUM(NSUInteger, BranchAttributionLevel) {
  @discussion This method allows you to control the amount and type of data collected and transmitted by Branch.
              Adjusting the consumer protection attribution level can help you comply with privacy regulations and meet your data collection needs.
  */
-+ (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level;
+- (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level;
 
 
 #pragma mark - Session Item methods

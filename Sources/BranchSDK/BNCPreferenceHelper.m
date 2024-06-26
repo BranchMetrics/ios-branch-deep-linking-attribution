@@ -824,15 +824,11 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 }
 
 - (NSInteger)attributionLevel {
-    @synchronized(self) {
-        return [self readIntegerFromDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL];
-    }
+    return [self readIntegerFromDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL];
 }
 
-- (void)attributionLevel:(NSInteger)level {
-    @synchronized(self) {
-        [self writeIntegerToDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL value:level];
-    }
+- (void)setAttributionLevel:(NSInteger)level {
+    [self writeIntegerToDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL value:level];
 }
 
 - (void) clearTrackingInformation {
