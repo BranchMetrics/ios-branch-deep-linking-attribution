@@ -548,7 +548,7 @@ static NSString *bnc_branchKey = nil;
     if (level == BranchAttributionLevelNone) {
         if ([Branch trackingDisabled] == false) {
             //Disable Tracking
-            [[BranchLogger shared] logVerbose:@"Disabling tracking due to Consumer Protection Attribution Level being BranchAttributionLevelNone." error:nil];
+            [[BranchLogger shared] logVerbose:@"Disabling attribution events due to Consumer Protection Attribution Level being BranchAttributionLevelNone." error:nil];
 
             // Clear partner parameters
             [[BNCPartnerParameters shared] clearAllParameters];
@@ -565,7 +565,7 @@ static NSString *bnc_branchKey = nil;
     } else {
         if ([Branch trackingDisabled]) {
             //Enable Tracking
-            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enabling tracking due to Consumer Protection Attribution Level being %lu.", (unsigned long)level] error:nil];
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enabling attribution events due to Consumer Protection Attribution Level being %lu.", (unsigned long)level] error:nil];
 
             // Set the flag:
             [BNCPreferenceHelper sharedInstance].trackingDisabled = NO;
