@@ -215,7 +215,7 @@ class HomeViewController: UITableViewController {
                     if let jsonObject = try JSONSerialization.jsonObject(with: data, options : .allowFragments) as? [String:AnyObject]
                     {
                         if jsonObject["consumer_protection_attribution_level"] != nil {
-                            let attribution_level = jsonObject["consumer_protection_attribution_level"] as! Int
+                            let attribution_level = jsonObject["consumer_protection_attribution_level"] as! String
                             self.logData = ""
                             self.enableBranchLogging(){(msg:String,msg2:BranchLogLevel,msg3:Error?)->() in
                                 if (msg.contains("BranchSDK")){
@@ -228,13 +228,13 @@ class HomeViewController: UITableViewController {
                             }
                             
                             switch attribution_level {
-                            case 0:
+                            case "0":
                                 Branch.getInstance().setConsumerProtectionAttributionLevel(.full)
-                            case 1:
+                            case "1":
                                 Branch.getInstance().setConsumerProtectionAttributionLevel(.reduced)
-                            case 2:
+                            case "2":
                                 Branch.getInstance().setConsumerProtectionAttributionLevel(.minimal)
-                            case 3:
+                            case "3":
                                 Branch.getInstance().setConsumerProtectionAttributionLevel(.none)
                             default:
                                 Branch.getInstance().setConsumerProtectionAttributionLevel(.full)
