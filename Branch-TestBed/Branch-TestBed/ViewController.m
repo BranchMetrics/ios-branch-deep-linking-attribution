@@ -156,6 +156,37 @@ bool hasSetPartnerParams = false;
                               sender:self];
 }
 
+- (IBAction)changeConsumerProtectionAttributionLevel:(id)sender {
+    Branch *branch = [Branch getInstance];
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Select Consumer Protection Attribution Level" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertAction *fullAction = [UIAlertAction actionWithTitle:@"Full" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
+    }];
+    
+    UIAlertAction *privacyOnlyAction = [UIAlertAction actionWithTitle:@"Reduced" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
+    }];
+    
+    UIAlertAction *attributionOnlyAction = [UIAlertAction actionWithTitle:@"Minimal" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelMinimal];
+    }];
+    
+    UIAlertAction *noAttributionAction = [UIAlertAction actionWithTitle:@"None" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelNone];
+    }];
+    
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+    
+    [actionSheet addAction:fullAction];
+    [actionSheet addAction:privacyOnlyAction];
+    [actionSheet addAction:attributionOnlyAction];
+    [actionSheet addAction:noAttributionAction];
+    [actionSheet addAction:cancelAction];
+    
+    [self presentViewController:actionSheet animated:YES completion:nil];
+}
+
 -(IBAction)showVersionAlert:(id)sender {
     NSString *versionString = [NSString stringWithFormat:@"Branch SDK v%@\nBundle Version %@\niOS %@",
                                BNC_SDK_VERSION,
