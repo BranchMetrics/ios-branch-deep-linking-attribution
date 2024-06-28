@@ -243,19 +243,20 @@
 
 - (void)testSetConsumerProtectionAttributionLevel {
     // Set to Reduced and check
-    [Branch setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
+    Branch *branch = [Branch getInstance];
+    [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
     XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelReduced);
     
     // Set to Minimal and check
-    [Branch setConsumerProtectionAttributionLevel:BranchAttributionLevelMinimal];
+    [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelMinimal];
     XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelMinimal);
     
     // Set to None and check
-    [Branch setConsumerProtectionAttributionLevel:BranchAttributionLevelNone];
+    [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelNone];
     XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelNone);
     
     // Set to Full and check
-    [Branch setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
+    [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
     XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelFull);
     
 }
