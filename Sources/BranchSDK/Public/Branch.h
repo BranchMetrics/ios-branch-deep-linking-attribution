@@ -764,9 +764,9 @@ Sets a custom base URL for all calls to the Branch API.
  Key-value pairs to be included in the metadata on every request.
 
  @param key String to be included in request metadata
- @param value Object to be included in request metadata
+ @param value Value to be included in request metadata
  */
-- (void)setRequestMetadataKey:(NSString *)key value:(nullable id)value;
+- (void)setRequestMetadataKey:(NSString *)key value:(nullable NSString *)value;
 
 /**
  Disables the Branch SDK from tracking the user. This is useful for GDPR privacy compliance.
