@@ -133,6 +133,8 @@
     } else if (statusCode != 200 || error != nil || jsonString == nil) {
         if ([NSError branchDNSBlockingError:error]) {
             [[BranchLogger shared] logWarning:@"Possible DNS Ad Blocker" error:error];
+        } else if ([NSError branchVPNBlockingError:error]) {
+            [[BranchLogger shared] logWarning:@"Possible VPN Ad Blocker" error:error];
         } else {
             [[BranchLogger shared] logWarning:@"Failed to update URL ignore list" error:operation.error];
         }

@@ -115,4 +115,38 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
     return NO;
 }
 
++ (BOOL)branchVPNBlockingError:(NSError *)error {
+    if (error) {
+        NSError *underlyingError = error.userInfo[@"NSUnderlyingError"];
+        if (underlyingError) {
+
+            BOOL isCouldntConnectErrorCode = [@(-1004) isEqual:@(underlyingError.code)];
+            BOOL isLocalHostErrorKey = [@(61) isEqual:error.userInfo[@"_kCFStreamErrorCodeKey"]];
+            
+            if ([self isConnectedToVPN] && isCouldntConnectErrorCode && isLocalHostErrorKey) {
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
+
++ (BOOL)isConnectedToVPN {
+    NSDictionary *proxySettings = (__bridge NSDictionary *)(CFNetworkCopySystemProxySettings());
+    if (proxySettings) {
+        NSDictionary *scopedSettings = proxySettings[@"__SCOPED__"];
+        if (scopedSettings) {
+            for (NSString *key in scopedSettings) {
+                if ([key containsString:@"tap"] ||
+                    [key containsString:@"tun"] ||
+                    [key containsString:@"ppp"] ||
+                    [key containsString:@"ipsec"]) {
+                    return YES;
+                }
+            }
+        }
+    }
+    return NO;
+}
+
 @end
