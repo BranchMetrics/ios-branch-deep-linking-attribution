@@ -491,7 +491,7 @@ static NSString *bnc_branchKey = nil;
 }
 
 
-- (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value {
+- (void)setRequestMetadataKey:(NSString *)key value:(NSString *)value {
     [self.preferenceHelper setRequestMetadataKey:key value:value];
 }
 
