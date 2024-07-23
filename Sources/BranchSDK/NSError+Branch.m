@@ -120,6 +120,14 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
         NSError *underlyingError = error.userInfo[@"NSUnderlyingError"];
         if (underlyingError) {
 
+            /**
+             `Domain=kCFErrorDomainCFNetwork Code=-1004` indicates that the connection failed because a connection can't be made to the host.
+             Reference: https://developer.apple.com/documentation/cfnetwork/cfnetworkerrors/kcfurlerrorcannotconnecttohost?language=objc
+             
+             `_kCFStreamErrorCodeKey=61` indicates that the connection was refused.
+             Reference: https://opensource.apple.com/source/xnu/xnu-792/bsd/sys/errno.h.auto.html
+             */
+            
             BOOL isCouldntConnectErrorCode = [@(-1004) isEqual:@(underlyingError.code)];
             BOOL isLocalHostErrorKey = [@(61) isEqual:error.userInfo[@"_kCFStreamErrorCodeKey"]];
             
@@ -131,6 +139,10 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
     return NO;
 }
 
+/**
+ Helper method to which checks the device's internet proxy settings for common VPN protocol and interface substrings to determine if a VPN enabled.
+ https://developer.apple.com/documentation/cfnetwork/cfnetworkcopysystemproxysettings()
+ */
 + (BOOL)isConnectedToVPN {
     NSDictionary *proxySettings = (__bridge NSDictionary *)(CFNetworkCopySystemProxySettings());
     if (proxySettings) {
