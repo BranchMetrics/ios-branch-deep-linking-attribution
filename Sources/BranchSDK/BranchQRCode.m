@@ -145,6 +145,8 @@
         if (error) {
             if ([NSError branchDNSBlockingError:error]) {
                 [[BranchLogger shared] logWarning:@"Possible DNS Ad Blocker" error:error];
+            } else if ([NSError branchVPNBlockingError:error]) {
+                [[BranchLogger shared] logWarning:@"Possible VPN Ad Blocker" error:error];
             } else {
                 [[BranchLogger shared] logError:@"QR Code request failed" error:error];
                 completion(nil, error);

@@ -124,6 +124,8 @@
                 if (status != 200) {
                     if ([NSError branchDNSBlockingError:underlyingError]) {
                         [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Possible DNS Ad Blocker. Giving up on request with HTTP status code %ld", (long)status] error:underlyingError];
+                    } else if ([NSError branchVPNBlockingError:underlyingError]) {
+                        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Possible VPN Ad Blocker. Giving up on request with HTTP status code %ld", (long)status] error:underlyingError];
                     } else {
                         [[BranchLogger shared] logWarning: [NSString stringWithFormat:@"Giving up on request with HTTP status code %ld", (long)status] error:underlyingError];
                     }
