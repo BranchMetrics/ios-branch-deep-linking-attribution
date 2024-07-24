@@ -847,7 +847,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         self.userIdentity = nil;
         self.referringURLQueryParameters = nil;
         self.anonID = nil;
-        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Tracking information cleared"] error:nil];
+        [[BranchLogger shared] logVerbose:@"Tracking information cleared" error:nil];
     }
 }
 
