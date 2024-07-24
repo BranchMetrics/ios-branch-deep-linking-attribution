@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+v.3.5.0
+- Add additional logging
+- Update setRequestMetadata signature to use NSString
+
 v.3.4.4
 - Fix for rare case where Branch events were duplicated
 - Fixed script in "Run Script" phase of static framework targets
