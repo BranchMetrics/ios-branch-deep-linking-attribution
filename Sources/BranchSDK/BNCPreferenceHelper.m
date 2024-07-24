@@ -388,9 +388,11 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 - (void)setSessionParams:(NSString *)sessionParams {
     @synchronized (self) {
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Setting session params %@", sessionParams] error:nil];
         if (sessionParams == nil || ![_sessionParams isEqualToString:sessionParams]) {
             _sessionParams = sessionParams;
             [self writeObjectToDefaults:BRANCH_PREFS_KEY_SESSION_PARAMS value:sessionParams];
+            [[BranchLogger shared] logVerbose:@"Params set" error:nil];
         }
     }
 }
@@ -845,6 +847,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         self.userIdentity = nil;
         self.referringURLQueryParameters = nil;
         self.anonID = nil;
+        [[BranchLogger shared] logVerbose:@"Tracking information cleared" error:nil];
     }
 }
 

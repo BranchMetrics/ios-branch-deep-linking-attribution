@@ -504,6 +504,8 @@ static NSString *bnc_branchKey = nil;
 
 + (void)setTrackingDisabled:(BOOL)disabled {
     @synchronized(self) {
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"setTrackingDisabled to %d", disabled] error:nil];
+
         BOOL currentSetting = self.trackingDisabled;
         if (!!currentSetting == !!disabled)
             return;
@@ -515,6 +517,8 @@ static NSString *bnc_branchKey = nil;
             Branch *branch = Branch.getInstance;
             [branch clearNetworkQueue];
             branch.initializationStatus = BNCInitStatusUninitialized;
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", branch.initializationStatus] error:nil];
+
             [branch.linkCache clear];
             // Release the lock in case it's locked:
             [BranchOpenRequest releaseOpenResponseLock];
@@ -668,10 +672,12 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (BOOL)handleDeepLink:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier {
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Handle deep link %@", url] error:nil];
 
     // we've been resetting the session on all deeplinks for quite some time
     // this allows foreground links to callback
     self.initializationStatus = BNCInitStatusUninitialized;
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
 
     //Check the referring url/uri for query parameters and save them
     BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
@@ -702,6 +708,8 @@ static NSString *bnc_branchKey = nil;
 - (BOOL)handleSchemeDeepLink_private:(NSURL*)url sceneIdentifier:(NSString *)sceneIdentifier {
     BOOL handled = NO;
     self.preferenceHelper.referringURL = nil;
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Set referringURL to %@", self.preferenceHelper.referringURL] error:nil];
+
     if (url && ![url isEqual:[NSNull null]]) {
 
         NSString *urlScheme = [url scheme];
@@ -712,12 +720,14 @@ static NSString *bnc_branchKey = nil;
                 if (urlScheme && [scheme isEqualToString:urlScheme]) {
                     self.preferenceHelper.externalIntentURI = [url absoluteString];
                     self.preferenceHelper.referringURL = [url absoluteString];
+                    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Allowed scheme list, set externalIntentURI and referringURL to %@", [url absoluteString]] error:nil];
                     break;
                 }
             }
         } else {
             self.preferenceHelper.externalIntentURI = [url absoluteString];
             self.preferenceHelper.referringURL = [url absoluteString];
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Set externalIntentURI and referringURL to %@", [url absoluteString]] error:nil];
         }
 
         NSString *query = [url fragment];
@@ -762,6 +772,7 @@ static NSString *bnc_branchKey = nil;
     if (urlString.length) {
         self.preferenceHelper.universalLinkUrl = urlString;
         self.preferenceHelper.referringURL = urlString;
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Set universalLinkUrl and referringURL to %@", urlString] error:nil];
     }
 
     [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:urlString];
@@ -1699,16 +1710,25 @@ static NSString *bnc_branchKey = nil;
     dispatch_async(self.isolationQueue, ^(){
         //  if necessary, creates a new organic open
         BOOL installOrOpenInQueue = [self.requestQueue containsInstallOrOpen];
+        
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive installOrOpenInQueue %d", installOrOpenInQueue] error:nil];
+
         if (!Branch.trackingDisabled && self.initializationStatus != BNCInitStatusInitialized && !installOrOpenInQueue) {
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive trackingDisabled %d initializationStatus %d installOrOpenInQueue %d", Branch.trackingDisabled, self.initializationStatus, installOrOpenInQueue] error:nil];
+
             [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:nil];
         }
     });
 }
 
 - (void)applicationWillResignActive {
+    [[BranchLogger shared] logVerbose:@"applicationWillResignActive" error:nil];
+
     dispatch_async(self.isolationQueue, ^(){
         if (!Branch.trackingDisabled) {
             self.initializationStatus = BNCInitStatusUninitialized;
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationWillResignActive initializationStatus %ld", self.initializationStatus] error:nil];
+
             [self.requestQueue persistImmediately];
             [BranchOpenRequest setWaitNeededForOpenResponseLock];
         }
@@ -1842,6 +1862,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         self.networkCount = 1;
         dispatch_semaphore_signal(self.processing_sema);
         BNCServerRequest *req = [self.requestQueue peek];
+        
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Processing %@", req]error:nil];
 
         if (req) {
 
@@ -2035,6 +2057,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             }
             
             self.initializationStatus = BNCInitStatusInitializing;
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
+
             [self processNextQueueItem];
         });
 	}
@@ -2044,6 +2068,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 - (void)handleInitSuccessAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
 
     self.initializationStatus = BNCInitStatusInitialized;
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
+
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
 
     if ([latestReferringParams[@"_branch_validate"] isEqualToString:@"060514"]) {
@@ -2260,6 +2286,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 - (void)handleInitFailure:(NSError *)error callCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
     self.initializationStatus = BNCInitStatusUninitialized;
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
 
     if (callCallback) {
         if (self.sceneSessionInitWithCallback) {

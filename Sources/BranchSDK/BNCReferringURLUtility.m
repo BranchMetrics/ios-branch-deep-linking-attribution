@@ -46,6 +46,8 @@
 
 
 - (void)parseReferringURL:(NSURL *)url {
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Parsing URL %@", url] error:nil];
+    
     NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
     for  (NSURLQueryItem *item in components.queryItems) {
         if ([self isSupportedQueryParameter:item.name]) {

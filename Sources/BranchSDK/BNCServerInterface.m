@@ -61,6 +61,8 @@
 
 - (void)postRequest:(NSDictionary *)post url:(NSString *)url retryNumber:(NSInteger)retryNumber key:(NSString *)key callback:(BNCServerCallback)callback {
     
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"retryNumber %ld", retryNumber] error:nil];
+    
     // TODO: confirm it's ok to send full URL instead of with the domain trimmed off
     self.requestEndpoint = url;
     NSURLRequest *request = [self preparePostRequest:post url:url key:key retryNumber:retryNumber];
@@ -141,7 +143,8 @@
     // Drops non-linking requests when tracking is disabled
     if (Branch.trackingDisabled) {
         NSString *endpoint = request.URL.absoluteString;
-    
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Tracking is disabled, checking if %@ is linking request.", endpoint] error:nil];
+
         if (![self isLinkingRelatedRequest:endpoint]) {
             [[BNCPreferenceHelper sharedInstance] clearTrackingInformation];
             NSError *error = [NSError branchErrorWithCode:BNCTrackingDisabledError];
@@ -292,6 +295,10 @@
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
     NSString *requestId = httpResponse.allHeaderFields[@"X-Branch-Request-Id"];
     
+    if ([[BranchLogger shared] shouldLog:BranchLogLevelVerbose]) {
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Processing response %@", requestId] error:nil];
+    }
+
     if (!error) {
         serverResponse.statusCode = @([httpResponse statusCode]);
         serverResponse.data = [BNCEncodingUtils decodeJsonDataToDictionary:data];
