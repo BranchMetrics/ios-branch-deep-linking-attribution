@@ -130,11 +130,13 @@
     if (statusCode == 404) {
         [[BranchLogger shared] logDebug:@"No update for URL ignore list found." error:nil];
         return NO;
-    } else if (statusCode != 200 || error != nil || jsonString == nil) {
+    } else if (statusCode != 200 || error != nil || jsonString == nil) {   
         if ([NSError branchDNSBlockingError:error]) {
-            [[BranchLogger shared] logWarning:@"Possible DNS Ad Blocker" error:error];
+            NSError *dnsError = [NSError branchErrorWithCode:BNCDNSAdBlockerError];
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Possible DNS Ad Blocker. Giving up on request with HTTP status code %ld. Underlying error: %@", (long)statusCode, error] error:dnsError];
         } else if ([NSError branchVPNBlockingError:error]) {
-            [[BranchLogger shared] logWarning:@"Possible VPN Ad Blocker" error:error];
+            NSError *vpnError = [NSError branchErrorWithCode:BNCVPNAdBlockerError];
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Possible VPN Ad Blocker. Giving up on request with HTTP status code %ld. Underlying error: %@", (long)statusCode, error] error:vpnError];
         } else {
             [[BranchLogger shared] logWarning:@"Failed to update URL ignore list" error:operation.error];
         }
