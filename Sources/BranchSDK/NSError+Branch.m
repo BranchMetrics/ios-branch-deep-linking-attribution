@@ -40,6 +40,8 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
         [messages setObject:@"The Spotlight identifier is required to remove indexing from spotlight." forKey:@(BNCSpotlightIdentifierError)];
         [messages setObject:@"Spotlight cannot remove publicly indexed content." forKey:@(BNCSpotlightPublicIndexError)];
         [messages setObject:@"User tracking is disabled and the request is not allowed" forKey:@(BNCTrackingDisabledError)];
+        [messages setObject:@"Possible DNS Ad Blocker. Giving up on request." forKey:@(BNCDNSAdBlockerError)];
+        [messages setObject:@"Possible VPN Ad Blocker. Giving up on request." forKey:@(BNCVPNAdBlockerError)];
     });
     
     NSString *errorMessage = [messages objectForKey:@(code)];

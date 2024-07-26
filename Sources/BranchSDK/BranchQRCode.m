@@ -144,9 +144,11 @@
         
         if (error) {
             if ([NSError branchDNSBlockingError:error]) {
-                [[BranchLogger shared] logWarning:@"Possible DNS Ad Blocker" error:error];
+                NSError *dnsError = [NSError branchErrorWithCode:BNCDNSAdBlockerError];
+                [[BranchLogger shared] logError:[NSString stringWithFormat:@"Possible DNS Ad Blocker. Giving up on QR code request. Underlying error: %@", error] error:dnsError];
             } else if ([NSError branchVPNBlockingError:error]) {
-                [[BranchLogger shared] logWarning:@"Possible VPN Ad Blocker" error:error];
+                NSError *vpnError = [NSError branchErrorWithCode:BNCVPNAdBlockerError];
+                [[BranchLogger shared] logError:[NSString stringWithFormat:@"Possible VPN Ad Blocker. Giving up on QR code request. Underlying error: %@", error] error:vpnError];
             } else {
                 [[BranchLogger shared] logError:@"QR Code request failed" error:error];
                 completion(nil, error);

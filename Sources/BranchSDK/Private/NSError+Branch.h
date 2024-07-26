@@ -32,6 +32,8 @@ typedef NS_ENUM(NSInteger, BNCErrorCode) {
     BNCSpotlightPublicIndexError    = 1014,
     BNCTrackingDisabledError        = 1015,
     BNCGeneralError                 = 1016, // General Branch SDK Error
+    BNCDNSAdBlockerError                 = 1017,
+    BNCVPNAdBlockerError                 = 1018,
     BNCHighestError
 };
 
