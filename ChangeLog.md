@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.3.5.1
+- Minor logging improvement
+
 v.3.5.0
 - Add additional logging
 - Update setRequestMetadata signature to use NSString
