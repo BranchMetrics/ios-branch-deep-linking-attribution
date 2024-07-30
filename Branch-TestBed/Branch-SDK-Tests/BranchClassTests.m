@@ -241,4 +241,25 @@
     [[BNCPreferenceHelper sharedInstance] writeObjectToDefaults:@"bnc_dma_ad_user_data" value:nil];
 }
 
+- (void)testSetConsumerProtectionAttributionLevel {
+    // Set to Reduced and check
+    Branch *branch = [Branch getInstance];
+    [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
+    XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelReduced);
+    
+    // Set to Minimal and check
+    [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelMinimal];
+    XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelMinimal);
+    
+    // Set to None and check
+    [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelNone];
+    XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelNone);
+    
+    // Set to Full and check
+    [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
+    XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelFull);
+    
+}
+
+
 @end
