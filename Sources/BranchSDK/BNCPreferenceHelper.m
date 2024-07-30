@@ -823,12 +823,20 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
 }
 
-- (NSInteger)attributionLevel {
-    return [self readIntegerFromDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL];
+- (BOOL) attributionLevelInitialized {
+    @synchronized(self) {
+        if([self readObjectFromDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL])
+            return YES;
+        return NO;
+    }
 }
 
-- (void)setAttributionLevel:(NSInteger)level {
-    [self writeIntegerToDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL value:level];
+- (BranchAttributionLevel)attributionLevel {
+    return [self readStringFromDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL];
+}
+
+- (void)setAttributionLevel:(BranchAttributionLevel)level {
+    [self writeObjectToDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL value:level];
 }
 
 - (void) clearTrackingInformation {

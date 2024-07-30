@@ -117,6 +117,8 @@
     // Add DMA Compliance Params for Google
     [self addDMAConsentParamsToJSON:json];
     
+    [self addConsumerProtectionAttributionLevel:json];
+
     return json;
 }
 
@@ -164,6 +166,8 @@
     // Add DMA Compliance Params for Google
     [self addDMAConsentParamsToJSON:json];
     
+    [self addConsumerProtectionAttributionLevel:json];
+
     return json;
 }
 
@@ -342,7 +346,6 @@
     }
 }
 
-
 - (void)addLocalURLToInstallJSON:(NSMutableDictionary *)json {
     if ([BNCPasteboard sharedInstance].checkOnInstall) {
         NSURL *pasteboardURL = nil;
@@ -413,10 +416,6 @@
 
 - (void)addDefaultRequestDataToJSON:(NSMutableDictionary *)json {
     json[@"branch_key"] = self.branchKey;
-    
-    if (self.preferenceHelper.attributionLevel != NSNotFound) {
-        [json bnc_safeSetObject:@(self.preferenceHelper.attributionLevel) forKey:@"consumer_protection_attribution_level"];
-    }
     
     // omit field if value is NO
     if ([self isTrackingDisabled]) {
@@ -491,6 +490,12 @@
     [json bnc_safeSetObject:self.preferenceHelper.userIdentity forKey:@"identity"];
 }
 
+- (void)addConsumerProtectionAttributionLevel:(NSMutableDictionary *)json {
+    if([self.preferenceHelper attributionLevelInitialized]){
+        [self safeSetValue:[self.preferenceHelper attributionLevel] forKey:BRANCH_REQUEST_KEY_CPP_LEVEL onDict:json];
+    }
+}
+
 // event
 - (void)addV2DictionaryToJSON:(NSMutableDictionary *)json {
     NSDictionary *tmp = [self v2dictionary];
@@ -553,6 +558,8 @@
 
     // Add DMA Compliance Params for Google
     [self addDMAConsentParamsToJSON:dictionary];
+    
+    [self addConsumerProtectionAttributionLevel:dictionary];
     
     return dictionary;
 }

@@ -816,48 +816,48 @@ Sets a custom base URL for all calls to the Branch API.
 /**
  * Enumeration representing different levels of consumer protection attribution levels
  */
-typedef NS_ENUM(NSUInteger, BranchAttributionLevel) {
-    /**
-     * Full:
-     * - Advertising Ids
-     * - Device Ids
-     * - Local IP
-     * - Persisted Non-Aggregate Ids
-     * - Persisted Aggregate Ids
-     * - Ads Postbacks / Webhooks
-     * - Data Integrations Webhooks
-     * - SAN Callouts
-     * - Privacy Frameworks
-     * - Deep Linking
-     */
-    BranchAttributionLevelFull = 0,
-    
-    /**
-     * Reduced:
-     * - Device Ids
-     * - Local IP
-     * - Data Integrations Webhooks
-     * - Privacy Frameworks
-     * - Deep Linking
-     */
-    BranchAttributionLevelReduced = 1,
-    
-    /**
-     * Minimal:
-     * - Device Ids
-     * - Local IP
-     * - Data Integrations Webhooks
-     * - Deep Linking
-     */
-    BranchAttributionLevelMinimal = 2,
-    
-    /**
-     * None:
-     * - Only Deterministic Deep Linking
-     * - Disables all other Branch requests
-     */
-    BranchAttributionLevelNone = 3
-};
+typedef NSString * BranchAttributionLevel NS_STRING_ENUM;
+
+/**
+ * Full:
+ * - Advertising Ids
+ * - Device Ids
+ * - Local IP
+ * - Persisted Non-Aggregate Ids
+ * - Persisted Aggregate Ids
+ * - Ads Postbacks / Webhooks
+ * - Data Integrations Webhooks
+ * - SAN Callouts
+ * - Privacy Frameworks
+ * - Deep Linking
+ */
+extern BranchAttributionLevel const BranchAttributionLevelFull;
+
+/**
+ * Reduced:
+ * - Device Ids
+ * - Local IP
+ * - Data Integrations Webhooks
+ * - Privacy Frameworks
+ * - Deep Linking
+ */
+extern BranchAttributionLevel const BranchAttributionLevelReduced;
+
+/**
+ * Minimal:
+ * - Device Ids
+ * - Local IP
+ * - Data Integrations Webhooks
+ * - Deep Linking
+ */
+extern BranchAttributionLevel const BranchAttributionLevelMinimal;
+
+/**
+ * None:
+ * - Only Deterministic Deep Linking
+ * - Disables all other Branch requests
+ */
+extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 
 /**
