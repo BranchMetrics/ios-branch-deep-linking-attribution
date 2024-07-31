@@ -147,7 +147,6 @@
     [self addAppleReceiptSourceToJSON:json];
     [self addTimestampsToJSON:json];
     
-    
     if (urlString) {
         [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
     }
