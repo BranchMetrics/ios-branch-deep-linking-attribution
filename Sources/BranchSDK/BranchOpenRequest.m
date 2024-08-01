@@ -40,6 +40,7 @@
     if ((self = [super init])) {
         _callback = callback;
         _isInstall = isInstall;
+        _isFromArchivedQueue = NO;
     }
 
     return self;

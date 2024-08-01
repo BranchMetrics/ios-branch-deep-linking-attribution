@@ -167,7 +167,8 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             BNCServerRequest *request = [self.queue objectAtIndex:i];
 
             // Install subclasses open, so only need to check open
-            if ([request isKindOfClass:[BranchOpenRequest class]]) {
+            // Request should not be the one added from archived queue
+            if ([request isKindOfClass:[BranchOpenRequest class]] && !((BranchOpenRequest *)request).isFromArchivedQueue) {
                 return (BranchOpenRequest *)request;
             }
         }
@@ -279,6 +280,11 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
         NSData *data = [NSData dataWithContentsOfURL:self.class.URLForQueueFile options:0 error:&error];
         if (!error && data) {
             NSMutableArray *decodedQueue = [self unarchiveQueueFromData:data];
+            for (id request in decodedQueue) {
+                if ([request isKindOfClass:[BranchOpenRequest class]] || [request isKindOfClass:[BranchInstallRequest class]]) {
+                    ((BranchOpenRequest *)request).isFromArchivedQueue = YES;
+                }
+            }
             self.queue = decodedQueue;
         }
     }
@@ -386,7 +392,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^ {
         sharedQueue = [[BNCServerRequestQueue alloc] init];
-        //[sharedQueue retrieve];
+        [sharedQueue retrieve];
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Retrieved from storage: %@.", sharedQueue] error:nil];
     });
     return sharedQueue;
