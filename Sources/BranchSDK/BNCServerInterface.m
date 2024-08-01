@@ -65,6 +65,23 @@
     
     // TODO: confirm it's ok to send full URL instead of with the domain trimmed off
     self.requestEndpoint = url;
+    
+    // Drops non-linking requests when tracking is disabled
+    if (Branch.trackingDisabled) {
+    
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Tracking is disabled, checking if %@ is linking request.", url] error:nil];
+
+        if (![self isLinkingRelatedRequest:url postParams:post]) {
+            [[BNCPreferenceHelper sharedInstance] clearTrackingInformation];
+            NSError *error = [NSError branchErrorWithCode:BNCTrackingDisabledError];
+            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Dropping non-linking request"] error:error];
+            if (callback) {
+                callback(nil, error);
+            }
+            return;
+        }
+    }
+    
     NSURLRequest *request = [self preparePostRequest:post url:url key:key retryNumber:retryNumber];
     
     [self genericHTTPRequest:request
@@ -142,21 +159,7 @@
             }
         };
 
-    // Drops non-linking requests when tracking is disabled
-    if (Branch.trackingDisabled) {
-        NSString *endpoint = request.URL.absoluteString;
-        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Tracking is disabled, checking if %@ is linking request.", endpoint] error:nil];
 
-        if (![self isLinkingRelatedRequest:endpoint]) {
-            [[BNCPreferenceHelper sharedInstance] clearTrackingInformation];
-            NSError *error = [NSError branchErrorWithCode:BNCTrackingDisabledError];
-            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Dropping non-linking request"] error:error];
-            if (callback) {
-                callback(nil, error);
-            }
-            return;
-        }
-    }
     
     id<BNCNetworkOperationProtocol> operation = [self.networkService networkOperationWithURLRequest:request.copy completion:completionHandler];
     [operation start];
@@ -172,9 +175,9 @@
     }
 }
 
-- (BOOL)isLinkingRelatedRequest:(NSString *)endpoint {
-    BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
-    BOOL hasIdentifier = (prefs.linkClickIdentifier.length > 0 ) || (prefs.spotlightIdentifier.length > 0 ) || (prefs.universalLinkUrl.length > 0);
+- (BOOL)isLinkingRelatedRequest:(NSString *)endpoint postParams:(NSDictionary *)post {
+   
+    BOOL hasIdentifier = (post[BRANCH_REQUEST_KEY_LINK_IDENTIFIER] != nil ) || (post[BRANCH_REQUEST_KEY_LINK_IDENTIFIER] != nil) || (post[BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL] != nil);
     
     // Allow install to resolve a link.
     if ([endpoint containsString:@"/v1/install"]) {

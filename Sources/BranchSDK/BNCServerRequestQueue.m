@@ -386,7 +386,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^ {
         sharedQueue = [[BNCServerRequestQueue alloc] init];
-        [sharedQueue retrieve];
+        //[sharedQueue retrieve];
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Retrieved from storage: %@.", sharedQueue] error:nil];
     });
     return sharedQueue;
