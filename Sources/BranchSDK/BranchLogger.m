@@ -42,7 +42,7 @@
 }
 
 - (BOOL)shouldLog:(BranchLogLevel)level {
-    if (!self.loggingEnabled || level <= self.logLevelThreshold) {
+    if (!self.loggingEnabled || level < self.logLevelThreshold) {
         return NO;
     }
     return YES;
