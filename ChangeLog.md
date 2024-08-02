@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.3.6.0
+- Bug fix with universal links on cold opens
+
 v.3.5.1
 - Minor logging improvement
 
