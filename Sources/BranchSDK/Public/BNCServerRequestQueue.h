@@ -11,6 +11,8 @@
 
 @interface BNCServerRequestQueue : NSObject
 
+@property (assign, nonatomic) BOOL processArchivedOpens;
+
 - (void)enqueue:(BNCServerRequest *)request;
 - (BNCServerRequest *)dequeue;
 - (BNCServerRequest *)peek;

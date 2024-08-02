@@ -42,6 +42,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 
     self.queue = [NSMutableArray<BNCServerRequest *> new];
     self.asyncQueue = dispatch_queue_create("io.branch.persist_queue", DISPATCH_QUEUE_SERIAL);
+    self.processArchivedOpens = YES;
     return self;
 }
 

@@ -1885,6 +1885,15 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                     return;
                 }
             }
+            
+            if ( !(((BNCServerRequestQueue*)[BNCServerRequestQueue getInstance]).processArchivedOpens)
+                && [req isKindOfClass:[BranchOpenRequest class]]
+                && ((BranchOpenRequest *)req).isFromArchivedQueue){
+                [self.requestQueue remove:req];
+                self.networkCount = 0;
+                [self processNextQueueItem];
+                return;
+            }
 
             dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
             dispatch_async(queue, ^ {
