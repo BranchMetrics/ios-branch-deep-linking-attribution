@@ -1982,7 +1982,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     dispatch_async(self.isolationQueue, ^(){
 
         
-        // If the session is not yet initialized
+        // If the session is not yet initialized  OR
+        // If the session is already initialized or is initializing but we need to reset it.
         if ( reset || self.initializationStatus == BNCInitStatusUninitialized) {
             [self initializeSessionAndCallCallback:callCallback sceneIdentifier:sceneIdentifier urlString:urlString];
         }
