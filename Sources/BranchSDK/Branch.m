@@ -526,7 +526,7 @@ static NSString *bnc_branchKey = nil;
             // Set the flag:
             [BNCPreferenceHelper sharedInstance].trackingDisabled = NO;
             // Initialize a Branch session:
-            [Branch.getInstance initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil];
+            [Branch.getInstance initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil reset:NO];
         }
     }
 }
@@ -642,7 +642,7 @@ static NSString *bnc_branchKey = nil;
     }
     #endif
 
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:pushURL];
+    [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:pushURL reset:NO];
 }
 
 - (void)setDeepLinkDebugMode:(NSDictionary *)debugParams {
@@ -693,7 +693,7 @@ static NSString *bnc_branchKey = nil;
         self.preferenceHelper.externalIntentURI = pattern;
         self.preferenceHelper.referringURL = pattern;
 
-        [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:nil];
+        [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:nil reset:YES];
         return NO;
     }
 
@@ -741,7 +741,7 @@ static NSString *bnc_branchKey = nil;
             self.preferenceHelper.linkClickIdentifier = params[@"link_click_id"];
         }
     }
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:url.absoluteString];
+    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:url.absoluteString reset:YES];
     return handled;
 }
 
@@ -775,7 +775,7 @@ static NSString *bnc_branchKey = nil;
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Set universalLinkUrl and referringURL to %@", urlString] error:nil];
     }
 
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:urlString];
+    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:urlString reset:YES];
 
     return [Branch isBranchLink:urlString];
 }
@@ -815,7 +815,7 @@ static NSString *bnc_branchKey = nil;
     }
     #endif
 
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:userActivity.webpageURL.absoluteString];
+    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:userActivity.webpageURL.absoluteString reset:YES];
 
     return spotlightIdentifier != nil;
 }
@@ -1716,7 +1716,7 @@ static NSString *bnc_branchKey = nil;
         if (!Branch.trackingDisabled && self.initializationStatus != BNCInitStatusInitialized && !installOrOpenInQueue) {
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive trackingDisabled %d initializationStatus %d installOrOpenInQueue %d", Branch.trackingDisabled, self.initializationStatus, installOrOpenInQueue] error:nil];
 
-            [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:nil];
+            [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:nil reset:NO];
         }
     });
 }
@@ -1885,6 +1885,16 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                     return;
                 }
             }
+            
+            if ( !(((BNCServerRequestQueue*)[BNCServerRequestQueue getInstance]).processArchivedOpens)
+                && [req isKindOfClass:[BranchOpenRequest class]]
+                && ((BranchOpenRequest *)req).isFromArchivedQueue){
+                [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Removed Archived Open Request from Queue  %@", [req description]] error:nil];
+                [self.requestQueue remove:req];
+                self.networkCount = 0;
+                [self processNextQueueItem];
+                return;
+            }
 
             dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
             dispatch_async(queue, ^ {
@@ -1945,11 +1955,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 - (void)initSafetyCheck {
     if (self.initializationStatus == BNCInitStatusUninitialized) {
         [[BranchLogger shared] logDebug:@"Branch avoided an error by preemptively initializing." error:nil];
-        [self initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil];
+        [self initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil reset:NO];
     }
 }
 
-- (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString {
+- (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString reset:(BOOL)reset {
     
     @synchronized (self) {
         if (self.deferInitForPluginRuntime) {
@@ -1971,8 +1981,10 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     
     dispatch_async(self.isolationQueue, ^(){
 
-        // If the session is not yet initialized
-        if (self.initializationStatus == BNCInitStatusUninitialized) {
+        
+        // If the session is not yet initialized  OR
+        // If the session is already initialized or is initializing but we need to reset it.
+        if ( reset || self.initializationStatus == BNCInitStatusUninitialized) {
             [self initializeSessionAndCallCallback:callCallback sceneIdentifier:sceneIdentifier urlString:urlString];
         }
         // If the session was initialized, but callCallback was specified, do so.

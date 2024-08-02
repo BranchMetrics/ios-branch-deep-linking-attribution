@@ -42,6 +42,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 
     self.queue = [NSMutableArray<BNCServerRequest *> new];
     self.asyncQueue = dispatch_queue_create("io.branch.persist_queue", DISPATCH_QUEUE_SERIAL);
+    self.processArchivedOpens = YES;
     return self;
 }
 
@@ -167,7 +168,8 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             BNCServerRequest *request = [self.queue objectAtIndex:i];
 
             // Install subclasses open, so only need to check open
-            if ([request isKindOfClass:[BranchOpenRequest class]]) {
+            // Request should not be the one added from archived queue
+            if ([request isKindOfClass:[BranchOpenRequest class]] && !((BranchOpenRequest *)request).isFromArchivedQueue) {
                 return (BranchOpenRequest *)request;
             }
         }
@@ -279,6 +281,11 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
         NSData *data = [NSData dataWithContentsOfURL:self.class.URLForQueueFile options:0 error:&error];
         if (!error && data) {
             NSMutableArray *decodedQueue = [self unarchiveQueueFromData:data];
+            for (id request in decodedQueue) {
+                if ([request isKindOfClass:[BranchOpenRequest class]] || [request isKindOfClass:[BranchInstallRequest class]]) {
+                    ((BranchOpenRequest *)request).isFromArchivedQueue = YES;
+                }
+            }
             self.queue = decodedQueue;
         }
     }

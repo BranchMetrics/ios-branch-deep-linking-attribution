@@ -40,6 +40,7 @@
     if ((self = [super init])) {
         _callback = callback;
         _isInstall = isInstall;
+        _isFromArchivedQueue = NO;
     }
 
     return self;
@@ -150,6 +151,10 @@
                 referringURL = link;
             }
         }
+    }
+    
+    if (referringURL.length > 0) {
+        ((BNCServerRequestQueue *)[BNCServerRequestQueue getInstance]).processArchivedOpens = NO;
     }
 
     // Clear link identifiers so they don't get reused on the next open
