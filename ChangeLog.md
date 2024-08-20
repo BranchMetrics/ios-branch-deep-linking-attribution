@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.3.6.1
+- Fixed issues where external_intent_uri was incorrectly set in certain cases
+
 v.3.6.0
 - Fixes intermittent issue with universal links on cold opens
 
