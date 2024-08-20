@@ -100,8 +100,14 @@
     [self addAppleReceiptSourceToJSON:json];
     [self addTimestampsToJSON:json];
     
+    // Check if the urlString is a valid URL to ensure it's a universal link, not the external intent uri
     if (urlString) {
-        [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
+        NSURL *url = [NSURL URLWithString:urlString];
+        if (url && ([url.scheme isEqualToString:@"http"] || [url.scheme isEqualToString:@"https"])) {
+            [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
+        } else {
+            [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:json];
+        }
     }
     
     [self addAppleAttributionTokenToJSON:json];
@@ -147,8 +153,15 @@
     [self addAppleReceiptSourceToJSON:json];
     [self addTimestampsToJSON:json];
     
+    
+    // Check if the urlString is a valid URL to ensure it's a universal link, not the external intent uri
     if (urlString) {
-        [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
+        NSURL *url = [NSURL URLWithString:urlString];
+        if (url && ([url.scheme isEqualToString:@"http"] || [url.scheme isEqualToString:@"https"])) {
+            [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
+        } else {
+            [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:json];
+        }
     }
     
     // Usually sent with install, but retry on open if it didn't get sent
