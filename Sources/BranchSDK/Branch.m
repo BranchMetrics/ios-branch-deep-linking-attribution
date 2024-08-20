@@ -690,8 +690,10 @@ static NSString *bnc_branchKey = nil;
     }
     if (pattern) {
         self.preferenceHelper.dropURLOpen = YES;
-        self.preferenceHelper.externalIntentURI = pattern;
-        self.preferenceHelper.referringURL = pattern;
+        
+        NSString *urlString = [url absoluteString];
+        self.preferenceHelper.externalIntentURI = urlString;
+        self.preferenceHelper.referringURL = urlString;
 
         [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:nil reset:YES];
         return NO;
