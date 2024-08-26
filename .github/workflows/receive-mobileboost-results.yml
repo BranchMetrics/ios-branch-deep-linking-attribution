@@ -1,0 +1,88 @@
+name: Receive MobileBoost Results
+
+on:
+  repository_dispatch:
+    types: [mobileboost-results]
+
+jobs:
+  process-results:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Process results
+        id: process_results
+        run: |
+          import json
+          import os
+
+          # Get the JSON payload from the webhook
+          payload = ${{ toJson(github.event.client_payload) }}
+
+          # Process the results
+          total_tests = payload['totalTests']
+          failed_tests = payload['failedTests']
+          app_info = payload['appInfo']
+          app_version = f"{payload['appVersionName']} ({payload['appVersionCode']})"
+          platform = payload['platform']
+
+          # Create the Slack message blocks
+          blocks = [
+              {
+                  "type": "header",
+                  "text": {
+                      "type": "plain_text",
+                      "text": f"MobileBoost Test Results for {app_info}",
+                      "emoji": True
+                  }
+              },
+              {
+                  "type": "section",
+                  "fields": [
+                      {"type": "mrkdwn", "text": f"*Platform:* {platform.capitalize()}"},
+                      {"type": "mrkdwn", "text": f"*Version:* {app_version}"},
+                      {"type": "mrkdwn", "text": f"*Total Tests:* {total_tests}"},
+                      {"type": "mrkdwn", "text": f"*Failed Tests:* {len(failed_tests)}"}
+                  ]
+              }
+          ]
+
+          if failed_tests:
+              blocks.append({"type": "divider"})
+              blocks.append({
+                  "type": "section",
+                  "text": {"type": "mrkdwn", "text": "*Failed Tests:*"}
+              })
+              for test in failed_tests:
+                  blocks.append({
+                      "type": "section",
+                      "text": {
+                          "type": "mrkdwn",
+                          "text": f"• <{test['recording']}|{test['title']}>\n"
+                                  f"  Device: {test['device']} ({test['os']})\n"
+                                  f"  Error: {test['statusMessage']}"
+                      }
+                  })
+          else:
+              blocks.append({
+                  "type": "section",
+                  "text": {"type": "mrkdwn", "text": "All tests passed successfully! 🎉"}
+              })
+
+          # Set output for the next step
+          print(f"::set-output name=slack_payload::{json.dumps({'blocks': blocks})}")
+        shell: python
+
+      - name: Send message to Slack
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: "C07JDKLFU8N"
+          payload: ${{ steps.process_results.outputs.slack_payload }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

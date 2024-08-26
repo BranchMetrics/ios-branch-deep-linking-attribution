@@ -1,0 +1,35 @@
+name: Run MobileBoost Tests on PR
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Build iOS Simulator App
+        run: |
+          xcodebuild -project Branch-TestBed.xcodeproj \
+                      -scheme Branch-TestBed \
+                      -sdk iphonesimulator \
+                      -configuration Debug \
+                      -derivedDataPath $PWD/build \
+                      clean build
+
+      - name: Compress .app Bundle into a .zip File
+        run: |
+          cd $PWD/build/Build/Products/Debug-iphonesimulator/
+          zip -r Branch-TestBed.app.zip Branch-TestBed.app
+
+      - name: Upload .zip to Mobile Boost and Run Tests
+        run: |
+          curl https://app.mobileboost.io/cli.sh | bash $PWD/build/Build/Products/Debug-iphonesimulator/Branch-TestBed.app.zip ios
+        env:
+          API_ORG_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }}
+          API_TOKEN: ${{ secrets.MOBILEBOOST_API_TOKEN }}
+          TEST_TAGS: iOS
