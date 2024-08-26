@@ -31,5 +31,4 @@ jobs:
           curl https://app.mobileboost.io/cli.sh | bash $PWD/build/Build/Products/Debug-iphonesimulator/Branch-TestBed.app.zip ios
         env:
           API_ORG_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }}
-          API_TOKEN: ${{ secrets.MOBILEBOOST_API_TOKEN }}
           TEST_TAGS: iOS
