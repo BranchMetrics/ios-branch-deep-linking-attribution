@@ -168,6 +168,7 @@ class HomeViewController: UITableViewController {
             return
         }
         self.enableBranchLogging(){(message:String, loglevel:BranchLogLevel, error:Error?)->() in
+            print("BranchSDK : " + message)
             if (message.contains("BranchSDK")){
                 self.logData = self.logData + message + "\n"
                 Utils.shared.printLogMessage(message + "\n")
