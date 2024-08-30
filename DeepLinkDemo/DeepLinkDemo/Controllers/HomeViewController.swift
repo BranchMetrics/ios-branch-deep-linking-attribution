@@ -4,6 +4,15 @@
 
 import UIKit
 import BranchSDK
+import Darwin
+import os
+
+
+@available(iOS 14.0, *)
+extension Logger {
+    static let branchLogs = Logger(subsystem: Bundle.main.bundleIdentifier!, category: String(describing: "BranchSDK"))
+}
+
 class HomeViewController: UITableViewController {
     private var reachability:Reachability?
     
@@ -168,6 +177,30 @@ class HomeViewController: UITableViewController {
             return
         }
         self.enableBranchLogging(){(message:String, loglevel:BranchLogLevel, error:Error?)->() in
+            
+            var str = message
+            var startIndex = 0;
+            while (str.count > 0)  {
+                var substring : String = ""
+                substring = String(str.prefix(1024))
+                if #available(iOS 14.0, *) {
+                    Logger.branchLogs.log("\(substring , privacy: .public)" )
+                } else {
+                    // Fallback on earlier versions
+                }
+                print(substring )
+                str = String(str.dropFirst(1024))
+            }
+            
+            if let err = error {
+                if #available(iOS 14.0, *) {
+                    Logger.branchLogs.log("Error is \(String(describing: err), privacy: .public)" )
+                } else {
+                    // Fallback on earlier versions
+                }
+
+            }
+            
             print("BranchSDK : " + message)
             if (message.contains("BranchSDK")){
                 self.logData = self.logData + message + "\n"
