@@ -649,7 +649,7 @@ static NSString *bnc_branchKey = nil;
     }
     #endif
 
-    if(pushURL || [[options objectForKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"] isEqualToNumber:@1]) {
+    if(pushURL || [[options objectForKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"] isEqualToNumber:@1] || (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) ) {
         [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:pushURL reset:NO];
     }
 }
