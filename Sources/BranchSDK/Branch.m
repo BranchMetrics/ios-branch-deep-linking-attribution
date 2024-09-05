@@ -617,11 +617,11 @@ static NSString *bnc_branchKey = nil;
 - (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
                   registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback {
     NSMutableDictionary * optionsWithDeferredInit = [options mutableCopy] ;
-        if (self.deferInitForPluginRuntime) {
-            [optionsWithDeferredInit setObject:@1 forKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"];
-        } else {
-            [optionsWithDeferredInit setObject:@0 forKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"];
-        }
+    if (self.deferInitForPluginRuntime) {
+        [optionsWithDeferredInit setObject:@1 forKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"];
+    } else {
+        [optionsWithDeferredInit setObject:@0 forKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"];
+    }
     [self deferInitBlock:^{
         self.sceneSessionInitWithCallback = callback;
         [self initSessionWithLaunchOptions:(NSDictionary *)optionsWithDeferredInit isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
