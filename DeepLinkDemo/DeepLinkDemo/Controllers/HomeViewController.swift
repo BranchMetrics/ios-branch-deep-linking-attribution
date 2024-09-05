@@ -4,7 +4,6 @@
 
 import UIKit
 import BranchSDK
-
 class HomeViewController: UITableViewController {
     private var reachability:Reachability?
     
