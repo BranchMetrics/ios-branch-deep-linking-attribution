@@ -32,12 +32,15 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
     Branch *branch = [Branch getInstance];
     
+
     // Change the Branch base API URL
     //[Branch setAPIUrl:@"https://api3.branch.io"];
     
     // test pre init support
     //[self testDispatchToIsolationQueue:branch]
-    [branch enableLoggingAtLevel:BranchLogLevelVerbose withCallback:^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+    
+    
+    [Branch enableLoggingAtLevel:BranchLogLevelVerbose withCallback:^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
         // Handle the log message and error here. For example, printing to the console:
         if (error) {
             NSLog(@"[BranchLog] Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription);
@@ -45,6 +48,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
             NSLog(@"[BranchLog] Level: %lu, Message: %@", (unsigned long)logLevel, message);
         }
     }];
+    
     
     // Comment out in production. Un-comment to test your Branch SDK Integration:
     //[branch validateSDKIntegration];
@@ -61,6 +65,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [self setLogFile:@"OpenNInstall"];
     
     [branch setIdentity:@"Bobby Branch"];
+    
+    //[branch setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
     
     [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandlerUsingBranchUniversalObject:
      ^ (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) {

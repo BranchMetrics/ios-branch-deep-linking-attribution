@@ -21,6 +21,7 @@ class HomeViewController: UITableViewController {
     @IBOutlet weak var btnReadLog: UIButton!
     @IBOutlet weak var btnSetDMAParams: UIButton!
     @IBOutlet weak var btnSendV2Event: UIButton!
+    @IBOutlet weak var btnSetAttributionLevel: UIButton!
     
     @IBOutlet weak var switchControl: UISwitch!
     
@@ -47,6 +48,7 @@ class HomeViewController: UITableViewController {
         btnLoadWebView.layer.cornerRadius = 8.0
         btnSetDMAParams.layer.cornerRadius = 8.0
         btnSendV2Event.layer.cornerRadius = 8.0
+        btnSetAttributionLevel.layer.cornerRadius = 8.0
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.methodOfReceivedNotification(notification:)), name: Notification.Name("NotificationIdentifier"), object: nil)
         
@@ -131,7 +133,9 @@ class HomeViewController: UITableViewController {
                     self.setDMAParamsWrapper()
                } else if textValue == "sendV2Event" {
                    self.sendV2EventWrapper()
-              }
+               } else if textValue == "setAttributionLevel" {
+                   self.setAttributionLevelWrapper()
+               }
             }
         }
         
@@ -159,10 +163,9 @@ class HomeViewController: UITableViewController {
     }
     
     func enableBranchLogging(callback: @escaping BranchLogCallback){
-        BranchLogger.shared().loggingEnabled =  true
-        BranchLogger.shared().logLevelThreshold = .verbose
-        BranchLogger.shared().logCallback = callback
+        Branch.enableLogging(at: .verbose, withCallback: callback)
     }
+    
     func initBranch(){
         if branchSDKInitialized {
             return
@@ -193,6 +196,68 @@ class HomeViewController: UITableViewController {
         ]
         // Log the event
         event.logEvent()
+    }
+    
+    func setAttributionLevelWrapper() {
+        self.logData = "Error: Missing testData.\n"
+
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let vc = storyBoard.instantiateViewController(withIdentifier: "TextViewController") as? TextViewController
+        vc?.isSetAttributionLevel = true
+        
+        do {
+            let argCount = ProcessInfo.processInfo.arguments.count
+            if  argCount >= 2 {
+                
+                for i in (1 ..< argCount) {
+                    let data = ProcessInfo.processInfo.arguments[i].data(using: .utf8)!
+                    
+                    if let jsonObject = try JSONSerialization.jsonObject(with: data, options : .allowFragments) as? [String:AnyObject]
+                    {
+                        if jsonObject["consumer_protection_attribution_level"] != nil {
+                            let attribution_level = jsonObject["consumer_protection_attribution_level"] as! String
+                            self.logData = ""
+                            self.enableBranchLogging(){(msg:String,msg2:BranchLogLevel,msg3:Error?)->() in
+                                if (msg.contains("BranchSDK")){
+                                    self.logData = self.logData + msg + "\n"
+                                }
+                                vc?.updateText(msg: self.logData)
+                            }
+                            if(self.branchSDKInitialized){
+                                Branch.getInstance().resetUserSession()
+                            }
+                            
+                            switch attribution_level {
+                            case "0":
+                                Branch.getInstance().setConsumerProtectionAttributionLevel(.full)
+                            case "1":
+                                Branch.getInstance().setConsumerProtectionAttributionLevel(.reduced)
+                            case "2":
+                                Branch.getInstance().setConsumerProtectionAttributionLevel(.minimal)
+                            case "3":
+                                Branch.getInstance().setConsumerProtectionAttributionLevel(.none)
+                            default:
+                                Branch.getInstance().setConsumerProtectionAttributionLevel(.full)
+                            }
+                            
+                            AppDelegate.shared.getBranchData(AppDelegate.shared.launchOption)
+                            self.branchSDKInitialized = true
+                        } else {
+                            self.logData = "Missing params from JSON Object: \n" + jsonObject.description
+                        }
+                    } else {
+                        self.logData = "Bad JSON : \n" + ProcessInfo.processInfo.arguments[i]
+                    }
+                }
+
+                
+            }
+        } catch let error as NSError {
+            print(error)
+            self.logData += error.localizedDescription
+        }
+        vc?.updateText(msg: self.logData)
+        self.navigationController?.pushViewController(vc!, animated: true)
     }
     
     func setDMAParamsWrapper() {
@@ -366,6 +431,10 @@ class HomeViewController: UITableViewController {
     
     @IBAction func sendV2Event(){
         reachabilityCheck(textValue: "sendV2Event")
+    }
+    
+    @IBAction func setAttributionLevel(){
+        reachabilityCheck(textValue: "setAttributionLevel")
     }
 }
 

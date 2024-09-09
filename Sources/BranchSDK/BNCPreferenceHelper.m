@@ -64,6 +64,8 @@ static NSString * const BRANCH_PREFS_KEY_DMA_EEA = @"bnc_dma_eea";
 static NSString * const BRANCH_PREFS_KEY_DMA_AD_PERSONALIZATION = @"bnc_dma_ad_personalization";
 static NSString * const BRANCH_PREFS_KEY_DMA_AD_USER_DATA = @"bnc_dma_ad_user_data";
 
+static NSString * const BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL = @"bnc_attribution_level";
+
 
 NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
@@ -119,7 +121,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     patternListURL = _patternListURL,
     eeaRegion = _eeaRegion,
     adPersonalizationConsent = _adPersonalizationConsent,
-    adUserDataUsageConsent = _adUserDataUsageConsent;
+    adUserDataUsageConsent = _adUserDataUsageConsent,
+    attributionLevel = _attributionLevel;
 
 + (BNCPreferenceHelper *)sharedInstance {
     static BNCPreferenceHelper *preferenceHelper = nil;
@@ -627,7 +630,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
 }
 
-
 - (BOOL) trackingDisabled {
     @synchronized(self) {
         NSNumber *b = (id) [self readObjectFromDefaults:@"trackingDisabled"];
@@ -823,6 +825,21 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
 }
 
+- (BOOL) attributionLevelInitialized {
+    @synchronized(self) {
+        if([self readObjectFromDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL])
+            return YES;
+        return NO;
+    }
+}
+
+- (BranchAttributionLevel)attributionLevel {
+    return [self readStringFromDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL];
+}
+
+- (void)setAttributionLevel:(BranchAttributionLevel)level {
+    [self writeObjectToDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL value:level];
+}
 
 - (void) clearTrackingInformation {
     @synchronized(self) {

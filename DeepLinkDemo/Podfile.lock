@@ -1,16 +1,23 @@
 PODS:
-  - IQKeyboardManager (6.5.15)
+  - BranchSDK (3.4.4)
+  - IQKeyboardManager (6.5.19)
 
 DEPENDENCIES:
+  - BranchSDK (from `./../`)
   - IQKeyboardManager
 
 SPEC REPOS:
   trunk:
     - IQKeyboardManager
 
+EXTERNAL SOURCES:
+  BranchSDK:
+    :path: "./../"
+
 SPEC CHECKSUMS:
-  IQKeyboardManager: 22ffab9bd300ad493485a390a095f5db0c841776
+  BranchSDK: 28bec34fb99c53ab8e86b7bf69cc55a4505fe0b3
+  IQKeyboardManager: c8665b3396bd0b79402b4c573eac345a31c7d485
 
-PODFILE CHECKSUM: 5d77f506f7fd530dd480a25e957b270a906b4207
+PODFILE CHECKSUM: 8c4b32f5c4a14defd62bc8a2d1e49cee9e7c2173
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.15.2
