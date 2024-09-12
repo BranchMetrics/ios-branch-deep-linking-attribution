@@ -898,6 +898,10 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     [bsl presentActivityViewControllerFromViewController:self anchor:nil];
 }
 
+- (IBAction)forceQuitAppPressed:(id)sender {
+    exit(0);
+}
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 50;
 }
