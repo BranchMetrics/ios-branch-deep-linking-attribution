@@ -287,6 +287,8 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
                 }
             }
             self.queue = decodedQueue;
+            // Requests are loaded into queue now. Delete queue file stored on disk.
+            [self removeSaveFile];
         }
     }
 }

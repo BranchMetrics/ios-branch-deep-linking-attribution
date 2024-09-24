@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.3.6.3
+- Fix for duplicate events created from archived request queue on disk.
+
 v.3.6.2
 - Fix for issue which was sending an extra open request on cold app launch. 
 - Updated fix for cold link launch when using deferred initialization and an AppDelegate only app.
