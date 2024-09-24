@@ -217,6 +217,8 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 - (void)persistImmediately {
     @synchronized (self) {
         if (!self.queue || self.queue.count == 0) {
+            //No more requests. Delete cached queue file.
+            [self removeSaveFile];
             return;
         }
         NSArray *queueCopy = [self.queue copy];
@@ -287,6 +289,8 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
                 }
             }
             self.queue = decodedQueue;
+            // Requests are loaded into queue now. Delete queue file stored on disk.
+            [self removeSaveFile];
         }
     }
 }
@@ -294,7 +298,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 // It's been reported that unarchive can fail in some situations. In that case, remove the queued requests file.
 - (void)removeSaveFile {
     NSURL *fileURL = [BNCServerRequestQueue URLForQueueFile];
-    if (fileURL) {
+    if (fileURL && [NSFileManager.defaultManager fileExistsAtPath:[fileURL path]]) {
         NSError *error;
         [NSFileManager.defaultManager removeItemAtURL:fileURL error:&error];
         

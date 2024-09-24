@@ -25,6 +25,8 @@
 // returns data in the legacy format
 - (NSData *)oldArchiveQueue:(NSArray<BNCServerRequest *> *)queue;
 
++ (NSURL * _Nonnull) URLForQueueFile;
+
 @end
 
 @interface BNCServerRequestQueueTests : XCTestCase
@@ -155,6 +157,28 @@
     
     XCTAssertNotNil(unarchived);
     XCTAssert(unarchived.count == 2);
+}
+
+- (void)testMultipleRequests {
+    BranchEventRequest *eventObject = [BranchEventRequest new];
+    BranchOpenRequest *openObject = [BranchOpenRequest new];
+ 
+    [_queue enqueue: eventObject];
+    [_queue enqueue: openObject];
+    [_queue persistImmediately];
+    
+    NSMutableArray *decodedQueue = nil;
+    NSData *data = [NSData dataWithContentsOfURL:[BNCServerRequestQueue URLForQueueFile] options:0 error:nil];
+    if (data) {
+        decodedQueue = [_queue unarchiveQueueFromData:data];
+    }
+    XCTAssert([decodedQueue count] == 2);
+    
+    [_queue remove:eventObject];
+    [_queue remove:openObject];
+    [_queue persistImmediately];
+     // Request Queue is empty. So there should not be any queue file on disk.
+    XCTAssert([NSFileManager.defaultManager fileExistsAtPath:[[BNCServerRequestQueue URLForQueueFile] path]] == NO);
 }
 
 @end
