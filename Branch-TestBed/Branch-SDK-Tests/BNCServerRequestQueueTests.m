@@ -26,6 +26,7 @@
 - (NSData *)oldArchiveQueue:(NSArray<BNCServerRequest *> *)queue;
 
 + (NSURL * _Nonnull) URLForQueueFile;
+- (void)retrieve;
 
 @end
 
@@ -173,11 +174,12 @@
         decodedQueue = [_queue unarchiveQueueFromData:data];
     }
     XCTAssert([decodedQueue count] == 2);
-    
-    [_queue remove:eventObject];
-    [_queue remove:openObject];
-    [_queue persistImmediately];
-     // Request Queue is empty. So there should not be any queue file on disk.
+    [_queue clearQueue];
+    XCTAssert([_queue queueDepth] == 0);
+    [_queue retrieve];
+    XCTAssert([_queue queueDepth] == 2);
+
+     // Request are loaded. So there should not be any queue file on disk.
     XCTAssert([NSFileManager.defaultManager fileExistsAtPath:[[BNCServerRequestQueue URLForQueueFile] path]] == NO);
 }
 
