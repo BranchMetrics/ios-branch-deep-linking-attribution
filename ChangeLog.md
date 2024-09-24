@@ -1,7 +1,7 @@
 Branch iOS SDK Change Log
 
 v.3.6.3
-- Fix for duplicate purchase events created from archived request queue on disk.
+- Fix for duplicate events created from archived request queue on disk.
 
 v.3.6.2
 - Fix for issue which was sending an extra open request on cold app launch. 
