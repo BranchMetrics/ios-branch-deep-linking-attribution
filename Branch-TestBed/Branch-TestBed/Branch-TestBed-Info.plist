@@ -23,14 +23,18 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>branchtest</string>
-			</array>
-		</dict>
-	</array>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>branchtest</string>
+            </array>
+            <key>CFBundleURLName</key>
+            <string>io.branch.sdk.Branch-TestBed</string>
+        </dict>
+    </array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSApplicationCategoryType</key>
