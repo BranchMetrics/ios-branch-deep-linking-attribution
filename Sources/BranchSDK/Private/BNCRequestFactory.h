@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface BNCRequestFactory : NSObject
 
-- (instancetype)initWithBranchKey:(NSString *)key NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithBranchKey:(NSString *)key UUID:(NSString *)requestUUID TimeStamp:(NSNumber *)requestTimeStamp NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
 - (NSDictionary *)dataForInstallWithURLString:(nullable NSString *)urlString;

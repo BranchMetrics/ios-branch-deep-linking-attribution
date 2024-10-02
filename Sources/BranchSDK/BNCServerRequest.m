@@ -8,8 +8,17 @@
 
 #import "BNCServerRequest.h"
 #import "BranchLogger.h"
+#import "BNCEncodingUtils.h"
 
 @implementation BNCServerRequest
+
+- (id) init {
+    if ((self = [super init])) {
+        _requestUUID = [[NSUUID UUID ] UUIDString];
+        _requestCreationTimeStamp = BNCWireFormatFromDate([NSDate date]);
+    }
+    return self;
+}
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     [[BranchLogger shared] logError:@"BNCServerRequest subclasses must implement makeRequest:key:callback:." error:nil];

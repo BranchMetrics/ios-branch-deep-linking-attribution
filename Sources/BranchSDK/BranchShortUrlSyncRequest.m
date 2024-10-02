@@ -28,7 +28,8 @@
 @property (strong, nonatomic) NSDictionary *params;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) BNCLinkData *linkData;
-
+@property (nonatomic, copy, readwrite) NSString *requestUUID;
+@property (nonatomic, copy, readwrite) NSNumber *requestCreationTimeStamp;
 @end
 
 @implementation BranchShortUrlSyncRequest
@@ -46,13 +47,15 @@
         _params = params;
         _linkCache = linkCache;
         _linkData = linkData;
+        _requestUUID = [[NSUUID UUID ] UUIDString];
+        _requestCreationTimeStamp = BNCWireFormatFromDate([NSDate date]);
     }
     
     return self;
 }
 
 - (BNCServerResponse *)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key {
-    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key];
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
     NSDictionary *json = [factory dataForShortURLWithLinkDataDictionary:[self.linkData.data mutableCopy] isSpotlightRequest:NO];
 
     return [serverInterface postRequestSynchronous:json
