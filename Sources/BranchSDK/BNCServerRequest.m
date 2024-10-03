@@ -29,11 +29,17 @@
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
-    return self = [super init];
+    self = [super init];
+    if (self) {
+        self.requestUUID = [aDecoder decodeObjectOfClass:NSString.class forKey:@"requestUUID"];
+        self.requestCreationTimeStamp = [aDecoder decodeObjectOfClass:NSNumber.class forKey:@"requestCreationTimeStamp"];
+    }
+    return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
-    // Nothing going on here
+    [coder encodeObject:self.requestUUID forKey:@"requestUUID"];
+    [coder encodeObject:self.requestCreationTimeStamp forKey:@"requestCreationTimeStamp"];
 }
 
 - (void)safeSetValue:(NSObject *)value forKey:(NSString *)key onDict:(NSMutableDictionary *)dict {
