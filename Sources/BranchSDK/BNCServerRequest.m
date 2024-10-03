@@ -14,8 +14,9 @@
 
 - (id) init {
     if ((self = [super init])) {
-        _requestUUID = [[NSUUID UUID ] UUIDString];
-        _requestCreationTimeStamp = BNCWireFormatFromDate([NSDate date]);
+        NSDate *timeStampDate = [NSDate date];
+        _requestUUID = [self generateRequestUUIDFromDate:timeStampDate];
+        _requestCreationTimeStamp = BNCWireFormatFromDate(timeStampDate);
     }
     return self;
 }
@@ -50,6 +51,17 @@
 
 + (BOOL)supportsSecureCoding {
     return YES;
+}
+
+- (NSString *) generateRequestUUIDFromDate:(NSDate *) localDate {
+    NSString *uuid = [[NSUUID UUID ] UUIDString];
+    
+    NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"'-'yyyyMMddHH";
+    [dateFormatter setTimeZone:gmt];
+    
+    return [uuid stringByAppendingString:[dateFormatter stringFromDate:localDate]];
 }
 
 @end
