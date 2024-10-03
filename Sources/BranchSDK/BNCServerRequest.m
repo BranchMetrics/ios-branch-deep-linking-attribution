@@ -14,9 +14,9 @@
 
 - (id) init {
     if ((self = [super init])) {
-        NSDate *timeStampDate = [NSDate date];
-        _requestUUID = [self generateRequestUUIDFromDate:timeStampDate];
-        _requestCreationTimeStamp = BNCWireFormatFromDate(timeStampDate);
+        NSDate *timeStamp = [NSDate date];
+        _requestUUID = [BNCServerRequest generateRequestUUIDFromDate:timeStamp];
+        _requestCreationTimeStamp = BNCWireFormatFromDate(timeStamp);
     }
     return self;
 }
@@ -53,7 +53,7 @@
     return YES;
 }
 
-- (NSString *) generateRequestUUIDFromDate:(NSDate *) localDate {
++ (NSString *) generateRequestUUIDFromDate:(NSDate *) localDate {
     NSString *uuid = [[NSUUID UUID ] UUIDString];
     
     NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];

@@ -209,7 +209,6 @@
             XCTAssertTrue([timeStampFromEventObject isEqualToNumber:[(BranchEventRequest *)requestObject requestCreationTimeStamp]]);
         }
         if ([requestObject isKindOfClass:BranchOpenRequest.class]) {
-            
             XCTAssertTrue([uuidFromOpenObject isEqualToString:[(BranchOpenRequest *)requestObject requestUUID]]);
             XCTAssertTrue([timeStampFromOpenObject isEqualToNumber:[(BranchOpenRequest *)requestObject requestCreationTimeStamp]]);
         }
