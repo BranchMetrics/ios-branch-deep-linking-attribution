@@ -183,4 +183,37 @@
     XCTAssert([NSFileManager.defaultManager fileExistsAtPath:[[BNCServerRequestQueue URLForQueueFile] path]] == NO);
 }
 
+- (void)testUUIDANDTimeStampPersistence {
+    BranchEventRequest *eventObject = [BranchEventRequest new];
+    BranchOpenRequest *openObject = [BranchOpenRequest new];
+    NSString *uuidFromEventObject = eventObject.requestUUID;
+    NSNumber *timeStampFromEventObject = eventObject.requestCreationTimeStamp;
+    NSString *uuidFromOpenObject = openObject.requestUUID;
+    NSNumber *timeStampFromOpenObject = openObject.requestCreationTimeStamp;
+    
+    XCTAssertTrue(![uuidFromEventObject isEqualToString:uuidFromOpenObject]);
+    
+    [_queue enqueue: eventObject];
+    [_queue enqueue: openObject];
+    [_queue persistImmediately];
+    
+    NSMutableArray *decodedQueue = nil;
+    NSData *data = [NSData dataWithContentsOfURL:[BNCServerRequestQueue URLForQueueFile] options:0 error:nil];
+    if (data) {
+        decodedQueue = [_queue unarchiveQueueFromData:data];
+    }
+    
+    for (id requestObject in decodedQueue) {
+        if ([requestObject isKindOfClass:BranchEventRequest.class]) {
+            XCTAssertTrue([uuidFromEventObject isEqualToString:[(BranchEventRequest *)requestObject requestUUID]]);
+            XCTAssertTrue([timeStampFromEventObject isEqualToNumber:[(BranchEventRequest *)requestObject requestCreationTimeStamp]]);
+        }
+        if ([requestObject isKindOfClass:BranchOpenRequest.class]) {
+            
+            XCTAssertTrue([uuidFromOpenObject isEqualToString:[(BranchOpenRequest *)requestObject requestUUID]]);
+            XCTAssertTrue([timeStampFromOpenObject isEqualToNumber:[(BranchOpenRequest *)requestObject requestCreationTimeStamp]]);
+        }
+    }
+}
+
 @end
