@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.3.6.4
+- Added unique id and timestamp to all requests sent to Server.
+
 v.3.6.3
 - Fix for duplicate events created from archived request queue on disk.
 
