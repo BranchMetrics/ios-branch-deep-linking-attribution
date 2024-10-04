@@ -7,6 +7,7 @@
 //
 
 #import "BNCQRCodeCache.h"
+#import "BranchConstants.h"
 
 @interface BNCQRCodeCache()
 @property (nonatomic, strong) NSMutableDictionary *cache;
@@ -35,6 +36,8 @@
     @synchronized (self) {
         [self.cache removeAllObjects];
         NSMutableDictionary *tempParams = [parameters mutableCopy];
+        [tempParams removeObjectForKey:BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP];
+        [tempParams removeObjectForKey:BRANCH_REQUEST_KEY_REQUEST_UUID];
         [tempParams[@"data"] removeObjectForKey:@"$creation_timestamp"];
         self.cache[tempParams] = qrCodeData;
     }
@@ -45,6 +48,8 @@
     @synchronized (self) {
         NSMutableDictionary *tempParams = [parameters mutableCopy];
         [tempParams[@"data"] removeObjectForKey:@"$creation_timestamp"];
+        [tempParams removeObjectForKey:BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP];
+        [tempParams removeObjectForKey:BRANCH_REQUEST_KEY_REQUEST_UUID];
         qrCode = self.cache[tempParams];
     }
     return qrCode;
