@@ -324,8 +324,8 @@
     
     for (id requestObject in decodedQueue) {
         if ([requestObject isKindOfClass:BranchShortUrlRequest.class]) {
-                XCTAssertTrue([shortURLObject.requestUUID isEqualToString:((BranchEventRequest *)requestObject).requestUUID]);
-                XCTAssertTrue([shortURLObject.requestCreationTimeStamp isEqualToNumber:((BranchEventRequest *)requestObject).requestCreationTimeStamp]);
+                XCTAssertTrue([shortURLObject.requestUUID isEqualToString:((BranchShortUrlRequest *)requestObject).requestUUID]);
+                XCTAssertTrue([shortURLObject.requestCreationTimeStamp isEqualToNumber:((BranchShortUrlRequest *)requestObject).requestCreationTimeStamp]);
         } else {
             XCTFail("Invalid Object type found");
         }
@@ -342,8 +342,8 @@
     
     for (id requestObject in decodedQueue) {
         if ([requestObject isKindOfClass:BranchShortUrlRequest.class]) {
-                XCTAssertTrue([shortURLObject.requestUUID isEqualToString:((BranchEventRequest *)requestObject).requestUUID]);
-                XCTAssertTrue([shortURLObject.requestCreationTimeStamp isEqualToNumber:((BranchEventRequest *)requestObject).requestCreationTimeStamp]);
+                XCTAssertTrue([shortURLObject.requestUUID isEqualToString:((BranchShortUrlRequest *)requestObject).requestUUID]);
+                XCTAssertTrue([shortURLObject.requestCreationTimeStamp isEqualToNumber:((BranchShortUrlRequest *)requestObject).requestCreationTimeStamp]);
         } else {
             XCTFail("Invalid Object type found");
         }
@@ -360,8 +360,8 @@
     
     for (id requestObject in decodedQueue) {
         if ([requestObject isKindOfClass:BranchLATDRequest.class]) {
-                XCTAssertTrue([latdObject.requestUUID isEqualToString:((BranchEventRequest *)requestObject).requestUUID]);
-                XCTAssertTrue([latdObject.requestCreationTimeStamp isEqualToNumber:((BranchEventRequest *)requestObject).requestCreationTimeStamp]);
+                XCTAssertTrue([latdObject.requestUUID isEqualToString:((BranchLATDRequest *)requestObject).requestUUID]);
+                XCTAssertTrue([latdObject.requestCreationTimeStamp isEqualToNumber:((BranchLATDRequest *)requestObject).requestCreationTimeStamp]);
         } else {
             XCTFail("Invalid Object type found");
         }
