@@ -3,12 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>NSPrivacyTracking</key>
-	<true/>
+	<false/>
 	<key>NSPrivacyTrackingDomains</key>
-	<array>
-		<string>api-safetrack.branch.io</string>
-		<string>api-safetrack-eu.branch.io</string>
-	</array>
+	<array/>
 	<key>NSPrivacyCollectedDataTypes</key>
 	<array>
 		<dict>
