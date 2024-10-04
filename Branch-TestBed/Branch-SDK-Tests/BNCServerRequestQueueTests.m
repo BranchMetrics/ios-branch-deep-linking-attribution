@@ -179,7 +179,7 @@
     [_queue enqueue: openObject];
     [_queue persistImmediately];
     
-    NSMutableArray *decodedQueue = [self getQueueCachedOnDisk];
+    NSArray *decodedQueue = [self getQueueCachedOnDisk];
     
     XCTAssert([decodedQueue count] == 2);
     [_queue clearQueue];
