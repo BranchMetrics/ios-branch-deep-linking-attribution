@@ -70,6 +70,7 @@ NSString * const BRANCH_INIT_KEY_PHONE_NUMBER = @"+phone_number";
 NSString * const BRANCH_INIT_KEY_IS_FIRST_SESSION = @"+is_first_session";
 NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
 static NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
+static NSString * const BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY = @"deferInitForPluginRuntime";
 
 NSString * const BNCCanonicalIdList = @"$canonical_identifier_list";
 NSString * const BNCPurchaseAmount = @"$amount";
@@ -615,9 +616,15 @@ static NSString *bnc_branchKey = nil;
 
 - (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
                   registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback {
+    NSMutableDictionary * optionsWithDeferredInit = [[NSMutableDictionary alloc ] initWithDictionary:options];
+    if (self.deferInitForPluginRuntime) {
+        [optionsWithDeferredInit setObject:@1 forKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"];
+    } else {
+        [optionsWithDeferredInit setObject:@0 forKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"];
+    }
     [self deferInitBlock:^{
         self.sceneSessionInitWithCallback = callback;
-        [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
+        [self initSessionWithLaunchOptions:(NSDictionary *)optionsWithDeferredInit isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
     }];
 }
 
@@ -642,7 +649,9 @@ static NSString *bnc_branchKey = nil;
     }
     #endif
 
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:pushURL reset:NO];
+    if(pushURL || [[options objectForKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"] isEqualToNumber:@1] || (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) ) {
+        [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:pushURL reset:NO];
+    }
 }
 
 - (void)setDeepLinkDebugMode:(NSDictionary *)debugParams {
