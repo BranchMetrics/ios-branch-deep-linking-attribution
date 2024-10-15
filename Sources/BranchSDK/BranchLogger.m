@@ -7,6 +7,7 @@
 //
 
 #import "BranchLogger.h"
+#import "BranchFileLogger.h"
 #import <os/log.h>
 
 @implementation BranchLogger
@@ -81,6 +82,10 @@
     if (self.logCallback) {
         self.logCallback(formattedMessage, level, error);
     }
+    
+    #ifdef DEBUG
+    [[BranchFileLogger sharedInstance] logMessage:formattedMessage];
+    #endif
 }
 
 - (NSString *)callingClass {
