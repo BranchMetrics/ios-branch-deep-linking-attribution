@@ -137,57 +137,5 @@
     return result;
 }
 
-- (void)encodeWithCoder:(NSCoder *)coder {
-    if (self.tags) {
-        [coder encodeObject:self.tags forKey:BRANCH_REQUEST_KEY_URL_TAGS];
-    }
-    if (self.alias) {
-        [coder encodeObject:self.alias forKey:BRANCH_REQUEST_KEY_URL_ALIAS];
-    }
-    if (self.type) {
-        [coder encodeObject:@(self.type) forKey:BRANCH_REQUEST_KEY_URL_LINK_TYPE];
-    }
-    if (self.channel) {
-        [coder encodeObject:self.channel forKey:BRANCH_REQUEST_KEY_URL_CHANNEL];
-    }
-    if (self.feature) {
-        [coder encodeObject:self.feature forKey:BRANCH_REQUEST_KEY_URL_FEATURE];
-    }
-    if (self.stage) {
-        [coder encodeObject:self.stage forKey:BRANCH_REQUEST_KEY_URL_STAGE];
-    }
-    if (self.campaign) {
-        [coder encodeObject:self.campaign forKey:BRANCH_REQUEST_KEY_URL_CAMPAIGN];
-    }
-    if (self.params) {
-        NSString *encodedParams = [BNCEncodingUtils encodeDictionaryToJsonString:self.params];
-        [coder encodeObject:encodedParams forKey:BRANCH_REQUEST_KEY_URL_DATA];
-    }
-    if (self.duration > 0) {
-        [coder encodeObject:@(self.duration) forKey:BRANCH_REQUEST_KEY_URL_DURATION];
-    }
-}
-
-- (id)initWithCoder:(NSCoder *)coder {
-    if ((self = [super init])) {
-        self.tags = [coder decodeObjectOfClass:NSArray.class forKey:BRANCH_REQUEST_KEY_URL_TAGS];
-        self.alias = [coder decodeObjectOfClass:NSString.class forKey:BRANCH_REQUEST_KEY_URL_ALIAS];
-        self.type = [[coder decodeObjectOfClass:NSNumber.class forKey:BRANCH_REQUEST_KEY_URL_LINK_TYPE] integerValue];
-        self.channel = [coder decodeObjectOfClass:NSString.class forKey:BRANCH_REQUEST_KEY_URL_CHANNEL];
-        self.feature = [coder decodeObjectOfClass:NSString.class forKey:BRANCH_REQUEST_KEY_URL_FEATURE];
-        self.stage = [coder decodeObjectOfClass:NSString.class forKey:BRANCH_REQUEST_KEY_URL_STAGE];
-        self.campaign = [coder decodeObjectOfClass:NSString.class forKey:BRANCH_REQUEST_KEY_URL_CAMPAIGN];
-        self.duration = [[coder decodeObjectOfClass:NSNumber.class forKey:BRANCH_REQUEST_KEY_URL_DURATION] integerValue];
-        
-        NSString *encodedParams = [coder decodeObjectOfClass:NSString.class forKey:BRANCH_REQUEST_KEY_URL_DATA];
-        self.params = [BNCEncodingUtils decodeJsonStringToDictionary:encodedParams];
-    }
-
-    return self;
-}
-
-+ (BOOL)supportsSecureCoding {
-    return YES;
-}
 
 @end

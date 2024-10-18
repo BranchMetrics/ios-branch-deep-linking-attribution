@@ -8,7 +8,7 @@
 
 #import "BNCServerInterface.h"
 
-@interface BNCServerRequest : NSObject <NSSecureCoding>
+@interface BNCServerRequest : NSObject
 
 @property (nonatomic, copy, readwrite) NSString *requestUUID;
 @property (nonatomic, copy, readwrite) NSNumber *requestCreationTimeStamp;

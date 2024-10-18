@@ -29,28 +29,11 @@
     [[BranchLogger shared] logError:@"BNCServerRequest subclasses must implement processResponse:error:." error:nil];
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder {
-    self = [super init];
-    if (self) {
-        self.requestUUID = [aDecoder decodeObjectOfClass:NSString.class forKey:@"requestUUID"];
-        self.requestCreationTimeStamp = [aDecoder decodeObjectOfClass:NSNumber.class forKey:@"requestCreationTimeStamp"];
-    }
-    return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)coder {
-    [coder encodeObject:self.requestUUID forKey:@"requestUUID"];
-    [coder encodeObject:self.requestCreationTimeStamp forKey:@"requestCreationTimeStamp"];
-}
 
 - (void)safeSetValue:(NSObject *)value forKey:(NSString *)key onDict:(NSMutableDictionary *)dict {
     if (value) {
         dict[key] = value;
     }
-}
-
-+ (BOOL)supportsSecureCoding {
-    return YES;
 }
 
 + (NSString *) generateRequestUUIDFromDate:(NSDate *) localDate {

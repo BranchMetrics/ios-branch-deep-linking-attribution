@@ -120,7 +120,7 @@ typedef NS_ENUM(NSInteger, BranchEventAdType) {
 
 #pragma mark - BranchEventRequest
 
-@interface BranchEventRequest : BNCServerRequest <NSSecureCoding>
+@interface BranchEventRequest : BNCServerRequest
 
 - (instancetype _Nonnull) initWithServerURL:(NSURL*_Nonnull)serverURL
                    eventDictionary:(NSDictionary*_Nullable)eventDictionary

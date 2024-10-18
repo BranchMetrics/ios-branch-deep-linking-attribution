@@ -128,30 +128,6 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
     }
 }
 
-#pragma mark BranchEventRequest NSSecureCoding
-
-- (instancetype)initWithCoder:(NSCoder *)decoder {
-    self = [super initWithCoder:decoder];
-	if (!self) return self;
-
-    self.serverURL = [decoder decodeObjectOfClass:NSURL.class forKey:@"serverURL"];
-    
-    NSSet *classes = [NSSet setWithArray:@[NSDictionary.class, NSArray.class, NSString.class, NSNumber.class]];
-    self.eventDictionary = [decoder decodeObjectOfClasses:classes forKey:@"eventDictionary"];
-    
-    return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)coder {
-    [super encodeWithCoder:coder];
-    [coder encodeObject:self.serverURL forKey:@"serverURL"];
-    [coder encodeObject:self.eventDictionary forKey:@"eventDictionary"];
-}
-
-+ (BOOL)supportsSecureCoding {
-    return YES;
-}
-
 @end
 
 #pragma mark - BranchEvent

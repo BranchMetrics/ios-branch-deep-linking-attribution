@@ -153,9 +153,6 @@
         }
     }
     
-    if (referringURL.length > 0) {
-        ((BNCServerRequestQueue *)[BNCServerRequestQueue getInstance]).processArchivedOpens = NO;
-    }
 
     // Clear link identifiers so they don't get reused on the next open
     preferenceHelper.linkClickIdentifier = nil;
@@ -258,21 +255,6 @@
     return @"open";
 }
 
-- (instancetype)initWithCoder:(NSCoder *)decoder {
-    self = [super initWithCoder:decoder];
-    if (!self) return self;
-    self.urlString = [decoder decodeObjectOfClass:NSString.class forKey:@"urlString"];
-    return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)coder {
-    [super encodeWithCoder:coder];
-    [coder encodeObject:self.urlString forKey:@"urlString"];
-}
-
-+ (BOOL)supportsSecureCoding {
-    return YES;
-}
 
 #pragma - Open Response Lock Handling
 

@@ -1725,7 +1725,7 @@ static NSString *bnc_branchKey = nil;
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive installOrOpenInQueue %d", installOrOpenInQueue] error:nil];
 
         if (!Branch.trackingDisabled && self.initializationStatus != BNCInitStatusInitialized && !installOrOpenInQueue) {
-            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive trackingDisabled %d initializationStatus %d installOrOpenInQueue %d", Branch.trackingDisabled, self.initializationStatus, installOrOpenInQueue] error:nil];
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive trackingDisabled %d initializationStatus %ld installOrOpenInQueue %d", Branch.trackingDisabled, (long)self.initializationStatus, installOrOpenInQueue] error:nil];
 
             [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:nil reset:NO];
         }
@@ -1740,7 +1740,6 @@ static NSString *bnc_branchKey = nil;
             self.initializationStatus = BNCInitStatusUninitialized;
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationWillResignActive initializationStatus %ld", self.initializationStatus] error:nil];
 
-            [self.requestQueue persistImmediately];
             [BranchOpenRequest setWaitNeededForOpenResponseLock];
         }
     });
@@ -1897,15 +1896,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 }
             }
             
-            if ( !(((BNCServerRequestQueue*)[BNCServerRequestQueue getInstance]).processArchivedOpens)
-                && [req isKindOfClass:[BranchOpenRequest class]]
-                && ((BranchOpenRequest *)req).isFromArchivedQueue){
-                [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Removed Archived Open Request from Queue  %@", [req description]] error:nil];
-                [self.requestQueue remove:req];
-                self.networkCount = 0;
-                [self processNextQueueItem];
-                return;
-            }
 
             dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
             dispatch_async(queue, ^ {
