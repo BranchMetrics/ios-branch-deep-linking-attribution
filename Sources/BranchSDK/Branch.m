@@ -1739,8 +1739,6 @@ static NSString *bnc_branchKey = nil;
         if (!Branch.trackingDisabled) {
             self.initializationStatus = BNCInitStatusUninitialized;
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationWillResignActive initializationStatus %ld", self.initializationStatus] error:nil];
-
-            [self.requestQueue persistImmediately];
             [BranchOpenRequest setWaitNeededForOpenResponseLock];
         }
     });
@@ -1897,16 +1895,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 }
             }
             
-            if ( !(((BNCServerRequestQueue*)[BNCServerRequestQueue getInstance]).processArchivedOpens)
-                && [req isKindOfClass:[BranchOpenRequest class]]
-                && ((BranchOpenRequest *)req).isFromArchivedQueue){
-                [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Removed Archived Open Request from Queue  %@", [req description]] error:nil];
-                [self.requestQueue remove:req];
-                self.networkCount = 0;
-                [self processNextQueueItem];
-                return;
-            }
-
             dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
             dispatch_async(queue, ^ {
                 [req makeRequest:self.serverInterface key:self.class.branchKey callback:
