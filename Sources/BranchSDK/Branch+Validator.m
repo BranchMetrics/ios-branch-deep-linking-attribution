@@ -15,7 +15,9 @@
 #import "UIViewController+Branch.h"
 #import "BNCConfig.h"
 #import "Branch.h"
+#if !TARGET_OS_TV
 #import "BranchFileLogger.h"
+#endif
 
 void BNCForceBranchValidatorCategoryToLoad(void) {
     // Empty body but forces loader to load the category.
@@ -307,7 +309,12 @@ NSURL *BranchValidationErrorReference(BranchValidationError error) {
         [alertController
             addAction:[UIAlertAction actionWithTitle:BranchValidationErrorReferenceDescription(error)
             style:UIAlertActionStyleDefault
-            handler:^ (UIAlertAction *action) { [[UIApplication sharedApplication] openURL:BranchValidationErrorReference(error) options:@{} completionHandler:nil];; }]];
+                                             handler:^ (UIAlertAction *action) {
+            Class applicationClass = NSClassFromString(@"UIApplication");
+            id<NSObject> sharedApplication = [applicationClass performSelector:@selector(sharedApplication)];
+            if ([sharedApplication respondsToSelector:@selector(openURL:)])
+                [sharedApplication performSelector:@selector(openURL:) withObject:BranchValidationErrorReference(error)];
+        }]];
     }
     
     alertController.message = message;
@@ -323,6 +330,7 @@ NSURL *BranchValidationErrorReference(BranchValidationError error) {
 }
 
 - (void) showExportedLogs {
+    #if !TARGET_OS_TV
     if ([[BranchFileLogger sharedInstance] isLogFilePopulated]) {
         UIViewController *currentVC = [UIViewController bnc_currentViewController];
         [[BranchFileLogger sharedInstance] shareLogFileFromViewController:currentVC];
@@ -337,6 +345,7 @@ NSURL *BranchValidationErrorReference(BranchValidationError error) {
             animated:YES
             completion:nil];
     }
+    #endif
 }
 
 //MARK: Not in use until development of Integration Validator Phase 2 Changes
