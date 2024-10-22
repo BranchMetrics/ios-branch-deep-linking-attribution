@@ -489,7 +489,7 @@
 		5FCDD5B22B7AC89100EAF29F /* BranchSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FF2AFDF28E7C22100393216 /* BranchSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FCDD5B32B7AC89200EAF29F /* BranchSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FF2AFDF28E7C22100393216 /* BranchSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FCDD5B42B7AC89200EAF29F /* BranchSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FF2AFDF28E7C22100393216 /* BranchSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E52E5B062CC79E4E00F553EE /* BranchFileLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = E52E5B052CC79E4E00F553EE /* BranchFileLogger.h */; };
+		E52E5B062CC79E4E00F553EE /* BranchFileLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = E52E5B052CC79E4E00F553EE /* BranchFileLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E52E5B072CC79E4E00F553EE /* BranchFileLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = E52E5B052CC79E4E00F553EE /* BranchFileLogger.h */; };
 		E52E5B0A2CC79E5C00F553EE /* BranchFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E52E5B092CC79E5C00F553EE /* BranchFileLogger.m */; };
 		E52E5B0B2CC79E5C00F553EE /* BranchFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E52E5B092CC79E5C00F553EE /* BranchFileLogger.m */; };
@@ -1038,8 +1038,8 @@
 				5FCDD4A12B7AC6A200EAF29F /* BNCServerResponse.h in Headers */,
 				5FCDD4C22B7AC6A200EAF29F /* BranchDeepLinkingController.h in Headers */,
 				5FCDD4B92B7AC6A200EAF29F /* BranchPasteControl.h in Headers */,
-				5FCDD5072B7AC6A300EAF29F /* BNCUrlQueryParameter.h in Headers */,
 				E52E5B062CC79E4E00F553EE /* BranchFileLogger.h in Headers */,
+				5FCDD5072B7AC6A300EAF29F /* BNCUrlQueryParameter.h in Headers */,
 				5FCDD5462B7AC6A300EAF29F /* BNCConfig.h in Headers */,
 				5FCDD4E62B7AC6A200EAF29F /* UIViewController+Branch.h in Headers */,
 				5F5FDA1A2B7DE31E00F14A43 /* BranchLogger.h in Headers */,
