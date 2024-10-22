@@ -4,6 +4,7 @@
 //
 //  Created by Sharath Sriram on 15/10/24.
 //
+#if !TARGET_OS_TV
 
 #import "BranchFileLogger.h"
 
@@ -109,3 +110,5 @@
 }
 
 @end
+
+#endif

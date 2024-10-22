@@ -5,6 +5,8 @@
 //  Created by Sharath Sriram on 15/10/24.
 //
 
+#if !TARGET_OS_TV
+
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
@@ -18,3 +20,5 @@
 - (void)shareLogFileFromViewController:(UIViewController *)viewController;
 
 @end
+
+#endif
