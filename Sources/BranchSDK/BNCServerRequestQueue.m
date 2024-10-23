@@ -17,11 +17,6 @@
 
 #import "BranchLogger.h"
 
-static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
-    return interval * ((NSTimeInterval) NSEC_PER_SEC);
-}
-
-
 @interface BNCServerRequestQueue()
 @property (strong, nonatomic) NSMutableArray<BNCServerRequest *> *queue;
 @end
