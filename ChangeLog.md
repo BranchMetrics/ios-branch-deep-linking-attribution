@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.3.6.5
+- Removed on-disk caching and replay of server request objects.
+
 v.3.6.4
 - Added 'branch_sdk_request_unique_id' and 'branch_sdk_request_timestamp' to post params of all the SDK requests.
 
