@@ -89,6 +89,7 @@ BranchAttributionLevel const BranchAttributionLevelReduced = @"REDUCED";
 BranchAttributionLevel const BranchAttributionLevelMinimal = @"MINIMAL";
 BranchAttributionLevel const BranchAttributionLevelNone = @"NONE";
 
+
 #ifndef CSSearchableItemActivityIdentifier
 #define CSSearchableItemActivityIdentifier @"kCSSearchableItemActivityIdentifier"
 #endif
