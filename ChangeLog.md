@@ -1,5 +1,18 @@
 Branch iOS SDK Change Log
 
+v.3.6.5
+- Removed on-disk caching and replay of server request objects.
+
+v.3.6.4
+- Added 'branch_sdk_request_unique_id' and 'branch_sdk_request_timestamp' to post params of all the SDK requests.
+
+v.3.6.3
+- Fix for duplicate events created from archived request queue on disk.
+
+v.3.6.2
+- Fix for issue which was sending an extra open request on cold app launch. 
+- Updated fix for cold link launch when using deferred initialization and an AppDelegate only app.
+
 v.3.6.1
 - Fixed issues where external_intent_uri was incorrectly set in certain cases
 

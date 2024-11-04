@@ -15,6 +15,8 @@
 #import "UIViewController+Branch.h"
 #import "BranchLogger.h"
 #import "BNCServerAPI.h"
+#import "BranchConstants.h"
+#import "BNCEncodingUtils.h"
 
 @interface BranchQRCode()
 @property (nonatomic, copy, readwrite) NSString *buoTitle;
@@ -91,6 +93,10 @@
     parameters[@"data"] = [buo dictionary];
     parameters[@"branch_key"] = [Branch branchKey];
     
+    NSDate *timestamp = [NSDate date];
+    parameters[BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP] = BNCWireFormatFromDate(timestamp);
+    parameters[BRANCH_REQUEST_KEY_REQUEST_UUID] = [BNCServerRequest generateRequestUUIDFromDate:timestamp];
+    
     NSData *cachedQRCode = [[BNCQRCodeCache sharedInstance] checkQRCodeCache:parameters];
     if (cachedQRCode) {
         completion(cachedQRCode, nil);
@@ -136,8 +142,7 @@
 
     NSData *postData = [NSJSONSerialization dataWithJSONObject:params options:0 error:&error];
     [request setHTTPBody:postData];
-    
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Network start operation %@.", request.URL.absoluteString] error:nil];
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Network start operation %@.\n Body %@", request.URL.absoluteString, [BNCEncodingUtils prettyPrintJSON:params]] error:nil];
     NSDate *startDate = [NSDate date];
     
     NSURLSessionDataTask *postDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {

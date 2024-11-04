@@ -166,3 +166,6 @@ NSString * const BRANCH_REQUEST_KEY_DMA_EEA = @"dma_eea";
 NSString * const BRANCH_REQUEST_KEY_DMA_AD_PEROSALIZATION = @"dma_ad_personalization";
 NSString * const BRANCH_REQUEST_KEY_DMA_AD_USER_DATA = @"dma_ad_user_data";
 
+NSString * const BRANCH_REQUEST_KEY_REQUEST_UUID = @"branch_sdk_request_unique_id";
+NSString * const BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP = @"branch_sdk_request_timestamp";
+

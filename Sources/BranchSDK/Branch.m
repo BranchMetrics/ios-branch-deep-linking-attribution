@@ -70,6 +70,7 @@ NSString * const BRANCH_INIT_KEY_PHONE_NUMBER = @"+phone_number";
 NSString * const BRANCH_INIT_KEY_IS_FIRST_SESSION = @"+is_first_session";
 NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
 static NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
+static NSString * const BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY = @"deferInitForPluginRuntime";
 
 NSString * const BNCCanonicalIdList = @"$canonical_identifier_list";
 NSString * const BNCPurchaseAmount = @"$amount";
@@ -615,9 +616,15 @@ static NSString *bnc_branchKey = nil;
 
 - (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
                   registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback {
+    NSMutableDictionary * optionsWithDeferredInit = [[NSMutableDictionary alloc ] initWithDictionary:options];
+    if (self.deferInitForPluginRuntime) {
+        [optionsWithDeferredInit setObject:@1 forKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"];
+    } else {
+        [optionsWithDeferredInit setObject:@0 forKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"];
+    }
     [self deferInitBlock:^{
         self.sceneSessionInitWithCallback = callback;
-        [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
+        [self initSessionWithLaunchOptions:(NSDictionary *)optionsWithDeferredInit isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
     }];
 }
 
@@ -642,7 +649,9 @@ static NSString *bnc_branchKey = nil;
     }
     #endif
 
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:pushURL reset:NO];
+    if(pushURL || [[options objectForKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"] isEqualToNumber:@1] || (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) ) {
+        [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:pushURL reset:NO];
+    }
 }
 
 - (void)setDeepLinkDebugMode:(NSDictionary *)debugParams {
@@ -1730,8 +1739,6 @@ static NSString *bnc_branchKey = nil;
         if (!Branch.trackingDisabled) {
             self.initializationStatus = BNCInitStatusUninitialized;
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationWillResignActive initializationStatus %ld", self.initializationStatus] error:nil];
-
-            [self.requestQueue persistImmediately];
             [BranchOpenRequest setWaitNeededForOpenResponseLock];
         }
     });
@@ -1888,16 +1895,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 }
             }
             
-            if ( !(((BNCServerRequestQueue*)[BNCServerRequestQueue getInstance]).processArchivedOpens)
-                && [req isKindOfClass:[BranchOpenRequest class]]
-                && ((BranchOpenRequest *)req).isFromArchivedQueue){
-                [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Removed Archived Open Request from Queue  %@", [req description]] error:nil];
-                [self.requestQueue remove:req];
-                self.networkCount = 0;
-                [self processNextQueueItem];
-                return;
-            }
-
             dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
             dispatch_async(queue, ^ {
                 [req makeRequest:self.serverInterface key:self.class.branchKey callback:

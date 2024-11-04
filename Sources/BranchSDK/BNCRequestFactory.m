@@ -47,12 +47,14 @@
 @property (nonatomic, strong, readwrite) BNCSKAdNetwork *skAdNetwork;
 @property (nonatomic, strong, readwrite) BNCAppleReceipt *appleReceipt;
 @property (nonatomic, strong, readwrite) BNCPasteboard *pasteboard;
+@property (nonatomic, strong, readwrite) NSNumber *requestCreationTimeStamp;
+@property (nonatomic, strong, readwrite) NSString *requestUUID;
 
 @end
 
 @implementation BNCRequestFactory
 
-- (instancetype)initWithBranchKey:(NSString *)key {
+- (instancetype)initWithBranchKey:(NSString *)key UUID:(NSString *)requestUUID TimeStamp:(NSNumber *)requestTimeStamp {
     self = [super init];
     if (self) {
         self.branchKey = key;
@@ -65,6 +67,8 @@
         self.skAdNetwork = [BNCSKAdNetwork sharedInstance];
         self.appleReceipt = [BNCAppleReceipt sharedInstance];
         self.pasteboard = [BNCPasteboard sharedInstance];
+        self.requestUUID = requestUUID;
+        self.requestCreationTimeStamp = requestTimeStamp;
     }
     return self;
 }
@@ -426,6 +430,8 @@
 
 - (void)addDefaultRequestDataToJSON:(NSMutableDictionary *)json {
     json[@"branch_key"] = self.branchKey;
+    json[BRANCH_REQUEST_KEY_REQUEST_UUID] = self.requestUUID;
+    json[BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP] = self.requestCreationTimeStamp;
     
     // omit field if value is NO
     if ([self isTrackingDisabled]) {
