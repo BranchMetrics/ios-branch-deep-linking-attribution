@@ -40,6 +40,8 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
         [messages setObject:@"The Spotlight identifier is required to remove indexing from spotlight." forKey:@(BNCSpotlightIdentifierError)];
         [messages setObject:@"Spotlight cannot remove publicly indexed content." forKey:@(BNCSpotlightPublicIndexError)];
         [messages setObject:@"User tracking is disabled and the request is not allowed" forKey:@(BNCTrackingDisabledError)];
+        [messages setObject:@"Possible DNS Ad Blocker. Giving up on request." forKey:@(BNCDNSAdBlockerError)];
+        [messages setObject:@"Possible VPN Ad Blocker. Giving up on request." forKey:@(BNCVPNAdBlockerError)];
     });
     
     NSString *errorMessage = [messages objectForKey:@(code)];
@@ -109,6 +111,52 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
             
             if (isCFErrorDomainCFNetwork && isCodeMalFormedURL && isErrorDomainPosix && isPosixInvalidArgument) {
                 return YES;
+            }
+        }
+    }
+    return NO;
+}
+
++ (BOOL)branchVPNBlockingError:(NSError *)error {
+    if (error) {
+        NSError *underlyingError = error.userInfo[@"NSUnderlyingError"];
+        if (underlyingError) {
+
+            /**
+             `Domain=kCFErrorDomainCFNetwork Code=-1004` indicates that the connection failed because a connection can't be made to the host.
+             Reference: https://developer.apple.com/documentation/cfnetwork/cfnetworkerrors/kcfurlerrorcannotconnecttohost?language=objc
+             
+             `_kCFStreamErrorCodeKey=61` indicates that the connection was refused.
+             Reference: https://opensource.apple.com/source/xnu/xnu-792/bsd/sys/errno.h.auto.html
+             */
+            
+            BOOL isCouldntConnectErrorCode = [@(-1004) isEqual:@(underlyingError.code)];
+            BOOL isLocalHostErrorKey = [@(61) isEqual:error.userInfo[@"_kCFStreamErrorCodeKey"]];
+            
+            if ([self isConnectedToVPN] && isCouldntConnectErrorCode && isLocalHostErrorKey) {
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
+
+/**
+ Helper method to which checks the device's internet proxy settings for common VPN protocol and interface substrings to determine if a VPN enabled.
+ https://developer.apple.com/documentation/cfnetwork/cfnetworkcopysystemproxysettings()
+ */
++ (BOOL)isConnectedToVPN {
+    NSDictionary *proxySettings = (__bridge NSDictionary *)(CFNetworkCopySystemProxySettings());
+    if (proxySettings) {
+        NSDictionary *scopedSettings = proxySettings[@"__SCOPED__"];
+        if (scopedSettings) {
+            for (NSString *key in scopedSettings) {
+                if ([key containsString:@"tap"] ||
+                    [key containsString:@"tun"] ||
+                    [key containsString:@"ppp"] ||
+                    [key containsString:@"ipsec"]) {
+                    return YES;
+                }
             }
         }
     }

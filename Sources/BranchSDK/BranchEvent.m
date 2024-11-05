@@ -77,7 +77,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
 			    key:(NSString *)key
            callback:(BNCServerCallback)callback {
     
-    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key];
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
     NSDictionary *json = [factory dataForEventWithEventDictionary:[self.eventDictionary mutableCopy]];
     
     [serverInterface postRequest:json url:[self.serverURL absoluteString] key:key callback:callback];

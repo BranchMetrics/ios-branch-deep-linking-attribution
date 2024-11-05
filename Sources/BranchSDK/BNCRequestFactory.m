@@ -47,12 +47,14 @@
 @property (nonatomic, strong, readwrite) BNCSKAdNetwork *skAdNetwork;
 @property (nonatomic, strong, readwrite) BNCAppleReceipt *appleReceipt;
 @property (nonatomic, strong, readwrite) BNCPasteboard *pasteboard;
+@property (nonatomic, strong, readwrite) NSNumber *requestCreationTimeStamp;
+@property (nonatomic, strong, readwrite) NSString *requestUUID;
 
 @end
 
 @implementation BNCRequestFactory
 
-- (instancetype)initWithBranchKey:(NSString *)key {
+- (instancetype)initWithBranchKey:(NSString *)key UUID:(NSString *)requestUUID TimeStamp:(NSNumber *)requestTimeStamp {
     self = [super init];
     if (self) {
         self.branchKey = key;
@@ -65,6 +67,8 @@
         self.skAdNetwork = [BNCSKAdNetwork sharedInstance];
         self.appleReceipt = [BNCAppleReceipt sharedInstance];
         self.pasteboard = [BNCPasteboard sharedInstance];
+        self.requestUUID = requestUUID;
+        self.requestCreationTimeStamp = requestTimeStamp;
     }
     return self;
 }
@@ -100,8 +104,14 @@
     [self addAppleReceiptSourceToJSON:json];
     [self addTimestampsToJSON:json];
     
+    // Check if the urlString is a valid URL to ensure it's a universal link, not the external intent uri
     if (urlString) {
-        [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
+        NSURL *url = [NSURL URLWithString:urlString];
+        if (url && ([url.scheme isEqualToString:@"http"] || [url.scheme isEqualToString:@"https"])) {
+            [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
+        } else {
+            [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:json];
+        }
     }
     
     [self addAppleAttributionTokenToJSON:json];
@@ -149,8 +159,15 @@
     [self addAppleReceiptSourceToJSON:json];
     [self addTimestampsToJSON:json];
     
+    
+    // Check if the urlString is a valid URL to ensure it's a universal link, not the external intent uri
     if (urlString) {
-        [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
+        NSURL *url = [NSURL URLWithString:urlString];
+        if (url && ([url.scheme isEqualToString:@"http"] || [url.scheme isEqualToString:@"https"])) {
+            [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
+        } else {
+            [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:json];
+        }
     }
     
     // Usually sent with install, but retry on open if it didn't get sent
@@ -416,6 +433,8 @@
 
 - (void)addDefaultRequestDataToJSON:(NSMutableDictionary *)json {
     json[@"branch_key"] = self.branchKey;
+    json[BRANCH_REQUEST_KEY_REQUEST_UUID] = self.requestUUID;
+    json[BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP] = self.requestCreationTimeStamp;
     
     // omit field if value is NO
     if ([self isTrackingDisabled]) {

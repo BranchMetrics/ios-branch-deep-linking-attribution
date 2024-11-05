@@ -40,13 +40,14 @@
     if ((self = [super init])) {
         _callback = callback;
         _isInstall = isInstall;
+        _isFromArchivedQueue = NO;
     }
 
     return self;
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
-    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key];
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
     NSDictionary *params = [factory dataForOpenWithURLString:self.urlString];
 
     [serverInterface postRequest:params

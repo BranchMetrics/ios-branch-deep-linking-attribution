@@ -15,6 +15,8 @@
 #import "UIViewController+Branch.h"
 #import "BranchLogger.h"
 #import "BNCServerAPI.h"
+#import "BranchConstants.h"
+#import "BNCEncodingUtils.h"
 
 @interface BranchQRCode()
 @property (nonatomic, copy, readwrite) NSString *buoTitle;
@@ -91,6 +93,10 @@
     parameters[@"data"] = [buo dictionary];
     parameters[@"branch_key"] = [Branch branchKey];
     
+    NSDate *timestamp = [NSDate date];
+    parameters[BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP] = BNCWireFormatFromDate(timestamp);
+    parameters[BRANCH_REQUEST_KEY_REQUEST_UUID] = [BNCServerRequest generateRequestUUIDFromDate:timestamp];
+    
     NSData *cachedQRCode = [[BNCQRCodeCache sharedInstance] checkQRCodeCache:parameters];
     if (cachedQRCode) {
         completion(cachedQRCode, nil);
@@ -136,15 +142,18 @@
 
     NSData *postData = [NSJSONSerialization dataWithJSONObject:params options:0 error:&error];
     [request setHTTPBody:postData];
-    
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Network start operation %@.", request.URL.absoluteString] error:nil];
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Network start operation %@.\n Body %@", request.URL.absoluteString, [BNCEncodingUtils prettyPrintJSON:params]] error:nil];
     NSDate *startDate = [NSDate date];
     
     NSURLSessionDataTask *postDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         
         if (error) {
             if ([NSError branchDNSBlockingError:error]) {
-                [[BranchLogger shared] logWarning:@"Possible DNS Ad Blocker" error:error];
+                NSError *dnsError = [NSError branchErrorWithCode:BNCDNSAdBlockerError];
+                [[BranchLogger shared] logError:[NSString stringWithFormat:@"Possible DNS Ad Blocker. Giving up on QR code request. Underlying error: %@", error] error:dnsError];
+            } else if ([NSError branchVPNBlockingError:error]) {
+                NSError *vpnError = [NSError branchErrorWithCode:BNCVPNAdBlockerError];
+                [[BranchLogger shared] logError:[NSString stringWithFormat:@"Possible VPN Ad Blocker. Giving up on QR code request. Underlying error: %@", error] error:vpnError];
             } else {
                 [[BranchLogger shared] logError:@"QR Code request failed" error:error];
                 completion(nil, error);

@@ -61,8 +61,27 @@
 
 - (void)postRequest:(NSDictionary *)post url:(NSString *)url retryNumber:(NSInteger)retryNumber key:(NSString *)key callback:(BNCServerCallback)callback {
     
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"retryNumber %ld", retryNumber] error:nil];
+    
     // TODO: confirm it's ok to send full URL instead of with the domain trimmed off
     self.requestEndpoint = url;
+    
+    // Drops non-linking requests when tracking is disabled
+    if (Branch.trackingDisabled) {
+    
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Tracking is disabled, checking if %@ is linking request.", url] error:nil];
+
+        if (![self isLinkingRelatedRequest:url postParams:post]) {
+            [[BNCPreferenceHelper sharedInstance] clearTrackingInformation];
+            NSError *error = [NSError branchErrorWithCode:BNCTrackingDisabledError];
+            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Dropping non-linking request"] error:error];
+            if (callback) {
+                callback(nil, error);
+            }
+            return;
+        }
+    }
+    
     NSURLRequest *request = [self preparePostRequest:post url:url key:key retryNumber:retryNumber];
     
     [self genericHTTPRequest:request
@@ -123,7 +142,11 @@
             } else {
                 if (status != 200) {
                     if ([NSError branchDNSBlockingError:underlyingError]) {
-                        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Possible DNS Ad Blocker. Giving up on request with HTTP status code %ld", (long)status] error:underlyingError];
+                        NSError *error = [NSError branchErrorWithCode:BNCDNSAdBlockerError];
+                        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Possible DNS Ad Blocker. Giving up on request with HTTP status code %ld. Underlying error: %@", (long)status, underlyingError] error:error];
+                    } else if ([NSError branchVPNBlockingError:underlyingError]) {
+                        NSError *error = [NSError branchErrorWithCode:BNCVPNAdBlockerError];
+                        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Possible VPN Ad Blocker. Giving up on request with HTTP status code %ld. Underlying error: %@", (long)status, underlyingError] error:error];
                     } else {
                         [[BranchLogger shared] logWarning: [NSString stringWithFormat:@"Giving up on request with HTTP status code %ld", (long)status] error:underlyingError];
                     }
@@ -136,20 +159,7 @@
             }
         };
 
-    // Drops non-linking requests when tracking is disabled
-    if (Branch.trackingDisabled) {
-        NSString *endpoint = request.URL.absoluteString;
-    
-        if (![self isLinkingRelatedRequest:endpoint]) {
-            [[BNCPreferenceHelper sharedInstance] clearTrackingInformation];
-            NSError *error = [NSError branchErrorWithCode:BNCTrackingDisabledError];
-            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Dropping non-linking request"] error:error];
-            if (callback) {
-                callback(nil, error);
-            }
-            return;
-        }
-    }
+
     
     id<BNCNetworkOperationProtocol> operation = [self.networkService networkOperationWithURLRequest:request.copy completion:completionHandler];
     [operation start];
@@ -165,9 +175,9 @@
     }
 }
 
-- (BOOL)isLinkingRelatedRequest:(NSString *)endpoint {
-    BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
-    BOOL hasIdentifier = (prefs.linkClickIdentifier.length > 0 ) || (prefs.spotlightIdentifier.length > 0 ) || (prefs.universalLinkUrl.length > 0);
+- (BOOL)isLinkingRelatedRequest:(NSString *)endpoint postParams:(NSDictionary *)post {
+   
+    BOOL hasIdentifier = (post[BRANCH_REQUEST_KEY_LINK_IDENTIFIER] != nil ) || (post[BRANCH_REQUEST_KEY_LINK_IDENTIFIER] != nil) || (post[BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL] != nil);
     
     // Allow install to resolve a link.
     if ([endpoint containsString:@"/v1/install"]) {
@@ -290,6 +300,10 @@
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
     NSString *requestId = httpResponse.allHeaderFields[@"X-Branch-Request-Id"];
     
+    if ([[BranchLogger shared] shouldLog:BranchLogLevelVerbose]) {
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Processing response %@", requestId] error:nil];
+    }
+
     if (!error) {
         serverResponse.statusCode = @([httpResponse statusCode]);
         serverResponse.data = [BNCEncodingUtils decodeJsonDataToDictionary:data];

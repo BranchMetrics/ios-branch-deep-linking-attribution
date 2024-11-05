@@ -32,6 +32,8 @@ typedef NS_ENUM(NSInteger, BNCErrorCode) {
     BNCSpotlightPublicIndexError    = 1014,
     BNCTrackingDisabledError        = 1015,
     BNCGeneralError                 = 1016, // General Branch SDK Error
+    BNCDNSAdBlockerError                 = 1017,
+    BNCVPNAdBlockerError                 = 1018,
     BNCHighestError
 };
 
@@ -45,6 +47,9 @@ typedef NS_ENUM(NSInteger, BNCErrorCode) {
 
 // Checks if an NSError looks like a DNS blocking error
 + (BOOL)branchDNSBlockingError:(NSError *)error;
+
+// Checks if an NSError looks like a VPN blocking error
++ (BOOL)branchVPNBlockingError:(NSError *)error;
 
 @end
 

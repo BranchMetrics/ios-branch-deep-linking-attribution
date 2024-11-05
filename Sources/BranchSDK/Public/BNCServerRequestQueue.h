@@ -25,8 +25,5 @@
 
 - (BranchOpenRequest *)findExistingInstallOrOpen;
 
-- (void)persistEventually;
-- (void)persistImmediately;
-
 + (id)getInstance;
 @end
