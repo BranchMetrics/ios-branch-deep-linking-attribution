@@ -21,6 +21,8 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
+    [self setBranchLogFile];
+
     appDelegate = self;
 
     /*
@@ -44,9 +46,14 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         // Handle the log message and error here. For example, printing to the console:
         if (error) {
             NSLog(@"[BranchLog] Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription);
+            //Add to file here
         } else {
             NSLog(@"[BranchLog] Level: %lu, Message: %@", (unsigned long)logLevel, message);
         }
+        
+        NSString *logEntry = error ? [NSString stringWithFormat:@"Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription]
+                                   : [NSString stringWithFormat:@"Level: %lu, Message: %@", (unsigned long)logLevel, message];
+        APPLogHookFunction([NSDate date], logLevel, logEntry);
     }];
     
     
@@ -62,16 +69,16 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
      *    Required: Initialize Branch, passing a deep link handler block:
      */
 
-    [self setLogFile:@"OpenNInstall"];
+    //[self setLogFile:@"OpenNInstall"];
     
     [branch setIdentity:@"Bobby Branch"];
     
-    //[branch setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
+    //[[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
     
     [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandlerUsingBranchUniversalObject:
      ^ (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) {
 
-        [self setLogFile:nil];
+        //[self setLogFile:nil];
         [self handleDeepLinkObject:universalObject linkProperties:linkProperties error:error];
     }];
 
@@ -140,7 +147,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
             [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
         [navigationController pushViewController:logOutputViewController animated:YES];
         NSString *logOutput =
-            [NSString stringWithFormat:@"Successfully Deeplinked:\n\n%@\nSession Details:\n\n%@",
+            [NSString stringWithFormat:@"Successfully Deeplinked!\n\nCustom Metadata Deeplink Text: %@\n\nSession Details:\n\n%@",
                 deeplinkText, [[[Branch getInstance] getLatestReferringParams] description]];
         logOutputViewController.logOutput = logOutput;
     }
@@ -181,6 +188,19 @@ continueUserActivity:(NSUserActivity *)userActivity
     return YES;
 }
 
+- (void)setBranchLogFile {
+    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    NSString *logFilePath = [documentsDirectory stringByAppendingPathComponent:@"branchlogs.txt"];
+    
+    // If the log file already exists, remove it to start fresh
+    if ([[NSFileManager defaultManager] fileExistsAtPath:logFilePath]) {
+        [[NSFileManager defaultManager] removeItemAtPath:logFilePath error:nil];
+    }
+    
+    self.logFileName = logFilePath;
+}
+
+
 #pragma mark - Push Notifications (Optional)
 /*
 // Helper method
@@ -219,7 +239,8 @@ didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
 
 // hook Function for SDK - Its for taking control of Logging messages.
 void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSString*_Nullable message) {
-    [appDelegate processLogMessage:message];
+    NSString *formattedMessage = [NSString stringWithFormat:@"%@ [%lu] %@", timestamp, (unsigned long)level, message];
+    [appDelegate processLogMessage:formattedMessage];
 }
 
 // Writes message to log File.
@@ -240,7 +261,7 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
                         encoding:NSStringEncodingConversionAllowLossy
                            error:nil];
         }
-        NSLog(@"%@", message); // Log mmessages to console - remove if required.
+        NSLog(@"%@", message); // Log messages to console - remove if required.
     }
 }
 

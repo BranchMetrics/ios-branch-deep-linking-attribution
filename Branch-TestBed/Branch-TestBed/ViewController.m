@@ -162,18 +162,22 @@ bool hasSetPartnerParams = false;
     
     UIAlertAction *fullAction = [UIAlertAction actionWithTitle:@"Full" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
+        [self showAlert:@"Consumer Protection Attribution Level set to Full" withDescription:@""];
     }];
     
     UIAlertAction *privacyOnlyAction = [UIAlertAction actionWithTitle:@"Reduced" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
+        [self showAlert:@"Consumer Protection Attribution Level set to Reduced" withDescription:@""];
     }];
     
     UIAlertAction *attributionOnlyAction = [UIAlertAction actionWithTitle:@"Minimal" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelMinimal];
+        [self showAlert:@"Consumer Protection Attribution Level set to Minimal" withDescription:@""];
     }];
     
     UIAlertAction *noAttributionAction = [UIAlertAction actionWithTitle:@"None" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelNone];
+        [self showAlert:@"Consumer Protection Attribution Level set to None" withDescription:@""];
     }];
     
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
@@ -824,10 +828,11 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
     [navigationController pushViewController:logOutputViewController animated:YES];
     
-    NSString *logFileContents = [NSString stringWithContentsOfFile:appDelegate.PrevCommandLogFileName encoding:NSUTF8StringEncoding error:nil];
+    //NSString *logFileContents = [NSString stringWithContentsOfFile:appDelegate.PrevCommandLogFileName encoding:NSUTF8StringEncoding error:nil];
     
+    NSString *logFileContents = [NSString stringWithContentsOfFile:appDelegate.logFileName encoding:NSUTF8StringEncoding error:nil];
+    NSLog(@"Got log file (%@) contents: %@", appDelegate.logFileName, logFileContents);
     logOutputViewController.logOutput = [NSString stringWithFormat:@"%@", logFileContents];
-    
 }
 
 - (IBAction)disableTracking:(id)sender {

@@ -580,8 +580,9 @@ static NSString *bnc_branchKey = nil;
             
             // Set the flag:
             [BNCPreferenceHelper sharedInstance].trackingDisabled = NO;
+
             // Initialize a Branch session:
-            [Branch.getInstance initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil];
+            [[Branch getInstance] initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil reset:true];
         }
     }
     
