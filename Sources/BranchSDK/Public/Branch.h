@@ -785,7 +785,7 @@ Sets a custom base URL for all calls to the Branch API.
  @param disabled    If set to `true` then tracking will be disabled.
  @warning This will prevent most of the Branch SDK functionality.
 */
-+ (void)setTrackingDisabled:(BOOL)disabled __attribute__((deprecated("This method has been deprecated. Use `setConsumerProtectionAttributionLevel:` instead.")));
++ (void)setTrackingDisabled:(BOOL)disabled __attribute__((deprecated("This method has been deprecated. Use `setConsumerProtectionAttributionLevel:` with `BranchAttributionLevelNone` instead.")));
 
 ///Returns the current tracking state.
 + (BOOL) trackingDisabled;
