@@ -46,7 +46,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         // Handle the log message and error here. For example, printing to the console:
         if (error) {
             NSLog(@"[BranchLog] Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription);
-            //Add to file here
         } else {
             NSLog(@"[BranchLog] Level: %lu, Message: %@", (unsigned long)logLevel, message);
         }
@@ -243,7 +242,7 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
     [appDelegate processLogMessage:formattedMessage];
 }
 
-// Writes message to log File.
+// Writes message to Log File.
 - (void) processLogMessage:(NSString *)message {
     
     if (!self.logFileName)
@@ -255,13 +254,12 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
             [fileHandle seekToEndOfFile];
             [fileHandle writeData:[message dataUsingEncoding:NSUTF8StringEncoding]];
             [fileHandle closeFile];
-        } else { // Create file if it doesnt exist
+        } else {
             [message writeToFile:self.logFileName
                       atomically:NO
                         encoding:NSStringEncodingConversionAllowLossy
                            error:nil];
         }
-        NSLog(@"%@", message); // Log messages to console - remove if required.
     }
 }
 
