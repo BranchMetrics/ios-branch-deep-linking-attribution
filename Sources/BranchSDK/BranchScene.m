@@ -38,8 +38,6 @@
 - (void)initSessionWithSceneOptions:(nullable UISceneConnectionOptions *)connectionOptions scene:(UIScene *)scene
              registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback {
     
-    [[BranchLogger shared] logVerbose:[[NSString alloc] initWithFormat:@"connectionOptions : %@", connectionOptions.debugDescription ] error:nil];
-    
     NSMutableDictionary *launchOptions = [[NSMutableDictionary alloc] init];
     
     if (connectionOptions.userActivities.count ) {
