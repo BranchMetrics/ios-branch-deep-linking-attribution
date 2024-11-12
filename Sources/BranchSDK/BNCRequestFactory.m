@@ -623,11 +623,11 @@
                     dict[BRANCH_REQUEST_KEY_HARDWARE_ID_TYPE] = hardwareIdType;
                     dict[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = isRealHardwareId;
                 }
-                [self safeSetValue:self.deviceInfo.advertiserId forKey:@"idfa" onDict:dict];
             }
             
             // Only include hardware ID fields for attribution levels greater than None
             if ([self.preferenceHelper attributionLevel] != BranchAttributionLevelNone) {
+                // idfv is duplicated in the hardware id field when idfa is unavailable
                 [self safeSetValue:self.deviceInfo.vendorId forKey:BRANCH_REQUEST_KEY_IOS_VENDOR_ID onDict:dict];
             }
             
