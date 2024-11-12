@@ -84,6 +84,8 @@
         if ([uid isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"IDFA is all 0's. Probably running on a simulator or an App Clip."] error:nil];
             uid = nil;
+        } else {
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"IDFA found: %@", uid] error:nil];
         }
     }
     return uid;

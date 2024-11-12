@@ -610,7 +610,8 @@
             [self.deviceInfo checkAdvertisingIdentifier];
             
             // Only include hardware ID fields for Full Attribution Level
-            if ([self.preferenceHelper attributionLevel] == BranchAttributionLevelFull) {
+            if ([self.preferenceHelper attributionLevel] == BranchAttributionLevelFull
+                || [self.preferenceHelper attributionLevelInitialized] == false) {
 
             // hardware id information.  idfa, idfv or random
             NSString *hardwareId = [self.deviceInfo.hardwareId copy];
