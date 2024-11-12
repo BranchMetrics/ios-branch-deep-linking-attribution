@@ -499,8 +499,8 @@
 // BNCReferringURLUtility requires the endpoint string to determine which query params are applied
 - (void)addReferringURLsToJSON:(NSMutableDictionary *)json forEndpoint:(NSString *)endpoint {
     // Not a singleton, but BNCReferringURLUtility does pull from storage
-    if ([self.preferenceHelper attributionLevel] == BranchAttributionLevelFull || 
-        [self.preferenceHelper attributionLevelInitialized] == false) {
+    if ([[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelFull] ||
+        ![self.preferenceHelper attributionLevelInitialized]) {
         BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
         NSDictionary *urlQueryParams = [utility referringURLQueryParamsForEndpoint:endpoint];
         [json bnc_safeAddEntriesFromDictionary:urlQueryParams];
@@ -542,13 +542,13 @@
         } else {
             BranchAttributionLevel attributionLevel = [self.preferenceHelper attributionLevel];
             
-            if (attributionLevel == BranchAttributionLevelFull ||
-                [self.preferenceHelper attributionLevelInitialized] == false) {
+            if ([attributionLevel isEqualToString:BranchAttributionLevelFull] ||
+                ![self.preferenceHelper attributionLevelInitialized]) {
                 [dictionary bnc_safeSetObject:self.deviceInfo.advertiserId forKey:@"idfa"];
             }
-            
-            if (attributionLevel != BranchAttributionLevelNone ||
-                [self.preferenceHelper attributionLevelInitialized] == false) {
+
+            if (![attributionLevel isEqualToString:BranchAttributionLevelNone] ||
+                ![self.preferenceHelper attributionLevelInitialized]) {
                 [dictionary bnc_safeSetObject:self.deviceInfo.vendorId forKey:@"idfv"];
             }
         }
@@ -610,14 +610,14 @@
             [self.deviceInfo checkAdvertisingIdentifier];
             
             // Only include hardware ID fields for Full Attribution Level
-            if ([self.preferenceHelper attributionLevel] == BranchAttributionLevelFull
+            if (([[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelFull])
                 || [self.preferenceHelper attributionLevelInitialized] == false) {
-
-            // hardware id information.  idfa, idfv or random
-            NSString *hardwareId = [self.deviceInfo.hardwareId copy];
-            NSString *hardwareIdType = [self.deviceInfo.hardwareIdType copy];
-            NSNumber *isRealHardwareId = @(self.deviceInfo.isRealHardwareId);
-            
+                
+                // hardware id information.  idfa, idfv or random
+                NSString *hardwareId = [self.deviceInfo.hardwareId copy];
+                NSString *hardwareIdType = [self.deviceInfo.hardwareIdType copy];
+                NSNumber *isRealHardwareId = @(self.deviceInfo.isRealHardwareId);
+       
                 if (hardwareId != nil && hardwareIdType != nil && isRealHardwareId != nil) {
                     dict[BRANCH_REQUEST_KEY_HARDWARE_ID] = hardwareId;
                     dict[BRANCH_REQUEST_KEY_HARDWARE_ID_TYPE] = hardwareIdType;

@@ -220,7 +220,8 @@
 
 - (BOOL)isSKANAllowedForAttributionLevel {
     BranchAttributionLevel level = [[BNCPreferenceHelper sharedInstance] attributionLevel];
-    return !(level == BranchAttributionLevelMinimal || level == BranchAttributionLevelNone);
+    return !([level isEqualToString:BranchAttributionLevelMinimal] ||
+             [level isEqualToString:BranchAttributionLevelNone]);
 }
 
 @end
