@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+v.3.7.0
+- Added `setConsumerProtectionAttributionLevel` for controlling attribution data collection
+- Deprecated `setTrackingDisabled` in favor of `setConsumerProtectionAttributionLevel(NONE)`
+
 v.3.6.5
 - Removed on-disk caching and replay of server request objects.
 
