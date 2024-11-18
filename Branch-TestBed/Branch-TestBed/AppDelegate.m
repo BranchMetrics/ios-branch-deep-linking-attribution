@@ -21,6 +21,8 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
+    [self setBranchLogFile];
+
     appDelegate = self;
 
     /*
@@ -32,19 +34,27 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
     Branch *branch = [Branch getInstance];
     
+
     // Change the Branch base API URL
     //[Branch setAPIUrl:@"https://api3.branch.io"];
     
     // test pre init support
     //[self testDispatchToIsolationQueue:branch]
-    [branch enableLoggingAtLevel:BranchLogLevelVerbose withCallback:^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+    
+    
+    [Branch enableLoggingAtLevel:BranchLogLevelVerbose withCallback:^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
         // Handle the log message and error here. For example, printing to the console:
         if (error) {
             NSLog(@"[BranchLog] Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription);
         } else {
             NSLog(@"[BranchLog] Level: %lu, Message: %@", (unsigned long)logLevel, message);
         }
+        
+        NSString *logEntry = error ? [NSString stringWithFormat:@"Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription]
+                                   : [NSString stringWithFormat:@"Level: %lu, Message: %@", (unsigned long)logLevel, message];
+        APPLogHookFunction([NSDate date], logLevel, logEntry);
     }];
+    
     
     // Comment out in production. Un-comment to test your Branch SDK Integration:
     //[branch validateSDKIntegration];
@@ -58,14 +68,16 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
      *    Required: Initialize Branch, passing a deep link handler block:
      */
 
-    [self setLogFile:@"OpenNInstall"];
+    //[self setLogFile:@"OpenNInstall"];
     
     [branch setIdentity:@"Bobby Branch"];
+    
+    //[[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
     
     [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandlerUsingBranchUniversalObject:
      ^ (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) {
 
-        [self setLogFile:nil];
+        //[self setLogFile:nil];
         [self handleDeepLinkObject:universalObject linkProperties:linkProperties error:error];
     }];
 
@@ -134,7 +146,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
             [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
         [navigationController pushViewController:logOutputViewController animated:YES];
         NSString *logOutput =
-            [NSString stringWithFormat:@"Successfully Deeplinked:\n\n%@\nSession Details:\n\n%@",
+            [NSString stringWithFormat:@"Successfully Deeplinked!\n\nCustom Metadata Deeplink Text: %@\n\nSession Details:\n\n%@",
                 deeplinkText, [[[Branch getInstance] getLatestReferringParams] description]];
         logOutputViewController.logOutput = logOutput;
     }
@@ -175,6 +187,19 @@ continueUserActivity:(NSUserActivity *)userActivity
     return YES;
 }
 
+- (void)setBranchLogFile {
+    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    NSString *logFilePath = [documentsDirectory stringByAppendingPathComponent:@"branchlogs.txt"];
+    
+    // If the log file already exists, remove it to start fresh
+    if ([[NSFileManager defaultManager] fileExistsAtPath:logFilePath]) {
+        [[NSFileManager defaultManager] removeItemAtPath:logFilePath error:nil];
+    }
+    
+    self.logFileName = logFilePath;
+}
+
+
 #pragma mark - Push Notifications (Optional)
 /*
 // Helper method
@@ -213,10 +238,11 @@ didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
 
 // hook Function for SDK - Its for taking control of Logging messages.
 void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSString*_Nullable message) {
-    [appDelegate processLogMessage:message];
+    NSString *formattedMessage = [NSString stringWithFormat:@"%@ [%lu] %@", timestamp, (unsigned long)level, message];
+    [appDelegate processLogMessage:formattedMessage];
 }
 
-// Writes message to log File.
+// Writes message to Log File.
 - (void) processLogMessage:(NSString *)message {
     
     if (!self.logFileName)
@@ -228,13 +254,12 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
             [fileHandle seekToEndOfFile];
             [fileHandle writeData:[message dataUsingEncoding:NSUTF8StringEncoding]];
             [fileHandle closeFile];
-        } else { // Create file if it doesnt exist
+        } else {
             [message writeToFile:self.logFileName
                       atomically:NO
                         encoding:NSStringEncodingConversionAllowLossy
                            error:nil];
         }
-        NSLog(@"%@", message); // Log mmessages to console - remove if required.
     }
 }
 

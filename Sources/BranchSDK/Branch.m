@@ -85,6 +85,12 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 
 NSString * const BNCSpotlightFeature = @"spotlight";
 
+BranchAttributionLevel const BranchAttributionLevelFull = @"FULL";
+BranchAttributionLevel const BranchAttributionLevelReduced = @"REDUCED";
+BranchAttributionLevel const BranchAttributionLevelMinimal = @"MINIMAL";
+BranchAttributionLevel const BranchAttributionLevelNone = @"NONE";
+
+
 #ifndef CSSearchableItemActivityIdentifier
 #define CSSearchableItemActivityIdentifier @"kCSSearchableItemActivityIdentifier"
 #endif
@@ -542,6 +548,44 @@ static NSString *bnc_branchKey = nil;
     [BNCPreferenceHelper sharedInstance].eeaRegion = eeaRegion;
     [BNCPreferenceHelper sharedInstance].adPersonalizationConsent = adPersonalizationConsent;
     [BNCPreferenceHelper sharedInstance].adUserDataUsageConsent = adUserDataUsageConsent;
+}
+
+- (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level {
+    self.preferenceHelper.attributionLevel = level;
+    
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Setting Consumer Protection Attribution Level to %@", level] error:nil];
+    
+    //Set tracking to disabled if consumer protection attribution level is changed to BranchAttributionLevelNone. Otherwise, keep tracking enabled.
+    if (level == BranchAttributionLevelNone) {
+        if ([Branch trackingDisabled] == false) {
+            //Disable Tracking
+            [[BranchLogger shared] logVerbose:@"Disabling attribution events due to Consumer Protection Attribution Level being BranchAttributionLevelNone." error:nil];
+            
+            // Clear partner parameters
+            [[BNCPartnerParameters shared] clearAllParameters];
+            
+            // Set the flag (which also clears the settings):
+            [BNCPreferenceHelper sharedInstance].trackingDisabled = YES;
+            Branch *branch = Branch.getInstance;
+            [branch clearNetworkQueue];
+            branch.initializationStatus = BNCInitStatusUninitialized;
+            [branch.linkCache clear];
+            // Release the lock in case it's locked:
+            [BranchOpenRequest releaseOpenResponseLock];
+        }
+    } else {
+        if ([Branch trackingDisabled]) {
+            //Enable Tracking
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enabling attribution events due to Consumer Protection Attribution Level being %@.", level] error:nil];
+            
+            // Set the flag:
+            [BNCPreferenceHelper sharedInstance].trackingDisabled = NO;
+
+            // Initialize a Branch session:
+            [[Branch getInstance] initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil reset:true];
+        }
+    }
+    
 }
 
 #pragma mark - InitSession Permutation methods

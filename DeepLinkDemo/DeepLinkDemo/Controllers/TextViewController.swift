@@ -23,7 +23,8 @@ class TextViewController: UIViewController {
     var isTrackUser = false
     var isSetDMAParams = false
     var isSendV2Event = false
-    
+    var isSetAttributionLevel = false
+
     var url = ""
     var responseStatus = ""
     var dictData = [String:Any]()
@@ -67,6 +68,8 @@ class TextViewController: UIViewController {
         } else if self.isSetDMAParams == true {
             self.navigationController?.popToRootViewController(animated: true)
         } else if self.isSendV2Event == true {
+            self.navigationController?.popToRootViewController(animated: true)
+        } else if self.isSetAttributionLevel == true {
             self.navigationController?.popToRootViewController(animated: true)
         }
         else {

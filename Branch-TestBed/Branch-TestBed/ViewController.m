@@ -156,6 +156,41 @@ bool hasSetPartnerParams = false;
                               sender:self];
 }
 
+- (IBAction)changeConsumerProtectionAttributionLevel:(id)sender {
+    Branch *branch = [Branch getInstance];
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Select Consumer Protection Attribution Level" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertAction *fullAction = [UIAlertAction actionWithTitle:@"Full" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
+        [self showAlert:@"Consumer Protection Attribution Level set to Full" withDescription:@""];
+    }];
+    
+    UIAlertAction *privacyOnlyAction = [UIAlertAction actionWithTitle:@"Reduced" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
+        [self showAlert:@"Consumer Protection Attribution Level set to Reduced" withDescription:@""];
+    }];
+    
+    UIAlertAction *attributionOnlyAction = [UIAlertAction actionWithTitle:@"Minimal" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelMinimal];
+        [self showAlert:@"Consumer Protection Attribution Level set to Minimal" withDescription:@""];
+    }];
+    
+    UIAlertAction *noAttributionAction = [UIAlertAction actionWithTitle:@"None" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelNone];
+        [self showAlert:@"Consumer Protection Attribution Level set to None" withDescription:@""];
+    }];
+    
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+    
+    [actionSheet addAction:fullAction];
+    [actionSheet addAction:privacyOnlyAction];
+    [actionSheet addAction:attributionOnlyAction];
+    [actionSheet addAction:noAttributionAction];
+    [actionSheet addAction:cancelAction];
+    
+    [self presentViewController:actionSheet animated:YES completion:nil];
+}
+
 -(IBAction)showVersionAlert:(id)sender {
     NSString *versionString = [NSString stringWithFormat:@"Branch SDK v%@\nBundle Version %@\niOS %@",
                                BNC_SDK_VERSION,
@@ -793,10 +828,11 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
     [navigationController pushViewController:logOutputViewController animated:YES];
     
-    NSString *logFileContents = [NSString stringWithContentsOfFile:appDelegate.PrevCommandLogFileName encoding:NSUTF8StringEncoding error:nil];
+    //NSString *logFileContents = [NSString stringWithContentsOfFile:appDelegate.PrevCommandLogFileName encoding:NSUTF8StringEncoding error:nil];
     
+    NSString *logFileContents = [NSString stringWithContentsOfFile:appDelegate.logFileName encoding:NSUTF8StringEncoding error:nil];
+    NSLog(@"Got log file (%@) contents: %@", appDelegate.logFileName, logFileContents);
     logOutputViewController.logOutput = [NSString stringWithFormat:@"%@", logFileContents];
-    
 }
 
 - (IBAction)disableTracking:(id)sender {
