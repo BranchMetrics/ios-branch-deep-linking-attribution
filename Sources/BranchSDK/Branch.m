@@ -85,6 +85,12 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 
 NSString * const BNCSpotlightFeature = @"spotlight";
 
+BranchAttributionLevel const BranchAttributionLevelFull = @"FULL";
+BranchAttributionLevel const BranchAttributionLevelReduced = @"REDUCED";
+BranchAttributionLevel const BranchAttributionLevelMinimal = @"MINIMAL";
+BranchAttributionLevel const BranchAttributionLevelNone = @"NONE";
+
+
 #ifndef CSSearchableItemActivityIdentifier
 #define CSSearchableItemActivityIdentifier @"kCSSearchableItemActivityIdentifier"
 #endif
@@ -542,6 +548,44 @@ static NSString *bnc_branchKey = nil;
     [BNCPreferenceHelper sharedInstance].eeaRegion = eeaRegion;
     [BNCPreferenceHelper sharedInstance].adPersonalizationConsent = adPersonalizationConsent;
     [BNCPreferenceHelper sharedInstance].adUserDataUsageConsent = adUserDataUsageConsent;
+}
+
+- (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level {
+    self.preferenceHelper.attributionLevel = level;
+    
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Setting Consumer Protection Attribution Level to %@", level] error:nil];
+    
+    //Set tracking to disabled if consumer protection attribution level is changed to BranchAttributionLevelNone. Otherwise, keep tracking enabled.
+    if (level == BranchAttributionLevelNone) {
+        if ([Branch trackingDisabled] == false) {
+            //Disable Tracking
+            [[BranchLogger shared] logVerbose:@"Disabling attribution events due to Consumer Protection Attribution Level being BranchAttributionLevelNone." error:nil];
+            
+            // Clear partner parameters
+            [[BNCPartnerParameters shared] clearAllParameters];
+            
+            // Set the flag (which also clears the settings):
+            [BNCPreferenceHelper sharedInstance].trackingDisabled = YES;
+            Branch *branch = Branch.getInstance;
+            [branch clearNetworkQueue];
+            branch.initializationStatus = BNCInitStatusUninitialized;
+            [branch.linkCache clear];
+            // Release the lock in case it's locked:
+            [BranchOpenRequest releaseOpenResponseLock];
+        }
+    } else {
+        if ([Branch trackingDisabled]) {
+            //Enable Tracking
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enabling attribution events due to Consumer Protection Attribution Level being %@.", level] error:nil];
+            
+            // Set the flag:
+            [BNCPreferenceHelper sharedInstance].trackingDisabled = NO;
+
+            // Initialize a Branch session:
+            [[Branch getInstance] initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil reset:true];
+        }
+    }
+    
 }
 
 #pragma mark - InitSession Permutation methods
@@ -1739,8 +1783,6 @@ static NSString *bnc_branchKey = nil;
         if (!Branch.trackingDisabled) {
             self.initializationStatus = BNCInitStatusUninitialized;
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationWillResignActive initializationStatus %ld", self.initializationStatus] error:nil];
-
-            [self.requestQueue persistImmediately];
             [BranchOpenRequest setWaitNeededForOpenResponseLock];
         }
     });
@@ -1897,16 +1939,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 }
             }
             
-            if ( !(((BNCServerRequestQueue*)[BNCServerRequestQueue getInstance]).processArchivedOpens)
-                && [req isKindOfClass:[BranchOpenRequest class]]
-                && ((BranchOpenRequest *)req).isFromArchivedQueue){
-                [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Removed Archived Open Request from Queue  %@", [req description]] error:nil];
-                [self.requestQueue remove:req];
-                self.networkCount = 0;
-                [self processNextQueueItem];
-                return;
-            }
-
             dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
             dispatch_async(queue, ^ {
                 [req makeRequest:self.serverInterface key:self.class.branchKey callback:

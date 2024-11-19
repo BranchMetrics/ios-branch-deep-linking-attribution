@@ -47,12 +47,14 @@
 @property (nonatomic, strong, readwrite) BNCSKAdNetwork *skAdNetwork;
 @property (nonatomic, strong, readwrite) BNCAppleReceipt *appleReceipt;
 @property (nonatomic, strong, readwrite) BNCPasteboard *pasteboard;
+@property (nonatomic, strong, readwrite) NSNumber *requestCreationTimeStamp;
+@property (nonatomic, strong, readwrite) NSString *requestUUID;
 
 @end
 
 @implementation BNCRequestFactory
 
-- (instancetype)initWithBranchKey:(NSString *)key {
+- (instancetype)initWithBranchKey:(NSString *)key UUID:(NSString *)requestUUID TimeStamp:(NSNumber *)requestTimeStamp {
     self = [super init];
     if (self) {
         self.branchKey = key;
@@ -65,6 +67,8 @@
         self.skAdNetwork = [BNCSKAdNetwork sharedInstance];
         self.appleReceipt = [BNCAppleReceipt sharedInstance];
         self.pasteboard = [BNCPasteboard sharedInstance];
+        self.requestUUID = requestUUID;
+        self.requestCreationTimeStamp = requestTimeStamp;
     }
     return self;
 }
@@ -123,6 +127,8 @@
     // Add DMA Compliance Params for Google
     [self addDMAConsentParamsToJSON:json];
     
+    [self addConsumerProtectionAttributionLevel:json];
+
     return json;
 }
 
@@ -177,6 +183,8 @@
     // Add DMA Compliance Params for Google
     [self addDMAConsentParamsToJSON:json];
     
+    [self addConsumerProtectionAttributionLevel:json];
+
     return json;
 }
 
@@ -355,7 +363,6 @@
     }
 }
 
-
 - (void)addLocalURLToInstallJSON:(NSMutableDictionary *)json {
     if ([BNCPasteboard sharedInstance].checkOnInstall) {
         NSURL *pasteboardURL = nil;
@@ -426,6 +433,8 @@
 
 - (void)addDefaultRequestDataToJSON:(NSMutableDictionary *)json {
     json[@"branch_key"] = self.branchKey;
+    json[BRANCH_REQUEST_KEY_REQUEST_UUID] = self.requestUUID;
+    json[BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP] = self.requestCreationTimeStamp;
     
     // omit field if value is NO
     if ([self isTrackingDisabled]) {
@@ -490,14 +499,24 @@
 // BNCReferringURLUtility requires the endpoint string to determine which query params are applied
 - (void)addReferringURLsToJSON:(NSMutableDictionary *)json forEndpoint:(NSString *)endpoint {
     // Not a singleton, but BNCReferringURLUtility does pull from storage
-    BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
-    NSDictionary *urlQueryParams = [utility referringURLQueryParamsForEndpoint:endpoint];
-    [json bnc_safeAddEntriesFromDictionary:urlQueryParams];
+    if ([[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelFull] ||
+        ![self.preferenceHelper attributionLevelInitialized]) {
+        BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
+        NSDictionary *urlQueryParams = [utility referringURLQueryParamsForEndpoint:endpoint];
+        [json bnc_safeAddEntriesFromDictionary:urlQueryParams];
+    }
 }
 
 // install and open
 - (void)addDeveloperUserIDToJSON:(NSMutableDictionary *)json {
     [json bnc_safeSetObject:self.preferenceHelper.userIdentity forKey:@"identity"];
+}
+
+- (void)addConsumerProtectionAttributionLevel:(NSMutableDictionary *)json {
+    if ([self.preferenceHelper attributionLevelInitialized]) {
+        BranchAttributionLevel attributionLevel = [self.preferenceHelper attributionLevel];
+        [self safeSetValue:attributionLevel forKey:BRANCH_REQUEST_KEY_CPP_LEVEL onDict:json];
+    }
 }
 
 // event
@@ -512,18 +531,28 @@
     NSMutableDictionary *dictionary = [NSMutableDictionary new];
     @synchronized (self.deviceInfo) {
         [self.deviceInfo checkAdvertisingIdentifier];
-
+        
         BOOL disableAdNetworkCallouts = self.preferenceHelper.disableAdNetworkCallouts;
         if (disableAdNetworkCallouts) {
             dictionary[@"disable_ad_network_callouts"] = [NSNumber numberWithBool:disableAdNetworkCallouts];
         }
-
+        
         if (self.preferenceHelper.isDebug) {
             dictionary[@"unidentified_device"] = @(YES);
         } else {
-            [dictionary bnc_safeSetObject:self.deviceInfo.vendorId forKey:@"idfv"];
-            [dictionary bnc_safeSetObject:self.deviceInfo.advertiserId forKey:@"idfa"];
+            BranchAttributionLevel attributionLevel = [self.preferenceHelper attributionLevel];
+            
+            if ([attributionLevel isEqualToString:BranchAttributionLevelFull] ||
+                ![self.preferenceHelper attributionLevelInitialized]) {
+                [dictionary bnc_safeSetObject:self.deviceInfo.advertiserId forKey:@"idfa"];
+            }
+
+            if (![attributionLevel isEqualToString:BranchAttributionLevelNone] ||
+                ![self.preferenceHelper attributionLevelInitialized]) {
+                [dictionary bnc_safeSetObject:self.deviceInfo.vendorId forKey:@"idfv"];
+            }
         }
+        
         [dictionary bnc_safeSetObject:self.deviceInfo.anonId forKey:@"anon_id"];
         [dictionary bnc_safeSetObject:self.deviceInfo.localIPAddress forKey:@"local_ip"];
 
@@ -563,6 +592,8 @@
     // Add DMA Compliance Params for Google
     [self addDMAConsentParamsToJSON:dictionary];
     
+    [self addConsumerProtectionAttributionLevel:dictionary];
+    
     return dictionary;
 }
 
@@ -578,20 +609,28 @@
         if (![self isTrackingDisabled]) {
             [self.deviceInfo checkAdvertisingIdentifier];
             
-            // hardware id information.  idfa, idfv or random
-            NSString *hardwareId = [self.deviceInfo.hardwareId copy];
-            NSString *hardwareIdType = [self.deviceInfo.hardwareIdType copy];
-            NSNumber *isRealHardwareId = @(self.deviceInfo.isRealHardwareId);
-            if (hardwareId != nil && hardwareIdType != nil && isRealHardwareId != nil) {
-                dict[BRANCH_REQUEST_KEY_HARDWARE_ID] = hardwareId;
-                dict[BRANCH_REQUEST_KEY_HARDWARE_ID_TYPE] = hardwareIdType;
-                dict[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = isRealHardwareId;
+            // Only include hardware ID fields for Full Attribution Level
+            if (([[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelFull])
+                || [self.preferenceHelper attributionLevelInitialized] == false) {
+                
+                // hardware id information.  idfa, idfv or random
+                NSString *hardwareId = [self.deviceInfo.hardwareId copy];
+                NSString *hardwareIdType = [self.deviceInfo.hardwareIdType copy];
+                NSNumber *isRealHardwareId = @(self.deviceInfo.isRealHardwareId);
+       
+                if (hardwareId != nil && hardwareIdType != nil && isRealHardwareId != nil) {
+                    dict[BRANCH_REQUEST_KEY_HARDWARE_ID] = hardwareId;
+                    dict[BRANCH_REQUEST_KEY_HARDWARE_ID_TYPE] = hardwareIdType;
+                    dict[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = isRealHardwareId;
+                }
             }
-
-            // idfv is duplicated in the hardware id field when idfa is unavailable
-            [self safeSetValue:self.deviceInfo.vendorId forKey:BRANCH_REQUEST_KEY_IOS_VENDOR_ID onDict:dict];
-            // idfa is only in the hardware id field
-            // [self safeSetValue:deviceInfo.advertiserId forKey:@"idfa" onDict:dict];
+            
+            // Only include hardware ID fields for attribution levels greater than None
+            if ([self.preferenceHelper attributionLevel] != BranchAttributionLevelNone) {
+                // idfv is duplicated in the hardware id field when idfa is unavailable
+                [self safeSetValue:self.deviceInfo.vendorId forKey:BRANCH_REQUEST_KEY_IOS_VENDOR_ID onDict:dict];
+            }
+            
             [self safeSetValue:self.deviceInfo.anonId forKey:@"anon_id" onDict:dict];
             
             [self safeSetValue:[self.deviceInfo localIPAddress] forKey:@"local_ip" onDict:dict];

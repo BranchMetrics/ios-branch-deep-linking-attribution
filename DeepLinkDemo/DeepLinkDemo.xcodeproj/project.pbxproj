@@ -73,7 +73,6 @@
 		B7B7DC292859974E00D45FC5 /* TextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewController.swift; sourceTree = "<group>"; };
 		C06885D21868B25319262FC1 /* Pods-DeepLinkDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeepLinkDemo.debug.xcconfig"; path = "Target Support Files/Pods-DeepLinkDemo/Pods-DeepLinkDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		DDBB5A837B0C008CA5BEC1EF /* Pods_DeepLinkDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DeepLinkDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E70E80C12A0E22C1008007B6 /* BranchSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = BranchSDK.xcframework; path = Framework/BranchSDK.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,7 +100,6 @@
 		29D53CAAE9E9EF2F96296086 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E70E80C12A0E22C1008007B6 /* BranchSDK.xcframework */,
 				DDBB5A837B0C008CA5BEC1EF /* Pods_DeepLinkDemo.framework */,
 			);
 			name = Frameworks;
