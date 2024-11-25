@@ -898,7 +898,6 @@
 		5FCDD3982B7AC6A100EAF29F /* Public */ = {
 			isa = PBXGroup;
 			children = (
-				E52E5B052CC79E4E00F553EE /* BranchFileLogger.h */,
 				5FCDD3A42B7AC6A100EAF29F /* BNCCallbacks.h */,
 				5FCDD3A02B7AC6A100EAF29F /* BNCCurrency.h */,
 				5FCDD3A72B7AC6A100EAF29F /* BNCInitSessionResponse.h */,
@@ -978,6 +977,7 @@
 				5FCDD3CC2B7AC6A100EAF29F /* NSError+Branch.h */,
 				5FCDD3C82B7AC6A100EAF29F /* NSMutableDictionary+Branch.h */,
 				5FCDD3D12B7AC6A100EAF29F /* NSString+Branch.h */,
+				E52E5B052CC79E4E00F553EE /* BranchFileLogger.h */,
 				5FCDD3BB2B7AC6A100EAF29F /* UIViewController+Branch.h */,
 			);
 			path = Private;

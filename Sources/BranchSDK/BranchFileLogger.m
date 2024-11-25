@@ -70,31 +70,27 @@
 }
 
 - (BOOL)isLogFilePopulated {
-    NSString *logFilePath = [self getLogFilePath];
-    
     // Check if the file exists
-    if (![[NSFileManager defaultManager] fileExistsAtPath:logFilePath]) {
+    if (![[NSFileManager defaultManager] fileExistsAtPath:self.logFilePath]) {
         return NO;
     }
     
     // Check if the file is non-empty
-    NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:logFilePath error:nil];
+    NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:self.logFilePath error:nil];
     unsigned long long fileSize = [attributes fileSize];
     
     return fileSize > 0;  // Return YES if file is populated, NO otherwise
 }
 
 - (void)shareLogFileFromViewController:(UIViewController *)viewController {
-    NSString *logFilePath = [self getLogFilePath];
-    
     // Check if the log file exists
-    if (![[NSFileManager defaultManager] fileExistsAtPath:logFilePath]) {
+    if (![[NSFileManager defaultManager] fileExistsAtPath:self.logFilePath]) {
         NSLog(@"No log file found to share.");
         return;
     }
     
     // Create a URL from the log file path
-    NSURL *logFileURL = [NSURL fileURLWithPath:logFilePath];
+    NSURL *logFileURL = [NSURL fileURLWithPath:self.logFilePath];
     
     // Create an activity view controller with the log file
     UIActivityViewController *activityVC =

@@ -47,7 +47,7 @@ NSString *BranchValidationErrorDescription(BranchValidationError error) {
         case BranchLinkDomainError:
             return @"Check the link domain and alternate domain values in your info.plist file under the key 'branch_universal_link_domains'. The values should match with the ones on the Branch dashboard.\n\n";
         case BranchURISchemeError:
-            return @"The URI scheme in your info.plist file shoudl match with the URI scheme value for iOS on the Branch dashboard.\n\n";
+            return @"The URI scheme in your info.plist file should match with the URI scheme value for iOS on the Branch dashboard.\n\n";
         case BranchAppIDError:
             return @"Check your bundle ID and Apple App Prefix from the Apple Developer website and ensure it matches with the values you have added on the Branch dashboard.\n\n";
         case BranchATTError:
@@ -132,8 +132,8 @@ NSURL *BranchValidationErrorReference(BranchValidationError error) {
     NSLog(@"-------------------------------------------------");
 
     NSLog(@"------ Checking for URI scheme correctness ------");
-    NSString *uriScheme = [BNCSystemObserver compareUriSchemes:serverUriScheme] ? passString : errorString;
     bool doUriSchemesMatch = [BNCSystemObserver compareUriSchemes:serverUriScheme];
+    NSString *uriScheme = doUriSchemesMatch ? passString : errorString;
     NSLog(@"-------------------------------------------------");
 
     NSLog(@"-- Checking for bundle identifier correctness ---");

@@ -159,8 +159,6 @@
             if ([uriScheme isEqualToString:serverUriSchemeWithoutSuffix]) {
                 return true; }
         }
-        // If no Uri schemes match the one set on the dashboard
-        return false;
     }
     return false;
 }
