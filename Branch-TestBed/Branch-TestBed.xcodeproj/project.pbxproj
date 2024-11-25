@@ -234,8 +234,8 @@
 		C1614D56285BC8A00098946B /* LinkPresentation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1614D55285BC8A00098946B /* LinkPresentation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		C17DAF7B2AC20C2000B16B1A /* BranchClassTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C17DAF7A2AC20C2000B16B1A /* BranchClassTests.m */; };
 		C1CC888229BAAFC000BDD2B5 /* BNCReferringURLUtilityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C1CC888129BAAFC000BDD2B5 /* BNCReferringURLUtilityTests.m */; };
+		E51F642A2CF46899000858D2 /* BranchFileLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = E51F64292CF46899000858D2 /* BranchFileLogger.h */; };
 		E56394312CC7AC9F00E18E65 /* BranchFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E563942F2CC7AC9500E18E65 /* BranchFileLogger.m */; };
-		E56394332CC7ACB600E18E65 /* BranchFileLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = E56394322CC7ACAA00E18E65 /* BranchFileLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E72489D228E40D0200DCD8FD /* PasteControlViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E72489D128E40D0200DCD8FD /* PasteControlViewController.m */; };
 		E7A728BD2AA9A112009343B7 /* BNCAPIServerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = E7A728BC2AA9A112009343B7 /* BNCAPIServerTest.m */; };
 		F1CF14111F4CC79F00BB2694 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; settings = {ATTRIBUTES = (Required, ); }; };
@@ -540,8 +540,8 @@
 		C1614D55285BC8A00098946B /* LinkPresentation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LinkPresentation.framework; path = System/Library/Frameworks/LinkPresentation.framework; sourceTree = SDKROOT; };
 		C17DAF7A2AC20C2000B16B1A /* BranchClassTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchClassTests.m; sourceTree = "<group>"; };
 		C1CC888129BAAFC000BDD2B5 /* BNCReferringURLUtilityTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCReferringURLUtilityTests.m; sourceTree = "<group>"; };
+		E51F64292CF46899000858D2 /* BranchFileLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchFileLogger.h; sourceTree = "<group>"; };
 		E563942F2CC7AC9500E18E65 /* BranchFileLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchFileLogger.m; sourceTree = "<group>"; };
-		E56394322CC7ACAA00E18E65 /* BranchFileLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchFileLogger.h; sourceTree = "<group>"; };
 		E72489D028E40D0200DCD8FD /* PasteControlViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasteControlViewController.h; sourceTree = "<group>"; };
 		E72489D128E40D0200DCD8FD /* PasteControlViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PasteControlViewController.m; sourceTree = "<group>"; };
 		E7A728BC2AA9A112009343B7 /* BNCAPIServerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCAPIServerTest.m; sourceTree = "<group>"; };
@@ -759,7 +759,6 @@
 		5F644B522B7AA810000DCD78 /* Public */ = {
 			isa = PBXGroup;
 			children = (
-				E56394322CC7ACAA00E18E65 /* BranchFileLogger.h */,
 				5F644B5E2B7AA810000DCD78 /* BNCCallbacks.h */,
 				5F644B5A2B7AA810000DCD78 /* BNCCurrency.h */,
 				5F644B612B7AA810000DCD78 /* BNCInitSessionResponse.h */,
@@ -839,6 +838,7 @@
 				5F644B862B7AA811000DCD78 /* NSError+Branch.h */,
 				5F644B822B7AA811000DCD78 /* NSMutableDictionary+Branch.h */,
 				5F644B8B2B7AA811000DCD78 /* NSString+Branch.h */,
+				E51F64292CF46899000858D2 /* BranchFileLogger.h */,
 				5F644B752B7AA810000DCD78 /* UIViewController+Branch.h */,
 			);
 			path = Private;
@@ -963,6 +963,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E51F642A2CF46899000858D2 /* BranchFileLogger.h in Headers */,
 				5F644BE52B7AA811000DCD78 /* BNCLinkData.h in Headers */,
 				5F644BE62B7AA811000DCD78 /* BranchDelegate.h in Headers */,
 				5F644BE72B7AA811000DCD78 /* BranchQRCode.h in Headers */,
@@ -991,7 +992,6 @@
 				5F644BFE2B7AA811000DCD78 /* BNCServerInterface.h in Headers */,
 				5F644BFF2B7AA811000DCD78 /* BNCProductCategory.h in Headers */,
 				5F644C1C2B7AA811000DCD78 /* NSString+Branch.h in Headers */,
-				E56394332CC7ACB600E18E65 /* BranchFileLogger.h in Headers */,
 				5F644C132B7AA811000DCD78 /* NSMutableDictionary+Branch.h in Headers */,
 				5F644C122B7AA811000DCD78 /* BNCApplication.h in Headers */,
 				5F5FDA122B7DE22A00F14A43 /* BranchLogger.h in Headers */,
