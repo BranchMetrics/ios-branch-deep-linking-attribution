@@ -161,8 +161,17 @@
             if ([uriScheme isEqualToString:serverUriSchemeWithoutSuffix]) {
                 return true; }
         }
-        // If no Uri schemes match the one set on the dashboard
-        return false;
+    }
+    return false;
+}
+
++ (BOOL)compareLinkDomain:(NSString *)serverLinkDomain {
+    NSArray *linkDomains = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"branch_universal_link_domains"];
+    
+    for (NSString *domain in linkDomains) {
+        if ([domain isEqualToString:serverLinkDomain]) {
+            return true;
+        }
     }
     return false;
 }
