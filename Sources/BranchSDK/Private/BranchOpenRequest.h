@@ -13,7 +13,6 @@
 
 // URL that triggered this install or open event
 @property (nonatomic, copy, readwrite) NSString *urlString;
-@property (assign, nonatomic) BOOL isFromArchivedQueue;
 @property (nonatomic, copy) callbackWithStatus callback;
 
 + (void) waitForOpenResponseLock;

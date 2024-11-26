@@ -138,7 +138,7 @@
 
             // Install subclasses open, so only need to check open
             // Request should not be the one added from archived queue
-            if ([request isKindOfClass:[BranchOpenRequest class]] && !((BranchOpenRequest *)request).isFromArchivedQueue) {
+            if ([request isKindOfClass:[BranchOpenRequest class]]) {
                 return (BranchOpenRequest *)request;
             }
         }
