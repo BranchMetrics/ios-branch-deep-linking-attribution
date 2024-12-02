@@ -12,9 +12,7 @@
 @interface BranchOpenRequestLinkParams : NSObject
 @property (copy, nonatomic) NSString *linkClickIdentifier;
 @property (copy, nonatomic) NSString *spotlightIdentifier;
-@property (copy, nonatomic) NSString *universalLinkUrl;
 @property (copy, nonatomic) NSString *referringURL;
-@property (copy, nonatomic) NSString *externalIntentURI;
 @property (assign, nonatomic) BOOL dropURLOpen;
 @end
 

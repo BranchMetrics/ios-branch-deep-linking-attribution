@@ -687,7 +687,6 @@ static NSString *bnc_branchKey = nil;
     if ([options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
         id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
         if ([branchUrlFromPush isKindOfClass:[NSString class]]) {
-            params.universalLinkUrl = branchUrlFromPush;
             params.referringURL = branchUrlFromPush;
             pushURL = (NSString *)branchUrlFromPush;
         }
@@ -748,7 +747,6 @@ static NSString *bnc_branchKey = nil;
         params.dropURLOpen = YES;
         
         NSString *urlString = [url absoluteString];
-        params.externalIntentURI = urlString;
         params.referringURL = urlString;
 
         [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:nil urlParams:params  reset:YES];
@@ -772,20 +770,17 @@ static NSString *bnc_branchKey = nil;
 
         NSString *urlScheme = [url scheme];
 
-        // save the incoming url in the preferenceHelper in the externalIntentURI field
         if ([self.allowedSchemeList count]) {
             for (NSString *scheme in self.allowedSchemeList) {
                 if (urlScheme && [scheme isEqualToString:urlScheme]) {
-                    openRequestParams.externalIntentURI = [url absoluteString];
                     openRequestParams.referringURL = [url absoluteString];
-                    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Allowed scheme list, set externalIntentURI and referringURL to %@", [url absoluteString]] error:nil];
+                    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Allowed scheme list, set referringURL to %@", [url absoluteString]] error:nil];
                     break;
                 }
             }
         } else {
-            openRequestParams.externalIntentURI = [url absoluteString];
             openRequestParams.referringURL = [url absoluteString];
-            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Set externalIntentURI and referringURL to %@", [url absoluteString]] error:nil];
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Set  referringURL to %@", [url absoluteString]] error:nil];
         }
 
         NSString *query = [url fragment];
@@ -830,7 +825,6 @@ static NSString *bnc_branchKey = nil;
     
     BranchOpenRequestLinkParams *params = [[BranchOpenRequestLinkParams alloc] init];
     if (urlString.length) {
-        params.universalLinkUrl = urlString;
         params.referringURL = urlString;
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Set universalLinkUrl and referringURL to %@", urlString] error:nil];
     }

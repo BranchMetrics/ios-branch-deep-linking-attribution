@@ -312,9 +312,6 @@
     [self safeSetValue:openRequest.linkParams.linkClickIdentifier forKey:BRANCH_REQUEST_KEY_LINK_IDENTIFIER onDict:json];
     [self safeSetValue:openRequest.linkParams.spotlightIdentifier forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:json];
    
-    
-    // This was only on opens before, cause it can't exist on install.
-    [self safeSetValue:openRequest.linkParams.externalIntentURI forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:json];
 }
 
 - (void)addSystemObserverDataToJSON:(NSMutableDictionary *)json {
