@@ -533,7 +533,7 @@ static NSString *bnc_branchKey = nil;
             // Set the flag:
             [BNCPreferenceHelper sharedInstance].trackingDisabled = NO;
             // Initialize a Branch session:
-            [Branch.getInstance initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil reset:NO];
+            [Branch.getInstance initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil urlParams:nil reset:NO];
         }
     }
 }
@@ -582,7 +582,7 @@ static NSString *bnc_branchKey = nil;
             [BNCPreferenceHelper sharedInstance].trackingDisabled = NO;
 
             // Initialize a Branch session:
-            [[Branch getInstance] initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil reset:true];
+            [[Branch getInstance] initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil urlParams:nil reset:true];
         }
     }
     
@@ -682,19 +682,20 @@ static NSString *bnc_branchKey = nil;
 
     // Check for Branch link in a push payload
     NSString *pushURL = nil;
+    BranchOpenRequestLinkParams *params = [[BranchOpenRequestLinkParams alloc] init];
     #if !TARGET_OS_TV
     if ([options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
         id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
         if ([branchUrlFromPush isKindOfClass:[NSString class]]) {
-            self.preferenceHelper.universalLinkUrl = branchUrlFromPush;
-            self.preferenceHelper.referringURL = branchUrlFromPush;
+            params.universalLinkUrl = branchUrlFromPush;
+            params.referringURL = branchUrlFromPush;
             pushURL = (NSString *)branchUrlFromPush;
         }
     }
     #endif
 
     if(pushURL || [[options objectForKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"] isEqualToNumber:@1] || (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) ) {
-        [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:pushURL reset:NO];
+        [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:pushURL urlParams:params reset:NO];
     }
 }
 
@@ -741,14 +742,17 @@ static NSString *bnc_branchKey = nil;
     if (!pattern) {
         pattern = [self.userURLFilter patternMatchingURL:url];
     }
+    
+    BranchOpenRequestLinkParams *params = [[BranchOpenRequestLinkParams alloc] init];
     if (pattern) {
-        self.preferenceHelper.dropURLOpen = YES;
+        params.dropURLOpen = YES;
         
         NSString *urlString = [url absoluteString];
-        self.preferenceHelper.externalIntentURI = urlString;
-        self.preferenceHelper.referringURL = urlString;
+        params.externalIntentURI = urlString;
+        params.referringURL = urlString;
 
-        [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:nil reset:YES];
+        [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:nil urlParams:params  reset:YES];
+        
         return NO;
     }
 
@@ -762,8 +766,7 @@ static NSString *bnc_branchKey = nil;
 
 - (BOOL)handleSchemeDeepLink_private:(NSURL*)url sceneIdentifier:(NSString *)sceneIdentifier {
     BOOL handled = NO;
-    self.preferenceHelper.referringURL = nil;
-    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Set referringURL to %@", self.preferenceHelper.referringURL] error:nil];
+    BranchOpenRequestLinkParams *openRequestParams = [[BranchOpenRequestLinkParams alloc] init];
 
     if (url && ![url isEqual:[NSNull null]]) {
 
@@ -773,15 +776,15 @@ static NSString *bnc_branchKey = nil;
         if ([self.allowedSchemeList count]) {
             for (NSString *scheme in self.allowedSchemeList) {
                 if (urlScheme && [scheme isEqualToString:urlScheme]) {
-                    self.preferenceHelper.externalIntentURI = [url absoluteString];
-                    self.preferenceHelper.referringURL = [url absoluteString];
+                    openRequestParams.externalIntentURI = [url absoluteString];
+                    openRequestParams.referringURL = [url absoluteString];
                     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Allowed scheme list, set externalIntentURI and referringURL to %@", [url absoluteString]] error:nil];
                     break;
                 }
             }
         } else {
-            self.preferenceHelper.externalIntentURI = [url absoluteString];
-            self.preferenceHelper.referringURL = [url absoluteString];
+            openRequestParams.externalIntentURI = [url absoluteString];
+            openRequestParams.referringURL = [url absoluteString];
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Set externalIntentURI and referringURL to %@", [url absoluteString]] error:nil];
         }
 
@@ -793,10 +796,10 @@ static NSString *bnc_branchKey = nil;
         NSDictionary *params = [BNCEncodingUtils decodeQueryStringToDictionary:query];
         if (params[@"link_click_id"]) {
             handled = YES;
-            self.preferenceHelper.linkClickIdentifier = params[@"link_click_id"];
+            openRequestParams.linkClickIdentifier = params[@"link_click_id"];
         }
     }
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:url.absoluteString reset:YES];
+    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:url.absoluteString urlParams:openRequestParams reset:YES];
     return handled;
 }
 
@@ -805,7 +808,7 @@ static NSString *bnc_branchKey = nil;
             openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication
          annotation:(id)annotation {
-    return [self handleDeepLink:url sceneIdentifier:nil];
+    return [self handleDeepLink:url sceneIdentifier:nil ];
 }
 
 - (BOOL)sceneIdentifier:(NSString *)sceneIdentifier
@@ -824,13 +827,15 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (BOOL)handleUniversalDeepLink_private:(NSString*)urlString sceneIdentifier:(NSString *)sceneIdentifier {
+    
+    BranchOpenRequestLinkParams *params = [[BranchOpenRequestLinkParams alloc] init];
     if (urlString.length) {
-        self.preferenceHelper.universalLinkUrl = urlString;
-        self.preferenceHelper.referringURL = urlString;
+        params.universalLinkUrl = urlString;
+        params.referringURL = urlString;
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Set universalLinkUrl and referringURL to %@", urlString] error:nil];
     }
 
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:urlString reset:YES];
+    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:urlString urlParams:params reset:YES];
 
     return [Branch isBranchLink:urlString];
 }
@@ -850,7 +855,8 @@ static NSString *bnc_branchKey = nil;
     }
 
     NSString *spotlightIdentifier = nil;
-
+    BranchOpenRequestLinkParams *params = [[BranchOpenRequestLinkParams alloc] init];
+    
     #if !TARGET_OS_TV
     // Check to see if a spotlight activity needs to be handled
     spotlightIdentifier = [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
@@ -861,16 +867,16 @@ static NSString *bnc_branchKey = nil;
     } else if (webURL != nil && [Branch isBranchLink:[webURL absoluteString]]) {
         return [self handleDeepLink:webURL sceneIdentifier:sceneIdentifier];
     } else if (spotlightIdentifier) {
-        self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
+        params.spotlightIdentifier = spotlightIdentifier;
     } else {
         NSString *nonBranchSpotlightIdentifier = [self.contentDiscoveryManager standardSpotlightIdentifierFromActivity:userActivity];
         if (nonBranchSpotlightIdentifier) {
-            self.preferenceHelper.spotlightIdentifier = nonBranchSpotlightIdentifier;
+            params.spotlightIdentifier = nonBranchSpotlightIdentifier;
         }
     }
     #endif
 
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:userActivity.webpageURL.absoluteString reset:YES];
+    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:userActivity.webpageURL.absoluteString urlParams:params reset:YES];
 
     return spotlightIdentifier != nil;
 }
@@ -1494,7 +1500,6 @@ static NSString *bnc_branchKey = nil;
             // Note: Link Click Identifier is not cleared because of the potential for that to mess up a deep link
             if (preferenceHelper.lastRunBranchKey && ![key isEqualToString:preferenceHelper.lastRunBranchKey]) {
                 [[BranchLogger shared] logWarning:@"The Branch Key has changed, clearing relevant items." error:nil];
-                preferenceHelper.appVersion = nil;
                 preferenceHelper.randomizedDeviceToken = nil;
                 preferenceHelper.sessionID = nil;
                 preferenceHelper.randomizedBundleToken = nil;
@@ -1771,7 +1776,7 @@ static NSString *bnc_branchKey = nil;
         if (!Branch.trackingDisabled && self.initializationStatus != BNCInitStatusInitialized && !installOrOpenInQueue) {
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive trackingDisabled %d initializationStatus %d installOrOpenInQueue %d", Branch.trackingDisabled, self.initializationStatus, installOrOpenInQueue] error:nil];
 
-            [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:nil reset:NO];
+            [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:nil urlParams:nil reset:NO];
         }
     });
 }
@@ -1998,11 +2003,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 - (void)initSafetyCheck {
     if (self.initializationStatus == BNCInitStatusUninitialized) {
         [[BranchLogger shared] logDebug:@"Branch avoided an error by preemptively initializing." error:nil];
-        [self initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil reset:NO];
+        [self initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil urlParams:nil reset:NO];
     }
 }
 
-- (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString reset:(BOOL)reset {
+- (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString  urlParams:(BranchOpenRequestLinkParams *)params reset:(BOOL)reset {
     
     @synchronized (self) {
         if (self.deferInitForPluginRuntime) {
@@ -2028,7 +2033,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         // If the session is not yet initialized  OR
         // If the session is already initialized or is initializing but we need to reset it.
         if ( reset || self.initializationStatus == BNCInitStatusUninitialized) {
-            [self initializeSessionAndCallCallback:callCallback sceneIdentifier:sceneIdentifier urlString:urlString];
+            [self initializeSessionAndCallCallback:callCallback sceneIdentifier:sceneIdentifier urlString:urlString urlParams:params];
         }
         // If the session was initialized, but callCallback was specified, do so.
         else if (callCallback && self.initializationStatus == BNCInitStatusInitialized) {
@@ -2049,10 +2054,10 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 // only called from initUserSessionAndCallCallback!
-- (void)initializeSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString {
+- (void)initializeSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString urlParams:(BranchOpenRequestLinkParams *)params {
 
 	// BranchDelegate willStartSessionWithURL notification
-    NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;
+    NSURL *URL = (params.referringURL.length) ? [NSURL URLWithString:params.referringURL] : nil;
     if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)]) {
         [self.delegate branch:self willStartSessionWithURL:URL];
     }
@@ -2067,9 +2072,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         // callback on main, this is generally what the client expects and maintains our previous behavior
         dispatch_async(dispatch_get_main_queue(), ^ {
             if (error) {
-                [self handleInitFailure:error callCallback:callCallback sceneIdentifier:(NSString *)sceneIdentifier];
+                [self handleInitFailure:error callCallback:callCallback sceneIdentifier:(NSString *)sceneIdentifier referringURL:params.referringURL];
             } else {
-                [self handleInitSuccessAndCallCallback:callCallback sceneIdentifier:(NSString *)sceneIdentifier];
+                [self handleInitSuccessAndCallCallback:callCallback sceneIdentifier:(NSString *)sceneIdentifier referringURL:params.referringURL];
             }
         });
     };
@@ -2088,6 +2093,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 }
                 req.callback = initSessionCallback;
                 req.urlString = urlString;
+                req.linkParams = params
                 
                 [self.requestQueue insert:req at:0];
                 
@@ -2101,6 +2107,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                     req = [[BranchOpenRequest alloc] initWithCallback:initSessionCallback];
                     req.callback = initSessionCallback;
                     req.urlString = urlString;
+                    req.linkParams = params;
                     
                     // put it behind the one that's already on queue
                     [self.requestQueue insert:req at:1];
@@ -2120,7 +2127,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 
-- (void)handleInitSuccessAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
+- (void)handleInitSuccessAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier referringURL:(NSString *) referringURL{
 
     self.initializationStatus = BNCInitStatusInitialized;
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
@@ -2152,7 +2159,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             self.sceneSessionInitWithCallback(response, nil);
         }
     }
-    [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
+    [self sendOpenNotificationWithLinkParameters:latestReferringParams referringURL:referringURL error:nil];
 
     [self.urlFilter updatePatternListFromServerWithCompletion:nil];
 
@@ -2269,12 +2276,12 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
-- (void)sendOpenNotificationWithLinkParameters:(NSDictionary*)linkParameters
+- (void)sendOpenNotificationWithLinkParameters:(NSDictionary*)linkParameters referringURL:(NSString *) referringURL
                                          error:(NSError*)error {
 
-    NSURL *originalURL =
-        (self.preferenceHelper.referringURL.length)
-        ? [NSURL URLWithString:self.preferenceHelper.referringURL]
+    NSURL *originalURL  =
+        (referringURL.length)
+        ? [NSURL URLWithString:referringURL]
         : nil;
     BranchLinkProperties *linkProperties = nil;
     BranchUniversalObject *universalObject = nil;
@@ -2310,8 +2317,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         postNotificationName:BranchDidStartSessionNotification
         object:self
         userInfo:userInfo];
-
-    self.preferenceHelper.referringURL = nil;
 }
 
 - (void)removeViewControllerFromRootNavigationController:(UIViewController*)branchSharingController {
@@ -2339,7 +2344,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
-- (void)handleInitFailure:(NSError *)error callCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
+- (void)handleInitFailure:(NSError *)error callCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier referringURL:(NSString *) referringURL{
     self.initializationStatus = BNCInitStatusUninitialized;
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
 
@@ -2355,7 +2360,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         }
     }
 
-    [self sendOpenNotificationWithLinkParameters:@{} error:error];
+    [self sendOpenNotificationWithLinkParameters:@{} referringURL:referringURL error:error];
 }
 
 - (void)dealloc {

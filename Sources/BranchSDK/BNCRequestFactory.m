@@ -34,6 +34,8 @@
 #import "BNCSKAdNetwork.h"
 #import "BNCReferringURLUtility.h"
 #import "BNCPasteboard.h"
+#import "BranchOpenRequest.h"
+#import "BranchInstallRequest.h"
 
 @interface BNCRequestFactory()
 
@@ -80,7 +82,7 @@
     return Branch.trackingDisabled;
 }
 
-- (NSDictionary *)dataForInstallWithURLString:(NSString *)urlString {
+- (NSDictionary *)dataForInstallWithRequestObject:(BranchInstallRequest *) installRequest {
     NSMutableDictionary *json = [NSMutableDictionary new];
     
     // All requests
@@ -99,13 +101,13 @@
     // Install and Open
     [self addDeveloperUserIDToJSON:json];
     [self addSystemObserverDataToJSON:json];
-    [self addPreferenceHelperDataToJSON:json];
+    [self addOpenRequestDataToJSON:json fromRequestObject:installRequest];
     [self addPartnerParametersToJSON:json];
     [self addAppleReceiptSourceToJSON:json];
     [self addTimestampsToJSON:json];
     
     // Check if the urlString is a valid URL to ensure it's a universal link, not the external intent uri
-    if (urlString) {
+ /*   if (openRequest.) {
         NSURL *url = [NSURL URLWithString:urlString];
         if (url && ([url.scheme isEqualToString:@"http"] || [url.scheme isEqualToString:@"https"])) {
             [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
@@ -113,7 +115,7 @@
             [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:json];
         }
     }
-    
+    */
     [self addAppleAttributionTokenToJSON:json];
 
     // Install Only
@@ -132,7 +134,7 @@
     return json;
 }
 
-- (NSDictionary *)dataForOpenWithURLString:(NSString *)urlString {
+- (NSDictionary *)dataForOpenWithRequestObject:(BranchOpenRequest *) openRequest {
     NSMutableDictionary *json = [NSMutableDictionary new];
     
     // All requests
@@ -154,19 +156,19 @@
     // Install and Open
     [self addDeveloperUserIDToJSON:json];
     [self addSystemObserverDataToJSON:json];
-    [self addPreferenceHelperDataToJSON:json];
+    [self addOpenRequestDataToJSON:json fromRequestObject:openRequest];
     [self addPartnerParametersToJSON:json];
     [self addAppleReceiptSourceToJSON:json];
     [self addTimestampsToJSON:json];
     
     
     // Check if the urlString is a valid URL to ensure it's a universal link, not the external intent uri
-    if (urlString) {
-        NSURL *url = [NSURL URLWithString:urlString];
+    if (openRequest.urlString) {
+        NSURL *url = [NSURL URLWithString:openRequest.urlString];
         if (url && ([url.scheme isEqualToString:@"http"] || [url.scheme isEqualToString:@"https"])) {
-            [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
+            [self safeSetValue:openRequest.urlString forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
         } else {
-            [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:json];
+            [self safeSetValue:openRequest.urlString forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:json];
         }
     }
     
@@ -303,15 +305,16 @@
     json[BRANCH_REQUEST_KEY_SESSION_ID] = self.preferenceHelper.sessionID;
 }
 
-- (void)addPreferenceHelperDataToJSON:(NSMutableDictionary *)json {
+- (void)addOpenRequestDataToJSON:(NSMutableDictionary *)json fromRequestObject:(BranchOpenRequest *) openRequest{
     json[BRANCH_REQUEST_KEY_DEBUG] = @(self.preferenceHelper.isDebug);
-
-    [self safeSetValue:self.preferenceHelper.linkClickIdentifier forKey:BRANCH_REQUEST_KEY_LINK_IDENTIFIER onDict:json];
-    [self safeSetValue:self.preferenceHelper.spotlightIdentifier forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:json];
     [self safeSetValue:self.preferenceHelper.initialReferrer forKey:BRANCH_REQUEST_KEY_INITIAL_REFERRER onDict:json];
     
+    [self safeSetValue:openRequest.linkParams.linkClickIdentifier forKey:BRANCH_REQUEST_KEY_LINK_IDENTIFIER onDict:json];
+    [self safeSetValue:openRequest.linkParams.spotlightIdentifier forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:json];
+   
+    
     // This was only on opens before, cause it can't exist on install.
-    [self safeSetValue:self.preferenceHelper.externalIntentURI forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:json];
+    [self safeSetValue:openRequest.linkParams.externalIntentURI forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:json];
 }
 
 - (void)addSystemObserverDataToJSON:(NSMutableDictionary *)json {

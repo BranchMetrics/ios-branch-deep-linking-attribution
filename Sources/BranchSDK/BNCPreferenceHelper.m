@@ -73,7 +73,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     NSOperationQueue *_persistPrefsQueue;
     NSString         *_lastSystemBuildVersion;
     NSString         *_browserUserAgentString;
-    NSString         *_referringURL;
 }
 
 @property (strong, nonatomic) NSMutableDictionary *persistenceDict;
@@ -90,20 +89,15 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 // since we override both setter and getter, these properties do not auto synthesize
 @synthesize
     lastRunBranchKey = _lastRunBranchKey,
-    appVersion = _appVersion,
     randomizedDeviceToken = _randomizedDeviceToken,
     sessionID = _sessionID,
-    spotlightIdentifier = _spotlightIdentifier,
     randomizedBundleToken = _randomizedBundleToken,
-    linkClickIdentifier = _linkClickIdentifier,
     userUrl = _userUrl,
     userIdentity = _userIdentity,
     sessionParams = _sessionParams,
     installParams = _installParams,
-    universalLinkUrl = _universalLinkUrl,
     initialReferrer = _initialReferrer,
     localUrl = _localUrl,
-    externalIntentURI = _externalIntentURI,
     isDebug = _isDebug,
     retryCount = _retryCount,
     retryInterval = _retryInterval,
@@ -220,20 +214,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
 }
 
-- (NSString *)appVersion {
-    if (!_appVersion) {
-        _appVersion = [self readStringFromDefaults:BRANCH_PREFS_KEY_APP_VERSION];
-    }
-    return _appVersion;
-}
-
-- (void)setAppVersion:(NSString *)appVersion {
-    if (![_appVersion isEqualToString:appVersion]) {
-        _appVersion = appVersion;
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_APP_VERSION value:appVersion];
-    }
-}
-
 - (NSString *)randomizedDeviceToken {
     if (!_randomizedDeviceToken) {
         NSString *tmp = [self readStringFromDefaults:BRANCH_PREFS_KEY_RANDOMIZED_DEVICE_TOKEN];
@@ -306,62 +286,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 - (void)setUserIdentity:(NSString *)userIdentity {
     [self writeObjectToDefaults:BRANCH_PREFS_KEY_IDENTITY value:userIdentity];
-}
-
-- (NSString *)linkClickIdentifier {
-    return [self readStringFromDefaults:BRANCH_PREFS_KEY_LINK_CLICK_IDENTIFIER];
-}
-
-- (void)setLinkClickIdentifier:(NSString *)linkClickIdentifier {
-    [self writeObjectToDefaults:BRANCH_PREFS_KEY_LINK_CLICK_IDENTIFIER value:linkClickIdentifier];
-}
-
-- (NSString *)spotlightIdentifier {
-    return [self readStringFromDefaults:BRANCH_PREFS_KEY_SPOTLIGHT_IDENTIFIER];
-}
-
-- (void)setSpotlightIdentifier:(NSString *)spotlightIdentifier {
-    [self writeObjectToDefaults:BRANCH_PREFS_KEY_SPOTLIGHT_IDENTIFIER value:spotlightIdentifier];
-}
-
-- (NSString *)externalIntentURI {
-    @synchronized(self) {
-        if (!_externalIntentURI) {
-            _externalIntentURI = [self readStringFromDefaults:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI];
-        }
-        return _externalIntentURI;
-    }
-}
-
-- (void)setExternalIntentURI:(NSString *)externalIntentURI {
-    @synchronized(self) {
-        if (externalIntentURI == nil || ![_externalIntentURI isEqualToString:externalIntentURI]) {
-            _externalIntentURI = externalIntentURI;
-            [self writeObjectToDefaults:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI value:externalIntentURI];
-        }
-    }
-}
-
-- (NSString*) referringURL {
-    @synchronized (self) {
-        if (!_referringURL) _referringURL = [self readStringFromDefaults:@"referringURL"];
-        return _referringURL;
-    }
-}
-
-- (void) setReferringURL:(NSString *)referringURL {
-    @synchronized (self) {
-        _referringURL = [referringURL copy];
-        [self writeObjectToDefaults:@"referringURL" value:_referringURL];
-    }
-}
-
-- (NSString *)universalLinkUrl {
-    return [self readStringFromDefaults:BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL];
-}
-
-- (void)setUniversalLinkUrl:(NSString *)universalLinkUrl {
-    [self writeObjectToDefaults:BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL value:universalLinkUrl];
 }
 
 - (NSString *)localUrl {
@@ -618,18 +542,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
 }
 
-- (BOOL) dropURLOpen {
-    @synchronized(self) {
-        return [self readBoolFromDefaults:@"dropURLOpen"];
-    }
-}
-
-- (void) setDropURLOpen:(BOOL)value {
-    @synchronized(self) {
-        [self writeBoolToDefaults:@"dropURLOpen" value:value];
-    }
-}
-
 - (BOOL) trackingDisabled {
     @synchronized(self) {
         NSNumber *b = (id) [self readObjectFromDefaults:@"trackingDisabled"];
@@ -849,14 +761,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
          self.randomizedBundleToken = nil;
          */
         self.sessionID = nil;
-        self.linkClickIdentifier = nil;
-        self.spotlightIdentifier = nil;
-        self.referringURL = nil;
-        self.universalLinkUrl = nil;
-        self.initialReferrer = nil;
         self.installParams = nil;
         self.sessionParams = nil;
-        self.externalIntentURI = nil;
         self.savedAnalyticsData = nil;
         self.previousAppBuildDate = nil;
         self.requestMetadataDictionary = nil;

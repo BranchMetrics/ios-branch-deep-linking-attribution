@@ -364,14 +364,8 @@
     [self.prefHelper clearTrackingInformation];
     
     XCTAssertNil(self.prefHelper.sessionID);
-    XCTAssertNil(self.prefHelper.linkClickIdentifier);
-    XCTAssertNil(self.prefHelper.spotlightIdentifier);
-    XCTAssertNil(self.prefHelper.referringURL);
-    XCTAssertNil(self.prefHelper.universalLinkUrl);
-    XCTAssertNil(self.prefHelper.initialReferrer);
     XCTAssertNil(self.prefHelper.installParams);
     XCTAssertNil(self.prefHelper.sessionParams);
-    XCTAssertNil(self.prefHelper.externalIntentURI);
     XCTAssertNil(self.prefHelper.savedAnalyticsData);
     XCTAssertNil(self.prefHelper.previousAppBuildDate);
     XCTAssertEqual(self.prefHelper.requestMetadataDictionary.count, 0);

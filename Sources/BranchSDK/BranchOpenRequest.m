@@ -47,7 +47,7 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
-    NSDictionary *params = [factory dataForOpenWithURLString:self.urlString];
+    NSDictionary *params = [factory dataForOpenWithRequestObject:self];
 
     [serverInterface postRequest:params
         url:[[BNCServerAPI sharedInstance] openServiceURL]
@@ -57,7 +57,7 @@
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
-    if (error && preferenceHelper.dropURLOpen) {
+    if (error && self.linkParams.dropURLOpen) {
         // Ignore this response from the server. Dummy up a response:
         error = nil;
         response.data = @{
@@ -115,10 +115,10 @@
 
     // Update session params
 
-    if (preferenceHelper.spotlightIdentifier) {
+    if (self.linkParams.spotlightIdentifier) {
         NSMutableDictionary *sessionDataDict =
         [NSMutableDictionary dictionaryWithDictionary: [BNCEncodingUtils decodeJsonStringToDictionary:sessionData]];
-        NSDictionary *spotlightDic = @{BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER:preferenceHelper.spotlightIdentifier};
+        NSDictionary *spotlightDic = @{BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER:self.linkParams.spotlightIdentifier};
         [sessionDataDict addEntriesFromDictionary:spotlightDic];
         sessionData = [BNCEncodingUtils encodeDictionaryToJsonString:sessionDataDict];
     }
@@ -152,13 +152,6 @@
         }
     }
 
-    // Clear link identifiers so they don't get reused on the next open
-    preferenceHelper.linkClickIdentifier = nil;
-    preferenceHelper.spotlightIdentifier = nil;
-    preferenceHelper.universalLinkUrl = nil;
-    preferenceHelper.externalIntentURI = nil;
-    preferenceHelper.referringURL = referringURL;
-    preferenceHelper.dropURLOpen = NO;
     
     NSString *string = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN]);
     if (!string) {
@@ -314,6 +307,19 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
             dispatch_resume(openRequestWaitQueue);
         }
     }
+}
+
+@end
+
+@implementation BranchOpenRequestLinkParams
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.dropURLOpen = NO;
+    }
+    return self;
 }
 
 @end

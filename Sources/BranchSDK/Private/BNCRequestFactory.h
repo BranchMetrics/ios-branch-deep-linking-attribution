@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "BranchOpenRequest.h"
+#import "BranchInstallRequest.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -23,8 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithBranchKey:(NSString *)key UUID:(NSString *)requestUUID TimeStamp:(NSNumber *)requestTimeStamp NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
-- (NSDictionary *)dataForInstallWithURLString:(nullable NSString *)urlString;
-- (NSDictionary *)dataForOpenWithURLString:(nullable NSString *)urlString;
+- (NSDictionary *)dataForInstallWithRequestObject:(BranchInstallRequest *) installRequest;
+- (NSDictionary *)dataForOpenWithRequestObject:(BranchOpenRequest *) openRequest;
 
 // Event data is passed in
 - (NSDictionary *)dataForEventWithEventDictionary:(NSMutableDictionary *)dictionary;
