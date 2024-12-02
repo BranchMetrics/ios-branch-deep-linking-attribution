@@ -107,15 +107,15 @@
     [self addTimestampsToJSON:json];
     
     // Check if the urlString is a valid URL to ensure it's a universal link, not the external intent uri
- /*   if (openRequest.) {
-        NSURL *url = [NSURL URLWithString:urlString];
+    if (installRequest.urlString) {
+        NSURL *url = [NSURL URLWithString:installRequest.urlString];
         if (url && ([url.scheme isEqualToString:@"http"] || [url.scheme isEqualToString:@"https"])) {
-            [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
+            [self safeSetValue:installRequest.urlString forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
         } else {
-            [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:json];
+            [self safeSetValue:installRequest.urlString forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:json];
         }
     }
-    */
+    
     [self addAppleAttributionTokenToJSON:json];
 
     // Install Only
