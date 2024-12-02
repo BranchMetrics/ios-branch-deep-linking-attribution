@@ -2093,7 +2093,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 }
                 req.callback = initSessionCallback;
                 req.urlString = urlString;
-                req.linkParams = params
+                req.linkParams = params;
                 
                 [self.requestQueue insert:req at:0];
                 
