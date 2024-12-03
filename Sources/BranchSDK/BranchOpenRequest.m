@@ -166,7 +166,7 @@
     [BranchOpenRequest releaseOpenResponseLock];
     
     if (self.isInstall) {
-        [[BNCAppGroupsData shared] saveAppClipData];
+        [[BNCAppGroupsData shared] saveAppClipData: self.linkParams.referringURL];
     }
     
 #if !TARGET_OS_TV
