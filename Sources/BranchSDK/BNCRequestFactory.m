@@ -107,7 +107,7 @@
     [self addTimestampsToJSON:json];
     
     // Check if the urlString is a valid URL to ensure it's a universal link, not the external intent uri
-    if (installRequest.urlString) {
+    if (installRequest.urlString && !installRequest.linkParams.dropURLOpen) {
         NSURL *url = [NSURL URLWithString:installRequest.urlString];
         if (url && ([url.scheme isEqualToString:@"http"] || [url.scheme isEqualToString:@"https"])) {
             [self safeSetValue:installRequest.urlString forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
@@ -163,7 +163,7 @@
     
     
     // Check if the urlString is a valid URL to ensure it's a universal link, not the external intent uri
-    if (openRequest.urlString) {
+    if (openRequest.urlString && !openRequest.linkParams.dropURLOpen) {
         NSURL *url = [NSURL URLWithString:openRequest.urlString];
         if (url && ([url.scheme isEqualToString:@"http"] || [url.scheme isEqualToString:@"https"])) {
             [self safeSetValue:openRequest.urlString forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
