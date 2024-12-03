@@ -2089,12 +2089,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                     req = [[BranchInstallRequest alloc] initWithCallback:initSessionCallback];
                 }
                 req.callback = initSessionCallback;
-                req.urlString = params.referringURL;
                 req.linkParams = params;
                 
                 [self.requestQueue insert:req at:0];
                 
-                NSString *message = [NSString stringWithFormat:@"Request %@ callback %@ link %@", req, req.callback, req.urlString];
+                NSString *message = [NSString stringWithFormat:@"Request %@ callback %@ link params %@", req, req.callback, req.linkParams];
                 [[BranchLogger shared] logDebug:message error:nil];
 
             } else {
@@ -2103,14 +2102,13 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 if (params.referringURL) {
                     req = [[BranchOpenRequest alloc] initWithCallback:initSessionCallback];
                     req.callback = initSessionCallback;
-                    req.urlString = params.referringURL;
                     req.linkParams = params;
                     
                     // put it behind the one that's already on queue
                     [self.requestQueue insert:req at:1];
 
                     [[BranchLogger shared] logDebug:@"Link resolution request" error:nil];
-                    NSString *message = [NSString stringWithFormat:@"Request %@ callback %@ link %@", req, req.callback, req.urlString];
+                    NSString *message = [NSString stringWithFormat:@"Request %@ callback %@ link params%@", req, req.callback, req.linkParams];
                     [[BranchLogger shared] logDebug:message error:nil];
                 }
             }

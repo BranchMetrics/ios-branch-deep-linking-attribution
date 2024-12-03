@@ -47,7 +47,7 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
-    NSDictionary *params = [factory dataForOpenWithRequestObject:self];
+    NSDictionary *params = [factory dataForOpenWithLinkParams:self.linkParams];
 
     [serverInterface postRequest:params
         url:[[BNCServerAPI sharedInstance] openServiceURL]
@@ -140,8 +140,8 @@
     }
 
     NSString *referringURL = nil;
-    if (self.urlString.length > 0) {
-        referringURL = self.urlString;
+    if (self.linkParams.referringURL.length > 0) {
+        referringURL = self.linkParams.referringURL;
     } else {
         NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
         NSString *link = sessionDataDict[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK];
@@ -249,13 +249,13 @@
 - (instancetype)initWithCoder:(NSCoder *)decoder {
     self = [super initWithCoder:decoder];
     if (!self) return self;
-    self.urlString = [decoder decodeObjectOfClass:NSString.class forKey:@"urlString"];
+    self.linkParams.referringURL = [decoder decodeObjectOfClass:NSString.class forKey:@"urlString"];
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
     [super encodeWithCoder:coder];
-    [coder encodeObject:self.urlString forKey:@"urlString"];
+    [coder encodeObject:self.linkParams.referringURL forKey:@"urlString"];
 }
 
 + (BOOL)supportsSecureCoding {
