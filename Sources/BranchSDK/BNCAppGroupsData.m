@@ -64,7 +64,7 @@
     return nil;
 }
 
-- (void)saveAppClipData {
+- (void)saveAppClipData:(NSString *) referringURL {
     if ([BNCSystemObserver isAppClip]) {
         
         BNCApplication *application = [BNCApplication currentApplication];
@@ -79,7 +79,7 @@
         
         BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
         
-        NSString *url = preferenceHelper.referringURL;
+        NSString *url = referringURL;
         NSString *token = preferenceHelper.randomizedDeviceToken;
         NSString *bundleToken = preferenceHelper.randomizedBundleToken;
         

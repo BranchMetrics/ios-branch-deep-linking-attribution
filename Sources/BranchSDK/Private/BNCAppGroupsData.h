@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)shared;
 
 // saves app clip data when appropriate
-- (void)saveAppClipData;
+- (void)saveAppClipData:(NSString *) referringURL ;
 
 // loads app clip data
 - (BOOL)loadAppClipData;

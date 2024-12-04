@@ -29,7 +29,7 @@
 
 - (void)testInitWithBranchKeyNil {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:nil UUID:_requestUUID TimeStamp:_requestCreationTimeStamp];
-    NSDictionary *json = [factory dataForInstallWithURLString:@"https://branch.io"];
+    NSDictionary *json = [factory dataForInstallWithLinkParams:nil];
     XCTAssertNotNil(json);
     
     // key is omitted when nil
@@ -40,7 +40,7 @@
 
 - (void)testInitWithBranchKeyEmpty {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
-    NSDictionary *json = [factory dataForInstallWithURLString:@"https://branch.io"];
+    NSDictionary *json = [factory dataForInstallWithLinkParams:nil];
     XCTAssertNotNil(json);
     
     // empty string is allowed
@@ -52,7 +52,7 @@
 
 - (void)testInitWithBranchKey {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
-    NSDictionary *json = [factory dataForInstallWithURLString:@"https://branch.io"];
+    NSDictionary *json = [factory dataForInstallWithLinkParams:nil];
     XCTAssertNotNil(json);
     XCTAssertTrue([@"key_abcd" isEqualToString:[json objectForKey:@"branch_key"]]);
     
@@ -62,7 +62,7 @@
 
 - (void)testDataForInstall {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
-    NSDictionary *json = [factory dataForInstallWithURLString:@"https://branch.io"];
+    NSDictionary *json = [factory dataForInstallWithLinkParams:nil];
     XCTAssertNotNil(json);
     
     XCTAssertTrue([@"key_abcd" isEqualToString:[json objectForKey:@"branch_key"]]);
@@ -79,7 +79,7 @@
 
 - (void)testDataForOpen {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
-    NSDictionary *json = [factory dataForOpenWithURLString:@"https://branch.io"];
+    NSDictionary *json = [factory dataForInstallWithLinkParams:nil];
     XCTAssertNotNil(json);
     
     XCTAssertTrue([@"key_abcd" isEqualToString:[json objectForKey:@"branch_key"]]);
