@@ -18,7 +18,7 @@ NSString * _Nonnull const BranchJsonConfigDeferInitForPluginRuntimeOption = @"de
 NSString * _Nonnull const BranchJsonConfigEnableLogging = @"enableLogging";
 NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPasteboardOnInstall";
 NSString * _Nonnull const BranchJsonConfigAPIUrl = @"apiUrl";
-
+NSString * _Nonnull const BranchJsonConfigCPPLevel = @"consumerProtectionAttributionLevel";
 
 @interface BranchJsonConfig()
 @property (nonatomic, strong) NSDictionary *configuration;
@@ -161,6 +161,11 @@ NSString * _Nonnull const BranchJsonConfigAPIUrl = @"apiUrl";
 - (NSString *)apiUrl
 {
     return self[BranchJsonConfigAPIUrl];
+}
+
+- (NSString *)cppLevel
+{
+    return self[BranchJsonConfigCPPLevel];
 }
 
 - (id)objectForKey:(NSString *)key
