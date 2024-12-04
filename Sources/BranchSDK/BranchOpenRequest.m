@@ -40,6 +40,7 @@
     if ((self = [super init])) {
         _callback = callback;
         _isInstall = isInstall;
+        _linkParams = [[BranchOpenRequestLinkParams alloc] init];
     }
 
     return self;
@@ -166,7 +167,7 @@
     [BranchOpenRequest releaseOpenResponseLock];
     
     if (self.isInstall) {
-        [[BNCAppGroupsData shared] saveAppClipData: self.linkParams.referringURL];
+        [[BNCAppGroupsData shared] saveAppClipData: referringURL];
     }
     
 #if !TARGET_OS_TV
@@ -248,14 +249,15 @@
 
 - (instancetype)initWithCoder:(NSCoder *)decoder {
     self = [super initWithCoder:decoder];
-    if (!self) return self;
-    self.linkParams.referringURL = [decoder decodeObjectOfClass:NSString.class forKey:@"urlString"];
+    if (self) {
+        self.linkParams = [decoder decodeObjectOfClass:BranchOpenRequestLinkParams.class forKey:@"urlString"];
+    }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
     [super encodeWithCoder:coder];
-    [coder encodeObject:self.linkParams.referringURL forKey:@"urlString"];
+    [coder encodeObject:self.linkParams forKey:@"urlString"];
 }
 
 + (BOOL)supportsSecureCoding {
@@ -322,4 +324,20 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
     return self;
 }
 
+- (instancetype)initWithCoder:(NSCoder *)decoder {
+    self = [super init];
+    if (self) {
+        self.referringURL = [decoder decodeObjectOfClass:NSString.class forKey:@"referringURL"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [coder encodeObject:self.referringURL forKey:@"referringURL"];
+}
+
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+    
 @end

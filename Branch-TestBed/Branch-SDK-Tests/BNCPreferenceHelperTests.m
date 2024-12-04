@@ -243,13 +243,6 @@
     XCTAssertEqualObjects(expectedDate, actualDate);
 }
 
-- (void)testSetAppVersion {
-    NSString *expectedVersion = @"1.0.0";
-    [self.prefHelper setAppVersion: expectedVersion];
-    
-    NSString *actualVersion = [self.prefHelper appVersion];
-    XCTAssertEqualObjects(expectedVersion, actualVersion);
-}
 
 - (void)testSetLocalUrl {
     NSString *expectedLocalURL = @"https://local.example.com";

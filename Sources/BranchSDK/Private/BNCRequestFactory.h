@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "BranchOpenRequest.h"
-#import "BranchInstallRequest.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

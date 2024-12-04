@@ -9,7 +9,7 @@
 #import "BNCServerRequest.h"
 #import "BNCCallbacks.h"
 
-@interface BranchOpenRequestLinkParams : NSObject
+@interface BranchOpenRequestLinkParams : NSObject <NSSecureCoding>
 @property (copy, nonatomic) NSString *linkClickIdentifier;
 @property (copy, nonatomic) NSString *spotlightIdentifier;
 @property (copy, nonatomic) NSString *referringURL; // URL that triggered this install or open event
@@ -20,7 +20,7 @@
 
 
 @property (nonatomic, copy) callbackWithStatus callback;
-@property (nonatomic, copy, readwrite) BranchOpenRequestLinkParams *linkParams;
+@property (nonatomic, strong, readwrite) BranchOpenRequestLinkParams *linkParams;
 
 + (void) waitForOpenResponseLock;
 + (void) releaseOpenResponseLock;
