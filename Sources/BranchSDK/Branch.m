@@ -681,19 +681,17 @@ static NSString *bnc_branchKey = nil;
     self.shouldAutomaticallyDeepLink = automaticallyDisplayController;
 
     // Check for Branch link in a push payload
-    NSString *pushURL = nil;
     BranchOpenRequestLinkParams *params = [[BranchOpenRequestLinkParams alloc] init];
     #if !TARGET_OS_TV
     if ([options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
         id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
         if ([branchUrlFromPush isKindOfClass:[NSString class]]) {
-            params.referringURL = branchUrlFromPush;
-            pushURL = (NSString *)branchUrlFromPush;
+            params.referringURL = (NSString *)branchUrlFromPush;
         }
     }
     #endif
 
-    if(pushURL || [[options objectForKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"] isEqualToNumber:@1] || (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) ) {
+    if(params.referringURL || [[options objectForKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"] isEqualToNumber:@1] || (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) ) {
         [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlParams:params reset:NO];
     }
 }
@@ -742,15 +740,11 @@ static NSString *bnc_branchKey = nil;
         pattern = [self.userURLFilter patternMatchingURL:url];
     }
     
-    BranchOpenRequestLinkParams *params = [[BranchOpenRequestLinkParams alloc] init];
     if (pattern) {
+        BranchOpenRequestLinkParams *params = [[BranchOpenRequestLinkParams alloc] init];
         params.dropURLOpen = YES;
-        
-        NSString *urlString = [url absoluteString];
-        params.referringURL = urlString;
-
+        params.referringURL = [url absoluteString];;
         [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlParams:params  reset:YES];
-        
         return NO;
     }
 
@@ -869,7 +863,7 @@ static NSString *bnc_branchKey = nil;
         }
     }
     #endif
-
+    params.referringURL = userActivity.webpageURL.absoluteString;
     [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlParams:params reset:YES];
 
     return spotlightIdentifier != nil;
