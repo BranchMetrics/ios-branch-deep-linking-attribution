@@ -55,7 +55,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         }
         
         if (response) {
-            NSLog(@"[BranchLog] Got %@ Response: %@", response, response.data);
+            NSLog(@"[BranchLog] Got Response for request(%@): %@", response.requestId, response.data);
         }
         
         NSString *logEntry = error ? [NSString stringWithFormat:@"Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription]
