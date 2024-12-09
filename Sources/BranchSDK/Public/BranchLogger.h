@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "BNCServerResponse.h"
 
 typedef NS_ENUM(NSUInteger, BranchLogLevel) {
     BranchLogLevelVerbose, // development
@@ -15,7 +16,7 @@ typedef NS_ENUM(NSUInteger, BranchLogLevel) {
     BranchLogLevelError,   // severe errors. SDK is probably in a bad state.
 };
 
-typedef void(^BranchLogCallback)(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error);
+typedef void(^BranchLogCallback)(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error, NSMutableURLRequest * _Nullable request, BNCServerResponse * _Nullable response);
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -37,6 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)logError:(NSString * _Nonnull)message error:(NSError * _Nullable)error;
 - (void)logWarning:(NSString * _Nonnull)message error:(NSError * _Nullable)error;
 - (void)logDebug:(NSString * _Nonnull)message error:(NSError * _Nullable)error;
+- (void)logDebug:(NSString * _Nonnull)message error:(NSError * _Nullable)error request:(NSMutableURLRequest * _Nullable)request response:(BNCServerResponse * _Nullable)response;
 - (void)logVerbose:(NSString * _Nonnull)message error:(NSError * _Nullable)error;
 
 // default Branch log format

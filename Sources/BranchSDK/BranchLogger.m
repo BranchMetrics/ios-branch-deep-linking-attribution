@@ -18,7 +18,7 @@
         _includeCallerDetails = YES;
         
         // default callback sends logs to os_log
-        _logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+        _logCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error, NSMutableURLRequest * _Nullable request, BNCServerResponse * _Nullable response) {
             NSString *formattedMessage = [BranchLogger formatMessage:message logLevel:logLevel error:error];
             
             os_log_t log = os_log_create("io.branch.sdk", "BranchSDK");
@@ -53,22 +53,29 @@
 }
 
 - (void)logError:(NSString *)message error:(NSError *_Nullable)error {
-    [self logMessage:message withLevel:BranchLogLevelError error:error];
+    [self logMessage:message withLevel:BranchLogLevelError error:error request:nil response:nil];
 }
 
 - (void)logWarning:(NSString *)message error:(NSError *_Nullable)error {
-    [self logMessage:message withLevel:BranchLogLevelWarning error:error];
+    [self logMessage:message withLevel:BranchLogLevelWarning error:error request:nil response:nil];
 }
 
-- (void)logDebug:(NSString *)message error:(NSError *_Nullable)error {
-    [self logMessage:message withLevel:BranchLogLevelDebug error:error];
+- (void)logDebug:(NSString * _Nonnull)message error:(NSError * _Nullable)error {
+    [self logDebug:message error:error request:nil response:nil];
+}
+
+- (void)logDebug:(NSString * _Nonnull)message
+           error:(NSError * _Nullable)error
+         request:(NSMutableURLRequest * _Nullable)request
+        response:(BNCServerResponse * _Nullable)response {
+    [self logMessage:message withLevel:BranchLogLevelDebug error:error request:request response:response];
 }
 
 - (void)logVerbose:(NSString *)message error:(NSError *_Nullable)error {
-    [self logMessage:message withLevel:BranchLogLevelVerbose error:error];
+    [self logMessage:message withLevel:BranchLogLevelVerbose error:error request:nil response:nil];
 }
 
-- (void)logMessage:(NSString *)message withLevel:(BranchLogLevel)level error:(NSError *_Nullable)error {
+- (void)logMessage:(NSString *)message withLevel:(BranchLogLevel)level error:(NSError *_Nullable)error request:(NSMutableURLRequest * _Nullable)request response:(BNCServerResponse * _Nullable)response {
     if (!self.loggingEnabled || level < self.logLevelThreshold || message.length == 0) {
         return;
     }
@@ -79,7 +86,7 @@
     }
 
     if (self.logCallback) {
-        self.logCallback(formattedMessage, level, error);
+        self.logCallback(formattedMessage, level, error, request, response);
     }
 }
 
