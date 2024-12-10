@@ -16,7 +16,8 @@ typedef NS_ENUM(NSUInteger, BranchLogLevel) {
     BranchLogLevelError,   // severe errors. SDK is probably in a bad state.
 };
 
-typedef void(^BranchLogCallback)(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error, NSMutableURLRequest * _Nullable request, BNCServerResponse * _Nullable response);
+typedef void(^BranchLogCallback)(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error);
+typedef void(^BranchAdvancedLogCallback)(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error, NSMutableURLRequest * _Nullable request, BNCServerResponse * _Nullable response);
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -25,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL loggingEnabled;
 @property (nonatomic, assign) BOOL includeCallerDetails;
 @property (nonatomic, copy, nullable) BranchLogCallback logCallback;
+@property (nonatomic, copy, nullable) BranchAdvancedLogCallback advancedLogCallback;
 @property (nonatomic, assign) BranchLogLevel logLevelThreshold;
 
 + (instancetype _Nonnull)shared;
