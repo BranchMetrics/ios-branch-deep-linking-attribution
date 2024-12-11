@@ -53,22 +53,29 @@
 }
 
 - (void)logError:(NSString *)message error:(NSError *_Nullable)error {
-    [self logMessage:message withLevel:BranchLogLevelError error:error];
+    [self logMessage:message withLevel:BranchLogLevelError error:error request:nil response:nil];
 }
 
 - (void)logWarning:(NSString *)message error:(NSError *_Nullable)error {
-    [self logMessage:message withLevel:BranchLogLevelWarning error:error];
+    [self logMessage:message withLevel:BranchLogLevelWarning error:error request:nil response:nil];
 }
 
-- (void)logDebug:(NSString *)message error:(NSError *_Nullable)error {
-    [self logMessage:message withLevel:BranchLogLevelDebug error:error];
+- (void)logDebug:(NSString * _Nonnull)message error:(NSError * _Nullable)error {
+    [self logDebug:message error:error request:nil response:nil];
+}
+
+- (void)logDebug:(NSString * _Nonnull)message
+           error:(NSError * _Nullable)error
+         request:(NSMutableURLRequest * _Nullable)request
+        response:(BNCServerResponse * _Nullable)response {
+    [self logMessage:message withLevel:BranchLogLevelDebug error:error request:request response:response];
 }
 
 - (void)logVerbose:(NSString *)message error:(NSError *_Nullable)error {
-    [self logMessage:message withLevel:BranchLogLevelVerbose error:error];
+    [self logMessage:message withLevel:BranchLogLevelVerbose error:error request:nil response:nil];
 }
 
-- (void)logMessage:(NSString *)message withLevel:(BranchLogLevel)level error:(NSError *_Nullable)error {
+- (void)logMessage:(NSString *)message withLevel:(BranchLogLevel)level error:(NSError *_Nullable)error request:(NSMutableURLRequest * _Nullable)request response:(BNCServerResponse * _Nullable)response {
     if (!self.loggingEnabled || level < self.logLevelThreshold || message.length == 0) {
         return;
     }
@@ -77,8 +84,10 @@
     if (self.includeCallerDetails) {
         formattedMessage = [NSString stringWithFormat:@"%@ %@", [self callingClass], message];
     }
-
-    if (self.logCallback) {
+    
+    if  (self.advancedLogCallback) {
+        self.advancedLogCallback(formattedMessage, level, error, request, response);
+    } else if (self.logCallback) {
         self.logCallback(formattedMessage, level, error);
     }
 }

@@ -289,7 +289,7 @@
     [request setHTTPBody:postData];
     
     if ([[BranchLogger shared] shouldLog:BranchLogLevelDebug]) {
-        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"%@\nHeaders %@\nBody %@", request, [request allHTTPHeaderFields], [BNCEncodingUtils prettyPrintJSON:updatedParams]] error:nil];
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"%@\nHeaders %@\nBody %@", request, [request allHTTPHeaderFields], [BNCEncodingUtils prettyPrintJSON:updatedParams]] error:nil request:request response:nil];
     }
     
     return request;
@@ -310,7 +310,7 @@
         serverResponse.requestId = requestId;
      
         if ([[BranchLogger shared] shouldLog:BranchLogLevelDebug]) {
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"%@\nBody %@", response, [BNCEncodingUtils prettyPrintJSON:serverResponse.data]] error:nil];
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"%@\nBody %@", response, [BNCEncodingUtils prettyPrintJSON:serverResponse.data]] error:nil request:nil response:serverResponse];
         }
         
     } else {

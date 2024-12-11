@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "BNCServerResponse.h"
 
 typedef NS_ENUM(NSUInteger, BranchLogLevel) {
     BranchLogLevelVerbose, // development
@@ -16,6 +17,7 @@ typedef NS_ENUM(NSUInteger, BranchLogLevel) {
 };
 
 typedef void(^BranchLogCallback)(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error);
+typedef void(^BranchAdvancedLogCallback)(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error, NSMutableURLRequest * _Nullable request, BNCServerResponse * _Nullable response);
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -24,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL loggingEnabled;
 @property (nonatomic, assign) BOOL includeCallerDetails;
 @property (nonatomic, copy, nullable) BranchLogCallback logCallback;
+@property (nonatomic, copy, nullable) BranchAdvancedLogCallback advancedLogCallback;
 @property (nonatomic, assign) BranchLogLevel logLevelThreshold;
 
 + (instancetype _Nonnull)shared;
@@ -37,6 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)logError:(NSString * _Nonnull)message error:(NSError * _Nullable)error;
 - (void)logWarning:(NSString * _Nonnull)message error:(NSError * _Nullable)error;
 - (void)logDebug:(NSString * _Nonnull)message error:(NSError * _Nullable)error;
+- (void)logDebug:(NSString * _Nonnull)message error:(NSError * _Nullable)error request:(NSMutableURLRequest * _Nullable)request response:(BNCServerResponse * _Nullable)response;
 - (void)logVerbose:(NSString * _Nonnull)message error:(NSError * _Nullable)error;
 
 // default Branch log format
