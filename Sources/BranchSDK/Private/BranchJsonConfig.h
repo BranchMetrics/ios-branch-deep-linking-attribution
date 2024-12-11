@@ -31,6 +31,7 @@ extern NSString * _Nonnull const BranchJsonConfigAPIUrl;
 @property (nonatomic, readonly, assign) BOOL enableLogging;
 @property (nonatomic, readonly, assign) BOOL checkPasteboardOnInstall;
 @property (nonatomic, readonly, nullable, copy) NSString *apiUrl;
+@property (nonatomic, readonly, nullable, copy) NSString *cppLevel;
 
 - (nullable id)objectForKey:(NSString * _Nonnull)key;
 - (nullable id)objectForKeyedSubscript:(NSString * _Nonnull)key;
