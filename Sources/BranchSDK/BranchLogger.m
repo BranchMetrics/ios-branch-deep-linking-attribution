@@ -25,15 +25,6 @@
             os_log_type_t osLogType = [BranchLogger osLogTypeForBranchLogLevel:logLevel];
             os_log_with_type(log, osLogType, "%{private}@", formattedMessage);
         };
-        
-        // default advanced callback sends logs to os_log
-        _advancedLogCallback = ^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error, NSMutableURLRequest * _Nullable request, BNCServerResponse * _Nullable response) {
-            NSString *formattedMessage = [BranchLogger formatMessage:message logLevel:logLevel error:error];
-            
-            os_log_t log = os_log_create("io.branch.sdk", "BranchSDK");
-            os_log_type_t osLogType = [BranchLogger osLogTypeForBranchLogLevel:logLevel];
-            os_log_with_type(log, osLogType, "%{private}@", formattedMessage);
-        };
     }
     return self;
 }
