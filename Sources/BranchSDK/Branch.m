@@ -256,6 +256,20 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     if (config.checkPasteboardOnInstall) {
         [self checkPasteboardOnInstall];
     }
+    
+    if (config.cppLevel) {
+        if ([config.cppLevel caseInsensitiveCompare:@"FULL"] == NSOrderedSame) {
+            [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
+        } else if ([config.cppLevel caseInsensitiveCompare:@"REDUCED"] == NSOrderedSame) {
+            [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
+        } else if ([config.cppLevel caseInsensitiveCompare:@"MINIMAL"] == NSOrderedSame) {
+            [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelMinimal];
+        } else if ([config.cppLevel caseInsensitiveCompare:@"NONE"] == NSOrderedSame) {
+            [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelNone];
+        } else {
+            NSLog(@"Invalid CPP Level set in branch.json: %@", config.cppLevel);
+        }
+    }
 
     return self;
 }
@@ -455,6 +469,15 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
++ (void)enableLoggingAtLevel:(BranchLogLevel)logLevel withAdvancedCallback:(nullable BranchAdvancedLogCallback)callback {
+    BranchLogger *logger = [BranchLogger shared];
+    logger.loggingEnabled = YES;
+    logger.logLevelThreshold = logLevel;
+    if (callback) {
+        logger.advancedLogCallback = callback;
+    }
+}
+
 - (void)useEUEndpoints {
     [BNCServerAPI sharedInstance].useEUServers = YES;
 }
@@ -632,7 +655,7 @@ static NSString *bnc_branchKey = nil;
 
 #pragma mark - Actual Init Session
 
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController registerDeepLinkHandlerUsingBranchUniversalObject:(callbackWithBranchUniversalObject)callback {    
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController registerDeepLinkHandlerUsingBranchUniversalObject:(callbackWithBranchUniversalObject)callback {
     [self initSceneSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController
                     registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
         if (callback) {
@@ -1107,8 +1130,8 @@ static NSString *bnc_branchKey = nil;
 
     if (self.deepLinkDebugParams) {
         NSMutableDictionary* debugInstallParams =
-			[[BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams]
-				mutableCopy];
+            [[BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams]
+                mutableCopy];
         [debugInstallParams addEntriesFromDictionary:self.deepLinkDebugParams];
         return debugInstallParams;
     }
@@ -2051,7 +2074,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 // only called from initUserSessionAndCallCallback!
 - (void)initializeSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString {
 
-	// BranchDelegate willStartSessionWithURL notification
+    // BranchDelegate willStartSessionWithURL notification
     NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;
     if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)]) {
         [self.delegate branch:self willStartSessionWithURL:URL];
@@ -2116,7 +2139,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
             [self processNextQueueItem];
         });
-	}
+    }
 }
 
 
