@@ -1931,7 +1931,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 - (void)processNextQueueItem {
     dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
-
+    
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Processing next queue item. Network Count: %ld. Queue depth: %ld", (long)self.networkCount, (long)self.requestQueue.queueDepth] error:nil];
+   
     if (self.networkCount == 0 &&
         self.requestQueue.queueDepth > 0) {
 
@@ -1943,10 +1945,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
         if (req) {
 
-            // If tracking is disabled, then do not check for install event.  It won't exist.
+            // If tracking is disabled, then do not check for install event. It won't exist.
             if (!Branch.trackingDisabled) {
                 if (![req isKindOfClass:[BranchInstallRequest class]] && !self.preferenceHelper.randomizedBundleToken) {
                     [[BranchLogger shared] logError:@"User session has not been initialized!" error:nil];
+                    self.networkCount = 0;                    
                     BNCPerformBlockOnMainThreadSync(^{
                         [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
                     });
