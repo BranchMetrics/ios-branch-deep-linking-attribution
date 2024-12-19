@@ -6,67 +6,83 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
-
+    runs-on: macos-latest
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Build Test Apps
+      - name: Build Main Branch-TestBed
         run: |
-          # Build Main Branch-TestBed
-          xcodebuild -project Branch-TestBed.xcodeproj \
-                      -scheme Branch-TestBed \
-                      -sdk iphonesimulator \
-                      -configuration Debug \
-                      -derivedDataPath $PWD/build \
-                      clean build
+          xcodebuild -project Branch-TestBed/Branch-TestBed.xcodeproj \
+                     -scheme Branch-TestBed \
+                     -sdk iphonesimulator \
+                     -configuration Debug \
+                     -derivedDataPath $PWD/build \
+                     clean build
 
-          # Build DelayedInitTest
-          xcodebuild -project Linking-TestBeds/DelayedInitTest/DelayedInitTest.xcodeproj \
-                      -scheme DelayedInitTest \
-                      -sdk iphonesimulator \
-                      -configuration Debug \
-                      -derivedDataPath $PWD/build \
-                      clean build
+      - name: Build DelayedInitTest
+        run: |
+          ls
+          xcodebuild -project Linking-TestBeds/DelayedInitTest/DelayedInitTest.xcodeproj/ \
+                     -scheme DelayedInitTest \
+                     -sdk iphonesimulator \
+                     -configuration Debug \
+                     -derivedDataPath $PWD/build_delayed \
+                     clean build
 
-          # Build ScenesTest
+      - name: Build ScenesTest
+        run: |
           xcodebuild -project Linking-TestBeds/ScenesTest/ScenesTest.xcodeproj \
-                      -scheme ScenesTest \
-                      -sdk iphonesimulator \
-                      -configuration Debug \
-                      -derivedDataPath $PWD/build \
-                      clean build
+                     -scheme ScenesTest \
+                     -sdk iphonesimulator \
+                     -configuration Debug \
+                     -derivedDataPath $PWD/build_scenes \
+                     clean build
 
-          # Build SwiftUITest
+      - name: Build SwiftUITest
+        run: |
           xcodebuild -project Linking-TestBeds/SwiftUITest/SwiftUITest.xcodeproj \
-                      -scheme SwiftUITest \
-                      -sdk iphonesimulator \
-                      -configuration Debug \
-                      -derivedDataPath $PWD/build \
-                      clean build
+                     -scheme SwiftUITest \
+                     -sdk iphonesimulator \
+                     -configuration Debug \
+                     -derivedDataPath $PWD/build_swiftui \
+                     clean build
 
-      - name: Compress Testbed .app Bundles into .zip Files
+      - name: Compress Main Branch-TestBed
         run: |
           cd $PWD/build/Build/Products/Debug-iphonesimulator/
           zip -r Branch-TestBed.app.zip Branch-TestBed.app
 
+      - name: Compress DelayedInitTest
+        run: |
           cd $PWD/build_delayed/Build/Products/Debug-iphonesimulator/
           zip -r DelayedInitTest.app.zip DelayedInitTest.app
 
+      - name: Compress ScenesTest
+        run: |
           cd $PWD/build_scenes/Build/Products/Debug-iphonesimulator/
           zip -r ScenesTest.app.zip ScenesTest.app
 
+      - name: Compress SwiftUITest
+        run: |
           cd $PWD/build_swiftui/Build/Products/Debug-iphonesimulator/
           zip -r SwiftUITest.app.zip SwiftUITest.app
 
-      - name: Upload .zip files to Mobile Boost and Run Tests
+      - name: Upload builds to Mobile Boost and Run Tests
         run: |
-          curl https://app.mobileboost.io/cli.sh | bash $PWD/build/Build/Products/Debug-iphonesimulator/Branch-TestBed.app.zip ios
-          curl https://app.mobileboost.io/cli.sh | bash $PWD/build_delayed/Build/Products/Debug-iphonesimulator/DelayedInitTest.app.zip ios
-          curl https://app.mobileboost.io/cli.sh | bash $PWD/build_scenes/Build/Products/Debug-iphonesimulator/ScenesTest.app.zip ios
-          curl https://app.mobileboost.io/cli.sh | bash $PWD/build_swiftui/Build/Products/Debug-iphonesimulator/SwiftUITest.app.zip ios
+          echo "Uploading Branch-TestBed..."
+          curl -s https://app.mobileboost.io/cli.sh | tr -d '\r' | /bin/bash -s -- "$PWD/build/Build/Products/Debug-iphonesimulator/Branch-TestBed.app.zip" ios
+
+          echo "Uploading DelayedInitTest.app.zip..."
+          curl -s https://app.mobileboost.io/cli.sh | tr -d '\r' | /bin/bash -s -- "$PWD/build_delayed/Build/Products/Debug-iphonesimulator/DelayedInitTest.app.zip" ios
+
+          echo "Uploading ScenesTest.app.zip..."
+          curl -s https://app.mobileboost.io/cli.sh | tr -d '\r' | /bin/bash -s -- "$PWD/build_scenes/Build/Products/Debug-iphonesimulator/ScenesTest.app.zip" ios
+
+          echo "Uploading SwiftUITest.app.zip..."
+          curl -s https://app.mobileboost.io/cli.sh | tr -d '\r' | /bin/bash -s -- "$PWD/build_swiftui/Build/Products/Debug-iphonesimulator/SwiftUITest.app.zip" ios
         env:
           API_ORG_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }}
           API_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }}
-          TEST_TAGS: iOS
+          TEST_TAGS: Test
+          shell: bash
