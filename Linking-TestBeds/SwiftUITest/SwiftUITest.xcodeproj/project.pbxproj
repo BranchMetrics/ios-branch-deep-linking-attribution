@@ -88,7 +88,6 @@
 			children = (
 				C121D5B72C9B6FF500DC22DA /* Info.plist */,
 				C121D5B42C9A541F00DC22DA /* SwiftUITest.entitlements */,
-				C121D5A62C9A53E100DC22DA /* BranchSDK.xcframework */,
 				C121D58F2C950ADC00DC22DA /* SwiftUITestApp.swift */,
 				C121D5912C950ADC00DC22DA /* ContentView.swift */,
 				C121D5B82C9B97DF00DC22DA /* AppDelegate.swift */,
@@ -109,6 +108,7 @@
 		C121D5AB2C9A53F900DC22DA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C121D5A62C9A53E100DC22DA /* BranchSDK.xcframework */,
 				C121D5B22C9A540E00DC22DA /* CoreSpotlight.framework */,
 				C121D5B02C9A540900DC22DA /* WebKit.framework */,
 				C121D5AE2C9A540300DC22DA /* SystemConfiguration.framework */,
