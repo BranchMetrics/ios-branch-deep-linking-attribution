@@ -227,10 +227,12 @@ bool hasSetPartnerParams = false;
         dispatch_async(dispatch_get_main_queue(), ^{
             [appDelegate setLogFile:nil];
             if (!error) {
-                NSLog(@"Branch TestBed: Identity Successfully Set%@", params);
+                NSString* newIdentity = [BNCPreferenceHelper sharedInstance].userIdentity;
+                
+                NSLog(@"Branch TestBed: Attempted to set Identity to: %@\nIdentity Successfully Set to: %@", user_id2, newIdentity);
                 [self performSegueWithIdentifier:@"ShowLogOutput"
-                                          sender:[NSString stringWithFormat:@"Identity set to: %@\n\n%@",
-                                                  user_id2, params.description]];
+                                          sender:[NSString stringWithFormat:@"Attempted to set Identity to %@\n Identity set to: %@",
+                                                  user_id2, newIdentity]];
             } else {
                 NSLog(@"Branch TestBed: Error setting identity: %@", error);
                 [self showAlert:@"Unable to Set Identity" withDescription:error.localizedDescription];
@@ -239,6 +241,32 @@ bool hasSetPartnerParams = false;
     }];
 }
 
+- (IBAction)setDMAParamsPressed:(id)sender {
+    [appDelegate setLogFile:@"SetDMAParams"];
+    [Branch setDMAParamsForEEA:true AdPersonalizationConsent:true AdUserDataUsageConsent:true];
+    
+    BOOL eeaRegion = [BNCPreferenceHelper sharedInstance].eeaRegion;
+    BOOL adPersonalizationConsent = [BNCPreferenceHelper sharedInstance].adPersonalizationConsent;
+    BOOL adUserDataUsageConsent = [BNCPreferenceHelper sharedInstance].adUserDataUsageConsent;
+    
+    // Check if all DMA parameters are set to true
+    if (!eeaRegion || !adPersonalizationConsent || !adUserDataUsageConsent) {
+        [self showAlert:@"Unable to Set DMA Params" withDescription:@"One or more DMA parameters are not set correctly."];
+        return;
+    }
+    
+    NSLog(@"Branch TestBed: Set DMA Params: %@, %@, %@",
+          eeaRegion ? @"YES" : @"NO",
+          adPersonalizationConsent ? @"YES" : @"NO",
+          adUserDataUsageConsent ? @"YES" : @"NO");
+    
+    [self performSegueWithIdentifier:@"ShowLogOutput" sender:[
+        NSString stringWithFormat:@"Set DMA Params: %@, %@, %@",
+        eeaRegion ? @"YES" : @"NO",
+        adPersonalizationConsent ? @"YES" : @"NO",
+        adUserDataUsageConsent ? @"YES" : @"NO"
+    ]];
+}
 
 - (IBAction)logoutWithCallback {
     Branch *branch = [Branch getInstance];
@@ -904,6 +932,10 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     }
     
     [bsl presentActivityViewControllerFromViewController:self anchor:nil];
+}
+
+- (IBAction)forceQuitAppPressed:(id)sender {
+    exit(0);
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
