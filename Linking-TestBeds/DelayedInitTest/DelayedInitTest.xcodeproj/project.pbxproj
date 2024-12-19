@@ -20,7 +20,6 @@
 		C121D5A32C98FC9E00DC22DA /* BranchSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C121D5A22C98FC9E00DC22DA /* BranchSDK.xcframework */; };
 		C121D5A42C98FFFC00DC22DA /* BranchSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C121D5A22C98FC9E00DC22DA /* BranchSDK.xcframework */; };
 		C121D5A52C98FFFC00DC22DA /* BranchSDK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C121D5A22C98FC9E00DC22DA /* BranchSDK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		C121D5BB2C9CAE4A00DC22DA /* UserDefaultsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C121D5BA2C9CAE4A00DC22DA /* UserDefaultsHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -52,7 +51,6 @@
 		C121D57F2C94E3AA00DC22DA /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		C121D5812C94E3B100DC22DA /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = System/Library/Frameworks/CoreSpotlight.framework; sourceTree = SDKROOT; };
 		C121D5A22C98FC9E00DC22DA /* BranchSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = BranchSDK.xcframework; sourceTree = "<group>"; };
-		C121D5BA2C9CAE4A00DC22DA /* UserDefaultsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,7 +94,6 @@
 				C121D5632C94B67C00DC22DA /* AppDelegate.swift */,
 				C121D5652C94B67C00DC22DA /* SceneDelegate.swift */,
 				C121D5672C94B67C00DC22DA /* ViewController.swift */,
-				C121D5BA2C9CAE4A00DC22DA /* UserDefaultsHelper.swift */,
 				C121D5692C94B67C00DC22DA /* Main.storyboard */,
 				C121D56C2C94B67D00DC22DA /* Assets.xcassets */,
 				C121D56E2C94B67D00DC22DA /* LaunchScreen.storyboard */,
@@ -189,7 +186,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C121D5BB2C9CAE4A00DC22DA /* UserDefaultsHelper.swift in Sources */,
 				C121D5682C94B67C00DC22DA /* ViewController.swift in Sources */,
 				C121D5642C94B67C00DC22DA /* AppDelegate.swift in Sources */,
 				C121D5662C94B67C00DC22DA /* SceneDelegate.swift in Sources */,
