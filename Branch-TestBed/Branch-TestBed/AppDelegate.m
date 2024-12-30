@@ -41,13 +41,21 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // test pre init support
     //[self testDispatchToIsolationQueue:branch]
     
-    
-    [Branch enableLoggingAtLevel:BranchLogLevelVerbose withCallback:^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+    [Branch enableLoggingAtLevel:BranchLogLevelVerbose withAdvancedCallback:^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error, NSMutableURLRequest * _Nullable request, BNCServerResponse * _Nullable response) {
         // Handle the log message and error here. For example, printing to the console:
         if (error) {
             NSLog(@"[BranchLog] Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription);
         } else {
             NSLog(@"[BranchLog] Level: %lu, Message: %@", (unsigned long)logLevel, message);
+        }
+        
+        if (request) {
+            NSString *jsonString = [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding];
+            NSLog(@"[BranchLog] Got %@ Request: %@", request.URL , jsonString);
+        }
+        
+        if (response) {
+            NSLog(@"[BranchLog] Got Response for request (%@): %@", response.requestId, response.data);
         }
         
         NSString *logEntry = error ? [NSString stringWithFormat:@"Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription]
