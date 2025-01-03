@@ -704,18 +704,18 @@ static NSString *bnc_branchKey = nil;
     self.shouldAutomaticallyDeepLink = automaticallyDisplayController;
 
     // Check for Branch link in a push payload
-    BranchOpenRequestLinkParams *params = [[BranchOpenRequestLinkParams alloc] init];
+    BOOL appLaunchViaPushNotification = NO;
     #if !TARGET_OS_TV
     if ([options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
         id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
         if ([branchUrlFromPush isKindOfClass:[NSString class]]) {
-            params.referringURL = (NSString *)branchUrlFromPush;
+            appLaunchViaPushNotification = YES;
         }
     }
     #endif
 
-    if(params.referringURL || [[options objectForKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"] isEqualToNumber:@1] || (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) ) {
-        [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlParams:params reset:NO];
+    if( [[options objectForKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"] isEqualToNumber:@1] || (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey] && !appLaunchViaPushNotification)) {
+        [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlParams:nil reset:NO];
     }
 }
 
