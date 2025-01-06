@@ -150,14 +150,25 @@
 
 + (BOOL)compareUriSchemes : (NSString *) serverUriScheme {
     NSArray *urlTypes = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"];
+    return [self compareUriSchemes:serverUriScheme With:urlTypes];
+}
+
++ (BOOL)compareUriSchemes:(NSString *)serverUriScheme With:(NSArray *)urlTypes {
+    NSString * serverUriSchemeWithoutSuffix ;
+    
+    if ([serverUriScheme hasSuffix:@"://"]) {
+        serverUriSchemeWithoutSuffix = [serverUriScheme substringToIndex:[serverUriScheme length] - 3];
+    } else {
+        serverUriSchemeWithoutSuffix = serverUriScheme;
+    }
 
     for (NSDictionary *urlType in urlTypes) {
 
         NSArray *urlSchemes = [urlType objectForKey:@"CFBundleURLSchemes"];
         for (NSString *uriScheme in urlSchemes) {
-            NSString * serverUriSchemeWithoutSuffix = [serverUriScheme substringToIndex:[serverUriScheme length] - 3];
             if ([uriScheme isEqualToString:serverUriSchemeWithoutSuffix]) {
-                return true; }
+                return true;
+            }
         }
     }
     return false;
