@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+v.3.8.0
+- Added new `BranchAdvancedLogCallback` which contains request and response data for Branch network requests
+- Added ability to set Consumer Protection Attribution Level through the `branch.json` file
+
 v.3.7.0
 - Added `setConsumerProtectionAttributionLevel` for controlling attribution data collection
 - Deprecated `setTrackingDisabled` in favor of `setConsumerProtectionAttributionLevel(NONE)`
