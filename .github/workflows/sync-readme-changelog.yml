@@ -40,7 +40,7 @@ jobs:
             --data "$payload"
 
     - name: Announce New Release in Slack
-      uses: slackapi/slack-github-action@v1.24.0
+      uses: slackapi/slack-github-action@v2.0.0
       with:
         channel-id: "C063MQJMKJN" #sdk-releases
         payload: |
