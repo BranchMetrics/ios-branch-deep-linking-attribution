@@ -42,6 +42,6 @@ jobs:
           name: test-results
           path: fastlane/test_output
       - name: Upload codecov  results
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           files: ./fastlane/test_output/cobertura.xml
