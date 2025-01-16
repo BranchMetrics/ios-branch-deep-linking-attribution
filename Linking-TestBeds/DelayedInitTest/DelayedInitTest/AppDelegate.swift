@@ -16,7 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         redirectConsoleLogs()
         
-        Branch.enableLogging(at: .verbose)
+        Branch.enableLogging(at: .verbose, withCallback: nil)
         
         return true
     }

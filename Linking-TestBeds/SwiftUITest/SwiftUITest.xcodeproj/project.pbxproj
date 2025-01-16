@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,13 +11,12 @@
 		C121D5922C950ADC00DC22DA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C121D5912C950ADC00DC22DA /* ContentView.swift */; };
 		C121D5942C950ADF00DC22DA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C121D5932C950ADF00DC22DA /* Assets.xcassets */; };
 		C121D5972C950ADF00DC22DA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C121D5962C950ADF00DC22DA /* Preview Assets.xcassets */; };
-		C121D5A82C9A53E700DC22DA /* BranchSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C121D5A62C9A53E100DC22DA /* BranchSDK.xcframework */; };
-		C121D5A92C9A53E700DC22DA /* BranchSDK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C121D5A62C9A53E100DC22DA /* BranchSDK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C121D5AD2C9A53FA00DC22DA /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C121D5AC2C9A53FA00DC22DA /* CoreServices.framework */; };
 		C121D5AF2C9A540300DC22DA /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C121D5AE2C9A540300DC22DA /* SystemConfiguration.framework */; };
 		C121D5B12C9A540900DC22DA /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C121D5B02C9A540900DC22DA /* WebKit.framework */; };
 		C121D5B32C9A540E00DC22DA /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C121D5B22C9A540E00DC22DA /* CoreSpotlight.framework */; };
 		C121D5B92C9B97DF00DC22DA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C121D5B82C9B97DF00DC22DA /* AppDelegate.swift */; };
+		E70690302D396C60008FEDB5 /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E706902F2D396C60008FEDB5 /* BranchSDK */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,7 +26,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				C121D5A92C9A53E700DC22DA /* BranchSDK.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -40,7 +38,6 @@
 		C121D5912C950ADC00DC22DA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C121D5932C950ADF00DC22DA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C121D5962C950ADF00DC22DA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		C121D5A62C9A53E100DC22DA /* BranchSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = BranchSDK.xcframework; sourceTree = "<group>"; };
 		C121D5AC2C9A53FA00DC22DA /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		C121D5AE2C9A540300DC22DA /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		C121D5B02C9A540900DC22DA /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
@@ -55,11 +52,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E70690302D396C60008FEDB5 /* BranchSDK in Frameworks */,
 				C121D5B32C9A540E00DC22DA /* CoreSpotlight.framework in Frameworks */,
 				C121D5B12C9A540900DC22DA /* WebKit.framework in Frameworks */,
 				C121D5AF2C9A540300DC22DA /* SystemConfiguration.framework in Frameworks */,
 				C121D5AD2C9A53FA00DC22DA /* CoreServices.framework in Frameworks */,
-				C121D5A82C9A53E700DC22DA /* BranchSDK.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,7 +105,6 @@
 		C121D5AB2C9A53F900DC22DA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C121D5A62C9A53E100DC22DA /* BranchSDK.xcframework */,
 				C121D5B22C9A540E00DC22DA /* CoreSpotlight.framework */,
 				C121D5B02C9A540900DC22DA /* WebKit.framework */,
 				C121D5AE2C9A540300DC22DA /* SystemConfiguration.framework */,
@@ -134,6 +130,9 @@
 			dependencies = (
 			);
 			name = SwiftUITest;
+			packageProductDependencies = (
+				E706902F2D396C60008FEDB5 /* BranchSDK */,
+			);
 			productName = SwiftUITest;
 			productReference = C121D58C2C950ADC00DC22DA /* SwiftUITest.app */;
 			productType = "com.apple.product-type.application";
@@ -162,6 +161,9 @@
 				Base,
 			);
 			mainGroup = C121D5832C950ADC00DC22DA;
+			packageReferences = (
+				E706902E2D396C60008FEDB5 /* XCLocalSwiftPackageReference "../.." */,
+			);
 			productRefGroup = C121D58D2C950ADC00DC22DA /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -334,6 +336,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -365,6 +368,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -400,6 +404,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		E706902E2D396C60008FEDB5 /* XCLocalSwiftPackageReference "../.." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../..;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E706902F2D396C60008FEDB5 /* BranchSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BranchSDK;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C121D5842C950ADC00DC22DA /* Project object */;
 }

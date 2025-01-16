@@ -13,7 +13,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         redirectConsoleLogs()
         
-        Branch.enableLogging(at: .verbose)
+        Branch.enableLogging(at: .verbose, withCallback: nil)
         
         Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
             guard let data = params as? [String: AnyObject] else { return }

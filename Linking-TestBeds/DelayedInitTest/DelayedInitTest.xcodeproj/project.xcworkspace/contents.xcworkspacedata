@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:/Users/nipun.singh/Documents/GitHub/ios-branch-deep-linking-attribution/Linking-TestsBeds/DelayedInitTest/DelayedInitTest.xcodeproj">
+      location = "self:">
    </FileRef>
 </Workspace>

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,9 +17,7 @@
 		C121D57E2C94E3A500DC22DA /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C121D57D2C94E3A500DC22DA /* SystemConfiguration.framework */; };
 		C121D5802C94E3AA00DC22DA /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C121D57F2C94E3AA00DC22DA /* WebKit.framework */; };
 		C121D5822C94E3B100DC22DA /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C121D5812C94E3B100DC22DA /* CoreSpotlight.framework */; };
-		C121D5A32C98FC9E00DC22DA /* BranchSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C121D5A22C98FC9E00DC22DA /* BranchSDK.xcframework */; };
-		C121D5A42C98FFFC00DC22DA /* BranchSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C121D5A22C98FC9E00DC22DA /* BranchSDK.xcframework */; };
-		C121D5A52C98FFFC00DC22DA /* BranchSDK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C121D5A22C98FC9E00DC22DA /* BranchSDK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E709037D2D3903F000E61AEF /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E709037C2D3903F000E61AEF /* BranchSDK */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,7 +27,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				C121D5A52C98FFFC00DC22DA /* BranchSDK.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -50,7 +47,6 @@
 		C121D57D2C94E3A500DC22DA /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		C121D57F2C94E3AA00DC22DA /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		C121D5812C94E3B100DC22DA /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = System/Library/Frameworks/CoreSpotlight.framework; sourceTree = SDKROOT; };
-		C121D5A22C98FC9E00DC22DA /* BranchSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = BranchSDK.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,11 +54,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C121D5A32C98FC9E00DC22DA /* BranchSDK.xcframework in Frameworks */,
+				E709037D2D3903F000E61AEF /* BranchSDK in Frameworks */,
 				C121D5822C94E3B100DC22DA /* CoreSpotlight.framework in Frameworks */,
 				C121D5802C94E3AA00DC22DA /* WebKit.framework in Frameworks */,
 				C121D57E2C94E3A500DC22DA /* SystemConfiguration.framework in Frameworks */,
-				C121D5A42C98FFFC00DC22DA /* BranchSDK.xcframework in Frameworks */,
 				C121D57C2C94E39E00DC22DA /* CoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -105,7 +100,6 @@
 		C121D57A2C94E39E00DC22DA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C121D5A22C98FC9E00DC22DA /* BranchSDK.xcframework */,
 				C121D5812C94E3B100DC22DA /* CoreSpotlight.framework */,
 				C121D57F2C94E3AA00DC22DA /* WebKit.framework */,
 				C121D57D2C94E3A500DC22DA /* SystemConfiguration.framework */,
@@ -131,6 +125,9 @@
 			dependencies = (
 			);
 			name = DelayedInitTest;
+			packageProductDependencies = (
+				E709037C2D3903F000E61AEF /* BranchSDK */,
+			);
 			productName = ScenesTest;
 			productReference = C121D5602C94B67C00DC22DA /* DelayedInitTest.app */;
 			productType = "com.apple.product-type.application";
@@ -159,6 +156,9 @@
 				Base,
 			);
 			mainGroup = C121D5572C94B67C00DC22DA;
+			packageReferences = (
+				E709037B2D3903F000E61AEF /* XCLocalSwiftPackageReference "../.." */,
+			);
 			productRefGroup = C121D5612C94B67C00DC22DA /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -351,7 +351,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -383,7 +383,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -419,6 +419,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		E709037B2D3903F000E61AEF /* XCLocalSwiftPackageReference "../.." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../..;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E709037C2D3903F000E61AEF /* BranchSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BranchSDK;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C121D5582C94B67C00DC22DA /* Project object */;
 }
