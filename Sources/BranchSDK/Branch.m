@@ -2162,6 +2162,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         id<NSObject> sharedApplication = [applicationClass performSelector:@selector(sharedApplication)];
         if ([sharedApplication respondsToSelector:@selector(openURL:)])
             [sharedApplication performSelector:@selector(openURL:) withObject:comp.URL];
+    } else if ([latestReferringParams[@"validate_integration"] isEqualToString:@"true"]) {
+        [self validateSDKIntegration];
     }
 
     if (callCallback) {

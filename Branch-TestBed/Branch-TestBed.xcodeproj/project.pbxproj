@@ -233,6 +233,8 @@
 		C1614D56285BC8A00098946B /* LinkPresentation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1614D55285BC8A00098946B /* LinkPresentation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		C17DAF7B2AC20C2000B16B1A /* BranchClassTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C17DAF7A2AC20C2000B16B1A /* BranchClassTests.m */; };
 		C1CC888229BAAFC000BDD2B5 /* BNCReferringURLUtilityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C1CC888129BAAFC000BDD2B5 /* BNCReferringURLUtilityTests.m */; };
+		E51F642A2CF46899000858D2 /* BranchFileLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = E51F64292CF46899000858D2 /* BranchFileLogger.h */; };
+		E56394312CC7AC9F00E18E65 /* BranchFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E563942F2CC7AC9500E18E65 /* BranchFileLogger.m */; };
 		E72489D228E40D0200DCD8FD /* PasteControlViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E72489D128E40D0200DCD8FD /* PasteControlViewController.m */; };
 		E7A728BD2AA9A112009343B7 /* BNCAPIServerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = E7A728BC2AA9A112009343B7 /* BNCAPIServerTest.m */; };
 		F1CF14111F4CC79F00BB2694 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; settings = {ATTRIBUTES = (Required, ); }; };
@@ -536,6 +538,8 @@
 		C1614D55285BC8A00098946B /* LinkPresentation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LinkPresentation.framework; path = System/Library/Frameworks/LinkPresentation.framework; sourceTree = SDKROOT; };
 		C17DAF7A2AC20C2000B16B1A /* BranchClassTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchClassTests.m; sourceTree = "<group>"; };
 		C1CC888129BAAFC000BDD2B5 /* BNCReferringURLUtilityTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCReferringURLUtilityTests.m; sourceTree = "<group>"; };
+		E51F64292CF46899000858D2 /* BranchFileLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchFileLogger.h; sourceTree = "<group>"; };
+		E563942F2CC7AC9500E18E65 /* BranchFileLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchFileLogger.m; sourceTree = "<group>"; };
 		E72489D028E40D0200DCD8FD /* PasteControlViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasteControlViewController.h; sourceTree = "<group>"; };
 		E72489D128E40D0200DCD8FD /* PasteControlViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PasteControlViewController.m; sourceTree = "<group>"; };
 		E7A728BC2AA9A112009343B7 /* BNCAPIServerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCAPIServerTest.m; sourceTree = "<group>"; };
@@ -672,6 +676,7 @@
 		5F644B252B7AA810000DCD78 /* BranchSDK */ = {
 			isa = PBXGroup;
 			children = (
+				E563942F2CC7AC9500E18E65 /* BranchFileLogger.m */,
 				5F644BB02B7AA811000DCD78 /* BNCAppGroupsData.m */,
 				5F644BA82B7AA811000DCD78 /* BNCAppleReceipt.m */,
 				5F644B2B2B7AA810000DCD78 /* BNCApplication.m */,
@@ -830,6 +835,7 @@
 				5F644B862B7AA811000DCD78 /* NSError+Branch.h */,
 				5F644B822B7AA811000DCD78 /* NSMutableDictionary+Branch.h */,
 				5F644B8B2B7AA811000DCD78 /* NSString+Branch.h */,
+				E51F64292CF46899000858D2 /* BranchFileLogger.h */,
 				5F644B752B7AA810000DCD78 /* UIViewController+Branch.h */,
 			);
 			path = Private;
@@ -954,6 +960,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E51F642A2CF46899000858D2 /* BranchFileLogger.h in Headers */,
 				5F644BE52B7AA811000DCD78 /* BNCLinkData.h in Headers */,
 				5F644BE62B7AA811000DCD78 /* BranchDelegate.h in Headers */,
 				5F644BE72B7AA811000DCD78 /* BranchQRCode.h in Headers */,
@@ -1313,6 +1320,7 @@
 				5F644BD72B7AA811000DCD78 /* BNCNetworkService.m in Sources */,
 				5F644C402B7AA811000DCD78 /* UIViewController+Branch.m in Sources */,
 				5F644BC12B7AA811000DCD78 /* BNCServerRequestQueue.m in Sources */,
+				E56394312CC7AC9F00E18E65 /* BranchFileLogger.m in Sources */,
 				5F644C452B7AA811000DCD78 /* BranchOpenRequest.m in Sources */,
 				5F644C312B7AA811000DCD78 /* BNCLinkData.m in Sources */,
 				5F644BD22B7AA811000DCD78 /* BranchContentDiscoveryManifest.m in Sources */,

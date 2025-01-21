@@ -13,6 +13,11 @@
 #import "BNCEncodingUtils.h"
 #import "BNCServerAPI.h"
 #import "UIViewController+Branch.h"
+#import "BNCConfig.h"
+#import "Branch.h"
+#if !TARGET_OS_TV
+#import "BranchFileLogger.h"
+#endif
 
 void BNCForceBranchValidatorCategoryToLoad(void) {
     // Empty body but forces loader to load the category.
@@ -28,6 +33,62 @@ static inline dispatch_time_t BNCDispatchTimeFromSeconds(NSTimeInterval seconds)
 
 static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval seconds, dispatch_block_t block) {
     dispatch_after(BNCDispatchTimeFromSeconds(seconds), dispatch_get_main_queue(), block);
+}
+
+typedef NS_ENUM(NSUInteger, BranchValidationError) {
+    BranchLinkDomainError, // for link domain or alternate domain mismatch
+    BranchURISchemeError, // for uri scheme mismatch
+    BranchAppIDError, // for bundle ID or app prefix mismatch
+    BranchATTError // for idfa missing error
+};
+
+NSString *BranchValidationErrorDescription(BranchValidationError error) {
+    switch (error) {
+        case BranchLinkDomainError:
+            return @"Check the link domain and alternate domain values in your info.plist file under the key 'branch_universal_link_domains'. The values should match with the ones on the Branch dashboard.\n\n";
+        case BranchURISchemeError:
+            return @"The URI scheme in your info.plist file should match with the URI scheme value for iOS on the Branch dashboard.\n\n";
+        case BranchAppIDError:
+            return @"Check your bundle ID and Apple App Prefix from the Apple Developer website and ensure it matches with the values you have added on the Branch dashboard.\n\n";
+        case BranchATTError:
+            return @"The ATT prompt ensures that the Branch SDK can access the IDFA when the user permits it. Add the ATT prompt in your app for IDFA access.\n\n";
+    }
+    return @"Unknown";
+}
+
+NSString *BranchValidationErrorReferenceDescription(BranchValidationError error) {
+    switch (error) {
+        case BranchLinkDomainError:
+            return @"Link Domain Reference";
+        case BranchURISchemeError:
+            return @"URI Scheme Reference";
+        case BranchAppIDError:
+            return @"App Prefix/Bundle ID Reference";
+        case BranchATTError:
+            return @"ATT Prompt Reference";
+    }
+    return @"Unknown";
+}
+
+NSURL *BranchValidationErrorReference(BranchValidationError error) {
+    NSString *urlString;
+
+    switch (error) {
+        case BranchLinkDomainError:
+            urlString = @"https://help.branch.io/developers-hub/docs/ios-basic-integration#4-configure-infoplist";
+            break;
+        case BranchURISchemeError:
+            urlString = @"https://help.branch.io/developers-hub/docs/ios-basic-integration#4-configure-infoplist";
+            break;
+        case BranchAppIDError:
+            urlString = @"https://help.branch.io/developers-hub/docs/ios-basic-integration#1-configure-branch-dashboard";
+            break;
+        case BranchATTError:
+            urlString = @"https://help.branch.io/developers-hub/docs/ios-advanced-features#include-apples-attrackingmanager";
+            break;
+    }
+
+    return [NSURL URLWithString:urlString];
 }
 
 #pragma mark - Branch (Validator)
@@ -62,20 +123,23 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
     NSString*serverUriScheme    = BNCStringFromWireFormat(response.data[@"ios_uri_scheme"]) ?: @"";
     NSString*serverBundleID     = BNCStringFromWireFormat(response.data[@"ios_bundle_id"]) ?: @"";
     NSString*serverTeamID       = BNCStringFromWireFormat(response.data[@"ios_team_id"]) ?: @"";
+    NSString*defaultDomain = BNCStringFromWireFormat(response.data[@"default_short_url_domain"]) ?: @"";
+    NSString*alternateDomain = BNCStringFromWireFormat(response.data[@"alternate_short_url_domain"]) ?: @"";
+    NSString*attOptInStatus = [BNCSystemObserver attOptedInStatus];
 
     // Verify:
     NSLog(@"** Initiating Branch integration verification **");
     NSLog(@"-------------------------------------------------");
 
     NSLog(@"------ Checking for URI scheme correctness ------");
-    NSString *clientUriScheme = [NSString stringWithFormat:@"%@%@", [BNCSystemObserver defaultURIScheme], @"://"];
-    NSString *uriScheme = [BNCSystemObserver compareUriSchemes:serverUriScheme] ? passString : errorString;
+    bool doUriSchemesMatch = [BNCSystemObserver compareUriSchemes:serverUriScheme];
+    NSString *uriScheme = doUriSchemesMatch ? passString : errorString;
     NSLog(@"-------------------------------------------------");
 
     NSLog(@"-- Checking for bundle identifier correctness ---");
     NSString *clientBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier] ?: @"";
-    bool doUriSchemesMatch = [serverBundleID isEqualToString:clientBundleIdentifier];
-    NSString *bundleIdentifier = doUriSchemesMatch ? passString : errorString;
+    bool doBundleIDsMatch = [serverBundleID isEqualToString:clientBundleIdentifier];
+    NSString *bundleIdentifier = doBundleIDsMatch ? passString : errorString;
     NSString *bundleIdentifierMessage =
         [NSString stringWithFormat:@"%@: Dashboard Link Settings page '%@' compared to client side '%@'",
             bundleIdentifier, serverBundleID, clientBundleIdentifier];
@@ -107,9 +171,37 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
     BOOL testsFailed = NO;
     NSString *kPassMark = @"✅\t";
     NSString *kFailMark = @"❌\t";
+    NSString *kWarningMark = @"⚠️\t";
 
     // Build an alert string:
-    NSString *alertString = @"\n";
+    NSString *alertString = @"";
+    NSMutableArray<NSNumber *> *errors = [[NSMutableArray alloc] init];
+    alertString = [alertString stringByAppendingFormat:@"\nBranch SDK Version: %@\n", BNC_SDK_VERSION];
+    if ([Branch useTestBranchKey]) {
+        alertString = [alertString stringByAppendingFormat:@"The SDK is using the test key\n\n"];
+    } else {
+        alertString = [alertString stringByAppendingFormat:@"The SDK is using the live key\n\n"];
+    }
+    if ([BNCSystemObserver compareLinkDomain:defaultDomain]) {
+        alertString = [alertString stringByAppendingFormat:@"%@Default Link Domain matches:\n\t'%@'\n", kPassMark, defaultDomain];
+    } else {
+        testsFailed = YES;
+        alertString = [alertString stringByAppendingFormat:@"%@Default Link Domain mismatch:\n\t'%@'\n", kFailMark, defaultDomain];
+        if (![errors containsObject:@(BranchLinkDomainError)]) {
+            [errors addObject:@(BranchLinkDomainError)];
+        }
+    }
+
+    if ([BNCSystemObserver compareLinkDomain:alternateDomain]) {
+        alertString = [alertString stringByAppendingFormat:@"%@Alternate Link Domain matches:\n\t'%@'\n", kPassMark, alternateDomain];
+    } else {
+        testsFailed = YES;
+        alertString = [alertString stringByAppendingFormat:@"%@Alternate Link Domain mismatch:\n\t'%@'\n", kFailMark, alternateDomain];
+        if (![errors containsObject:@(BranchLinkDomainError)]) {
+            [errors addObject:@(BranchLinkDomainError)];
+        }
+    }
+
     if (serverUriScheme.length && doUriSchemesMatch) {
         alertString = [alertString stringByAppendingFormat:@"%@URI Scheme matches:\n\t'%@'\n",
             kPassMark,  serverUriScheme];
@@ -117,6 +209,9 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
         testsFailed = YES;
         alertString = [alertString stringByAppendingFormat:@"%@URI Scheme mismatch:\n\t'%@'\n",
             kFailMark,  serverUriScheme];
+        if (![errors containsObject:@(BranchURISchemeError)]) {
+            [errors addObject:@(BranchURISchemeError)];
+        }
     }
 
     if ([serverBundleID isEqualToString:clientBundleIdentifier]) {
@@ -126,6 +221,9 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
         testsFailed = YES;
         alertString = [alertString stringByAppendingFormat:@"%@App Bundle ID mismatch:\n\t'%@'\n",
             kFailMark,  serverBundleID];
+        if (![errors containsObject:@(BranchAppIDError)]) {
+            [errors addObject:@(BranchAppIDError)];
+        }
     }
 
     if ([serverTeamID isEqualToString:clientTeamId]) {
@@ -135,10 +233,22 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
         testsFailed = YES;
         alertString = [alertString stringByAppendingFormat:@"%@Team ID mismatch:\n\t'%@'\n",
             kFailMark,  serverTeamID];
+        if (![errors containsObject:@(BranchAppIDError)]) {
+            [errors addObject:@(BranchAppIDError)];
+        }
     }
-
+    
+    if ([attOptInStatus isEqualToString:@"authorized"]) {
+        alertString = [alertString stringByAppendingFormat:@"%@IDFA is accessible\n", kPassMark];
+    } else {
+        alertString = [alertString stringByAppendingFormat:@"%@IDFA is not accessible\n", kWarningMark];
+        if (![errors containsObject:@(BranchATTError)]) {
+            [errors addObject:@(BranchATTError)];
+        }
+    }
+    
     if (testsFailed) {
-        alertString = [alertString stringByAppendingString:@"\nFailed!\nCheck the log for details."];
+        alertString = [alertString stringByAppendingString:@"\nFailed!"];
     } else {
         alertString = [alertString stringByAppendingString:@"\nPassed!"];
     }
@@ -154,19 +264,31 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
 
     BNCPerformBlockOnMainThreadAsync(^{
         UIAlertController *alertController =
-            [UIAlertController alertControllerWithTitle:@"Branch Integration"
+            [UIAlertController alertControllerWithTitle:@"Branch Integration Validator"
                 message:alertString
                 preferredStyle:UIAlertControllerStyleAlert];
         if (testsFailed) {
             [alertController
-                addAction:[UIAlertAction actionWithTitle:@"Bummer"
+                addAction:[UIAlertAction actionWithTitle:@"What should I change?"
+                style:UIAlertActionStyleDefault
+                handler:^ (UIAlertAction *action) { [self showSolutionsForErrors:(errors)]; }]];
+            [alertController
+                addAction:[UIAlertAction actionWithTitle:@"Export Logs"
+                style:UIAlertActionStyleDefault
+                handler:^ (UIAlertAction *action) { [self showExportedLogs]; }]];
+            [alertController
+                addAction:[UIAlertAction actionWithTitle:@"Done"
                 style:UIAlertActionStyleDefault
                 handler:nil]];
         } else {
             [alertController
-                addAction:[UIAlertAction actionWithTitle:@"Next Step"
+                addAction:[UIAlertAction actionWithTitle:@"Done"
                 style:UIAlertActionStyleDefault
-                handler:^ (UIAlertAction *action) { [self showNextStep]; }]];
+                handler:nil]];
+            [alertController
+                addAction:[UIAlertAction actionWithTitle:@"Export Logs"
+                style:UIAlertActionStyleDefault
+                handler:^ (UIAlertAction *action) { [self showExportedLogs]; }]];
         }
         [alertController setValue:styledAlertString forKey:@"attributedMessage"];
         [[UIViewController bnc_currentViewController]
@@ -176,6 +298,57 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
     });
 }
 
+- (void) showSolutionsForErrors:(NSArray<NSNumber *>*) errors {
+    NSString *message = @"";
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"What should I change?" message: @"" preferredStyle: UIAlertControllerStyleAlert];
+    for (NSNumber *errorNumber in errors) {
+        BranchValidationError error = (BranchValidationError)[errorNumber integerValue];
+        
+        message = [message stringByAppendingString:BranchValidationErrorDescription(error)];
+        
+        [alertController
+            addAction:[UIAlertAction actionWithTitle:BranchValidationErrorReferenceDescription(error)
+            style:UIAlertActionStyleDefault
+                                             handler:^ (UIAlertAction *action) {
+            Class applicationClass = NSClassFromString(@"UIApplication");
+            id<NSObject> sharedApplication = [applicationClass performSelector:@selector(sharedApplication)];
+            if ([sharedApplication respondsToSelector:@selector(openURL:)])
+                [sharedApplication performSelector:@selector(openURL:) withObject:BranchValidationErrorReference(error)];
+        }]];
+    }
+    
+    alertController.message = message;
+    [alertController
+        addAction:[UIAlertAction actionWithTitle:@"Done"
+        style:UIAlertActionStyleDefault
+        handler:nil]];
+    
+    [[UIViewController bnc_currentViewController]
+        presentViewController:alertController
+        animated:YES
+        completion:nil];
+}
+
+- (void) showExportedLogs {
+    #if !TARGET_OS_TV
+    if ([[BranchFileLogger sharedInstance] isLogFilePopulated]) {
+        UIViewController *currentVC = [UIViewController bnc_currentViewController];
+        [[BranchFileLogger sharedInstance] shareLogFileFromViewController:currentVC];
+    } else {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"No log file available" message: @"Ensure that logging is enabled and you are running the app in debug mode to export logs." preferredStyle: UIAlertControllerStyleAlert];
+        [alertController
+            addAction:[UIAlertAction actionWithTitle:@"Done"
+            style:UIAlertActionStyleDefault
+            handler:nil]];
+        [[UIViewController bnc_currentViewController]
+            presentViewController:alertController
+            animated:YES
+            completion:nil];
+    }
+    #endif
+}
+
+//MARK: Not in use until development of Integration Validator Phase 2 Changes
 - (void) showNextStep {
     NSString *message =
         @"\nGreat! Remove the 'validateSDKIntegration' line in your app.\n\n"
