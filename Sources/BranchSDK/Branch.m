@@ -1935,6 +1935,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 } else if (![req isKindOfClass:[BranchOpenRequest class]] &&
                     (!self.preferenceHelper.randomizedDeviceToken || !self.preferenceHelper.sessionID)) {
                     [[BranchLogger shared] logError:@"Missing session items!" error:nil];
+                    self.networkCount = 0;
                     BNCPerformBlockOnMainThreadSync(^{
                         [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
                     });
