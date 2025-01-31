@@ -568,7 +568,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  */
 + (void)enableLogging;
 + (void)enableLoggingAtLevel:(BranchLogLevel)logLevel withCallback:(nullable BranchLogCallback)callback;
-+ (void)enableLoggingAtLevel:(BranchLogLevel)logLevel withAdvancedCallback:(nullable BranchAdvancedLogCallback)callback;
++ (void)enableLoggingAtLevel:(BranchLogLevel)logLevel withAdvancedCallback:(BranchAdvancedLogCallback)callback;
 
 // The new logging system is independent of the Branch singleton and can be called earlier.
 - (void)enableLogging __attribute__((deprecated(("This API is deprecated. Please use the static version."))));
