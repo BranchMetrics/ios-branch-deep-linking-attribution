@@ -1,5 +1,16 @@
 Branch iOS SDK Change Log
 
+v.3.9.0
+- Integration Validator 2.0 - Improved integration validator to provide references to how to fix when a check fails, export logs from the app and invoke it using query parameter
+- Fixed Integration Validator crash when URIs and bundle ids from the server are empty.
+- Removed extra macros for tvOS check in umbrella header which were causing compiliation error in hybrid apps.
+- Fixed Init Race for Push notifications
+- Fixed issue which was not sending linking request when tracking is disabled and app is launched via spotlight results.
+- Added test apps for Mobileboost.
+- Added GHA for Mobileboost.
+- Fix for early branch init on install.
+- Fixed compilation error for enableLoggingAtLevel API when used without callback.
+
 v.3.8.0
 - Added new `BranchAdvancedLogCallback` which contains request and response data for Branch network requests
 - Added ability to set Consumer Protection Attribution Level through the `branch.json` file
