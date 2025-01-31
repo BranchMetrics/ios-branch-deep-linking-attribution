@@ -12,6 +12,7 @@
 #import "ViewController.h"
 #import "Branch.h"
 #import "BNCEncodingUtils.h"
+#import "BranchEvent.h"
 
 AppDelegate* appDelegate = nil;
 void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSString*_Nullable message);
@@ -33,7 +34,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
     Branch *branch = [Branch getInstance];
-    
 
     // Change the Branch base API URL
     //[Branch setAPIUrl:@"https://api3.branch.io"];
@@ -89,6 +89,12 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         [self handleDeepLinkObject:universalObject linkProperties:linkProperties error:error];
     }];
 
+    
+    BranchEvent *earlyEvent = [BranchEvent standardEvent:BNCAddToCartEvent];
+    NSLog(@"Logging Early Event: %@", earlyEvent);
+    [earlyEvent logEvent];
+
+    
     // Push notification support (Optional)
     // [self registerForPushNotifications:application];
 
