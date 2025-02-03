@@ -76,6 +76,9 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) BOOL adPersonalizationConsent;
 @property (assign, nonatomic) BOOL adUserDataUsageConsent;
 
+@property (nonatomic, assign) NSString *attributionLevel;
+
+
 - (void) clearTrackingInformation;
 
 + (BNCPreferenceHelper *)sharedInstance;
@@ -100,5 +103,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 - (void) synchronize;  //  Flushes preference queue to persistence.
 + (void) clearAll;
 - (BOOL) eeaRegionInitialized;
+- (BOOL) attributionLevelInitialized;
 
 @end

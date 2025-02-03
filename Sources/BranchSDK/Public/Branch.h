@@ -568,6 +568,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  */
 + (void)enableLogging;
 + (void)enableLoggingAtLevel:(BranchLogLevel)logLevel withCallback:(nullable BranchLogCallback)callback;
++ (void)enableLoggingAtLevel:(BranchLogLevel)logLevel withAdvancedCallback:(nullable BranchAdvancedLogCallback)callback;
 
 // The new logging system is independent of the Branch singleton and can be called earlier.
 - (void)enableLogging __attribute__((deprecated(("This API is deprecated. Please use the static version."))));
@@ -785,7 +786,7 @@ Sets a custom base URL for all calls to the Branch API.
  @param disabled    If set to `true` then tracking will be disabled.
  @warning This will prevent most of the Branch SDK functionality.
 */
-+ (void) setTrackingDisabled:(BOOL)disabled;
++ (void)setTrackingDisabled:(BOOL)disabled __attribute__((deprecated("This method has been deprecated. Use `setConsumerProtectionAttributionLevel:` with `BranchAttributionLevelNone` instead.")));
 
 ///Returns the current tracking state.
 + (BOOL) trackingDisabled;
@@ -811,6 +812,64 @@ Sets a custom base URL for all calls to the Branch API.
  @param adUserDataUsageConsent - (BOOL) If User has granted/denied consent for 3P transmission of user level data for ads
  */
 + (void) setDMAParamsForEEA:(BOOL) eeaRegion AdPersonalizationConsent:(BOOL) adPersonalizationConsent AdUserDataUsageConsent:(BOOL) adUserDataUsageConsent;
+
+
+/**
+ * Enumeration representing different levels of consumer protection attribution levels
+ */
+typedef NSString * BranchAttributionLevel NS_STRING_ENUM;
+
+/**
+ * Full:
+ * - Advertising Ids
+ * - Device Ids
+ * - Local IP
+ * - Persisted Non-Aggregate Ids
+ * - Persisted Aggregate Ids
+ * - Ads Postbacks / Webhooks
+ * - Data Integrations Webhooks
+ * - SAN Callouts
+ * - Privacy Frameworks
+ * - Deep Linking
+ */
+extern BranchAttributionLevel const BranchAttributionLevelFull;
+
+/**
+ * Reduced:
+ * - Device Ids
+ * - Local IP
+ * - Data Integrations Webhooks
+ * - Privacy Frameworks
+ * - Deep Linking
+ */
+extern BranchAttributionLevel const BranchAttributionLevelReduced;
+
+/**
+ * Minimal:
+ * - Device Ids
+ * - Local IP
+ * - Data Integrations Webhooks
+ * - Deep Linking
+ */
+extern BranchAttributionLevel const BranchAttributionLevelMinimal;
+
+/**
+ * None:
+ * - Only Deterministic Deep Linking
+ * - Disables all other Branch requests
+ */
+extern BranchAttributionLevel const BranchAttributionLevelNone;
+
+
+/**
+ Sets the consumer protection attribution level.
+
+ @param level The desired consumer protection attribution level, represented by the BranchAttributionLevel enum (Full, Reduced, Minimal, None).
+ @discussion This method allows you to control the amount and type of data collected and transmitted by Branch.
+             Adjusting the consumer protection attribution level can help you comply with privacy regulations and meet your data collection needs.
+ */
+- (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level;
+
 
 #pragma mark - Session Item methods
 

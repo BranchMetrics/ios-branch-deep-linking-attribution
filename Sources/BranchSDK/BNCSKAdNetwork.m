@@ -11,6 +11,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
 #import "BranchLogger.h"
+#import "Branch.h"
 
 @interface BNCSKAdNetwork()
 
@@ -72,6 +73,11 @@
 
 - (void)registerAppForAdNetworkAttribution {
     if (@available(iOS 14.0, macCatalyst 14.0, *)) {
+        if (![self isSKANAllowedForAttributionLevel]) {
+            [[BranchLogger shared] logDebug:@"SKAN registerAppForAdNetworkAttribution skipped due to BranchAttributionLevel" error:nil];
+            return;
+        }
+        
         if ([self shouldAttemptSKAdNetworkCallout] && [self.skAdNetworkClass respondsToSelector:self.skAdNetworkRegisterAppForAdNetworkAttribution]) {
             [[BranchLogger shared] logDebug:@"Calling registerAppForAdNetworkAttribution" error:nil];
             // Equivalent call [SKAdNetwork registerAppForAdNetworkAttribution];
@@ -82,6 +88,11 @@
 
 - (void)updateConversionValue:(NSInteger)conversionValue {
     if (@available(iOS 14.0, macCatalyst 14.0, *)) {
+        if (![self isSKANAllowedForAttributionLevel]) {
+            [[BranchLogger shared] logDebug:@"SKAN updateConversionValue skipped due to BranchAttributionLevel" error:nil];
+            return;
+        }
+        
         if ([self shouldAttemptSKAdNetworkCallout] && [self.skAdNetworkClass respondsToSelector:self.skAdNetworkUpdateConversionValue]) {
             [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Calling updateConversionValue:%ld", (long)conversionValue] error:nil];
 
@@ -93,6 +104,11 @@
 
 - (void)updatePostbackConversionValue:(NSInteger)conversionValue completionHandler:(void (^)(NSError *error))completion {
     if (@available(iOS 15.4, macCatalyst 15.4, *)) {
+        if (![self isSKANAllowedForAttributionLevel]) {
+            [[BranchLogger shared] logDebug:@"SKAN updatePostbackConversionValue skipped due to BranchAttributionLevel" error:nil];
+            return;
+        }
+        
         if ([self shouldAttemptSKAdNetworkCallout] && [self.skAdNetworkClass respondsToSelector:self.skAdNetworkUpdatePostbackConversionValue]) {
             [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Calling updatePostbackConversionValue:%ld completionHandler:completion", (long)conversionValue] error:nil];
 
@@ -108,6 +124,11 @@
                            lockWindow:(BOOL)lockWindow
                     completionHandler:(void (^)(NSError *error))completion {
     if (@available(iOS 16.1, macCatalyst 16.1, *)) {
+        if (![self isSKANAllowedForAttributionLevel]) {
+            [[BranchLogger shared] logDebug:@"SKAN updatePostbackConversionValue skipped due to BranchAttributionLevel" error:nil];
+            return;
+        }
+        
         if ([self shouldAttemptSKAdNetworkCallout] && [self.skAdNetworkClass respondsToSelector:self.skAdNetworkUpdatePostbackConversionValueCoarseValueLockWindow]) {
             [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Calling updatePostbackConversionValue:%ld coarseValue:%@ lockWindow:%d completionHandler:completion", (long)fineValue, coarseValue, lockWindow] error:nil];
             // Equivalent call [SKAdNetwork updatePostbackConversionValue:coarseValue:lockWindow:completionHandler:];
@@ -195,6 +216,12 @@
     }
     
     return shouldCallUpdatePostback;
+}
+
+- (BOOL)isSKANAllowedForAttributionLevel {
+    BranchAttributionLevel level = [[BNCPreferenceHelper sharedInstance] attributionLevel];
+    return !([level isEqualToString:BranchAttributionLevelMinimal] ||
+             [level isEqualToString:BranchAttributionLevelNone]);
 }
 
 @end

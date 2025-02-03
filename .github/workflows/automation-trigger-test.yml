@@ -77,7 +77,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Setup Node.js environment
-        uses: actions/setup-node@v4.0.3
+        uses: actions/setup-node@v4.2.0
       - name: Build with Maven
         id: build_maven
         run: |
