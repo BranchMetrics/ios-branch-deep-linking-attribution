@@ -177,7 +177,7 @@
 
 - (BOOL)isLinkingRelatedRequest:(NSString *)endpoint postParams:(NSDictionary *)post {
    
-    BOOL hasIdentifier = (post[BRANCH_REQUEST_KEY_LINK_IDENTIFIER] != nil ) || (post[BRANCH_REQUEST_KEY_LINK_IDENTIFIER] != nil) || (post[BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL] != nil);
+    BOOL hasIdentifier = (post[BRANCH_REQUEST_KEY_LINK_IDENTIFIER] != nil ) || (post[BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER] != nil) || (post[BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL] != nil);
     
     // Allow install to resolve a link.
     if ([endpoint containsString:@"/v1/install"]) {

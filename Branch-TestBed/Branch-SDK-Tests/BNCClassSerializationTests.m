@@ -71,7 +71,8 @@
 
 - (void)testBranchOpenRequestArchive {
     BranchOpenRequest *request = [[BranchOpenRequest alloc] initWithCallback:nil];
-    request.urlString = @"https://branch.io";
+    request.linkParams = [[BranchOpenRequestLinkParams alloc] init];
+    request.linkParams.referringURL = @"https://branch.io";
     
     // archive the event
     NSError *error = nil;
@@ -88,14 +89,15 @@
     XCTAssertTrue([object isKindOfClass:BranchOpenRequest.class]);
     BranchOpenRequest *unarchivedRequest = (BranchOpenRequest *)object;
     
-    XCTAssertTrue([request.urlString isEqualToString:unarchivedRequest.urlString]);
+    XCTAssertTrue([request.linkParams.referringURL isEqualToString:unarchivedRequest.linkParams.referringURL]);
     XCTAssertNil(unarchivedRequest.callback);
     XCTAssertTrue([@"open" isEqualToString:[unarchivedRequest getActionName]]);
 }
 
 - (void)testBranchInstallRequestArchive {
     BranchInstallRequest *request = [[BranchInstallRequest alloc] initWithCallback:nil];
-    request.urlString = @"https://branch.io";
+    request.linkParams = [[BranchOpenRequestLinkParams alloc] init];
+    request.linkParams.referringURL = @"https://branch.io";
     
     // archive the event
     NSError *error = nil;
@@ -112,7 +114,7 @@
     XCTAssertTrue([object isKindOfClass:BranchInstallRequest.class]);
     BranchInstallRequest *unarchivedRequest = (BranchInstallRequest *)object;
     
-    XCTAssertTrue([request.urlString isEqualToString:unarchivedRequest.urlString]);
+    XCTAssertTrue([request.linkParams.referringURL isEqualToString:unarchivedRequest.linkParams.referringURL]);
     XCTAssertNil(unarchivedRequest.callback);
     XCTAssertTrue([@"install" isEqualToString:[unarchivedRequest getActionName]]);
 }
