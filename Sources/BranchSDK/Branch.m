@@ -683,6 +683,12 @@ static NSString *bnc_branchKey = nil;
 
 - (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
                   registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback {
+    [self initSceneSessionWithLaunchOptions:options sceneIdentifier:nil isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController
+                    registerDeepLinkHandler:callback];
+}
+
+- (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options sceneIdentifier:(NSString *)sceneIdentifier isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
+                  registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback {
     NSMutableDictionary * optionsWithDeferredInit = [[NSMutableDictionary alloc ] initWithDictionary:options];
     if (self.deferInitForPluginRuntime) {
         [optionsWithDeferredInit setObject:@1 forKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"];
@@ -691,11 +697,12 @@ static NSString *bnc_branchKey = nil;
     }
     [self deferInitBlock:^{
         self.sceneSessionInitWithCallback = callback;
-        [self initSessionWithLaunchOptions:(NSDictionary *)optionsWithDeferredInit isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
+        [self initSessionWithLaunchOptions:(NSDictionary *)optionsWithDeferredInit sceneIdentifier:sceneIdentifier isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
     }];
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options
+                     sceneIdentifier:(NSString *)sceneIdentifier
                         isReferrable:(BOOL)isReferrable
        explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable
       automaticallyDisplayController:(BOOL)automaticallyDisplayController {
@@ -717,7 +724,7 @@ static NSString *bnc_branchKey = nil;
     #endif
 
     if(pushURL || [[options objectForKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"] isEqualToNumber:@1] || (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) ) {
-        [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:pushURL reset:NO];
+        [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:pushURL reset:NO];
     }
 }
 
