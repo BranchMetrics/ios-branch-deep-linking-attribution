@@ -30,7 +30,7 @@ FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 
 #import <BranchSDK/BranchDeepLinkingController.h>
 
-#if !TARGET_OS_TV
+#if TARGET_OS_IOS || TARGET_OS_MAC || TARGET_OS_WATCH
 // tvOS does not support these features
 #import <BranchSDK/BranchShareLink.h>
 #import <BranchSDK/BranchCSSearchableItemAttributeSet.h>
