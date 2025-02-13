@@ -30,7 +30,7 @@ FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 #import "BranchDeepLinkingController.h"
 #import "BranchLogger.h"
 
-#if TARGET_OS_IOS || TARGET_OS_MAC
+#if TARGET_OS_IOS
 #import "BranchShareLink.h"
 #import "BranchCSSearchableItemAttributeSet.h"
 #import "BranchActivityItemProvider.h"
