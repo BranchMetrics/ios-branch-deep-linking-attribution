@@ -30,12 +30,13 @@ FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 #import "BranchDeepLinkingController.h"
 #import "BranchLogger.h"
 
-#if TARGET_OS_IOS || TARGET_OS_SIMULATOR
+#if TARGET_OS_IOS || (TARGET_OS_SIMULATOR && !TARGET_OS_TVOS)
 #import "BranchShareLink.h"
 #import "BranchCSSearchableItemAttributeSet.h"
 #import "BranchActivityItemProvider.h"
 #import "BranchPasteControl.h"
 #endif
+
 
 // Used by Branch.h for debug and testing APIs. Need to move these.
 #import "BNCInitSessionResponse.h"
