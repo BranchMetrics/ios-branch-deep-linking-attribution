@@ -250,7 +250,7 @@
 		5FCDD4B82B7AC6A200EAF29F /* BNCServerRequestQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3AA2B7AC6A100EAF29F /* BNCServerRequestQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FCDD4B92B7AC6A200EAF29F /* BranchPasteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3AB2B7AC6A100EAF29F /* BranchPasteControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FCDD4BA2B7AC6A200EAF29F /* BranchPasteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3AB2B7AC6A100EAF29F /* BranchPasteControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5FCDD4BB2B7AC6A200EAF29F /* BranchPasteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3AB2B7AC6A100EAF29F /* BranchPasteControl.h */; };
+		5FCDD4BB2B7AC6A200EAF29F /* BranchPasteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3AB2B7AC6A100EAF29F /* BranchPasteControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FCDD4BC2B7AC6A200EAF29F /* BranchUniversalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3AC2B7AC6A100EAF29F /* BranchUniversalObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FCDD4BD2B7AC6A200EAF29F /* BranchUniversalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3AC2B7AC6A100EAF29F /* BranchUniversalObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FCDD4BE2B7AC6A200EAF29F /* BranchUniversalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3AC2B7AC6A100EAF29F /* BranchUniversalObject.h */; settings = {ATTRIBUTES = (Public, ); }; };

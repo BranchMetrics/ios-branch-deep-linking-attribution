@@ -30,14 +30,14 @@ FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 
 #import <BranchSDK/BranchDeepLinkingController.h>
 
-#if !TARGET_OS_TV
+//#if !TARGET_OS_TV
 // tvOS does not support these features
 #import <BranchSDK/BranchShareLink.h>
 #import <BranchSDK/BranchCSSearchableItemAttributeSet.h>
 #import <BranchSDK/BranchActivityItemProvider.h>
 
 #import <BranchSDK/BranchPasteControl.h>
-#endif
+//#endif
 
 // Used by Branch.h for debug and testing APIs. Need to move these.
 #import <BranchSDK/BNCInitSessionResponse.h>
