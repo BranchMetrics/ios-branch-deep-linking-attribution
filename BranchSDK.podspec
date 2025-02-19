@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "BranchSDK"
-  s.version          = "3.6.5"
+  s.version          = "3.9.0"
   s.summary          = "Create an HTTP URL for any piece of content in your app"
   s.description      = <<-DESC
 - Want the highest possible conversions on your sharing feature?
@@ -25,11 +25,6 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.tvos.exclude_files = "Sources/BranchSDK/**/BNCContentDiscoveryManager.{h,m}",
 	"Sources/BranchSDK/**/BNCUserAgentCollector.{h,m}",
 	"Sources/BranchSDK/**/BNCSpotlightService.{h,m}",
-	"Sources/BranchSDK/**/BranchActivityItemProvider.{h,m}",
-	"Sources/BranchSDK/**/BranchCSSearchableItemAttributeSet.{h,m}",
-	"Sources/BranchSDK/**/BranchShareLink.{h,m}",
-	"Sources/BranchSDK/**/BranchPasteControl.{h,m}"
-
   s.frameworks = 'CoreServices', 'SystemConfiguration'
   s.weak_framework = 'LinkPresentation'
   s.ios.frameworks = 'WebKit'
