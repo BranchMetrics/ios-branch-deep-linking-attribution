@@ -250,7 +250,7 @@
 		5FCDD4B82B7AC6A200EAF29F /* BNCServerRequestQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3AA2B7AC6A100EAF29F /* BNCServerRequestQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FCDD4B92B7AC6A200EAF29F /* BranchPasteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3AB2B7AC6A100EAF29F /* BranchPasteControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FCDD4BA2B7AC6A200EAF29F /* BranchPasteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3AB2B7AC6A100EAF29F /* BranchPasteControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5FCDD4BB2B7AC6A200EAF29F /* BranchPasteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3AB2B7AC6A100EAF29F /* BranchPasteControl.h */; };
+		5FCDD4BB2B7AC6A200EAF29F /* BranchPasteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3AB2B7AC6A100EAF29F /* BranchPasteControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FCDD4BC2B7AC6A200EAF29F /* BranchUniversalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3AC2B7AC6A100EAF29F /* BranchUniversalObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FCDD4BD2B7AC6A200EAF29F /* BranchUniversalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3AC2B7AC6A100EAF29F /* BranchUniversalObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FCDD4BE2B7AC6A200EAF29F /* BranchUniversalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3AC2B7AC6A100EAF29F /* BranchUniversalObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1173,6 +1173,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5FCDD4BB2B7AC6A200EAF29F /* BranchPasteControl.h in Headers */,
 				5FCDD5302B7AC6A300EAF29F /* Branch+Validator.h in Headers */,
 				5FCDD4A62B7AC6A200EAF29F /* BNCCallbacks.h in Headers */,
 				5FCDD4942B7AC6A100EAF29F /* BranchLinkProperties.h in Headers */,
@@ -1239,7 +1240,6 @@
 				5FCDD51B2B7AC6A300EAF29F /* NSError+Branch.h in Headers */,
 				5FCDD5032B7AC6A300EAF29F /* BranchOpenRequest.h in Headers */,
 				5FCDD4F72B7AC6A200EAF29F /* BNCEventUtils.h in Headers */,
-				5FCDD4BB2B7AC6A200EAF29F /* BranchPasteControl.h in Headers */,
 				5FCDD5632B7AC6A300EAF29F /* BNCReachability.h in Headers */,
 				5FCDD50F2B7AC6A300EAF29F /* NSMutableDictionary+Branch.h in Headers */,
 				5FCDD4D92B7AC6A200EAF29F /* BNCAppleReceipt.h in Headers */,

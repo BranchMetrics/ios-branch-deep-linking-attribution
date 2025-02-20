@@ -25,11 +25,6 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.tvos.exclude_files = "Sources/BranchSDK/**/BNCContentDiscoveryManager.{h,m}",
 	"Sources/BranchSDK/**/BNCUserAgentCollector.{h,m}",
 	"Sources/BranchSDK/**/BNCSpotlightService.{h,m}",
-	"Sources/BranchSDK/**/BranchActivityItemProvider.{h,m}",
-	"Sources/BranchSDK/**/BranchCSSearchableItemAttributeSet.{h,m}",
-	"Sources/BranchSDK/**/BranchShareLink.{h,m}",
-	"Sources/BranchSDK/**/BranchPasteControl.{h,m}"
-
   s.frameworks = 'CoreServices', 'SystemConfiguration'
   s.weak_framework = 'LinkPresentation'
   s.ios.frameworks = 'WebKit'
