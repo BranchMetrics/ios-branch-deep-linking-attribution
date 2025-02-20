@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.3.9.1
+- Fix for the warning 'Missing header files from umbrella header' when integrating BranchSDK into a hybrid app using SPM.
+
 v.3.9.0
 - Integration Validator 2.0 - Improved integration validator to provide references to how to fix when a check fails, export logs from the app and invoke it using query parameter
 - Fixed Integration Validator crash when URIs and bundle ids from the server are empty.
