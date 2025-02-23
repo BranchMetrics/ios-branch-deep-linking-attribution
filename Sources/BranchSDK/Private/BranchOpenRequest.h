@@ -9,12 +9,18 @@
 #import "BNCServerRequest.h"
 #import "BNCCallbacks.h"
 
+@interface BranchOpenRequestLinkParams : NSObject <NSSecureCoding>
+@property (copy, nonatomic) NSString *linkClickIdentifier;
+@property (copy, nonatomic) NSString *spotlightIdentifier;
+@property (copy, nonatomic) NSString *referringURL; // URL that triggered this install or open event
+@property (assign, nonatomic) BOOL dropURLOpen;
+@end
+
 @interface BranchOpenRequest : BNCServerRequest
 
-// URL that triggered this install or open event
-@property (nonatomic, copy, readwrite) NSString *urlString;
-@property (assign, nonatomic) BOOL isFromArchivedQueue;
+
 @property (nonatomic, copy) callbackWithStatus callback;
+@property (nonatomic, strong, readwrite) BranchOpenRequestLinkParams *linkParams;
 
 + (void) waitForOpenResponseLock;
 + (void) releaseOpenResponseLock;

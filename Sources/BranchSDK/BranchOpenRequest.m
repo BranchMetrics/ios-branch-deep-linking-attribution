@@ -40,7 +40,7 @@
     if ((self = [super init])) {
         _callback = callback;
         _isInstall = isInstall;
-        _isFromArchivedQueue = NO;
+        _linkParams = [[BranchOpenRequestLinkParams alloc] init];
     }
 
     return self;
@@ -48,7 +48,7 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
-    NSDictionary *params = [factory dataForOpenWithURLString:self.urlString];
+    NSDictionary *params = [factory dataForOpenWithLinkParams:self.linkParams];
 
     [serverInterface postRequest:params
         url:[[BNCServerAPI sharedInstance] openServiceURL]
@@ -58,7 +58,7 @@
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
-    if (error && preferenceHelper.dropURLOpen) {
+    if (error && self.linkParams.dropURLOpen) {
         // Ignore this response from the server. Dummy up a response:
         error = nil;
         response.data = @{
@@ -116,10 +116,10 @@
 
     // Update session params
 
-    if (preferenceHelper.spotlightIdentifier) {
+    if (self.linkParams.spotlightIdentifier) {
         NSMutableDictionary *sessionDataDict =
         [NSMutableDictionary dictionaryWithDictionary: [BNCEncodingUtils decodeJsonStringToDictionary:sessionData]];
-        NSDictionary *spotlightDic = @{BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER:preferenceHelper.spotlightIdentifier};
+        NSDictionary *spotlightDic = @{BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER:self.linkParams.spotlightIdentifier};
         [sessionDataDict addEntriesFromDictionary:spotlightDic];
         sessionData = [BNCEncodingUtils encodeDictionaryToJsonString:sessionDataDict];
     }
@@ -141,8 +141,8 @@
     }
 
     NSString *referringURL = nil;
-    if (self.urlString.length > 0) {
-        referringURL = self.urlString;
+    if (self.linkParams.referringURL.length > 0) {
+        referringURL = self.linkParams.referringURL;
     } else {
         NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
         NSString *link = sessionDataDict[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK];
@@ -153,13 +153,6 @@
         }
     }
 
-    // Clear link identifiers so they don't get reused on the next open
-    preferenceHelper.linkClickIdentifier = nil;
-    preferenceHelper.spotlightIdentifier = nil;
-    preferenceHelper.universalLinkUrl = nil;
-    preferenceHelper.externalIntentURI = nil;
-    preferenceHelper.referringURL = referringURL;
-    preferenceHelper.dropURLOpen = NO;
     
     NSString *string = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN]);
     if (!string) {
@@ -174,7 +167,7 @@
     [BranchOpenRequest releaseOpenResponseLock];
     
     if (self.isInstall) {
-        [[BNCAppGroupsData shared] saveAppClipData];
+        [[BNCAppGroupsData shared] saveAppClipData: referringURL];
     }
     
 #if !TARGET_OS_TV
@@ -256,14 +249,15 @@
 
 - (instancetype)initWithCoder:(NSCoder *)decoder {
     self = [super initWithCoder:decoder];
-    if (!self) return self;
-    self.urlString = [decoder decodeObjectOfClass:NSString.class forKey:@"urlString"];
+    if (self) {
+        self.linkParams = [decoder decodeObjectOfClass:BranchOpenRequestLinkParams.class forKey:@"urlString"];
+    }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
     [super encodeWithCoder:coder];
-    [coder encodeObject:self.urlString forKey:@"urlString"];
+    [coder encodeObject:self.linkParams forKey:@"urlString"];
 }
 
 + (BOOL)supportsSecureCoding {
@@ -317,4 +311,33 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
     }
 }
 
+@end
+
+@implementation BranchOpenRequestLinkParams
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.dropURLOpen = NO;
+    }
+    return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)decoder {
+    self = [super init];
+    if (self) {
+        self.referringURL = [decoder decodeObjectOfClass:NSString.class forKey:@"referringURL"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [coder encodeObject:self.referringURL forKey:@"referringURL"];
+}
+
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+    
 @end
