@@ -409,4 +409,95 @@
     XCTAssertEqualObjects(storedUrl, expectedUrl);
 }
 
+
+- (void)testSafeTrackServiceURLWithUserTrackingDomain {
+    NSString *url = @"https://links.tospotify.com";
+    NSString *safeTrackUrl = @"https://links.tospotify-safeTrack.com";
+    
+    [Branch setAPIUrl:url];
+    [Branch setSafetrackAPIURL:safeTrackUrl];
+    
+    BNCServerAPI *serverAPI = [BNCServerAPI sharedInstance];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    serverAPI.useTrackingDomain = YES;
+    
+    NSString *storedUrl = [[BNCServerAPI sharedInstance] installServiceURL];
+    NSString *expectedUrl = @"https://links.tospotify-safeTrack.com/v1/install";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] openServiceURL];
+    expectedUrl = @"https://links.tospotify-safeTrack.com/v1/open";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] standardEventServiceURL];
+    expectedUrl = @"https://links.tospotify-safeTrack.com/v2/event/standard";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] customEventServiceURL];
+    expectedUrl = @"https://links.tospotify-safeTrack.com/v2/event/custom";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] linkServiceURL];
+    expectedUrl = @"https://links.tospotify.com/v1/url";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] qrcodeServiceURL];
+    expectedUrl = @"https://links.tospotify.com/v1/qr-code";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] latdServiceURL];
+    expectedUrl = @"https://links.tospotify.com/v1/cpid/latd";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] validationServiceURL];
+    expectedUrl = @"https://links.tospotify.com/v1/app-link-settings";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+}
+
+- (void)testSafeTrackServiceURLWithOutUserTrackingDomain {
+    NSString *url = @"https://links.tospotify.com";
+    NSString *safeTrackUrl = @"https://links.tospotify-safeTrack.com";
+    
+    [Branch setAPIUrl:url];
+    [Branch setSafetrackAPIURL:safeTrackUrl];
+    
+    BNCServerAPI *serverAPI = [BNCServerAPI sharedInstance];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    serverAPI.useTrackingDomain = NO;
+    
+    NSString *storedUrl = [[BNCServerAPI sharedInstance] installServiceURL];
+    NSString *expectedUrl = @"https://links.tospotify.com/v1/install";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] openServiceURL];
+    expectedUrl = @"https://links.tospotify.com/v1/open";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] standardEventServiceURL];
+    expectedUrl = @"https://links.tospotify.com/v2/event/standard";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] customEventServiceURL];
+    expectedUrl = @"https://links.tospotify.com/v2/event/custom";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] linkServiceURL];
+    expectedUrl = @"https://links.tospotify.com/v1/url";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] qrcodeServiceURL];
+    expectedUrl = @"https://links.tospotify.com/v1/qr-code";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] latdServiceURL];
+    expectedUrl = @"https://links.tospotify.com/v1/cpid/latd";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] validationServiceURL];
+    expectedUrl = @"https://links.tospotify.com/v1/app-link-settings";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+}
+
 @end

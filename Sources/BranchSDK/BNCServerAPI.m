@@ -94,13 +94,17 @@
 }
 
 - (NSString *)getBaseURL {
-    //Check if user has set a custom API base URL
-    if (self.customAPIURL) {
-        return self.customAPIURL;
-    }
     
     if (self.automaticallyEnableTrackingDomain) {
         self.useTrackingDomain = [self optedIntoIDFA];
+    }
+    
+    //Check if user has set a custom API base URL / custom API safetrack base url
+    if (self.useTrackingDomain && self.customSafeTrackAPIURL){
+        return self.customSafeTrackAPIURL;
+    }
+    else if (self.customAPIURL) {
+        return self.customAPIURL;
     }
     
     NSString * urlString;
