@@ -8,6 +8,8 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
+        with:
+          ref: tags/3.6.5
       - name: Build xcframework
         run: |
             ./scripts/prep_xcframework.sh
