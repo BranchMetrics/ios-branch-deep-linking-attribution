@@ -18,5 +18,6 @@ jobs:
         with:
           name: release_framework
           path: |
+            ./build
             ./Branch.zip
             ./checksum.txt
