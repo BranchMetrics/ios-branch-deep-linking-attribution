@@ -457,6 +457,7 @@
     [BNCServerAPI sharedInstance].useEUServers = NO;
     [BNCServerAPI sharedInstance].automaticallyEnableTrackingDomain = YES;
     [BNCServerAPI sharedInstance].customAPIURL = nil;
+    [BNCServerAPI sharedInstance].customSafeTrackAPIURL = nil;
     
 }
 
@@ -507,6 +508,7 @@
     [BNCServerAPI sharedInstance].useEUServers = NO;
     [BNCServerAPI sharedInstance].automaticallyEnableTrackingDomain = YES;
     [BNCServerAPI sharedInstance].customAPIURL = nil;
+    [BNCServerAPI sharedInstance].customSafeTrackAPIURL = nil;
     
 }
 
