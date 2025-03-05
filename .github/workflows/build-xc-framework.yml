@@ -1,0 +1,22 @@
+name: Build xcframework with dSyms
+
+on: [push]
+
+jobs:
+  build-framework:
+    runs-on: macos-latest
+    #needs: [version-bump]
+    needs: [static-analysis]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Build xcframework
+        run: |
+            ./scripts/prep_xcframework.sh
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release_framework
+          path: |
+            ./Branch.zip
+            ./checksum.txt

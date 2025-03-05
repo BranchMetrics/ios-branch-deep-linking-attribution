@@ -50,11 +50,15 @@ xcodebuild archive \
 # package frameworks
 xcodebuild -create-xcframework \
     -framework "${IOS_PATH}/Products/Library/Frameworks/BranchSDK.framework" \
+    -debug-symbols "$(pwd)/build/ios/ios.xcarchive/dSYMs/BranchSDK.framework.dSYM"\
     -framework "${IOS_SIM_PATH}/Products/Library/Frameworks/BranchSDK.framework" \
+    -debug-symbols "$(pwd)/build/ios/ios_sim.xcarchive/dSYMs/BranchSDK.framework.dSYM"\
     -framework "${TVOS_PATH}/Products/Library/Frameworks/BranchSDK.framework" \
+    -debug-symbols "$(pwd)/build/tvos/tvos.xcarchive/dSYMs/BranchSDK.framework.dSYM"\
     -framework "${TVOS_SIM_PATH}/Products/Library/Frameworks/BranchSDK.framework" \
+    -debug-symbols "$(pwd)/build/tvos/tvos_sim.xcarchive/dSYMs/BranchSDK.framework.dSYM"\
     -framework "${CATALYST_PATH}/Products/Library/Frameworks/BranchSDK.framework" \
+    -debug-symbols "$(pwd)/build/catalyst/catalyst.xcarchive/dSYMs/BranchSDK.framework.dSYM"\
     -output "${XCFRAMEWORK_PATH}"
 
-    
-    
+
