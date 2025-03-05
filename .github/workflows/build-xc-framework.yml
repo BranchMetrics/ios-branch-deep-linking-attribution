@@ -4,9 +4,7 @@ on: [push]
 
 jobs:
   build-framework:
-    runs-on: macos-latest
-    #needs: [version-bump]
-    needs: [static-analysis]
+    runs-on: macos-14
     steps:
       - name: Check out code
         uses: actions/checkout@v4
