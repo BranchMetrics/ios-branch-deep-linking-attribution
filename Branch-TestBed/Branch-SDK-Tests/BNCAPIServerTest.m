@@ -410,7 +410,7 @@
 }
 
 
-- (void)testSafeTrackServiceURLWithUserTrackingDomain {
+- (void)testSetSafeTrackServiceURLWithUserTrackingDomain {
     NSString *url = @"https://links.tospotify.com";
     NSString *safeTrackUrl = @"https://links.tospotify-safeTrack.com";
     
@@ -453,9 +453,14 @@
     expectedUrl = @"https://links.tospotify.com/v1/app-link-settings";
     XCTAssertEqualObjects(storedUrl, expectedUrl);
     
+    [BNCServerAPI sharedInstance].useTrackingDomain = NO;
+    [BNCServerAPI sharedInstance].useEUServers = NO;
+    [BNCServerAPI sharedInstance].automaticallyEnableTrackingDomain = YES;
+    [BNCServerAPI sharedInstance].customAPIURL = nil;
+    
 }
 
-- (void)testSafeTrackServiceURLWithOutUserTrackingDomain {
+- (void)testSetSafeTrackServiceURLWithOutUserTrackingDomain {
     NSString *url = @"https://links.tospotify.com";
     NSString *safeTrackUrl = @"https://links.tospotify-safeTrack.com";
     
@@ -497,6 +502,11 @@
     storedUrl = [[BNCServerAPI sharedInstance] validationServiceURL];
     expectedUrl = @"https://links.tospotify.com/v1/app-link-settings";
     XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    [BNCServerAPI sharedInstance].useTrackingDomain = NO;
+    [BNCServerAPI sharedInstance].useEUServers = NO;
+    [BNCServerAPI sharedInstance].automaticallyEnableTrackingDomain = YES;
+    [BNCServerAPI sharedInstance].customAPIURL = nil;
     
 }
 
