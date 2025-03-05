@@ -9,7 +9,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
         with:
-          ref: tags/3.6.5
+          ref: 3681750228b820a250eabb26495093a94b574404
       - name: Build xcframework
         run: |
             ./scripts/prep_xcframework.sh
