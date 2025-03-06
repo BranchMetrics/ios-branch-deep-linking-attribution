@@ -159,6 +159,7 @@
     preferenceHelper.universalLinkUrl = nil;
     preferenceHelper.externalIntentURI = nil;
     preferenceHelper.referringURL = referringURL;
+    preferenceHelper.initialReferrer = nil;
     preferenceHelper.dropURLOpen = NO;
     
     NSString *string = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN]);
