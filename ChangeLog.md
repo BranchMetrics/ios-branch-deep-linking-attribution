@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+v.3.10.0
+- Added new API `setSafetrackAPIURL` for setting custom safetrack URL.
+- Fixed Bug - Clear initial referrer after init.
+
 v.3.9.1
 - Fix for the warning 'Missing header files from umbrella header' when integrating BranchSDK into a hybrid app using SPM.
 
