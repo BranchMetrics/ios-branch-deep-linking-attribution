@@ -588,6 +588,13 @@ Sets a custom base URL for all calls to the Branch API.
 + (void)setAPIUrl:(NSString *)url;
 
 /**
+Sets a custom base safetrack URL for non-linking calls to the Branch API.
+@param url  Base safetrack URL that the Branch API will use.
+ */
+
++ (void)setSafetrackAPIURL:(NSString *)url ;
+
+/**
   @brief        Use the `validateSDKIntegration` method as a debugging aid to assure that you've
                 integrated the Branch SDK correctly.
 

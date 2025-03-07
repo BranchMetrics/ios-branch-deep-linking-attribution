@@ -490,6 +490,14 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
++ (void)setSafetrackAPIURL:(NSString *)url {
+    if ([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
+        [BNCServerAPI sharedInstance].customSafeTrackAPIURL = url;
+    } else {
+        [[BranchLogger shared] logWarning:@"Ignoring invalid custom Safe Track API URL" error:nil];
+    }
+}
+
 - (void)validateSDKIntegration {
     [self validateSDKIntegrationCore];
 }

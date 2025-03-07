@@ -409,4 +409,107 @@
     XCTAssertEqualObjects(storedUrl, expectedUrl);
 }
 
+
+- (void)testSetSafeTrackServiceURLWithUserTrackingDomain {
+    NSString *url = @"https://links.toTestDomain.com";
+    NSString *safeTrackUrl = @"https://links.toTestDomain-safeTrack.com";
+    
+    [Branch setAPIUrl:url];
+    [Branch setSafetrackAPIURL:safeTrackUrl];
+    
+    BNCServerAPI *serverAPI = [BNCServerAPI sharedInstance];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    serverAPI.useTrackingDomain = YES;
+    
+    NSString *storedUrl = [[BNCServerAPI sharedInstance] installServiceURL];
+    NSString *expectedUrl = @"https://links.toTestDomain-safeTrack.com/v1/install";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] openServiceURL];
+    expectedUrl = @"https://links.toTestDomain-safeTrack.com/v1/open";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] standardEventServiceURL];
+    expectedUrl = @"https://links.toTestDomain-safeTrack.com/v2/event/standard";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] customEventServiceURL];
+    expectedUrl = @"https://links.toTestDomain-safeTrack.com/v2/event/custom";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] linkServiceURL];
+    expectedUrl = @"https://links.toTestDomain.com/v1/url";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] qrcodeServiceURL];
+    expectedUrl = @"https://links.toTestDomain.com/v1/qr-code";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] latdServiceURL];
+    expectedUrl = @"https://links.toTestDomain.com/v1/cpid/latd";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] validationServiceURL];
+    expectedUrl = @"https://links.toTestDomain.com/v1/app-link-settings";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    [BNCServerAPI sharedInstance].useTrackingDomain = NO;
+    [BNCServerAPI sharedInstance].useEUServers = NO;
+    [BNCServerAPI sharedInstance].automaticallyEnableTrackingDomain = YES;
+    [BNCServerAPI sharedInstance].customAPIURL = nil;
+    [BNCServerAPI sharedInstance].customSafeTrackAPIURL = nil;
+    
+}
+
+- (void)testSetSafeTrackServiceURLWithOutUserTrackingDomain {
+    NSString *url = @"https://links.toTestDomain.com";
+    NSString *safeTrackUrl = @"https://links.toTestDomain-safeTrack.com";
+    
+    [Branch setAPIUrl:url];
+    [Branch setSafetrackAPIURL:safeTrackUrl];
+    
+    BNCServerAPI *serverAPI = [BNCServerAPI sharedInstance];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    serverAPI.useTrackingDomain = NO;
+    
+    NSString *storedUrl = [[BNCServerAPI sharedInstance] installServiceURL];
+    NSString *expectedUrl = @"https://links.toTestDomain.com/v1/install";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] openServiceURL];
+    expectedUrl = @"https://links.toTestDomain.com/v1/open";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] standardEventServiceURL];
+    expectedUrl = @"https://links.toTestDomain.com/v2/event/standard";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] customEventServiceURL];
+    expectedUrl = @"https://links.toTestDomain.com/v2/event/custom";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] linkServiceURL];
+    expectedUrl = @"https://links.toTestDomain.com/v1/url";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] qrcodeServiceURL];
+    expectedUrl = @"https://links.toTestDomain.com/v1/qr-code";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] latdServiceURL];
+    expectedUrl = @"https://links.toTestDomain.com/v1/cpid/latd";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    storedUrl = [[BNCServerAPI sharedInstance] validationServiceURL];
+    expectedUrl = @"https://links.toTestDomain.com/v1/app-link-settings";
+    XCTAssertEqualObjects(storedUrl, expectedUrl);
+    
+    [BNCServerAPI sharedInstance].useTrackingDomain = NO;
+    [BNCServerAPI sharedInstance].useEUServers = NO;
+    [BNCServerAPI sharedInstance].automaticallyEnableTrackingDomain = YES;
+    [BNCServerAPI sharedInstance].customAPIURL = nil;
+    [BNCServerAPI sharedInstance].customSafeTrackAPIURL = nil;
+    
+}
+
 @end

@@ -34,6 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, readwrite) BOOL automaticallyEnableTrackingDomain;
 
 @property (nonatomic, copy, readwrite, nullable) NSString *customAPIURL;
+@property (nonatomic, copy, readwrite, nullable) NSString *customSafeTrackAPIURL;
 
 @end
 
