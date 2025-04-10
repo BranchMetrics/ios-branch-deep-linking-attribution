@@ -581,6 +581,11 @@ static NSString *bnc_branchKey = nil;
     [BNCPreferenceHelper sharedInstance].adUserDataUsageConsent = adUserDataUsageConsent;
 }
 
++ (void)setODMInfo:(NSString *)odmInfo {
+    [[BNCPreferenceHelper sharedInstance] setOdmInfo:odmInfo];
+    [[BNCPreferenceHelper sharedInstance] setOdmInfoInitDate:[NSDate date]];
+}
+
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level {
     self.preferenceHelper.attributionLevel = level;
     
