@@ -130,7 +130,7 @@
     [self addConsumerProtectionAttributionLevel:json];
     
     // Add ODM Data if available
-    [self addODMInfoToJSON:json]
+    [self addODMInfoToJSON:json];
 
     return json;
 }
