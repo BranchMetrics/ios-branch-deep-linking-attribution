@@ -128,6 +128,9 @@
     [self addDMAConsentParamsToJSON:json];
     
     [self addConsumerProtectionAttributionLevel:json];
+    
+    // Add ODM Data if available
+    [self addODMInfoToJSON:json]
 
     return json;
 }
@@ -184,6 +187,9 @@
     [self addDMAConsentParamsToJSON:json];
     
     [self addConsumerProtectionAttributionLevel:json];
+    
+    // Add ODM Data if available
+    [self addODMInfoToJSON:json]
 
     return json;
 }
