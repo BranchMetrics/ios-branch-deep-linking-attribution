@@ -720,12 +720,10 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 
 - (NSString *) odmInfo {
-    
     if (!_odmInfo) {
         _odmInfo = [self readStringFromDefaults:BRANCH_PREFS_KEY_ODM_INFO];
     }
     return _odmInfo;
-    
 }
 
 - (void) setOdmInfo:(NSString *)odmInfo {
@@ -739,15 +737,18 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 - (NSDate*) odmInfoInitDate {
     @synchronized (self) {
-        NSDate* initdate = (NSDate*)[self readObjectFromDefaults:BRANCH_PREFS_KEY_ODM_INFO_INIT_DATE];
-        if ([initdate isKindOfClass:[NSDate class]]) return initdate;
+        _odmInfoInitDate = (NSDate*)[self readObjectFromDefaults:BRANCH_PREFS_KEY_ODM_INFO_INIT_DATE];
+        if ([_odmInfoInitDate isKindOfClass:[NSDate class]]) return _odmInfoInitDate;
         return nil;
     }
 }
 
 - (void)setODMInfoInitDate:(NSDate *)initDate {
     @synchronized (self) {
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_ODM_INFO_INIT_DATE value:initDate];
+        if (![_odmInfoInitDate isEqualToDate:initDate]) {
+            _odmInfoInitDate = initDate;
+            [self writeObjectToDefaults:BRANCH_PREFS_KEY_ODM_INFO_INIT_DATE value:initDate];
+        }
     }
 }
 

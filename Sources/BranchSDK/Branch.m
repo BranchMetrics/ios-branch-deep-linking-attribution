@@ -51,6 +51,7 @@
 #import "BNCSpotlightService.h"
 #import "BNCContentDiscoveryManager.h"
 #import "BranchContentDiscoverer.h"
+#import "BNCODMInfoCollector.h"
 #endif
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
@@ -241,6 +242,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     // queue up async data loading
     [self loadApplicationData];
     [self loadUserAgent];
+    [self loadODMInfo];
     
     BranchJsonConfig *config = BranchJsonConfig.instance;
     self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
@@ -973,6 +975,18 @@ static NSString *bnc_branchKey = nil;
         dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     });
 }
+
+- (void)loadODMInfo {
+    dispatch_async(self.isolationQueue, ^(){
+        [[BranchLogger shared] logVerbose:@"Loading ODM info ..." error:nil];
+        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+        [[BNCODMInfoCollector instance] loadODMInfoWithCompletion:^(NSString * _Nullable odmInfo,  NSError * _Nullable error) {
+                    dispatch_semaphore_signal(semaphore);
+        }];
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    });
+}
+
 
 #pragma mark - Apple Search Ad Check
 

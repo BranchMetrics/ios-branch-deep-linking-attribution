@@ -35,6 +35,5 @@
 + (BOOL)isAppClip;
 + (BOOL)compareUriSchemes:(NSString *) serverUriScheme;
 + (BOOL)compareLinkDomain:(NSString*) serverLinkDomain;
-+ (NSString *)fetchODMInfoFromDeviceWithInitDate:(NSDate *) date ;
 
 @end

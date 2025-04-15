@@ -7,7 +7,6 @@
 
 
 #if !TARGET_OS_TV
-
 #if __has_feature(modules)
 @import Foundation;
 #else
@@ -23,10 +22,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy, readwrite) NSString *odmInfo;
 
-- (void)loadODMInfoWithCompletion:(void (^_Nullable)(NSString * _Nullable odmInfo))completion;
+- (void)loadODMInfoWithCompletion:(void (^_Nullable)(NSString * _Nullable odmInfo,  NSError * _Nullable error))completion;
+
+
 @end
 
 NS_ASSUME_NONNULL_END
-
 #endif /* !TARGET_OS_TV */
 

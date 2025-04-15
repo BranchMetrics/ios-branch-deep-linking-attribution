@@ -34,6 +34,7 @@
 #import "BNCSKAdNetwork.h"
 #import "BNCReferringURLUtility.h"
 #import "BNCPasteboard.h"
+#import "BNCODMInfoCollector.h"
 
 @interface BNCRequestFactory()
 
@@ -350,47 +351,13 @@
 }
 
 
-- (BOOL)isWithinValidityWindow:(NSDate *)initTime timeInterval:(NSTimeInterval)timeInterval  {
-    NSDate *expirationDate = [initTime dateByAddingTimeInterval:timeInterval];
-    if ([[NSDate date] compare:expirationDate] == NSOrderedAscending) {
-        return YES;
-    } else {
-        return NO;
-    }
-}
-
 - (void)addODMInfoToJSON:(NSMutableDictionary *)json {
-    
-    BOOL fetchFromDevice = true;
-    NSString *odmInfo = nil;
-    
-    // Check if odmInfo is present in pref helper
-    if (self.preferenceHelper.odmInfo) {
-        // Check if odmInfo is within validity window
-        NSDate *initTime = self.preferenceHelper.odmInfoInitDate;
-        NSTimeInterval validityWindow = self.preferenceHelper.odmInfoValidityWindow;
-        if ([self isWithinValidityWindow:initTime timeInterval:validityWindow]) {
-            // fetch ODM info from pref helper
-            odmInfo = self.preferenceHelper.odmInfo;
-            fetchFromDevice = false;
-        } else {
-            // Since ODM Infor is expired, clear it from pref helper
-            self.preferenceHelper.odmInfo = nil;
-            self.preferenceHelper.odmInfoInitDate = 0;
-        }
+#if !TARGET_OS_TV
+    if ([[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelFull]) {
+        NSString *odmInfo = [BNCODMInfoCollector instance].odmInfo ;
+        [self safeSetValue:odmInfo forKey:BRANCH_REQUEST_KEY_ODM_INFO onDict:json];
     }
-    
-    if (fetchFromDevice) {
-        // Fetch ODM Info from device
-        NSDate * odmInfofetchingTime = [NSDate date];
-        odmInfo = [BNCSystemObserver fetchODMInfoFromDeviceWithInitDate:odmInfofetchingTime];
-         if (odmInfo) {
-             // Cache ODM info in pref helper
-             self.preferenceHelper.odmInfo = odmInfo;
-             self.preferenceHelper.odmInfoInitDate = odmInfofetchingTime;
-             [self safeSetValue:odmInfo forKey:BRANCH_REQUEST_KEY_ODM_INFO onDict:json];
-         }
-    }
+#endif
 }
 
 - (void)addPartnerParametersToJSON:(NSMutableDictionary *)json {

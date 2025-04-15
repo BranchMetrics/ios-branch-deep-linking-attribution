@@ -5,13 +5,18 @@
 //  Created by Nidhi Dixit on 4/13/25.
 //
 
-#import <Foundation/Foundation.h>
 
 #if !TARGET_OS_TV
+
 #import "BNCODMInfoCollector.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchLogger.h"
+#import "NSError+Branch.h"
+
 @interface BNCODMInfoCollector()
+
+@property (nonatomic, strong, readwrite) BNCPreferenceHelper *preferenceHelper;
+
 @end
 
 @implementation BNCODMInfoCollector
@@ -28,42 +33,49 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        
+        self.preferenceHelper = [BNCPreferenceHelper sharedInstance];
     }
     return self;
 }
-- (void)loadODMInfoWithCompletion:(void (^__strong)(NSString * _Nullable __strong))completion {
+
+- (void)loadODMInfoWithCompletion:(void (^__strong)(NSString * _Nullable __strong,  NSError * _Nullable))completion {
     
-    NSString *savedODMInfo = [self fetchSavedODMInfo];
-    if (savedODMInfo) {
-        self.odmInfo = savedODMInfo;
-        if (completion) {
-            completion(savedODMInfo);
+    if (self.preferenceHelper.odmInfo) {
+        // Check if odmInfo is within validity window
+        NSDate *initTime = self.preferenceHelper.odmInfoInitDate;
+        NSTimeInterval validityWindow = self.preferenceHelper.odmInfoValidityWindow;
+        if ([self isWithinValidityWindow:initTime timeInterval:validityWindow]) {
+            // fetch ODM info from pref helper
+            self.odmInfo = self.preferenceHelper.odmInfo;
         }
     } else {
-        [self fetchODMInfoFromDeviceWithInitDate:[NSDate date] andCompletion:  ^(NSString * _Nullable odmInfo) {
-            self.odmInfo = odmInfo;
-            [self saveODMInfo:odmInfo];
-            if (completion) {
-                completion(savedODMInfo);
-            }
+        // Fetch ODM Info from device
+        NSDate * odmInfofetchingTime = [NSDate date];
+        
+        [self fetchODMInfoFromDeviceWithInitDate:odmInfofetchingTime andCompletion:^(NSString *odmInfo, NSError *error) {
+            if (odmInfo) {
+                self.odmInfo = odmInfo;
+                 // Cache ODM info in pref helper
+                 self.preferenceHelper.odmInfo = odmInfo;
+                 self.preferenceHelper.odmInfoInitDate = odmInfofetchingTime;
+             }
         }];
     }
-    
 }
 
-- (NSString *) fetchSavedODMInfo {
-    return nil;
+- (BOOL)isWithinValidityWindow:(NSDate *)initTime timeInterval:(NSTimeInterval)timeInterval  {
+    NSDate *expirationDate = [initTime dateByAddingTimeInterval:timeInterval];
+    if ([[NSDate date] compare:expirationDate] == NSOrderedAscending) {
+        return YES;
+    } else {
+        return NO;
+    }
 }
 
-- (void) saveODMInfo:(NSString *) odmInfo {
-    
-}
-
-
-- (NSString *)fetchODMInfoFromDeviceWithInitDate:(NSDate *) date  andCompletion:(void (^)(NSString *odmInfo))completion {
+- (void) fetchODMInfoFromDeviceWithInitDate:(NSDate *) date  andCompletion:(void (^)(NSString *odmInfo, NSError *error))completion {
     
     NSString *odmInfo = nil;
+    NSError *error = nil ;
     
     Class ODMConversionManagerClass = NSClassFromString(@"ODCConversionManager");
     SEL sharedInstanceSelector = NSSelectorFromString(@"sharedInstance");
@@ -100,30 +112,45 @@
                 [invocation setArgument:&arg1 atIndex:2];
 
                 void (^completionBlock)(NSString *, NSError *) = ^(NSString *info, NSError *error) {
+                    
                     if (error) {
-                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@""] error:nil];
-                        NSLog(@"Error: %@", error.localizedDescription);
-                        return;
+                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"ODMConversionManager:fetchInfo Error : %@", error.localizedDescription ] error:nil];
                     }
-                    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@""] error:nil];
+                    
+                    if (info) {
+                        self.odmInfo = info;
+                    }
+                    
+                    if (completion) {
+                        completion( odmInfo, error);
+                    }
                     NSLog(@"Received Info: %@", info);
                 };
 
                 [invocation setArgument:&completionBlock atIndex:3];
                 [invocation invoke];
-                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@""] error:nil];
-                NSLog(@"fetchInfo:completion: invoked successfully.");
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"fetchInfo:completion: invoked successfully."] error:nil];
+        
+                
             } else {
-                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@""] error:nil];
-                NSLog(@"Method fetchInfo:completion: not found.");
+                NSString *message = [NSString stringWithFormat:@"Method fetchInfo:completion: not found."] ;
+                error = [NSError branchErrorWithCode:BNCMethodNotFoundError ];
+                [[BranchLogger shared] logDebug:message error:nil];
             }
         } else {
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Method setFirstLaunchTimeSelector: not found."] error:nil];
+            NSString *message = [NSString stringWithFormat:@"Method setFirstLaunchTimeSelector: not found."] ;
+            error = [NSError branchErrorWithCode:BNCMethodNotFoundError ];
+            [[BranchLogger shared] logDebug:message error:nil];
         }
     } else {
-        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"ODCConversionManager class or sharedInstance method not found."] error:nil];
+        NSString *message = [NSString stringWithFormat:@"ODCConversionManager class or sharedInstance method not found."] ;
+        error = [NSError branchErrorWithCode:BNCClassNotFoundError localizedMessage:message];
+        [[BranchLogger shared] logDebug:message error:error];
     }
-    return  odmInfo;
+    
+    if (completion) {
+        completion( odmInfo, error);
+    }
 }
 
 @end

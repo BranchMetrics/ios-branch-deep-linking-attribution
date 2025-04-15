@@ -34,6 +34,10 @@ typedef NS_ENUM(NSInteger, BNCErrorCode) {
     BNCGeneralError                 = 1016, // General Branch SDK Error
     BNCDNSAdBlockerError                 = 1017,
     BNCVPNAdBlockerError                 = 1018,
+    // Reflection and Google ODM Related Errors
+    BNCClassNotFoundError                = 1019,
+    BNCMethodNotFoundError               = 1020,
+    BNCODCConversionManagerError         = 1021,
     BNCHighestError
 };
 
