@@ -584,11 +584,16 @@ static NSString *bnc_branchKey = nil;
 }
 
 + (void)setODMInfo:(NSString *)odmInfo {
+#if !TARGET_OS_TV
     @synchronized (self) {
         [[BNCPreferenceHelper sharedInstance] setOdmInfo:odmInfo];
         [BNCPreferenceHelper sharedInstance].odmInfoInitDate = [NSDate date];
         [[BNCODMInfoCollector instance] loadODMInfoWithCompletion:nil];
     }
+#else
+    [[BranchLogger shared] logWarning:@"setODMInfo not supported on tvOS." error:nil];
+#endif
+    
 }
 
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level {
@@ -980,6 +985,7 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)loadODMInfo {
+    #if !TARGET_OS_TV
     dispatch_async(self.isolationQueue, ^(){
         [[BranchLogger shared] logVerbose:@"Loading ODM info ..." error:nil];
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -988,6 +994,7 @@ static NSString *bnc_branchKey = nil;
         }];
         dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     });
+   #endif
 }
 
 
