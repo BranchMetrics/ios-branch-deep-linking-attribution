@@ -584,8 +584,11 @@ static NSString *bnc_branchKey = nil;
 }
 
 + (void)setODMInfo:(NSString *)odmInfo {
-    [[BNCPreferenceHelper sharedInstance] setOdmInfo:odmInfo];
-    [[BNCPreferenceHelper sharedInstance] setOdmInfoInitDate:[NSDate date]];
+    @synchronized (self) {
+        [[BNCPreferenceHelper sharedInstance] setOdmInfo:odmInfo];
+        [BNCPreferenceHelper sharedInstance].odmInfoInitDate = [NSDate date];
+        [[BNCODMInfoCollector instance] loadODMInfoWithCompletion:nil];
+    }
 }
 
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level {

@@ -13,7 +13,9 @@
 #import "BranchLogger.h"
 #import "NSError+Branch.h"
 
-@interface BNCODMInfoCollector()
+@interface BNCODMInfoCollector(){
+    void (^completionBlock)(NSString *, NSError *);
+}
 
 @property (nonatomic, strong, readwrite) BNCPreferenceHelper *preferenceHelper;
 
@@ -48,6 +50,9 @@
             // fetch ODM info from pref helper
             self.odmInfo = self.preferenceHelper.odmInfo;
         }
+        if (completion) {
+            completion(self.odmInfo, nil);
+        }
     } else {
         // Fetch ODM Info from device
         NSDate * odmInfofetchingTime = [NSDate date];
@@ -59,6 +64,10 @@
                  self.preferenceHelper.odmInfo = odmInfo;
                  self.preferenceHelper.odmInfoInitDate = odmInfofetchingTime;
              }
+            
+            if (completion) {
+                completion(self.odmInfo, error);
+            }
         }];
     }
 }
@@ -74,7 +83,7 @@
 
 - (void) fetchODMInfoFromDeviceWithInitDate:(NSDate *) date  andCompletion:(void (^)(NSString *odmInfo, NSError *error))completion {
     
-    NSString *odmInfo = nil;
+   
     NSError *error = nil ;
     
     Class ODMConversionManagerClass = NSClassFromString(@"ODCConversionManager");
@@ -118,11 +127,11 @@
                     }
                     
                     if (info) {
-                        self.odmInfo = info;
+                        self->_odmInfo = info;
                     }
                     
                     if (completion) {
-                        completion( odmInfo, error);
+                        completion( self->_odmInfo, error);
                     }
                     NSLog(@"Received Info: %@", info);
                 };
@@ -136,20 +145,25 @@
                 NSString *message = [NSString stringWithFormat:@"Method fetchInfo:completion: not found."] ;
                 error = [NSError branchErrorWithCode:BNCMethodNotFoundError ];
                 [[BranchLogger shared] logDebug:message error:nil];
+                if (completion) {
+                    completion( nil, error);
+                }
             }
         } else {
             NSString *message = [NSString stringWithFormat:@"Method setFirstLaunchTimeSelector: not found."] ;
             error = [NSError branchErrorWithCode:BNCMethodNotFoundError ];
             [[BranchLogger shared] logDebug:message error:nil];
+            if (completion) {
+                completion( nil, error);
+            }
         }
     } else {
         NSString *message = [NSString stringWithFormat:@"ODCConversionManager class or sharedInstance method not found."] ;
         error = [NSError branchErrorWithCode:BNCClassNotFoundError localizedMessage:message];
         [[BranchLogger shared] logDebug:message error:error];
-    }
-    
-    if (completion) {
-        completion( odmInfo, error);
+        if (completion) {
+            completion( nil, error);
+        }
     }
 }
 

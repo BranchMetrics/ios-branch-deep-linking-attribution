@@ -743,7 +743,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
 }
 
-- (void)setODMInfoInitDate:(NSDate *)initDate {
+- (void) setOdmInfoInitDate:(NSDate *)initDate {
     @synchronized (self) {
         if (![_odmInfoInitDate isEqualToDate:initDate]) {
             _odmInfoInitDate = initDate;
