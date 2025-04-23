@@ -283,5 +283,4 @@
     return @([UIScreen mainScreen].scale);
 }
 
-
 @end
