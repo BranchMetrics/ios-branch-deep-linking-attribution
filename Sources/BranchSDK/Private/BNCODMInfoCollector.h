@@ -18,14 +18,13 @@ NS_ASSUME_NONNULL_BEGIN
 //  Loads ODM Info either from device or pref helper
 @interface BNCODMInfoCollector : NSObject
 
-+ (BNCODMInfoCollector *_Nullable)instance;
++ (BNCODMInfoCollector *_Nullable) instance;
 
-@property (nonatomic, copy, readwrite) NSString *odmInfo;
+@property (nonatomic, copy, readwrite) NSString * _Nullable odmInfo;
 
 - (BOOL)isWithinValidityWindow:(NSDate *)initTime timeInterval:(NSTimeInterval)timeInterval;
 - (void)loadODMInfoWithCompletion:(void (^_Nullable)(NSString * _Nullable odmInfo,  NSError * _Nullable error))completion;
-- (void) fetchODMInfoFromDeviceWithInitDate:(NSDate *) date  andCompletion:(void (^)(NSString *odmInfo, NSError *error))completion;
-
+- (void)fetchODMInfoFromDeviceWithInitDate:(NSDate *) date  andCompletion:(void (^)(NSString *odmInfo, NSError *error))completion;
 
 @end
 

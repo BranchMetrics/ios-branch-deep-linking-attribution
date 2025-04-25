@@ -13,11 +13,10 @@
 #import "BranchLogger.h"
 #import "NSError+Branch.h"
 
-@interface BNCODMInfoCollector(){
-    void (^completionBlock)(NSString *, NSError *);
-}
+@interface BNCODMInfoCollector()
 
 @property (nonatomic, strong, readwrite) BNCPreferenceHelper *preferenceHelper;
+@property (nonatomic, copy) void (^odmFetchCompletion)(NSString *info, NSError *error);
 
 @end
 
@@ -49,6 +48,8 @@
         if ([self isWithinValidityWindow:initTime timeInterval:validityWindow]) {
             // fetch ODM info from pref helper
             self.odmInfo = self.preferenceHelper.odmInfo;
+        } else {
+            self.odmInfo = nil;
         }
         if (completion) {
             completion(self.odmInfo, nil);
@@ -83,7 +84,6 @@
 
 - (void) fetchODMInfoFromDeviceWithInitDate:(NSDate *) date  andCompletion:(void (^)(NSString *odmInfo, NSError *error))completion {
     
-   
     NSError *error = nil ;
     
     Class ODMConversionManagerClass = NSClassFromString(@"ODCConversionManager");
@@ -119,13 +119,16 @@
                 
                 ODCInteractionType arg1 = ODCInteractionTypeInstallation;
                 [invocation setArgument:&arg1 atIndex:2];
-
-                void (^completionBlock)(NSString *, NSError *) = ^(NSString *info, NSError *error) {
+                
+                __weak typeof(self) weakSelf = self;
+                self.odmFetchCompletion = ^(NSString *info, NSError *error) {
+                    
                     
                     if (error) {
                         [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"ODMConversionManager:fetchInfo Error : %@", error.localizedDescription ] error:nil];
                     }
                     
+                    __strong typeof(self) self = weakSelf;
                     if (info) {
                         self->_odmInfo = info;
                     }
@@ -136,7 +139,7 @@
                     NSLog(@"Received Info: %@", info);
                 };
 
-                [invocation setArgument:&completionBlock atIndex:3];
+                [invocation setArgument:&_odmFetchCompletion atIndex:3];
                 [invocation invoke];
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"fetchInfo:completion: invoked successfully."] error:nil];
         

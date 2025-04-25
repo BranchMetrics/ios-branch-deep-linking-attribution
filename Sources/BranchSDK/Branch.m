@@ -583,11 +583,11 @@ static NSString *bnc_branchKey = nil;
     [BNCPreferenceHelper sharedInstance].adUserDataUsageConsent = adUserDataUsageConsent;
 }
 
-+ (void)setODMInfo:(NSString *)odmInfo {
++ (void)setODMInfo:(NSString *)odmInfo andFirstOpenTimestamp:(NSDate *) firstOpenTimestamp {
 #if !TARGET_OS_TV
     @synchronized (self) {
         [[BNCPreferenceHelper sharedInstance] setOdmInfo:odmInfo];
-        [BNCPreferenceHelper sharedInstance].odmInfoInitDate = [NSDate date];
+        [BNCPreferenceHelper sharedInstance].odmInfoInitDate = firstOpenTimestamp;
         [[BNCODMInfoCollector instance] loadODMInfoWithCompletion:nil];
     }
 #else
