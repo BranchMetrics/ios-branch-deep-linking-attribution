@@ -563,8 +563,8 @@
 		E7AC745A2DB06407002D8C40 /* BNCODMTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCODMTests.m; sourceTree = "<group>"; };
 		E7AC74602DB064BC002D8C40 /* Reflection_ODM_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Reflection_ODM_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7AC74762DB06B42002D8C40 /* Reflection_ODM_Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Reflection_ODM_Tests.xctestplan; sourceTree = "<group>"; };
-		E7AC74772DB06D05002D8C40 /* NSError+Branch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "NSError+Branch.m"; path = "../Sources/BranchSDK/NSError+Branch.m"; sourceTree = "<group>"; };
-		E7AC74782DB06D47002D8C40 /* NSError+Branch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "NSError+Branch.h"; path = "../Sources/BranchSDK/Private/NSError+Branch.h"; sourceTree = "<group>"; };
+		E7AC74772DB06D05002D8C40 /* NSError+Branch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSError+Branch.m"; sourceTree = "<group>"; };
+		E7AC74782DB06D47002D8C40 /* NSError+Branch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSError+Branch.h"; sourceTree = "<group>"; };
 		E7AC747D2DB07145002D8C40 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-TestBed-UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -734,6 +734,7 @@
 				5F644BA22B7AA811000DCD78 /* BNCJSONUtility.m */,
 				5F644B512B7AA810000DCD78 /* BNCKeyChain.m */,
 				5F644BAB2B7AA811000DCD78 /* BNCLinkCache.m */,
+				E7AC74772DB06D05002D8C40 /* NSError+Branch.m */,
 				5F644BA02B7AA811000DCD78 /* BNCLinkData.m */,
 				5F644B3B2B7AA810000DCD78 /* BNCNetworkInterface.m */,
 				5F644B442B7AA810000DCD78 /* BNCNetworkService.m */,
@@ -879,6 +880,7 @@
 				5F644B8B2B7AA811000DCD78 /* NSString+Branch.h */,
 				E51F64292CF46899000858D2 /* BranchFileLogger.h */,
 				5F644B752B7AA810000DCD78 /* UIViewController+Branch.h */,
+				E7AC74782DB06D47002D8C40 /* NSError+Branch.h */,
 			);
 			path = Private;
 			sourceTree = "<group>";
@@ -908,8 +910,6 @@
 		670016571940F51400A9E103 = {
 			isa = PBXGroup;
 			children = (
-				E7AC74782DB06D47002D8C40 /* NSError+Branch.h */,
-				E7AC74772DB06D05002D8C40 /* NSError+Branch.m */,
 				E7AC74762DB06B42002D8C40 /* Reflection_ODM_Tests.xctestplan */,
 				6589EBA52674270100F2E28B /* Branch-TestBed-CI.xctestplan */,
 				033FC71025AC1E5800D8319E /* Branch-TestBed.xctestplan */,

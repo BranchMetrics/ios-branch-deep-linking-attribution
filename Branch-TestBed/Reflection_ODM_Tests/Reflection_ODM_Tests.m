@@ -35,8 +35,8 @@
 - (void) testODMAPICall {
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Network call"];
-    
-    [[BNCODMInfoCollector instance ] loadODMInfoWithCompletion:^(NSString * _Nullable odmInfo, NSError * _Nullable error) {
+    [BNCPreferenceHelper sharedInstance].odmInfo = nil;
+    [[BNCODMInfoCollector instance ] loadODMInfoWithTimeOut:DISPATCH_TIME_FOREVER andCompletionHandler:^(NSString * _Nullable odmInfo, NSError * _Nullable error) {
             if ((error.code != BNCClassNotFoundError) && (error.code != BNCMethodNotFoundError)){
                 if (odmInfo) {
                     XCTAssertTrue([odmInfo isEqualToString:[BNCPreferenceHelper sharedInstance].odmInfo]);

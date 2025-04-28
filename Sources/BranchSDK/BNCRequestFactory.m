@@ -355,12 +355,11 @@
 #if !TARGET_OS_TV
     if ([[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelFull]) {
         NSString *odmInfo = [BNCODMInfoCollector instance].odmInfo ;
-        [self safeSetValue:odmInfo forKey:BRANCH_REQUEST_KEY_ODM_INFO onDict:json];
         if (odmInfo) {
+            [self safeSetValue:odmInfo forKey:BRANCH_REQUEST_KEY_ODM_INFO onDict:json];
             NSNumber* odmInitDateInNumberFormat = BNCWireFormatFromDate(self.preferenceHelper.odmInfoInitDate);
             [self safeSetValue:odmInitDateInNumberFormat forKey:BRANCH_REQUEST_KEY_ODM_FIRST_OPEN_TIMESTAMP onDict:json];
         }
-        
     }
 #endif
 }

@@ -26,6 +26,24 @@
   },
   "testTargets" : [
     {
+      "skippedTests" : [
+        "UITestSafari",
+        "UITestSafari\/testDeepLinking"
+      ],
+      "target" : {
+        "containerPath" : "container:Branch-TestBed.xcodeproj",
+        "identifier" : "F1D4F9AB1F323F01002D13FF",
+        "name" : "Branch-TestBed-UITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Branch-TestBed.xcodeproj",
+        "identifier" : "E7AC745F2DB064BC002D8C40",
+        "name" : "Reflection_ODM_Tests"
+      }
+    },
+    {
       "deviceAppDataReference" : {
         "resolvedPath" : "..\/Simulate-FirstRun.xcappdata"
       },
@@ -37,17 +55,6 @@
         "containerPath" : "container:Branch-TestBed.xcodeproj",
         "identifier" : "7E6B3B501AA42D0E005F45BF",
         "name" : "Branch-SDK-Tests"
-      }
-    },
-    {
-      "skippedTests" : [
-        "UITestSafari",
-        "UITestSafari\/testDeepLinking"
-      ],
-      "target" : {
-        "containerPath" : "container:Branch-TestBed.xcodeproj",
-        "identifier" : "F1D4F9AB1F323F01002D13FF",
-        "name" : "Branch-TestBed-UITests"
       }
     },
     {

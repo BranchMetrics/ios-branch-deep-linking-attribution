@@ -242,7 +242,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     // queue up async data loading
     [self loadApplicationData];
     [self loadUserAgent];
-    [self loadODMInfo];
+    [self startLoadingOfODMInfo];
     
     BranchJsonConfig *config = BranchJsonConfig.instance;
     self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
@@ -588,7 +588,7 @@ static NSString *bnc_branchKey = nil;
     @synchronized (self) {
         [[BNCPreferenceHelper sharedInstance] setOdmInfo:odmInfo];
         [BNCPreferenceHelper sharedInstance].odmInfoInitDate = firstOpenTimestamp;
-        [[BNCODMInfoCollector instance] loadODMInfoWithCompletion:nil];
+        [[BNCODMInfoCollector instance] loadODMInfo];
     }
 #else
     [[BranchLogger shared] logWarning:@"setODMInfo not supported on tvOS." error:nil];
@@ -984,15 +984,11 @@ static NSString *bnc_branchKey = nil;
     });
 }
 
-- (void)loadODMInfo {
+- (void)startLoadingOfODMInfo {
     #if !TARGET_OS_TV
-    dispatch_async(self.isolationQueue, ^(){
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [[BranchLogger shared] logVerbose:@"Loading ODM info ..." error:nil];
-        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-        [[BNCODMInfoCollector instance] loadODMInfoWithCompletion:^(NSString * _Nullable odmInfo,  NSError * _Nullable error) {
-                    dispatch_semaphore_signal(semaphore);
-        }];
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+        [[BNCODMInfoCollector instance] loadODMInfo];
     });
    #endif
 }
@@ -1822,6 +1818,7 @@ static NSString *bnc_branchKey = nil;
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive installOrOpenInQueue"] error:nil];
     dispatch_async(self.isolationQueue, ^(){
         //  if necessary, creates a new organic open
         BOOL installOrOpenInQueue = [self.requestQueue containsInstallOrOpen];

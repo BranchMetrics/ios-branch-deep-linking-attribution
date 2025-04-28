@@ -22,6 +22,8 @@
 
 @implementation BNCODMInfoCollector
 
+@synthesize odmInfo = _odmInfo;
+
 + (BNCODMInfoCollector *)instance {
     static BNCODMInfoCollector *collector = nil;
     static dispatch_once_t onceToken = 0;
@@ -39,37 +41,61 @@
     return self;
 }
 
-- (void)loadODMInfoWithCompletion:(void (^__strong)(NSString * _Nullable __strong,  NSError * _Nullable))completion {
+- (void) setOdmInfo:(NSString *)odmInfo {
+    _odmInfo = odmInfo;
+}
+
+- (NSString *) odmInfo {
+    @synchronized (self) {
+        
+        if (!_odmInfo) {
+            [self loadODMInfoWithTimeOut:dispatch_time(DISPATCH_TIME_NOW, (int64_t)(500 * NSEC_PER_MSEC)) andCompletionHandler:nil]; // Timeout after 500 ms
+        }
+        
+        if (_odmInfo) {
+            // Check if odmInfo is within validity window
+            NSDate *initTime = self.preferenceHelper.odmInfoInitDate;
+            NSTimeInterval validityWindow = self.preferenceHelper.odmInfoValidityWindow;
+            if ([self isWithinValidityWindow:initTime timeInterval:validityWindow]) {
+                // fetch ODM info from pref helper
+                _odmInfo = self.preferenceHelper.odmInfo;
+            } else {
+                _odmInfo = nil;
+            }
+        }
+        return _odmInfo;
+    }
+}
+
+- (void)loadODMInfo {
+    [self loadODMInfoWithTimeOut: DISPATCH_TIME_FOREVER andCompletionHandler:nil];
+}
+
+- (void)loadODMInfoWithTimeOut:(dispatch_time_t) timeOut andCompletionHandler:(void (^_Nullable)(NSString * _Nullable odmInfo,  NSError * _Nullable error))completion {
     
     if (self.preferenceHelper.odmInfo) {
-        // Check if odmInfo is within validity window
-        NSDate *initTime = self.preferenceHelper.odmInfoInitDate;
-        NSTimeInterval validityWindow = self.preferenceHelper.odmInfoValidityWindow;
-        if ([self isWithinValidityWindow:initTime timeInterval:validityWindow]) {
-            // fetch ODM info from pref helper
-            self.odmInfo = self.preferenceHelper.odmInfo;
-        } else {
-            self.odmInfo = nil;
-        }
+        self.odmInfo = self.preferenceHelper.odmInfo;
         if (completion) {
-            completion(self.odmInfo, nil);
+            completion(_odmInfo, nil);
         }
     } else {
         // Fetch ODM Info from device
         NSDate * odmInfofetchingTime = [NSDate date];
+        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
         
         [self fetchODMInfoFromDeviceWithInitDate:odmInfofetchingTime andCompletion:^(NSString *odmInfo, NSError *error) {
             if (odmInfo) {
                 self.odmInfo = odmInfo;
-                 // Cache ODM info in pref helper
-                 self.preferenceHelper.odmInfo = odmInfo;
-                 self.preferenceHelper.odmInfoInitDate = odmInfofetchingTime;
-             }
-            
-            if (completion) {
-                completion(self.odmInfo, error);
+                // Cache ODM info in pref helper
+                self.preferenceHelper.odmInfo = odmInfo;
+                self.preferenceHelper.odmInfoInitDate = odmInfofetchingTime;
             }
+            if (completion) {
+                completion(odmInfo, error);
+            }
+            dispatch_semaphore_signal(semaphore);
         }];
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     }
 }
 
@@ -146,16 +172,16 @@
                 
             } else {
                 NSString *message = [NSString stringWithFormat:@"Method fetchInfo:completion: not found."] ;
-                error = [NSError branchErrorWithCode:BNCMethodNotFoundError ];
-                [[BranchLogger shared] logDebug:message error:nil];
+                error = [NSError branchErrorWithCode:BNCMethodNotFoundError localizedMessage:message];
+                [[BranchLogger shared] logDebug:message error:error ];
                 if (completion) {
                     completion( nil, error);
                 }
             }
         } else {
             NSString *message = [NSString stringWithFormat:@"Method setFirstLaunchTimeSelector: not found."] ;
-            error = [NSError branchErrorWithCode:BNCMethodNotFoundError ];
-            [[BranchLogger shared] logDebug:message error:nil];
+            error = [NSError branchErrorWithCode:BNCMethodNotFoundError localizedMessage:message];
+            [[BranchLogger shared] logDebug:message error:error];
             if (completion) {
                 completion( nil, error);
             }

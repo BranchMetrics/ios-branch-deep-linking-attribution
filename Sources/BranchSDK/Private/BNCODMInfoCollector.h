@@ -23,7 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readwrite) NSString * _Nullable odmInfo;
 
 - (BOOL)isWithinValidityWindow:(NSDate *)initTime timeInterval:(NSTimeInterval)timeInterval;
-- (void)loadODMInfoWithCompletion:(void (^_Nullable)(NSString * _Nullable odmInfo,  NSError * _Nullable error))completion;
+- (void)loadODMInfo;
+- (void)loadODMInfoWithTimeOut:(dispatch_time_t) timeOut andCompletionHandler:(void (^_Nullable)(NSString * _Nullable odmInfo,  NSError * _Nullable error))completion; // Added completion handler for unit tests
 - (void)fetchODMInfoFromDeviceWithInitDate:(NSDate *) date  andCompletion:(void (^)(NSString *odmInfo, NSError *error))completion;
 
 @end

@@ -737,9 +737,12 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 - (NSDate*) odmInfoInitDate {
     @synchronized (self) {
-        _odmInfoInitDate = (NSDate*)[self readObjectFromDefaults:BRANCH_PREFS_KEY_ODM_INFO_INIT_DATE];
-        if ([_odmInfoInitDate isKindOfClass:[NSDate class]]) return _odmInfoInitDate;
-        return nil;
+        if (!_odmInfoInitDate) {
+            _odmInfoInitDate = (NSDate*)[self readObjectFromDefaults:BRANCH_PREFS_KEY_ODM_INFO_INIT_DATE];
+            if ([_odmInfoInitDate isKindOfClass:[NSDate class]]) return _odmInfoInitDate;
+            return nil;
+        }
+        return _odmInfoInitDate;
     }
 }
 
