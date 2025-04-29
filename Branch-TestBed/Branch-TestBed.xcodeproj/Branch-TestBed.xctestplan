@@ -44,9 +44,6 @@
       }
     },
     {
-      "deviceAppDataReference" : {
-        "resolvedPath" : "..\/Simulate-FirstRun.xcappdata"
-      },
       "skippedTests" : [
         "BNCServerInterfaceTests",
         "BranchDelegateTest"
