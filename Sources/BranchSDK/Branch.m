@@ -1834,7 +1834,6 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)applicationWillResignActive {
-    [[BranchLogger shared] logVerbose:@"applicationWillResignActive" error:nil];
 
     dispatch_async(self.isolationQueue, ^(){
         if (!Branch.trackingDisabled) {
