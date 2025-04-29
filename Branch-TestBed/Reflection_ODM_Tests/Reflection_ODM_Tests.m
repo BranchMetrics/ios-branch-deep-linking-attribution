@@ -42,6 +42,8 @@
                     XCTAssertTrue([odmInfo isEqualToString:[BNCPreferenceHelper sharedInstance].odmInfo]);
                     XCTAssertTrue([BNCPreferenceHelper sharedInstance].odmInfoInitDate != nil);
                 }
+                XCTAssertTrue(odmInfo !=nil);
+                XCTAssertTrue(error ==nil);
                 [expectation fulfill];
             }
     }];
