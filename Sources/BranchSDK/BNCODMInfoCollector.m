@@ -47,7 +47,7 @@
 
 - (NSString *) odmInfo {
     @synchronized (self) {
-        
+        // Load ODM info with a time-out of 500 ms. Its must for next call to v1/open.
         if (!_odmInfo) {
             [self loadODMInfoWithTimeOut:dispatch_time(DISPATCH_TIME_NOW, (int64_t)(500 * NSEC_PER_MSEC)) andCompletionHandler:nil]; // Timeout after 500 ms
         }
@@ -156,7 +156,7 @@
                     
                     __strong typeof(self) self = weakSelf;
                     if (info) {
-                        self->_odmInfo = info;
+                        self->_odmInfo = info; // Save new value even if its new.
                     }
                     
                     if (completion) {
