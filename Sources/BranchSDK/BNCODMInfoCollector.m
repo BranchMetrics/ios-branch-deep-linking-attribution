@@ -151,7 +151,7 @@
                     
                     
                     if (error) {
-                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"ODMConversionManager:fetchInfo Error : %@", error.localizedDescription ] error:nil];
+                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"ODMConversionManager:fetchInfo Error : %@", error.localizedDescription ] error:error];
                     }
                     
                     __strong typeof(self) self = weakSelf;
