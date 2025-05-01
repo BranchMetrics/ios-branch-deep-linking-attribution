@@ -162,7 +162,7 @@
                     if (completion) {
                         completion( self->_odmInfo, error);
                     }
-                    NSLog(@"Received Info: %@", info);
+                    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Received Info: %@", info] error:nil];
                 };
 
                 [invocation setArgument:&_odmFetchCompletion atIndex:3];
