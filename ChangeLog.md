@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+v.3.11.0
+- Added Google ODM Event Data support. SDK will fetch, cache and send ODM event data with v1/install and v1/open requests for 180 days.
+- Added new API `setODMInfo:andFirstOpenTimestamp` to set ODM Event data and first open timestamp if app developer wants to set it instead of SDK.
+
 v.3.10.0
 - Added new API `setSafetrackAPIURL` for setting custom safetrack URL.
 - Fixed Bug - Clear initial referrer after init.
