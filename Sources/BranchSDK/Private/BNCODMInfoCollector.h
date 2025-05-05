@@ -39,6 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param timeOut The maximum time to wait for ODM information.
  * @param completion Optional completion handler called when ODM info is loaded.
  */
+- (void)loadODMInfoWithTimeOut:(dispatch_time_t) timeOut andCompletionHandler:(void (^_Nullable)(NSString * _Nullable odmInfo,  NSError * _Nullable error))completion; // Added completion handler for unit tests
+
 - (void)fetchODMInfoFromDeviceWithInitDate:(NSDate *) date  andCompletion:(void (^)(NSString *odmInfo, NSError *error))completion;
 
 @end
