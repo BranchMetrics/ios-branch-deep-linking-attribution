@@ -820,6 +820,13 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
  */
 + (void) setDMAParamsForEEA:(BOOL) eeaRegion AdPersonalizationConsent:(BOOL) adPersonalizationConsent AdUserDataUsageConsent:(BOOL) adUserDataUsageConsent;
 
+/**
+ Sets the ODM ( Fetched using Google framework - AppAdsOnDeviceConversion:fetchAggregateConversionInfoForInteraction ) info in SDK.
+ @param odmInfo The ODM Event data ( or aggregate conversion info) of the current app instance.
+ @param firstOpenTimestamp  time passed to ODCConversionManager:setFirstLaunchTime API.
+ */
+
++ (void)setODMInfo:(NSString *)odmInfo andFirstOpenTimestamp:(NSDate *) firstOpenTimestamp;
 
 /**
  * Enumeration representing different levels of consumer protection attribution levels

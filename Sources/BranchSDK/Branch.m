@@ -51,6 +51,7 @@
 #import "BNCSpotlightService.h"
 #import "BNCContentDiscoveryManager.h"
 #import "BranchContentDiscoverer.h"
+#import "BNCODMInfoCollector.h"
 #endif
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
@@ -241,6 +242,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     // queue up async data loading
     [self loadApplicationData];
     [self loadUserAgent];
+    [self startLoadingOfODMInfo];
     
     BranchJsonConfig *config = BranchJsonConfig.instance;
     self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
@@ -579,6 +581,19 @@ static NSString *bnc_branchKey = nil;
     [BNCPreferenceHelper sharedInstance].eeaRegion = eeaRegion;
     [BNCPreferenceHelper sharedInstance].adPersonalizationConsent = adPersonalizationConsent;
     [BNCPreferenceHelper sharedInstance].adUserDataUsageConsent = adUserDataUsageConsent;
+}
+
++ (void)setODMInfo:(NSString *)odmInfo andFirstOpenTimestamp:(NSDate *) firstOpenTimestamp {
+#if !TARGET_OS_TV
+    @synchronized (self) {
+        [[BNCPreferenceHelper sharedInstance] setOdmInfo:odmInfo];
+        [BNCPreferenceHelper sharedInstance].odmInfoInitDate = firstOpenTimestamp;
+        [[BNCODMInfoCollector instance] loadODMInfo];
+    }
+#else
+    [[BranchLogger shared] logWarning:@"setODMInfo not supported on tvOS." error:nil];
+#endif
+    
 }
 
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level {
@@ -968,6 +983,16 @@ static NSString *bnc_branchKey = nil;
         dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     });
 }
+
+- (void)startLoadingOfODMInfo {
+    #if !TARGET_OS_TV
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [[BranchLogger shared] logVerbose:@"Loading ODM info ..." error:nil];
+        [[BNCODMInfoCollector instance] loadODMInfo];
+    });
+   #endif
+}
+
 
 #pragma mark - Apple Search Ad Check
 
@@ -1793,6 +1818,7 @@ static NSString *bnc_branchKey = nil;
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive installOrOpenInQueue"] error:nil];
     dispatch_async(self.isolationQueue, ^(){
         //  if necessary, creates a new organic open
         BOOL installOrOpenInQueue = [self.requestQueue containsInstallOrOpen];
@@ -1808,7 +1834,6 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)applicationWillResignActive {
-    [[BranchLogger shared] logVerbose:@"applicationWillResignActive" error:nil];
 
     dispatch_async(self.isolationQueue, ^(){
         if (!Branch.trackingDisabled) {

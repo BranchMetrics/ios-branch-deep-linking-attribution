@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -237,6 +237,14 @@
 		E56394312CC7AC9F00E18E65 /* BranchFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E563942F2CC7AC9500E18E65 /* BranchFileLogger.m */; };
 		E72489D228E40D0200DCD8FD /* PasteControlViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E72489D128E40D0200DCD8FD /* PasteControlViewController.m */; };
 		E7A728BD2AA9A112009343B7 /* BNCAPIServerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = E7A728BC2AA9A112009343B7 /* BNCAPIServerTest.m */; };
+		E7AC74572DB0639E002D8C40 /* BNCODMInfoCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = E7AC74562DB0639E002D8C40 /* BNCODMInfoCollector.h */; };
+		E7AC74592DB063C6002D8C40 /* BNCODMInfoCollector.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AC74582DB063C6002D8C40 /* BNCODMInfoCollector.m */; };
+		E7AC745B2DB06407002D8C40 /* BNCODMTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AC745A2DB06407002D8C40 /* BNCODMTests.m */; };
+		E7AC74702DB06992002D8C40 /* GULLogger in Frameworks */ = {isa = PBXBuildFile; productRef = E7AC746F2DB06992002D8C40 /* GULLogger */; };
+		E7AC74722DB06992002D8C40 /* GULNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = E7AC74712DB06992002D8C40 /* GULNetwork */; };
+		E7AC74752DB069B2002D8C40 /* nanopb in Frameworks */ = {isa = PBXBuildFile; productRef = E7AC74742DB069B2002D8C40 /* nanopb */; };
+		E7AC747B2DB0700D002D8C40 /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E7AC747A2DB0700D002D8C40 /* BranchSDK */; };
+		E7AC747E2DB0714B002D8C40 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E7AC747D2DB07145002D8C40 /* libc++.tbd */; };
 		F1CF14111F4CC79F00BB2694 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 /* End PBXBuildFile section */
 
@@ -263,6 +271,13 @@
 			remoteInfo = "Branch-TestBed";
 		};
 		5F8B7B4121B5F5CD009CE0A6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 670016581940F51400A9E103 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 466B58371B17773000A69EDE;
+			remoteInfo = Branch;
+		};
+		E7AC74652DB064BC002D8C40 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 670016581940F51400A9E103 /* Project object */;
 			proxyType = 1;
@@ -543,8 +558,20 @@
 		E72489D028E40D0200DCD8FD /* PasteControlViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasteControlViewController.h; sourceTree = "<group>"; };
 		E72489D128E40D0200DCD8FD /* PasteControlViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PasteControlViewController.m; sourceTree = "<group>"; };
 		E7A728BC2AA9A112009343B7 /* BNCAPIServerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCAPIServerTest.m; sourceTree = "<group>"; };
+		E7AC74562DB0639E002D8C40 /* BNCODMInfoCollector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCODMInfoCollector.h; sourceTree = "<group>"; };
+		E7AC74582DB063C6002D8C40 /* BNCODMInfoCollector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCODMInfoCollector.m; sourceTree = "<group>"; };
+		E7AC745A2DB06407002D8C40 /* BNCODMTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCODMTests.m; sourceTree = "<group>"; };
+		E7AC74602DB064BC002D8C40 /* Reflection_ODM_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Reflection_ODM_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E7AC74762DB06B42002D8C40 /* Reflection_ODM_Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Reflection_ODM_Tests.xctestplan; sourceTree = "<group>"; };
+		E7AC74772DB06D05002D8C40 /* NSError+Branch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSError+Branch.m"; sourceTree = "<group>"; };
+		E7AC74782DB06D47002D8C40 /* NSError+Branch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSError+Branch.h"; sourceTree = "<group>"; };
+		E7AC747D2DB07145002D8C40 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-TestBed-UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		E7AC74612DB064BC002D8C40 /* Reflection_ODM_Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Reflection_ODM_Tests; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		466B58351B17773000A69EDE /* Frameworks */ = {
@@ -594,6 +621,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E7AC745D2DB064BC002D8C40 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E7AC747E2DB0714B002D8C40 /* libc++.tbd in Frameworks */,
+				E7AC747B2DB0700D002D8C40 /* BranchSDK in Frameworks */,
+				E7AC74752DB069B2002D8C40 /* nanopb in Frameworks */,
+				E7AC74722DB06992002D8C40 /* GULNetwork in Frameworks */,
+				E7AC74702DB06992002D8C40 /* GULLogger in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F1D4F9A91F323F01002D13FF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -635,6 +674,7 @@
 				5FCF7EAC29DC96A7008D629E /* BNCURLFilterSkiplistUpgradeTests.m */,
 				4D16838C2098C901008819E3 /* BNCURLFilterTests.m */,
 				5F205D022318641700C776D1 /* BNCUserAgentCollectorTests.m */,
+				E7AC745A2DB06407002D8C40 /* BNCODMTests.m */,
 				4D1683812098C901008819E3 /* Branch-SDK-Tests-Bridging-Header.h */,
 				C15CC9DF2ABCF8C8003CC339 /* BranchActivityItemTests.m */,
 				C17DAF7A2AC20C2000B16B1A /* BranchClassTests.m */,
@@ -694,6 +734,7 @@
 				5F644BA22B7AA811000DCD78 /* BNCJSONUtility.m */,
 				5F644B512B7AA810000DCD78 /* BNCKeyChain.m */,
 				5F644BAB2B7AA811000DCD78 /* BNCLinkCache.m */,
+				E7AC74772DB06D05002D8C40 /* NSError+Branch.m */,
 				5F644BA02B7AA811000DCD78 /* BNCLinkData.m */,
 				5F644B3B2B7AA810000DCD78 /* BNCNetworkInterface.m */,
 				5F644B442B7AA810000DCD78 /* BNCNetworkService.m */,
@@ -716,6 +757,7 @@
 				5F644B392B7AA810000DCD78 /* BNCURLFilter.m */,
 				5F644B2F2B7AA810000DCD78 /* BNCUrlQueryParameter.m */,
 				5F644B272B7AA810000DCD78 /* BNCUserAgentCollector.m */,
+				E7AC74582DB063C6002D8C40 /* BNCODMInfoCollector.m */,
 				5F644BA12B7AA811000DCD78 /* Branch.m */,
 				5F644B332B7AA810000DCD78 /* Branch+Validator.m */,
 				5F644B4F2B7AA810000DCD78 /* BranchActivityItemProvider.m */,
@@ -820,6 +862,7 @@
 				5F644B872B7AA811000DCD78 /* BNCURLFilter.h */,
 				5F644B802B7AA811000DCD78 /* BNCUrlQueryParameter.h */,
 				5F644B842B7AA811000DCD78 /* BNCUserAgentCollector.h */,
+				E7AC74562DB0639E002D8C40 /* BNCODMInfoCollector.h */,
 				5F644B8D2B7AA811000DCD78 /* Branch+Validator.h */,
 				5F644B962B7AA811000DCD78 /* BranchConstants.h */,
 				5F644B922B7AA811000DCD78 /* BranchContentDiscoverer.h */,
@@ -837,6 +880,7 @@
 				5F644B8B2B7AA811000DCD78 /* NSString+Branch.h */,
 				E51F64292CF46899000858D2 /* BranchFileLogger.h */,
 				5F644B752B7AA810000DCD78 /* UIViewController+Branch.h */,
+				E7AC74782DB06D47002D8C40 /* NSError+Branch.h */,
 			);
 			path = Private;
 			sourceTree = "<group>";
@@ -866,6 +910,7 @@
 		670016571940F51400A9E103 = {
 			isa = PBXGroup;
 			children = (
+				E7AC74762DB06B42002D8C40 /* Reflection_ODM_Tests.xctestplan */,
 				6589EBA52674270100F2E28B /* Branch-TestBed-CI.xctestplan */,
 				033FC71025AC1E5800D8319E /* Branch-TestBed.xctestplan */,
 				4D93D8592098CC4400CFABA6 /* README.md */,
@@ -875,6 +920,7 @@
 				670016691940F51400A9E103 /* Branch-TestBed */,
 				4D93D85E2098D43C00CFABA6 /* Branch-TestBed-UITests */,
 				5FC4CF7D24860C320001E701 /* cannedData */,
+				E7AC74612DB064BC002D8C40 /* Reflection_ODM_Tests */,
 				670016621940F51400A9E103 /* Frameworks */,
 				670016611940F51400A9E103 /* Products */,
 			);
@@ -888,6 +934,7 @@
 				466B58381B17773000A69EDE /* libBranch.a */,
 				F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */,
 				5F8B7B3B21B5F5CD009CE0A6 /* Branch-SDK-Unhosted-Tests.xctest */,
+				E7AC74602DB064BC002D8C40 /* Reflection_ODM_Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -895,6 +942,7 @@
 		670016621940F51400A9E103 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E7AC747D2DB07145002D8C40 /* libc++.tbd */,
 				5FF7D2852A9549B40049158D /* AdServices.framework */,
 				C1614D55285BC8A00098946B /* LinkPresentation.framework */,
 				5F42763225DB3694005B9BBC /* AdServices.framework */,
@@ -987,6 +1035,8 @@
 				5F644BFC2B7AA811000DCD78 /* BranchScene.h in Headers */,
 				5F644BFD2B7AA811000DCD78 /* BNCPreferenceHelper.h in Headers */,
 				5F644BFE2B7AA811000DCD78 /* BNCServerInterface.h in Headers */,
+				5F644C172B7AA811000DCD78 /* NSError+Branch.h in Headers */,
+				E7AC74572DB0639E002D8C40 /* BNCODMInfoCollector.h in Headers */,
 				5F644BFF2B7AA811000DCD78 /* BNCProductCategory.h in Headers */,
 				5F644C1C2B7AA811000DCD78 /* NSString+Branch.h in Headers */,
 				5F644C132B7AA811000DCD78 /* NSMutableDictionary+Branch.h in Headers */,
@@ -1019,7 +1069,6 @@
 				5F644C202B7AA811000DCD78 /* BNCContentDiscoveryManager.h in Headers */,
 				5F644C0C2B7AA811000DCD78 /* BNCCallbackMap.h in Headers */,
 				5F644C192B7AA811000DCD78 /* BNCNetworkInterface.h in Headers */,
-				5F644C172B7AA811000DCD78 /* NSError+Branch.h in Headers */,
 				5F644C182B7AA811000DCD78 /* BNCURLFilter.h in Headers */,
 				5F644C072B7AA811000DCD78 /* BNCAppGroupsData.h in Headers */,
 				5F644C252B7AA811000DCD78 /* BranchContentDiscoveryManifest.h in Headers */,
@@ -1114,6 +1163,33 @@
 			productReference = 7E6B3B511AA42D0E005F45BF /* Branch-SDK-Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		E7AC745F2DB064BC002D8C40 /* Reflection_ODM_Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E7AC74672DB064BC002D8C40 /* Build configuration list for PBXNativeTarget "Reflection_ODM_Tests" */;
+			buildPhases = (
+				E7AC745C2DB064BC002D8C40 /* Sources */,
+				E7AC745D2DB064BC002D8C40 /* Frameworks */,
+				E7AC745E2DB064BC002D8C40 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E7AC74662DB064BC002D8C40 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E7AC74612DB064BC002D8C40 /* Reflection_ODM_Tests */,
+			);
+			name = Reflection_ODM_Tests;
+			packageProductDependencies = (
+				E7AC746F2DB06992002D8C40 /* GULLogger */,
+				E7AC74712DB06992002D8C40 /* GULNetwork */,
+				E7AC74742DB069B2002D8C40 /* nanopb */,
+				E7AC747A2DB0700D002D8C40 /* BranchSDK */,
+			);
+			productName = Reflection_ODM_Tests;
+			productReference = E7AC74602DB064BC002D8C40 /* Reflection_ODM_Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		F1D4F9AB1F323F01002D13FF /* Branch-TestBed-UITests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F1D4F9B51F323F01002D13FF /* Build configuration list for PBXNativeTarget "Branch-TestBed-UITests" */;
@@ -1169,6 +1245,9 @@
 						LastSwiftMigration = 1030;
 						TestTargetID = 6700165F1940F51400A9E103;
 					};
+					E7AC745F2DB064BC002D8C40 = {
+						CreatedOnToolsVersion = 16.2;
+					};
 					F1D4F9AB1F323F01002D13FF = {
 						CreatedOnToolsVersion = 8.3.1;
 						DevelopmentTeam = R63EM248DP;
@@ -1178,7 +1257,7 @@
 				};
 			};
 			buildConfigurationList = 6700165B1940F51400A9E103 /* Build configuration list for PBXProject "Branch-TestBed" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -1186,6 +1265,11 @@
 				Base,
 			);
 			mainGroup = 670016571940F51400A9E103;
+			packageReferences = (
+				E7AC746E2DB06992002D8C40 /* XCRemoteSwiftPackageReference "GoogleUtilities" */,
+				E7AC74732DB069B2002D8C40 /* XCRemoteSwiftPackageReference "nanopb" */,
+				E7AC74792DB0700D002D8C40 /* XCLocalSwiftPackageReference "../../ios-branch-deep-linking-attribution" */,
+			);
 			productRefGroup = 670016611940F51400A9E103 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1195,6 +1279,7 @@
 				7E6B3B501AA42D0E005F45BF /* Branch-SDK-Tests */,
 				5F8B7B3A21B5F5CD009CE0A6 /* Branch-SDK-Unhosted-Tests */,
 				F1D4F9AB1F323F01002D13FF /* Branch-TestBed-UITests */,
+				E7AC745F2DB064BC002D8C40 /* Reflection_ODM_Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -1228,6 +1313,13 @@
 				5FC4CF9024860C440001E701 /* example.json in Resources */,
 				5FC4CF9224860C440001E701 /* latd_missing_data.json in Resources */,
 				5FC4CF8D24860C440001E701 /* latd_missing_window.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E7AC745E2DB064BC002D8C40 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1265,6 +1357,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F644BB92B7AA811000DCD78 /* NSError+Branch.m in Sources */,
 				5F644C482B7AA811000DCD78 /* BNCCallbackMap.m in Sources */,
 				5F644BBE2B7AA811000DCD78 /* BNCApplication.m in Sources */,
 				5F644C302B7AA811000DCD78 /* BranchDelegate.m in Sources */,
@@ -1278,6 +1371,7 @@
 				5F644BDF2B7AA811000DCD78 /* BranchLATDRequest.m in Sources */,
 				5F644C382B7AA811000DCD78 /* BNCPasteboard.m in Sources */,
 				5F644BE22B7AA811000DCD78 /* BranchActivityItemProvider.m in Sources */,
+				E7AC74592DB063C6002D8C40 /* BNCODMInfoCollector.m in Sources */,
 				5F644BE12B7AA811000DCD78 /* BranchCSSearchableItemAttributeSet.m in Sources */,
 				5F644BD92B7AA811000DCD78 /* BNCRequestFactory.m in Sources */,
 				5F644BC32B7AA811000DCD78 /* BNCDeepLinkViewControllerInstance.m in Sources */,
@@ -1292,7 +1386,6 @@
 				5F644BD02B7AA811000DCD78 /* BNCConfig.m in Sources */,
 				5F644BD52B7AA811000DCD78 /* BranchContentDiscoverer.m in Sources */,
 				5F644BBF2B7AA811000DCD78 /* BNCDeviceSystem.m in Sources */,
-				5F644BB92B7AA811000DCD78 /* NSError+Branch.m in Sources */,
 				5F644C412B7AA811000DCD78 /* BNCAppGroupsData.m in Sources */,
 				5F644BBD2B7AA811000DCD78 /* BranchPasteControl.m in Sources */,
 				5F644C492B7AA811000DCD78 /* BNCEventUtils.m in Sources */,
@@ -1388,6 +1481,7 @@
 				5F5FDA142B7DE27D00F14A43 /* BranchLoggerTests.m in Sources */,
 				5F8BB66E278771890055D2DC /* BNCKeyChainTests.m in Sources */,
 				C1CC888229BAAFC000BDD2B5 /* BNCReferringURLUtilityTests.m in Sources */,
+				E7AC745B2DB06407002D8C40 /* BNCODMTests.m in Sources */,
 				5FE694382405FA2700E3AEE2 /* BNCCallbackMapTests.m in Sources */,
 				5FDB04F424E6156800F2F267 /* BNCSKAdNetworkTests.m in Sources */,
 				4D1683AE2098C902008819E3 /* BNCLinkDataTests.m in Sources */,
@@ -1405,6 +1499,13 @@
 				5F437E40237E1A560052064B /* BNCDeviceSystemTests.m in Sources */,
 				4D1683C72098C902008819E3 /* BNCCrashlyticsWrapperTests.m in Sources */,
 				5FDF91592581CDF4009BE5A3 /* BNCPartnerParametersTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E7AC745C2DB064BC002D8C40 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1445,6 +1546,11 @@
 			isa = PBXTargetDependency;
 			target = 466B58371B17773000A69EDE /* Branch */;
 			targetProxy = 5F8B7B4121B5F5CD009CE0A6 /* PBXContainerItemProxy */;
+		};
+		E7AC74662DB064BC002D8C40 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 466B58371B17773000A69EDE /* Branch */;
+			targetProxy = E7AC74652DB064BC002D8C40 /* PBXContainerItemProxy */;
 		};
 		F1D4F9B21F323F01002D13FF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1519,7 +1625,11 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Branch-SDK-Unhosted-Tests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.Branch-SDK-Unhosted-Tests";
@@ -1542,7 +1652,11 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Branch-SDK-Unhosted-Tests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.Branch-SDK-Unhosted-Tests";
@@ -1663,7 +1777,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 4.2;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1726,7 +1841,11 @@
 				);
 				INFOPLIST_FILE = "Branch-SDK-Tests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1746,13 +1865,74 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				INFOPLIST_FILE = "Branch-SDK-Tests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Branch-SDK-Tests/Branch-SDK-Tests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Branch-TestBed.app/Branch-TestBed";
+			};
+			name = Release;
+		};
+		E7AC74682DB064BC002D8C40 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = R63EM248DP;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "branch.Reflection-ODM-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E7AC74692DB064BC002D8C40 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = R63EM248DP;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "branch.Reflection-ODM-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -1767,7 +1947,11 @@
 				DEVELOPMENT_TEAM = R63EM248DP;
 				INFOPLIST_FILE = "Branch-TestBed-UITests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1787,7 +1971,11 @@
 				DEVELOPMENT_TEAM = R63EM248DP;
 				INFOPLIST_FILE = "Branch-TestBed-UITests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1843,6 +2031,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		E7AC74672DB064BC002D8C40 /* Build configuration list for PBXNativeTarget "Reflection_ODM_Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E7AC74682DB064BC002D8C40 /* Debug */,
+				E7AC74692DB064BC002D8C40 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		F1D4F9B51F323F01002D13FF /* Build configuration list for PBXNativeTarget "Branch-TestBed-UITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1853,6 +2050,54 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		E7AC74792DB0700D002D8C40 /* XCLocalSwiftPackageReference "../../ios-branch-deep-linking-attribution" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../ios-branch-deep-linking-attribution";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E7AC746E2DB06992002D8C40 /* XCRemoteSwiftPackageReference "GoogleUtilities" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleUtilities";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.2;
+			};
+		};
+		E7AC74732DB069B2002D8C40 /* XCRemoteSwiftPackageReference "nanopb" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nanopb/nanopb";
+			requirement = {
+				kind = revision;
+				revision = b7e1104502eca3a213b46303391ca4d3bc8ddec1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E7AC746F2DB06992002D8C40 /* GULLogger */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E7AC746E2DB06992002D8C40 /* XCRemoteSwiftPackageReference "GoogleUtilities" */;
+			productName = GULLogger;
+		};
+		E7AC74712DB06992002D8C40 /* GULNetwork */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E7AC746E2DB06992002D8C40 /* XCRemoteSwiftPackageReference "GoogleUtilities" */;
+			productName = GULNetwork;
+		};
+		E7AC74742DB069B2002D8C40 /* nanopb */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E7AC74732DB069B2002D8C40 /* XCRemoteSwiftPackageReference "nanopb" */;
+			productName = nanopb;
+		};
+		E7AC747A2DB0700D002D8C40 /* BranchSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BranchSDK;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 670016581940F51400A9E103 /* Project object */;
 }

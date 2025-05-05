@@ -19,6 +19,7 @@ static const NSTimeInterval DEFAULT_TIMEOUT = 5.5;
 static const NSTimeInterval DEFAULT_RETRY_INTERVAL = 0;
 static const NSInteger DEFAULT_RETRY_COUNT = 3;
 static const NSTimeInterval DEFAULT_REFERRER_GBRAID_WINDOW = 2592000; // 30 days = 2,592,000 seconds
+static const NSTimeInterval DEFAULT_ODM_INFO_VALIDITY_WINDOW = 15552000; // 180 days = 15,552,000 seconds
 
 static NSString * const BRANCH_PREFS_FILE = @"BNCPreferences";
 
@@ -48,6 +49,9 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID = @"bnc_referrer_gbraid";
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID_WINDOW = @"bnc_referrer_gbraid_window";
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID_INIT_DATE = @"bnc_referrer_gbraid_init_date";
+static NSString * const BRANCH_PREFS_KEY_ODM_INFO = @"bnc_odm_info";
+static NSString * const BRANCH_PREFS_KEY_ODM_INFO_VALIDITY_WINDOW = @"bnc_odm_info_validity_window";
+static NSString * const BRANCH_PREFS_KEY_ODM_INFO_INIT_DATE = @"bnc_odm_info_init_date";
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GCLID = @"bnc_referrer_gclid";
 static NSString * const BRANCH_PREFS_KEY_SKAN_CURRENT_WINDOW = @"bnc_skan_current_window";
 static NSString * const BRANCH_PREFS_KEY_FIRST_APP_LAUNCH_TIME = @"bnc_first_app_launch_time";
@@ -113,6 +117,9 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     instrumentationDictionary = _instrumentationDictionary,
     referrerGBRAID = _referrerGBRAID,
     referrerGBRAIDValidityWindow = _referrerGBRAIDValidityWindow,
+    odmInfo = _odmInfo,
+    odmInfoValidityWindow = _odmInfoValidityWindow,
+    odmInfoInitDate = _odmInfoInitDate,
     skanCurrentWindow = _skanCurrentWindow,
     firstAppLaunchTime = _firstAppLaunchTime,
     highestConversionValueSent = _highestConversionValueSent,
@@ -144,6 +151,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         _timeout = DEFAULT_TIMEOUT;
         _retryCount = DEFAULT_RETRY_COUNT;
         _retryInterval = DEFAULT_RETRY_INTERVAL;
+        _odmInfoValidityWindow = DEFAULT_ODM_INFO_VALIDITY_WINDOW;
         _isDebug = NO;
         _persistPrefsQueue = [[NSOperationQueue alloc] init];
         _persistPrefsQueue.maxConcurrentOperationCount = 1;
@@ -707,6 +715,43 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (void)setReferrerGBRAIDInitDate:(NSDate *)initDate {
     @synchronized (self) {
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_REFERRER_GBRAID_INIT_DATE value:initDate];
+    }
+}
+
+
+- (NSString *) odmInfo {
+    if (!_odmInfo) {
+        _odmInfo = [self readStringFromDefaults:BRANCH_PREFS_KEY_ODM_INFO];
+    }
+    return _odmInfo;
+}
+
+- (void) setOdmInfo:(NSString *)odmInfo {
+    @synchronized(self) {
+        if (![_odmInfo isEqualToString:odmInfo]) {
+            _odmInfo = odmInfo;
+            [self writeObjectToDefaults:BRANCH_PREFS_KEY_ODM_INFO value:odmInfo];
+        }
+    }
+}
+
+- (NSDate*) odmInfoInitDate {
+    @synchronized (self) {
+        if (!_odmInfoInitDate) {
+            _odmInfoInitDate = (NSDate*)[self readObjectFromDefaults:BRANCH_PREFS_KEY_ODM_INFO_INIT_DATE];
+            if ([_odmInfoInitDate isKindOfClass:[NSDate class]]) return _odmInfoInitDate;
+            return nil;
+        }
+        return _odmInfoInitDate;
+    }
+}
+
+- (void) setOdmInfoInitDate:(NSDate *)initDate {
+    @synchronized (self) {
+        if (![_odmInfoInitDate isEqualToDate:initDate]) {
+            _odmInfoInitDate = initDate;
+            [self writeObjectToDefaults:BRANCH_PREFS_KEY_ODM_INFO_INIT_DATE value:initDate];
+        }
     }
 }
 

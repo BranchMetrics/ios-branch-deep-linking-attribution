@@ -67,6 +67,10 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (strong, nonatomic) NSDate *referrerGBRAIDInitDate;
 @property (strong, nonatomic) NSMutableDictionary *referringURLQueryParameters;
 
+@property (copy, nonatomic) NSString *odmInfo;
+@property (assign, nonatomic) NSTimeInterval odmInfoValidityWindow;
+@property (strong, nonatomic) NSDate *odmInfoInitDate;
+
 @property (assign, nonatomic) NSInteger skanCurrentWindow;
 @property (assign, nonatomic) NSInteger highestConversionValueSent;
 @property (strong, nonatomic) NSDate   *firstAppLaunchTime;

@@ -1,0 +1,23 @@
+{
+  "originHash" : "d56bc7728e41c97a44136d6183fac55f67109eb4ddd481e77850df5331f07c38",
+  "pins" : [
+    {
+      "identity" : "googleutilities",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/google/GoogleUtilities",
+      "state" : {
+        "revision" : "53156c7ec267db846e6b64c9f4c4e31ba4cf75eb",
+        "version" : "8.0.2"
+      }
+    },
+    {
+      "identity" : "nanopb",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nanopb/nanopb",
+      "state" : {
+        "revision" : "b7e1104502eca3a213b46303391ca4d3bc8ddec1"
+      }
+    }
+  ],
+  "version" : 3
+}

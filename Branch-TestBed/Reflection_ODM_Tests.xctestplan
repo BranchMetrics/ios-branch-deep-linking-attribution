@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "A6502679-11C9-4A48-B913-4DDAEC18EBD9",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Branch-TestBed.xcodeproj",
+        "identifier" : "E7AC745F2DB064BC002D8C40",
+        "name" : "Reflection_ODM_Tests"
+      }
+    }
+  ],
+  "version" : 1
+}

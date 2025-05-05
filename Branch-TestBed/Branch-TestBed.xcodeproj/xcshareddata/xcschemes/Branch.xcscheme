@@ -57,6 +57,16 @@
                ReferencedContainer = "container:Branch-TestBed.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "E7AC745F2DB064BC002D8C40"
+               BuildableName = "Reflection_ODM_Tests.xctest"
+               BlueprintName = "Reflection_ODM_Tests"
+               ReferencedContainer = "container:Branch-TestBed.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

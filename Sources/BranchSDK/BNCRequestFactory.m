@@ -34,6 +34,7 @@
 #import "BNCSKAdNetwork.h"
 #import "BNCReferringURLUtility.h"
 #import "BNCPasteboard.h"
+#import "BNCODMInfoCollector.h"
 
 @interface BNCRequestFactory()
 
@@ -128,6 +129,9 @@
     [self addDMAConsentParamsToJSON:json];
     
     [self addConsumerProtectionAttributionLevel:json];
+    
+    // Add ODM Data if available
+    [self addODMInfoToJSON:json];
 
     return json;
 }
@@ -184,6 +188,9 @@
     [self addDMAConsentParamsToJSON:json];
     
     [self addConsumerProtectionAttributionLevel:json];
+    
+    // Add ODM Data if available
+    [self addODMInfoToJSON:json];
 
     return json;
 }
@@ -341,6 +348,20 @@
             [self safeSetValue:appleAttributionToken forKey:BRANCH_REQUEST_KEY_APPLE_ATTRIBUTION_TOKEN onDict:json];
         }
     }
+}
+
+
+- (void)addODMInfoToJSON:(NSMutableDictionary *)json {
+#if !TARGET_OS_TV
+    if ([[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelFull]) {
+        NSString *odmInfo = [BNCODMInfoCollector instance].odmInfo ;
+        if (odmInfo) {
+            [self safeSetValue:odmInfo forKey:BRANCH_REQUEST_KEY_ODM_INFO onDict:json];
+            NSNumber* odmInitDateInNumberFormat = BNCWireFormatFromDate(self.preferenceHelper.odmInfoInitDate);
+            [self safeSetValue:odmInitDateInNumberFormat forKey:BRANCH_REQUEST_KEY_ODM_FIRST_OPEN_TIMESTAMP onDict:json];
+        }
+    }
+#endif
 }
 
 - (void)addPartnerParametersToJSON:(NSMutableDictionary *)json {
