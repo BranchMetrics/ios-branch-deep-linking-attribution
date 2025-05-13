@@ -495,7 +495,6 @@
 		E52E5B0B2CC79E5C00F553EE /* BranchFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E52E5B092CC79E5C00F553EE /* BranchFileLogger.m */; };
 		E563942E2CC7A8E600E18E65 /* BranchFileLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = E52E5B052CC79E4E00F553EE /* BranchFileLogger.h */; };
 		E71E396F2DD3A92900110F59 /* BNCInAppBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = E71E396D2DD3A92900110F59 /* BNCInAppBrowser.h */; };
-		E71E39702DD3A92900110F59 /* BNCInAppBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = E71E396E2DD3A92900110F59 /* BNCInAppBrowser.m */; };
 		E71E39712DD3A92900110F59 /* BNCInAppBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = E71E396E2DD3A92900110F59 /* BNCInAppBrowser.m */; };
 		E71E39722DD3A92900110F59 /* BNCInAppBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = E71E396D2DD3A92900110F59 /* BNCInAppBrowser.h */; };
 		E71E39732DD3A92900110F59 /* BNCInAppBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = E71E396E2DD3A92900110F59 /* BNCInAppBrowser.m */; };
@@ -1817,7 +1816,6 @@
 				5FCDD41C2B7AC6A100EAF29F /* BNCUrlQueryParameter.m in Sources */,
 				5FCDD5902B7AC6A400EAF29F /* BNCServerAPI.m in Sources */,
 				5FCDD4492B7AC6A100EAF29F /* BranchConstants.m in Sources */,
-				E71E39702DD3A92900110F59 /* BNCInAppBrowser.m in Sources */,
 				5FCDD5722B7AC6A400EAF29F /* BNCCurrency.m in Sources */,
 				5FCDD5AB2B7AC6A400EAF29F /* BranchShortUrlSyncRequest.m in Sources */,
 				5FCDD43A2B7AC6A100EAF29F /* BNCURLFilter.m in Sources */,
