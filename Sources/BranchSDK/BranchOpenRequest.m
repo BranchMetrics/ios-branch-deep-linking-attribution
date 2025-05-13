@@ -301,7 +301,7 @@
                 [BNCPreferenceHelper sharedInstance].urlLoadMs = [NSDate date];
             }
         } else {
-            NSLog(@"Invalid  URL: %@", webLinkRedirectUrl);
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Invalid  URL: %@", webLinkRedirectUrl] error:nil];
             return;
         }
     }
