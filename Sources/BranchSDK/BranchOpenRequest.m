@@ -261,40 +261,49 @@
 - (void) invokeFeatures:(NSDictionary *)invokeFeatures {
     
     NSString *uxType = invokeFeatures[BRANCH_RESPONSE_KEY_ENHANCED_WEB_LINK_UX];
-    NSString *webLinkRedirectUrl = invokeFeatures[BRANCH_RESPONSE_KEY_WEB_LINK_REDIRECT_URL];
-    if (uxType && webLinkRedirectUrl) {
-        if ([uxType isEqualToString:@"IN_APP_WEBVIEW"]) {
-            id inAppBrowser = nil;
+    
+    if (uxType) {
+        NSURL *webLinkRedirectUrl = [NSURL URLWithString:invokeFeatures[BRANCH_RESPONSE_KEY_WEB_LINK_REDIRECT_URL]];
+        if (webLinkRedirectUrl) {
+            if ([uxType isEqualToString:@"IN_APP_WEBVIEW"]) {
+                id inAppBrowser = nil;
 #if !TARGET_OS_TV
-            inAppBrowser = [BNCInAppBrowser sharedInstance];
+                inAppBrowser = [BNCInAppBrowser sharedInstance];
 # endif
-            if (inAppBrowser) {
+                if (inAppBrowser) {
 #if !TARGET_OS_TV
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [(BNCInAppBrowser *)inAppBrowser openURLInSafariVC:webLinkRedirectUrl];
-                });
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [(BNCInAppBrowser *)inAppBrowser openURLInSafariVC:webLinkRedirectUrl];
+                    });
+                    [BNCPreferenceHelper sharedInstance].uxType = uxType;
+                    [BNCPreferenceHelper sharedInstance].urlLoadMs = [NSDate date];
+                    
 # endif
-            } else {
-                uxType = @"EXTERNAL_BROWSER";
+                } else {
+                    uxType = @"EXTERNAL_BROWSER";
+                }
             }
-        }
-        if ([uxType isEqualToString:@"EXTERNAL_BROWSER"]) {
-            dispatch_async(dispatch_get_main_queue(), ^{
+            if ([uxType isEqualToString:@"EXTERNAL_BROWSER"]) {
                 BOOL isAppExtension = [[[NSBundle mainBundle] bundlePath] hasSuffix:@".appex"];
                 if (!isAppExtension) {
-                    Class applicationClass = NSClassFromString(@"UIApplication");
-                    id<NSObject> sharedApplication = [applicationClass performSelector:@selector(sharedApplication)];
-                    if ([sharedApplication respondsToSelector:@selector(openURL:)])
-                        [sharedApplication performSelector:@selector(openURL:) withObject:[NSURL URLWithString:webLinkRedirectUrl]];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        Class applicationClass = NSClassFromString(@"UIApplication");
+                        id<NSObject> sharedApplication = [applicationClass performSelector:@selector(sharedApplication)];
+                        if ([sharedApplication respondsToSelector:@selector(openURL:)])
+                            [sharedApplication performSelector:@selector(openURL:) withObject:webLinkRedirectUrl];
+                    });
+                    
                 } else {
                     [[BranchLogger shared] logDebug:@"Will not load URL for app extensions" error:nil];
                 }
-            });
+                
+                [BNCPreferenceHelper sharedInstance].uxType = uxType;
+                [BNCPreferenceHelper sharedInstance].urlLoadMs = [NSDate date];
+            }
+        } else {
+            NSLog(@"Invalid  URL: %@", webLinkRedirectUrl);
+            return;
         }
-    }
-    if (uxType) {
-        [BNCPreferenceHelper sharedInstance].uxType = uxType;
-        [BNCPreferenceHelper sharedInstance].urlLoadMs = [NSDate date];
     }
 }
 

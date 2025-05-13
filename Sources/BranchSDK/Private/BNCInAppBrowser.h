@@ -21,9 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Opens the given URL in a `SFSafariViewController`over  current top-most view controller.
- @param  urlStr The URL string to be opened.
+ @param  url  The URL  to be opened.
  */
-- (void)openURLInSafariVC:(NSString *) urlStr;
+- (void)openURLInSafariVC:(NSURL *) url;
 
 @end
 
