@@ -894,7 +894,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     if (!_uxType) {
         _uxType = [self readStringFromDefaults:BRANCH_PREFS_KEY_UX_TYPE];
     }
-    return _odmInfo;
+    return _uxType;
 }
 
 - (void) setUxType:(NSString *)uxType {
