@@ -287,7 +287,7 @@
                     if ([sharedApplication respondsToSelector:@selector(openURL:)])
                         [sharedApplication performSelector:@selector(openURL:) withObject:[NSURL URLWithString:webLinkRedirectUrl]];
                 } else {
-                    
+                    [[BranchLogger shared] logDebug:@"Will not load URL for app extensions" error:nil];
                 }
             });
         }
