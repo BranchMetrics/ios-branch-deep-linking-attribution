@@ -245,6 +245,9 @@
 		E7AC74752DB069B2002D8C40 /* nanopb in Frameworks */ = {isa = PBXBuildFile; productRef = E7AC74742DB069B2002D8C40 /* nanopb */; };
 		E7AC747B2DB0700D002D8C40 /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E7AC747A2DB0700D002D8C40 /* BranchSDK */; };
 		E7AC747E2DB0714B002D8C40 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E7AC747D2DB07145002D8C40 /* libc++.tbd */; };
+		E7B1E23D2DD28A1300FA5603 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67163AAD1B9A036F007A8AB1 /* SafariServices.framework */; };
+		E7E28EC92DD2424C00F75D0D /* BNCInAppBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = E7E28EC72DD2424C00F75D0D /* BNCInAppBrowser.h */; };
+		E7E28ECA2DD2424C00F75D0D /* BNCInAppBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = E7E28EC82DD2424C00F75D0D /* BNCInAppBrowser.m */; };
 		F1CF14111F4CC79F00BB2694 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 /* End PBXBuildFile section */
 
@@ -566,6 +569,8 @@
 		E7AC74772DB06D05002D8C40 /* NSError+Branch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSError+Branch.m"; sourceTree = "<group>"; };
 		E7AC74782DB06D47002D8C40 /* NSError+Branch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSError+Branch.h"; sourceTree = "<group>"; };
 		E7AC747D2DB07145002D8C40 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
+		E7E28EC72DD2424C00F75D0D /* BNCInAppBrowser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCInAppBrowser.h; sourceTree = "<group>"; };
+		E7E28EC82DD2424C00F75D0D /* BNCInAppBrowser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCInAppBrowser.m; sourceTree = "<group>"; };
 		F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-TestBed-UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -606,6 +611,7 @@
 				5F205D062318659500C776D1 /* WebKit.framework in Frameworks */,
 				46DC406E1B2A328900D2D203 /* AdSupport.framework in Frameworks */,
 				670016661940F51400A9E103 /* CoreGraphics.framework in Frameworks */,
+				E7B1E23D2DD28A1300FA5603 /* SafariServices.framework in Frameworks */,
 				67F270891BA9FCFF002546A7 /* CoreSpotlight.framework in Frameworks */,
 				670016641940F51400A9E103 /* Foundation.framework in Frameworks */,
 				466B58811B1778DB00A69EDE /* libBranch.a in Frameworks */,
@@ -790,6 +796,8 @@
 				5F644BAF2B7AA811000DCD78 /* UIViewController+Branch.m */,
 				5F644B6E2B7AA810000DCD78 /* Private */,
 				5F644B522B7AA810000DCD78 /* Public */,
+				E7E28EC72DD2424C00F75D0D /* BNCInAppBrowser.h */,
+				E7E28EC82DD2424C00F75D0D /* BNCInAppBrowser.m */,
 			);
 			name = BranchSDK;
 			path = ../Sources/BranchSDK;
@@ -1078,6 +1086,7 @@
 				5F644C112B7AA811000DCD78 /* BNCUrlQueryParameter.h in Headers */,
 				5F644C2B2B7AA811000DCD78 /* BNCCrashlyticsWrapper.h in Headers */,
 				5F644C2F2B7AA811000DCD78 /* BNCReachability.h in Headers */,
+				E7E28EC92DD2424C00F75D0D /* BNCInAppBrowser.h in Headers */,
 				5F644C062B7AA811000DCD78 /* UIViewController+Branch.h in Headers */,
 				5F644C022B7AA811000DCD78 /* BNCPasteboard.h in Headers */,
 				5F644C0F2B7AA811000DCD78 /* BranchOpenRequest.h in Headers */,
@@ -1416,6 +1425,7 @@
 				E56394312CC7AC9F00E18E65 /* BranchFileLogger.m in Sources */,
 				5F644C452B7AA811000DCD78 /* BranchOpenRequest.m in Sources */,
 				5F644C312B7AA811000DCD78 /* BNCLinkData.m in Sources */,
+				E7E28ECA2DD2424C00F75D0D /* BNCInAppBrowser.m in Sources */,
 				5F644BD22B7AA811000DCD78 /* BranchContentDiscoveryManifest.m in Sources */,
 				5F644BDC2B7AA811000DCD78 /* BNCCrashlyticsWrapper.m in Sources */,
 				5F644C3F2B7AA811000DCD78 /* BranchShareLink.m in Sources */,

@@ -82,6 +82,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 
 @property (nonatomic, assign) NSString *attributionLevel;
 
+@property (copy, nonatomic) NSString *uxType;
+@property (strong, nonatomic) NSDate *urlLoadMs;
 
 - (void) clearTrackingInformation;
 
