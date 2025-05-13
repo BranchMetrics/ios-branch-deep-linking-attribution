@@ -287,10 +287,7 @@
                 BOOL isAppExtension = [[[NSBundle mainBundle] bundlePath] hasSuffix:@".appex"];
                 if (!isAppExtension) {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        Class applicationClass = NSClassFromString(@"UIApplication");
-                        id<NSObject> sharedApplication = [applicationClass performSelector:@selector(sharedApplication)];
-                        if ([sharedApplication respondsToSelector:@selector(openURL:)])
-                            [sharedApplication performSelector:@selector(openURL:) withObject:webLinkRedirectUrl];
+                        [self openURLInDefaultBrowser:webLinkRedirectUrl];
                     });
                     
                 } else {
@@ -303,6 +300,36 @@
         } else {
             [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Invalid  URL: %@", webLinkRedirectUrl] error:nil];
             return;
+        }
+    }
+}
+
+- (void)openURLInDefaultBrowser:(NSURL *)url{
+    
+    if (!url) return;
+
+    Class applicationClass = NSClassFromString(@"UIApplication");
+    SEL sharedAppSel = NSSelectorFromString(@"sharedApplication");
+
+    if ([applicationClass respondsToSelector:sharedAppSel]) {
+        id sharedApp = [applicationClass performSelector:sharedAppSel];
+
+        SEL openURLSel = NSSelectorFromString(@"openURL:options:completionHandler:");
+        if ([sharedApp respondsToSelector:openURLSel]) {
+            NSDictionary *options = @{};
+
+            NSMethodSignature *signature = [sharedApp methodSignatureForSelector:openURLSel];
+            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+            [invocation setSelector:openURLSel];
+            [invocation setTarget:sharedApp];
+
+            [invocation setArgument:&url atIndex:2];
+            [invocation setArgument:&options atIndex:3];
+
+            void (^nilHandler)(BOOL) = nil;
+            [invocation setArgument:&nilHandler atIndex:4];
+
+            [invocation invoke];
         }
     }
 }

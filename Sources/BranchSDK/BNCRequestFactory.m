@@ -550,7 +550,8 @@
 - (void)addWebUXParams:(NSMutableDictionary *)json {
    [self safeSetValue:self.preferenceHelper.uxType forKey:BRANCH_REQUEST_KEY_UX_TYPE onDict:json];
    if (self.preferenceHelper.uxType) {
-       [self safeSetValue:self.preferenceHelper.urlLoadMs forKey:BRANCH_REQUEST_KEY_URL_LOAD_MS onDict:json];
+       NSNumber* urlLoadMsInNumberFormat = BNCWireFormatFromDate(self.preferenceHelper.urlLoadMs);
+       [self safeSetValue:urlLoadMsInNumberFormat forKey:BRANCH_REQUEST_KEY_URL_LOAD_MS onDict:json];
    }
 }
 
