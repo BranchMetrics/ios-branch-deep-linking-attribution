@@ -8,7 +8,6 @@
 
 #if !TARGET_OS_TV
 
-#import <SafariServices/SafariServices.h>
 #import "BNCInAppBrowser.h"
 #import "UIViewController+Branch.h"
 #import "Branch.h"
@@ -46,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
     return (NSClassFromString(@"SFSafariViewController") != nil);
 }
 
-- (void)openURLInSafariVC:(NSString *)urlStr overViewController: topVC {
+- (void)openURLInSafariVC:(NSString *)urlStr overViewController:(UIViewController *)topVC {
    
     NSURL *url = [NSURL URLWithString:urlStr];
     
