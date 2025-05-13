@@ -264,14 +264,16 @@
     NSString *webLinkRedirectUrl = invokeFeatures[BRANCH_RESPONSE_KEY_WEB_LINK_REDIRECT_URL];
     if (uxType && webLinkRedirectUrl) {
         if ([uxType isEqualToString:@"IN_APP_WEBVIEW"]) {
-            BNCInAppBrowser *inAppBrowser = nil;
+            id inAppBrowser = nil;
 #if !TARGET_OS_TV
             inAppBrowser = [BNCInAppBrowser sharedInstance];
 # endif
             if (inAppBrowser) {
+#if !TARGET_OS_TV
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [inAppBrowser openURLInSafariVC:webLinkRedirectUrl];
+                    [(BNCInAppBrowser *)inAppBrowser openURLInSafariVC:webLinkRedirectUrl];
                 });
+# endif
             } else {
                 uxType = @"EXTERNAL_BROWSER";
             }
