@@ -250,7 +250,9 @@
 
     NSDictionary *invokeFeatures = data[BRANCH_RESPONSE_KEY_INVOKE_FEATURES];
     if (invokeFeatures) {
-        [self invokeFeatures:invokeFeatures];
+        if ([self invokeFeatures:invokeFeatures]) {
+            return; // Return - Dont call callback since weblink in launched
+        }
     }
 
     if (self.callback) {
@@ -258,7 +260,7 @@
     }
 }
 
-- (void) invokeFeatures:(NSDictionary *)invokeFeatures {
+- (BOOL) invokeFeatures:(NSDictionary *)invokeFeatures {
     
     NSString *uxType = invokeFeatures[BRANCH_RESPONSE_KEY_ENHANCED_WEB_LINK_UX];
     
@@ -277,7 +279,7 @@
                     });
                     [BNCPreferenceHelper sharedInstance].uxType = uxType;
                     [BNCPreferenceHelper sharedInstance].urlLoadMs = [NSDate date];
-                    
+                    return TRUE;
 # endif
                 } else {
                     uxType = @"EXTERNAL_BROWSER";
@@ -289,19 +291,18 @@
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [self openURLInDefaultBrowser:webLinkRedirectUrl];
                     });
-                    
+                    [BNCPreferenceHelper sharedInstance].uxType = uxType;
+                    [BNCPreferenceHelper sharedInstance].urlLoadMs = [NSDate date];
+                    return TRUE;
                 } else {
                     [[BranchLogger shared] logDebug:@"Will not load URL for app extensions" error:nil];
                 }
-                
-                [BNCPreferenceHelper sharedInstance].uxType = uxType;
-                [BNCPreferenceHelper sharedInstance].urlLoadMs = [NSDate date];
             }
         } else {
             [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Invalid  URL: %@", webLinkRedirectUrl] error:nil];
-            return;
         }
     }
+    return FALSE;
 }
 
 - (void)openURLInDefaultBrowser:(NSURL *)url{
@@ -312,7 +313,8 @@
     SEL sharedAppSel = NSSelectorFromString(@"sharedApplication");
 
     if ([applicationClass respondsToSelector:sharedAppSel]) {
-        id sharedApp = [applicationClass performSelector:sharedAppSel];
+        id sharedApp = ((id (*)(id, SEL))[applicationClass methodForSelector:sharedAppSel])
+                (applicationClass, sharedAppSel);
 
         SEL openURLSel = NSSelectorFromString(@"openURL:options:completionHandler:");
         if ([sharedApp respondsToSelector:openURLSel]) {
