@@ -267,7 +267,7 @@
     if (uxType) {
         NSURL *webLinkRedirectUrl = [NSURL URLWithString:invokeFeatures[BRANCH_RESPONSE_KEY_WEB_LINK_REDIRECT_URL]];
         if (webLinkRedirectUrl) {
-            if ([uxType isEqualToString:@"IN_APP_WEBVIEW"]) {
+            if ([uxType isEqualToString:WEB_UX_IN_APP_WEBVIEW]) {
                 id inAppBrowser = nil;
 #if !TARGET_OS_TV
                 inAppBrowser = [BNCInAppBrowser sharedInstance];
@@ -282,10 +282,10 @@
                     return TRUE;
 # endif
                 } else {
-                    uxType = @"EXTERNAL_BROWSER";
+                    uxType = WEB_UX_EXTERNAL_BROWSER;
                 }
             }
-            if ([uxType isEqualToString:@"EXTERNAL_BROWSER"]) {
+            if ([uxType isEqualToString:WEB_UX_EXTERNAL_BROWSER]) {
                 BOOL isAppExtension = [[[NSBundle mainBundle] bundlePath] hasSuffix:@".appex"];
                 if (!isAppExtension) {
                     dispatch_async(dispatch_get_main_queue(), ^{

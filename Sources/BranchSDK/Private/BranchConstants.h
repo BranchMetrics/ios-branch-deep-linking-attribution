@@ -180,3 +180,6 @@ extern NSString * const BRANCH_REQUEST_KEY_CPP_LEVEL;
 
 extern NSString * const BRANCH_REQUEST_KEY_REQUEST_UUID;
 extern NSString * const BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP;
+
+extern NSString * const WEB_UX_IN_APP_WEBVIEW;
+extern NSString * const WEB_UX_EXTERNAL_BROWSER;

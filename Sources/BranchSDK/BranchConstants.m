@@ -178,3 +178,6 @@ NSString * const BRANCH_REQUEST_KEY_CPP_LEVEL = @"cpp_level";
 
 NSString * const BRANCH_REQUEST_KEY_REQUEST_UUID = @"branch_sdk_request_unique_id";
 NSString * const BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP = @"branch_sdk_request_timestamp";
+
+NSString * const WEB_UX_IN_APP_WEBVIEW = @"IN_APP_WEBVIEW";
+NSString * const WEB_UX_EXTERNAL_BROWSER = @"EXTERNAL_BROWSER";
