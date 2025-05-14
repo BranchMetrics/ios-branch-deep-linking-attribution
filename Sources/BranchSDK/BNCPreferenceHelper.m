@@ -70,6 +70,8 @@ static NSString * const BRANCH_PREFS_KEY_DMA_AD_USER_DATA = @"bnc_dma_ad_user_da
 
 static NSString * const BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL = @"bnc_attribution_level";
 
+static NSString * const BRANCH_PREFS_KEY_UX_TYPE = @"bnc_ux_type";
+static NSString * const BRANCH_PREFS_KEY_URL_LOAD_MS = @"bnc_url_load_ms";
 
 NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
@@ -129,7 +131,9 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     eeaRegion = _eeaRegion,
     adPersonalizationConsent = _adPersonalizationConsent,
     adUserDataUsageConsent = _adUserDataUsageConsent,
-    attributionLevel = _attributionLevel;
+    attributionLevel = _attributionLevel,
+    uxType = _uxType,
+    urlLoadMs = _urlLoadMs;
 
 + (BNCPreferenceHelper *)sharedInstance {
     static BNCPreferenceHelper *preferenceHelper = nil;
@@ -885,6 +889,43 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (void)setAttributionLevel:(BranchAttributionLevel)level {
     [self writeObjectToDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL value:level];
 }
+
+- (NSString *) uxType {
+    if (!_uxType) {
+        _uxType = [self readStringFromDefaults:BRANCH_PREFS_KEY_UX_TYPE];
+    }
+    return _uxType;
+}
+
+- (void) setUxType:(NSString *)uxType {
+    @synchronized(self) {
+        if (![_uxType isEqualToString:uxType]) {
+            _uxType = uxType;
+            [self writeObjectToDefaults:BRANCH_PREFS_KEY_UX_TYPE value:uxType];
+        }
+    }
+}
+
+- (NSDate*) urlLoadMs {
+    @synchronized (self) {
+        if (!_urlLoadMs) {
+            _urlLoadMs = (NSDate*)[self readObjectFromDefaults:BRANCH_PREFS_KEY_URL_LOAD_MS];
+            if ([_urlLoadMs isKindOfClass:[NSDate class]]) return _urlLoadMs;
+            return nil;
+        }
+        return _urlLoadMs;
+    }
+}
+
+- (void) setUrlLoadMs:(NSDate *)urlLoadMs {
+    @synchronized (self) {
+        if (![_urlLoadMs isEqualToDate:urlLoadMs]) {
+            _urlLoadMs = urlLoadMs;
+            [self writeObjectToDefaults:BRANCH_PREFS_KEY_URL_LOAD_MS value:urlLoadMs];
+        }
+    }
+}
+
 
 - (void) clearTrackingInformation {
     @synchronized(self) {

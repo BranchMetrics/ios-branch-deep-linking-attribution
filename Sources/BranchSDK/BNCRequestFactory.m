@@ -132,6 +132,9 @@
     
     // Add ODM Data if available
     [self addODMInfoToJSON:json];
+    
+    // Add Enhanced Web UX params
+    [self addWebUXParams:json];
 
     return json;
 }
@@ -192,6 +195,9 @@
     // Add ODM Data if available
     [self addODMInfoToJSON:json];
 
+    // Add Enhanced Web UX params
+    [self addWebUXParams:json];
+    
     return json;
 }
 
@@ -539,6 +545,18 @@
         [self safeSetValue:attributionLevel forKey:BRANCH_REQUEST_KEY_CPP_LEVEL onDict:json];
     }
 }
+
+// install and open
+- (void)addWebUXParams:(NSMutableDictionary *)json {
+   if (self.preferenceHelper.uxType) {
+       NSMutableDictionary *uxDictionary = [[NSMutableDictionary alloc] init];
+       [self safeSetValue:self.preferenceHelper.uxType forKey:BRANCH_REQUEST_KEY_UX_TYPE onDict:uxDictionary];
+       NSNumber* urlLoadMsInNumberFormat = BNCWireFormatFromDate(self.preferenceHelper.urlLoadMs);
+       [self safeSetValue:urlLoadMsInNumberFormat forKey:BRANCH_REQUEST_KEY_URL_LOAD_MS onDict:uxDictionary];
+       [self safeSetValue:uxDictionary forKey:BRANCH_REQUEST_KEY_WEB_LINK_CONTEXT onDict:json];
+   }
+}
+
 
 // event
 - (void)addV2DictionaryToJSON:(NSMutableDictionary *)json {

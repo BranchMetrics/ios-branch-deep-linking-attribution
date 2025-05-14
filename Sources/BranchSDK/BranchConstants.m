@@ -79,6 +79,9 @@ NSString * const BRANCH_URL_QUERY_PARAMETERS_TIMESTAMP_KEY = @"timestamp";
 NSString * const BRANCH_URL_QUERY_PARAMETERS_IS_DEEPLINK_KEY = @"isDeepLink";
 NSString * const BRANCH_URL_QUERY_PARAMETERS_VALIDITY_WINDOW_KEY = @"validityWindow";
 NSString * const BRANCH_REQUEST_KEY_SCCID = @"sccid";
+NSString * const BRANCH_REQUEST_KEY_WEB_LINK_CONTEXT = @"web_link_context";
+NSString * const BRANCH_REQUEST_KEY_UX_TYPE = @"ux_type";
+NSString * const BRANCH_REQUEST_KEY_URL_LOAD_MS = @"url_load_ms";
 
 NSString * const BRANCH_REQUEST_ENDPOINT_APP_LINK_SETTINGS = @"app-link-settings";
 NSString * const BRANCH_REQUEST_ENDPOINT_USER_COMPLETED_ACTION = @"event";
@@ -107,6 +110,9 @@ NSString * const BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE = @"update_conversi
 NSString * const BRANCH_RESPONSE_KEY_COARSE_KEY = @"coarse_key";
 NSString * const BRANCH_RESPONSE_KEY_UPDATE_IS_LOCKED = @"locked";
 NSString * const BRANCH_RESPONSE_KEY_ASCENDING_ONLY = @"ascending_only";
+NSString * const BRANCH_RESPONSE_KEY_INVOKE_FEATURES = @"invoke_features";
+NSString * const BRANCH_RESPONSE_KEY_ENHANCED_WEB_LINK_UX = @"enhanced_web_link_ux";
+NSString * const BRANCH_RESPONSE_KEY_WEB_LINK_REDIRECT_URL = @"web_link_redirect_url";
 
 NSString * const BRANCH_LINK_DATA_KEY_OG_TITLE = @"$og_title";
 NSString * const BRANCH_LINK_DATA_KEY_OG_DESCRIPTION = @"$og_description";
@@ -172,3 +178,6 @@ NSString * const BRANCH_REQUEST_KEY_CPP_LEVEL = @"cpp_level";
 
 NSString * const BRANCH_REQUEST_KEY_REQUEST_UUID = @"branch_sdk_request_unique_id";
 NSString * const BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP = @"branch_sdk_request_timestamp";
+
+NSString * const WEB_UX_IN_APP_WEBVIEW = @"IN_APP_WEBVIEW";
+NSString * const WEB_UX_EXTERNAL_BROWSER = @"EXTERNAL_BROWSER";

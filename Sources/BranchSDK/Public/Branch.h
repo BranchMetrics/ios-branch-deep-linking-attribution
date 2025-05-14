@@ -437,6 +437,14 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 - (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
                   registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback;
+
+/**
+ Initialize the Branch session.
+ 
+ @warning This function is an internal helper function for session initalization and should not be used by apps.
+ **/
+- (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString reset:(BOOL)reset;
+
 /**
  Allow Branch to handle a link opening the app, returning whether it was from a Branch link or not.
 
