@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "BranchSDK"
-  s.version          = "3.11.0"
+  s.version          = "3.12.0"
   s.summary          = "Create an HTTP URL for any piece of content in your app"
   s.description      = <<-DESC
 - Want the highest possible conversions on your sharing feature?
