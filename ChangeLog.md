@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.3.12.0
+- Added browser experience for apps that have opted in. WebURL will open in in-app browser if app is linked with SafariServices.framework otherwise it will open in external browser.
+
 v.3.11.0
 - Added Google ODM Event Data support. SDK will fetch, cache and send ODM event data with v1/install and v1/open requests for 180 days.
 - Added new API `setODMInfo:andFirstOpenTimestamp` to set ODM Event data and first open timestamp if app developer wants to set it instead of SDK.
