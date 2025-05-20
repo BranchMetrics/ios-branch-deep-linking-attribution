@@ -100,12 +100,16 @@
 }
 
 - (NSString *)metaCampaignIDsFromDictionary:(NSDictionary *)json {
-    NSString *campaignIDs = nil;
-    id value = [json objectForKey:@"campaign_ids"];
-    if ([value isKindOfClass:NSString.class]) {
-        campaignIDs = (NSString *)value;
+    if (!json) {
+        return nil;
     }
-    return campaignIDs;
+    
+    id campaignIDs = [json objectForKey:@"campaign_ids"];
+    if (![campaignIDs isKindOfClass:NSString.class])  {
+        return nil;
+    }
+    
+    return (NSString *)campaignIDs;
 }
 
 - (NSDictionary *)dictionaryFromEncodedJsonString:(NSString *)encodedJsonString {
