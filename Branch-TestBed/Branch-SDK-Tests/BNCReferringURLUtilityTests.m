@@ -79,6 +79,17 @@ static NSString *eventEndpoint = @"/v2/event";
     XCTAssert([expected isEqualToDictionary:params]);
 }
 
+- (void)testNilReferringURL {
+    NSURL *url = nil;
+    NSDictionary *expected = @{};
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
+}
+
 - (void)testReferringURLIgnoredParam {
     NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?other=12345"];
     NSDictionary *expected = @{ };
@@ -226,6 +237,17 @@ static NSString *eventEndpoint = @"/v2/event";
     NSDictionary *params2 = [utility referringURLQueryParamsForEndpoint:openEndpoint];
     
     XCTAssert([expected2 isEqualToDictionary:params2]);
+}
+
+- (void)testReferringURLWithMetaCampaignIdsAndInvalidURL {
+    NSURL *url = [NSURL URLWithString:@"https://bnctestbed.app.link?al_applink_data=[]#target_url%22%3A%22http%3A%5C%2F%5C%2Fitunes.apple.com%5C%2Fapp%5C%2Fid880047117%22%2C%22extras%22%3A%7B%22fb_app_id%22%3A2020399148181142%7D%2C%22referer_app_link%22%3A%7B%22url%22%3A%22fb%3A%5C%2F%5C%2F%5C%2F%3Fapp_id%3D2020399148181142%22%2C%22app_name%22%3A%22Facebook%22%7D%2C%22acs_token%22%3A%22debuggingtoken%22%2C%22campaign_ids%22%3A%22ARFUlbyOurYrHT2DsknR7VksCSgN4tiH8TzG8RIvVoUQoYog5bVCvADGJil5kFQC6tQm-fFJQH0w8wCi3NbOmEHHrtgCNglkXNY-bECEL0aUhj908hIxnBB0tchJCqwxHjorOUqyk2v4bTF75PyWvxOksZ6uTzBmr7wJq8XnOav0bA%22%2C%22test_deeplink%22%3A1%7D"];
+    NSDictionary *expected = @{};
+    
+    BNCReferringURLUtility *utility = [self referringUtilityForTests];
+    [utility parseReferringURL:url];
+    NSDictionary *params = [utility referringURLQueryParamsForEndpoint:openEndpoint];
+    
+    XCTAssert([expected isEqualToDictionary:params]);
 }
 
 - (void)testReferringURLWithMetaCampaignIds {
