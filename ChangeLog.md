@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.3.12.1
+- Fixed bug - SDK crashes when Meta AEM query param `al_applink_data` is empty.
+
 v.3.12.0
 - Added browser experience for apps that have opted in. WebURL will open in in-app browser if app is linked with SafariServices.framework otherwise it will open in external browser.
 
