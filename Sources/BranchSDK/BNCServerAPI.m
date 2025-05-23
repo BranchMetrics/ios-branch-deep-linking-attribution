@@ -78,8 +78,9 @@
 }
 
 // Linking endpoints are not used for Ads tracking
-- (NSString *)getBaseURLForLinkingEndpoints: (BOOL)useCustom {
-    if (useCustom && self.customAPIURL) {
+- (NSString *)getBaseURLForLinkingEndpoints:(BOOL)useCustomURL {
+    // Determines whether to use custom API URL (when available) or always use standard URL
+    if (useCustomURL && self.customAPIURL) {
         return self.customAPIURL;
     }
     
