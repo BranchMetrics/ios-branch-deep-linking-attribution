@@ -67,6 +67,10 @@ jobs:
           path: |
             ./Branch.zip
             ./checksum.txt
+            ./Branch_signed_xcframework.zip
+            ./checksum_signed_xcframework.txt
+            ./Branch_xcframework_WithdSym.zip
+            ./checksum_xcframework_WithdSym.txt
 
   build-noidfa-framework:
     runs-on: macos-latest
@@ -85,6 +89,8 @@ jobs:
           path: |
             ./Branch_noidfa.zip
             ./checksum_noidfa.txt
+            ./Branch_noidfa_signed_xcframework
+            ./checksum_noidfa_signed_xcframework.txt
 
   build-static-framework:
     runs-on: macos-latest
@@ -247,6 +253,48 @@ jobs:
               releaseId,
               assetName: 'checksum',
               path: 'release_framework/checksum.txt',
+            });
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
+              assetName: 'Branch_signed_xcframework',
+              path: 'release_framework/Branch_signed_xcframework.zip',
+            });
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
+              assetName: 'checksum_signed_xcframework',
+              path: 'release_framework/checksum_signed_xcframework.txt',
+            });
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
+              assetName: 'Branch_xcframework_WithdSym',
+              path: 'release_framework/Branch_xcframework_WithdSym.zip',
+            });
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
+              assetName: 'checksum_xcframework_WithdSym',
+              path: 'release_framework/checksum_xcframework_WithdSym.txt',
+            });
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
+              assetName: 'Branch_noidfa_signed_xcframework',
+              path: 'framework-noidfa/Branch_noidfa_signed_xcframework.zip',
+            });
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
+              assetName: 'checksum_noidfa_signed_xcframework',
+              path: 'framework-noidfa/checksum_noidfa_signed_xcframework.txt',
             });
 
       - name: Trigger workflow in iOS Branch SDK spm repo for updating code and creating release
