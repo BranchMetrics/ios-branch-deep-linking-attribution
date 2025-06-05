@@ -6,6 +6,12 @@ scheme='xcframework'
 checksum_file=checksum.txt
 zip_file=Branch.zip
 
+checksum_file_signed=checksum_signed_xcframework.txt
+zip_file_signed=Branch_signed_xcframework.zip
+
+checksum_file_WithdSym=checksum_xcframework_WithdSym.txt
+zip_file_WithdSym=Branch_xcframework_WithdSym.zip
+
 scriptname=$(basename "${BASH_SOURCE[0]}")
 scriptpath="${BASH_SOURCE[0]}"
 scriptpath=$(cd "$(dirname "${scriptpath}")" && pwd)
@@ -33,3 +39,15 @@ mv $checksum_file ..
 # Remove source frameworks
 echo "Cleaning up"
 rm -rf BranchSDK.xcframework
+
+echo "Packaging signed BranchSDK.xcframework"
+zip -rqy $zip_file_signed ./signedFramework/BranchSDK.xcframework/
+shasum $zip_file_signed >> $checksum_file_signed
+mv $zip_file_signed ..
+mv $checksum_file_signed ..
+
+echo "Packaging debug BranchSDK.xcframework with dSyms"
+zip -rqy $zip_file_WithdSym ./dSymFramework/BranchSDK.xcframework/
+shasum $zip_file_WithdSym >> $checksum_file_WithdSym
+mv $zip_file_WithdSym ..
+mv $checksum_file_WithdSym ..
