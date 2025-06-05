@@ -65,4 +65,4 @@ xcodebuild -create-xcframework \
 # create signed binary
 mkdir -p "${XCFRAMEWORK_PATH_SIGNED}"
 cp -rf "${XCFRAMEWORK_PATH}" "${XCFRAMEWORK_PATH_SIGNED}"
-codesign --timestamp -s  "Apple Distribution: Branch Metrics, Inc. (R63EM248DP)" "${XCFRAMEWORK_PATH_SIGNED}/BranchSDK.xcframework"
+codesign --deep --timestamp -s  "Apple Distribution: Branch Metrics, Inc. (R63EM248DP)" "${XCFRAMEWORK_PATH_SIGNED}/BranchSDK.xcframework"
