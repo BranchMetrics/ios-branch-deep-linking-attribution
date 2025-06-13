@@ -45,6 +45,7 @@
 #import "BNCServerAPI.h"
 #import "BranchPluginSupport.h"
 #import "BranchLogger.h"
+#import "BranchConfigurationController.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
@@ -166,6 +167,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (nonatomic, assign, readwrite) BOOL deferInitForPluginRuntime;
 @property (nonatomic, copy, nullable) void (^cachedInitBlock)(void);
 @property (nonatomic, copy, readwrite) NSString *cachedURLString;
+@property (strong, nonatomic) BranchConfigurationController *configurationController;
 
 @end
 
@@ -187,6 +189,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 
 + (Branch *)getInstance:(NSString *)branchKey {
     self.branchKey = branchKey;
+    [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_GET_INSTANCE_API;
     return [Branch getInstanceInternal:self.branchKey];
 }
 
@@ -246,6 +249,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     
     BranchJsonConfig *config = BranchJsonConfig.instance;
     self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
+    [BranchConfigurationController sharedInstance].deferInitForPluginRuntime = self.deferInitForPluginRuntime;
     
     if (config.apiUrl) {
         [Branch setAPIUrl:config.apiUrl];
@@ -407,7 +411,7 @@ static NSString *bnc_branchKey = nil;
             [[BranchLogger shared] logError:[NSString stringWithFormat:@"Invalid Branch key format. Did you add your Branch key to your Info.plist? Passed key is '%@'.", branchKey] error:*error];
             return;
         }
-
+        [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_SET_BRANCH_KEY_API;
         bnc_branchKey = branchKey;
     }
 }
@@ -417,13 +421,16 @@ static NSString *bnc_branchKey = nil;
         if (bnc_branchKey) return bnc_branchKey;
         
         NSString *branchKey = nil;
+        NSString *branchKeySource = @"Unknown";
         
         BranchJsonConfig *config = BranchJsonConfig.instance;
         BOOL usingTestInstance = bnc_useTestBranchKey || config.useTestInstance;
         branchKey = config.branchKey ?: usingTestInstance ? config.testKey : config.liveKey;
         [self setUseTestBranchKey:usingTestInstance];
         
-        if (branchKey == nil) {
+        if (branchKey) {
+            branchKeySource = BRANCH_KEY_SOURCE_CONFIG_JSON;
+        } else {
             NSDictionary *branchDictionary = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_key"];
             if ([branchDictionary isKindOfClass:[NSString class]]) {
                 branchKey = (NSString*) branchDictionary;
@@ -432,12 +439,15 @@ static NSString *bnc_branchKey = nil;
                 branchKey =
                     (self.useTestBranchKey) ? branchDictionary[@"test"] : branchDictionary[@"live"];
             }
+            if (branchKey)
+                branchKeySource = BRANCH_KEY_SOURCE_INFO_PLIST;
         }
 
         self.branchKey = branchKey;
         if (!bnc_branchKey) {
             [[BranchLogger shared] logError:@"Your Branch key is not set in your Info.plist file. See https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/#configure-xcode-project for configuration instructions." error:nil];
         }
+        [BranchConfigurationController sharedInstance].branchKeySource = branchKeySource;
         return bnc_branchKey;
     }
 }
@@ -890,6 +900,7 @@ static NSString *bnc_branchKey = nil;
         self.preferenceHelper.initialReferrer = userActivity.referrerURL.absoluteString;
     }
     
+    [[BranchLogger shared] logVerbose:userActivity.debugDescription error:nil];
     // Check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
         return [self handleDeepLink:userActivity.webpageURL sceneIdentifier:sceneIdentifier];
@@ -998,6 +1009,7 @@ static NSString *bnc_branchKey = nil;
 
 - (void)checkPasteboardOnInstall {
     [BNCPasteboard sharedInstance].checkOnInstall = YES;
+    [BranchConfigurationController sharedInstance].checkPasteboardOnInstall = YES;
 }
 
 - (BOOL)willShowPasteboardToast {

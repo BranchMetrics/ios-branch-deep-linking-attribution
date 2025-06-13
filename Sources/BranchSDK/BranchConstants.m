@@ -181,3 +181,21 @@ NSString * const BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP = @"branch_sdk_r
 
 NSString * const WEB_UX_IN_APP_WEBVIEW = @"IN_APP_WEBVIEW";
 NSString * const WEB_UX_EXTERNAL_BROWSER = @"EXTERNAL_BROWSER";
+
+NSString * const BRANCH_REQUEST_KEY_OPERATIONAL_METRICS = @"operational_metrics";
+NSString * const BRANCH_REQUEST_KEY_DEFER_INIT_FOR_PLUGIN_RUNTIME = @"deferInitForPluginRuntime";
+NSString * const BRANCH_REQUEST_KEY_CHECK_PASTEBOARD_ON_INSTALL= @"checkPasteboardOnInstall";
+
+NSString * const BRANCH_REQUEST_KEY_BRANCH_KEY_SOURCE = @"branch_key_source";
+NSString * const BRANCH_KEY_SOURCE_UNKNOWN = @"Unknown";
+NSString * const BRANCH_KEY_SOURCE_CONFIG_JSON = @"config_json";
+NSString * const BRANCH_KEY_SOURCE_INFO_PLIST = @"info_plist";
+NSString * const BRANCH_KEY_SOURCE_GET_INSTANCE_API = @"getInstance_api";
+NSString * const BRANCH_KEY_SOURCE_SET_BRANCH_KEY_API= @"setBranchKey_api";
+
+NSString * const BRANCH_REQUEST_KEY_LINKED_FRAMEORKS = @"linked_frameworks";
+NSString * const FRAMEWORK_ATT_TRACKING_MANAGER = @"ATTrackingManager";
+NSString * const FRAMEWORK_AD_SUPPORT = @"AdSupport";
+NSString * const FRAMEWORK_AD_SAFARI_SERVICES = @"SafariServices";
+NSString * const FRAMEWORK_AD_APP_ADS_ONDEVICE_CONVERSION = @"AppAdsOnDeviceConversion";
+NSString * const FRAMEWORK_AD_FIREBASE_CRASHLYTICS = @"FirebaseCrashlytics";
