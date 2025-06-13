@@ -167,7 +167,6 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (nonatomic, assign, readwrite) BOOL deferInitForPluginRuntime;
 @property (nonatomic, copy, nullable) void (^cachedInitBlock)(void);
 @property (nonatomic, copy, readwrite) NSString *cachedURLString;
-@property (strong, nonatomic) BranchConfigurationController *configurationController;
 
 @end
 
