@@ -35,6 +35,7 @@
 #import "BNCReferringURLUtility.h"
 #import "BNCPasteboard.h"
 #import "BNCODMInfoCollector.h"
+#import "BranchConfigurationController.h"
 
 @interface BNCRequestFactory()
 
@@ -135,6 +136,9 @@
     
     // Add Enhanced Web UX params
     [self addWebUXParams:json];
+    
+    // Add Operation Metrics for Install only.
+    [self addOperationalMetrics:json];
 
     return json;
 }
@@ -424,6 +428,12 @@
         }
     }
 }
+
+// If the client uses a UIPasteControl, force a new open to fetch the payload
+- (void)addOperationalMetrics:(NSMutableDictionary *)json {
+    [self safeSetValue:[[BranchConfigurationController sharedInstance] getConfiguration] forKey:BRANCH_REQUEST_KEY_OPERATIONAL_METRICS onDict:json];
+}
+
 
 - (void)clearLocalURLFromStorage {
     self.preferenceHelper.localUrl = nil;
