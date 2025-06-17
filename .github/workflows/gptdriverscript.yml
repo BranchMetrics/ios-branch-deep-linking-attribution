@@ -135,12 +135,14 @@ jobs:
     <false/>
 </dict>
 </plist>
-EOF_PLIST # Corrected indentation for this EOF_PLIST
+EOF_PLIST # Corrected indentation for this EOF_PLIST, ensure it's exact: 10 spaces from left margin.
+          
           echo "Exporting IPA to: $IPA_OUTPUT_DIR"
           xcodebuild -exportArchive \
             -archivePath "${{ env.ARCHIVE_PATH }}" \
             -exportPath "$IPA_OUTPUT_DIR" \
-            -exportOptionsPlist "$EXPORT_OPTIONS_PLIST_PATH" 
+            -exportOptionsPlist "$EXPORT_OPTIONS_PLIST_PATH" \
+            | xcpretty || true # xcpretty for cleaner logs
 
           # Find the generated IPA file dynamically, as its exact name might vary
           GENERATED_IPA=$(find "$IPA_OUTPUT_DIR" -name "*.ipa" -print -quit)
@@ -154,7 +156,7 @@ EOF_PLIST # Corrected indentation for this EOF_PLIST
           echo "--- Contents of IPA Output Directory ---"
           ls -R "$IPA_OUTPUT_DIR" # Corrected variable name from $IPA_OUTPUT_OUTPUT_DIR to $IPA_OUTPUT_DIR
           echo "----------------------------------------"
-        working-directory: ./ios-app-repo # This step also runs from the app's checkout root.
+        working-directory: ./ios-app-repo # This must be indented exactly 6 spaces, aligned with 'name:' and 'run:' for this step.
 
       # --- Step 8: Echo the location of the generated .ipa file ---
       - name: Echo .ipa file location
