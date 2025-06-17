@@ -55,7 +55,7 @@ jobs:
         run: |
           # Build for simulator. Adjust scheme if necessary.
           # The output framework will be in build/Debug-iphonesimulator/BranchSDK.framework
-          xcodebuild build -project Branch-SDK/Branch-SDK.xcodeproj \
+          xcodebuild build -project BranchSDK/BranchSDK.xcodeproj \
             -scheme BranchSDK \
             -configuration Debug \
             -sdk iphonesimulator \
