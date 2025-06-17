@@ -57,7 +57,8 @@ jobs:
           ls -R . # List contents recursively from the current working directory
           echo "-------------------------------------------------------------"
           echo "Attempting to build the SDK framework..."
-          xcodebuild build -project Branch-SDK/Branch-SDK.xcodeproj \
+          # CORRECTED: Removed 'Branch-SDK/' from the project path
+          xcodebuild build -project BranchSDK.xcodeproj \
             -scheme BranchSDK \
             -configuration Debug \
             -sdk iphonesimulator \
