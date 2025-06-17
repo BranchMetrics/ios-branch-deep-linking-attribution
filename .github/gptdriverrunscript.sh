@@ -13,7 +13,8 @@ readonly TEST_TAGS="${TEST_TAGS:-}"
 post_data() {
   local url=$1
   local body=$2
-  if ! response=$(curl -s -f -X POST -H "Authorization: Bearer $API_TOKEN" -H "Content-Type: application/json" -d "$body" "$url"); then
+  # ADD -v FLAG HERE for debugging, you can remove it later
+  if ! response=$(curl -s -f -v -X POST -H "Authorization: Bearer $API_TOKEN" -H "Content-Type: application/json" -d "$body" "$url" 2>&1); then # 2>&1 captures stderr too
     echo "Error: Network request failed with error $response" >&2
     exit 1
   fi
@@ -43,14 +44,15 @@ fi
 
 # Upload build file
 echo -n "Uploading build from $buildFilename for $buildPlatform: "
-if ! uploadedBuildResponse=$(curl -s -f -X POST \
+# ADD -v FLAG HERE for debugging, you can remove it later
+if ! uploadedBuildResponse=$(curl -s -f -v -X POST \
                   -H "Authorization: Bearer $API_TOKEN" \
                   -H "Content-Type: multipart/form-data" \
                   -F "build=@$buildFilename" \
                   -F "organisation_key=$API_ORG_KEY" \
                   -F "platform=$buildPlatform" \
                   -F "metadata={}" \
-                  "$API_URL/uploadBuild/"); then
+                  "$API_URL/uploadBuild/" 2>&1); then # 2>&1 captures stderr too
   echo "Error: Failed to upload build" >&2
   exit 1
 fi
@@ -80,7 +82,8 @@ fi
 echo -n "Waiting for test suite to finish..."
 startTime=$(date +%s)
 while true; do
-  if ! testSuiteData=$(curl -s -f "$API_URL/testSuiteRuns/$testSuiteRunId/gh"); then
+  # ADD -v FLAG HERE for debugging, you can remove it later
+  if ! testSuiteData=$(curl -s -f -v "$API_URL/testSuiteRuns/$testSuiteRunId/gh" 2>&1); then # 2>&1 captures stderr too
     echo "Error: Failed to retrieve test suite data" >&2
     exit 1
   fi
