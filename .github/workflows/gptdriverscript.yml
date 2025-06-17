@@ -135,13 +135,12 @@ jobs:
     <false/>
 </dict>
 </plist>
-EOF_PLIST # Ensure this matches the opening EOF_PLIST and is at the same indentation as 'cat <<EOF_PLIST'
+EOF_PLIST # Corrected indentation for this EOF_PLIST
           echo "Exporting IPA to: $IPA_OUTPUT_DIR"
           xcodebuild -exportArchive \
             -archivePath "${{ env.ARCHIVE_PATH }}" \
             -exportPath "$IPA_OUTPUT_DIR" \
-            -exportOptionsPlist "$EXPORT_OPTIONS_PLIST_PATH" \
-            | xcpretty || true # xcpretty for cleaner logs
+            -exportOptionsPlist "$EXPORT_OPTIONS_PLIST_PATH" 
 
           # Find the generated IPA file dynamically, as its exact name might vary
           GENERATED_IPA=$(find "$IPA_OUTPUT_DIR" -name "*.ipa" -print -quit)
@@ -153,7 +152,7 @@ EOF_PLIST # Ensure this matches the opening EOF_PLIST and is at the same indenta
           echo "Generated IPA path: $GENERATED_IPA"
           echo "APP_PATH=$GENERATED_IPA" >> $GITHUB_ENV # Overwrite APP_PATH to point to the IPA
           echo "--- Contents of IPA Output Directory ---"
-          ls -R "$IPA_OUTPUT_DIR" # Show what was actually exported
+          ls -R "$IPA_OUTPUT_DIR" # Corrected variable name from $IPA_OUTPUT_OUTPUT_DIR to $IPA_OUTPUT_DIR
           echo "----------------------------------------"
         working-directory: ./ios-app-repo # This step also runs from the app's checkout root.
 
