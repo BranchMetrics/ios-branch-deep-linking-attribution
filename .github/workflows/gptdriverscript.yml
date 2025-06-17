@@ -53,10 +53,6 @@ jobs:
       # --- Step 3: Build the iOS Branch SDK Framework ---
       - name: Build Branch SDK Framework
         run: |
-          echo "--- Listing contents of the SDK repo directory for debugging ---"
-          ls -R . # List contents recursively from the current working directory
-          echo "-------------------------------------------------------------"
-          echo "Attempting to build the SDK framework..."
           xcodebuild build -project BranchSDK.xcodeproj \
             -scheme BranchSDK \
             -configuration Debug \
@@ -85,9 +81,12 @@ jobs:
       # --- Step 6: Build the iOS Branch Link Simulator App using the local SDK Framework ---
       - name: Build iOS App with local SDK
         run: |
-          # Build the app. Adjust project/workspace, scheme, and destination if necessary.
-          # We're passing MARKETING_VERSION (versionName) and CURRENT_PROJECT_VERSION (versionCode)
-          xcodebuild build -project BranchLinkSimulator.xcodeproj \
+          # The -project flag defines the project root from which SRCROOT is relative.
+          # The `BUILD_DIR` is where products are placed. We'll rely on xcodebuild's default DerivedData location,
+          # and then capture the specific path to the .app bundle using `xcodebuild -showBuildSettings`.
+          # This command ensures the build output variables are available.
+          set -o pipefail # Fail if any part of the pipe fails
+          XCODEBUILD_OUTPUT=$(xcodebuild build -project BranchLinkSimulator.xcodeproj \
             -scheme BranchLinkSimulator \
             -configuration Debug \
             -sdk iphonesimulator \
@@ -95,20 +94,36 @@ jobs:
             MARKETING_VERSION=${{ env.VERSION_STRING }} \
             CURRENT_PROJECT_VERSION=${{ env.VERSION_CODE_INT }} \
             FRAMEWORK_SEARCH_PATHS="$(SRCROOT)/Frameworks" \
-            # You might also need LD_RUNPATH_SEARCH_PATHS if it's an embedded framework
-            # LD_RUNPATH_SEARCH_PATHS="@loader_path/../Frameworks"
+            ONLY_ACTIVE_ARCH=YES \
+            | xcpretty # xcpretty makes xcodebuild output readable, install it if not present
 
-          echo "--- Listing contents of the app's build output directory for debugging ---"
-          # List the contents of the 'build' directory relative to the app's repo root
-          ls -R "${{ github.workspace }}/ios-app-repo/build/" || true # '|| true' prevents step from failing if dir doesn't exist
-          echo "-------------------------------------------------------------"
+          # Extract BUILT_PRODUCTS_DIR from xcodebuild output
+          # This command must be run AFTER the build, and often requires parsing
+          # a successful build log for the definitive path.
+          # A more robust way is to query build settings directly:
+          BUILT_PRODUCTS_DIR=$(xcodebuild -project BranchLinkSimulator.xcodeproj \
+            -scheme BranchLinkSimulator \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -showBuildSettings \
+            | grep -m 1 "BUILT_PRODUCTS_DIR =" \
+            | sed 's/.*BUILT_PRODUCTS_DIR = //')
+
+          if [ -z "$BUILT_PRODUCTS_DIR" ]; then
+            echo "Error: Could not determine BUILT_PRODUCTS_DIR."
+            exit 1
+          fi
+
+          echo "Detected BUILT_PRODUCTS_DIR: $BUILT_PRODUCTS_DIR"
+          echo "BUILT_PRODUCTS_DIR=$BUILT_PRODUCTS_DIR" >> $GITHUB_ENV # Set as environment variable
+
         working-directory: ./ios-app-repo # Run xcodebuild from the App's checkout directory
 
       # --- Step 7: Echo the location of the generated .app bundle ---
       - name: Echo .app bundle location
         run: |
-          # Renamed from APK_PATH to APP_PATH for iOS clarity
-          APP_PATH="./ios-app-repo/build/Debug-iphonesimulator/BranchLinkSimulator.app"
+          # Use the dynamically determined BUILT_PRODUCTS_DIR
+          APP_PATH="${{ env.BUILT_PRODUCTS_DIR }}/BranchLinkSimulator.app"
           echo "Generated .app bundle location: $APP_PATH"
 
       # --- Step 8: Upload Build Artifacts ---
@@ -116,18 +131,16 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: BranchLinkSimulator-iOS-Debug-Build
-          # Path uses the new APP_PATH variable if you decide to define it globally,
-          # or simply the direct path as shown.
-          path: ./ios-app-repo/build/Debug-iphonesimulator/BranchLinkSimulator.app
+          # Use the dynamically determined BUILT_PRODUCTS_DIR
+          path: "${{ env.BUILT_PRODUCTS_DIR }}/BranchLinkSimulator.app"
 
       # --- Step 9: Upload and run tests on GPTDriver service. ---
       - name: Run GPTDriver tests
         run: |
           # Ensure the script is executable
           chmod +x ./branch-ios-sdk-repo/.github/gptdriverrunscript.sh
-          # Execute the script, passing the .app path and platform
-          # Uses the APP_PATH variable defined in Step 7
-          bash ./branch-ios-sdk-repo/.github/gptdriverrunscript.sh ./ios-app-repo/build/Debug-iphonesimulator/BranchLinkSimulator.app ios
+          # Use the dynamically determined BUILT_PRODUCTS_DIR
+          bash ./branch-ios-sdk-repo/.github/gptdriverrunscript.sh "${{ env.BUILT_PRODUCTS_DIR }}/BranchLinkSimulator.app" ios
         env:
           API_ORG_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }}
           API_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }}
