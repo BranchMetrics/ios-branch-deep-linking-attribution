@@ -13,7 +13,7 @@ readonly TEST_TAGS="${TEST_TAGS:-}"
 post_data() {
   local url=$1
   local body=$2
-  # ADD -v FLAG HERE for debugging, you can remove it later
+  # Debugging: Added -v flag and 2>&1 to capture verbose output
   if ! response=$(curl -s -f -v -X POST -H "Authorization: Bearer $API_TOKEN" -H "Content-Type: application/json" -d "$body" "$url" 2>&1); then # 2>&1 captures stderr too
     echo "Error: Network request failed with error $response" >&2
     exit 1
@@ -44,7 +44,7 @@ fi
 
 # Upload build file
 echo -n "Uploading build from $buildFilename for $buildPlatform: "
-# ADD -v FLAG HERE for debugging, you can remove it later
+# Debugging: Added -v flag and 2>&1 to capture verbose output
 if ! uploadedBuildResponse=$(curl -s -f -v -X POST \
                   -H "Authorization: Bearer $API_TOKEN" \
                   -H "Content-Type: multipart/form-data" \
@@ -82,7 +82,7 @@ fi
 echo -n "Waiting for test suite to finish..."
 startTime=$(date +%s)
 while true; do
-  # ADD -v FLAG HERE for debugging, you can remove it later
+  # Debugging: Added -v flag and 2>&1 to capture verbose output
   if ! testSuiteData=$(curl -s -f -v "$API_URL/testSuiteRuns/$testSuiteRunId/gh" 2>&1); then # 2>&1 captures stderr too
     echo "Error: Failed to retrieve test suite data" >&2
     exit 1
