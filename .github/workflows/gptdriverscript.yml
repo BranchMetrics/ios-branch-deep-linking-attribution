@@ -53,9 +53,11 @@ jobs:
       # --- Step 3: Build the iOS Branch SDK Framework ---
       - name: Build Branch SDK Framework
         run: |
-          # Build for simulator. Adjust scheme if necessary.
-          # The output framework will be in build/Debug-iphonesimulator/BranchSDK.framework
-          xcodebuild build -project BranchSDK/BranchSDK.xcodeproj \
+          echo "--- Listing contents of the SDK repo directory for debugging ---"
+          ls -R . # List contents recursively from the current working directory
+          echo "-------------------------------------------------------------"
+          echo "Attempting to build the SDK framework..."
+          xcodebuild build -project Branch-SDK/Branch-SDK.xcodeproj \
             -scheme BranchSDK \
             -configuration Debug \
             -sdk iphonesimulator \
