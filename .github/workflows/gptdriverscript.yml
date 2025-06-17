@@ -141,5 +141,5 @@ jobs:
           bash ./branch-ios-sdk-repo/.github/gptdriverrunscript.sh "${{ env.BUILT_PRODUCTS_DIR }}/BranchLinkSimulator.app" ios
         env:
           API_ORG_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }}
-          API_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }}
+          API_TOKEN: ${{ secrets.MOBILEBOOST_API_ORG_KEY }} # CORRECTED: Mapped secret to API_TOKEN for the script
           TEST_TAGS: Release
