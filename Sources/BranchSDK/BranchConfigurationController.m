@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSDictionary *) branchKeyInfo {
     return @{
-        BRANCH_REQUEST_KEY_BRANCH_KEY_SOURCE : self.branchKeySource ? self.branchKeySource: @"Unkown",
+        BRANCH_REQUEST_KEY_BRANCH_KEY_SOURCE : self.branchKeySource ? self.branchKeySource: @"Unknown",
     };
 }
 
