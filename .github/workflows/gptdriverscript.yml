@@ -6,17 +6,15 @@ on:
       - 'Release-*' # Trigger for branches starting with "Release-"
 
 jobs:
-  BuildAndTestAppOnGPTDriver: # Updated job name
-    runs-on: macos-latest # macOS runner is required for iOS builds
+  BuildAndTestAppOnGPTDriver:
+    runs-on: macos-latest
     steps:
       # --- Step 1: Extract version from branch name ---
       - name: Extract version from branch name
         id: extract_version_step
         run: |
           BRANCH_NAME="${{ github.ref }}"
-          # Remove 'refs/heads/' prefix (e.g., refs/heads/Release-0.0.0 -> Release-0.0.0)
           BRANCH_NAME_WITHOUT_PREFIX="${BRANCH_NAME#refs/heads/}"
-          # Extract version after "Release-" (e.g., Release-0.0.0 -> 0.0.0)
           VERSION=$(echo "$BRANCH_NAME_WITHOUT_PREFIX" | sed -n 's/^Release-\([0-9]*\.[0-9]*\.[0-9]*\)$/\1/p')
 
           if [ -z "$VERSION" ]; then
@@ -27,16 +25,10 @@ jobs:
           echo "Extracted versionName: $VERSION"
           echo "VERSION_STRING=$VERSION" >> $GITHUB_ENV
 
-          # Convert semantic version to an integer for CFBundleVersion (versionCode equivalent)
-          # Example: 1.2.3 -> 102003 (assuming max 2 digits for minor/patch)
-          # This should be adjusted based on the maximum expected values for major/minor/patch
           MAJOR=$(echo "$VERSION" | cut -d. -f1)
           MINOR=$(echo "$VERSION" | cut -d. -f2)
           PATCH=$(echo "$VERSION" | cut -d. -f3)
 
-          # Calculate versionCode (CFBundleVersion) - ensure this fits in a 32-bit integer
-          # Standard Android-like conversion: Major * 10000 + Minor * 100 + Patch
-          # This provides sufficient uniqueness for most common versioning schemes.
           VERSION_CODE_INT=$(( MAJOR * 10000 + MINOR * 100 + PATCH ))
           echo "Calculated versionCode: $VERSION_CODE_INT"
           echo "VERSION_CODE_INT=$VERSION_CODE_INT" >> $GITHUB_ENV
@@ -47,14 +39,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: BranchMetrics/ios-branch-deep-linking-attribution
-          ref: ${{ github.ref }} # Use the same branch that triggered the workflow
-          path: ./branch-ios-sdk-repo # Checkout into a subdirectory
+          ref: ${{ github.ref }}
+          path: ./branch-ios-sdk-repo
 
       # --- Step 3: Build the iOS Branch SDK Framework ---
       - name: Build Branch SDK Framework
         run: |
           echo "--- Listing contents of the SDK repo directory for debugging ---"
-          ls -R . # List contents recursively from the current working directory
+          ls -R .
           echo "-------------------------------------------------------------"
           echo "Attempting to build the SDK framework..."
           xcodebuild build -project BranchSDK.xcodeproj \
@@ -63,83 +55,121 @@ jobs:
             -sdk iphonesimulator \
             BUILD_DIR="${{ github.workspace }}/branch-ios-sdk-repo/build" \
             SKIP_INSTALL=NO
-        working-directory: ./branch-ios-sdk-repo # Run xcodebuild from the SDK's checkout directory
+        working-directory: ./branch-ios-sdk-repo
 
       # --- Step 4: Checkout the iOS Branch Link Simulator App repository ---
       - name: Checkout BranchMetrics/BranchLinkSimulator (App)
         uses: actions/checkout@v4
         with:
           repository: BranchMetrics/BranchLinkSimulator
-          ref: gptdriver/linkingTests # Checkout the specific app branch
-          path: ./ios-app-repo # Checkout into another subdirectory
+          ref: gptdriver/linkingTests
+          path: ./ios-app-repo
 
       # --- Step 5: Copy the generated SDK Framework to the App's project ---
       - name: Copy generated SDK Framework to App's project
         run: |
-          # Create a 'Frameworks' directory within the app repo for the local SDK
           mkdir -p ./ios-app-repo/Frameworks
-          # Copy the built framework
           cp -R ./branch-ios-sdk-repo/build/Debug-iphonesimulator/BranchSDK.framework ./ios-app-repo/Frameworks/
-        working-directory: ${{ github.workspace }} # Run from the root of the GITHUB_WORKSPACE
+        working-directory: ${{ github.workspace }}
 
-      # --- Step 6: Build the iOS App using the local SDK Framework and get output path ---
-      - name: Build iOS App with local SDK
+      # --- Step 6: Archive iOS App (to prepare for IPA export) ---
+      - name: Archive iOS App
         run: |
-          set -o pipefail # Fail if any part of the pipe fails
+          ARCHIVE_PATH="${{ github.workspace }}/ios-app-repo/build/BranchLinkSimulator.xcarchive"
+          echo "Archiving app to: $ARCHIVE_PATH"
           
-          # First, perform the build. Pipe to xcpretty for cleaner logs if installed.
-          # Note: xcpretty is optional, if you don't have it installed in your runner environment, remove '| xcpretty'
-          xcodebuild build -project BranchLinkSimulator.xcodeproj \
+          # Use 'xcodebuild archive' to create the .xcarchive
+          # For simulator builds, you typically don't need real code signing,
+          # but `archive` still requires some identity for metadata.
+          xcodebuild archive -project BranchLinkSimulator.xcodeproj \
             -scheme BranchLinkSimulator \
             -configuration Debug \
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 15' \
+            -archivePath "$ARCHIVE_PATH" \
             MARKETING_VERSION=${{ env.VERSION_STRING }} \
             CURRENT_PROJECT_VERSION=${{ env.VERSION_CODE_INT }} \
             FRAMEWORK_SEARCH_PATHS="$(SRCROOT)/Frameworks" \
             ONLY_ACTIVE_ARCH=YES \
-            | xcpretty || true # Added || true to prevent build failure due to xcpretty if it's not installed or errors.
+            SKIP_INSTALL=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcpretty || true # xcpretty for cleaner logs, || true to prevent failure if xcpretty is missing
 
-          # Now, query build settings to get the exact output directory
-          BUILT_PRODUCTS_DIR=$(xcodebuild -project BranchLinkSimulator.xcodeproj \
-            -scheme BranchLinkSimulator \
-            -configuration Debug \
-            -sdk iphonesimulator \
-            -showBuildSettings \
-            | grep -m 1 "BUILT_PRODUCTS_DIR =" \
-            | sed 's/.*BUILT_PRODUCTS_DIR = //') # <-- Added missing ')' here
+          if [ ! -d "$ARCHIVE_PATH" ]; then
+            echo "Error: Archive not created at $ARCHIVE_PATH"
+            exit 1
+          fi
+          echo "ARCHIVE_PATH=$ARCHIVE_PATH" >> $GITHUB_ENV
+        working-directory: ./ios-app-repo
 
-          if [ -z "$BUILT_PRODUCTS_DIR" ]; then
-            echo "Error: Could not determine BUILT_PRODUCTS_DIR."
+      # --- Step 7: Export IPA from Archive ---
+      - name: Export IPA from Archive
+        run: |
+          IPA_OUTPUT_DIR="${{ github.workspace }}/ios-app-repo/build/IPA_Output"
+          mkdir -p "$IPA_OUTPUT_DIR"
+
+          # Create a simple ExportOptions.plist for 'development' method (suitable for debug/test IPAs)
+          EXPORT_OPTIONS_PLIST_PATH="$IPA_OUTPUT_DIR/ExportOptions.plist"
+          cat <<EOF > "$EXPORT_OPTIONS_PLIST_PATH"
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>method</key>
+    <string>development</string>
+    <key>compileBitcode</key>
+    <false/>
+    <key>uploadSymbols</key>
+    <false/>
+</dict>
+</plist>
+EOF
+          echo "Exporting IPA to: $IPA_OUTPUT_DIR"
+          xcodebuild -exportArchive \
+            -archivePath "${{ env.ARCHIVE_PATH }}" \
+            -exportPath "$IPA_OUTPUT_DIR" \
+            -exportOptionsPlist "$EXPORT_OPTIONS_PLIST_PATH" \
+            | xcpretty || true # xcpretty for cleaner logs
+
+          # Find the generated IPA file dynamically, as its exact name might vary
+          GENERATED_IPA=$(find "$IPA_OUTPUT_DIR" -name "*.ipa" -print -quit)
+          if [ -z "$GENERATED_IPA" ]; then
+            echo "Error: Could not find generated IPA file in $IPA_OUTPUT_DIR."
             exit 1
           fi
 
-          echo "Detected BUILT_PRODUCTS_DIR: $BUILT_PRODUCTS_DIR"
-          echo "BUILT_PRODUCTS_DIR=$BUILT_PRODUCTS_DIR" >> $GITHUB_ENV # Set as environment variable
+          echo "Generated IPA path: $GENERATED_IPA"
+          echo "APP_PATH=$GENERATED_IPA" >> $GITHUB_ENV # Overwrite APP_PATH to point to the IPA
+          echo "--- Contents of IPA Output Directory ---"
+          ls -R "$IPA_OUTPUT_DIR" # Show what was actually exported
+          echo "----------------------------------------"
+        working-directory: ./ios-app-repo # This step also runs from the app's checkout root.
 
-        working-directory: ./ios-app-repo # Run xcodebuild from the App's checkout directory
-
-      # --- Step 7: Echo the location of the generated .app bundle ---
-      - name: Echo .app bundle location
+      # --- Step 8: Echo the location of the generated .ipa file ---
+      - name: Echo .ipa file location
         run: |
-          APP_PATH="${{ env.BUILT_PRODUCTS_DIR }}/BranchLinkSimulator.app"
-          echo "Generated .app bundle location: $APP_PATH"
+          # APP_PATH now holds the path to the .ipa file from the previous step
+          echo "Generated .ipa file location: ${{ env.APP_PATH }}"
 
-      # --- Step 8: Upload Build Artifacts ---
+      # --- Step 9: Upload Build Artifacts (now the .ipa) ---
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: BranchLinkSimulator-iOS-Debug-Build
-          path: "${{ env.BUILT_PRODUCTS_DIR }}/BranchLinkSimulator.app"
+          name: BranchLinkSimulator-iOS-Debug-Build-IPA
+          path: "${{ env.APP_PATH }}" # This now points to the IPA
 
-      # --- Step 9: Upload and run tests on GPTDriver service. ---
+      # --- Step 10: Upload and run tests on GPTDriver service (using .ipa) ---
       - name: Run GPTDriver tests
         run: |
-          # Ensure the script is executable
+          # !!! IMPORTANT: ENSURE your gptdriverrunscript.sh can handle .ipa files directly !!!
+          # It currently expects a .app bundle. You MUST verify with the service
+          # if it accepts .ipa files directly, or if the script needs modification
+          # to extract the .app from the .ipa before upload.
           chmod +x ./branch-ios-sdk-repo/.github/gptdriverrunscript.sh
-          # Execute the script, passing the .app path and platform
-          bash ./branch-ios-sdk-repo/.github/gptdriverrunscript.sh "${{ env.BUILT_PRODUCTS_DIR }}/BranchLinkSimulator.app" ios
+          bash ./branch-ios-sdk-repo/.github/gptdriverrunscript.sh "${{ env.APP_PATH }}" ios
         env:
           API_ORG_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }}
-          API_TOKEN: ${{ secrets.MOBILEBOOST_API_ORG_KEY }} # CORRECTED: Mapped secret to API_TOKEN for the script
+          API_TOKEN: ${{ secrets.MOBILEBOOST_API_ORG_KEY }}
           TEST_TAGS: Release
