@@ -6,15 +6,17 @@ on:
       - 'Release-*' # Trigger for branches starting with "Release-"
 
 jobs:
-  BuildAndTestAppOnGPTDriver:
-    runs-on: macos-latest
+  BuildAndTestAppOnGPTDriver: # Updated job name
+    runs-on: macos-latest # macOS runner is required for iOS builds
     steps:
       # --- Step 1: Extract version from branch name ---
       - name: Extract version from branch name
         id: extract_version_step
         run: |
           BRANCH_NAME="${{ github.ref }}"
+          # Remove 'refs/heads/' prefix (e.g., refs/heads/Release-0.0.0 -> Release-0.0.0)
           BRANCH_NAME_WITHOUT_PREFIX="${BRANCH_NAME#refs/heads/}"
+          # Extract version after "Release-" (e.g., Release-0.0.0 -> 0.0.0)
           VERSION=$(echo "$BRANCH_NAME_WITHOUT_PREFIX" | sed -n 's/^Release-\([0-9]*\.[0-9]*\.[0-9]*\)$/\1/p')
 
           if [ -z "$VERSION" ]; then
@@ -25,10 +27,16 @@ jobs:
           echo "Extracted versionName: $VERSION"
           echo "VERSION_STRING=$VERSION" >> $GITHUB_ENV
 
+          # Convert semantic version to an integer for CFBundleVersion (versionCode equivalent)
+          # Example: 1.2.3 -> 102003 (assuming max 2 digits for minor/patch)
+          # This should be adjusted based on the maximum expected values for major/minor/patch
           MAJOR=$(echo "$VERSION" | cut -d. -f1)
           MINOR=$(echo "$VERSION" | cut -d. -f2)
           PATCH=$(echo "$VERSION" | cut -d. -f3)
 
+          # Calculate versionCode (CFBundleVersion) - ensure this fits in a 32-bit integer
+          # Standard Android-like conversion: Major * 10000 + Minor * 100 + Patch
+          # This provides sufficient uniqueness for most common versioning schemes.
           VERSION_CODE_INT=$(( MAJOR * 10000 + MINOR * 100 + PATCH ))
           echo "Calculated versionCode: $VERSION_CODE_INT"
           echo "VERSION_CODE_INT=$VERSION_CODE_INT" >> $GITHUB_ENV
@@ -39,14 +47,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: BranchMetrics/ios-branch-deep-linking-attribution
-          ref: ${{ github.ref }}
-          path: ./branch-ios-sdk-repo
+          ref: ${{ github.ref }} # Use the same branch that triggered the workflow
+          path: ./branch-ios-sdk-repo # Checkout into a subdirectory
 
       # --- Step 3: Build the iOS Branch SDK Framework ---
       - name: Build Branch SDK Framework
         run: |
           echo "--- Listing contents of the SDK repo directory for debugging ---"
-          ls -R .
+          ls -R . # List contents recursively from the current working directory
           echo "-------------------------------------------------------------"
           echo "Attempting to build the SDK framework..."
           xcodebuild build -project BranchSDK.xcodeproj \
@@ -55,22 +63,24 @@ jobs:
             -sdk iphonesimulator \
             BUILD_DIR="${{ github.workspace }}/branch-ios-sdk-repo/build" \
             SKIP_INSTALL=NO
-        working-directory: ./branch-ios-sdk-repo
+        working-directory: ./branch-ios-sdk-repo # Run xcodebuild from the SDK's checkout directory
 
       # --- Step 4: Checkout the iOS Branch Link Simulator App repository ---
       - name: Checkout BranchMetrics/BranchLinkSimulator (App)
         uses: actions/checkout@v4
         with:
           repository: BranchMetrics/BranchLinkSimulator
-          ref: gptdriver/linkingTests
-          path: ./ios-app-repo
+          ref: gptdriver/linkingTests # Checkout the specific app branch
+          path: ./ios-app-repo # Checkout into another subdirectory
 
       # --- Step 5: Copy the generated SDK Framework to the App's project ---
       - name: Copy generated SDK Framework to App's project
         run: |
+          # Create a 'Frameworks' directory within the app repo for the local SDK
           mkdir -p ./ios-app-repo/Frameworks
+          # Copy the built framework
           cp -R ./branch-ios-sdk-repo/build/Debug-iphonesimulator/BranchSDK.framework ./ios-app-repo/Frameworks/
-        working-directory: ${{ github.workspace }}
+        working-directory: ${{ github.workspace }} # Run from the root of the GITHUB_WORKSPACE
 
       # --- Step 6: Archive iOS App (to prepare for IPA export) ---
       - name: Archive iOS App
@@ -112,7 +122,7 @@ jobs:
 
           # Create a simple ExportOptions.plist for 'development' method (suitable for debug/test IPAs)
           EXPORT_OPTIONS_PLIST_PATH="$IPA_OUTPUT_DIR/ExportOptions.plist"
-          cat <<EOF > "$EXPORT_OPTIONS_PLIST_PATH"
+          cat <<EOF_PLIST > "$EXPORT_OPTIONS_PLIST_PATH" # Changed EOF to EOF_PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -125,7 +135,7 @@ jobs:
     <false/>
 </dict>
 </plist>
-EOF
+EOF_PLIST # Ensure this matches the opening EOF_PLIST and is at the same indentation as 'cat <<EOF_PLIST'
           echo "Exporting IPA to: $IPA_OUTPUT_DIR"
           xcodebuild -exportArchive \
             -archivePath "${{ env.ARCHIVE_PATH }}" \
@@ -136,7 +146,7 @@ EOF
           # Find the generated IPA file dynamically, as its exact name might vary
           GENERATED_IPA=$(find "$IPA_OUTPUT_DIR" -name "*.ipa" -print -quit)
           if [ -z "$GENERATED_IPA" ]; then
-            echo "Error: Could not find generated IPA file in $IPA_OUTPUT_DIR."
+            echo "Error: Could not find generated IPA file."
             exit 1
           fi
 
