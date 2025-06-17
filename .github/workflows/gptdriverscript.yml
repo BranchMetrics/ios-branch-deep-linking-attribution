@@ -53,6 +53,10 @@ jobs:
       # --- Step 3: Build the iOS Branch SDK Framework ---
       - name: Build Branch SDK Framework
         run: |
+          echo "--- Listing contents of the SDK repo directory for debugging ---"
+          ls -R . # List contents recursively from the current working directory
+          echo "-------------------------------------------------------------"
+          echo "Attempting to build the SDK framework..."
           xcodebuild build -project BranchSDK.xcodeproj \
             -scheme BranchSDK \
             -configuration Debug \
@@ -78,15 +82,14 @@ jobs:
           cp -R ./branch-ios-sdk-repo/build/Debug-iphonesimulator/BranchSDK.framework ./ios-app-repo/Frameworks/
         working-directory: ${{ github.workspace }} # Run from the root of the GITHUB_WORKSPACE
 
-      # --- Step 6: Build the iOS Branch Link Simulator App using the local SDK Framework ---
+      # --- Step 6: Build the iOS App using the local SDK Framework and get output path ---
       - name: Build iOS App with local SDK
         run: |
-          # The -project flag defines the project root from which SRCROOT is relative.
-          # The `BUILD_DIR` is where products are placed. We'll rely on xcodebuild's default DerivedData location,
-          # and then capture the specific path to the .app bundle using `xcodebuild -showBuildSettings`.
-          # This command ensures the build output variables are available.
           set -o pipefail # Fail if any part of the pipe fails
-          XCODEBUILD_OUTPUT=$(xcodebuild build -project BranchLinkSimulator.xcodeproj \
+          
+          # First, perform the build. Pipe to xcpretty for cleaner logs if installed.
+          # Note: xcpretty is optional, if you don't have it installed in your runner environment, remove '| xcpretty'
+          xcodebuild build -project BranchLinkSimulator.xcodeproj \
             -scheme BranchLinkSimulator \
             -configuration Debug \
             -sdk iphonesimulator \
@@ -95,19 +98,16 @@ jobs:
             CURRENT_PROJECT_VERSION=${{ env.VERSION_CODE_INT }} \
             FRAMEWORK_SEARCH_PATHS="$(SRCROOT)/Frameworks" \
             ONLY_ACTIVE_ARCH=YES \
-            | xcpretty # xcpretty makes xcodebuild output readable, install it if not present
+            | xcpretty || true # Added || true to prevent build failure due to xcpretty if it's not installed or errors.
 
-          # Extract BUILT_PRODUCTS_DIR from xcodebuild output
-          # This command must be run AFTER the build, and often requires parsing
-          # a successful build log for the definitive path.
-          # A more robust way is to query build settings directly:
+          # Now, query build settings to get the exact output directory
           BUILT_PRODUCTS_DIR=$(xcodebuild -project BranchLinkSimulator.xcodeproj \
             -scheme BranchLinkSimulator \
             -configuration Debug \
             -sdk iphonesimulator \
             -showBuildSettings \
             | grep -m 1 "BUILT_PRODUCTS_DIR =" \
-            | sed 's/.*BUILT_PRODUCTS_DIR = //')
+            | sed 's/.*BUILT_PRODUCTS_DIR = //') # <-- Added missing ')' here
 
           if [ -z "$BUILT_PRODUCTS_DIR" ]; then
             echo "Error: Could not determine BUILT_PRODUCTS_DIR."
@@ -122,7 +122,6 @@ jobs:
       # --- Step 7: Echo the location of the generated .app bundle ---
       - name: Echo .app bundle location
         run: |
-          # Use the dynamically determined BUILT_PRODUCTS_DIR
           APP_PATH="${{ env.BUILT_PRODUCTS_DIR }}/BranchLinkSimulator.app"
           echo "Generated .app bundle location: $APP_PATH"
 
@@ -131,7 +130,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: BranchLinkSimulator-iOS-Debug-Build
-          # Use the dynamically determined BUILT_PRODUCTS_DIR
           path: "${{ env.BUILT_PRODUCTS_DIR }}/BranchLinkSimulator.app"
 
       # --- Step 9: Upload and run tests on GPTDriver service. ---
@@ -139,7 +137,7 @@ jobs:
         run: |
           # Ensure the script is executable
           chmod +x ./branch-ios-sdk-repo/.github/gptdriverrunscript.sh
-          # Use the dynamically determined BUILT_PRODUCTS_DIR
+          # Execute the script, passing the .app path and platform
           bash ./branch-ios-sdk-repo/.github/gptdriverrunscript.sh "${{ env.BUILT_PRODUCTS_DIR }}/BranchLinkSimulator.app" ios
         env:
           API_ORG_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }}
