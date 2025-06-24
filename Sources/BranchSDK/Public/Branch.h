@@ -49,6 +49,7 @@
 //#import "NSError+Branch.h"
 //#import "BranchConstants.h"
 //#import "UIViewController+Branch.h"
+#import "BranchConstants.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

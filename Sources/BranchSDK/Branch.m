@@ -45,7 +45,8 @@
 #import "BNCServerAPI.h"
 #import "BranchPluginSupport.h"
 #import "BranchLogger.h"
-#import "BranchConfigurationController.h"
+#import "BranchSDK/BranchSDK-Swift.h"
+
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
@@ -188,7 +189,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 
 + (Branch *)getInstance:(NSString *)branchKey {
     self.branchKey = branchKey;
-    [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_GET_INSTANCE_API;
+    [ConfigurationController shared].branchKeySource = BRANCH_KEY_SOURCE_GET_INSTANCE_API;
     return [Branch getInstanceInternal:self.branchKey];
 }
 
@@ -248,7 +249,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     
     BranchJsonConfig *config = BranchJsonConfig.instance;
     self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
-    [BranchConfigurationController sharedInstance].deferInitForPluginRuntime = self.deferInitForPluginRuntime;
+    [ConfigurationController shared].deferInitForPluginRuntime = self.deferInitForPluginRuntime;
     
     if (config.apiUrl) {
         [Branch setAPIUrl:config.apiUrl];
@@ -410,7 +411,7 @@ static NSString *bnc_branchKey = nil;
             [[BranchLogger shared] logError:[NSString stringWithFormat:@"Invalid Branch key format. Did you add your Branch key to your Info.plist? Passed key is '%@'.", branchKey] error:*error];
             return;
         }
-        [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_SET_BRANCH_KEY_API;
+        [ConfigurationController shared].branchKeySource = BRANCH_KEY_SOURCE_SET_BRANCH_KEY_API;
         bnc_branchKey = branchKey;
     }
 }
@@ -446,7 +447,7 @@ static NSString *bnc_branchKey = nil;
         if (!bnc_branchKey) {
             [[BranchLogger shared] logError:@"Your Branch key is not set in your Info.plist file. See https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/#configure-xcode-project for configuration instructions." error:nil];
         }
-        [BranchConfigurationController sharedInstance].branchKeySource = branchKeySource;
+        [ConfigurationController shared].branchKeySource = branchKeySource;
         return bnc_branchKey;
     }
 }
@@ -1008,7 +1009,7 @@ static NSString *bnc_branchKey = nil;
 
 - (void)checkPasteboardOnInstall {
     [BNCPasteboard sharedInstance].checkOnInstall = YES;
-    [BranchConfigurationController sharedInstance].checkPasteboardOnInstall = YES;
+    [ConfigurationController shared].checkPasteboardOnInstall = YES;
 }
 
 - (BOOL)willShowPasteboardToast {
