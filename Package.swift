@@ -5,42 +5,21 @@ import PackageDescription
 let package = Package(
     name: "ios-branch-deep-linking-attribution",
     platforms: [
-        .iOS(.v12),
-        .tvOS(.v12),
-    ],
-    products: [
-        .library(
-            name: "BranchSDK",
-            targets: ["BranchSDK"]),
-    ],
-    dependencies: [
-    ],
-    targets: [
-        .target(
-            name: "BranchSDK",
-            dependencies: [
-                "BranchSDK_Swift"
-            ],
-            path: "Sources/BranchSDK",
-            resources: [
-                .copy("../Resources/PrivacyInfo.xcprivacy"),
-            ],
-            publicHeadersPath: "Public",
-            cSettings: [
-                .headerSearchPath("."),
-                .headerSearchPath("Private")
-            ],
-            linkerSettings: [
-                .linkedFramework("CoreServices"),
-                .linkedFramework("SystemConfiguration"),
-                .linkedFramework("WebKit", .when(platforms: [.iOS])),
-                .linkedFramework("CoreSpotlight", .when(platforms: [.iOS])),
-                .linkedFramework("AdServices", .when(platforms: [.iOS]))
-            ]
-        ),
-        .target(
-            name: "BranchSDK_Swift",
-            path: "Sources/BranchSDK_Swift"
-        ),
-    ]
+            .iOS(.v13),
+            .tvOS(.v13),
+        ],
+        products: [
+            .library(
+                name: "BranchSDK",
+                targets: ["BranchSDKBinary"]
+            ),
+        ],
+        targets: [
+            .binaryTarget(
+                name: "BranchSDKBinary",
+                url: "https://github.com/NidhiDixit09/nidhidixit09.github.io/raw/refs/heads/main/Branch.zip",
+                checksum: "ac2fe6717dda43cc2e9674f549937a6ab487447698451e4c2a823b6b26ce16ac"
+            )
+            
+        ]
 )
