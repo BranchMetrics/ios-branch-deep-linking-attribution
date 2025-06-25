@@ -40,7 +40,7 @@ let package = Package(
         ),
         .target(
             name: "BranchSDK_Swift",
-            path: "Sources/BranchSDK_Swift",
+            path: "Sources/BranchSDK_Swift"
         ),
     ]
 )
