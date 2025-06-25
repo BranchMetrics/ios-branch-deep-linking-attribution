@@ -384,8 +384,7 @@
 		5FCDD5472B7AC6A300EAF29F /* BNCConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3DB2B7AC6A100EAF29F /* BNCConfig.h */; };
 		5FCDD5482B7AC6A300EAF29F /* BNCConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3DB2B7AC6A100EAF29F /* BNCConfig.h */; };
 		5FCDD5492B7AC6A300EAF29F /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3DC2B7AC6A100EAF29F /* BranchConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5FCDD54A2B7AC6A300EAF29F /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3DC2B7AC6A100EAF29F /* BranchConstants.h */; };
-		5FCDD54B2B7AC6A300EAF29F /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3DC2B7AC6A100EAF29F /* BranchConstants.h */; };
+		5FCDD54B2B7AC6A300EAF29F /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3DC2B7AC6A100EAF29F /* BranchConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FCDD54C2B7AC6A300EAF29F /* BNCPartnerParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3DD2B7AC6A100EAF29F /* BNCPartnerParameters.h */; };
 		5FCDD54D2B7AC6A300EAF29F /* BNCPartnerParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3DD2B7AC6A100EAF29F /* BNCPartnerParameters.h */; };
 		5FCDD54E2B7AC6A300EAF29F /* BNCPartnerParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3DD2B7AC6A100EAF29F /* BNCPartnerParameters.h */; };
@@ -502,6 +501,7 @@
 		E7931D842E01C8AE0007A374 /* ConfigurationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7931D832E01C8AE0007A374 /* ConfigurationController.swift */; };
 		E7931D852E01C8AE0007A374 /* ConfigurationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7931D832E01C8AE0007A374 /* ConfigurationController.swift */; };
 		E7931D862E01C8AE0007A374 /* ConfigurationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7931D832E01C8AE0007A374 /* ConfigurationController.swift */; };
+		E7A7F2922E0CAB61001FBADE /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3DC2B7AC6A100EAF29F /* BranchConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E7F311AE2DACB4D400F824A7 /* BNCODMInfoCollector.m in Sources */ = {isa = PBXBuildFile; fileRef = E7F311AD2DACB4D400F824A7 /* BNCODMInfoCollector.m */; };
 		E7F311AF2DACB4D400F824A7 /* BNCODMInfoCollector.m in Sources */ = {isa = PBXBuildFile; fileRef = E7F311AD2DACB4D400F824A7 /* BNCODMInfoCollector.m */; };
 		E7F311B12DACB54100F824A7 /* BNCODMInfoCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = E7F311B02DACB54100F824A7 /* BNCODMInfoCollector.h */; };
@@ -1119,6 +1119,7 @@
 			files = (
 				5FCDD52F2B7AC6A300EAF29F /* Branch+Validator.h in Headers */,
 				5FCDD4A52B7AC6A200EAF29F /* BNCCallbacks.h in Headers */,
+				E7A7F2922E0CAB61001FBADE /* BranchConstants.h in Headers */,
 				5FCDD4932B7AC6A100EAF29F /* BranchLinkProperties.h in Headers */,
 				5FCDD4C92B7AC6A200EAF29F /* BranchScene.h in Headers */,
 				5FCDD4A82B7AC6A200EAF29F /* BranchShareLink.h in Headers */,
@@ -1151,7 +1152,6 @@
 				5F5FDA1B2B7DE31E00F14A43 /* BranchLogger.h in Headers */,
 				5FCDD4E72B7AC6A200EAF29F /* UIViewController+Branch.h in Headers */,
 				E7F311B12DACB54100F824A7 /* BNCODMInfoCollector.h in Headers */,
-				5FCDD54A2B7AC6A300EAF29F /* BranchConstants.h in Headers */,
 				5FCDD5412B7AC6A300EAF29F /* BranchSpotlightUrlRequest.h in Headers */,
 				5FCDD5562B7AC6A300EAF29F /* BNCCrashlyticsWrapper.h in Headers */,
 				5FCDD52C2B7AC6A300EAF29F /* BranchInstallRequest.h in Headers */,
@@ -1227,11 +1227,11 @@
 				5FCDD4A32B7AC6A200EAF29F /* BNCServerResponse.h in Headers */,
 				5FCDD4C42B7AC6A200EAF29F /* BranchDeepLinkingController.h in Headers */,
 				5FCDD4A02B7AC6A200EAF29F /* Branch.h in Headers */,
+				5FCDD54B2B7AC6A300EAF29F /* BranchConstants.h in Headers */,
 				5FCDD5092B7AC6A300EAF29F /* BNCUrlQueryParameter.h in Headers */,
 				5FCDD5482B7AC6A300EAF29F /* BNCConfig.h in Headers */,
 				E563942E2CC7A8E600E18E65 /* BranchFileLogger.h in Headers */,
 				5FCDD4E82B7AC6A200EAF29F /* UIViewController+Branch.h in Headers */,
-				5FCDD54B2B7AC6A300EAF29F /* BranchConstants.h in Headers */,
 				5F5FDA1C2B7DE31E00F14A43 /* BranchLogger.h in Headers */,
 				E7F311B32DACB54100F824A7 /* BNCODMInfoCollector.h in Headers */,
 				5FCDD5422B7AC6A300EAF29F /* BranchSpotlightUrlRequest.h in Headers */,
