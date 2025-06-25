@@ -23,7 +23,7 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.resource_bundles = { 'BranchSDK' => 'Sources/Resources/*.xcprivacy' }
   s.ios.source_files = "Sources/BranchSDK/**/*.{h,m}", "Sources/BranchSDK_Swift/**/*.swift" 
 
-  s.tvos.source_files = "Sources/BranchSDK/**/*.{h,m}"
+  s.tvos.source_files = "Sources/BranchSDK/**/*.{h,m}", "Sources/BranchSDK_Swift/**/*.swift" 
   s.tvos.exclude_files = "Sources/BranchSDK/**/BNCContentDiscoveryManager.{h,m}",
 	"Sources/BranchSDK/**/BNCUserAgentCollector.{h,m}",
 	"Sources/BranchSDK/**/BNCSpotlightService.{h,m}",
