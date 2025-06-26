@@ -18,7 +18,7 @@ let package = Package(
             .binaryTarget(
                 name: "BranchSDKBinary",
                 url: "https://github.com/NidhiDixit09/nidhidixit09.github.io/raw/refs/heads/main/Branch.zip",
-                checksum: "23f2d42a54ed9c14e4bc1ec93c8b28f5c66c68b26988692a1c154efa1710d868"
+                checksum: "ac2fe6717dda43cc2e9674f549937a6ab487447698451e4c2a823b6b26ce16ac"
             )
             
         ]
