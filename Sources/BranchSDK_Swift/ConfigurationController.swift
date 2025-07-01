@@ -8,6 +8,10 @@
 
 import Foundation
 
+#if SWIFT_PACKAGE
+import BranchConstantsTarget
+#endif
+
 @objcMembers
 public class ConfigurationController: NSObject {
 

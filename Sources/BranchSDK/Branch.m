@@ -45,8 +45,13 @@
 #import "BNCServerAPI.h"
 #import "BranchPluginSupport.h"
 #import "BranchLogger.h"
-#import "BranchSDK/BranchSDK-Swift.h"
 
+
+#if SWIFT_PACKAGE
+@import BranchSwiftSDK;
+#else
+#import "BranchSDK/BranchSDK-Swift.h"
+#endif
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
@@ -2420,11 +2425,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     if (callCallback) {
         if (self.sceneSessionInitWithCallback) {
             BNCInitSessionResponse *response = [BNCInitSessionResponse new];
-            response.error = error;
             response.params = [NSDictionary new];
             response.universalObject = [BranchUniversalObject new];
             response.linkProperties = [BranchLinkProperties new];
             response.sceneIdentifier = sceneIdentifier;
+            response.error = error;
             self.sceneSessionInitWithCallback(response, error);
         }
     }

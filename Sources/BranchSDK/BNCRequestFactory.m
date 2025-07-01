@@ -3,7 +3,7 @@
 //  Branch
 //
 //  Created by Ernest Cho on 8/16/23.
-//  Copyright © 2023 Branch, Inc. All rights reserved.
+//  Copyright 2023 Branch, Inc. All rights reserved.
 //
 
 #import "BNCRequestFactory.h"
@@ -32,10 +32,17 @@
 #import "BNCAppleReceipt.h"
 #import "BNCAppGroupsData.h"
 #import "BNCSKAdNetwork.h"
+
+#if SWIFT_PACKAGE
+@import BranchSwiftSDK;
+#else
+#import "BranchSDK/BranchSDK-Swift.h"
+#endif
+
+
 #import "BNCReferringURLUtility.h"
 #import "BNCPasteboard.h"
 #import "BNCODMInfoCollector.h"
-#import "BranchSDK/BranchSDK-Swift.h"
 
 @interface BNCRequestFactory()
 
