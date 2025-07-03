@@ -9,7 +9,7 @@
 import Foundation
 
 #if SWIFT_PACKAGE
-import BranchConstantsTarget
+import BranchObjCSDK
 #endif
 
 @objcMembers
