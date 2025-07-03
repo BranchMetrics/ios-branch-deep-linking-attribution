@@ -21,9 +21,9 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
     s.swift_versions = ['5.0', '5.1', '5.2', '5.3', '5.4', '5.5', '5.6', '5.7', '5.8', '5.9', '6.0'] 
 
   s.resource_bundles = { 'BranchSDK' => 'Sources/Resources/*.xcprivacy' }
-  s.ios.source_files = "Sources/BranchSDK/**/*.{h,m}", "Sources/BranchSDK_Swift/**/*.swift, "Sources/BranchSDK_ObjC/**/*.{h,m}"" 
+  s.ios.source_files = "Sources/BranchSDK/**/*.{h,m}", "Sources/BranchSDK_Swift/**/*.swift", "Sources/BranchSDK_ObjC/**/*.{h,m}"
 
-  s.tvos.source_files = "Sources/BranchSDK/**/*.{h,m}", "Sources/BranchSDK_Swift/**/*.swift, "Sources/BranchSDK_ObjC/**/*.{h,m}"" 
+  s.tvos.source_files = "Sources/BranchSDK/**/*.{h,m}", "Sources/BranchSDK_Swift/**/*.swift", "Sources/BranchSDK_ObjC/**/*.{h,m}" 
   s.tvos.exclude_files = "Sources/BranchSDK/**/BNCContentDiscoveryManager.{h,m}",
 	"Sources/BranchSDK/**/BNCUserAgentCollector.{h,m}",
 	"Sources/BranchSDK/**/BNCSpotlightService.{h,m}",
