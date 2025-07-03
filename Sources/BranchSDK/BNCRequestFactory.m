@@ -3,7 +3,7 @@
 //  Branch
 //
 //  Created by Ernest Cho on 8/16/23.
-//  Copyright 2023 Branch, Inc. All rights reserved.
+//  Copyright © 2023 Branch, Inc. All rights reserved.
 //
 
 #import "BNCRequestFactory.h"
