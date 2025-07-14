@@ -1,0 +1,37 @@
+{
+  "configurations" : [
+    {
+      "id" : "9EAB663B-7807-43EE-AD4E-658E8734932A",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:BranchSDK.xcodeproj",
+      "identifier" : "5F22116E2894A9C000C5B190",
+      "name" : "TestHost"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:BranchSDK.xcodeproj",
+        "identifier" : "E7CA74EA2E1B4F75002EFB40",
+        "name" : "BranchSDKTests"
+      }
+    },
+    {
+      "enabled" : false,
+      "target" : {
+        "containerPath" : "container:BranchSDK.xcodeproj",
+        "identifier" : "5F2211832894A9C100C5B190",
+        "name" : "TestHostTests"
+      }
+    }
+  ],
+  "version" : 1
+}
