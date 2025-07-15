@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   verify-cocoapods-iOS:
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -33,7 +33,7 @@ jobs:
             carthage update --use-xcframeworks
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-SPM-iOS:
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -44,7 +44,7 @@ jobs:
             cd  SDKIntegrationTestApps/iOSReleaseTest-SPM/
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-manually-with-xcframework-iOS:
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -56,7 +56,7 @@ jobs:
             cd  SDKIntegrationTestApps/iOSReleaseTest-Manual/
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-manually-with-StaticFramework-iOS:
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -68,7 +68,7 @@ jobs:
             cd  SDKIntegrationTestApps/iOSReleaseTest-Manual-Static/
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-cocoapods-tvOS:
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -80,7 +80,7 @@ jobs:
             pod install
             xcodebuild test -scheme tvOSReleaseTest -workspace tvOSReleaseTest.xcworkspace -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-carthage-tvOS:
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -91,7 +91,7 @@ jobs:
             cd  SDKIntegrationTestApps/tvOSReleaseTest-Carthage/
             echo "Skipping it ... its broken"
   verify-manually-with-xcframework-tvOS:
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - name: Check out code
         uses: actions/checkout@v4
