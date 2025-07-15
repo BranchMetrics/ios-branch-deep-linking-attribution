@@ -722,7 +722,7 @@
 		E7931D832E01C8AE0007A374 /* ConfigurationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ConfigurationController.swift; path = ../BranchSDK_Swift/ConfigurationController.swift; sourceTree = "<group>"; };
 		E7F311AD2DACB4D400F824A7 /* BNCODMInfoCollector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCODMInfoCollector.m; sourceTree = "<group>"; };
 		E7F311B02DACB54100F824A7 /* BNCODMInfoCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCODMInfoCollector.h; sourceTree = "<group>"; };
-		E7FBA85E2E14492600E7AAD9 /* BranchConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BranchConstants.h; path = Sources/BranchSDK_ObjC/Public/BranchConstants.h; sourceTree = "<group>"; };
+		E7FBA85E2E14492600E7AAD9 /* BranchConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BranchConstants.h; path = ../../BranchSDK_ObjC/Public/BranchConstants.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -776,7 +776,6 @@
 		5F2210132894A0DB00C5B190 = {
 			isa = PBXGroup;
 			children = (
-				E7FBA85E2E14492600E7AAD9 /* BranchConstants.h */,
 				5FCDD36B2B7AC6A100EAF29F /* BranchSDK */,
 				5F2211702894A9C000C5B190 /* TestHost */,
 				5F2211872894A9C100C5B190 /* TestHostTests */,
@@ -948,6 +947,7 @@
 				5FCDD39F2B7AC6A100EAF29F /* BranchSDK.h */,
 				5FCDD3A52B7AC6A100EAF29F /* BranchShareLink.h */,
 				5FCDD3AC2B7AC6A100EAF29F /* BranchUniversalObject.h */,
+				E7FBA85E2E14492600E7AAD9 /* BranchConstants.h */,
 			);
 			path = Public;
 			sourceTree = "<group>";
