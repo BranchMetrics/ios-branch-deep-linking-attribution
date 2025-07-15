@@ -8,7 +8,7 @@ on:
 
 jobs:
   verify:
-    runs-on: macos-latest
+    runs-on: macos-15
     timeout-minutes: 20
     steps:
       - name: Check out code
@@ -17,13 +17,7 @@ jobs:
         run: |
           xcodebuild test \
             -project BranchSDK.xcodeproj \
-            -scheme BranchSDK \
+            -scheme BranchSDKTests \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 14,OS=latest' \
+            -destination 'platform=iOS Simulator,name=iPhone 14,OS=macOS-15' \
             -testPlan BranchSDKTests
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always() # even if tests fail
-        with:
-          name: test-results
-          path: fastlane/test_output
