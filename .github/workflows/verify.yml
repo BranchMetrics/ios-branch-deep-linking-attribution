@@ -15,9 +15,11 @@ jobs:
         uses: actions/checkout@v4
       - name: Run unit tests
         run: |
+          echo "branch=${{ github.ref }}" >> $GITHUB_OUTPUT
+          ./scripts/getSimulator
+          DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
           xcodebuild test \
             -project BranchSDK.xcodeproj \
             -scheme BranchSDKTests \
-            -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 14,OS=macOS-15' \
-            -testPlan BranchSDKTests
+            -destination "$DESTINATION" \
+            -testPlan BranchSDKTests | xcpretty && exit ${PIPESTATUS[0]}
