@@ -52,20 +52,20 @@
 }
 
 - (NSString *)linkServiceURL {
-    return [[self getBaseURLForLinkingEndpoints] stringByAppendingString: @"/v1/url"];
+    return [[self getBaseURLForLinkingEndpoints:YES] stringByAppendingString: @"/v1/url"];
 }
 
 - (NSString *)qrcodeServiceURL {
-    return [[self getBaseURLForLinkingEndpoints] stringByAppendingString: @"/v1/qr-code"];
+    return [[self getBaseURLForLinkingEndpoints:YES] stringByAppendingString: @"/v1/qr-code"];
 }
 
 // LATD endpoint is not a data collection endpoint and will be treated like linking endpoints
 - (NSString *)latdServiceURL {
-    return [[self getBaseURLForLinkingEndpoints] stringByAppendingString: @"/v1/cpid/latd"];
+    return [[self getBaseURLForLinkingEndpoints:YES] stringByAppendingString: @"/v1/cpid/latd"];
 }
 
 - (NSString *)validationServiceURL {
-    return [[self getBaseURLForLinkingEndpoints] stringByAppendingString: @"/v1/app-link-settings"];
+    return [[self getBaseURLForLinkingEndpoints:NO] stringByAppendingString: @"/v1/app-link-settings"];
 }
 
 // Currently we switch to tracking domains if we detect IDFA, indicating that Ad Tracking is enabled
@@ -78,8 +78,9 @@
 }
 
 // Linking endpoints are not used for Ads tracking
-- (NSString *)getBaseURLForLinkingEndpoints {
-    if (self.customAPIURL) {
+- (NSString *)getBaseURLForLinkingEndpoints:(BOOL)useCustomURL {
+    // Determines whether to use custom API URL (when available) or always use standard URL
+    if (useCustomURL && self.customAPIURL) {
         return self.customAPIURL;
     }
     
