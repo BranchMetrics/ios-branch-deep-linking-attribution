@@ -1,20 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "1640"
-   version = "1.7">
+   version = "2.1">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES"
       buildArchitectures = "Automatic">
+      <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "E7CA755E2E1B59F5002EFB40"
+               BuildableName = "BranchSDKTestsHostApp.app"
+               BlueprintName = "BranchSDKTestsHostApp"
+               ReferencedContainer = "container:BranchSDK.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "NO"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <TestPlanReference
+               reference = "container:BranchSDK_Tests/BranchSDKTests.xctestplan">
+            </TestPlanReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
    </BuildAction>
    <TestAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:BranchSDK_Tests/BranchSDKTests.xctestplan"
+            reference = "container:BranchSDKTests/BranchSDKTests.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>

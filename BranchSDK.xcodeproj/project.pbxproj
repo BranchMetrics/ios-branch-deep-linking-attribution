@@ -757,6 +757,13 @@
 			);
 			target = E7CA74EA2E1B4F75002EFB40 /* BranchSDKTests */;
 		};
+		E7F2461F2E26B8F90083FDE1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				BranchSDKTests.xctestplan,
+			);
+			target = E7CA755E2E1B59F5002EFB40 /* BranchSDKTestsHostApp */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
@@ -771,7 +778,7 @@
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		E7CA74EC2E1B4F75002EFB40 /* BranchSDKTests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E7CA75522E1B504C002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E7CA75532E1B504C002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E7CA75542E1B504C002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E7CA75552E1B504C002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E7CA75562E1B504C002EFB40 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = BranchSDKTests; sourceTree = "<group>"; };
+		E7CA74EC2E1B4F75002EFB40 /* BranchSDKTests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E7CA75522E1B504C002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E7CA75532E1B504C002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E7CA75542E1B504C002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E7CA75552E1B504C002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E7CA75562E1B504C002EFB40 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, E7F2461F2E26B8F90083FDE1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = BranchSDKTests; sourceTree = "<group>"; };
 		E7CA75602E1B59F5002EFB40 /* BranchSDKTestsHostApp */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E7CA75B12E1B7B02002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E7CA758B2E1B59F7002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = BranchSDKTestsHostApp; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
