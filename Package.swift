@@ -18,7 +18,8 @@ let package = Package(
     targets: [
         .target(
             name: "BranchObjCSDK",
-            path: "Sources/BranchSDK_ObjC"
+            path: "Sources/BranchSDK_ObjC",
+            publicHeadersPath: "Public"
         ),
         .target(
             name: "BranchSwiftSDK",
