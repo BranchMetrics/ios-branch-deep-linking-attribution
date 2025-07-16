@@ -1,6 +1,0 @@
-project 'Branch-TestBed/Branch-TestBed.xcodeproj'
-device 'iPhone 12'
-output_types 'junit,html'
-code_coverage true
-clean true 
-output_directory 'fastlane/test_output/'

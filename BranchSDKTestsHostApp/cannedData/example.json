@@ -1,0 +1,31 @@
+{
+  "user_string": "test user",
+  "user_number": 3.14,
+  "user_dict": {
+    "id": "273e4c5da13b978ee2f78f8997abd972959c184aaffb8cad716721a00a08d32b",
+    "name": "hello@branch.io"
+  },
+  "user_dict_mixed": {
+      "id": 123,
+      "name": "hello@branch.io"
+  },
+  "user_dict_numbers": {
+      "id": 123,
+      "name": 42
+  },
+  "user_array": [
+      "123",
+      "abc",
+      "xyz"
+  ],
+  "user_array_mixed": [
+      "abc",
+      123,
+      "xyz"
+  ],
+  "user_array_numbers": [
+      1,
+      2,
+      3
+  ]
+}

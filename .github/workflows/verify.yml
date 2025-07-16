@@ -13,37 +13,13 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Set up Ruby 2.7
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '2.7'
-      - name: Restore cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            vendor
-            Branch-TestBed/Pods
-          key: ${{ runner.os }}-${{ hashFiles('Gemfile.lock','Branch-TestBed/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-
-      - name: Install Ruby dependencies
-        run: |
-          bundle config set --local path vendor
-          bundle check || bundle install
-      # This happens automatically with the unit_tests lane, but adding it here
-      # makes it easier to keep track of installation time via GHA without
-      # adding execution time to the next step.
-      #- name: Install CocoaPods dependencies
-      #  run: bundle exec fastlane prepare_pods
       - name: Run unit tests
-        run: bundle exec fastlane unit_tests
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always() # even if tests fail
-        with:
-          name: test-results
-          path: fastlane/test_output
-      - name: Upload codecov  results
-        uses: codecov/codecov-action@v5
-        with:
-          files: ./fastlane/test_output/cobertura.xml
+        run: |
+          echo "branch=${{ github.ref }}" >> $GITHUB_OUTPUT
+          ./scripts/getSimulator
+          DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
+          xcodebuild test \
+            -project BranchSDK.xcodeproj \
+            -scheme BranchSDKTests \
+            -destination "$DESTINATION" \
+            -testPlan BranchSDKTests | xcpretty && exit ${PIPESTATUS[0]}

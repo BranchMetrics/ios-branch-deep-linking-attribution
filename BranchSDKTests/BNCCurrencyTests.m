@@ -1,0 +1,194 @@
+//
+//  BNCCurrencyTests.m
+//  Branch-SDK-Tests
+//
+//  Created by Nipun Singh on 9/21/23.
+//  Copyright © 2023 Branch, Inc. All rights reserved.
+//
+
+#import <XCTest/XCTest.h>
+#import "BNCCurrency.h"
+
+@interface BNCCurrencyTests : XCTestCase
+@end
+
+@implementation BNCCurrencyTests
+
+- (void)testEnumValues {
+    XCTAssertEqualObjects(BNCCurrencyAED, @"AED");
+    XCTAssertEqualObjects(BNCCurrencyAFN, @"AFN");
+    XCTAssertEqualObjects(BNCCurrencyALL, @"ALL");
+    XCTAssertEqualObjects(BNCCurrencyAMD, @"AMD");
+    XCTAssertEqualObjects(BNCCurrencyANG, @"ANG");
+    XCTAssertEqualObjects(BNCCurrencyAOA, @"AOA");
+    XCTAssertEqualObjects(BNCCurrencyARS, @"ARS");
+    XCTAssertEqualObjects(BNCCurrencyAUD, @"AUD");
+    XCTAssertEqualObjects(BNCCurrencyAWG, @"AWG");
+    XCTAssertEqualObjects(BNCCurrencyAZN, @"AZN");
+    XCTAssertEqualObjects(BNCCurrencyBAM, @"BAM");
+    XCTAssertEqualObjects(BNCCurrencyBBD, @"BBD");
+    XCTAssertEqualObjects(BNCCurrencyBDT, @"BDT");
+    XCTAssertEqualObjects(BNCCurrencyBGN, @"BGN");
+    XCTAssertEqualObjects(BNCCurrencyBHD, @"BHD");
+    XCTAssertEqualObjects(BNCCurrencyBIF, @"BIF");
+    XCTAssertEqualObjects(BNCCurrencyBMD, @"BMD");
+    XCTAssertEqualObjects(BNCCurrencyBND, @"BND");
+    XCTAssertEqualObjects(BNCCurrencyBOB, @"BOB");
+    XCTAssertEqualObjects(BNCCurrencyBOV, @"BOV");
+    XCTAssertEqualObjects(BNCCurrencyBRL, @"BRL");
+    XCTAssertEqualObjects(BNCCurrencyBSD, @"BSD");
+    XCTAssertEqualObjects(BNCCurrencyBTN, @"BTN");
+    XCTAssertEqualObjects(BNCCurrencyBWP, @"BWP");
+    XCTAssertEqualObjects(BNCCurrencyBYN, @"BYN");
+    XCTAssertEqualObjects(BNCCurrencyBYR, @"BYR");
+    XCTAssertEqualObjects(BNCCurrencyBZD, @"BZD");
+    XCTAssertEqualObjects(BNCCurrencyCAD, @"CAD");
+    XCTAssertEqualObjects(BNCCurrencyCDF, @"CDF");
+    XCTAssertEqualObjects(BNCCurrencyCHE, @"CHE");
+    XCTAssertEqualObjects(BNCCurrencyCHF, @"CHF");
+    XCTAssertEqualObjects(BNCCurrencyCHW, @"CHW");
+    XCTAssertEqualObjects(BNCCurrencyCLF, @"CLF");
+    XCTAssertEqualObjects(BNCCurrencyCLP, @"CLP");
+    XCTAssertEqualObjects(BNCCurrencyCNY, @"CNY");
+    XCTAssertEqualObjects(BNCCurrencyCOP, @"COP");
+    XCTAssertEqualObjects(BNCCurrencyCOU, @"COU");
+    XCTAssertEqualObjects(BNCCurrencyCRC, @"CRC");
+    XCTAssertEqualObjects(BNCCurrencyCUC, @"CUC");
+    XCTAssertEqualObjects(BNCCurrencyCUP, @"CUP");
+    XCTAssertEqualObjects(BNCCurrencyCVE, @"CVE");
+    XCTAssertEqualObjects(BNCCurrencyCZK, @"CZK");
+    XCTAssertEqualObjects(BNCCurrencyDJF, @"DJF");
+    XCTAssertEqualObjects(BNCCurrencyDKK, @"DKK");
+    XCTAssertEqualObjects(BNCCurrencyDOP, @"DOP");
+    XCTAssertEqualObjects(BNCCurrencyDZD, @"DZD");
+    XCTAssertEqualObjects(BNCCurrencyEGP, @"EGP");
+    XCTAssertEqualObjects(BNCCurrencyERN, @"ERN");
+    XCTAssertEqualObjects(BNCCurrencyETB, @"ETB");
+    XCTAssertEqualObjects(BNCCurrencyEUR, @"EUR");
+    XCTAssertEqualObjects(BNCCurrencyFJD, @"FJD");
+    XCTAssertEqualObjects(BNCCurrencyFKP, @"FKP");
+    XCTAssertEqualObjects(BNCCurrencyGBP, @"GBP");
+    XCTAssertEqualObjects(BNCCurrencyGEL, @"GEL");
+    XCTAssertEqualObjects(BNCCurrencyGHS, @"GHS");
+    XCTAssertEqualObjects(BNCCurrencyGIP, @"GIP");
+    XCTAssertEqualObjects(BNCCurrencyGMD, @"GMD");
+    XCTAssertEqualObjects(BNCCurrencyGNF, @"GNF");
+    XCTAssertEqualObjects(BNCCurrencyGTQ, @"GTQ");
+    XCTAssertEqualObjects(BNCCurrencyGYD, @"GYD");
+    XCTAssertEqualObjects(BNCCurrencyHKD, @"HKD");
+    XCTAssertEqualObjects(BNCCurrencyHNL, @"HNL");
+    XCTAssertEqualObjects(BNCCurrencyHRK, @"HRK");
+    XCTAssertEqualObjects(BNCCurrencyHTG, @"HTG");
+    XCTAssertEqualObjects(BNCCurrencyHUF, @"HUF");
+    XCTAssertEqualObjects(BNCCurrencyIDR, @"IDR");
+    XCTAssertEqualObjects(BNCCurrencyILS, @"ILS");
+    XCTAssertEqualObjects(BNCCurrencyINR, @"INR");
+    XCTAssertEqualObjects(BNCCurrencyIQD, @"IQD");
+    XCTAssertEqualObjects(BNCCurrencyIRR, @"IRR");
+    XCTAssertEqualObjects(BNCCurrencyISK, @"ISK");
+    XCTAssertEqualObjects(BNCCurrencyJMD, @"JMD");
+    XCTAssertEqualObjects(BNCCurrencyJOD, @"JOD");
+    XCTAssertEqualObjects(BNCCurrencyJPY, @"JPY");
+    XCTAssertEqualObjects(BNCCurrencyKES, @"KES");
+    XCTAssertEqualObjects(BNCCurrencyKGS, @"KGS");
+    XCTAssertEqualObjects(BNCCurrencyKHR, @"KHR");
+    XCTAssertEqualObjects(BNCCurrencyKMF, @"KMF");
+    XCTAssertEqualObjects(BNCCurrencyKPW, @"KPW");
+    XCTAssertEqualObjects(BNCCurrencyKRW, @"KRW");
+    XCTAssertEqualObjects(BNCCurrencyKWD, @"KWD");
+    XCTAssertEqualObjects(BNCCurrencyKYD, @"KYD");
+    XCTAssertEqualObjects(BNCCurrencyKZT, @"KZT");
+    XCTAssertEqualObjects(BNCCurrencyLAK, @"LAK");
+    XCTAssertEqualObjects(BNCCurrencyLBP, @"LBP");
+    XCTAssertEqualObjects(BNCCurrencyLKR, @"LKR");
+    XCTAssertEqualObjects(BNCCurrencyLRD, @"LRD");
+    XCTAssertEqualObjects(BNCCurrencyLSL, @"LSL");
+    XCTAssertEqualObjects(BNCCurrencyLYD, @"LYD");
+    XCTAssertEqualObjects(BNCCurrencyMAD, @"MAD");
+    XCTAssertEqualObjects(BNCCurrencyMDL, @"MDL");
+    XCTAssertEqualObjects(BNCCurrencyMGA, @"MGA");
+    XCTAssertEqualObjects(BNCCurrencyMKD, @"MKD");
+    XCTAssertEqualObjects(BNCCurrencyMMK, @"MMK");
+    XCTAssertEqualObjects(BNCCurrencyMNT, @"MNT");
+    XCTAssertEqualObjects(BNCCurrencyMOP, @"MOP");
+    XCTAssertEqualObjects(BNCCurrencyMRO, @"MRO");
+    XCTAssertEqualObjects(BNCCurrencyMUR, @"MUR");
+    XCTAssertEqualObjects(BNCCurrencyMVR, @"MVR");
+    XCTAssertEqualObjects(BNCCurrencyMWK, @"MWK");
+    XCTAssertEqualObjects(BNCCurrencyMXN, @"MXN");
+    XCTAssertEqualObjects(BNCCurrencyMXV, @"MXV");
+    XCTAssertEqualObjects(BNCCurrencyMYR, @"MYR");
+    XCTAssertEqualObjects(BNCCurrencyMZN, @"MZN");
+    XCTAssertEqualObjects(BNCCurrencyNAD, @"NAD");
+    XCTAssertEqualObjects(BNCCurrencyNGN, @"NGN");
+    XCTAssertEqualObjects(BNCCurrencyNIO, @"NIO");
+    XCTAssertEqualObjects(BNCCurrencyNOK, @"NOK");
+    XCTAssertEqualObjects(BNCCurrencyNPR, @"NPR");
+    XCTAssertEqualObjects(BNCCurrencyNZD, @"NZD");
+    XCTAssertEqualObjects(BNCCurrencyOMR, @"OMR");
+    XCTAssertEqualObjects(BNCCurrencyPAB, @"PAB");
+    XCTAssertEqualObjects(BNCCurrencyPEN, @"PEN");
+    XCTAssertEqualObjects(BNCCurrencyPGK, @"PGK");
+    XCTAssertEqualObjects(BNCCurrencyPHP, @"PHP");
+    XCTAssertEqualObjects(BNCCurrencyPKR, @"PKR");
+    XCTAssertEqualObjects(BNCCurrencyPLN, @"PLN");
+    XCTAssertEqualObjects(BNCCurrencyPYG, @"PYG");
+    XCTAssertEqualObjects(BNCCurrencyQAR, @"QAR");
+    XCTAssertEqualObjects(BNCCurrencyRON, @"RON");
+    XCTAssertEqualObjects(BNCCurrencyRSD, @"RSD");
+    XCTAssertEqualObjects(BNCCurrencyRUB, @"RUB");
+    XCTAssertEqualObjects(BNCCurrencyRWF, @"RWF");
+    XCTAssertEqualObjects(BNCCurrencySAR, @"SAR");
+    XCTAssertEqualObjects(BNCCurrencySBD, @"SBD");
+    XCTAssertEqualObjects(BNCCurrencySCR, @"SCR");
+    XCTAssertEqualObjects(BNCCurrencySDG, @"SDG");
+    XCTAssertEqualObjects(BNCCurrencySEK, @"SEK");
+    XCTAssertEqualObjects(BNCCurrencySGD, @"SGD");
+    XCTAssertEqualObjects(BNCCurrencySHP, @"SHP");
+    XCTAssertEqualObjects(BNCCurrencySLL, @"SLL");
+    XCTAssertEqualObjects(BNCCurrencySOS, @"SOS");
+    XCTAssertEqualObjects(BNCCurrencySRD, @"SRD");
+    XCTAssertEqualObjects(BNCCurrencySSP, @"SSP");
+    XCTAssertEqualObjects(BNCCurrencySTD, @"STD");
+    XCTAssertEqualObjects(BNCCurrencySYP, @"SYP");
+    XCTAssertEqualObjects(BNCCurrencySZL, @"SZL");
+    XCTAssertEqualObjects(BNCCurrencyTHB, @"THB");
+    XCTAssertEqualObjects(BNCCurrencyTJS, @"TJS");
+    XCTAssertEqualObjects(BNCCurrencyTMT, @"TMT");
+    XCTAssertEqualObjects(BNCCurrencyTND, @"TND");
+    XCTAssertEqualObjects(BNCCurrencyTOP, @"TOP");
+    XCTAssertEqualObjects(BNCCurrencyTRY, @"TRY");
+    XCTAssertEqualObjects(BNCCurrencyTTD, @"TTD");
+    XCTAssertEqualObjects(BNCCurrencyTWD, @"TWD");
+    XCTAssertEqualObjects(BNCCurrencyTZS, @"TZS");
+    XCTAssertEqualObjects(BNCCurrencyUAH, @"UAH");
+    XCTAssertEqualObjects(BNCCurrencyUGX, @"UGX");
+    XCTAssertEqualObjects(BNCCurrencyUSD, @"USD");
+    XCTAssertEqualObjects(BNCCurrencyUSN, @"USN");
+    XCTAssertEqualObjects(BNCCurrencyUYI, @"UYI");
+    XCTAssertEqualObjects(BNCCurrencyUYU, @"UYU");
+    XCTAssertEqualObjects(BNCCurrencyUZS, @"UZS");
+    XCTAssertEqualObjects(BNCCurrencyVEF, @"VEF");
+    XCTAssertEqualObjects(BNCCurrencyVND, @"VND");
+    XCTAssertEqualObjects(BNCCurrencyVUV, @"VUV");
+    XCTAssertEqualObjects(BNCCurrencyWST, @"WST");
+    XCTAssertEqualObjects(BNCCurrencyXAF, @"XAF");
+    XCTAssertEqualObjects(BNCCurrencyXAG, @"XAG");
+    XCTAssertEqualObjects(BNCCurrencyXAU, @"XAU");
+    XCTAssertEqualObjects(BNCCurrencyXCD, @"XCD");
+    XCTAssertEqualObjects(BNCCurrencyXDR, @"XDR");
+    XCTAssertEqualObjects(BNCCurrencyXOF, @"XOF");
+    XCTAssertEqualObjects(BNCCurrencyXPD, @"XPD");
+    XCTAssertEqualObjects(BNCCurrencyXPF, @"XPF");
+    XCTAssertEqualObjects(BNCCurrencyXPT, @"XPT");
+    XCTAssertEqualObjects(BNCCurrencyXSU, @"XSU");
+    XCTAssertEqualObjects(BNCCurrencyXTS, @"XTS");
+    XCTAssertEqualObjects(BNCCurrencyXUA, @"XUA");
+    XCTAssertEqualObjects(BNCCurrencyXXX, @"XXX");
+    XCTAssertEqualObjects(BNCCurrencyYER, @"YER");
+    XCTAssertEqualObjects(BNCCurrencyZAR, @"ZAR");
+    XCTAssertEqualObjects(BNCCurrencyZMW, @"ZMW");
+}
+
+
+@end
