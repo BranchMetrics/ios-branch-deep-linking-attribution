@@ -496,9 +496,9 @@
 		E7F311B12DACB54100F824A7 /* BNCODMInfoCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = E7F311B02DACB54100F824A7 /* BNCODMInfoCollector.h */; };
 		E7F311B22DACB54100F824A7 /* BNCODMInfoCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = E7F311B02DACB54100F824A7 /* BNCODMInfoCollector.h */; };
 		E7F311B32DACB54100F824A7 /* BNCODMInfoCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = E7F311B02DACB54100F824A7 /* BNCODMInfoCollector.h */; };
-		E7FAF6A02E26E497006C167F /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E7FAF69F2E26E497006C167F /* BranchConstants.h */; };
-		E7FAF6A12E26E497006C167F /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E7FAF69F2E26E497006C167F /* BranchConstants.h */; };
-		E7FAF6A22E26E497006C167F /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E7FAF69F2E26E497006C167F /* BranchConstants.h */; };
+		E7FAF6A02E26E497006C167F /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E7FAF69F2E26E497006C167F /* BranchConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E7FAF6A12E26E497006C167F /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E7FAF69F2E26E497006C167F /* BranchConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E7FAF6A22E26E497006C167F /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E7FAF69F2E26E497006C167F /* BranchConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1034,6 +1034,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7FAF6A02E26E497006C167F /* BranchConstants.h in Headers */,
 				5FCDD52E2B7AC6A300EAF29F /* Branch+Validator.h in Headers */,
 				5FCDD4A42B7AC6A200EAF29F /* BNCCallbacks.h in Headers */,
 				5FCDD4922B7AC6A100EAF29F /* BranchLinkProperties.h in Headers */,
@@ -1072,7 +1073,6 @@
 				5FCDD52B2B7AC6A300EAF29F /* BranchInstallRequest.h in Headers */,
 				5FCDD5042B7AC6A300EAF29F /* BranchShortUrlRequest.h in Headers */,
 				5FCDD50A2B7AC6A300EAF29F /* BNCApplication.h in Headers */,
-				E7FAF6A02E26E497006C167F /* BranchConstants.h in Headers */,
 				5FCDD4E32B7AC6A200EAF29F /* BNCJSONUtility.h in Headers */,
 				5FCDD5582B7AC6A300EAF29F /* BNCRequestFactory.h in Headers */,
 				5FCDD4FE2B7AC6A200EAF29F /* BNCQRCodeCache.h in Headers */,
@@ -1117,6 +1117,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7FAF6A22E26E497006C167F /* BranchConstants.h in Headers */,
 				5FCDD52F2B7AC6A300EAF29F /* Branch+Validator.h in Headers */,
 				5FCDD4A52B7AC6A200EAF29F /* BNCCallbacks.h in Headers */,
 				5FCDD4932B7AC6A100EAF29F /* BranchLinkProperties.h in Headers */,
@@ -1155,7 +1156,6 @@
 				5FCDD5562B7AC6A300EAF29F /* BNCCrashlyticsWrapper.h in Headers */,
 				5FCDD52C2B7AC6A300EAF29F /* BranchInstallRequest.h in Headers */,
 				5FCDD5052B7AC6A300EAF29F /* BranchShortUrlRequest.h in Headers */,
-				E7FAF6A22E26E497006C167F /* BranchConstants.h in Headers */,
 				5FCDD50B2B7AC6A300EAF29F /* BNCApplication.h in Headers */,
 				5FCDD4E42B7AC6A200EAF29F /* BNCJSONUtility.h in Headers */,
 				5FCDD5592B7AC6A300EAF29F /* BNCRequestFactory.h in Headers */,
@@ -1200,6 +1200,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7FAF6A12E26E497006C167F /* BranchConstants.h in Headers */,
 				5FCDD4BB2B7AC6A200EAF29F /* BranchPasteControl.h in Headers */,
 				5FCDD5302B7AC6A300EAF29F /* Branch+Validator.h in Headers */,
 				5FCDD4A62B7AC6A200EAF29F /* BNCCallbacks.h in Headers */,
@@ -1238,7 +1239,6 @@
 				5FCDD5572B7AC6A300EAF29F /* BNCCrashlyticsWrapper.h in Headers */,
 				5FCDD52D2B7AC6A300EAF29F /* BranchInstallRequest.h in Headers */,
 				5FCDD5062B7AC6A300EAF29F /* BranchShortUrlRequest.h in Headers */,
-				E7FAF6A12E26E497006C167F /* BranchConstants.h in Headers */,
 				5FCDD50C2B7AC6A300EAF29F /* BNCApplication.h in Headers */,
 				5FCDD4E52B7AC6A200EAF29F /* BNCJSONUtility.h in Headers */,
 				5FCDD55A2B7AC6A300EAF29F /* BNCRequestFactory.h in Headers */,
