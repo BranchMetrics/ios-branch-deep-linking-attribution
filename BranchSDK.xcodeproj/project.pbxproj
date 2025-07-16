@@ -939,6 +939,7 @@
 				5FCDD39F2B7AC6A100EAF29F /* BranchSDK.h */,
 				5FCDD3A52B7AC6A100EAF29F /* BranchShareLink.h */,
 				5FCDD3AC2B7AC6A100EAF29F /* BranchUniversalObject.h */,
+				E7FBA85E2E14492600E7AAD9 /* BranchConstants.h */,
 			);
 			path = Public;
 			sourceTree = "<group>";
