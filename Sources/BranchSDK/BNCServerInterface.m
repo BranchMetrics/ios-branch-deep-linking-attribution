@@ -150,9 +150,8 @@
                     } else {
                         // If a network request is successful, the `data` field will be populated with the error response from the service
                         // We have to create an NSError object here to pass down to callback.
-                        NSLog(@"Creating underlying error with %@", serverResponse.data);
                         
-                        if(serverResponse.data[@"error"] != nil){
+                        if(serverResponse.data && serverResponse.data[@"error"] != nil){
                             id errorJson = serverResponse.data[@"error"];
                             
                             if(errorJson[@"message"] != nil){
@@ -164,9 +163,8 @@
                                                                       code:[(errorJson[@"code"]) integerValue]
                                                                   userInfo:userInfo];
                             }
-                            
-                            [[BranchLogger shared] logError: [NSString stringWithFormat:@"Giving up on request with HTTP status code %ld", (long)status] error:underlyingError];
                         }
+                        
                         [[BranchLogger shared] logError: [NSString stringWithFormat:@"Giving up on request with HTTP status code %ld", (long)status] error:underlyingError];
                     }
                 }
