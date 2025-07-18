@@ -1,4 +1,8 @@
 Branch iOS SDK Change Log
+v.3.12.2
+- Fixed bug where error object was not being forwarded when receiving error from service.
+- Fixed bug with Advanced Compliance and Integration Validator.
+- Added param 'operational_metrics' in v1/install request.
 
 v.3.12.1
 - Fixed bug - SDK crashes when Meta AEM query param `al_applink_data` is empty.
