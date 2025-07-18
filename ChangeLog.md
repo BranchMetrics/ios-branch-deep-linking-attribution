@@ -1,6 +1,6 @@
 Branch iOS SDK Change Log
 v.3.12.2
-- Fixed bug - Fixed bug where error object was not being forwarded when receiving error from service.
+- Fixed bug where error object was not being forwarded when receiving error from service.
 - Fixed bug with Advanced Compliance and Integration Validator.
 - Added param 'operational_metrics' in v1/install request.
 
