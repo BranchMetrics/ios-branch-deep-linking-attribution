@@ -282,6 +282,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
         }
     }
 
+    [self.requestQueue configureWithServerInterface:_serverInterface branchKey:key preferenceHelper:preferenceHelper];
     return self;
 }
 
@@ -1875,14 +1876,6 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
-- (void)insertRequestAtFront:(BNCServerRequest *)req {
-    if (self.networkCount == 0) {
-        [self.requestQueue insert:req at:0];
-    } else {
-        [self.requestQueue insert:req at:1];
-    }
-}
-
 static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     if (block) {
         if ([NSThread isMainThread]) {
@@ -1902,7 +1895,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                   error:(NSError*)error {
 
     // If the request was successful, or was a bad user request, continue processing.
-    if (!error ||
+   /* if (!error ||
         error.code == BNCTrackingDisabledError ||
         error.code == BNCBadRequestError ||
         error.code == BNCDuplicateResourceError) {
@@ -1956,7 +1949,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 }
             });
         }
-    }
+    }*/
 }
 
 - (BOOL)isReplayableRequest:(BNCServerRequest *)request {
@@ -1980,6 +1973,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 - (void)processNextQueueItem {
+    /*
     dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
     
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Processing next queue item. Network Count: %ld. Queue depth: %ld", (long)self.networkCount, (long)self.requestQueue.queueDepth] error:nil];
@@ -2027,7 +2021,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
     else {
         dispatch_semaphore_signal(self.processing_sema);
-    }
+    }*/
 }
 
 - (void)clearNetworkQueue {
@@ -2166,7 +2160,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 req.callback = initSessionCallback;
                 req.urlString = urlString;
                 
-                [self.requestQueue insert:req at:0];
+                [self.requestQueue enqueue:req withPriority:NSOperationQueuePriorityHigh];
                 
                 NSString *message = [NSString stringWithFormat:@"Request %@ callback %@ link %@", req, req.callback, req.urlString];
                 [[BranchLogger shared] logDebug:message error:nil];
@@ -2180,7 +2174,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                     req.urlString = urlString;
                     
                     // put it behind the one that's already on queue
-                    [self.requestQueue insert:req at:1];
+                    [self.requestQueue enqueue:req withPriority:NSOperationQueuePriorityHigh];
 
                     [[BranchLogger shared] logDebug:@"Link resolution request" error:nil];
                     NSString *message = [NSString stringWithFormat:@"Request %@ callback %@ link %@", req, req.callback, req.urlString];
