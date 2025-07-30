@@ -1151,7 +1151,6 @@ static NSString *bnc_branchKey = nil;
     [self initSafetyCheck];
     dispatch_async(self.isolationQueue, ^(){
         [self.requestQueue enqueue:request];
-        [self processNextQueueItem];
     });
 }
 
@@ -1351,7 +1350,6 @@ static NSString *bnc_branchKey = nil;
     dispatch_async(self.isolationQueue, ^(){
         BranchSpotlightUrlRequest *req = [[BranchSpotlightUrlRequest alloc] initWithParams:params callback:callback];
         [self.requestQueue enqueue:req];
-        [self processNextQueueItem];
     });
 }
 
@@ -1647,7 +1645,6 @@ static NSString *bnc_branchKey = nil;
                                                                        linkCache:self.linkCache
                                                                         callback:callback];
         [self.requestQueue enqueue:req];
-        [self processNextQueueItem];
     });
 }
 
@@ -2184,8 +2181,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             
             self.initializationStatus = BNCInitStatusInitializing;
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
-
-            [self processNextQueueItem];
         });
     }
 }
