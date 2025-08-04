@@ -23,6 +23,6 @@
 - (void)enqueue:(BNCServerRequest *)request withPriority:(NSOperationQueuePriority)priority;
 - (void)clearQueue;
 - (BOOL)containsInstallOrOpen;
-- (BranchOpenRequest *)findExistingInstallOrOpen; // Note: returns the wrapped request
+- (BranchOpenRequest *)findExistingInstallOrOpen;
 
 @end
