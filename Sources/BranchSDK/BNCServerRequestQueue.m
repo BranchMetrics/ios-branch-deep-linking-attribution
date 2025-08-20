@@ -15,13 +15,7 @@
 #import "BranchLogger.h"
 #import "BNCServerRequestQueue.h"
 #import "BNCServerRequestOperation.h"
-#import "BranchOpenRequest.h"
-#import "BranchInstallRequest.h"
-#import "BranchLogger.h"
-#import "BNCPreferenceHelper.h"
 #import "Branch.h"
-
-
 
 @interface BNCServerRequestQueue ()
 @property (strong, nonatomic) NSOperationQueue *operationQueue;

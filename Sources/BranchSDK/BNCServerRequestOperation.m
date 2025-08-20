@@ -18,9 +18,7 @@
 @property (nonatomic, assign, readwrite, getter = isFinished) BOOL finished;
 @end
 
-@implementation BNCServerRequestOperation {
-    BNCServerRequest *_request;
-}
+@implementation BNCServerRequestOperation 
 
 @synthesize executing = _executing;
 @synthesize finished = _finished;
