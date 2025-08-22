@@ -8,6 +8,8 @@
 
 #import "BNCSystemObserver.h"
 #import "BranchLogger.h"
+#import "BNCPreferenceHelper.h"
+
 #if __has_feature(modules)
 @import UIKit;
 @import SystemConfiguration;
@@ -52,8 +54,11 @@
             dispatch_semaphore_signal(semaphore);
         });
 
-        // Apple said this API should respond within 50ms, lets give up after 500 ms
-        dispatch_semaphore_wait(semaphore, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(500 * NSEC_PER_MSEC)));
+        // Apple said this API should respond within 50ms
+        // Lets give up after thirdPartyAPIsTimeout set in preference helper.
+        NSTimeInterval timeoutSeconds = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsTimeout;
+        dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeoutSeconds * NSEC_PER_SEC));
+        dispatch_semaphore_wait(semaphore, timeout);
         if (token == nil) {
             [[BranchLogger shared] logError:[NSString stringWithFormat:@"AppleAttributionToken request timed out"] error:nil];
         }

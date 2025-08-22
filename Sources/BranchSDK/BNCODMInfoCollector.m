@@ -47,9 +47,11 @@
 
 - (NSString *) odmInfo {
     @synchronized (self) {
-        // Load ODM info with a time-out of 500 ms. Its must for next call to v1/open.
+        // Load ODM info with configurable timeout from preference helper
         if (!_odmInfo) {
-            [self loadODMInfoWithTimeOut:dispatch_time(DISPATCH_TIME_NOW, (int64_t)(500 * NSEC_PER_MSEC)) andCompletionHandler:nil]; // Timeout after 500 ms
+            NSTimeInterval timeoutSeconds = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsTimeout;
+            dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeoutSeconds * NSEC_PER_SEC));
+            [self loadODMInfoWithTimeOut:timeout andCompletionHandler:nil];
         }
         
         if (_odmInfo) {
@@ -67,21 +69,18 @@
     }
 }
 
-- (void)loadODMInfo {
-    [self loadODMInfoWithTimeOut: DISPATCH_TIME_FOREVER andCompletionHandler:nil];
-}
-
 - (void)loadODMInfoWithTimeOut:(dispatch_time_t) timeOut andCompletionHandler:(void (^_Nullable)(NSString * _Nullable odmInfo,  NSError * _Nullable error))completion {
     
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     if (self.preferenceHelper.odmInfo) {
         self.odmInfo = self.preferenceHelper.odmInfo;
         if (completion) {
             completion(_odmInfo, nil);
         }
+        dispatch_semaphore_signal(semaphore);
     } else {
         // Fetch ODM Info from device
         NSDate * odmInfofetchingTime = [NSDate date];
-        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
         
         [self fetchODMInfoFromDeviceWithInitDate:odmInfofetchingTime andCompletion:^(NSString *odmInfo, NSError *error) {
             if (odmInfo) {
@@ -95,8 +94,8 @@
             }
             dispatch_semaphore_signal(semaphore);
         }];
-        dispatch_semaphore_wait(semaphore, timeOut);
     }
+    dispatch_semaphore_wait(semaphore, timeOut);
 }
 
 - (BOOL)isWithinValidityWindow:(NSDate *)initTime timeInterval:(NSTimeInterval)timeInterval  {

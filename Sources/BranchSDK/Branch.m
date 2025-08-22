@@ -244,7 +244,6 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     // queue up async data loading
     [self loadApplicationData];
     [self loadUserAgent];
-    [self startLoadingOfODMInfo];
     
     BranchJsonConfig *config = BranchJsonConfig.instance;
     self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
@@ -539,6 +538,19 @@ static NSString *bnc_branchKey = nil;
     self.preferenceHelper.retryInterval = retryInterval;
 }
 
++ (void)setThirdPartyAPIsTimeout:(NSTimeInterval)timeout {
+    @synchronized(self) {
+        if (timeout <= 0) {
+            [[BranchLogger shared] logWarning:@"Invalid timeout value. Timeout must be greater than 0. Using default value." error:nil];
+            return;
+        }
+        if (timeout > 10) {
+            [[BranchLogger shared] logWarning:@"Invalid timeout value. Timeout must not exceed 10 seconds. Using default value." error:nil];
+            return;
+        }
+        [BNCPreferenceHelper sharedInstance].thirdPartyAPIsTimeout = timeout;
+    }
+}
 
 - (void)setRequestMetadataKey:(NSString *)key value:(NSString *)value {
     [self.preferenceHelper setRequestMetadataKey:key value:value];
@@ -595,9 +607,9 @@ static NSString *bnc_branchKey = nil;
 + (void)setODMInfo:(NSString *)odmInfo andFirstOpenTimestamp:(NSDate *) firstOpenTimestamp {
 #if !TARGET_OS_TV
     @synchronized (self) {
+        [[BNCODMInfoCollector instance] setOdmInfo:odmInfo];
         [[BNCPreferenceHelper sharedInstance] setOdmInfo:odmInfo];
         [BNCPreferenceHelper sharedInstance].odmInfoInitDate = firstOpenTimestamp;
-        [[BNCODMInfoCollector instance] loadODMInfo];
     }
 #else
     [[BranchLogger shared] logWarning:@"setODMInfo not supported on tvOS." error:nil];
@@ -992,15 +1004,6 @@ static NSString *bnc_branchKey = nil;
         }];
         dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     });
-}
-
-- (void)startLoadingOfODMInfo {
-    #if !TARGET_OS_TV
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [[BranchLogger shared] logVerbose:@"Loading ODM info ..." error:nil];
-        [[BNCODMInfoCollector instance] loadODMInfo];
-    });
-   #endif
 }
 
 
