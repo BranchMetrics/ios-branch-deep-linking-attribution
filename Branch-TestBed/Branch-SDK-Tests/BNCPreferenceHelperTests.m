@@ -414,4 +414,36 @@
     XCTAssertEqualObjects(retrievedManifest, dummyManifest);
 }
 
+- (void)testThirdPartyAPIsTimeoutDefaultValue {
+    XCTAssertEqual(self.prefHelper.thirdPartyAPIsTimeout, 0.5,
+                   @"Default third party APIs timeout should be 0.5 seconds");
+}
+
+- (void)testThirdPartyAPIsTimeoutSetterGetter {
+    NSTimeInterval testTimeout1 = 1.0;
+    self.prefHelper.thirdPartyAPIsTimeout = testTimeout1;
+    XCTAssertEqual(self.prefHelper.thirdPartyAPIsTimeout, testTimeout1,
+                   @"Third party APIs timeout should be settable and retrievable");
+    
+    NSTimeInterval testTimeout2 = 2.5;
+    self.prefHelper.thirdPartyAPIsTimeout = testTimeout2;
+    XCTAssertEqual(self.prefHelper.thirdPartyAPIsTimeout, testTimeout2,
+                   @"Third party APIs timeout should be updatable");
+    
+    NSTimeInterval testTimeout3 = 0.1;
+    self.prefHelper.thirdPartyAPIsTimeout = testTimeout3;
+    XCTAssertEqual(self.prefHelper.thirdPartyAPIsTimeout, testTimeout3,
+                   @"Third party APIs timeout should support small values");
+}
+
+- (void)testThirdPartyAPIsTimeoutPersistence {
+    NSTimeInterval testTimeout = 1.5;
+    self.prefHelper.thirdPartyAPIsTimeout = testTimeout;
+    
+    // Create a new instance to verify persistence
+    BNCPreferenceHelper *newPrefHelper = [BNCPreferenceHelper new];
+    XCTAssertEqual(newPrefHelper.thirdPartyAPIsTimeout, testTimeout,
+                   @"Third party APIs timeout should persist across preference helper instances");
+}
+
 @end
