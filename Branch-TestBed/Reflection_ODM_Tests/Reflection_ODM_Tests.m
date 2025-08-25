@@ -32,11 +32,11 @@
     
 }
 
-- (void) testODMAPICall {
+- (void) testFetchODMInfoFromDevice {
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Network call"];
     [BNCPreferenceHelper sharedInstance].odmInfo = nil;
-    [[BNCODMInfoCollector instance ] loadODMInfoWithTimeOut:15 andCompletionHandler:^(NSString * _Nullable odmInfo, NSError * _Nullable error) {
+    [[BNCODMInfoCollector instance ] fetchODMInfoFromDeviceWithInitDate:[NSDate date] andCompletion:^(NSString * _Nullable odmInfo, NSError * _Nullable error) {
             if ((error.code != BNCClassNotFoundError) && (error.code != BNCMethodNotFoundError)){
                 if (odmInfo) {
                     XCTAssertTrue([odmInfo isEqualToString:[BNCPreferenceHelper sharedInstance].odmInfo]);
@@ -47,6 +47,18 @@
             }
     }];
     [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void) testODMAPICall {
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Network call"];
+    [BNCPreferenceHelper sharedInstance].odmInfo = nil;
+    [[BNCODMInfoCollector instance ] loadODMInfo];
+    
+    XCTAssertTrue([odmInfo isEqualToString:[BNCPreferenceHelper sharedInstance].odmInfo]);
+    XCTAssertTrue([BNCPreferenceHelper sharedInstance].odmInfoInitDate != nil);
+  
+    [self waitForExpectationsWithTimeout:11 handler:nil];
 }
 
 @end

@@ -79,7 +79,7 @@
 }
 
 - (void) loadDataFromThirdPartyAPIs {
-    
+#if !TARGET_OS_TV
     dispatch_group_t apiGroup = dispatch_group_create();
     dispatch_queue_t concurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     
@@ -104,6 +104,7 @@
     
     // Wait for both operations to complete
     dispatch_group_wait(apiGroup, DISPATCH_TIME_FOREVER);
+#endif
     
 }
 

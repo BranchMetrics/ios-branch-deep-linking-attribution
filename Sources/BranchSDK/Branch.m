@@ -608,7 +608,6 @@ static NSString *bnc_branchKey = nil;
 #if !TARGET_OS_TV
     @synchronized (self) {
         [[BNCODMInfoCollector instance] setOdmInfo:odmInfo];
-        [[BNCPreferenceHelper sharedInstance] setOdmInfo:odmInfo];
         [BNCPreferenceHelper sharedInstance].odmInfoInitDate = firstOpenTimestamp;
     }
 #else

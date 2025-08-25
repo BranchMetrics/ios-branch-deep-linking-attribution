@@ -91,12 +91,12 @@
 
 - (void) testODMAPIsNotLoaded {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Check if ODCManager class is loaded."];
-    [[BNCODMInfoCollector instance ] loadODMInfoWithTimeOut:DISPATCH_TIME_FOREVER andCompletionHandler:^(NSString * _Nullable odmInfo, NSError * _Nullable error) {
-            if (error.code == BNCClassNotFoundError){
-                [expectation fulfill];
-            }
+    [[BNCODMInfoCollector instance ] fetchODMInfoFromDeviceWithInitDate:[NSDate date] andCompletion:^(NSString * _Nonnull odmInfo, NSError * _Nonnull error) {
+        if (error.code == BNCClassNotFoundError){
+            [expectation fulfill];
+        }
     }];
-    [self waitForExpectationsWithTimeout:15 handler:nil];
+    [self waitForExpectationsWithTimeout:5 handler:nil];
 }
 
 @end
