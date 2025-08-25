@@ -1,5 +1,5 @@
 project 'Branch-TestBed/Branch-TestBed.xcodeproj'
-device 'iPhone 12'
+device 'iPhone 16.0'
 output_types 'junit,html'
 code_coverage true
 clean true 
