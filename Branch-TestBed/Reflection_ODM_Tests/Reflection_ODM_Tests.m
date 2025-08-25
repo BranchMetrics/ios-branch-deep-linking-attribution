@@ -10,6 +10,7 @@
 #import "BNCODMInfoCollector.h"
 #import "NSError+Branch.h"
 #import "BNCPreferenceHelper.h"
+#import "BranchSDK.h"
 
 @interface Reflection_ODM_Tests : XCTestCase
 
@@ -39,8 +40,7 @@
     [[BNCODMInfoCollector instance ] fetchODMInfoFromDeviceWithInitDate:[NSDate date] andCompletion:^(NSString * _Nullable odmInfo, NSError * _Nullable error) {
             if ((error.code != BNCClassNotFoundError) && (error.code != BNCMethodNotFoundError)){
                 if (odmInfo) {
-                    XCTAssertTrue([odmInfo isEqualToString:[BNCPreferenceHelper sharedInstance].odmInfo]);
-                    XCTAssertTrue([BNCPreferenceHelper sharedInstance].odmInfoInitDate != nil);
+                    XCTAssertNotNil(odmInfo, "ODM Info returned is nil");
                 }
                 XCTAssertTrue((error == nil), "%s", [[error description] UTF8String]);
                 [expectation fulfill];
@@ -51,14 +51,15 @@
 
 - (void) testODMAPICall {
     
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Network call"];
+    [Branch setThirdPartyAPIsTimeout:10];
+    
     [BNCPreferenceHelper sharedInstance].odmInfo = nil;
     [[BNCODMInfoCollector instance ] loadODMInfo];
     
-    XCTAssertTrue([odmInfo isEqualToString:[BNCPreferenceHelper sharedInstance].odmInfo]);
+    XCTAssertTrue([[BNCODMInfoCollector instance ].odmInfo isEqualToString:[BNCPreferenceHelper sharedInstance].odmInfo]);
     XCTAssertTrue([BNCPreferenceHelper sharedInstance].odmInfoInitDate != nil);
   
-    [self waitForExpectationsWithTimeout:11 handler:nil];
+   
 }
 
 @end

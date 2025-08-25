@@ -31,9 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Loads ODM information with a specified timeout.
- * @param timeOut The maximum time to wait for ODM information.
  */
-- (void)loadODMInfoWithTimeOut:(dispatch_time_t) timeOut;
+- (void)loadODMInfo;
 
 - (void)fetchODMInfoFromDeviceWithInitDate:(NSDate *) date  andCompletion:(void (^)(NSString *odmInfo, NSError *error))completion;
 

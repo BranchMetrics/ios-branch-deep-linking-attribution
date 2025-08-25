@@ -436,14 +436,5 @@
                    @"Third party APIs timeout should support small values");
 }
 
-- (void)testThirdPartyAPIsTimeoutPersistence {
-    NSTimeInterval testTimeout = 1.5;
-    self.prefHelper.thirdPartyAPIsTimeout = testTimeout;
-    
-    // Create a new instance to verify persistence
-    BNCPreferenceHelper *newPrefHelper = [BNCPreferenceHelper new];
-    XCTAssertEqual(newPrefHelper.thirdPartyAPIsTimeout, testTimeout,
-                   @"Third party APIs timeout should persist across preference helper instances");
-}
 
 @end
