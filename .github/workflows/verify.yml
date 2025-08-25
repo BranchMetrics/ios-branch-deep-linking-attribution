@@ -8,7 +8,7 @@ on:
 
 jobs:
   verify:
-    runs-on: macos-15
+    runs-on: macos-latest
     timeout-minutes: 20
     steps:
       - name: Check out code
