@@ -43,21 +43,23 @@
 
 - (void) setOdmInfo:(NSString *)odmInfo {
     _odmInfo = odmInfo;
-    [self.preferenceHelper setOdmInfo:odmInfo];
 }
 
 - (NSString *) odmInfo {
     @synchronized (self) {
-        // loadODMInfo function will load odm and save it in preference helper if not already there.
+        // Load ODM info with a time-out of 500 ms. Its must for next call to v1/open.
         if (!_odmInfo) {
-            [self loadODMInfo];
+            [self loadODMInfoWithTimeOut:dispatch_time(DISPATCH_TIME_NOW, (int64_t)(500 * NSEC_PER_MSEC)) andCompletionHandler:nil]; // Timeout after 500 ms
         }
-        
+
         if (_odmInfo) {
             // Check if odmInfo is within validity window
             NSDate *initTime = self.preferenceHelper.odmInfoInitDate;
             NSTimeInterval validityWindow = self.preferenceHelper.odmInfoValidityWindow;
-            if (![self isWithinValidityWindow:initTime timeInterval:validityWindow]) {
+            if ([self isWithinValidityWindow:initTime timeInterval:validityWindow]) {
+                // fetch ODM info from pref helper
+                _odmInfo = self.preferenceHelper.odmInfo;
+            } else {
                 _odmInfo = nil;
             }
         }
@@ -65,31 +67,34 @@
     }
 }
 
-- (void)loadODMInfo {
-   
-    @synchronized(self) {
-        if (self.preferenceHelper.odmInfo) {
-            self.odmInfo = self.preferenceHelper.odmInfo;
-        } else {
-            // Fetch ODM Info from device
-            NSDate * odmInfofetchingTime = [NSDate date];
-            
-            dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-            [self fetchODMInfoFromDeviceWithInitDate:odmInfofetchingTime andCompletion:^(NSString *odmInfo, NSError *error) {
-                if (odmInfo) {
-                    self.odmInfo = odmInfo;
-                    // Cache ODM info in pref helper
-                    self.preferenceHelper.odmInfo = odmInfo;
-                    self.preferenceHelper.odmInfoInitDate = odmInfofetchingTime;
-                }
-                dispatch_semaphore_signal(semaphore);
-            }];
-            NSTimeInterval timeoutSeconds = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsTimeout;
-            dispatch_time_t timeOut = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeoutSeconds * NSEC_PER_SEC));
-            dispatch_semaphore_wait(semaphore, timeOut);
+- (void)loadODMInfoWithTimeOut:(dispatch_time_t) timeOut andCompletionHandler:(void (^_Nullable)(NSString * _Nullable odmInfo,  NSError * _Nullable error))completion {
+    
+    if (self.preferenceHelper.odmInfo) {
+        self.odmInfo = self.preferenceHelper.odmInfo;
+        if (completion) {
+            completion(_odmInfo, nil);
         }
+    } else {
+        // Fetch ODM Info from device
+        NSDate * odmInfofetchingTime = [NSDate date];
+        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+        
+        [self fetchODMInfoFromDeviceWithInitDate:odmInfofetchingTime andCompletion:^(NSString *odmInfo, NSError *error) {
+            if (odmInfo) {
+                self.odmInfo = odmInfo;
+                // Cache ODM info in pref helper
+                self.preferenceHelper.odmInfo = odmInfo;
+                self.preferenceHelper.odmInfoInitDate = odmInfofetchingTime;
+            }
+            if (completion) {
+                completion(odmInfo, error);
+            }
+            dispatch_semaphore_signal(semaphore);
+        }];
+        dispatch_semaphore_wait(semaphore, timeOut);
     }
 }
+
 
 - (BOOL)isWithinValidityWindow:(NSDate *)initTime timeInterval:(NSTimeInterval)timeInterval  {
     NSDate *expirationDate = [initTime dateByAddingTimeInterval:timeInterval];

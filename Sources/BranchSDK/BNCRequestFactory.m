@@ -102,8 +102,9 @@
         dispatch_group_leave(apiGroup);
     });
     
-    // Wait for both operations to complete
-    dispatch_group_wait(apiGroup, DISPATCH_TIME_FOREVER);
+    NSTimeInterval timeoutSeconds = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsTimeout;
+    dispatch_time_t timeOut = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeoutSeconds * NSEC_PER_SEC));
+    dispatch_group_wait(apiGroup, timeOut);
 #endif
     
 }
