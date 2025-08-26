@@ -17,7 +17,7 @@ jobs:
             pod install
             xcodebuild test -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace -destination "$DESTINATION"| xcpretty && exit ${PIPESTATUS[0]}
   verify-carthage-iOS:
-    runs-on: macos-15
+    runs-on: macos-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v4
