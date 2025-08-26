@@ -51,7 +51,7 @@
         if (!_odmInfo) {
             [self loadODMInfoWithTimeOut:dispatch_time(DISPATCH_TIME_NOW, (int64_t)(500 * NSEC_PER_MSEC)) andCompletionHandler:nil]; // Timeout after 500 ms
         }
-
+        
         if (_odmInfo) {
             // Check if odmInfo is within validity window
             NSDate *initTime = self.preferenceHelper.odmInfoInitDate;
@@ -94,7 +94,6 @@
         dispatch_semaphore_wait(semaphore, timeOut);
     }
 }
-
 
 - (BOOL)isWithinValidityWindow:(NSDate *)initTime timeInterval:(NSTimeInterval)timeInterval  {
     NSDate *expirationDate = [initTime dateByAddingTimeInterval:timeInterval];
