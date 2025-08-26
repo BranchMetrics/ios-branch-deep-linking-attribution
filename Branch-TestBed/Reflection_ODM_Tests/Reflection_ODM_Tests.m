@@ -10,7 +10,6 @@
 #import "BNCODMInfoCollector.h"
 #import "NSError+Branch.h"
 #import "BNCPreferenceHelper.h"
-#import "BranchSDK.h"
 
 @interface Reflection_ODM_Tests : XCTestCase
 
