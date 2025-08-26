@@ -29,7 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Loads ODM information with a specified timeout.
- * @param timeOut The maximum time to wait for ODM information.
  * @param completion Optional completion handler called when ODM info is loaded.
  */
 - (void)loadODMInfoWithCompletionHandler:(void (^_Nullable)(NSString * _Nullable odmInfo,  NSError * _Nullable error))completion;
