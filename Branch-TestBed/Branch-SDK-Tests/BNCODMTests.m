@@ -65,7 +65,7 @@
 }
 
 - (void)testODMTimeOut {
-   
+    
     NSString* requestUUID = [[NSUUID UUID ] UUIDString];
     NSNumber* requestCreationTimeStamp = BNCWireFormatFromDate([NSDate date]);
     NSString *odm = @"testODMString";
@@ -80,23 +80,25 @@
     
     sleep(10);
     
-    NSDictionary *jsonOpen = [factory dataForOpenWithURLString:@"https://branch.io"];
+    BNCRequestFactory *factory2 = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:requestUUID TimeStamp:requestCreationTimeStamp];
+    NSDictionary *jsonOpen = [factory2 dataForOpenWithURLString:@"https://branch.io"];
     XCTAssertTrue(![odm isEqualToString:[jsonOpen objectForKey:@"odm_info"]]);
     
     self.prefHelper.odmInfo = nil;
     self.prefHelper.odmInfoInitDate = nil;
-
+    
 }
 
 
 - (void) testODMAPIsNotLoaded {
+    
     XCTestExpectation *expectation = [self expectationWithDescription:@"Check if ODCManager class is loaded."];
-    [[BNCODMInfoCollector instance ] fetchODMInfoFromDeviceWithInitDate:[NSDate date] andCompletion:^(NSString * _Nonnull odmInfo, NSError * _Nonnull error) {
+    [[BNCODMInfoCollector instance ] loadODMInfoWithCompletionHandler:^(NSString * _Nullable odmInfo, NSError * _Nullable error) {
         if (error.code == BNCClassNotFoundError){
             [expectation fulfill];
         }
     }];
-    [self waitForExpectationsWithTimeout:5 handler:nil];
+    [self waitForExpectationsWithTimeout:15 handler:nil];
 }
 
 @end

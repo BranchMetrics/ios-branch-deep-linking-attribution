@@ -86,9 +86,14 @@
     dispatch_group_enter(apiGroup);
     dispatch_async(concurrentQueue, ^{
         if ([[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelFull]) {
-            self.odmInfo = [BNCODMInfoCollector instance].odmInfo;
+            [[BNCODMInfoCollector instance] loadODMInfoWithCompletionHandler:^(NSString * _Nullable odmInfo, NSError * _Nullable error) {
+                    self.odmInfo = odmInfo;
+                    dispatch_group_leave(apiGroup);
+            }];
+            
+        } else {
+            dispatch_group_leave(apiGroup);
         }
-        dispatch_group_leave(apiGroup);
     });
     
     dispatch_group_enter(apiGroup);

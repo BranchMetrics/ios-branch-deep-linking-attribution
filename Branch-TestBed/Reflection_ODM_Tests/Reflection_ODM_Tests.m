@@ -33,33 +33,22 @@
     
 }
 
-- (void) testFetchODMInfoFromDevice {
-    
+
+- (void) testODMAPICall {
+
     XCTestExpectation *expectation = [self expectationWithDescription:@"Network call"];
     [BNCPreferenceHelper sharedInstance].odmInfo = nil;
-    [[BNCODMInfoCollector instance ] fetchODMInfoFromDeviceWithInitDate:[NSDate date] andCompletion:^(NSString * _Nullable odmInfo, NSError * _Nullable error) {
+    [[BNCODMInfoCollector instance ] loadODMInfoWithCompletionHandler:^(NSString * _Nullable odmInfo, NSError * _Nullable error) {
             if ((error.code != BNCClassNotFoundError) && (error.code != BNCMethodNotFoundError)){
                 if (odmInfo) {
-                    XCTAssertNotNil(odmInfo, "ODM Info returned is nil");
+                    XCTAssertTrue([odmInfo isEqualToString:[BNCPreferenceHelper sharedInstance].odmInfo]);
+                    XCTAssertTrue([BNCPreferenceHelper sharedInstance].odmInfoInitDate != nil);
                 }
                 XCTAssertTrue((error == nil), "%s", [[error description] UTF8String]);
                 [expectation fulfill];
             }
     }];
-    [self waitForExpectationsWithTimeout:30 handler:nil];
-}
-
-- (void) testODMAPICall {
-    
-    [Branch setThirdPartyAPIsTimeout:10];
-    
-    [BNCPreferenceHelper sharedInstance].odmInfo = nil;
-    [[BNCODMInfoCollector instance ] loadODMInfo];
-    
-    XCTAssertTrue([[BNCODMInfoCollector instance ].odmInfo isEqualToString:[BNCPreferenceHelper sharedInstance].odmInfo]);
-    XCTAssertTrue([BNCPreferenceHelper sharedInstance].odmInfoInitDate != nil);
-  
-   
+    [self waitForExpectationsWithTimeout:10 handler:nil];
 }
 
 @end

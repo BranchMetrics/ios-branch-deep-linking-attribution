@@ -609,7 +609,6 @@ static NSString *bnc_branchKey = nil;
     @synchronized (self) {
         [[BNCPreferenceHelper sharedInstance] setOdmInfo:odmInfo];
         [BNCPreferenceHelper sharedInstance].odmInfoInitDate = firstOpenTimestamp;
-        [[BNCODMInfoCollector instance] setOdmInfo:odmInfo];
     }
 #else
     [[BranchLogger shared] logWarning:@"setODMInfo not supported on tvOS." error:nil];
