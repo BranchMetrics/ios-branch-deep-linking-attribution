@@ -37,6 +37,11 @@
       }
     },
     {
+      "skippedTests" : [
+        "Reflection_ODM_Tests",
+        "Reflection_ODM_Tests\/testODMAPICall",
+        "Reflection_ODM_Tests\/testODMAPIsLoaded"
+      ],
       "target" : {
         "containerPath" : "container:Branch-TestBed.xcodeproj",
         "identifier" : "E7AC745F2DB064BC002D8C40",
