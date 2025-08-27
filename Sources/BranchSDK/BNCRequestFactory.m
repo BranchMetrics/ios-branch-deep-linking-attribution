@@ -83,29 +83,27 @@
     dispatch_group_t apiGroup = dispatch_group_create();
     dispatch_queue_t concurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     
-    dispatch_group_enter(apiGroup);
-    dispatch_async(concurrentQueue, ^{
-        if ([[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelFull]) {
+    if ([[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelFull])
+    {
+        dispatch_group_enter(apiGroup);
+        dispatch_async(concurrentQueue, ^{
             [[BNCODMInfoCollector instance] loadODMInfoWithCompletionHandler:^(NSString * _Nullable odmInfo, NSError * _Nullable error) {
-                    self.odmInfo = odmInfo;
-                    dispatch_group_leave(apiGroup);
+                self.odmInfo = odmInfo;
+                dispatch_group_leave(apiGroup);
             }];
-            
-        } else {
-            dispatch_group_leave(apiGroup);
-        }
-    });
+        });
+    }
     
-    dispatch_group_enter(apiGroup);
-    dispatch_async(concurrentQueue, ^{
-        if (!self.preferenceHelper.appleAttributionTokenChecked) {
+    if (!self.preferenceHelper.appleAttributionTokenChecked) {
+        dispatch_group_enter(apiGroup);
+        dispatch_async(concurrentQueue, ^{
             self.appleAttributionToken = [BNCSystemObserver appleAttributionToken];
             if (self.appleAttributionToken) {
                 self.preferenceHelper.appleAttributionTokenChecked = YES;
             }
-        }
-        dispatch_group_leave(apiGroup);
-    });
+            dispatch_group_leave(apiGroup);
+        });
+    }
     
     NSTimeInterval timeoutSeconds = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsTimeout;
     dispatch_time_t timeOut = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeoutSeconds * NSEC_PER_SEC));

@@ -37,35 +37,20 @@
         return nil;
     }
     
-    __block NSString *token = nil;
-    
 #if !TARGET_OS_TV
     if (@available(iOS 14.3, macCatalyst 14.3, *)) {
-
-        // We are getting reports on iOS 14.5 that this API can hang, adding a short timeout for now.
-        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            NSError *error;
-            NSString *appleAttributionToken = [AAAttribution attributionTokenWithError:&error];
-            if (!error) {
-                token = appleAttributionToken;
-            }
-            dispatch_semaphore_signal(semaphore);
-        });
-
-        // Apple said this API should respond within 50ms
-        // Lets give up after thirdPartyAPIsTimeout set in preference helper.
-        NSTimeInterval timeoutSeconds = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsTimeout;
-        dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeoutSeconds * NSEC_PER_SEC));
-        dispatch_semaphore_wait(semaphore, timeout);
-        if (token == nil) {
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"AppleAttributionToken request timed out"] error:nil];
+        NSError *error;
+        NSString *appleAttributionToken = [AAAttribution attributionTokenWithError:&error];
+        if (error) {
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"AppleAttributionToken API failed, error: %@", [error description]] error:error];
         }
+        if (appleAttributionToken == nil) {
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"AppleAttributionToken returned nil token"] error:nil];
+        }
+        return appleAttributionToken;
     }
 #endif
-    
-    return token;
+    return nil;
 }
 
 + (NSString *)advertiserIdentifier {
