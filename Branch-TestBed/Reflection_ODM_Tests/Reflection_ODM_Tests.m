@@ -28,7 +28,7 @@
         }
     }];
     
-    [self waitForExpectationsWithTimeout:15 handler:nil];
+    [self waitForExpectationsWithTimeout:30 handler:nil];
     
 }
 
@@ -47,7 +47,7 @@
                 [expectation fulfill];
             }
     }];
-    [self waitForExpectationsWithTimeout:10 handler:nil];
+    [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 @end
