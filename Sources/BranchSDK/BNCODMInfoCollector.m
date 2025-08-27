@@ -158,7 +158,7 @@
             }
         }
     } else {
-        NSString *message = [NSString stringWithFormat:@"ODCConversionManager class or sharedInstance method not found."] ;
+        NSString *message = [NSString stringWithFormat:@"ODCConversionManager class or sharedInstance method not found. Ignore this error if not using ODM."] ;
         error = [NSError branchErrorWithCode:BNCClassNotFoundError localizedMessage:message];
         [[BranchLogger shared] logDebug:message error:error];
         if (completion) {
