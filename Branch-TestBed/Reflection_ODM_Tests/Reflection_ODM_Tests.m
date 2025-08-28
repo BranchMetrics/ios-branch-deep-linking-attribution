@@ -21,45 +21,37 @@
 
 + (void)load {
    
-        NSString *logFileName = @"branch_sdk_test_logs.log";
-        
-        // Create a predictable path for the log file relative to the project root.
-        NSString *projectDir = [NSProcessInfo processInfo].environment[@"SRCROOT"];
-        if (!projectDir) {
-            // Fallback for when SRCROOT is not set (e.g., direct xcodebuild)
-            // This assumes the working directory is the project root.
-            projectDir = [NSFileManager defaultManager].currentDirectoryPath;
-        }
-        
-        NSString *buildDir = [projectDir stringByAppendingPathComponent:@"build"];
-        [[NSFileManager defaultManager] createDirectoryAtPath:buildDir withIntermediateDirectories:YES attributes:nil error:nil];
-        
-        NSString *logFilePath = [buildDir stringByAppendingPathComponent:logFileName];
-        
-        // Clear any old log file before starting.
-        [[NSFileManager defaultManager] removeItemAtPath:logFilePath error:nil];
-        
-        NSLog(@"BranchSDK test logs will be written to: %@", logFilePath);
-        
-        // Create a file handle that can be written to from multiple threads.
-        NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:logFilePath];
-        if (!fileHandle) {
-            [[NSData data] writeToFile:logFilePath atomically:YES];
-            fileHandle = [NSFileHandle fileHandleForWritingAtPath:logFilePath];
-        }
+   
+            // Find the Caches directory, a reliable place to write temporary files.
+            NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+            NSString *cacheDir = [cachePaths firstObject];
+            NSString *logFilePath = [cacheDir stringByAppendingPathComponent:@"branch_sdk_test_logs.log"];
 
-        // Enable logging and set our custom callback.
-        [Branch enableLoggingAtLevel:BranchLogLevelVerbose withCallback:^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
-            // The callback can be called from any thread, so synchronize access to the file handle.
-            @synchronized (fileHandle) {
-                NSString *logLine = [NSString stringWithFormat:@"%@: %@\n", [NSDate date], message];
-                [fileHandle seekToEndOfFile];
-                [fileHandle writeData:[logLine dataUsingEncoding:NSUTF8StringEncoding]];
+            // Clear any old log file before starting.
+            [[NSFileManager defaultManager] removeItemAtPath:logFilePath error:nil];
+
+            // This log will now appear in your main xcodebuild output.
+            // It helps confirm that this code is running and shows the exact path.
+            NSLog(@"[BRANCH SDK TEST LOGGING] Writing logs to: %@", logFilePath);
+
+            NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:logFilePath];
+            if (!fileHandle) {
+                [[NSData data] writeToFile:logFilePath atomically:YES];
+                fileHandle = [NSFileHandle fileHandleForWritingAtPath:logFilePath];
             }
-        }];
+
+            [Branch enableLoggingAtLevel:BranchLogLevelVerbose withCallback:^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+                @synchronized (fileHandle) {
+                    NSString *logLine = [NSString stringWithFormat:@"%@: %@\n", [NSDate date], message];
+                    [fileHandle seekToEndOfFile];
+                    [fileHandle writeData:[logLine dataUsingEncoding:NSUTF8StringEncoding]];
+                }
+            }];
     
 }
 - (void) testODMAPIsLoaded {
+    
+   // [Reflection_ODM_Tests load];
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Network call"];
     
@@ -83,6 +75,8 @@
 
 - (void) testODMAPICall {
 
+    [Reflection_ODM_Tests load];
+    
     XCTestExpectation *expectation = [self expectationWithDescription:@"Network call"];
     [BNCPreferenceHelper sharedInstance].odmInfo = nil;
     [[BNCODMInfoCollector instance ] loadODMInfoWithCompletionHandler:^(NSString * _Nullable odmInfo, NSError * _Nullable error) {

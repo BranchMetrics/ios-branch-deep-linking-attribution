@@ -39,18 +39,17 @@ jobs:
       #  run: bundle exec fastlane prepare_pods
       - name: Run unit tests
         run: bundle exec fastlane unit_tests
-      - name: Copy Branch SDK Logs to Test Results
-        if: always() # Run this step even if tests fail
+      - name: Find and Copy Branch SDK Logs
+        if: always()
         run: |
-          LOG_FILE="build/branch_sdk_test_logs.log"
+          LOG_FILENAME="branch_sdk_test_logs.log"
           DEST_DIR="fastlane/test_output"
-          if [ -f "$LOG_FILE" ]; then
-            echo "Log file found. Copying to artifacts directory."
-            mkdir -p "$DEST_DIR"
-            mv "$LOG_FILE" "$DEST_DIR/"
-          else
-            echo "Log file not found at $LOG_FILE."
-          fi
+          
+          echo "Searching for $LOG_FILENAME in all simulator directories..."
+          
+          # This command finds the log file, prints its path, and copies it.
+          # The || true ensures the step doesn't fail if the file isn't found.
+          find ~/Library/Developer/CoreSimulator/Devices -name "$LOG_FILENAME" -print -exec cp {} "$DEST_DIR/" \; || true
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always() # even if tests fail
