@@ -5,6 +5,7 @@ on: [push]
 jobs:
   verify-cocoapods-iOS:
     runs-on: macos-latest
+    timeout-minutes: 10
     steps:
       - name: Select Xcode version
         run: sudo xcode-select -s '/Applications/Xcode_16.4.app/Contents/Developer'
@@ -43,6 +44,42 @@ jobs:
         run: sudo xcode-select -s '/Applications/Xcode_16.4.app/Contents/Developer'
       - name: Check out code
         uses: actions/checkout@v4
+      
+      - name: Build and run the app
+        run: |
+        # Step 1: Prepare the simulator
+        ./scripts/getSimulator
+        SIMULATOR_NAME=$(cat ./iphoneSim)
+        DESTINATION="platform=iOS Simulator,name=$SIMULATOR_NAME,OS=latest"
+        
+        # Step 2: Build the app for the simulator
+        echo "--- Building the app ---"
+        cd SDKIntegrationTestApps/iOSReleaseTest-SPM/
+        xcodebuild build -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" -derivedDataPath ./build | xcpretty
+        
+        # Step 3: Find the compiled .app bundle
+        APP_PATH=$(find ./build -name "iOSReleaseTest.app" -print -quit)
+        if [ -z "$APP_PATH" ]; then
+          echo "Error: .app bundle not found!"
+          exit 1
+        fi
+        echo "Found app at: $APP_PATH"
+        
+        # Step 4: Boot the simulator and launch the app
+        echo "--- Launching the app on the simulator ---"
+        SIMULATOR_UDID=$(xcrun simctl list devices | grep "$SIMULATOR_NAME" | awk 'match($0, /\(([-0-9A-F]+)\)/) { print substr($0, RSTART + 1, RLENGTH - 2) }' | head -n 1)
+        
+        xcrun simctl boot "$SIMULATOR_UDID"
+        xcrun simctl install "$SIMULATOR_UDID" "$APP_PATH"
+        
+        # Get the app's bundle identifier from its Info.plist
+        BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP_PATH/Info.plist")
+        
+        xcrun simctl launch "$SIMULATOR_UDID" "$BUNDLE_ID"
+        
+        # Keep the script running for a moment to see the launch
+        echo "App launched. Waiting for 30 seconds..."
+        sleep 45
       - name: build project and run tests
         run: |
             ./scripts/getSimulator
