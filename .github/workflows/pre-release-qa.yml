@@ -19,6 +19,14 @@ jobs:
           cd SDKIntegrationTestApps/iOSReleaseTest-Cocoapods/
           pod install
           xcodebuild test -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
+      - name: Debug - List Contents of Simulator Directories
+        if: always()
+        run: |
+          echo "--- Searching for any .log files in all simulator directories ---"
+          find ~/Library/Developer/CoreSimulator/Devices -name "*.log"
+          
+          echo "--- Recursively listing all files containing 'branch' in their name ---"
+          ls -R ~/Library/Developer/CoreSimulator/Devices | grep "branch" || echo "No file containing 'branch' was found."
       - name: Gather Logs
         if: always()
         run: |
@@ -50,6 +58,15 @@ jobs:
           echo "git \"file://${CURR_DIR}\" \"$BRANCH_NAME\" " >> cartfile
           carthage update --use-xcframeworks
           xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
+      - name: Debug - List Contents of Simulator Directories
+        if: always()
+        run: |
+          echo "--- Searching for any .log files in all simulator directories ---"
+          find ~/Library/Developer/CoreSimulator/Devices -name "*.log"
+          
+          echo "--- Recursively listing all files containing 'branch' in their name ---"
+          ls -R ~/Library/Developer/CoreSimulator/Devices | grep "branch" || echo "No file containing 'branch' was found."
+
       - name: Gather Logs
         if: always()
         run: |
@@ -76,6 +93,14 @@ jobs:
           DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
           cd SDKIntegrationTestApps/iOSReleaseTest-SPM/
           xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
+      - name: Debug - List Contents of Simulator Directories
+        if: always()
+        run: |
+          echo "--- Searching for any .log files in all simulator directories ---"
+          find ~/Library/Developer/CoreSimulator/Devices -name "*.log"
+          
+          echo "--- Recursively listing all files containing 'branch' in their name ---"
+          ls -R ~/Library/Developer/CoreSimulator/Devices | grep "branch" || echo "No file containing 'branch' was found."
       - name: Gather Logs
         if: always()
         run: |
@@ -103,6 +128,14 @@ jobs:
           xcodebuild -scheme xcframework
           cd SDKIntegrationTestApps/iOSReleaseTest-Manual/
           xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
+      - name: Debug - List Contents of Simulator Directories
+        if: always()
+        run: |
+          echo "--- Searching for any .log files in all simulator directories ---"
+          find ~/Library/Developer/CoreSimulator/Devices -name "*.log"
+          
+          echo "--- Recursively listing all files containing 'branch' in their name ---"
+          ls -R ~/Library/Developer/CoreSimulator/Devices | grep "branch" || echo "No file containing 'branch' was found."
       - name: Gather Logs
         if: always()
         run: |
