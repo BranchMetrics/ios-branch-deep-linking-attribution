@@ -73,7 +73,6 @@
         self.pasteboard = [BNCPasteboard sharedInstance];
         self.requestUUID = requestUUID;
         self.requestCreationTimeStamp = requestTimeStamp;
-        [self loadDataFromThirdPartyAPIs];
     }
     return self;
 }
@@ -105,7 +104,7 @@
         });
     }
     
-    NSTimeInterval timeoutSeconds = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsTimeout;
+    NSTimeInterval timeoutSeconds = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime;
     dispatch_time_t timeOut = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeoutSeconds * NSEC_PER_SEC));
     dispatch_group_wait(apiGroup, timeOut);
 #endif
@@ -121,6 +120,8 @@
 
 - (NSDictionary *)dataForInstallWithURLString:(NSString *)urlString {
     NSMutableDictionary *json = [NSMutableDictionary new];
+    
+    [self loadDataFromThirdPartyAPIs];
     
     // All requests
     [self addDefaultRequestDataToJSON:json];
@@ -182,6 +183,8 @@
 
 - (NSDictionary *)dataForOpenWithURLString:(NSString *)urlString {
     NSMutableDictionary *json = [NSMutableDictionary new];
+    
+    [self loadDataFromThirdPartyAPIs];
     
     // All requests
     [self addDefaultRequestDataToJSON:json];

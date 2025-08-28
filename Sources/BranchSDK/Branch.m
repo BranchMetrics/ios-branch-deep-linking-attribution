@@ -538,17 +538,17 @@ static NSString *bnc_branchKey = nil;
     self.preferenceHelper.retryInterval = retryInterval;
 }
 
-+ (void)setThirdPartyAPIsTimeout:(NSTimeInterval)timeout {
++ (void)setSDKWaitTimeForThirdPartyAPIs:(NSTimeInterval)waitTime {
     @synchronized(self) {
-        if (timeout <= 0) {
-            [[BranchLogger shared] logWarning:@"Invalid timeout value. Timeout must be greater than 0. Using default value." error:nil];
+        if (waitTime <= 0) {
+            [[BranchLogger shared] logWarning:@"Invalid waitTime value. It must be greater than 0. Using default value." error:nil];
             return;
         }
-        if (timeout > 10) {
-            [[BranchLogger shared] logWarning:@"Invalid timeout value. Timeout must not exceed 10 seconds. Using default value." error:nil];
+        if (waitTime > 10) {
+            [[BranchLogger shared] logWarning:@"Invalid waitTime value. It must not exceed 10 seconds. Using default value." error:nil];
             return;
         }
-        [BNCPreferenceHelper sharedInstance].thirdPartyAPIsTimeout = timeout;
+        [BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime = waitTime;
     }
 }
 
