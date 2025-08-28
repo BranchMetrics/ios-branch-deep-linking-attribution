@@ -11,7 +11,6 @@ import BranchSDK
 class BranchSDKTest {
     
     init() {
-        Branch.getInstance().enableLogging()
         Branch.getInstance().initSession(launchOptions: nil) { (params, error) in
               print(params as? [String: AnyObject] ?? {})
         }
