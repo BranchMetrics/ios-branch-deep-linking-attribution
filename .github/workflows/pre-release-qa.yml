@@ -42,6 +42,7 @@ jobs:
 
   verify-carthage-iOS:
     runs-on: macos-15
+    timeout-minutes: 20
     steps:
       - name: Select Xcode version
         run: sudo xcode-select -s '/Applications/Xcode_16.4.app/Contents/Developer'
@@ -82,6 +83,7 @@ jobs:
 
   verify-SPM-iOS:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Select Xcode version
         run: sudo xcode-select -s '/Applications/Xcode_16.4.app/Contents/Developer'
@@ -116,6 +118,7 @@ jobs:
 
   verify-manually-with-xcframework-iOS:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Select Xcode version
         run: sudo xcode-select -s '/Applications/Xcode_16.4.app/Contents/Developer'
@@ -151,6 +154,7 @@ jobs:
 
   verify-manually-with-StaticFramework-iOS:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Select Xcode version
         run: sudo xcode-select -s '/Applications/Xcode_16.4.app/Contents/Developer'
@@ -178,6 +182,7 @@ jobs:
 
   verify-cocoapods-tvOS:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Select Xcode version
         run: sudo xcode-select -s '/Applications/Xcode_16.4.app/Contents/Developer'
@@ -219,6 +224,7 @@ jobs:
 
   verify-manually-with-xcframework-tvOS:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Select Xcode version
         run: sudo xcode-select -s '/Applications/Xcode_16.4.app/Contents/Developer'
