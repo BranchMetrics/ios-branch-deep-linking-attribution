@@ -88,11 +88,11 @@ jobs:
             echo "--- Log capture complete ---"
             
       - name: Upload Simulator Logs
-          if: always()
-          uses: actions/upload-artifact@v4
-          with:
-            name: simulator-logs
-            path: SDKIntegrationTestApps/iOSReleaseTest-SPM/build/simulator_system.log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulator-logs
+          path: SDKIntegrationTestApps/iOSReleaseTest-SPM/build/simulator_system.log
       
   verify-manually-with-xcframework-iOS:
     runs-on: macos-latest
