@@ -21,6 +21,7 @@ final class iOSReleaseTestTests: XCTestCase {
     // This class method is called once before any tests in this class are run.
     override class func setUp() {
         super.setUp()
+        print(">>>> TEST SUITE STARTED: iOSReleaseTestTests.setUp() <<<<")
         setupBranchFileLogging()
         BranchLogger.shared().logDebug("Inside Setup", error: nil)
     }
