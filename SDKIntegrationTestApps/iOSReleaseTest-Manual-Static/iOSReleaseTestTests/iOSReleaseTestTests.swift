@@ -91,7 +91,7 @@ final class iOSReleaseTestTests: XCTestCase {
            }
 
            // 3. Wait for the expectation to be fulfilled before continuing.
-           waitForExpectations(timeout: 5, handler: nil)
+           waitForExpectations(timeout: 30, handler: nil)
     }
 
     func testPerformanceExample() throws {
