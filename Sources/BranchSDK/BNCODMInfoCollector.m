@@ -136,7 +136,8 @@
                     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Received Info: %@", info] error:nil];
                 };
 
-                [invocation setArgument:&_odmFetchCompletion atIndex:3];
+                void (^completionBlock)(NSString *, NSError *) = self.odmFetchCompletion;
+                [invocation setArgument:&completionBlock atIndex:3];
                 [invocation invoke];
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"fetchInfo:completion: invoked successfully."] error:nil];
         
