@@ -22,6 +22,7 @@ final class iOSReleaseTestTests: XCTestCase {
     override class func setUp() {
         super.setUp()
         setupBranchFileLogging()
+        BranchLogger.shared().logDebug("Inside Setup", error: nil)
     }
     
     // This class method is called once after all tests in this class have been run.
@@ -67,10 +68,15 @@ final class iOSReleaseTestTests: XCTestCase {
 
         // Enable Branch SDK's verbose logging and direct its output to our file.
         Branch.enableLogging(at: .verbose) { message, logLevel, error in
-            
             // Use the serial queue to safely write from any thread.
             logQueue.async {
-                let logLine = "\(Date()): \(message)\n"
+                var logLine = ""
+                if (message.isEmpty == false) {
+                    logLine = "\(Date()): \(message)\n"
+                }
+                else {
+                    logLine = "\(Date()): Empty Message"
+                }
                 guard let logData = logLine.data(using: .utf8) else { return }
                 
                 // Seek to the end and write the new log line.
@@ -82,12 +88,27 @@ final class iOSReleaseTestTests: XCTestCase {
 
     func testSetTrackingDisabled() throws {
 
-        let sdk = BranchSDKTest()
-        
-        sdk.disableTracking(status: true)
-        let x = sdk.trackingStatus()
-        assert( x == true)
-        sdk.disableTracking(status: true)
+        // 1. Create an expectation to wait for the async init callback.
+           let expectation = self.expectation(description: "Branch SDK Init")
+
+           // 2. Initialize the Branch session.
+           Branch.getInstance().initSession(launchOptions: nil) { params, error in
+               // The init callback has returned, so we can fulfill the expectation.
+               XCTAssertNil(error, "Branch init failed with error: \(error?.localizedDescription ?? "unknown")")
+               expectation.fulfill()
+           }
+
+           // 3. Wait for the expectation to be fulfilled before continuing.
+           waitForExpectations(timeout: 5, handler: nil)
+
+           // 4. Now perform your test logic on the initialized SDK.
+           let sdk = BranchSDKTest()
+           sdk.disableTracking(status: true)
+           let isTrackingDisabled = sdk.trackingStatus()
+           XCTAssertTrue(isTrackingDisabled, "Tracking should have been disabled.")
+           
+           // You can re-enable it for other tests if needed.
+           sdk.disableTracking(status: false)
     }
 
     func testPerformanceExample() throws {
