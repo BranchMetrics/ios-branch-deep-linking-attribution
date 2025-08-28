@@ -10,6 +10,7 @@
 #import "BNCODMInfoCollector.h"
 #import "NSError+Branch.h"
 #import "BNCPreferenceHelper.h"
+#import "BranchSDK.h"
 
 @interface Reflection_ODM_Tests : XCTestCase
 
@@ -18,6 +19,46 @@
 @implementation Reflection_ODM_Tests
 
 
++ (void)load {
+    if (self == [Reflection_ODM_Tests class]) {
+        NSString *logFileName = @"branch_sdk_test_logs.log";
+        
+        // Create a predictable path for the log file relative to the project root.
+        NSString *projectDir = [NSProcessInfo processInfo].environment[@"SRCROOT"];
+        if (!projectDir) {
+            // Fallback for when SRCROOT is not set (e.g., direct xcodebuild)
+            // This assumes the working directory is the project root.
+            projectDir = [NSFileManager defaultManager].currentDirectoryPath;
+        }
+        
+        NSString *buildDir = [projectDir stringByAppendingPathComponent:@"build"];
+        [[NSFileManager defaultManager] createDirectoryAtPath:buildDir withIntermediateDirectories:YES attributes:nil error:nil];
+        
+        NSString *logFilePath = [buildDir stringByAppendingPathComponent:logFileName];
+        
+        // Clear any old log file before starting.
+        [[NSFileManager defaultManager] removeItemAtPath:logFilePath error:nil];
+        
+        NSLog(@"BranchSDK test logs will be written to: %@", logFilePath);
+        
+        // Create a file handle that can be written to from multiple threads.
+        NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:logFilePath];
+        if (!fileHandle) {
+            [[NSData data] writeToFile:logFilePath atomically:YES];
+            fileHandle = [NSFileHandle fileHandleForWritingAtPath:logFilePath];
+        }
+
+        // Enable logging and set our custom callback.
+        [Branch enableLoggingAtLevel:BranchLogLevelVerbose withCallback:^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error) {
+            // The callback can be called from any thread, so synchronize access to the file handle.
+            @synchronized (fileHandle) {
+                NSString *logLine = [NSString stringWithFormat:@"%@: %@\n", [NSDate date], message];
+                [fileHandle seekToEndOfFile];
+                [fileHandle writeData:[logLine dataUsingEncoding:NSUTF8StringEncoding]];
+            }
+        }];
+    }
+}
 - (void) testODMAPIsLoaded {
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Network call"];
