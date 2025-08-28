@@ -12,33 +12,23 @@ import BranchSDK
 
 final class iOSReleaseTestTests: XCTestCase {
 
-    // A static property to hold the file handle, ensuring it persists across all test runs.
-    private static var logFileHandle: FileHandle?
-    
-    // A serial dispatch queue to ensure that writes to the log file are thread-safe.
-    private static let logQueue = DispatchQueue(label: "io.branch.sdk.testLogQueue")
-
-    // This class method is called once before any tests in this class are run.
     override class func setUp() {
         super.setUp()
-        print(">>>> TEST SUITE STARTED: iOSReleaseTestTests.setUp() <<<<")
-        setupBranchFileLogging()
-        BranchLogger.shared().logDebug("Inside Setup", error: nil)
     }
     
     // This class method is called once after all tests in this class have been run.
     override class func tearDown() {
-        logQueue.sync {
-            self.logFileHandle?.closeFile()
-            self.logFileHandle = nil
-        }
+        
+          //  self.logFileHandle?.closeFile()
+           // self.logFileHandle = nil
+        
         super.tearDown()
     }
     
     /// Sets up a file-based logger for the Branch SDK to capture verbose output during tests.
     private static func setupBranchFileLogging() {
         // Find the Caches directory, a reliable place to write temporary files.
-        guard let cacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else {
+       /* guard let cacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else {
             XCTFail("Could not access Caches directory.")
             return
         }
@@ -84,11 +74,15 @@ final class iOSReleaseTestTests: XCTestCase {
                 self.logFileHandle?.seekToEndOfFile()
                 self.logFileHandle?.write(logData)
             }
-        }
+        }*/
     }
 
     func testSetTrackingDisabled() throws {
 
+        var i = 0;
+        Branch.getInstance().enableLogging(at: .verbose) { msg, loglevel, error in
+            print(msg)
+        }
         print("Satrting Test testSetTrackingDisabled ....")
         // 1. Create an expectation to wait for the async init callback.
            let expectation = self.expectation(description: "Branch SDK Init")
@@ -99,12 +93,14 @@ final class iOSReleaseTestTests: XCTestCase {
                // The init callback has returned, so we can fulfill the expectation.
                print("Session initialized ...")
                XCTAssertNil(error, "Branch init failed with error: \(error?.localizedDescription ?? "unknown")")
+               i = 33
                expectation.fulfill()
            }
         print("Waiting for ....")
            // 3. Wait for the expectation to be fulfilled before continuing.
            waitForExpectations(timeout: 5, handler: nil)
         print("Waiting finished")
+        XCTAssertTrue(i == 33, "Its initialized")
            // 4. Now perform your test logic on the initialized SDK.
         /*   let sdk = BranchSDKTest()
            sdk.disableTracking(status: true)
