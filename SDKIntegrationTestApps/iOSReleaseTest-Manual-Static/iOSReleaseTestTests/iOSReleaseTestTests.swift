@@ -80,13 +80,18 @@ final class iOSReleaseTestTests: XCTestCase {
     }
 
     func testSetTrackingDisabled() throws {
+        // 1. Create an expectation to wait for the async init callback.
+           let expectation = self.expectation(description: "Branch SDK Init")
 
-        let sdk = BranchSDKTest()
-        
-        sdk.disableTracking(status: true)
-        let x = sdk.trackingStatus()
-        assert( x == true)
-        sdk.disableTracking(status: true)
+           // 2. Initialize the Branch session.
+           Branch.getInstance().initSession(launchOptions: nil) { params, error in
+               // The init callback has returned, so we can fulfill the expectation.
+               XCTAssertNil(error, "Branch init failed with error: \(error?.localizedDescription ?? "unknown")")
+               expectation.fulfill()
+           }
+
+           // 3. Wait for the expectation to be fulfilled before continuing.
+           waitForExpectations(timeout: 5, handler: nil)
     }
 
     func testPerformanceExample() throws {

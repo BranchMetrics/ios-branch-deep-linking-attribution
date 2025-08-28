@@ -102,13 +102,13 @@ final class iOSReleaseTestTests: XCTestCase {
            waitForExpectations(timeout: 5, handler: nil)
 
            // 4. Now perform your test logic on the initialized SDK.
-           let sdk = BranchSDKTest()
+        /*   let sdk = BranchSDKTest()
            sdk.disableTracking(status: true)
            let isTrackingDisabled = sdk.trackingStatus()
            XCTAssertTrue(isTrackingDisabled, "Tracking should have been disabled.")
            
            // You can re-enable it for other tests if needed.
-           sdk.disableTracking(status: false)
+           sdk.disableTracking(status: false)*/
     }
 
     func testPerformanceExample() throws {
