@@ -116,7 +116,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     retryCount = _retryCount,
     retryInterval = _retryInterval,
     timeout = _timeout,
-    thirdPartyAPIsWaitTime = thirdPartyAPIsWaitTime,
+    thirdPartyAPIsWaitTime = _thirdPartyAPIsWaitTime,
     lastStrongMatchDate = _lastStrongMatchDate,
     requestMetadataDictionary = _requestMetadataDictionary,
     instrumentationDictionary = _instrumentationDictionary,
@@ -159,7 +159,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         _retryCount = DEFAULT_RETRY_COUNT;
         _retryInterval = DEFAULT_RETRY_INTERVAL;
         _odmInfoValidityWindow = DEFAULT_ODM_INFO_VALIDITY_WINDOW;
-        thirdPartyAPIsWaitTime = DEFAULT_THIRD_PARTY_APIS_TIMEOUT;
+        _thirdPartyAPIsWaitTime = DEFAULT_THIRD_PARTY_APIS_TIMEOUT;
         _isDebug = NO;
         _persistPrefsQueue = [[NSOperationQueue alloc] init];
         _persistPrefsQueue.maxConcurrentOperationCount = 1;
@@ -765,17 +765,17 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 - (NSTimeInterval) thirdPartyAPIsWaitTime {
     @synchronized (self) {
-        thirdPartyAPIsWaitTime = [self readDoubleFromDefaults:BRANCH_PREFS_KEY_THIRD_PARTY_APIS_TIMEOUT];
-        if (thirdPartyAPIsWaitTime == NSNotFound) {
-            thirdPartyAPIsWaitTime = DEFAULT_THIRD_PARTY_APIS_TIMEOUT;
+        _thirdPartyAPIsWaitTime = [self readDoubleFromDefaults:BRANCH_PREFS_KEY_THIRD_PARTY_APIS_TIMEOUT];
+        if (_thirdPartyAPIsWaitTime == NSNotFound) {
+            _thirdPartyAPIsWaitTime = DEFAULT_THIRD_PARTY_APIS_TIMEOUT;
         }
-        return thirdPartyAPIsWaitTime;
+        return _thirdPartyAPIsWaitTime;
     }
 }
 
-- (void) setSDKWaitTimeForThirdPartyAPIs:(NSTimeInterval)waitTime {
+- (void) setThirdPartyAPIsWaitTime:(NSTimeInterval)waitTime {
     @synchronized (self) {
-        thirdPartyAPIsWaitTime = waitTime;
+        _thirdPartyAPIsWaitTime = waitTime;
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_THIRD_PARTY_APIS_TIMEOUT value:@(waitTime)];
     }
 }

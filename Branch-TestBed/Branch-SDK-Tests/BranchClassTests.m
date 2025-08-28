@@ -263,26 +263,26 @@
     
 }
 
-- (void)testBranchSetThirdPartyAPIsTimeout {
+- (void)testBranchSetSDKWaitTimeForThirdPartyAPIs {
     // Test Branch instance method for setting timeout
     NSTimeInterval testTimeout = 2.0;
-    [Branch setThirdPartyAPIsTimeout:testTimeout];
+    [Branch setSDKWaitTimeForThirdPartyAPIs:testTimeout];
     
     // Verify it was set in the preference helper
-    XCTAssertEqual(self.prefHelper.thirdPartyAPIsTimeout, testTimeout,
-                   @"Branch setThirdPartyAPIsTimeout should update preference helper");
+    XCTAssertEqual(self.prefHelper.thirdPartyAPIsWaitTime, testTimeout,
+                   @"Branch setSDKWaitTimeForThirdPartyAPIs should update preference helper");
 }
 
-- (void)testBranchSetThirdPartyAPIsTimeoutMultipleValues {
+- (void)testBranchSetSDKWaitTimeForThirdPartyAPIsMultipleValues {
     // Test setting multiple different values
     NSArray *testValues = @[@0.5, @1.0, @1.5, @3.0, @5.0];
     
     for (NSNumber *timeoutValue in testValues) {
         NSTimeInterval timeout = [timeoutValue doubleValue];
-        [Branch setThirdPartyAPIsTimeout:timeout];
+        [Branch setSDKWaitTimeForThirdPartyAPIs:timeout];
         
-        XCTAssertEqual(self.prefHelper.thirdPartyAPIsTimeout, timeout,
-                       @"Branch setThirdPartyAPIsTimeout should handle value %.1f", timeout);
+        XCTAssertEqual(self.prefHelper.thirdPartyAPIsWaitTime, timeout,
+                       @"Branch setSDKWaitTimeForThirdPartyAPIs should handle value %.1f", timeout);
     }
 }
 
@@ -292,25 +292,25 @@
     NSTimeInterval directTimeout = 2.3;
     
     // Set via Branch
-    [Branch setThirdPartyAPIsTimeout:branchTimeout];
-    XCTAssertEqual(self.prefHelper.thirdPartyAPIsTimeout, branchTimeout,
-                   @"Timeout set via Branch should be readable from PreferenceHelper");
+    [Branch setSDKWaitTimeForThirdPartyAPIs:branchTimeout];
+    XCTAssertEqual(self.prefHelper.thirdPartyAPIsWaitTime, branchTimeout,
+                   @"Wait Time set via Branch should be readable from PreferenceHelper");
     
     // Set directly on PreferenceHelper
-    self.prefHelper.thirdPartyAPIsTimeout = directTimeout;
-    XCTAssertEqual(self.prefHelper.thirdPartyAPIsTimeout, directTimeout,
-                   @"Timeout set directly should be readable via Branch");
+    self.prefHelper.thirdPartyAPIsWaitTime = directTimeout;
+    XCTAssertEqual(self.prefHelper.thirdPartyAPIsWaitTime, directTimeout,
+                   @"Wait time set directly should be readable via Branch");
 }
 
 - (void)testTimeoutValueConsistency {
     // Test that the same instance maintains consistent values
     NSTimeInterval testTimeout = 1.25;
     
-    [Branch setThirdPartyAPIsTimeout:testTimeout];
+    [Branch setSDKWaitTimeForThirdPartyAPIs:testTimeout];
     
     // Read multiple times to ensure consistency
     for (int i = 0; i < 5; i++) {
-        XCTAssertEqual(self.prefHelper.thirdPartyAPIsTimeout, testTimeout,
+        XCTAssertEqual(self.prefHelper.thirdPartyAPIsWaitTime, testTimeout,
                        @"Timeout value should remain consistent across multiple reads");
     }
 }
@@ -318,46 +318,44 @@
 - (void)testBranchSetThirdPartyAPIsTimeoutInvalidLowValues {
 
     NSArray *invalidLowValues = @[@0.0, @-1.0, @-0.5];
-    NSTimeInterval originalTimeout = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsTimeout;
+    NSTimeInterval originalTimeout = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime;
     
     for (NSNumber *timeoutValue in invalidLowValues) {
         NSTimeInterval timeout = [timeoutValue doubleValue];
-        [Branch setThirdPartyAPIsTimeout:timeout];
-        XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsTimeout, originalTimeout,
-                       @"Branch setThirdPartyAPIsTimeout should reject invalid low value %.3f", timeout);
+        [Branch setSDKWaitTimeForThirdPartyAPIs:timeout];
+        XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime, originalTimeout,
+                       @"Branch setSDKWaitTimeForThirdPartyAPIs should reject invalid low value %.3f", timeout);
     }
 }
 
 - (void)testBranchSetThirdPartyAPIsTimeoutInvalidHighValues {
 
     NSArray *invalidHighValues = @[@10.1, @15.0, @30.0, @60.0];
-    NSTimeInterval originalTimeout = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsTimeout;
+    NSTimeInterval originalTimeout = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime;
     
     for (NSNumber *timeoutValue in invalidHighValues) {
         NSTimeInterval timeout = [timeoutValue doubleValue];
-        [Branch setThirdPartyAPIsTimeout:timeout];
-        XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsTimeout, originalTimeout,
+        [Branch setSDKWaitTimeForThirdPartyAPIs:timeout];
+        XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime, originalTimeout,
                        @"Branch setThirdPartyAPIsTimeout should reject invalid high value %.3f", timeout);
     }
 }
 
 - (void)testBranchSetThirdPartyAPIsTimeoutBoundaryValues {
-    // Test exact boundary values
-    NSTimeInterval originalTimeout = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsTimeout;
     
     // Test exactly 10.0 (should be valid)
-    [Branch setThirdPartyAPIsTimeout:10.0];
-    XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsTimeout, 10.0,
+    [Branch setSDKWaitTimeForThirdPartyAPIs:10.0];
+    XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime, 10.0,
                    @"Timeout of exactly 10.0 seconds should be valid");
     
     // Test just over 10.0 (should be invalid)
-    [Branch setThirdPartyAPIsTimeout:10.0001];
-    XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsTimeout, 10.0,
+    [Branch setSDKWaitTimeForThirdPartyAPIs:10.0001];
+    XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime, 10.0,
                    @"Timeout of 10.0001 seconds should be rejected");
     
     // Test very small positive value (should be valid)
-    [Branch setThirdPartyAPIsTimeout:0.0001];
-    XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsTimeout, 0.0001,
+    [Branch setSDKWaitTimeForThirdPartyAPIs:0.0001];
+    XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime, 0.0001,
                    @"Very small positive timeout should be valid");
 }
 

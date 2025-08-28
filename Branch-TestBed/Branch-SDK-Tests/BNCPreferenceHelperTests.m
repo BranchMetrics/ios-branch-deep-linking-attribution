@@ -415,24 +415,24 @@
 }
 
 - (void)testThirdPartyAPIsTimeoutDefaultValue {
-    XCTAssertEqual(self.prefHelper.thirdPartyAPIsTimeout, 0.5,
+    XCTAssertEqual(self.prefHelper.thirdPartyAPIsWaitTime, 0.5,
                    @"Default third party APIs timeout should be 0.5 seconds");
 }
 
 - (void)testThirdPartyAPIsTimeoutSetterGetter {
     NSTimeInterval testTimeout1 = 1.0;
-    self.prefHelper.thirdPartyAPIsTimeout = testTimeout1;
-    XCTAssertEqual(self.prefHelper.thirdPartyAPIsTimeout, testTimeout1,
+    self.prefHelper.thirdPartyAPIsWaitTime = testTimeout1;
+    XCTAssertEqual(self.prefHelper.thirdPartyAPIsWaitTime, testTimeout1,
                    @"Third party APIs timeout should be settable and retrievable");
     
     NSTimeInterval testTimeout2 = 2.5;
-    self.prefHelper.thirdPartyAPIsTimeout = testTimeout2;
-    XCTAssertEqual(self.prefHelper.thirdPartyAPIsTimeout, testTimeout2,
+    self.prefHelper.thirdPartyAPIsWaitTime = testTimeout2;
+    XCTAssertEqual(self.prefHelper.thirdPartyAPIsWaitTime, testTimeout2,
                    @"Third party APIs timeout should be updatable");
     
     NSTimeInterval testTimeout3 = 0.1;
-    self.prefHelper.thirdPartyAPIsTimeout = testTimeout3;
-    XCTAssertEqual(self.prefHelper.thirdPartyAPIsTimeout, testTimeout3,
+    self.prefHelper.thirdPartyAPIsWaitTime = testTimeout3;
+    XCTAssertEqual(self.prefHelper.thirdPartyAPIsWaitTime, testTimeout3,
                    @"Third party APIs timeout should support small values");
 }
 
