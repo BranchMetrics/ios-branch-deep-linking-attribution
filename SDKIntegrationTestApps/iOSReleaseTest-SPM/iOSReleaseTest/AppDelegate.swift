@@ -7,7 +7,8 @@
 
 import UIKit
 import BranchSDK
-import GoogleUtilities
+import GoogleUtilities_Logger
+import GoogleUtilities_Network
 import GoogleAdsOnDeviceConversion
 
 
