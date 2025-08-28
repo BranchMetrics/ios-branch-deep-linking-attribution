@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         GULSetLoggerLevel(.max)
         // Override point for customization after application launch.
-     //   Branch.getInstance().enableLogging()
+        Branch.getInstance().enableLogging()
        // Set the time when the app was first launched.
         ConversionManager.sharedInstance.setFirstLaunchTime(Date())
 
@@ -44,6 +44,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
            // For example, if info is "abcdEfadGdaf", then odm_info=abcdEfadGdaf.
         }
         
+      /*  Branch.enableLogging(at: .verbose) { msg,level , error in
+            print(msg)
+        }
+        Branch.getInstance().initSession(launchOptions: nil) { (params, error) in
+              print(params as? [String: AnyObject] ?? {})
+        }*/
         return true
     }
 

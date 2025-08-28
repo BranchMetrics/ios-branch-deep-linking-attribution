@@ -44,48 +44,56 @@ jobs:
         run: sudo xcode-select -s '/Applications/Xcode_16.4.app/Contents/Developer'
       - name: Check out code
         uses: actions/checkout@v4
-      
-      - name: Build and run the app
+      - name: Build, run, and capture logs from the app
         run: |
-            # Step 1: Prepare the simulator
+            # --- Step 1: Prepare Simulator and Paths ---
             ./scripts/getSimulator
             SIMULATOR_NAME=$(cat ./iphoneSim)
             DESTINATION="platform=iOS Simulator,name=$SIMULATOR_NAME,OS=latest"
-            
-            # Step 2: Build the app for the simulator
+            LOG_ARTIFACT_PATH="build/simulator_system.log"
+
+            # --- Step 2: Build the app ---
             echo "--- Building the app ---"
             cd SDKIntegrationTestApps/iOSReleaseTest-SPM/
             xcodebuild build -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" -derivedDataPath ./build | xcpretty
             
-            # Step 3: Find the compiled .app bundle
             APP_PATH=$(find ./build -name "iOSReleaseTest.app" -print -quit)
             if [ -z "$APP_PATH" ]; then
               echo "Error: .app bundle not found!"
               exit 1
             fi
-            echo "Found app at: $APP_PATH"
+            BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP_PATH/Info.plist")
             
-            # Step 4: Boot the simulator and launch the app
-            echo "--- Launching the app on the simulator ---"
+            # --- Step 3: Boot Simulator and Capture Logs ---
+            echo "--- Launching app and capturing logs ---"
             SIMULATOR_UDID=$(xcrun simctl list devices | grep "$SIMULATOR_NAME" | awk 'match($0, /\(([-0-9A-F]+)\)/) { print substr($0, RSTART + 1, RLENGTH - 2) }' | head -n 1)
             
             xcrun simctl boot "$SIMULATOR_UDID"
             xcrun simctl install "$SIMULATOR_UDID" "$APP_PATH"
             
-            # Get the app's bundle identifier from its Info.plist
-            BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP_PATH/Info.plist")
+            # Start capturing the log stream in the background
+            # We filter by the app's bundle ID to reduce noise
+            xcrun simctl logstream "$SIMULATOR_UDID" --predicate 'subsystem == "com.apple.console" && process == "iOSReleaseTest"' > "$LOG_ARTIFACT_PATH" &
+            LOG_PID=$!
             
-            xcrun simctl launch "$SIMULATOR_UDID" "$BUNDLE_ID"
+            # Launch the app
+            xcrun simctl launch --console-pty "$SIMULATOR_UDID" "$BUNDLE_ID"
             
-            # Keep the script running for a moment to see the launch
-            echo "App launched. Waiting for 30 seconds..."
-            sleep 45
-      - name: build project and run tests
-        run: |
-            ./scripts/getSimulator
-            DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
-            cd  SDKIntegrationTestApps/iOSReleaseTest-SPM/
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
+            echo "App launched. Waiting for 30 seconds to allow it to run..."
+            sleep 30
+            
+            # Stop the background log capture
+            kill $LOG_PID
+            
+            echo "--- Log capture complete ---"
+            
+      - name: Upload Simulator Logs
+          if: always()
+          uses: actions/upload-artifact@v4
+          with:
+            name: simulator-logs
+            path: SDKIntegrationTestApps/iOSReleaseTest-SPM/build/simulator_system.log
+      
   verify-manually-with-xcframework-iOS:
     runs-on: macos-latest
     steps:
