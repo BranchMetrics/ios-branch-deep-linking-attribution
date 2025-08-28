@@ -20,7 +20,7 @@
 
 
 + (void)load {
-    if (self == [Reflection_ODM_Tests class]) {
+   
         NSString *logFileName = @"branch_sdk_test_logs.log";
         
         // Create a predictable path for the log file relative to the project root.
@@ -57,7 +57,7 @@
                 [fileHandle writeData:[logLine dataUsingEncoding:NSUTF8StringEncoding]];
             }
         }];
-    }
+    
 }
 - (void) testODMAPIsLoaded {
     

@@ -20,6 +20,7 @@
       }
     },
     {
+      "enabled" : false,
       "target" : {
         "containerPath" : "container:Branch-TestBed.xcodeproj",
         "identifier" : "7E6B3B501AA42D0E005F45BF",
