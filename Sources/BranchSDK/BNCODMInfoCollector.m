@@ -121,23 +121,31 @@
                 [invocation setArgument:&arg1 atIndex:2];
                 
                 __weak typeof(self) weakSelf = self;
-                self.odmFetchCompletion = ^(NSString *info, NSError *error) {
-                    
-                    
+                // 1. Define the completion block.
+                void (^completionBlock)(NSString *, NSError *) = ^(NSString *info, NSError *error) {
+                    // We no longer need weak/strong self dance because this block
+                    // will be self-contained and we can pass the original completion handler directly.
                     if (error) {
-                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"ODMConversionManager:fetchInfo Error : %@", error.localizedDescription ] error:error];
+                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"ODMConversionManager:fetchInfo Error : %@", error.localizedDescription] error:error];
                     }
-                    
-                    __strong typeof(self) self = weakSelf;
                     
                     if (completion) {
-                        completion( info, error);
+                        completion(info, error);
                     }
+                    
                     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Received Info: %@", info] error:nil];
                 };
 
-                void (^completionBlock)(NSString *, NSError *) = self.odmFetchCompletion;
-                [invocation setArgument:&completionBlock atIndex:3];
+                // 2. Copy the block to the heap to ensure it persists.
+                id copiedBlock = [completionBlock copy];
+
+                // 3. Pass the pointer to the copied block to the invocation.
+                [invocation setArgument:&copiedBlock atIndex:3];
+
+                // 4. Tell the invocation to retain the block argument.
+                [invocation retainArguments];
+
+                // 5. Invoke the method.
                 [invocation invoke];
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"fetchInfo:completion: invoked successfully."] error:nil];
         
