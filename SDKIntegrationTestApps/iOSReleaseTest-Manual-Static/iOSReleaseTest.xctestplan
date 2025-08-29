@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "A1212951-86D2-4853-952D-68409371E9B5",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:iOSReleaseTest.xcodeproj",
+      "identifier" : "C119B01327ADC85C00E8C7BF",
+      "name" : "iOSReleaseTest"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:iOSReleaseTest.xcodeproj",
+        "identifier" : "E7939C0029749D3C00B90B82",
+        "name" : "iOSReleaseTestTests"
+      }
+    }
+  ],
+  "version" : 1
+}

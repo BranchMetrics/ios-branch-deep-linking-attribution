@@ -53,6 +53,7 @@
 		C119B02327ADC85E00E8C7BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C119B02527ADC85E00E8C7BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C119B02B27ADC8FB00E8C7BF /* iOSReleaseTest.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iOSReleaseTest.entitlements; sourceTree = "<group>"; };
+		E72683042E6200DC008A1BF9 /* iOSReleaseTest.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = iOSReleaseTest.xctestplan; sourceTree = "<group>"; };
 		E763E99C29354DA40053F490 /* BranchSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = BranchSDK.xcframework; path = Carthage/Build/BranchSDK.xcframework; sourceTree = "<group>"; };
 		E7939C0129749D3C00B90B82 /* iOSReleaseTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSReleaseTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSReleaseTestTests.swift; sourceTree = "<group>"; };
@@ -80,6 +81,7 @@
 		C119B00B27ADC85C00E8C7BF = {
 			isa = PBXGroup;
 			children = (
+				E72683042E6200DC008A1BF9 /* iOSReleaseTest.xctestplan */,
 				C119B01627ADC85C00E8C7BF /* iOSReleaseTest */,
 				E7939C0229749D3C00B90B82 /* iOSReleaseTestTests */,
 				C119B01527ADC85C00E8C7BF /* Products */,
