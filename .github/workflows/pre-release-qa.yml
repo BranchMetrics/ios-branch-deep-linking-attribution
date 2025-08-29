@@ -32,6 +32,7 @@ jobs:
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/iOSReleaseTest-Carthage/
             echo "git \"file://${CURR_DIR}\" \"$BRANCH_NAME\" " >> cartfile
+            cat cartfile
             carthage update --use-xcframeworks
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-SPM-iOS:
