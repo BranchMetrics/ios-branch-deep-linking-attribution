@@ -315,7 +315,7 @@
     }
 }
 
-- (void)testBranchSetThirdPartyAPIsTimeoutInvalidLowValues {
+- (void)testBranchSetSDKWaitTimeForThirdPartyAPIsInvalidLowValues {
 
     NSArray *invalidLowValues = @[@0.0, @-1.0, @-0.5];
     NSTimeInterval originalTimeout = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime;
@@ -328,7 +328,7 @@
     }
 }
 
-- (void)testBranchSetThirdPartyAPIsTimeoutInvalidHighValues {
+- (void)testBranchsetSDKWaitTimeForThirdPartyAPIsInvalidHighValues {
 
     NSArray *invalidHighValues = @[@10.1, @15.0, @30.0, @60.0];
     NSTimeInterval originalTimeout = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime;
@@ -337,11 +337,11 @@
         NSTimeInterval timeout = [timeoutValue doubleValue];
         [Branch setSDKWaitTimeForThirdPartyAPIs:timeout];
         XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime, originalTimeout,
-                       @"Branch setThirdPartyAPIsTimeout should reject invalid high value %.3f", timeout);
+                       @"Branch setSDKWaitTimeForThirdPartyAPIs should reject invalid high value %.3f", timeout);
     }
 }
 
-- (void)testBranchSetThirdPartyAPIsTimeoutBoundaryValues {
+- (void)testBranchSetSDKWaitTimeForThirdPartyAPIsBoundaryValues {
     
     // Test exactly 10.0 (should be valid)
     [Branch setSDKWaitTimeForThirdPartyAPIs:10.0];
