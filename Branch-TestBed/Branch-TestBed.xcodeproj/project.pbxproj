@@ -234,13 +234,11 @@
 		E56394312CC7AC9F00E18E65 /* BranchFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E563942F2CC7AC9500E18E65 /* BranchFileLogger.m */; };
 		E71E397B2DD3C14800110F59 /* BNCInAppBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = E71E397A2DD3C14800110F59 /* BNCInAppBrowser.h */; };
 		E72489D228E40D0200DCD8FD /* PasteControlViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E72489D128E40D0200DCD8FD /* PasteControlViewController.m */; };
+		E732827F2E5F7D92005CACC8 /* GoogleAdsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = E732827E2E5F7D92005CACC8 /* GoogleAdsOnDeviceConversion */; };
 		E7A728BD2AA9A112009343B7 /* BNCAPIServerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = E7A728BC2AA9A112009343B7 /* BNCAPIServerTest.m */; };
 		E7AC74572DB0639E002D8C40 /* BNCODMInfoCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = E7AC74562DB0639E002D8C40 /* BNCODMInfoCollector.h */; };
 		E7AC74592DB063C6002D8C40 /* BNCODMInfoCollector.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AC74582DB063C6002D8C40 /* BNCODMInfoCollector.m */; };
 		E7AC745B2DB06407002D8C40 /* BNCODMTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AC745A2DB06407002D8C40 /* BNCODMTests.m */; };
-		E7AC74702DB06992002D8C40 /* GULLogger in Frameworks */ = {isa = PBXBuildFile; productRef = E7AC746F2DB06992002D8C40 /* GULLogger */; };
-		E7AC74722DB06992002D8C40 /* GULNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = E7AC74712DB06992002D8C40 /* GULNetwork */; };
-		E7AC74752DB069B2002D8C40 /* nanopb in Frameworks */ = {isa = PBXBuildFile; productRef = E7AC74742DB069B2002D8C40 /* nanopb */; };
 		E7AC747B2DB0700D002D8C40 /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E7AC747A2DB0700D002D8C40 /* BranchSDK */; };
 		E7AC747E2DB0714B002D8C40 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E7AC747D2DB07145002D8C40 /* libc++.tbd */; };
 		E7AE4A092DFB2C4400696805 /* BranchConfigurationControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AE4A082DFB2C4400696805 /* BranchConfigurationControllerTests.m */; };
@@ -278,6 +276,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 466B58371B17773000A69EDE;
 			remoteInfo = Branch;
+		};
+		E73282812E5F81C9005CACC8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 670016581940F51400A9E103 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6700165F1940F51400A9E103;
+			remoteInfo = "Branch-TestBed";
 		};
 		E7AC74652DB064BC002D8C40 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -631,9 +636,7 @@
 			files = (
 				E7AC747E2DB0714B002D8C40 /* libc++.tbd in Frameworks */,
 				E7AC747B2DB0700D002D8C40 /* BranchSDK in Frameworks */,
-				E7AC74752DB069B2002D8C40 /* nanopb in Frameworks */,
-				E7AC74722DB06992002D8C40 /* GULNetwork in Frameworks */,
-				E7AC74702DB06992002D8C40 /* GULLogger in Frameworks */,
+				E732827F2E5F7D92005CACC8 /* GoogleAdsOnDeviceConversion in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1182,16 +1185,15 @@
 			);
 			dependencies = (
 				E7AC74662DB064BC002D8C40 /* PBXTargetDependency */,
+				E73282822E5F81C9005CACC8 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				E7AC74612DB064BC002D8C40 /* Reflection_ODM_Tests */,
 			);
 			name = Reflection_ODM_Tests;
 			packageProductDependencies = (
-				E7AC746F2DB06992002D8C40 /* GULLogger */,
-				E7AC74712DB06992002D8C40 /* GULNetwork */,
-				E7AC74742DB069B2002D8C40 /* nanopb */,
 				E7AC747A2DB0700D002D8C40 /* BranchSDK */,
+				E732827E2E5F7D92005CACC8 /* GoogleAdsOnDeviceConversion */,
 			);
 			productName = Reflection_ODM_Tests;
 			productReference = E7AC74602DB064BC002D8C40 /* Reflection_ODM_Tests.xctest */;
@@ -1254,6 +1256,7 @@
 					};
 					E7AC745F2DB064BC002D8C40 = {
 						CreatedOnToolsVersion = 16.2;
+						TestTargetID = 6700165F1940F51400A9E103;
 					};
 					F1D4F9AB1F323F01002D13FF = {
 						CreatedOnToolsVersion = 8.3.1;
@@ -1273,9 +1276,8 @@
 			);
 			mainGroup = 670016571940F51400A9E103;
 			packageReferences = (
-				E7AC746E2DB06992002D8C40 /* XCRemoteSwiftPackageReference "GoogleUtilities" */,
-				E7AC74732DB069B2002D8C40 /* XCRemoteSwiftPackageReference "nanopb" */,
 				E7AC74792DB0700D002D8C40 /* XCLocalSwiftPackageReference "../../ios-branch-deep-linking-attribution" */,
+				E732827D2E5F7D92005CACC8 /* XCRemoteSwiftPackageReference "google-ads-on-device-conversion-ios-sdk" */,
 			);
 			productRefGroup = 670016611940F51400A9E103 /* Products */;
 			projectDirPath = "";
@@ -1554,6 +1556,11 @@
 			isa = PBXTargetDependency;
 			target = 466B58371B17773000A69EDE /* Branch */;
 			targetProxy = 5F8B7B4121B5F5CD009CE0A6 /* PBXContainerItemProxy */;
+		};
+		E73282822E5F81C9005CACC8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6700165F1940F51400A9E103 /* Branch-TestBed */;
+			targetProxy = E73282812E5F81C9005CACC8 /* PBXContainerItemProxy */;
 		};
 		E7AC74662DB064BC002D8C40 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1891,6 +1898,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -1899,7 +1907,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = R63EM248DP;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
@@ -1912,6 +1920,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Branch-TestBed.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Branch-TestBed";
 			};
 			name = Debug;
 		};
@@ -1919,6 +1928,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -1928,7 +1938,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = R63EM248DP;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
@@ -1941,6 +1951,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Branch-TestBed.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Branch-TestBed";
 			};
 			name = Release;
 		};
@@ -2067,39 +2078,21 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E7AC746E2DB06992002D8C40 /* XCRemoteSwiftPackageReference "GoogleUtilities" */ = {
+		E732827D2E5F7D92005CACC8 /* XCRemoteSwiftPackageReference "google-ads-on-device-conversion-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/google/GoogleUtilities";
+			repositoryURL = "https://github.com/googleads/google-ads-on-device-conversion-ios-sdk";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 8.0.2;
-			};
-		};
-		E7AC74732DB069B2002D8C40 /* XCRemoteSwiftPackageReference "nanopb" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/nanopb/nanopb";
-			requirement = {
-				kind = revision;
-				revision = b7e1104502eca3a213b46303391ca4d3bc8ddec1;
+				minimumVersion = 2.3.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E7AC746F2DB06992002D8C40 /* GULLogger */ = {
+		E732827E2E5F7D92005CACC8 /* GoogleAdsOnDeviceConversion */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E7AC746E2DB06992002D8C40 /* XCRemoteSwiftPackageReference "GoogleUtilities" */;
-			productName = GULLogger;
-		};
-		E7AC74712DB06992002D8C40 /* GULNetwork */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E7AC746E2DB06992002D8C40 /* XCRemoteSwiftPackageReference "GoogleUtilities" */;
-			productName = GULNetwork;
-		};
-		E7AC74742DB069B2002D8C40 /* nanopb */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E7AC74732DB069B2002D8C40 /* XCRemoteSwiftPackageReference "nanopb" */;
-			productName = nanopb;
+			package = E732827D2E5F7D92005CACC8 /* XCRemoteSwiftPackageReference "google-ads-on-device-conversion-ios-sdk" */;
+			productName = GoogleAdsOnDeviceConversion;
 		};
 		E7AC747A2DB0700D002D8C40 /* BranchSDK */ = {
 			isa = XCSwiftPackageProductDependency;

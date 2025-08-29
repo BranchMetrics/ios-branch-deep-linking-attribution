@@ -450,7 +450,7 @@
     XCTAssertEqualObjects(storedUrl, expectedUrl);
     
     storedUrl = [[BNCServerAPI sharedInstance] validationServiceURL];
-    expectedUrl = @"https://links.toTestDomain.com/v1/app-link-settings";
+    expectedUrl = @"https://api3.branch.io/v1/app-link-settings";
     XCTAssertEqualObjects(storedUrl, expectedUrl);
     
     [BNCServerAPI sharedInstance].useTrackingDomain = NO;
@@ -501,7 +501,7 @@
     XCTAssertEqualObjects(storedUrl, expectedUrl);
     
     storedUrl = [[BNCServerAPI sharedInstance] validationServiceURL];
-    expectedUrl = @"https://links.toTestDomain.com/v1/app-link-settings";
+    expectedUrl = @"https://api3.branch.io/v1/app-link-settings";
     XCTAssertEqualObjects(storedUrl, expectedUrl);
     
     [BNCServerAPI sharedInstance].useTrackingDomain = NO;

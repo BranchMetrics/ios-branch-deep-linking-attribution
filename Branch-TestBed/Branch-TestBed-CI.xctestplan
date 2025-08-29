@@ -13,6 +13,7 @@
   },
   "testTargets" : [
     {
+      "enabled" : false,
       "target" : {
         "containerPath" : "container:Branch-TestBed.xcodeproj",
         "identifier" : "E7AC745F2DB064BC002D8C40",

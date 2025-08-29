@@ -49,6 +49,8 @@
 @property (nonatomic, strong, readwrite) BNCPasteboard *pasteboard;
 @property (nonatomic, strong, readwrite) NSNumber *requestCreationTimeStamp;
 @property (nonatomic, strong, readwrite) NSString *requestUUID;
+@property (nonatomic, strong, readwrite) NSString *odmInfo;
+@property (nonatomic, strong, readwrite) NSString *appleAttributionToken;
 
 @end
 
@@ -72,6 +74,40 @@
     return self;
 }
 
+- (void) loadDataFromThirdPartyAPIs {
+#if !TARGET_OS_TV
+    dispatch_group_t apiGroup = dispatch_group_create();
+    dispatch_queue_t concurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    
+    if ([[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelFull])
+    {
+        dispatch_group_enter(apiGroup);
+        dispatch_async(concurrentQueue, ^{
+            [[BNCODMInfoCollector instance] loadODMInfoWithCompletionHandler:^(NSString * _Nullable odmInfo, NSError * _Nullable error) {
+                self.odmInfo = odmInfo;
+                dispatch_group_leave(apiGroup);
+            }];
+        });
+    }
+    
+    if (!self.preferenceHelper.appleAttributionTokenChecked) {
+        dispatch_group_enter(apiGroup);
+        dispatch_async(concurrentQueue, ^{
+            self.appleAttributionToken = [BNCSystemObserver appleAttributionToken];
+            if (self.appleAttributionToken) {
+                self.preferenceHelper.appleAttributionTokenChecked = YES;
+            }
+            dispatch_group_leave(apiGroup);
+        });
+    }
+    
+    NSTimeInterval timeoutSeconds = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime;
+    dispatch_time_t timeOut = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeoutSeconds * NSEC_PER_SEC));
+    dispatch_group_wait(apiGroup, timeOut);
+#endif
+    
+}
+
 // SDK level tracking control
 // When set to YES, only link creation and resolution calls are allowed.
 // NO by default.
@@ -81,6 +117,8 @@
 
 - (NSDictionary *)dataForInstallWithURLString:(NSString *)urlString {
     NSMutableDictionary *json = [NSMutableDictionary new];
+    
+    [self loadDataFromThirdPartyAPIs];
     
     // All requests
     [self addDefaultRequestDataToJSON:json];
@@ -140,6 +178,8 @@
 
 - (NSDictionary *)dataForOpenWithURLString:(NSString *)urlString {
     NSMutableDictionary *json = [NSMutableDictionary new];
+    
+    [self loadDataFromThirdPartyAPIs];
     
     // All requests
     [self addDefaultRequestDataToJSON:json];
@@ -335,10 +375,9 @@
 - (void)addAppleAttributionTokenToJSON:(NSMutableDictionary *)json {
     // This value is only sent once usually on install
     if (!self.preferenceHelper.appleAttributionTokenChecked) {
-        NSString *appleAttributionToken = [BNCSystemObserver appleAttributionToken];
-        if (appleAttributionToken) {
+        if (self.appleAttributionToken) {
             self.preferenceHelper.appleAttributionTokenChecked = YES;
-            [self safeSetValue:appleAttributionToken forKey:BRANCH_REQUEST_KEY_APPLE_ATTRIBUTION_TOKEN onDict:json];
+            [self safeSetValue:self.appleAttributionToken forKey:BRANCH_REQUEST_KEY_APPLE_ATTRIBUTION_TOKEN onDict:json];
         }
     }
 }
@@ -347,9 +386,8 @@
 - (void)addODMInfoToJSON:(NSMutableDictionary *)json {
 #if !TARGET_OS_TV
     if ([[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelFull]) {
-        NSString *odmInfo = [BNCODMInfoCollector instance].odmInfo ;
-        if (odmInfo) {
-            [self safeSetValue:odmInfo forKey:BRANCH_REQUEST_KEY_ODM_INFO onDict:json];
+        if (self.odmInfo) {
+            [self safeSetValue:self.odmInfo forKey:BRANCH_REQUEST_KEY_ODM_INFO onDict:json];
             NSNumber* odmInitDateInNumberFormat = BNCWireFormatFromDate(self.preferenceHelper.odmInfoInitDate);
             [self safeSetValue:odmInitDateInNumberFormat forKey:BRANCH_REQUEST_KEY_ODM_FIRST_OPEN_TIMESTAMP onDict:json];
         }

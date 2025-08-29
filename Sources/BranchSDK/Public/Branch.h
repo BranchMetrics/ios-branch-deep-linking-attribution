@@ -753,6 +753,14 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 - (void)setNetworkTimeout:(NSTimeInterval)timeout;
 
 /**
+ Set the SDK wait time for third party APIs (for fetching ODM info and Apple Attribution Token) to finish
+ This timeout should be > 0 and <= 10 seconds.
+ 
+ @param waitTime Number of seconds before third party API calls are considered timed out. Default is 0.5 seconds (500ms).
+ */
++ (void)setSDKWaitTimeForThirdPartyAPIs:(NSTimeInterval)waitTime;
+
+/**
  Disable callouts to ad networks for all events for a user; by default Branch sends callouts to ad networks.
  
  By calling this method with YES, Branch will not send any events to the ad networks specified in your Branch account.  If ad networks are not specified in your Branch account, this method will be ignored and events will still be sent.
