@@ -29,11 +29,8 @@ final class iOSReleaseTestTests: XCTestCase {
         sdk.disableTracking(status: true)
     }
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
-        }
+    func testDummy() throws {
+        throw XCTSkip("Skipping this test ********************.")
     }
 
 }
