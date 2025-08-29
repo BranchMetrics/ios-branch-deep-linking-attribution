@@ -29,7 +29,6 @@
 #import "BNCPartnerParameters.h"
 #import "BNCDeviceInfo.h"
 #import "BNCPreferenceHelper.h"
-#import "BNCAppleReceipt.h"
 #import "BNCAppGroupsData.h"
 #import "BNCSKAdNetwork.h"
 #import "BNCReferringURLUtility.h"
@@ -47,7 +46,6 @@
 @property (nonatomic, strong, readwrite) BNCApplication *application;
 @property (nonatomic, strong, readwrite) BNCAppGroupsData *appGroupsData;
 @property (nonatomic, strong, readwrite) BNCSKAdNetwork *skAdNetwork;
-@property (nonatomic, strong, readwrite) BNCAppleReceipt *appleReceipt;
 @property (nonatomic, strong, readwrite) BNCPasteboard *pasteboard;
 @property (nonatomic, strong, readwrite) NSNumber *requestCreationTimeStamp;
 @property (nonatomic, strong, readwrite) NSString *requestUUID;
@@ -67,7 +65,6 @@
         self.application = [BNCApplication currentApplication];
         self.appGroupsData = [BNCAppGroupsData shared];
         self.skAdNetwork = [BNCSKAdNetwork sharedInstance];
-        self.appleReceipt = [BNCAppleReceipt sharedInstance];
         self.pasteboard = [BNCPasteboard sharedInstance];
         self.requestUUID = requestUUID;
         self.requestCreationTimeStamp = requestTimeStamp;
@@ -103,7 +100,6 @@
     [self addSystemObserverDataToJSON:json];
     [self addPreferenceHelperDataToJSON:json];
     [self addPartnerParametersToJSON:json];
-    [self addAppleReceiptSourceToJSON:json];
     [self addTimestampsToJSON:json];
     
     // Check if the urlString is a valid URL to ensure it's a universal link, not the external intent uri
@@ -119,7 +115,6 @@
     [self addAppleAttributionTokenToJSON:json];
 
     // Install Only
-    [self addAppleReceiptDataToJSON:json];
     [self addAppClipDataToJSON:json];
     [self addLocalURLToInstallJSON:json];
     
@@ -167,7 +162,6 @@
     [self addSystemObserverDataToJSON:json];
     [self addPreferenceHelperDataToJSON:json];
     [self addPartnerParametersToJSON:json];
-    [self addAppleReceiptSourceToJSON:json];
     [self addTimestampsToJSON:json];
     
     
@@ -336,17 +330,6 @@
     [self safeSetValue:[BNCSystemObserver teamIdentifier] forKey:BRANCH_REQUEST_KEY_TEAM_ID onDict:json];
     [self safeSetValue:[BNCSystemObserver applicationVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:json];
     [self safeSetValue:[BNCSystemObserver defaultURIScheme] forKey:BRANCH_REQUEST_KEY_URI_SCHEME onDict:json];
-}
-
-- (void)addAppleReceiptDataToJSON:(NSMutableDictionary *)json {
-    [self safeSetValue:[self.appleReceipt installReceipt] forKey:BRANCH_REQUEST_KEY_APPLE_RECEIPT onDict:json];
-}
-
-- (void)addAppleReceiptSourceToJSON:(NSMutableDictionary *)json {
-    NSNumber *isSandboxReceipt = [NSNumber numberWithBool:[self.appleReceipt isTestFlight]];
-    
-    // The JSON key name is misleading, really indicates if the receipt is real or a sandbox receipt
-    [self safeSetValue:isSandboxReceipt forKey:BRANCH_REQUEST_KEY_APPLE_TESTFLIGHT onDict:json];
 }
  
 - (void)addAppleAttributionTokenToJSON:(NSMutableDictionary *)json {
