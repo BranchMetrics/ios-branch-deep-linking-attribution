@@ -10,7 +10,7 @@ jobs:
   verify:
     runs-on: macos-15
     timeout-minutes: 20
-    steps:16
+    steps:
       - name: Check out code
         uses: actions/checkout@v4
       - name: Set up Ruby 2.7
