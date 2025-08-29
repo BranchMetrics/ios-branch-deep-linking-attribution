@@ -27,6 +27,8 @@ jobs:
         env:
             BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
         run: |
+            rm -rf ~/Library/Caches/org.carthage.CarthageKit
+            rm -rf Carthage
             CURR_DIR=$(PWD)
             ./scripts/getSimulator
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
