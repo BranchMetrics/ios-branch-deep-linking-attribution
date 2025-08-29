@@ -845,6 +845,12 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 + (void)setODMInfo:(NSString *)odmInfo andFirstOpenTimestamp:(NSDate *) firstOpenTimestamp;
 
 /**
+ Sets a custom Meta Anon ID for the current user.
+ @param anonID The custom Meta Anon ID to be used by Branch.
+ */
++ (void)setAnonID:(NSString *)anonID;
+
+/**
  * Enumeration representing different levels of consumer protection attribution levels
  */
 typedef NSString * BranchAttributionLevel NS_STRING_ENUM;

@@ -359,4 +359,101 @@
                    @"Very small positive timeout should be valid");
 }
 
+- (void)testSetAnonID {
+    NSString *expectedAnonID = @"static-test-anon-id-12345";
+    
+    [Branch setAnonID:expectedAnonID];
+    
+    NSString *actualAnonID = [BNCPreferenceHelper sharedInstance].anonID;
+    XCTAssertEqualObjects(actualAnonID, expectedAnonID, @"setAnonID should set valid string");
+}
+
+- (void)testSetAnonID_UpdateExistingValue {
+    NSString *initialAnonID = @"initial-anon-id";
+    NSString *updatedAnonID = @"updated-anon-id";
+    
+    [Branch setAnonID:initialAnonID];
+    XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].anonID, initialAnonID);
+    
+    [Branch setAnonID:updatedAnonID];
+    XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].anonID, updatedAnonID);
+}
+
+- (void)testSetAnonID_NilValue {
+    NSString *initialAnonID = @"initial-anon-id";
+
+    [Branch setAnonID:initialAnonID];
+    XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].anonID, initialAnonID);
+    
+    [Branch setAnonID:nil];
+    XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].anonID, initialAnonID);
+}
+
+- (void)testSetAnonID_EmptyString {
+    NSString *emptyAnonID = @"";
+    
+    [Branch setAnonID:emptyAnonID];
+    
+    NSString *actualAnonID = [BNCPreferenceHelper sharedInstance].anonID;
+    XCTAssertEqualObjects(actualAnonID, emptyAnonID, @"Static setAnonID should accept empty string");
+}
+
+- (void)testSetAnonID_NonStringObject {
+    NSString *initialAnonID = @"initial-anon-id";
+    
+    [Branch setAnonID:initialAnonID];
+    XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].anonID, initialAnonID);
+    
+    // Try to set with a non-string object (NSNumber)
+    NSNumber *nonStringValue = @123;
+    [Branch setAnonID:(NSString *)nonStringValue];
+    
+    XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].anonID, initialAnonID);
+}
+
+- (void)testSetAnonID_LongString {
+    NSString *longAnonID = @"very-long-anon-id-with-many-characters-to-test-string-handling-1234567890-abcdefghijklmnopqrstuvwxyz";
+    
+    [Branch setAnonID:longAnonID];
+    
+    NSString *actualAnonID = [BNCPreferenceHelper sharedInstance].anonID;
+    XCTAssertEqualObjects(actualAnonID, longAnonID, @"setAnonID should handle long strings");
+}
+
+- (void)testSetAnonID_SpecialCharacters {
+    NSString *specialCharAnonID = @"static-anon-id-with-special-chars-!@#$%^&*()_+-=[]{}|;:,.<>?";
+    
+    [Branch setAnonID:specialCharAnonID];
+    
+    NSString *actualAnonID = [BNCPreferenceHelper sharedInstance].anonID;
+    XCTAssertEqualObjects(actualAnonID, specialCharAnonID, @"setAnonID should handle special characters");
+}
+
+- (void)testSetAnonID_ThreadSafety {
+    NSString *anonID1 = @"thread-test-anon-id-1";
+    NSString *anonID2 = @"thread-test-anon-id-2";
+    
+    // Test that the method is thread-safe by calling it from different queues
+    dispatch_group_t group = dispatch_group_create();
+    
+    dispatch_group_enter(group);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [Branch setAnonID:anonID1];
+        dispatch_group_leave(group);
+    });
+    
+    dispatch_group_enter(group);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [Branch setAnonID:anonID2];
+        dispatch_group_leave(group);
+    });
+    
+    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+    
+    // Verify that one of the values was set (we can't predict which due to concurrency)
+    NSString *finalAnonID = [BNCPreferenceHelper sharedInstance].anonID;
+    XCTAssertTrue([finalAnonID isEqualToString:anonID1] || [finalAnonID isEqualToString:anonID2],
+                  @"One of the anonID values should be set");
+}
+
 @end

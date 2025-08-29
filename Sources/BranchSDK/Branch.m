@@ -616,6 +616,16 @@ static NSString *bnc_branchKey = nil;
     
 }
 
++ (void)setAnonID:(NSString *)anonID {
+    @synchronized (self) {
+        if (anonID && [anonID isKindOfClass:[NSString class]]) {
+            [BNCPreferenceHelper sharedInstance].anonID = anonID;
+        } else {
+            [[BranchLogger shared] logWarning:@"Invalid anonID provided. Must be a non-nil NSString." error:nil];
+        }
+    }
+}
+
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level {
     self.preferenceHelper.attributionLevel = level;
     
