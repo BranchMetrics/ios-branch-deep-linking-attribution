@@ -83,86 +83,88 @@
 }
 
 - (void) fetchODMInfoFromDeviceWithInitDate:(NSDate *) date  andCompletion:(void (^)(NSString *odmInfo, NSError *error))completion {
-    
-    NSError *error = nil ;
-    
-    Class ODMConversionManagerClass = NSClassFromString(@"ODCConversionManager");
-    SEL sharedInstanceSelector = NSSelectorFromString(@"sharedInstance");
-    
-    if (ODMConversionManagerClass && [ODMConversionManagerClass respondsToSelector:sharedInstanceSelector]) {
+    @synchronized (self) {
         
-        id sharedInstance =  ((id (*)(id, SEL))[ODMConversionManagerClass methodForSelector:sharedInstanceSelector])
-        (ODMConversionManagerClass, sharedInstanceSelector);
-
-        // Set the time when the app was first launched by calling setFirstLaunchTime: dynamically
-        SEL setFirstLaunchTimeSelector = NSSelectorFromString(@"setFirstLaunchTime:");
+        NSError *error = nil ;
         
-        if ([sharedInstance respondsToSelector:setFirstLaunchTimeSelector]) {
+        Class ODMConversionManagerClass = NSClassFromString(@"ODCConversionManager");
+        SEL sharedInstanceSelector = NSSelectorFromString(@"sharedInstance");
+        
+        if (ODMConversionManagerClass && [ODMConversionManagerClass respondsToSelector:sharedInstanceSelector]) {
             
-            void (*setFirstLaunchTimeMethod)(id, SEL, NSDate *) = (void (*)(id, SEL, NSDate *))
-                    [sharedInstance methodForSelector:setFirstLaunchTimeSelector];
-            setFirstLaunchTimeMethod(sharedInstance, setFirstLaunchTimeSelector, date);
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"setFirstLaunchTimeSelector: invoked successfully."] error:nil];
+            id sharedInstance =  ((id (*)(id, SEL))[ODMConversionManagerClass methodForSelector:sharedInstanceSelector])
+            (ODMConversionManagerClass, sharedInstanceSelector);
             
-            // Fetch the conversion info. Call fetchAggregateConversionInfoForInteraction:completion dynamically
-            SEL fetchAggregateConversionInfoSelector = NSSelectorFromString(@"fetchAggregateConversionInfoForInteraction:completion:");
-            if ([sharedInstance respondsToSelector:fetchAggregateConversionInfoSelector]) {
-                NSMethodSignature *signature = [sharedInstance methodSignatureForSelector:fetchAggregateConversionInfoSelector];
-                NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-                [invocation setTarget:sharedInstance];
-                [invocation setSelector:fetchAggregateConversionInfoSelector];
-
-                // Since ODCInteractionType is an enum defined in AppAdsOnDeviceConversion.framework and its not accessible via reflection. And since enums in Objective-C are just symbolic constants that get replaced by their underlying integer values at compile time, so defining similar enum here -
-                typedef NS_ENUM(NSInteger, ODCInteractionType) {
-                  ODCInteractionTypeInstallation,
-                } ;
+            // Set the time when the app was first launched by calling setFirstLaunchTime: dynamically
+            SEL setFirstLaunchTimeSelector = NSSelectorFromString(@"setFirstLaunchTime:");
+            
+            if ([sharedInstance respondsToSelector:setFirstLaunchTimeSelector]) {
                 
-                ODCInteractionType arg1 = ODCInteractionTypeInstallation;
-                [invocation setArgument:&arg1 atIndex:2];
+                void (*setFirstLaunchTimeMethod)(id, SEL, NSDate *) = (void (*)(id, SEL, NSDate *))
+                [sharedInstance methodForSelector:setFirstLaunchTimeSelector];
+                setFirstLaunchTimeMethod(sharedInstance, setFirstLaunchTimeSelector, date);
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"setFirstLaunchTimeSelector: invoked successfully."] error:nil];
                 
-                __weak typeof(self) weakSelf = self;
-                self.odmFetchCompletion = ^(NSString *info, NSError *error) {
+                // Fetch the conversion info. Call fetchAggregateConversionInfoForInteraction:completion dynamically
+                SEL fetchAggregateConversionInfoSelector = NSSelectorFromString(@"fetchAggregateConversionInfoForInteraction:completion:");
+                if ([sharedInstance respondsToSelector:fetchAggregateConversionInfoSelector]) {
+                    NSMethodSignature *signature = [sharedInstance methodSignatureForSelector:fetchAggregateConversionInfoSelector];
+                    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+                    [invocation setTarget:sharedInstance];
+                    [invocation setSelector:fetchAggregateConversionInfoSelector];
+                    
+                    // Since ODCInteractionType is an enum defined in AppAdsOnDeviceConversion.framework and its not accessible via reflection. And since enums in Objective-C are just symbolic constants that get replaced by their underlying integer values at compile time, so defining similar enum here -
+                    typedef NS_ENUM(NSInteger, ODCInteractionType) {
+                        ODCInteractionTypeInstallation,
+                    } ;
+                    
+                    ODCInteractionType arg1 = ODCInteractionTypeInstallation;
+                    [invocation setArgument:&arg1 atIndex:2];
+                    
+                    __weak typeof(self) weakSelf = self;
+                    self.odmFetchCompletion = ^(NSString *info, NSError *error) {
+                        
+                        
+                        if (error) {
+                            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"ODMConversionManager:fetchInfo Error : %@", error.localizedDescription ] error:error];
+                        }
+                        
+                        __strong typeof(self) self = weakSelf;
+                        
+                        if (completion) {
+                            completion( info, error);
+                        }
+                        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Received Info: %@", info] error:nil];
+                    };
+                    
+                    [invocation setArgument:&_odmFetchCompletion atIndex:3];
+                    [invocation invoke];
+                    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"fetchInfo:completion: invoked successfully."] error:nil];
                     
                     
-                    if (error) {
-                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"ODMConversionManager:fetchInfo Error : %@", error.localizedDescription ] error:error];
-                    }
-                    
-                    __strong typeof(self) self = weakSelf;
-                    
+                } else {
+                    NSString *message = [NSString stringWithFormat:@"Method fetchInfo:completion: not found."] ;
+                    error = [NSError branchErrorWithCode:BNCMethodNotFoundError localizedMessage:message];
+                    [[BranchLogger shared] logDebug:message error:error ];
                     if (completion) {
-                        completion( info, error);
+                        completion( nil, error);
                     }
-                    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Received Info: %@", info] error:nil];
-                };
-
-                [invocation setArgument:&_odmFetchCompletion atIndex:3];
-                [invocation invoke];
-                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"fetchInfo:completion: invoked successfully."] error:nil];
-        
-                
+                }
             } else {
-                NSString *message = [NSString stringWithFormat:@"Method fetchInfo:completion: not found."] ;
+                NSString *message = [NSString stringWithFormat:@"Method setFirstLaunchTimeSelector: not found."] ;
                 error = [NSError branchErrorWithCode:BNCMethodNotFoundError localizedMessage:message];
-                [[BranchLogger shared] logDebug:message error:error ];
+                [[BranchLogger shared] logDebug:message error:error];
                 if (completion) {
                     completion( nil, error);
                 }
             }
         } else {
-            NSString *message = [NSString stringWithFormat:@"Method setFirstLaunchTimeSelector: not found."] ;
-            error = [NSError branchErrorWithCode:BNCMethodNotFoundError localizedMessage:message];
+            NSString *message = [NSString stringWithFormat:@"ODCConversionManager class or sharedInstance method not found. Ignore this error if not using ODM."] ;
+            error = [NSError branchErrorWithCode:BNCClassNotFoundError localizedMessage:message];
             [[BranchLogger shared] logDebug:message error:error];
             if (completion) {
                 completion( nil, error);
             }
-        }
-    } else {
-        NSString *message = [NSString stringWithFormat:@"ODCConversionManager class or sharedInstance method not found. Ignore this error if not using ODM."] ;
-        error = [NSError branchErrorWithCode:BNCClassNotFoundError localizedMessage:message];
-        [[BranchLogger shared] logDebug:message error:error];
-        if (completion) {
-            completion( nil, error);
         }
     }
 }
