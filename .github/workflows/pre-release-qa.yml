@@ -5,6 +5,7 @@ on: [push]
 jobs:
   verify-cocoapods-iOS:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Select Xcode version
         run: sudo xcode-select -s '/Applications/Xcode_16.4.app/Contents/Developer'
@@ -20,6 +21,7 @@ jobs:
             xcodebuild test -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace -destination "$DESTINATION" 
   verify-carthage-iOS:
     runs-on: macos-15
+    timeout-minutes: 20
     steps:
       - name: Select Xcode version
         run: sudo xcode-select -s '/Applications/Xcode_16.4.app/Contents/Developer'
@@ -38,6 +40,7 @@ jobs:
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" 
   verify-SPM-iOS:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Select Xcode version
         run: sudo xcode-select -s '/Applications/Xcode_16.4.app/Contents/Developer'
@@ -51,6 +54,7 @@ jobs:
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" 
   verify-manually-with-xcframework-iOS:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Select Xcode version
         run: sudo xcode-select -s '/Applications/Xcode_16.4.app/Contents/Developer'
@@ -65,6 +69,7 @@ jobs:
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" 
   verify-manually-with-StaticFramework-iOS:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Select Xcode version
         run: sudo xcode-select -s '/Applications/Xcode_16.4.app/Contents/Developer'
@@ -79,6 +84,7 @@ jobs:
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" 
   verify-cocoapods-tvOS:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Select Xcode version
         run: sudo xcode-select -s '/Applications/Xcode_16.4.app/Contents/Developer'
@@ -93,6 +99,7 @@ jobs:
             xcodebuild test -scheme tvOSReleaseTest -workspace tvOSReleaseTest.xcworkspace -destination "$DESTINATION" 
   verify-carthage-tvOS:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Select Xcode version
         run: sudo xcode-select -s '/Applications/Xcode_16.4.app/Contents/Developer'
@@ -106,6 +113,7 @@ jobs:
             echo "Skipping it ... its broken"
   verify-manually-with-xcframework-tvOS:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Select Xcode version
         run: sudo xcode-select -s '/Applications/Xcode_16.4.app/Contents/Developer'
