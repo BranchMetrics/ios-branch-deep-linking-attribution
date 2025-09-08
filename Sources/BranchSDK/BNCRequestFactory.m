@@ -79,7 +79,7 @@
     dispatch_group_t apiGroup = dispatch_group_create();
     dispatch_queue_t concurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     
-    if ([[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelFull])
+    if (![self.preferenceHelper attributionLevelInitialized] || [[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelFull])
     {
         dispatch_group_enter(apiGroup);
         dispatch_async(concurrentQueue, ^{
@@ -385,7 +385,7 @@
 
 - (void)addODMInfoToJSON:(NSMutableDictionary *)json {
 #if !TARGET_OS_TV
-    if ([[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelFull]) {
+    if (![self.preferenceHelper attributionLevelInitialized] || [[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelFull]) {
         if (self.odmInfo) {
             [self safeSetValue:self.odmInfo forKey:BRANCH_REQUEST_KEY_ODM_INFO onDict:json];
             NSNumber* odmInitDateInNumberFormat = BNCWireFormatFromDate(self.preferenceHelper.odmInfoInitDate);
