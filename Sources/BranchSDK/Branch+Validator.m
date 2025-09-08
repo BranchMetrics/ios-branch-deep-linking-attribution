@@ -176,12 +176,8 @@ NSURL *BranchValidationErrorReference(BranchValidationError error) {
     // Build an alert string:
     NSString *alertString = @"";
     NSMutableArray<NSNumber *> *errors = [[NSMutableArray alloc] init];
-    alertString = [alertString stringByAppendingFormat:@"\nBranch SDK Version: %@\n", BNC_SDK_VERSION];
-    if ([Branch useTestBranchKey]) {
-        alertString = [alertString stringByAppendingFormat:@"The SDK is using the test key\n\n"];
-    } else {
-        alertString = [alertString stringByAppendingFormat:@"The SDK is using the live key\n\n"];
-    }
+    alertString = [alertString stringByAppendingFormat:@"\n SDK Version: %@\n", BNC_SDK_VERSION];
+    
     if ([BNCSystemObserver compareLinkDomain:defaultDomain]) {
         alertString = [alertString stringByAppendingFormat:@"%@Default Link Domain matches:\n\t'%@'\n", kPassMark, defaultDomain];
     } else {
