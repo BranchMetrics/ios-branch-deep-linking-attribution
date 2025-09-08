@@ -1905,12 +1905,12 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                   error:(NSError*)error {
 
     // If the request was successful, or was a bad user request, continue processing.
-    // Since 4xx are client error codes, skipping them for retry
+    // Also skipping retry for 1xx(Informational), 2xx(Success), 3xx(Redirectional Message) and 4xx(Client)error codes.
     if (!error ||
         error.code == BNCTrackingDisabledError ||
         error.code == BNCBadRequestError ||
         error.code == BNCDuplicateResourceError ||
-        (400 <= error.code && error.code <= 451)) {
+        ((100 <= error.code) && (error.code <= 499))) {
 
         BNCPerformBlockOnMainThreadSync(^{
             [req processResponse:response error:error];
