@@ -178,77 +178,101 @@ NSURL *BranchValidationErrorReference(BranchValidationError error) {
     NSMutableArray<NSNumber *> *errors = [[NSMutableArray alloc] init];
     alertString = [alertString stringByAppendingFormat:@"\n SDK Version: %@\n", BNC_SDK_VERSION];
     
-    if ([BNCSystemObserver compareLinkDomain:defaultDomain]) {
-        alertString = [alertString stringByAppendingFormat:@"%@Default Link Domain matches:\n\t'%@'\n", kPassMark, defaultDomain];
-    } else {
-        testsFailed = YES;
-        alertString = [alertString stringByAppendingFormat:@"%@Default Link Domain mismatch:\n\t'%@'\n", kFailMark, defaultDomain];
-        if (![errors containsObject:@(BranchLinkDomainError)]) {
-            [errors addObject:@(BranchLinkDomainError)];
-        }
-    }
-
-    if ([BNCSystemObserver compareLinkDomain:alternateDomain]) {
-        alertString = [alertString stringByAppendingFormat:@"%@Alternate Link Domain matches:\n\t'%@'\n", kPassMark, alternateDomain];
-    } else {
-        testsFailed = YES;
-        alertString = [alertString stringByAppendingFormat:@"%@Alternate Link Domain mismatch:\n\t'%@'\n", kFailMark, alternateDomain];
-        if (![errors containsObject:@(BranchLinkDomainError)]) {
-            [errors addObject:@(BranchLinkDomainError)];
-        }
-    }
-
-    if (serverUriScheme.length && doUriSchemesMatch) {
-        alertString = [alertString stringByAppendingFormat:@"%@URI Scheme matches:\n\t'%@'\n",
-            kPassMark,  serverUriScheme];
-    } else {
-        testsFailed = YES;
-        alertString = [alertString stringByAppendingFormat:@"%@URI Scheme mismatch:\n\t'%@'\n",
-            kFailMark,  serverUriScheme];
-        if (![errors containsObject:@(BranchURISchemeError)]) {
-            [errors addObject:@(BranchURISchemeError)];
-        }
-    }
-
-    if ([serverBundleID isEqualToString:clientBundleIdentifier]) {
-        alertString = [alertString stringByAppendingFormat:@"%@App Bundle ID matches:\n\t'%@'\n",
-            kPassMark,  serverBundleID];
-    } else {
-        testsFailed = YES;
-        alertString = [alertString stringByAppendingFormat:@"%@App Bundle ID mismatch:\n\t'%@'\n",
-            kFailMark,  serverBundleID];
-        if (![errors containsObject:@(BranchAppIDError)]) {
-            [errors addObject:@(BranchAppIDError)];
-        }
-    }
-
-    if ([serverTeamID isEqualToString:clientTeamId]) {
-        alertString = [alertString stringByAppendingFormat:@"%@Team ID matches:\n\t'%@'\n",
-            kPassMark,  serverTeamID];
-    } else {
-        testsFailed = YES;
-        alertString = [alertString stringByAppendingFormat:@"%@Team ID mismatch:\n\t'%@'\n",
-            kFailMark,  serverTeamID];
-        if (![errors containsObject:@(BranchAppIDError)]) {
-            [errors addObject:@(BranchAppIDError)];
-        }
-    }
+    //check if the Branch singleton has been created
+    alertString = [alertString stringByAppendingFormat:@"\nBranch Instance\n"];
     
-    if ([attOptInStatus isEqualToString:@"authorized"]) {
-        alertString = [alertString stringByAppendingFormat:@"%@IDFA is accessible\n", kPassMark];
-    } else {
-        alertString = [alertString stringByAppendingFormat:@"%@IDFA is not accessible\n", kWarningMark];
-        if (![errors containsObject:@(BranchATTError)]) {
-            [errors addObject:@(BranchATTError)];
-        }
-    }
+    //check if the keys have been added
+    alertString = [alertString stringByAppendingFormat:@"\nBranch Keys\n"];
     
-    if (testsFailed) {
-        alertString = [alertString stringByAppendingString:@"\nFailed!"];
-    } else {
-        alertString = [alertString stringByAppendingString:@"\nPassed!"];
-    }
-
+    //check if the package name matches the dashboard entry
+    alertString = [alertString stringByAppendingFormat:@"\nBundle Identifier\n"];
+    
+    //check if the uri scheme matches the dashboard entry
+    alertString = [alertString stringByAppendingFormat:@"\nURI Scheme\n"];
+    
+    //check if the Universal Links match the dashboard entry
+    alertString = [alertString stringByAppendingFormat:@"\n Universal Links\n"];
+    
+    //check if the custom domain was added (if applicable)
+    alertString = [alertString stringByAppendingFormat:@"\nCustom Domain\n"];
+    
+    //check if the default domains were added
+    alertString = [alertString stringByAppendingFormat:@"\nDefault Domains\n"];
+    
+    //check if the alt domains were added
+    alertString = [alertString stringByAppendingFormat:@"\nAlt Domains\n"];
+    
+//    if ([BNCSystemObserver compareLinkDomain:defaultDomain]) {
+//        alertString = [alertString stringByAppendingFormat:@"%@Default Link Domain matches:\n\t'%@'\n", kPassMark, defaultDomain];
+//    } else {
+//        testsFailed = YES;
+//        alertString = [alertString stringByAppendingFormat:@"%@Default Link Domain mismatch:\n\t'%@'\n", kFailMark, defaultDomain];
+//        if (![errors containsObject:@(BranchLinkDomainError)]) {
+//            [errors addObject:@(BranchLinkDomainError)];
+//        }
+//    }
+//
+//    if ([BNCSystemObserver compareLinkDomain:alternateDomain]) {
+//        alertString = [alertString stringByAppendingFormat:@"%@Alternate Link Domain matches:\n\t'%@'\n", kPassMark, alternateDomain];
+//    } else {
+//        testsFailed = YES;
+//        alertString = [alertString stringByAppendingFormat:@"%@Alternate Link Domain mismatch:\n\t'%@'\n", kFailMark, alternateDomain];
+//        if (![errors containsObject:@(BranchLinkDomainError)]) {
+//            [errors addObject:@(BranchLinkDomainError)];
+//        }
+//    }
+//
+//    if (serverUriScheme.length && doUriSchemesMatch) {
+//        alertString = [alertString stringByAppendingFormat:@"%@URI Scheme matches:\n\t'%@'\n",
+//            kPassMark,  serverUriScheme];
+//    } else {
+//        testsFailed = YES;
+//        alertString = [alertString stringByAppendingFormat:@"%@URI Scheme mismatch:\n\t'%@'\n",
+//            kFailMark,  serverUriScheme];
+//        if (![errors containsObject:@(BranchURISchemeError)]) {
+//            [errors addObject:@(BranchURISchemeError)];
+//        }
+//    }
+//
+//    if ([serverBundleID isEqualToString:clientBundleIdentifier]) {
+//        alertString = [alertString stringByAppendingFormat:@"%@App Bundle ID matches:\n\t'%@'\n",
+//            kPassMark,  serverBundleID];
+//    } else {
+//        testsFailed = YES;
+//        alertString = [alertString stringByAppendingFormat:@"%@App Bundle ID mismatch:\n\t'%@'\n",
+//            kFailMark,  serverBundleID];
+//        if (![errors containsObject:@(BranchAppIDError)]) {
+//            [errors addObject:@(BranchAppIDError)];
+//        }
+//    }
+//
+//    if ([serverTeamID isEqualToString:clientTeamId]) {
+//        alertString = [alertString stringByAppendingFormat:@"%@Team ID matches:\n\t'%@'\n",
+//            kPassMark,  serverTeamID];
+//    } else {
+//        testsFailed = YES;
+//        alertString = [alertString stringByAppendingFormat:@"%@Team ID mismatch:\n\t'%@'\n",
+//            kFailMark,  serverTeamID];
+//        if (![errors containsObject:@(BranchAppIDError)]) {
+//            [errors addObject:@(BranchAppIDError)];
+//        }
+//    }
+//    
+//    if ([attOptInStatus isEqualToString:@"authorized"]) {
+//        alertString = [alertString stringByAppendingFormat:@"%@IDFA is accessible\n", kPassMark];
+//    } else {
+//        alertString = [alertString stringByAppendingFormat:@"%@IDFA is not accessible\n", kWarningMark];
+//        if (![errors containsObject:@(BranchATTError)]) {
+//            [errors addObject:@(BranchATTError)];
+//        }
+//    }
+//    
+//    if (testsFailed) {
+//        alertString = [alertString stringByAppendingString:@"\nFailed!"];
+//    } else {
+//        alertString = [alertString stringByAppendingString:@"\nPassed!"];
+//    }
+//
     NSMutableParagraphStyle *ps = [NSMutableParagraphStyle new];
     ps.alignment = NSTextAlignmentLeft;
     NSAttributedString *styledAlertString =
@@ -278,13 +302,13 @@ NSURL *BranchValidationErrorReference(BranchValidationError error) {
                 handler:nil]];
         } else {
             [alertController
-                addAction:[UIAlertAction actionWithTitle:@"Done"
-                style:UIAlertActionStyleDefault
-                handler:nil]];
-            [alertController
                 addAction:[UIAlertAction actionWithTitle:@"Export Logs"
                 style:UIAlertActionStyleDefault
                 handler:^ (UIAlertAction *action) { [self showExportedLogs]; }]];
+            [alertController
+                addAction:[UIAlertAction actionWithTitle:@"Test Deep Linking"
+                style:UIAlertActionStyleDefault
+                handler:nil]];
         }
         [alertController setValue:styledAlertString forKey:@"attributedMessage"];
         [[UIViewController bnc_currentViewController]
