@@ -212,7 +212,7 @@ jobs:
           echo "Current version is $(cat fastlane/.version)."
           echo "version=$(cat fastlane/.version)" >> $GITHUB_OUTPUT
       - name: Create GitHub Release
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const createRelease = require('./.github/custom-scripts/create-release');
@@ -226,7 +226,7 @@ jobs:
               version: tagName,
             });
       - name: Upload Release Assets
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const uploadAsset = require('./.github/custom-scripts/upload-asset');
