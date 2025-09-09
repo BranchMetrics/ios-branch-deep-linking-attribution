@@ -125,6 +125,7 @@ NSURL *BranchValidationErrorReference(BranchValidationError error) {
     NSString*serverTeamID       = BNCStringFromWireFormat(response.data[@"ios_team_id"]) ?: @"";
     NSString*defaultDomain = BNCStringFromWireFormat(response.data[@"default_short_url_domain"]) ?: @"";
     NSString*alternateDomain = BNCStringFromWireFormat(response.data[@"alternate_short_url_domain"]) ?: @"";
+    NSString*customDomain = BNCStringFromWireFormat(response.data[@"short_url_domain"]) ?: @"";
     NSString*attOptInStatus = [BNCSystemObserver attOptedInStatus];
 
     // Verify:
@@ -176,7 +177,7 @@ NSURL *BranchValidationErrorReference(BranchValidationError error) {
     // Build an alert string:
     NSString *alertString = @"";
     NSMutableArray<NSNumber *> *errors = [[NSMutableArray alloc] init];
-    alertString = [alertString stringByAppendingFormat:@"\n SDK Version: %@\n", BNC_SDK_VERSION];
+    alertString = [alertString stringByAppendingFormat:@"\n\tSDK Version: %@\n", BNC_SDK_VERSION];
     
     //check if the Branch singleton has been created
     alertString = [alertString stringByAppendingFormat:@"\nBranch Instance\n"];
@@ -185,94 +186,74 @@ NSURL *BranchValidationErrorReference(BranchValidationError error) {
     alertString = [alertString stringByAppendingFormat:@"\nBranch Keys\n"];
     
     //check if the package name matches the dashboard entry
-    alertString = [alertString stringByAppendingFormat:@"\nBundle Identifier\n"];
+    BOOL bundleIDMatch = [serverBundleID isEqualToString:clientBundleIdentifier];
+    alertString = [alertString stringByAppendingFormat:@"\nBundle Identifier\t%@\n",
+        bundleIDMatch ? kPassMark : kFailMark];
+    if (!bundleIDMatch) {
+        testsFailed = YES;
+        if (![errors containsObject:@(BranchAppIDError)]) {
+            [errors addObject:@(BranchAppIDError)];
+        }
+    }
+    
+    //check if the Team ID matches the dashboard entry
+    BOOL teamIDMatch = [serverTeamID isEqualToString:clientTeamId];
+    alertString = [alertString stringByAppendingFormat:@"\nTeam ID\t%@\n",
+                   teamIDMatch ? kPassMark : kFailMark];
+    if (!teamIDMatch) {
+        testsFailed = YES;
+        if (![errors containsObject:@(BranchAppIDError)]) {
+            [errors addObject:@(BranchAppIDError)];
+        }
+    }
     
     //check if the uri scheme matches the dashboard entry
-    alertString = [alertString stringByAppendingFormat:@"\nURI Scheme\n"];
+    BOOL uriSchemeMatch = serverUriScheme.length && doUriSchemesMatch;
+    alertString = [alertString stringByAppendingFormat:@"\nURI Scheme\t%@\n",
+                   uriSchemeMatch ? kPassMark : kFailMark];
+    if (!uriSchemeMatch) {
+        testsFailed = YES;
+        if (![errors containsObject:@(BranchURISchemeError)]) {
+            [errors addObject:@(BranchURISchemeError)];
+        }
+    }
     
     //check if the Universal Links match the dashboard entry
-    alertString = [alertString stringByAppendingFormat:@"\n Universal Links\n"];
+    alertString = [alertString stringByAppendingFormat:@"\nUniversal Links\n"];
     
     //check if the custom domain was added (if applicable)
-    alertString = [alertString stringByAppendingFormat:@"\nCustom Domain\n"];
+    BOOL customDomainMatch = [BNCSystemObserver compareLinkDomain:customDomain] || [customDomain isEqual: @""];
+    alertString = [alertString stringByAppendingFormat:@"\nCustom Domain\t%@\n",
+                   customDomainMatch ? kPassMark : kFailMark];
+    if (!customDomainMatch) {
+        testsFailed = YES;
+        if (![errors containsObject:@(BranchLinkDomainError)]) {
+            [errors addObject:@(BranchLinkDomainError)];
+        }
+    }
     
     //check if the default domains were added
-    alertString = [alertString stringByAppendingFormat:@"\nDefault Domains\n"];
+    BOOL defaultDomainMatch = [BNCSystemObserver compareLinkDomain:defaultDomain];
+    alertString = [alertString stringByAppendingFormat:@"\nDefault Domains\t%@\n",
+                   defaultDomainMatch ? kPassMark : kFailMark];
+    if (!defaultDomainMatch) {
+        testsFailed = YES;
+        if (![errors containsObject:@(BranchLinkDomainError)]) {
+            [errors addObject:@(BranchLinkDomainError)];
+        }
+    }
     
     //check if the alt domains were added
-    alertString = [alertString stringByAppendingFormat:@"\nAlt Domains\n"];
-    
-//    if ([BNCSystemObserver compareLinkDomain:defaultDomain]) {
-//        alertString = [alertString stringByAppendingFormat:@"%@Default Link Domain matches:\n\t'%@'\n", kPassMark, defaultDomain];
-//    } else {
-//        testsFailed = YES;
-//        alertString = [alertString stringByAppendingFormat:@"%@Default Link Domain mismatch:\n\t'%@'\n", kFailMark, defaultDomain];
-//        if (![errors containsObject:@(BranchLinkDomainError)]) {
-//            [errors addObject:@(BranchLinkDomainError)];
-//        }
-//    }
-//
-//    if ([BNCSystemObserver compareLinkDomain:alternateDomain]) {
-//        alertString = [alertString stringByAppendingFormat:@"%@Alternate Link Domain matches:\n\t'%@'\n", kPassMark, alternateDomain];
-//    } else {
-//        testsFailed = YES;
-//        alertString = [alertString stringByAppendingFormat:@"%@Alternate Link Domain mismatch:\n\t'%@'\n", kFailMark, alternateDomain];
-//        if (![errors containsObject:@(BranchLinkDomainError)]) {
-//            [errors addObject:@(BranchLinkDomainError)];
-//        }
-//    }
-//
-//    if (serverUriScheme.length && doUriSchemesMatch) {
-//        alertString = [alertString stringByAppendingFormat:@"%@URI Scheme matches:\n\t'%@'\n",
-//            kPassMark,  serverUriScheme];
-//    } else {
-//        testsFailed = YES;
-//        alertString = [alertString stringByAppendingFormat:@"%@URI Scheme mismatch:\n\t'%@'\n",
-//            kFailMark,  serverUriScheme];
-//        if (![errors containsObject:@(BranchURISchemeError)]) {
-//            [errors addObject:@(BranchURISchemeError)];
-//        }
-//    }
-//
-//    if ([serverBundleID isEqualToString:clientBundleIdentifier]) {
-//        alertString = [alertString stringByAppendingFormat:@"%@App Bundle ID matches:\n\t'%@'\n",
-//            kPassMark,  serverBundleID];
-//    } else {
-//        testsFailed = YES;
-//        alertString = [alertString stringByAppendingFormat:@"%@App Bundle ID mismatch:\n\t'%@'\n",
-//            kFailMark,  serverBundleID];
-//        if (![errors containsObject:@(BranchAppIDError)]) {
-//            [errors addObject:@(BranchAppIDError)];
-//        }
-//    }
-//
-//    if ([serverTeamID isEqualToString:clientTeamId]) {
-//        alertString = [alertString stringByAppendingFormat:@"%@Team ID matches:\n\t'%@'\n",
-//            kPassMark,  serverTeamID];
-//    } else {
-//        testsFailed = YES;
-//        alertString = [alertString stringByAppendingFormat:@"%@Team ID mismatch:\n\t'%@'\n",
-//            kFailMark,  serverTeamID];
-//        if (![errors containsObject:@(BranchAppIDError)]) {
-//            [errors addObject:@(BranchAppIDError)];
-//        }
-//    }
-//    
-//    if ([attOptInStatus isEqualToString:@"authorized"]) {
-//        alertString = [alertString stringByAppendingFormat:@"%@IDFA is accessible\n", kPassMark];
-//    } else {
-//        alertString = [alertString stringByAppendingFormat:@"%@IDFA is not accessible\n", kWarningMark];
-//        if (![errors containsObject:@(BranchATTError)]) {
-//            [errors addObject:@(BranchATTError)];
-//        }
-//    }
-//    
-//    if (testsFailed) {
-//        alertString = [alertString stringByAppendingString:@"\nFailed!"];
-//    } else {
-//        alertString = [alertString stringByAppendingString:@"\nPassed!"];
-//    }
-//
+    BOOL altDomainMatch = [BNCSystemObserver compareLinkDomain:alternateDomain];
+    alertString = [alertString stringByAppendingFormat:@"\nAlt Domains\t%@\n",
+                   altDomainMatch ? kPassMark : kFailMark];
+    if (!altDomainMatch) {
+        testsFailed = YES;
+        if (![errors containsObject:@(BranchLinkDomainError)]) {
+            [errors addObject:@(BranchLinkDomainError)];
+        }
+    }
+
     NSMutableParagraphStyle *ps = [NSMutableParagraphStyle new];
     ps.alignment = NSTextAlignmentLeft;
     NSAttributedString *styledAlertString =
