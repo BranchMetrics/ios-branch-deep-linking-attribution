@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+v.3.13.1
+- SDK Request Queue will not cache request objects failed with Https Response Codes - 1xx, 2xx, 3xx and 4xx.
+- Fixed bug - SDK will send odm_info if Consumer Protection Attribution Level is not set or is set to Full.
+
 v.3.13.0
 - Added API 'setAnonID' to set custom Meta Anon ID for the current user.
 - Added API 'setSDKWaitTimeForThirdPartyAPIs' to set time for which SDK will wait for fetching data from third-party APIs, such as ODM info and Apple Attribution Token.
