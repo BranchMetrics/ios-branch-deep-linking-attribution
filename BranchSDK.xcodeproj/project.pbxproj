@@ -2016,7 +2016,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.13.0;
+				MARKETING_VERSION = 3.13.1;
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					LinkPresentation,
@@ -2051,7 +2051,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.13.0;
+				MARKETING_VERSION = 3.13.1;
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					LinkPresentation,
@@ -2257,7 +2257,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = staticlib;
-				MARKETING_VERSION = 3.13.0;
+				MARKETING_VERSION = 3.13.1;
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					LinkPresentation,
@@ -2296,7 +2296,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = staticlib;
-				MARKETING_VERSION = 3.13.0;
+				MARKETING_VERSION = 3.13.1;
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					LinkPresentation,
@@ -2333,7 +2333,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.13.0;
+				MARKETING_VERSION = 3.13.1;
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					LinkPresentation,
@@ -2368,7 +2368,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.13.0;
+				MARKETING_VERSION = 3.13.1;
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					LinkPresentation,
