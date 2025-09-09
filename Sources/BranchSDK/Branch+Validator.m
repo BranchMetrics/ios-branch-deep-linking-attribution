@@ -39,7 +39,8 @@ typedef NS_ENUM(NSUInteger, BranchValidationError) {
     BranchLinkDomainError, // for link domain or alternate domain mismatch
     BranchURISchemeError, // for uri scheme mismatch
     BranchAppIDError, // for bundle ID or app prefix mismatch
-    BranchATTError // for idfa missing error
+    BranchATTError, // for idfa missing error
+    BranchInstanceError //for branch instance not initialized
 };
 
 NSString *BranchValidationErrorDescription(BranchValidationError error) {
@@ -52,6 +53,8 @@ NSString *BranchValidationErrorDescription(BranchValidationError error) {
             return @"Check your bundle ID and Apple App Prefix from the Apple Developer website and ensure it matches with the values you have added on the Branch dashboard.\n\n";
         case BranchATTError:
             return @"The ATT prompt ensures that the Branch SDK can access the IDFA when the user permits it. Add the ATT prompt in your app for IDFA access.\n\n";
+        case BranchInstanceError:
+            return @"The Branch instance has not been created.";
     }
     return @"Unknown";
 }
@@ -85,6 +88,9 @@ NSURL *BranchValidationErrorReference(BranchValidationError error) {
             break;
         case BranchATTError:
             urlString = @"https://help.branch.io/developers-hub/docs/ios-advanced-features#include-apples-attrackingmanager";
+            break;
+        case BranchInstanceError:
+            urlString = @"https://help.branch.io/developers-hub/docs/ios-basic-integration#6-initialize-branch";
             break;
     }
 
@@ -180,7 +186,15 @@ NSURL *BranchValidationErrorReference(BranchValidationError error) {
     alertString = [alertString stringByAppendingFormat:@"\n\tSDK Version: %@\n", BNC_SDK_VERSION];
     
     //check if the Branch singleton has been created
-    alertString = [alertString stringByAppendingFormat:@"\nBranch Instance\n"];
+    BOOL doesBranchInstanceExist = [Branch getInstance];
+    alertString = [alertString stringByAppendingFormat:@"\nBranch Instance\t%@\n",
+                   doesBranchInstanceExist ? kPassMark : kFailMark];
+    if (!doesBranchInstanceExist) {
+        testsFailed = YES;
+        if (![errors containsObject:@(BranchInstanceError)]) {
+            [errors addObject:@(BranchInstanceError)];
+        }
+    }
     
     //check if the keys have been added
     alertString = [alertString stringByAppendingFormat:@"\nBranch Keys\n"];
