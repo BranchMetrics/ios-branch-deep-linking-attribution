@@ -1899,19 +1899,18 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
-//static inline void BNCPerformBlockOnMainThreadAsync(dispatch_block_t block) {
-//    dispatch_async(dispatch_get_main_queue(), block);
-//}
 
 - (void) processRequest:(BNCServerRequest*)req
                response:(BNCServerResponse*)response
                   error:(NSError*)error {
 
     // If the request was successful, or was a bad user request, continue processing.
+    // Also skipping retry for 1xx(Informational), 2xx(Success), 3xx(Redirectional Message) and 4xx(Client)error codes.
     if (!error ||
         error.code == BNCTrackingDisabledError ||
         error.code == BNCBadRequestError ||
-        error.code == BNCDuplicateResourceError) {
+        error.code == BNCDuplicateResourceError ||
+        ((100 <= error.code) && (error.code <= 499))) {
 
         BNCPerformBlockOnMainThreadSync(^{
             [req processResponse:response error:error];
