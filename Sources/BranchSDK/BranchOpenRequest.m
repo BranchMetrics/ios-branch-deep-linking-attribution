@@ -28,6 +28,7 @@
 
 @interface BranchOpenRequest ()
 @property (assign, nonatomic) BOOL isInstall;
+@property (strong, nonatomic) NSDictionary *requestParams;
 @end
 
 
@@ -50,7 +51,7 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
     NSDictionary *params = [factory dataForOpenWithURLString:self.urlString];
-
+    self.requestParams = [params copy];
     [serverInterface postRequest:params
         url:[[BNCServerAPI sharedInstance] openServiceURL]
         key:key
@@ -58,6 +59,11 @@
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
+    
+    if (self.traceCallback) {
+        self.traceCallback(self.urlString, self.requestParams, response.data, error);
+    }
+    
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     if (error && preferenceHelper.dropURLOpen) {
         // Ignore this response from the server. Dummy up a response:

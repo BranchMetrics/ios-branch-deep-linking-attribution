@@ -279,6 +279,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 }
 
 static Class bnc_networkServiceClass = NULL;
+static callbackForTracingRequests bnc_tracingCallback = nil;
 
 + (void)setNetworkServiceClass:(Class)networkServiceClass {
     @synchronized ([Branch class]) {
@@ -704,6 +705,10 @@ static NSString *bnc_branchKey = nil;
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController isReferrable:(BOOL)isReferrable deepLinkHandler:(callbackWithParams)callback {
     [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:YES automaticallyDisplayController:automaticallyDisplayController registerDeepLinkHandler:callback];
+}
+
++ (void) setCallbackForTracingRequests: (callbackForTracingRequests) callback {
+    bnc_tracingCallback = callback;
 }
 
 #pragma mark - Actual Init Session
@@ -2170,6 +2175,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 }
                 req.callback = initSessionCallback;
                 req.urlString = urlString;
+                req.traceCallback = bnc_tracingCallback;
                 
                 [self.requestQueue insert:req at:0];
                 
