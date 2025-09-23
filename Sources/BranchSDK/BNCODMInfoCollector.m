@@ -138,6 +138,7 @@
                     };
                     
                     [invocation setArgument:&_odmFetchCompletion atIndex:3];
+                    [invocation retainArguments];
                     [invocation invoke];
                     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"fetchInfo:completion: invoked successfully."] error:nil];
                     
