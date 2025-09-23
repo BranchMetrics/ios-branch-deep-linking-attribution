@@ -63,6 +63,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         APPLogHookFunction([NSDate date], logLevel, logEntry);
     }];
     
+    
     // Comment out in production. Un-comment to test your Branch SDK Integration:
     //[branch validateSDKIntegration];
 
