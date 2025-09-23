@@ -60,6 +60,9 @@ typedef NS_ENUM(NSInteger, BranchEventAdType) {
 
 #pragma mark - BranchEvent
 
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @interface BranchEvent : NSObject <SKProductsRequestDelegate>
 
 - (instancetype _Nonnull) initWithName:(NSString*_Nonnull)name NS_DESIGNATED_INITIALIZER;
@@ -117,6 +120,8 @@ typedef NS_ENUM(NSInteger, BranchEventAdType) {
 - (void) logEventWithTransaction:(SKPaymentTransaction*_Nonnull)transaction;
 
 @end
+
+#pragma clang diagnostic pop
 
 #pragma mark - BranchEventRequest
 

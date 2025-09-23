@@ -402,7 +402,7 @@
 				CODE_SIGN_ENTITLEMENTS = iOSReleaseTest/iOSReleaseTest.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 5YP4T32B58;
+				DEVELOPMENT_TEAM = R63EM248DP;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iOSReleaseTest/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -431,7 +431,7 @@
 				CODE_SIGN_ENTITLEMENTS = iOSReleaseTest/iOSReleaseTest.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = YKPTD52Z6X;
+				DEVELOPMENT_TEAM = R63EM248DP;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iOSReleaseTest/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
