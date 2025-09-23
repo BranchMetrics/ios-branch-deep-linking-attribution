@@ -40,15 +40,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     // test pre init support
     //[self testDispatchToIsolationQueue:branch]
-    [Branch setCallbackForTracingRequests:^(NSString * _Nullable url, NSDictionary * _Nullable request, NSDictionary * _Nullable response, NSError * _Nullable error) {
-        NSLog(@"Tracing Callback Start ********************");
-        NSLog(@"URL: %@", url);
-        NSLog(@"Request: %@", request);
-        NSLog(@"Response: %@", response);
-        NSLog(@"Error: %@", [error description]);
-        NSLog(@"Tracing Callback End ********************");
-    }];
-   /* [Branch enableLoggingAtLevel:BranchLogLevelVerbose withAdvancedCallback:^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error, NSMutableURLRequest * _Nullable request, BNCServerResponse * _Nullable response) {
+    
+    [Branch enableLoggingAtLevel:BranchLogLevelVerbose withAdvancedCallback:^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error, NSMutableURLRequest * _Nullable request, BNCServerResponse * _Nullable response) {
         // Handle the log message and error here. For example, printing to the console:
         if (error) {
             NSLog(@"[BranchLog] Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription);
@@ -70,7 +63,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         APPLogHookFunction([NSDate date], logLevel, logEntry);
     }];
     
-    */
     // Comment out in production. Un-comment to test your Branch SDK Integration:
     //[branch validateSDKIntegration];
 
