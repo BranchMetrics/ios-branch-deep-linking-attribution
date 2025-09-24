@@ -602,6 +602,8 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 
 + (void)setSafetrackAPIURL:(NSString *)url ;
 
++ (void)setCallbackForTracingRequests: (callbackForTracingRequests) callback ;
+
 /**
   @brief        Use the `validateSDKIntegration` method as a debugging aid to assure that you've
                 integrated the Branch SDK correctly.
