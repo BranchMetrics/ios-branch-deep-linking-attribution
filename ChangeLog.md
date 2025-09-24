@@ -1,5 +1,10 @@
 Branch iOS SDK Change Log
 
+v.3.13.2 
+— Suppressed deprecated StoreKit API warnings. These APIs will be replaced with StoreKit 2 APIs in upcoming releases.
+— Added defensive fix to improve reliability of NSInvocation calls.
+— Added some additional debug logging API.
+
 v.3.13.1
 - SDK Request Queue will not cache request objects failed with Https Response Codes - 1xx, 2xx, 3xx and 4xx.
 - Fixed bug - SDK will send odm_info if Consumer Protection Attribution Level is not set or is set to Full.
