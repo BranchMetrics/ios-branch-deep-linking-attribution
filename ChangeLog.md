@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.3.13.3 
+— Fixed Bug - Missing Apple Attribution Token in Install Requests.
+
 v.3.13.2 
 — Suppressed deprecated StoreKit API warnings. These APIs will be replaced with StoreKit 2 APIs in upcoming releases.
 — Added defensive fix to improve reliability of NSInvocation calls.
