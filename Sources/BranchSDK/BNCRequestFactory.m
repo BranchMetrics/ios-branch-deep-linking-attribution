@@ -94,9 +94,6 @@
         dispatch_group_enter(apiGroup);
         dispatch_async(concurrentQueue, ^{
             self.appleAttributionToken = [BNCSystemObserver appleAttributionToken];
-            if (self.appleAttributionToken) {
-                self.preferenceHelper.appleAttributionTokenChecked = YES;
-            }
             dispatch_group_leave(apiGroup);
         });
     }
