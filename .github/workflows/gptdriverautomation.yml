@@ -1,6 +1,6 @@
 name: iOS Release Build and GPTDriver Tests
-
-on: workflow_dispatch
+on:
+  workflow_dispatch: {}
 
 jobs:
   BuildAndTestAppOnGPTDriver: # Job name, as chosen
