@@ -3,11 +3,120 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  static-analysis:
-    runs-on: macos-latest
+  BuildAndTestAppOnGPTDriver: # Job name, as chosen
+    runs-on: macos-latest # macOS runner is required for iOS builds
     steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-      - name: Run static analysis
+      # --- Step 1: Extract version from branch name ---
+      - name: Extract version from branch name
+        id: extract_version_step
         run: |
-            xcodebuild analyze -project BranchSDK.xcodeproj
+          BRANCH_NAME="${{ github.ref }}"
+          # Remove 'refs/heads/' prefix (e.g., refs/heads/Release-0.0.0 -> Release-0.0.0)
+          BRANCH_NAME_WITHOUT_PREFIX="${BRANCH_NAME#refs/heads/}"
+          # Extract version after "Release-" (e.g., Release-0.0.0 -> 0.0.0)
+          VERSION=$(echo "$BRANCH_NAME_WITHOUT_PREFIX" | sed -n 's/^Release-\([0-9]*\.[0-9]*\.[0-9]*\)$/\1/p')
+
+          if [ -z "$VERSION" ]; then
+            echo "Error: Could not extract version from branch name '$BRANCH_NAME_WITHOUT_PREFIX'. Expected format: Release-X.Y.Z"
+            exit 1
+          fi
+
+          echo "Extracted versionName: $VERSION"
+          echo "VERSION_STRING=$VERSION" >> $GITHUB_ENV
+
+          # Convert semantic version to an integer for CFBundleVersion (versionCode equivalent)
+          # Example: 1.2.3 -> 102003 (assuming max 2 digits for minor/patch)
+          # This should be adjusted based on the maximum expected values for major/minor/patch
+          MAJOR=$(echo "$VERSION" | cut -d. -f1)
+          MINOR=$(echo "$VERSION" | cut -d. -f2)
+          PATCH=$(echo "$VERSION" | cut -d. -f3)
+
+          # Calculate versionCode (CFBundleVersion) - ensure this fits in a 32-bit integer
+          # Standard Android-like conversion: Major * 10000 + Minor * 100 + Patch
+          # This provides sufficient uniqueness for most common versioning schemes.
+          VERSION_CODE_INT=$(( MAJOR * 10000 + MINOR * 100 + PATCH ))
+          echo "Calculated versionCode: $VERSION_CODE_INT"
+          echo "VERSION_CODE_INT=$VERSION_CODE_INT" >> $GITHUB_ENV
+
+
+      # --- Step 2: Checkout the iOS Branch SDK repository ---
+      - name: Checkout BranchMetrics/ios-branch-deep-linking-attribution (SDK)
+        uses: actions/checkout@v4
+        with:
+          repository: BranchMetrics/ios-branch-deep-linking-attribution
+          ref: ${{ github.ref }} # Use the same branch that triggered the workflow
+          path: ./branch-ios-sdk-repo # Checkout into a subdirectory
+
+      # --- Step 3: Build the iOS Branch SDK Framework ---
+      - name: Build Branch SDK Framework
+        run: |
+          # Build for simulator. Adjust scheme if necessary.
+          # The output framework will be in build/Debug-iphonesimulator/BranchSDK.framework
+          xcodebuild build -project Branch-SDK/Branch-SDK.xcodeproj \
+            -scheme BranchSDK \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            BUILD_DIR="${{ github.workspace }}/branch-ios-sdk-repo/build" \
+            SKIP_INSTALL=NO
+        working-directory: ./branch-ios-sdk-repo # Run xcodebuild from the SDK's checkout directory
+
+      # --- Step 4: Checkout the iOS Branch Link Simulator App repository ---
+      - name: Checkout BranchMetrics/BranchLinkSimulator (App)
+        uses: actions/checkout@v4
+        with:
+          repository: BranchMetrics/BranchLinkSimulator
+          ref: gptdriver/linkingTests # Checkout the specific app branch
+          path: ./ios-app-repo # Checkout into another subdirectory
+
+      # --- Step 5: Copy the generated SDK Framework to the App's project ---
+      - name: Copy generated SDK Framework to App's libs directory
+        run: |
+          # Create a 'Frameworks' directory within the app repo for the local SDK
+          mkdir -p ./ios-app-repo/Frameworks
+          # Copy the built framework
+          cp -R ./branch-ios-sdk-repo/build/Debug-iphonesimulator/BranchSDK.framework ./ios-app-repo/Frameworks/
+        working-directory: ${{ github.workspace }} # Run from the root of the GITHUB_WORKSPACE
+
+      # --- Step 6: Build the iOS Branch Link Simulator App using the local SDK Framework ---
+      - name: Build iOS App with local SDK
+        run: |
+          # Build the app. Adjust project/workspace, scheme, and destination if necessary.
+          # We're passing MARKETING_VERSION (versionName) and CURRENT_PROJECT_VERSION (versionCode)
+          xcodebuild build -project BranchLinkSimulator.xcodeproj \
+            -scheme BranchLinkSimulator \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            MARKETING_VERSION=${{ env.VERSION_STRING }} \
+            CURRENT_PROJECT_VERSION=${{ env.VERSION_CODE_INT }} \
+            # Adjust Framework Search Paths if your Xcode project doesn't automatically find it
+            # For example, if you need to point directly to the copied framework:
+            # FRAMEWORK_SEARCH_PATHS="$(SRCROOT)/Frameworks"
+        working-directory: ./ios-app-repo # Run xcodebuild from the App's checkout directory
+
+      # --- Step 7: Echo the location of the generated .app bundle ---
+      - name: Echo .app bundle location
+        run: |
+          APP_PATH="./ios-app-repo/build/Debug-iphonesimulator/BranchLinkSimulator.app"
+          echo "Generated .app bundle location: $APP_PATH"
+          # You can also use 'find' to be more dynamic if the name might change
+          # find ./ios-app-repo/build -name "*.app"
+
+      # --- Step 8: Upload Build Artifacts ---
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: BranchLinkSimulator-iOS-Debug-Build
+          path: ./ios-app-repo/build/Debug-iphonesimulator/BranchLinkSimulator.app
+
+      # --- Step 9: Upload and run tests on GPTDriver service. ---
+      - name: Run GPTDriver tests
+        run: |
+          # Ensure the script is executable
+          chmod +x ./branch-ios-sdk-repo/.github/gptdriverrunscript.sh
+          # Execute the script, passing the .app path and platform
+          bash ./branch-ios-sdk-repo/.github/gptdriverrunscript.sh ./ios-app-repo/build/Debug-iphonesimulator/BranchLinkSimulator.app ios
+        env:
+          API_ORG_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }}
+          API_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }} # As per vendor design
+          TEST_TAGS: Release
