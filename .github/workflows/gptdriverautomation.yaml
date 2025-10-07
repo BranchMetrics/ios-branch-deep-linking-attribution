@@ -1,10 +1,6 @@
 name: iOS Release Build and GPTDriver Tests
-permissions:
-  contents: read
-  pull-requests: write
-on:
-  workflow_dispatch:
-    inputs:
+
+on: workflow_dispatch
 
 jobs:
   BuildAndTestAppOnGPTDriver: # Job name, as chosen
