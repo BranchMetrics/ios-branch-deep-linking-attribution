@@ -1,6 +1,7 @@
 name: iOS Release Build and GPTDriver Tests
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - 'Release-*' # Trigger for branches starting with "Release-"
