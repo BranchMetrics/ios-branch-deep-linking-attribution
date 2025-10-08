@@ -54,6 +54,6 @@ jobs:
         run: |
           # Build for simulator. Adjust scheme if necessary.
           # The output framework will be in build/Debug-iphonesimulator/BranchSDK.framework
-          xcodebuild build xcodebuild -scheme xcframework \
+          xcodebuild -scheme xcframework \
             BUILD_DIR="${{ github.workspace }}/branch-ios-sdk-repo/build" 
         working-directory: ./branch-ios-sdk-repo # Run xcodebuild from the SDK's checkout directory
