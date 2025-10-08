@@ -57,3 +57,64 @@ jobs:
           xcodebuild -scheme xcframework \
             BUILD_DIR="${{ github.workspace }}/branch-ios-sdk-repo/build" 
         working-directory: ./branch-ios-sdk-repo # Run xcodebuild from the SDK's checkout directory
+        
+              # --- Step 4: Checkout the iOS Branch Link Simulator App repository ---
+      - name: Checkout BranchMetrics/BranchLinkSimulator (App)
+        uses: actions/checkout@v4
+        with:
+          repository: BranchMetrics/BranchLinkSimulator
+          ref: gptdriver/linkingTests # Checkout the specific app branch
+          path: ./ios-app-repo # Checkout into another subdirectory
+
+      # --- Step 5: Copy the generated SDK Framework to the App's project ---
+      - name: Copy generated SDK Framework to App's libs directory
+        run: |
+          # Create a 'Frameworks' directory within the app repo for the local SDK
+          mkdir -p ./ios-app-repo/Frameworks
+          # Copy the built framework
+          cp -R ./branch-ios-sdk-repo/build/Debug-iphonesimulator/BranchSDK.framework ./ios-app-repo/Frameworks/
+        working-directory: ${{ github.workspace }} # Run from the root of the GITHUB_WORKSPACE
+
+      # --- Step 6: Build the iOS Branch Link Simulator App using the local SDK Framework ---
+      - name: Build iOS App with local SDK
+        run: |
+          # Build the app. Adjust project/workspace, scheme, and destination if necessary.
+          # We're passing MARKETING_VERSION (versionName) and CURRENT_PROJECT_VERSION (versionCode)
+          xcodebuild build -project BranchLinkSimulator.xcodeproj \
+            -scheme BranchLinkSimulator \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            MARKETING_VERSION=${{ env.VERSION_STRING }} \
+            CURRENT_PROJECT_VERSION=${{ env.VERSION_CODE_INT }} \
+            # Adjust Framework Search Paths if your Xcode project doesn't automatically find it
+            # For example, if you need to point directly to the copied framework:
+            # FRAMEWORK_SEARCH_PATHS="$(SRCROOT)/Frameworks"
+        working-directory: ./ios-app-repo # Run xcodebuild from the App's checkout directory
+
+      # --- Step 7: Echo the location of the generated .app bundle ---
+      - name: Echo .app bundle location
+        run: |
+          APP_PATH="./ios-app-repo/build/Debug-iphonesimulator/BranchLinkSimulator.app"
+          echo "Generated .app bundle location: $APP_PATH"
+          # You can also use 'find' to be more dynamic if the name might change
+          # find ./ios-app-repo/build -name "*.app"
+
+      # --- Step 8: Upload Build Artifacts ---
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: BranchLinkSimulator-iOS-Debug-Build
+          path: ./ios-app-repo/build/Debug-iphonesimulator/BranchLinkSimulator.app
+
+      # --- Step 9: Upload and run tests on GPTDriver service. ---
+      - name: Run GPTDriver tests
+        run: |
+          # Ensure the script is executable
+          chmod +x ./branch-ios-sdk-repo/.github/gptdriverrunscript.sh
+          # Execute the script, passing the .app path and platform
+          bash ./branch-ios-sdk-repo/.github/gptdriverrunscript.sh ./ios-app-repo/build/Debug-iphonesimulator/BranchLinkSimulator.app ios
+        env:
+          API_ORG_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }}
+          API_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }} # As per vendor design
+          TEST_TAGS: Release
