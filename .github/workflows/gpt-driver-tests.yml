@@ -82,9 +82,6 @@ jobs:
           # We're passing MARKETING_VERSION (versionName) and CURRENT_PROJECT_VERSION (versionCode)
           xcodebuild build -project BranchLinkSimulator.xcodeproj \
             -scheme BranchLinkSimulator \
-            -configuration Debug \
-            -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 15' \
             MARKETING_VERSION=${{ env.VERSION_STRING }} \
             CURRENT_PROJECT_VERSION=${{ env.VERSION_CODE_INT }} \
             # Adjust Framework Search Paths if your Xcode project doesn't automatically find it
