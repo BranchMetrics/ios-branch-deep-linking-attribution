@@ -93,7 +93,7 @@ jobs:
           echo "${{ secrets.BS_BUILD_PROVISION_PROFILE_BASE64_PART_AA }}" >> part_aa
           echo "${{ secrets.BS_BUILD_PROVISION_PROFILE_BASE64_PART_AB }}" >> part_aa
           echo "${{ secrets.BS_BUILD_PROVISION_PROFILE_BASE64_PART_AC }}" >> part_aa
-          base64 --decode part_aa > $PP_PATH
+          base64 -D -i part_aa > $PP_PATH
 
           # create temporary keychain
           security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
