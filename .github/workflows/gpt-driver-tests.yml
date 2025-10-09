@@ -72,7 +72,7 @@ jobs:
           # Create a 'Frameworks' directory within the app repo for the local SDK
           mkdir -p ./ios-app-repo/Frameworks
           # Copy the built framework
-          cp -R ./branch-ios-sdk-repo/build/BranchSDK.framework ./ios-app-repo/Frameworks/
+          cp -R ./branch-ios-sdk-repo/build/BranchSDK.xcframework ./ios-app-repo/Frameworks/
         working-directory: ${{ github.workspace }} # Run from the root of the GITHUB_WORKSPACE
 
       # --- Step 6: Build the iOS Branch Link Simulator App using the local SDK Framework ---
