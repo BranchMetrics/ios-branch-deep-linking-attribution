@@ -84,6 +84,7 @@ jobs:
             -scheme BranchLinkSimulator \
             MARKETING_VERSION=${{ env.VERSION_STRING }} \
             CURRENT_PROJECT_VERSION=${{ env.VERSION_CODE_INT }} \
+            -allowProvisioningUpdates
             # Adjust Framework Search Paths if your Xcode project doesn't automatically find it
             # For example, if you need to point directly to the copied framework:
             # FRAMEWORK_SEARCH_PATHS="$(SRCROOT)/Frameworks"
