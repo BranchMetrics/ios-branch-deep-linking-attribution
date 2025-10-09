@@ -80,11 +80,9 @@ jobs:
         run: |
           # Build the app. Adjust project/workspace, scheme, and destination if necessary.
           # We're passing MARKETING_VERSION (versionName) and CURRENT_PROJECT_VERSION (versionCode)
-          xcodebuild build -project BranchLinkSimulator.xcodeproj \
-            -scheme BranchLinkSimulator \
+          xcodebuild -scheme BranchLinkSimulator \
             MARKETING_VERSION=${{ env.VERSION_STRING }} \
-            CURRENT_PROJECT_VERSION=${{ env.VERSION_CODE_INT }} \
-            -allowProvisioningUpdates
+            CURRENT_PROJECT_VERSION=${{ env.VERSION_CODE_INT }} 
             # Adjust Framework Search Paths if your Xcode project doesn't automatically find it
             # For example, if you need to point directly to the copied framework:
             # FRAMEWORK_SEARCH_PATHS="$(SRCROOT)/Frameworks"
