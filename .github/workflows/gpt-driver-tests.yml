@@ -145,11 +145,11 @@ jobs:
                  https://api.mobileboost.io/uploadBuild/)
           
           mobileboost_url=$(echo "$call" | grep -o '"app_link":"[^"]*"' | cut -d '"' -f 4)
-          echo "${mobileboost_url}" >>$GITHUB_ENV
+          echo "MOBILEBOOST_URL=${mobileboost_url}" >> $GITHUB_ENV
           curl -X POST https://api.mobileboost.io/tests/execute \
             -H "Content-Type: application/json" \
             -d '{
-                "organisationId": ${{ secrets.MOBILEBOOST_API_ORG_KEY }}",
+                "organisationId": \"${{ secrets.MOBILEBOOST_API_ORG_KEY }}\",
                 "platform": "ios"
             }'
         env:
