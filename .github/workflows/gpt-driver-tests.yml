@@ -115,26 +115,23 @@ jobs:
           # We're passing MARKETING_VERSION (versionName) and CURRENT_PROJECT_VERSION (versionCode)
           xcodebuild -scheme BranchLinkSimulator -allowProvisioningUpdates \
             MARKETING_VERSION=${{ env.VERSION_STRING }} \
-            CURRENT_PROJECT_VERSION=${{ env.VERSION_CODE_INT }} 
-            # Adjust Framework Search Paths if your Xcode project doesn't automatically find it
-            # For example, if you need to point directly to the copied framework:
-            # FRAMEWORK_SEARCH_PATHS="$(SRCROOT)/Frameworks"
+            CURRENT_PROJECT_VERSION=${{ env.VERSION_CODE_INT  } \
+            -sdk iphoneos archive -archivePath ./IPA/BranchLinkSimulator.xcarchive 
+          xcodebuild -exportArchive -archivePath ./IPA/BranchLinkSimulator.xcarchive -exportOptionsPlist IPA/Info.plist -exportPath IPA/
         working-directory: ./ios-app-repo # Run xcodebuild from the App's checkout directory
 
       # --- Step 7: Echo the location of the generated .app bundle ---
       - name: Echo .app bundle location
         run: |
-          APP_PATH="./ios-app-repo/build/Debug-iphonesimulator/BranchLinkSimulator.app"
-          echo "Generated .app bundle location: $APP_PATH"
-          # You can also use 'find' to be more dynamic if the name might change
-          # find ./ios-app-repo/build -name "*.app"
+          APP_PATH="./ios-app-repo/IPA/BranchLinkSimulator.ipa"
+          echo "Generated IPA location: $APP_PATH"
 
       # --- Step 8: Upload Build Artifacts ---
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: BranchLinkSimulator-iOS-Debug-Build
-          path: ./ios-app-repo/build/Debug-iphonesimulator/BranchLinkSimulator.app
+          path: ./ios-app-repo/IPA/BranchLinkSimulator.ipa
 
       # --- Step 9: Upload and run tests on GPTDriver service. ---
       - name: Run GPTDriver tests
