@@ -136,22 +136,8 @@ jobs:
       # --- Step 9: Upload and run tests on GPTDriver service. ---
       - name: Run GPTDriver tests
         run: |
-          call=$(curl -i -X POST \
-                 -H "Content-Type: multipart/form-data" \
-                 -F "build=@./ios-app-repo/IPA/BranchLinkSimulator.ipa" \
-                 -F "organisation_key=${{ secrets.MOBILEBOOST_API_ORG_KEY }}" \
-                 -F "platform=ios" \
-                 -F "metadata={}" \
-                 https://api.mobileboost.io/uploadBuild/)
-          
-          mobileboost_url=$(echo "$call" | grep -o '"app_link":"[^"]*"' | cut -d '"' -f 4)
-          echo "MOBILEBOOST_URL=${mobileboost_url}" >> $GITHUB_ENV
-          curl -X POST https://api.mobileboost.io/tests/execute \
-            -H "Content-Type: application/json" \
-             -d "{
-              \"organisationId\": \"${{ secrets.MOBILEBOOST_API_ORG_KEY }}\",
-              \"platform\": \"ios\"
-              }"
+          chmod +x ./branch-sdk-repo/.github/gptdriverrunscript.sh
+          bash ./branch-sdk-repo/.github/gptdriverrunscript.sh /ios-app-repo/IPA/BranchLinkSimulator.ipa ios
         env:
           API_ORG_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }}
           API_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }} # As per vendor design
