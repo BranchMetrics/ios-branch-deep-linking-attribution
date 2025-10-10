@@ -76,8 +76,8 @@ jobs:
         working-directory: ${{ github.workspace }} # Run from the root of the GITHUB_WORKSPACE
       - name: Install the Apple certificate and provisioning profile
         env:
-          BUILD_CERTIFICATE_BASE64: ${{ secrets.BS_BUILD_CERTIFICATE }}
-          P12_PASSWORD: ${{ secrets.BS_P12_PASSWORD }}
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
           BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BS_BUILD_PROVISION_PROFILE_BASE64_PART_AA }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         run: |
@@ -91,8 +91,8 @@ jobs:
           
           # Create Provisioning Profiles 
           echo "${{ secrets.BS_BUILD_PROVISION_PROFILE_BASE64_PART_AA }}" >> part_aa
-          echo "${{ secrets.BS_BUILD_PROVISION_PROFILE_BASE64_PART_AB }}" >> part_aa
-          echo "${{ secrets.BS_BUILD_PROVISION_PROFILE_BASE64_PART_AC }}" >> part_aa
+          #echo "${{ secrets.BS_BUILD_PROVISION_PROFILE_BASE64_PART_AB }}" >> part_aa
+          #echo "${{ secrets.BS_BUILD_PROVISION_PROFILE_BASE64_PART_AC }}" >> part_aa
           base64 -D -i part_aa > $PP_PATH
 
           # create temporary keychain
