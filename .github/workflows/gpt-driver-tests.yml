@@ -115,7 +115,7 @@ jobs:
           # We're passing MARKETING_VERSION (versionName) and CURRENT_PROJECT_VERSION (versionCode)
           xcodebuild -scheme BranchLinkSimulator -allowProvisioningUpdates \
             MARKETING_VERSION=${{ env.VERSION_STRING }} \
-            CURRENT_PROJECT_VERSION=${{ env.VERSION_CODE_INT  } \
+            CURRENT_PROJECT_VERSION=${{ env.VERSION_CODE_INT }} \
             -sdk iphoneos archive -archivePath ./IPA/BranchLinkSimulator.xcarchive 
           xcodebuild -exportArchive -archivePath ./IPA/BranchLinkSimulator.xcarchive -exportOptionsPlist IPA/Info.plist -exportPath IPA/
         working-directory: ./ios-app-repo # Run xcodebuild from the App's checkout directory
