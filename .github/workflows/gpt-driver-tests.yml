@@ -136,10 +136,16 @@ jobs:
       # --- Step 9: Upload and run tests on GPTDriver service. ---
       - name: Run GPTDriver tests
         run: |
-          # Ensure the script is executable
-          chmod +x ./branch-ios-sdk-repo/.github/gptdriverrunscript.sh
-          # Execute the script, passing the .app path and platform
-          bash ./branch-ios-sdk-repo/.github/gptdriverrunscript.sh ./ios-app-repo/build/Debug-iphonesimulator/BranchLinkSimulator.app ios
+          call=$(curl -i -X POST \
+                 -H "Content-Type: multipart/form-data" \
+                 -F "build=@./ios-app-repo/IPA/BranchLinkSimulator.ipa" \
+                 -F "organisation_key=${{ secrets.MOBILEBOOST_API_ORG_KEY }}" \
+                 -F "platform=ios" \
+                 -F "metadata={}" \
+                 https://api.mobileboost.io/uploadBuild/)
+          
+          mobileboost_url=$(echo "$call" | grep -o '"app_link":"[^"]*"' | cut -d '"' -f 4)
+          echo "${mobileboost_url}" >>$GITHUB_ENV
         env:
           API_ORG_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }}
           API_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }} # As per vendor design
