@@ -149,7 +149,7 @@ jobs:
           curl -X POST https://api.mobileboost.io/tests/execute \
             -H "Content-Type: application/json" \
             -d '{
-                "organisationId": "$API_ORG_KEY",
+                "organisationId": ${{ secrets.MOBILEBOOST_API_ORG_KEY }}",
                 "platform": "ios"
             }'
         env:
