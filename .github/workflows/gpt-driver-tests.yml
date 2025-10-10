@@ -146,6 +146,12 @@ jobs:
           
           mobileboost_url=$(echo "$call" | grep -o '"app_link":"[^"]*"' | cut -d '"' -f 4)
           echo "${mobileboost_url}" >>$GITHUB_ENV
+          curl -X POST https://api.mobileboost.io/tests/execute \
+            -H "Content-Type: application/json" \
+            -d '{
+                "organisationId": "$API_ORG_KEY",
+                "platform": "ios"
+            }'
         env:
           API_ORG_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }}
           API_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }} # As per vendor design
