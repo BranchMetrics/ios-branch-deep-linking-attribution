@@ -136,8 +136,10 @@ jobs:
       # --- Step 9: Upload and run tests on GPTDriver service. ---
       - name: Run GPTDriver tests
         run: |
+          ls -la
+          pwd
           chmod +x ./branch-sdk-repo/.github/gptdriverrunscript.sh
-          bash ./branch-sdk-repo/.github/gptdriverrunscript.sh /ios-app-repo/IPA/BranchLinkSimulator.ipa ios
+          ./branch-sdk-repo/.github/gptdriverrunscript.sh /ios-app-repo/IPA/BranchLinkSimulator.ipa ios
         env:
           API_ORG_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }}
           API_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }} # As per vendor design
