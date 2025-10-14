@@ -1,12 +1,15 @@
-name: iOS Release Build and GPTDriver Tests
+name: GPTDriver Test Suite Automation
 
 on:
   workflow_dispatch:
     inputs:
+   push:
+    branches:
+      - 'Release-*' # Trigger for branches starting with "Release-"
         
 jobs:
-  BuildAndTestAppOnGPTDriver: # Job name, as chosen
-    runs-on: macos-latest # macOS runner is required for iOS builds
+  BuildAndTestAppOnGPTDriver:
+    runs-on: macos-latest
     steps:
       # --- Step 1: Extract version from branch name ---
       - name: Extract version from branch name
@@ -56,9 +59,9 @@ jobs:
           # The output framework will be in build/Debug-iphonesimulator/BranchSDK.framework
           xcodebuild -scheme xcframework \
             BUILD_DIR="${{ github.workspace }}/branch-ios-sdk-repo/build" 
-        working-directory: ./branch-ios-sdk-repo # Run xcodebuild from the SDK's checkout directory
+        working-directory: ./branch-ios-sdk-repo
         
-              # --- Step 4: Checkout the iOS Branch Link Simulator App repository ---
+      # --- Step 4: Checkout the iOS Branch Link Simulator App repository ---
       - name: Checkout BranchMetrics/BranchLinkSimulator (App)
         uses: actions/checkout@v4
         with:
@@ -74,6 +77,8 @@ jobs:
           # Copy the built framework
           cp -R ./branch-ios-sdk-repo/build/BranchSDK.xcframework ./ios-app-repo/Frameworks/
         working-directory: ${{ github.workspace }} # Run from the root of the GITHUB_WORKSPACE
+      
+      # --- Step 6: Install Code Sign Certificate and Provisioning profile
       - name: Install the Apple certificate and provisioning profile
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BS_BUILD_CERTIFICATE }}
@@ -118,7 +123,7 @@ jobs:
             CURRENT_PROJECT_VERSION=${{ env.VERSION_CODE_INT }} \
             -sdk iphoneos archive -archivePath ./IPA/BranchLinkSimulator.xcarchive 
           xcodebuild -exportArchive -archivePath ./IPA/BranchLinkSimulator.xcarchive -exportOptionsPlist IPA/Info.plist -exportPath IPA/
-        working-directory: ./ios-app-repo # Run xcodebuild from the App's checkout directory
+        working-directory: ./ios-app-repo
 
       # --- Step 7: Echo the location of the generated .app bundle ---
       - name: Echo .app bundle location
@@ -133,12 +138,12 @@ jobs:
           name: BranchLinkSimulator-iOS-Debug-Build
           path: ./ios-app-repo/IPA/BranchLinkSimulator.ipa
 
-      # --- Step 9: Upload and run tests on GPTDriver service. ---
+      # --- Step 9: Run tests on GPTDriver service. ---
       - name: Run GPTDriver tests
         run: |
           chmod +x ./branch-ios-sdk-repo/.github/gptdriverrunscript.sh
           ./branch-ios-sdk-repo/.github/gptdriverrunscript.sh ./ios-app-repo/IPA/BranchLinkSimulator.ipa ios
         env:
           API_ORG_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }}
-          API_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }} # As per vendor design
-          TEST_TAGS: Release
+          API_KEY: ${{ secrets.MOBILEBOOST_API_ORG_KEY }}
+          TEST_TAGS: ios
