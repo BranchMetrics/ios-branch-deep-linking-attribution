@@ -11,13 +11,14 @@ jobs:
         uses: actions/checkout@v4
       - name: Install pod, build project and run tests
         run: |
+            mkdir -p test-results
             echo "branch=${{ github.ref }}" >> $GITHUB_OUTPUT
             ./scripts/getSimulator
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/iOSReleaseTest-Cocoapods/
             pod install
             xcodebuild test -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace
-             -destination "$DESTINATION" 
+             -destination "$DESTINATION" -resultBundlePath ../../test-results/ios-cocoapods.xcresult
   verify-carthage-iOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -28,13 +29,14 @@ jobs:
         env:
             BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
         run: |
+            mkdir -p test-results
             CURR_DIR=$(PWD)
             ./scripts/getSimulator
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/iOSReleaseTest-Carthage/
             echo "git \"file://${CURR_DIR}\" \"$BRANCH_NAME\" " >> cartfile
             carthage update --use-xcframeworks
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION"
+            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" -resultBundlePath ../../test-results/ios-carthage.xcresult
   verify-SPM-iOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -43,10 +45,11 @@ jobs:
         uses: actions/checkout@v4
       - name: build project and run tests
         run: |
+            mkdir -p test-results
             ./scripts/getSimulator
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/iOSReleaseTest-SPM/
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" 
+            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" -resultBundlePath ../../test-results/ios-spm.xcresult
   verify-manually-with-xcframework-iOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -55,11 +58,12 @@ jobs:
         uses: actions/checkout@v4
       - name: build xcframework, then build project and run tests
         run: |
+            mkdir -p test-results
             ./scripts/getSimulator
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             xcodebuild -scheme xcframework
             cd  SDKIntegrationTestApps/iOSReleaseTest-Manual/
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" 
+            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" -resultBundlePath ../../test-results/ios-xcframework.xcresult
   verify-manually-with-StaticFramework-iOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -68,11 +72,12 @@ jobs:
         uses: actions/checkout@v4
       - name: build static xcframework, then build project and run tests
         run: |
+            mkdir -p test-results
             ./scripts/getSimulator
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             xcodebuild -scheme static-xcframework
             cd  SDKIntegrationTestApps/iOSReleaseTest-Manual-Static/
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION"
+            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" -resultBundlePath ../../test-results/ios-static-framework.xcresult
   verify-cocoapods-tvOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -81,11 +86,12 @@ jobs:
         uses: actions/checkout@v4
       - name: Install pod, build project and run tests
         run: |
+            mkdir -p test-results
             ./scripts/getSimulator
             DESTINATION="platform=tvOS Simulator,name=$(cat ./appleTVSim),OS=latest"
             cd  SDKIntegrationTestApps/tvOSReleaseTest-Cocoapods/
             pod install
-            xcodebuild test -scheme tvOSReleaseTest -workspace tvOSReleaseTest.xcworkspace -destination "$DESTINATION" 
+            xcodebuild test -scheme tvOSReleaseTest -workspace tvOSReleaseTest.xcworkspace -destination "$DESTINATION" -resultBundlePath ../../test-results/tvOS-cocoapods.xcresult
   verify-carthage-tvOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -94,6 +100,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Verify Integration using Carthage for tvOS
         run: |
+            mkdir -p test-results
             ./scripts/getSimulator
             DESTINATION="platform=tvOS Simulator,name=$(cat ./appleTVSim),OS=latest"
             cd  SDKIntegrationTestApps/tvOSReleaseTest-Carthage/
@@ -106,8 +113,9 @@ jobs:
         uses: actions/checkout@v4
       - name: build xcframework, then build project and run tests
         run: |
+            mkdir -p test-results
             ./scripts/getSimulator
             DESTINATION="platform=tvOS Simulator,name=$(cat ./appleTVSim),OS=latest"
             xcodebuild -scheme xcframework
             cd  SDKIntegrationTestApps/tvOSReleaseTest-Manual/
-            xcodebuild test -scheme tvOSReleaseTest -project tvOSReleaseTest.xcodeproj -destination "$DESTINATION"
+            xcodebuild test -scheme tvOSReleaseTest -project tvOSReleaseTest.xcodeproj -destination "$DESTINATION" -resultBundlePath ../../test-results/tvOS-xcframework.xcresult
