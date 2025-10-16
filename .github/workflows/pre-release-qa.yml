@@ -24,7 +24,7 @@ jobs:
         if: always()
         with:
           name: test-report-cocoapods-iOS
-          path: test-results/ios-cocoapods.xcresult
+          path: test-results
   verify-carthage-iOS:
     runs-on: macos-latest
     timeout-minutes: 20
