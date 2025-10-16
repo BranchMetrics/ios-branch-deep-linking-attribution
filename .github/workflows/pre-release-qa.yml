@@ -19,6 +19,12 @@ jobs:
             pod install
             xcodebuild test -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace
              -destination "$DESTINATION" -resultBundlePath ../../test-results/ios-cocoapods.xcresult
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-report-cocoapods-iOS
+          path: test-results/ios-cocoapods.xcresult
   verify-carthage-iOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -37,6 +43,12 @@ jobs:
             echo "git \"file://${CURR_DIR}\" \"$BRANCH_NAME\" " >> cartfile
             carthage update --use-xcframeworks
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" -resultBundlePath ../../test-results/ios-carthage.xcresult
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-report-carthage-iOS
+          path: test-results/ios-carthage.xcresult
   verify-SPM-iOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -50,6 +62,12 @@ jobs:
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/iOSReleaseTest-SPM/
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" -resultBundlePath ../../test-results/ios-spm.xcresult
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-report-spm-iOS
+          path: test-results/ios-spm.xcresult
   verify-manually-with-xcframework-iOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -64,6 +82,12 @@ jobs:
             xcodebuild -scheme xcframework
             cd  SDKIntegrationTestApps/iOSReleaseTest-Manual/
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" -resultBundlePath ../../test-results/ios-xcframework.xcresult
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-report-manual-xcframework-iOS
+          path: test-results/ios-xcframework.xcresult
   verify-manually-with-StaticFramework-iOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -78,6 +102,12 @@ jobs:
             xcodebuild -scheme static-xcframework
             cd  SDKIntegrationTestApps/iOSReleaseTest-Manual-Static/
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" -resultBundlePath ../../test-results/ios-static-framework.xcresult
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-report-manual-static-iOS
+          path: test-results/ios-static-framework.xcresult
   verify-cocoapods-tvOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -92,6 +122,12 @@ jobs:
             cd  SDKIntegrationTestApps/tvOSReleaseTest-Cocoapods/
             pod install
             xcodebuild test -scheme tvOSReleaseTest -workspace tvOSReleaseTest.xcworkspace -destination "$DESTINATION" -resultBundlePath ../../test-results/tvOS-cocoapods.xcresult
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-report-cocoapods-tvOS
+          path: test-results/tvOS-cocoapods.xcresult
   verify-carthage-tvOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -119,3 +155,9 @@ jobs:
             xcodebuild -scheme xcframework
             cd  SDKIntegrationTestApps/tvOSReleaseTest-Manual/
             xcodebuild test -scheme tvOSReleaseTest -project tvOSReleaseTest.xcodeproj -destination "$DESTINATION" -resultBundlePath ../../test-results/tvOS-xcframework.xcresult
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-report-manual-xcframework-tvOS
+          path: test-results/tvOS-xcframework.xcresult
