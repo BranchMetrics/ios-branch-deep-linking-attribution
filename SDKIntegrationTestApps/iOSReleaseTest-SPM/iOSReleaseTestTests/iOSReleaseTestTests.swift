@@ -7,6 +7,7 @@
 
 import XCTest
 @testable import iOSReleaseTest
+import BranchSDK
 
 final class iOSReleaseTestTests: XCTestCase {
     
@@ -20,6 +21,47 @@ final class iOSReleaseTestTests: XCTestCase {
         XCTestObservationCenter.shared.addTestObserver(testObserver!)
         
         print("[TestSetup] Test observer registered for enhanced GitHub Actions logging")
+        
+        Branch.setCallbackForTracingRequests { url, request, response, error, serviceURL in
+                   // traceQueue.async {
+                        print("Tracing Callback Start ********************");
+                        print("URL: " + (url ?? ""));
+                        if let dict = request as? [AnyHashable: Any] {
+                            let stringDict = dict.reduce(into: [String: Any]()) { result, entry in
+                                if let key = entry.key as? String {
+                                    result[key] = entry.value
+                                }
+                            }
+                            
+                            if let data = try? JSONSerialization.data(withJSONObject: stringDict, options: [.prettyPrinted]),
+                               let json = String(data: data, encoding: .utf8) {
+                                print("Request JSON:\n\(json)")
+                            }
+                        } else {
+                            print("Request JSON: null")
+                        }
+                        
+                        if let dict = response as? [AnyHashable: Any] {
+                            let stringDict = dict.reduce(into: [String: Any]()) { result, entry in
+                                if let key = entry.key as? String {
+                                    result[key] = entry.value
+                                }
+                            }
+                            
+                            if let data = try? JSONSerialization.data(withJSONObject: stringDict, options: [.prettyPrinted]),
+                               let json = String(data: data, encoding: .utf8) {
+                                print("Response JSON:\n\(json)")
+                            }
+                        } else {
+                            print("Response JSON: null")
+                        }
+                        print("Error: " + (error.debugDescription));
+                        print("Request Service URL: " + (serviceURL!));
+                    
+                        print("Tracing Callback End ********************");
+                  //  }
+                }
+        
         
     }
     
