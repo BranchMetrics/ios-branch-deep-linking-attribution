@@ -16,7 +16,8 @@ jobs:
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/iOSReleaseTest-Cocoapods/
             pod install
-            xcodebuild test -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild test -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace
+             -destination "$DESTINATION" 
   verify-carthage-iOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -33,8 +34,7 @@ jobs:
             cd  SDKIntegrationTestApps/iOSReleaseTest-Carthage/
             echo "git \"file://${CURR_DIR}\" \"$BRANCH_NAME\" " >> cartfile
             carthage update --use-xcframeworks
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
-  verify-SPM-iOS:
+            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" 
     runs-on: macos-latest
     timeout-minutes: 20
     steps:
@@ -45,7 +45,7 @@ jobs:
             ./scripts/getSimulator
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/iOSReleaseTest-SPM/
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" 
   verify-manually-with-xcframework-iOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -58,7 +58,7 @@ jobs:
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             xcodebuild -scheme xcframework
             cd  SDKIntegrationTestApps/iOSReleaseTest-Manual/
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" 
   verify-manually-with-StaticFramework-iOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -71,7 +71,7 @@ jobs:
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             xcodebuild -scheme static-xcframework
             cd  SDKIntegrationTestApps/iOSReleaseTest-Manual-Static/
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION"
   verify-cocoapods-tvOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -84,7 +84,7 @@ jobs:
             DESTINATION="platform=tvOS Simulator,name=$(cat ./appleTVSim),OS=latest"
             cd  SDKIntegrationTestApps/tvOSReleaseTest-Cocoapods/
             pod install
-            xcodebuild test -scheme tvOSReleaseTest -workspace tvOSReleaseTest.xcworkspace -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild test -scheme tvOSReleaseTest -workspace tvOSReleaseTest.xcworkspace -destination "$DESTINATION" 
   verify-carthage-tvOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -109,4 +109,4 @@ jobs:
             DESTINATION="platform=tvOS Simulator,name=$(cat ./appleTVSim),OS=latest"
             xcodebuild -scheme xcframework
             cd  SDKIntegrationTestApps/tvOSReleaseTest-Manual/
-            xcodebuild test -scheme tvOSReleaseTest -project tvOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild test -scheme tvOSReleaseTest -project tvOSReleaseTest.xcodeproj -destination "$DESTINATION"
