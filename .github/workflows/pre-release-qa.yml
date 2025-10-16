@@ -5,6 +5,7 @@ on: [push]
 jobs:
   verify-cocoapods-iOS:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -17,7 +18,8 @@ jobs:
             pod install
             xcodebuild test -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-carthage-iOS:
-    runs-on: macos-15
+    runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -34,6 +36,7 @@ jobs:
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-SPM-iOS:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -45,6 +48,7 @@ jobs:
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-manually-with-xcframework-iOS:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -57,6 +61,7 @@ jobs:
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-manually-with-StaticFramework-iOS:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -69,6 +74,7 @@ jobs:
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-cocoapods-tvOS:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -81,6 +87,7 @@ jobs:
             xcodebuild test -scheme tvOSReleaseTest -workspace tvOSReleaseTest.xcworkspace -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-carthage-tvOS:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -92,6 +99,7 @@ jobs:
             echo "Skipping it ... its broken"
   verify-manually-with-xcframework-tvOS:
     runs-on: macos-latest
+    timeout-minutes: 20
     steps:
       - name: Check out code
         uses: actions/checkout@v4
