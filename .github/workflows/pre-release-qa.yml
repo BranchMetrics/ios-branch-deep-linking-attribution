@@ -24,7 +24,7 @@ jobs:
         if: always()
         with:
           name: test-report-cocoapods-iOS
-          path: test-results/ios-cocoapods.xcresult
+          path: test-results
   verify-carthage-iOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -48,7 +48,7 @@ jobs:
         if: always()
         with:
           name: test-report-carthage-iOS
-          path: test-results/ios-carthage.xcresult
+          path: test-results
   verify-SPM-iOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -87,7 +87,7 @@ jobs:
         if: always()
         with:
           name: test-report-manual-xcframework-iOS
-          path: test-results/ios-xcframework.xcresult
+          path: test-results
   verify-manually-with-StaticFramework-iOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -107,7 +107,7 @@ jobs:
         if: always()
         with:
           name: test-report-manual-static-iOS
-          path: test-results/ios-static-framework.xcresult
+          path: test-results
   verify-cocoapods-tvOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -127,7 +127,7 @@ jobs:
         if: always()
         with:
           name: test-report-cocoapods-tvOS
-          path: test-results/tvOS-cocoapods.xcresult
+          path: test-results
   verify-carthage-tvOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -160,4 +160,4 @@ jobs:
         if: always()
         with:
           name: test-report-manual-xcframework-tvOS
-          path: test-results/tvOS-xcframework.xcresult
+          path: test-results
