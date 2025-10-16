@@ -14,6 +14,7 @@
 		C119B02127ADC85E00E8C7BF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C119B02027ADC85E00E8C7BF /* Assets.xcassets */; };
 		C119B02427ADC85E00E8C7BF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C119B02227ADC85E00E8C7BF /* LaunchScreen.storyboard */; };
 		C119B02C27ADC92A00E8C7BF /* iOSReleaseTest.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = C119B02B27ADC8FB00E8C7BF /* iOSReleaseTest.entitlements */; };
+		E72CA88B2EA19F0400805780 /* TestObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72CA88A2EA19F0400805780 /* TestObserver.swift */; };
 		E75C0E192975391F0001D5D7 /* BranchSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E763E99C29354DA40053F490 /* BranchSDK.xcframework */; };
 		E75C0E1A2975391F0001D5D7 /* BranchSDK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E763E99C29354DA40053F490 /* BranchSDK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E7939C0429749D3C00B90B82 /* iOSReleaseTestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */; };
@@ -53,9 +54,10 @@
 		C119B02327ADC85E00E8C7BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C119B02527ADC85E00E8C7BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C119B02B27ADC8FB00E8C7BF /* iOSReleaseTest.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iOSReleaseTest.entitlements; sourceTree = "<group>"; };
+		E72CA88A2EA19F0400805780 /* TestObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestObserver.swift; sourceTree = "<group>"; };
 		E763E99C29354DA40053F490 /* BranchSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = BranchSDK.xcframework; path = Carthage/Build/BranchSDK.xcframework; sourceTree = "<group>"; };
 		E7939C0129749D3C00B90B82 /* iOSReleaseTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSReleaseTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSReleaseTestTests.swift; sourceTree = "<group>"; };
+		E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = iOSReleaseTestTests.swift; path = ../../Source/iOSReleaseTestTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +124,7 @@
 		E7939C0229749D3C00B90B82 /* iOSReleaseTestTests */ = {
 			isa = PBXGroup;
 			children = (
+				E72CA88A2EA19F0400805780 /* TestObserver.swift */,
 				E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */,
 			);
 			path = iOSReleaseTestTests;
@@ -241,6 +244,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E7939C0429749D3C00B90B82 /* iOSReleaseTestTests.swift in Sources */,
+				E72CA88B2EA19F0400805780 /* TestObserver.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
