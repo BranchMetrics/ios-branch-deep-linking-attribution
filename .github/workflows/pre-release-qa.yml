@@ -34,7 +34,8 @@ jobs:
             cd  SDKIntegrationTestApps/iOSReleaseTest-Carthage/
             echo "git \"file://${CURR_DIR}\" \"$BRANCH_NAME\" " >> cartfile
             carthage update --use-xcframeworks
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" 
+            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION"
+  verify-SPM-iOS:
     runs-on: macos-latest
     timeout-minutes: 20
     steps:
