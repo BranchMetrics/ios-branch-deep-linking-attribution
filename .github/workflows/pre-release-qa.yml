@@ -24,7 +24,7 @@ jobs:
         if: always()
         with:
           name: test-report-cocoapods-iOS
-          path: test-results
+          path: test-results/ios-cocoapods.xcresult
   verify-carthage-iOS:
     runs-on: macos-latest
     timeout-minutes: 20
@@ -67,7 +67,7 @@ jobs:
         if: always()
         with:
           name: test-report-spm-iOS
-          path: test-results/ios-spm.xcresult
+          path: test-results
   verify-manually-with-xcframework-iOS:
     runs-on: macos-latest
     timeout-minutes: 20
