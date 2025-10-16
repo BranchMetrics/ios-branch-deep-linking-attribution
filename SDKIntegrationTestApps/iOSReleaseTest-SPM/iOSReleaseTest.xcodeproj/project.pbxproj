@@ -16,6 +16,7 @@
 		C119B02C27ADC92A00E8C7BF /* iOSReleaseTest.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = C119B02B27ADC8FB00E8C7BF /* iOSReleaseTest.entitlements */; };
 		E71D371D29A5707800A0FDEF /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E71D371C29A5707800A0FDEF /* BranchSDK */; };
 		E71D371F29A570D500A0FDEF /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E71D371E29A570D500A0FDEF /* BranchSDK */; };
+		E77DEAF22E9FFEE300EDEAB4 /* TestObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DEAF12E9FFEE300EDEAB4 /* TestObserver.swift */; };
 		E7939C0429749D3C00B90B82 /* iOSReleaseTestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */; };
 		E7A0C3052989AB200024497D /* BranchSDKTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A0C3042989AB200024497D /* BranchSDKTest.swift */; };
 /* End PBXBuildFile section */
@@ -41,6 +42,7 @@
 		C119B02527ADC85E00E8C7BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C119B02B27ADC8FB00E8C7BF /* iOSReleaseTest.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iOSReleaseTest.entitlements; sourceTree = "<group>"; };
 		E73878F62988A82600BD3981 /* ios-branch-deep-linking-attribution */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "ios-branch-deep-linking-attribution"; path = ../..; sourceTree = "<group>"; };
+		E77DEAF12E9FFEE300EDEAB4 /* TestObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestObserver.swift; sourceTree = "<group>"; };
 		E7939C0129749D3C00B90B82 /* iOSReleaseTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSReleaseTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSReleaseTestTests.swift; sourceTree = "<group>"; };
 		E7A0C3042989AB200024497D /* BranchSDKTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchSDKTest.swift; sourceTree = "<group>"; };
@@ -120,6 +122,7 @@
 		E7939C0229749D3C00B90B82 /* iOSReleaseTestTests */ = {
 			isa = PBXGroup;
 			children = (
+				E77DEAF12E9FFEE300EDEAB4 /* TestObserver.swift */,
 				E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */,
 			);
 			path = iOSReleaseTestTests;
@@ -245,6 +248,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E7939C0429749D3C00B90B82 /* iOSReleaseTestTests.swift in Sources */,
+				E77DEAF22E9FFEE300EDEAB4 /* TestObserver.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
