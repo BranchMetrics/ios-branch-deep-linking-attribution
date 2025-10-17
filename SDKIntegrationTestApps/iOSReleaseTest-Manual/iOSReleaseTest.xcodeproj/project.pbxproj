@@ -57,7 +57,7 @@
 		C119B02B27ADC8FB00E8C7BF /* iOSReleaseTest.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iOSReleaseTest.entitlements; sourceTree = "<group>"; };
 		E72CA8882EA19ED900805780 /* TestObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestObserver.swift; sourceTree = "<group>"; };
 		E7939C0129749D3C00B90B82 /* iOSReleaseTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSReleaseTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = iOSReleaseTestTests.swift; path = ../../Source/iOSReleaseTestTests.swift; sourceTree = "<group>"; };
+		E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSReleaseTestTests.swift; sourceTree = "<group>"; };
 		E7A0C2F929898E4B0024497D /* BranchSDKTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchSDKTest.swift; sourceTree = "<group>"; };
 		E7A0C2FC2989914A0024497D /* BranchSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = BranchSDK.xcframework; path = ../../build/BranchSDK.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -113,7 +113,8 @@
 				C119B02227ADC85E00E8C7BF /* LaunchScreen.storyboard */,
 				C119B02527ADC85E00E8C7BF /* Info.plist */,
 			);
-			path = iOSReleaseTest;
+			name = iOSReleaseTest;
+			path = ../Source/iOSReleaseTest;
 			sourceTree = "<group>";
 		};
 		E7939C0229749D3C00B90B82 /* iOSReleaseTestTests */ = {
@@ -122,7 +123,8 @@
 				E72CA8882EA19ED900805780 /* TestObserver.swift */,
 				E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */,
 			);
-			path = iOSReleaseTestTests;
+			name = iOSReleaseTestTests;
+			path = ../Source/IntegrationTests;
 			sourceTree = "<group>";
 		};
 		E7A0C2FB2989914A0024497D /* Frameworks */ = {

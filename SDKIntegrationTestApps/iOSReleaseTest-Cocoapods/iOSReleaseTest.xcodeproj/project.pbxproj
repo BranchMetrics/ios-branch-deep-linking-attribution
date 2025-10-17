@@ -47,7 +47,7 @@
 		D347EDD199CA7E6A4A677D5A /* Pods-iOSReleaseTestTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSReleaseTestTests.release.xcconfig"; path = "Target Support Files/Pods-iOSReleaseTestTests/Pods-iOSReleaseTestTests.release.xcconfig"; sourceTree = "<group>"; };
 		E72CA8862EA19EA500805780 /* TestObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestObserver.swift; sourceTree = "<group>"; };
 		E7939C0129749D3C00B90B82 /* iOSReleaseTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSReleaseTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = iOSReleaseTestTests.swift; path = ../../Source/iOSReleaseTestTests.swift; sourceTree = "<group>"; };
+		E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSReleaseTestTests.swift; sourceTree = "<group>"; };
 		FD6F9153F98F7AA38E9A2DCF /* Pods_iOSReleaseTestTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOSReleaseTestTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -114,7 +114,8 @@
 				C119B02227ADC85E00E8C7BF /* LaunchScreen.storyboard */,
 				C119B02527ADC85E00E8C7BF /* Info.plist */,
 			);
-			path = iOSReleaseTest;
+			name = iOSReleaseTest;
+			path = ../Source/iOSReleaseTest;
 			sourceTree = "<group>";
 		};
 		E763E99B29354DA30053F490 /* Frameworks */ = {
@@ -132,7 +133,8 @@
 				E72CA8862EA19EA500805780 /* TestObserver.swift */,
 				E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */,
 			);
-			path = iOSReleaseTestTests;
+			name = iOSReleaseTestTests;
+			path = ../Source/IntegrationTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
