@@ -17,7 +17,8 @@
 		E72CA88B2EA19F0400805780 /* TestObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72CA88A2EA19F0400805780 /* TestObserver.swift */; };
 		E75C0E192975391F0001D5D7 /* BranchSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E763E99C29354DA40053F490 /* BranchSDK.xcframework */; };
 		E75C0E1A2975391F0001D5D7 /* BranchSDK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E763E99C29354DA40053F490 /* BranchSDK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		E7939C0429749D3C00B90B82 /* iOSReleaseTestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */; };
+		E7ACFC612EA2C2C200E60D8B /* iOSReleaseTestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7ACFC602EA2C2C200E60D8B /* iOSReleaseTestTests.swift */; };
+		E7ACFC632EA2C2CF00E60D8B /* BranchSDKTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7ACFC622EA2C2CF00E60D8B /* BranchSDKTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,7 +58,8 @@
 		E72CA88A2EA19F0400805780 /* TestObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestObserver.swift; sourceTree = "<group>"; };
 		E763E99C29354DA40053F490 /* BranchSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = BranchSDK.xcframework; path = Carthage/Build/BranchSDK.xcframework; sourceTree = "<group>"; };
 		E7939C0129749D3C00B90B82 /* iOSReleaseTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSReleaseTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = iOSReleaseTestTests.swift; path = ../../Source/iOSReleaseTestTests.swift; sourceTree = "<group>"; };
+		E7ACFC602EA2C2C200E60D8B /* iOSReleaseTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSReleaseTestTests.swift; sourceTree = "<group>"; };
+		E7ACFC622EA2C2CF00E60D8B /* BranchSDKTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchSDKTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +103,7 @@
 		C119B01627ADC85C00E8C7BF /* iOSReleaseTest */ = {
 			isa = PBXGroup;
 			children = (
+				E7ACFC622EA2C2CF00E60D8B /* BranchSDKTest.swift */,
 				C119B02B27ADC8FB00E8C7BF /* iOSReleaseTest.entitlements */,
 				C119B01727ADC85C00E8C7BF /* AppDelegate.swift */,
 				C119B01927ADC85C00E8C7BF /* SceneDelegate.swift */,
@@ -110,7 +113,8 @@
 				C119B02227ADC85E00E8C7BF /* LaunchScreen.storyboard */,
 				C119B02527ADC85E00E8C7BF /* Info.plist */,
 			);
-			path = iOSReleaseTest;
+			name = iOSReleaseTest;
+			path = ../Source/iOSReleaseTest;
 			sourceTree = "<group>";
 		};
 		E763E99B29354DA30053F490 /* Frameworks */ = {
@@ -124,10 +128,11 @@
 		E7939C0229749D3C00B90B82 /* iOSReleaseTestTests */ = {
 			isa = PBXGroup;
 			children = (
+				E7ACFC602EA2C2C200E60D8B /* iOSReleaseTestTests.swift */,
 				E72CA88A2EA19F0400805780 /* TestObserver.swift */,
-				E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */,
 			);
-			path = iOSReleaseTestTests;
+			name = iOSReleaseTestTests;
+			path = ../Source/IntegrationTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -235,6 +240,7 @@
 			files = (
 				C119B01C27ADC85C00E8C7BF /* ViewController.swift in Sources */,
 				C119B01827ADC85C00E8C7BF /* AppDelegate.swift in Sources */,
+				E7ACFC632EA2C2CF00E60D8B /* BranchSDKTest.swift in Sources */,
 				C119B01A27ADC85C00E8C7BF /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -243,8 +249,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E7939C0429749D3C00B90B82 /* iOSReleaseTestTests.swift in Sources */,
 				E72CA88B2EA19F0400805780 /* TestObserver.swift in Sources */,
+				E7ACFC612EA2C2C200E60D8B /* iOSReleaseTestTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
