@@ -11,16 +11,10 @@ import BranchSDK
 class BranchSDKTest {
     
     init(callback: @escaping ([AnyHashable: Any]?, Error?) -> Void) {
-       // Branch.getInstance().enableLogging()
-       // Branch.getInstance().initSession(launchOptions: nil, callback: callback)
         Branch.getInstance().initSession(launchOptions:nil, andRegisterDeepLinkHandler: callback)
     }
     
-    func disableTracking( status: Bool)  {
-        Branch.setTrackingDisabled(status)
-    }
-    
-    func trackingStatus() -> Bool {
-       return Branch.trackingDisabled()
+    func setCPPLevel( status: BranchAttributionLevel)  {
+        Branch.getInstance().setConsumerProtectionAttributionLevel(BranchAttributionLevel.full)
     }
 }

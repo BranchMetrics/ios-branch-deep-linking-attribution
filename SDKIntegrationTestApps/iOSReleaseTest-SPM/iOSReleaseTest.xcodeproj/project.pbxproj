@@ -42,9 +42,9 @@
 		C119B02527ADC85E00E8C7BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C119B02B27ADC8FB00E8C7BF /* iOSReleaseTest.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iOSReleaseTest.entitlements; sourceTree = "<group>"; };
 		E73878F62988A82600BD3981 /* ios-branch-deep-linking-attribution */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "ios-branch-deep-linking-attribution"; path = ../..; sourceTree = "<group>"; };
-		E77DEAF12E9FFEE300EDEAB4 /* TestObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TestObserver.swift; path = ../../Source/TestObserver.swift; sourceTree = "<group>"; };
+		E77DEAF12E9FFEE300EDEAB4 /* TestObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestObserver.swift; sourceTree = "<group>"; };
 		E7939C0129749D3C00B90B82 /* iOSReleaseTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSReleaseTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = iOSReleaseTestTests.swift; path = ../../Source/iOSReleaseTestTests.swift; sourceTree = "<group>"; };
+		E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSReleaseTestTests.swift; sourceTree = "<group>"; };
 		E7A0C3042989AB200024497D /* BranchSDKTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchSDKTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -73,7 +73,7 @@
 			children = (
 				E73878F42988A7DC00BD3981 /* Packages */,
 				C119B01627ADC85C00E8C7BF /* iOSReleaseTest */,
-				E7939C0229749D3C00B90B82 /* iOSReleaseTestTests */,
+				E7939C0229749D3C00B90B82 /* IntegrationTests */,
 				C119B01527ADC85C00E8C7BF /* Products */,
 				E73878F02988A44100BD3981 /* Frameworks */,
 			);
@@ -101,7 +101,8 @@
 				C119B02227ADC85E00E8C7BF /* LaunchScreen.storyboard */,
 				C119B02527ADC85E00E8C7BF /* Info.plist */,
 			);
-			path = iOSReleaseTest;
+			name = iOSReleaseTest;
+			path = ../Source/iOSReleaseTest;
 			sourceTree = "<group>";
 		};
 		E73878F02988A44100BD3981 /* Frameworks */ = {
@@ -119,13 +120,14 @@
 			name = Packages;
 			sourceTree = "<group>";
 		};
-		E7939C0229749D3C00B90B82 /* iOSReleaseTestTests */ = {
+		E7939C0229749D3C00B90B82 /* IntegrationTests */ = {
 			isa = PBXGroup;
 			children = (
 				E77DEAF12E9FFEE300EDEAB4 /* TestObserver.swift */,
 				E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */,
 			);
-			path = iOSReleaseTestTests;
+			name = IntegrationTests;
+			path = ../Source/IntegrationTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
