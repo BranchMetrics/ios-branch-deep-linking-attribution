@@ -10,11 +10,10 @@ import BranchSDK
 
 class BranchSDKTest {
     
-    init() {
-        Branch.getInstance().enableLogging()
-        Branch.getInstance().initSession(launchOptions: nil) { (params, error) in
-              print(params as? [String: AnyObject] ?? {})
-        }
+    init(callback: @escaping ([AnyHashable: Any]?, Error?) -> Void) {
+       // Branch.getInstance().enableLogging()
+       // Branch.getInstance().initSession(launchOptions: nil, callback: callback)
+        Branch.getInstance().initSession(launchOptions:nil, andRegisterDeepLinkHandler: callback)
     }
     
     func disableTracking( status: Bool)  {

@@ -94,7 +94,12 @@ final class iOSReleaseTestTests: XCTestCase {
     func testSetTrackingDisabled() throws {
         print("[Test] Starting testSetTrackingDisabled")
 
-        let sdk = BranchSDKTest()
+        let expectation = expectation(description: "My asynchronous operation should complete")
+
+        let sdk = BranchSDKTest(){  params, error in
+            print(params as? [String: AnyObject] ?? {})
+            expectation.fulfill()
+        }
         
         print("[Test] Disabling tracking...")
         sdk.disableTracking(status: true)
@@ -107,19 +112,10 @@ final class iOSReleaseTestTests: XCTestCase {
         print("[Test] Disabling tracking again...")
         sdk.disableTracking(status: true)
         
-        print("[Test] testSetTrackingDisabled completed successfully")
-    }
+        waitForExpectations(timeout: 5, handler: nil) // Wait for up to 5 seconds
 
-    func testPerformanceExample() throws {
-        print("[Test] Starting performance test *********************")
-        measure {
-            print("[Performance] Measuring performance...********************")
-            let sdk = BranchSDKTest()
-            sdk.disableTracking(status: false)
-            _ = sdk.trackingStatus()
-        }
         
-        print("[Test] Performance test completed")
+        print("[Test] testSetTrackingDisabled completed")
     }
 
 }
