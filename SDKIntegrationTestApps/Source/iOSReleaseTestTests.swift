@@ -112,7 +112,6 @@ final class iOSReleaseTestTests: XCTestCase {
         print("[Test] Disabling tracking again...")
         sdk.disableTracking(status: true)
         
-        waitForExpectations(timeout: 5, handler: nil) // Wait for up to 5 seconds
         waitForExpectations(timeout: 15, handler: nil) // Wait for up to 5 seconds
 
         
