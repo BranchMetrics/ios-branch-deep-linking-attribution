@@ -44,8 +44,15 @@ jobs:
             echo "branch=${{ github.ref }}" >> $GITHUB_OUTPUT
             cd  SDKIntegrationTestApps/iOSReleaseTest-Cocoapods/
             pod install
-            xcodebuild test -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace
-             -destination "generic/platform=iOS" CODE_SIGNING_ALLOWED=NO -resultBundlePath ../../test-results/ios-cocoapods.xcresult
+            xcodebuild -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,OS=latest,name=iPhone 15' \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            DEVELOPMENT_TEAM="" \
+            -resultBundlePath ../../test-results/ios-cocoapods.xcresult \
+            clean test 
       - name: Upload test report
         uses: actions/upload-artifact@v4
         if: always()
