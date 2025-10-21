@@ -48,7 +48,7 @@ jobs:
             cd  SDKIntegrationTestApps/iOSReleaseTest-Cocoapods/
             pod install
             xcodebuild test -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace
-             -destination "$DESTINATION" -resultBundlePath ../../test-results/ios-cocoapods.xcresult  -allowProvisioningUpdates
+             -destination "$DESTINATION" -resultBundlePath ../../test-results/ios-cocoapods.xcresult
       - name: Upload test report
         uses: actions/upload-artifact@v4
         if: always()
