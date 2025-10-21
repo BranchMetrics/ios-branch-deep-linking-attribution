@@ -13,7 +13,6 @@ jobs:
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.APPLE_DEV_CERT }}
           P12_PASSWORD: ${{ secrets.APPLE_DEV_CERT_PASSWORD }}
-          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BS_BUILD_PROVISION_PROFILE_BASE64_PART_AA }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         run: |
           # create variables
@@ -24,9 +23,9 @@ jobs:
           echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
           
           # Create Provisioning Profiles 
-          echo "${{ secrets.BS_BUILD_PROVISION_PROFILE_BASE64_PART_AA }}" >> part_aa
-          #echo "${{ secrets.BS_BUILD_PROVISION_PROFILE_BASE64_PART_AB }}" >> part_aa
-          #echo "${{ secrets.BS_BUILD_PROVISION_PROFILE_BASE64_PART_AC }}" >> part_aa
+          echo "${{ secrets.BS_DEV_BUILD_PROVISION_PROFILE_BASE64_PART_AA }}" >> part_aa
+          #echo "${{ secrets.BS_DEV_BUILD_PROVISION_PROFILE_BASE64_PART_AB }}" >> part_aa
+          #echo "${{ secrets.BS_DEV_BUILD_PROVISION_PROFILE_BASE64_PART_AC }}" >> part_aa
           base64 -D -i part_aa > $PP_PATH
           # create temporary keychain
           security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
