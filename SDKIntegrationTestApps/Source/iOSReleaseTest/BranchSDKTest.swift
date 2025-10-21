@@ -15,6 +15,6 @@ class BranchSDKTest {
     }
     
     func setCPPLevel( status: BranchAttributionLevel)  {
-        Branch.getInstance().setConsumerProtectionAttributionLevel(BranchAttributionLevel.full)
+        Branch.getInstance().setConsumerProtectionAttributionLevel(status)
     }
 }
