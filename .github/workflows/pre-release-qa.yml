@@ -42,12 +42,10 @@ jobs:
         run: |
             mkdir -p test-results
             echo "branch=${{ github.ref }}" >> $GITHUB_OUTPUT
-            ./scripts/getSimulator
-            DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/iOSReleaseTest-Cocoapods/
             pod install
             xcodebuild test -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace
-             -destination "$DESTINATION" -resultBundlePath ../../test-results/ios-cocoapods.xcresult
+             -destination "generic/platform=iOS" -resultBundlePath ../../test-results/ios-cocoapods.xcresult
       - name: Upload test report
         uses: actions/upload-artifact@v4
         if: always()
