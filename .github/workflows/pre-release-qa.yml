@@ -47,7 +47,7 @@ jobs:
             xcodebuild -configuration Debug \
             -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace \
             -sdk iphonesimulator \
-            -destination "platform=iOS Simulator" \
+            -destination "platform='iOS Simulator'" \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             PROVISIONING_PROFILE_SPECIFIER="" \
