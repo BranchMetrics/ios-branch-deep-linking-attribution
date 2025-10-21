@@ -42,12 +42,14 @@ jobs:
         run: |
             mkdir -p test-results
             echo "branch=${{ github.ref }}" >> $GITHUB_OUTPUT
+            ./scripts/getSimulator
+            DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/iOSReleaseTest-Cocoapods/
             pod install
             xcodebuild -configuration Debug \
             -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace \
             -sdk iphonesimulator \
-            -destination "platform='iOS Simulator'" \
+            -destination "$DESTINATION" \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             PROVISIONING_PROFILE_SPECIFIER="" \
