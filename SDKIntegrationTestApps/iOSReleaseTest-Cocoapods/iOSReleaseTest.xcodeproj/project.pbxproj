@@ -15,7 +15,6 @@
 		C119B01F27ADC85C00E8C7BF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C119B01D27ADC85C00E8C7BF /* Main.storyboard */; };
 		C119B02127ADC85E00E8C7BF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C119B02027ADC85E00E8C7BF /* Assets.xcassets */; };
 		C119B02427ADC85E00E8C7BF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C119B02227ADC85E00E8C7BF /* LaunchScreen.storyboard */; };
-		C119B02C27ADC92A00E8C7BF /* iOSReleaseTest.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = C119B02B27ADC8FB00E8C7BF /* iOSReleaseTest.entitlements */; };
 		E72CA8872EA19EA500805780 /* TestObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72CA8862EA19EA500805780 /* TestObserver.swift */; };
 		E7939C0429749D3C00B90B82 /* iOSReleaseTestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */; };
 /* End PBXBuildFile section */
@@ -42,7 +41,6 @@
 		C119B02027ADC85E00E8C7BF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C119B02327ADC85E00E8C7BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C119B02527ADC85E00E8C7BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C119B02B27ADC8FB00E8C7BF /* iOSReleaseTest.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iOSReleaseTest.entitlements; sourceTree = "<group>"; };
 		CB25BCCA817F45C9E229676E /* Pods_iOSReleaseTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOSReleaseTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D347EDD199CA7E6A4A677D5A /* Pods-iOSReleaseTestTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSReleaseTestTests.release.xcconfig"; path = "Target Support Files/Pods-iOSReleaseTestTests/Pods-iOSReleaseTestTests.release.xcconfig"; sourceTree = "<group>"; };
 		E72CA8862EA19EA500805780 /* TestObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestObserver.swift; sourceTree = "<group>"; };
@@ -105,7 +103,6 @@
 		C119B01627ADC85C00E8C7BF /* iOSReleaseTest */ = {
 			isa = PBXGroup;
 			children = (
-				C119B02B27ADC8FB00E8C7BF /* iOSReleaseTest.entitlements */,
 				C119B01727ADC85C00E8C7BF /* AppDelegate.swift */,
 				C119B01927ADC85C00E8C7BF /* SceneDelegate.swift */,
 				C119B01B27ADC85C00E8C7BF /* ViewController.swift */,
@@ -222,7 +219,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C119B02C27ADC92A00E8C7BF /* iOSReleaseTest.entitlements in Resources */,
 				C119B02427ADC85E00E8C7BF /* LaunchScreen.storyboard in Resources */,
 				C119B02127ADC85E00E8C7BF /* Assets.xcassets in Resources */,
 				C119B01F27ADC85C00E8C7BF /* Main.storyboard in Resources */,
