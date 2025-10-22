@@ -143,7 +143,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             PROVISIONING_PROFILE_SPECIFIER="" \
-            DEVELOPMENT_TEAM="" \ 
+            DEVELOPMENT_TEAM="" \
             -resultBundlePath  ../../test-results/ios-static-framework.xcresult \
             clean test 
       - name: Upload test report
