@@ -115,7 +115,7 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             PROVISIONING_PROFILE_SPECIFIER="" \
             DEVELOPMENT_TEAM="" \
-             -resultBundlePath ../../test-results/ios-xcframework.xcresult \
+            -resultBundlePath ../../test-results/ios-xcframework.xcresult \
             clean test 
       - name: Upload test report
         uses: actions/upload-artifact@v4
@@ -137,7 +137,7 @@ jobs:
             xcodebuild -scheme static-xcframework
             cd  SDKIntegrationTestApps/iOSReleaseTest-Manual-Static/
             xcodebuild -configuration Debug \
-            -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj \ 
+            -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj \
             -sdk iphonesimulator \
             -destination "$DESTINATION" \
             CODE_SIGNING_ALLOWED=NO \
