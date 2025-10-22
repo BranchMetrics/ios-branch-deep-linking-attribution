@@ -9,35 +9,6 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Install the Apple certificate and provisioning profile
-        env:
-          BUILD_CERTIFICATE_BASE64: ${{ secrets.APPLE_DEV_CERT }}
-          P12_PASSWORD: ${{ secrets.APPLE_DEV_CERT_PASSWORD }}
-          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-        run: |
-          # create variables
-          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
-          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-          PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
-          # import certificate 
-          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
-          
-          # Create Provisioning Profiles 
-          echo "${{ secrets.BS_DEV_BUILD_PROVISION_PROFILE_BASE64_PART_AA }}" >> part_aa
-          echo "${{ secrets.BS_DEV_BUILD_PROVISION_PROFILE_BASE64_PART_AB }}" >> part_aa
-          echo "${{ secrets.BS_DEV_BUILD_PROVISION_PROFILE_BASE64_PART_AC }}" >> part_aa
-          base64 -D -i part_aa > $PP_PATH
-          # create temporary keychain
-          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          # import certificate to keychain
-          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security list-keychain -d user -s $KEYCHAIN_PATH
-          
-          # apply provisioning profile
-          mkdir -p ~/Library/Developer/Xcode/UserData/Provisioning\ Profiles
-          cp $PP_PATH ~/Library/Developer/Xcode/UserData/Provisioning\ Profiles/
       - name: Install pod, build project and run tests
         run: |
             mkdir -p test-results
@@ -79,7 +50,16 @@ jobs:
             cd  SDKIntegrationTestApps/iOSReleaseTest-Carthage/
             echo "git \"file://${CURR_DIR}\" \"$BRANCH_NAME\" " >> cartfile
             carthage update --use-xcframeworks
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" -resultBundlePath ../../test-results/ios-carthage.xcresult
+            xcodebuild -configuration Debug \
+            -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj \
+            -sdk iphonesimulator \
+            -destination "$DESTINATION" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            DEVELOPMENT_TEAM="" \
+            -resultBundlePath ../../test-results/ios-carthage.xcresult \
+            clean test 
       - name: Upload test report
         uses: actions/upload-artifact@v4
         if: always()
@@ -98,7 +78,16 @@ jobs:
             ./scripts/getSimulator
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/iOSReleaseTest-SPM/
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" -resultBundlePath ../../test-results/ios-spm.xcresult
+            xcodebuild -configuration Debug \
+            -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj \
+            -sdk iphonesimulator \
+            -destination "$DESTINATION" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            DEVELOPMENT_TEAM="" \
+            -resultBundlePath ../../test-results/ios-spm.xcresult \
+            clean test 
       - name: Upload test report
         uses: actions/upload-artifact@v4
         if: always()
