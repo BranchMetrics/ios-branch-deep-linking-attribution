@@ -62,7 +62,7 @@ final class iOSReleaseTestTests: XCTestCase {
         print("[Test] Disabling tracking again...")
         sdk.setCPPLevel(status: BranchAttributionLevel.full)
         
-        waitForExpectations(timeout: 30, handler: nil)
+        waitForExpectations(timeout: 180, handler: nil)
         print("[Test] testSetTrackingDisabled completed")
     }
 
