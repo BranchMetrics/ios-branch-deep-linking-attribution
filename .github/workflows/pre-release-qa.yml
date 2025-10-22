@@ -108,7 +108,7 @@ jobs:
             xcodebuild -scheme xcframework
             cd  SDKIntegrationTestApps/iOSReleaseTest-Manual/
             xcodebuild -configuration Debug \
-            -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj \ 
+            -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj \
             -sdk iphonesimulator \
             -destination "$DESTINATION" \
             CODE_SIGNING_ALLOWED=NO \
