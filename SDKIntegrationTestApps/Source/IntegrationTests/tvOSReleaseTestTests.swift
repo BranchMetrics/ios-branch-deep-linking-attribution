@@ -1,15 +1,15 @@
 //
-//  iOSReleaseTestTests.swift
-//  iOSReleaseTestTests
+//  tvOSReleaseTestTests.swift
+//  tvOSReleaseTestTests
 //
-//  Created by Nidhi Dixit on 1/15/23.
+//  Created by Nidhi Dixit on 1/30/23.
 //
 
 import XCTest
-@testable import iOSReleaseTest
+@testable import tvOSReleaseTest
 @testable import BranchSDK
 
-final class iOSReleaseTestTests: XCTestCase {
+final class tvOSReleaseTestTests: XCTestCase {
     
     private static var testObserver: TestObserver?
 
