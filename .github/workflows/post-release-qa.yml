@@ -74,7 +74,7 @@ jobs:
             ./scripts/getSimulator
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/PostRelease-iOSReleaseTest-SPM/
-            xcodebuild -disableAutomaticPackageResolution -resolvePackageDependencies -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj 
+            xcodebuild -resolvePackageDependencies -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj 
             xcodebuild -configuration Debug \
             -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj \
             -sdk iphonesimulator \
