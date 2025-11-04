@@ -157,7 +157,6 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
 #pragma mark - BranchEvent
 
 @interface BranchEvent ()<SKRequestDelegate, SKProductsRequestDelegate>
-@property (nonatomic, copy) NSString*  eventName;
 @property (strong, nonatomic) SKProductsRequest *request;
 @end
 

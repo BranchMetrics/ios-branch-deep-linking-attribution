@@ -88,7 +88,7 @@ typedef NS_ENUM(NSInteger, BranchEventAdType) {
 @property (nonatomic, copy) NSString*_Nullable                affiliation;
 @property (nonatomic, copy) NSString*_Nullable                eventDescription;
 @property (nonatomic, copy) NSString*_Nullable                searchQuery;
-
+@property (nonatomic, copy) NSString*_Nullable                eventName;
 @property (nonatomic, assign) BranchEventAdType                 adType;
 
 @property (nonatomic, strong) NSArray<BranchUniversalObject*>*_Nonnull       contentItems;
