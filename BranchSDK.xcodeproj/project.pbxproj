@@ -510,7 +510,8 @@
 		E7F311B12DACB54100F824A7 /* BNCODMInfoCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = E7F311B02DACB54100F824A7 /* BNCODMInfoCollector.h */; };
 		E7F311B22DACB54100F824A7 /* BNCODMInfoCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = E7F311B02DACB54100F824A7 /* BNCODMInfoCollector.h */; };
 		E7F311B32DACB54100F824A7 /* BNCODMInfoCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = E7F311B02DACB54100F824A7 /* BNCODMInfoCollector.h */; };
-/* End PBXBuildFile section */
+		06A04628F6DB4F44A9BB2AE2 /* BNCServerRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = D8DF63E386294A42819E6992 /* BNCServerRequestOperation.m */; };
+	/* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		5F2211852894A9C100C5B190 /* PBXContainerItemProxy */ = {
@@ -727,7 +728,9 @@
 		E73D02802DEE8AE90076C3F1 /* BranchConfigurationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchConfigurationController.m; sourceTree = "<group>"; };
 		E7F311AD2DACB4D400F824A7 /* BNCODMInfoCollector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCODMInfoCollector.m; sourceTree = "<group>"; };
 		E7F311B02DACB54100F824A7 /* BNCODMInfoCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCODMInfoCollector.h; sourceTree = "<group>"; };
-/* End PBXFileReference section */
+		D8DF63E386294A42819E6992 /* BNCServerRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerRequestOperation.m; sourceTree = "<group>"; };
+		61FEEBBCF8A744929B7C96A1 /* BNCServerRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCServerRequestOperation.h; sourceTree = "<group>"; };
+	/* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		5F22101A2894A0DB00C5B190 /* Frameworks */ = {
@@ -874,6 +877,7 @@
 				5FCDD3902B7AC6A100EAF29F /* BNCServerInterface.m */,
 				5FCDD3802B7AC6A100EAF29F /* BNCServerRequest.m */,
 				5FCDD3742B7AC6A100EAF29F /* BNCServerRequestQueue.m */,
+				D8DF63E386294A42819E6992 /* BNCServerRequestOperation.m */,
 				5FCDD3F72B7AC6A100EAF29F /* BNCServerResponse.m */,
 				5FCDD3EB2B7AC6A100EAF29F /* BNCSKAdNetwork.m */,
 				5FCDD3F22B7AC6A100EAF29F /* BNCSpotlightService.m */,
@@ -1007,7 +1011,8 @@
 				5FCDD3BB2B7AC6A100EAF29F /* UIViewController+Branch.h */,
 				E71E396D2DD3A92900110F59 /* BNCInAppBrowser.h */,
 				E73D027F2DEE8AE90076C3F1 /* BranchConfigurationController.h */,
-			);
+			
+				61FEEBBCF8A744929B7C96A1 /* BNCServerRequestOperation.h */,);
 			path = Private;
 			sourceTree = "<group>";
 		};
@@ -1675,7 +1680,8 @@
 				5FCDD5852B7AC6A400EAF29F /* BNCInitSessionResponse.m in Sources */,
 				5FCDD4412B7AC6A100EAF29F /* BNCPreferenceHelper.m in Sources */,
 				5FCDD5792B7AC6A400EAF29F /* BranchContentPathProperties.m in Sources */,
-			);
+			
+				06A04628F6DB4F44A9BB2AE2 /* BNCServerRequestOperation.m in Sources */,);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5F22116B2894A9C000C5B190 /* Sources */ = {
@@ -1686,7 +1692,8 @@
 				5F6DD24C2894AF5E00AE9FB0 /* NSURLSession+Branch.m in Sources */,
 				5F2211722894A9C000C5B190 /* AppDelegate.swift in Sources */,
 				5F2211742894A9C000C5B190 /* SceneDelegate.swift in Sources */,
-			);
+			
+				06A04628F6DB4F44A9BB2AE2 /* BNCServerRequestOperation.m in Sources */,);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5F2211802894A9C100C5B190 /* Sources */ = {
@@ -1694,7 +1701,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				5F2211892894A9C100C5B190 /* TestHostTests.swift in Sources */,
-			);
+			
+				06A04628F6DB4F44A9BB2AE2 /* BNCServerRequestOperation.m in Sources */,);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5F22118A2894A9C100C5B190 /* Sources */ = {
@@ -1703,7 +1711,8 @@
 			files = (
 				5F2211952894A9C100C5B190 /* TestHostUITestsLaunchTests.swift in Sources */,
 				5F2211932894A9C100C5B190 /* TestHostUITests.swift in Sources */,
-			);
+			
+				06A04628F6DB4F44A9BB2AE2 /* BNCServerRequestOperation.m in Sources */,);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5F73EBF028ECE65400608601 /* Sources */ = {
@@ -1783,7 +1792,8 @@
 				5FCDD5862B7AC6A400EAF29F /* BNCInitSessionResponse.m in Sources */,
 				5FCDD4422B7AC6A100EAF29F /* BNCPreferenceHelper.m in Sources */,
 				5FCDD57A2B7AC6A400EAF29F /* BranchContentPathProperties.m in Sources */,
-			);
+			
+				06A04628F6DB4F44A9BB2AE2 /* BNCServerRequestOperation.m in Sources */,);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5F79038828B5765D003144CD /* Sources */ = {
@@ -1853,7 +1863,8 @@
 				5FCDD5872B7AC6A400EAF29F /* BNCInitSessionResponse.m in Sources */,
 				5FCDD4432B7AC6A100EAF29F /* BNCPreferenceHelper.m in Sources */,
 				5FCDD57B2B7AC6A400EAF29F /* BranchContentPathProperties.m in Sources */,
-			);
+			
+				06A04628F6DB4F44A9BB2AE2 /* BNCServerRequestOperation.m in Sources */,);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
