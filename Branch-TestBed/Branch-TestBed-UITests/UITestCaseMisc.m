@@ -7,7 +7,7 @@
 //
 
 #import "UITestCaseTestBed.h"
-#import "Branch.h"
+@import BranchSDK;
 #import "BranchEvent.h"
 
 @interface UITestCaseMisc : UITestCaseTestBed
