@@ -15,6 +15,7 @@
 #import "BNCNetworkService.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCServerRequest.h"
+#import "BNCServerRequestQueue.h"
 #import "BNCServerResponse.h"
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
