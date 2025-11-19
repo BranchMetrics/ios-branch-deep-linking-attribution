@@ -953,6 +953,7 @@
 				5FCDD39F2B7AC6A100EAF29F /* BranchSDK.h */,
 				5FCDD3A52B7AC6A100EAF29F /* BranchShareLink.h */,
 				5FCDD3AC2B7AC6A100EAF29F /* BranchUniversalObject.h */,
+			5FCDD3DB2B7AC6A100EAF29F /* BNCConfig.h */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -965,7 +966,6 @@
 				5FCDD3B62B7AC6A100EAF29F /* BNCAppleReceipt.h */,
 				5FCDD3C72B7AC6A100EAF29F /* BNCApplication.h */,
 				5FCDD3C12B7AC6A100EAF29F /* BNCCallbackMap.h */,
-				5FCDD3DB2B7AC6A100EAF29F /* BNCConfig.h */,
 				5FCDD3D52B7AC6A100EAF29F /* BNCContentDiscoveryManager.h */,
 				5FCDD3E02B7AC6A100EAF29F /* BNCCrashlyticsWrapper.h */,
 				5FCDD3D42B7AC6A100EAF29F /* BNCDeepLinkViewControllerInstance.h */,
