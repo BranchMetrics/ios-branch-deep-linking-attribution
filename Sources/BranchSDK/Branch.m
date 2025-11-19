@@ -15,7 +15,6 @@
 #import "BNCNetworkService.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCServerRequest.h"
-#import "BNCServerRequestQueue.h"
 #import "BNCServerResponse.h"
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
@@ -1895,6 +1894,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                response:(BNCServerResponse*)response
                   error:(NSError*)error {
 
+    // DEPRECATED: This method is being phased out in favor of NSOperationQueue-based request handling
+    // The remove: and peekAt: methods are incompatible with NSOperationQueue implementation
+    // TODO: Implement proper error handling for NSOperationQueue-based request queue
+
+    /* Legacy error handling code - commented out due to NSOperationQueue migration
     // If the request was successful, or was a bad user request, continue processing.
     if (!error ||
         error.code == BNCTrackingDisabledError ||
@@ -1950,7 +1954,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 }
             });
         }
-    }
+    }*/
 }
 
 - (BOOL)isReplayableRequest:(BNCServerRequest *)request {

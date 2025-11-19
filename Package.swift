@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 import PackageDescription
 
@@ -9,25 +9,23 @@ let package = Package(
         .tvOS(.v12),
     ],
     products: [
+        // Main product that clients will import
         .library(
             name: "BranchSDK",
-            targets: ["BranchSDK"]),
+            targets: ["BranchSDK", "BranchSwiftSDK"]),
     ],
     dependencies: [
     ],
     targets: [
+        // Main Objective-C SDK target
         .target(
             name: "BranchSDK",
-            path: "Sources",
-            sources: [
-                "BranchSDK/"
-            ],
-            resources: [
-                .copy("Resources/PrivacyInfo.xcprivacy"),
-            ],
-            publicHeadersPath: "BranchSDK/Public/",
+            dependencies: [],
+            path: "Sources/BranchSDK",
+            publicHeadersPath: "Public",
             cSettings: [
-                .headerSearchPath("BranchSDK/Private"),
+                .headerSearchPath("Private"),
+                .define("SWIFT_PACKAGE")
             ],
             linkerSettings: [
                 .linkedFramework("CoreServices"),
@@ -37,5 +35,14 @@ let package = Package(
                 .linkedFramework("AdServices", .when(platforms: [.iOS]))
             ]
         ),
+        // Swift Concurrency layer (depends on main SDK)
+        .target(
+            name: "BranchSwiftSDK",
+            dependencies: ["BranchSDK"],
+            path: "Sources/BranchSwiftSDK",
+            swiftSettings: [
+                .define("SWIFT_PACKAGE")
+            ]
+        )
     ]
 )
