@@ -12,12 +12,12 @@ let package = Package(
         // Main product that clients will import
         .library(
             name: "BranchSDK",
-            targets: ["BranchSDK", "BranchSwiftSDK"]),
+            targets: ["BranchSDK"]),
     ],
     dependencies: [
     ],
     targets: [
-        // Main Objective-C SDK target
+        // Main Objective-C SDK target with modern NSOperationQueue implementation
         .target(
             name: "BranchSDK",
             dependencies: [],
@@ -33,15 +33,6 @@ let package = Package(
                 .linkedFramework("WebKit", .when(platforms: [.iOS])),
                 .linkedFramework("CoreSpotlight", .when(platforms: [.iOS])),
                 .linkedFramework("AdServices", .when(platforms: [.iOS]))
-            ]
-        ),
-        // Swift Concurrency layer (depends on main SDK)
-        .target(
-            name: "BranchSwiftSDK",
-            dependencies: ["BranchSDK"],
-            path: "Sources/BranchSwiftSDK",
-            swiftSettings: [
-                .define("SWIFT_PACKAGE")
             ]
         )
     ]
