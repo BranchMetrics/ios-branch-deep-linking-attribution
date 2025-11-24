@@ -20,7 +20,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Run static analysis
         run: |
             xcodebuild analyze -project BranchSDK.xcodeproj
@@ -31,7 +31,7 @@ jobs:
   #   needs: [static-analysis]
   #   steps:
   #     - name: Check out code
-  #       uses: actions/checkout@v4
+  #       uses: actions/checkout@v6
   #     - name: Update Version
   #       run: |
   #           if [[ ${{ inputs.version }} == "patch" ]]; then
@@ -56,7 +56,7 @@ jobs:
     needs: [static-analysis]
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install the Apple certificate
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
@@ -99,7 +99,7 @@ jobs:
     needs: [static-analysis]
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install the Apple certificate
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
@@ -140,7 +140,7 @@ jobs:
     needs: [static-analysis]
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Build static xcframework
         run: |
             ./scripts/prep_static_xcframework.sh
@@ -158,7 +158,7 @@ jobs:
     needs: [static-analysis]
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Build static xcframework
         run: |
             ./scripts/prep_static_xcframework_noidfa.sh
@@ -175,7 +175,7 @@ jobs:
     needs: [build-framework, build-static-framework, build-noidfa-framework, build-static-noidfa-framework]
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set up Ruby 2.7
         uses: ruby/setup-ruby@v1
         with:
