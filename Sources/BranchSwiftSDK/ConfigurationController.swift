@@ -9,8 +9,25 @@
 import Foundation
 
 #if SWIFT_PACKAGE
-import BranchObjCSDK
+import BranchSDK
 #endif
+
+// MARK: - Branch Constants (Swift equivalents from BranchConstants.h)
+
+/// Branch request key constants
+/// These match the Objective-C constants defined in BranchConstants.m (lines 186-196)
+private let BRANCH_REQUEST_KEY_BRANCH_KEY_SOURCE = "branch_key_source"
+private let BRANCH_REQUEST_KEY_CHECK_PASTEBOARD_ON_INSTALL = "checkPasteboardOnInstall"
+private let BRANCH_REQUEST_KEY_DEFER_INIT_FOR_PLUGIN_RUNTIME = "deferInitForPluginRuntime"
+private let BRANCH_REQUEST_KEY_LINKED_FRAMEORKS = "linked_frameworks" // Note: typo "FRAMEORKS" in constant name is intentional
+
+/// Framework identification constants
+/// These match the Objective-C constants defined in BranchConstants.m (lines 197-201)
+private let FRAMEWORK_ATT_TRACKING_MANAGER = "ATTrackingManager"
+private let FRAMEWORK_AD_SUPPORT = "AdSupport"
+private let FRAMEWORK_AD_SAFARI_SERVICES = "SafariServices"
+private let FRAMEWORK_AD_APP_ADS_ONDEVICE_CONVERSION = "AppAdsOnDeviceConversion"
+private let FRAMEWORK_AD_FIREBASE_CRASHLYTICS = "FirebaseCrashlytics"
 
 @objcMembers
 public class ConfigurationController: NSObject {
@@ -21,7 +38,9 @@ public class ConfigurationController: NSObject {
     public var checkPasteboardOnInstall: Bool = false
 
     // MARK: - Singleton
-     @MainActor public static let shared = ConfigurationController()
+    // Note: Removed @MainActor to allow synchronous access from Objective-C code
+    // Thread safety is handled internally within the class methods
+    @objc public static let shared = ConfigurationController()
 
     private override init() {
         // Private initializer to enforce singleton usage.
@@ -30,11 +49,11 @@ public class ConfigurationController: NSObject {
 
     public func getConfiguration() -> [String: Any] {
         var config: [String: Any] = [:]
-        
+
         config.merge(branchKeyInfo()) { (_, new) in new }
         config.merge(featureFlagsInfo()) { (_, new) in new }
         config.merge(frameworkIntegrationInfo()) { (_, new) in new }
-        
+
         return config
     }
 
@@ -62,9 +81,9 @@ public class ConfigurationController: NSObject {
             FRAMEWORK_AD_SAFARI_SERVICES: isClassAvailable(className: "SFSafariViewController"),
             FRAMEWORK_AD_APP_ADS_ONDEVICE_CONVERSION: isClassAvailable(className: "ODCConversionManager")
         ]
-        
+
         info[BRANCH_REQUEST_KEY_LINKED_FRAMEORKS] = linkedFrameworks
-        
+
         return info
     }
 

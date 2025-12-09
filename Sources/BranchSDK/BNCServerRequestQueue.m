@@ -13,8 +13,7 @@
 #import "BranchOpenRequest.h"
 #import "BranchEvent.h"
 #import "BranchLogger.h"
-#import "BNCServerRequestQueue.h"
-#import "BNCServerRequestOperation.h"
+#import "Private/BNCServerRequestOperation.h"
 #import "Branch.h"
 
 @interface BNCServerRequestQueue ()

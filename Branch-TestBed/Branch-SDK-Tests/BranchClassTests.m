@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "Branch.h"
+@import BranchSDK;
 #import "BranchConstants.h"
 #import "BNCPasteboard.h"
 #import "BNCAppGroupsData.h"
