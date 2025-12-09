@@ -58,3 +58,4 @@ FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 
 // BNCLinkCache.h uses BNCLinkData.h
 #import <BranchSDK/BNCLinkData.h>
+#import <BranchSDK/BranchConstants.h>

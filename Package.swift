@@ -1,9 +1,9 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 import PackageDescription
 
 let package = Package(
-    name: "BranchSDK",
+    name: "ios-branch-deep-linking-attribution",
     platforms: [
         .iOS(.v12),
         .tvOS(.v12),
@@ -11,23 +11,29 @@ let package = Package(
     products: [
         .library(
             name: "BranchSDK",
-            targets: ["BranchSDK"]),
+            targets: ["BranchSDK", "BranchSwiftSDK", "BranchObjCSDK"]),
     ],
     dependencies: [
     ],
     targets: [
         .target(
+            name: "BranchObjCSDK",
+            path: "Sources/BranchSDK_ObjC",
+            publicHeadersPath: "Public"
+        ),
+        .target(
+            name: "BranchSwiftSDK",
+            dependencies: ["BranchObjCSDK"], // Swift code depends on Objective-C Constants
+            path: "Sources/BranchSDK_Swift"
+            
+        ),
+        .target(
             name: "BranchSDK",
-            path: "Sources",
-            sources: [
-                "BranchSDK/"
-            ],
-            resources: [
-                .copy("Resources/PrivacyInfo.xcprivacy"),
-            ],
-            publicHeadersPath: "BranchSDK/Public/",
+            dependencies: ["BranchSwiftSDK"],
+            path: "Sources/BranchSDK",
+            publicHeadersPath: "Public",
             cSettings: [
-                .headerSearchPath("BranchSDK/Private"),
+                .headerSearchPath("Private")
             ],
             linkerSettings: [
                 .linkedFramework("CoreServices"),
@@ -36,6 +42,6 @@ let package = Package(
                 .linkedFramework("CoreSpotlight", .when(platforms: [.iOS])),
                 .linkedFramework("AdServices", .when(platforms: [.iOS]))
             ]
-        ),
+        )
     ]
 )
