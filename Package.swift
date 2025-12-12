@@ -3,37 +3,32 @@
 import PackageDescription
 
 let package = Package(
-    name: "ios-branch-deep-linking-attribution",
+    name: "BranchSDK",
     platforms: [
         .iOS(.v12),
         .tvOS(.v12),
     ],
     products: [
+        // Main product that clients will import
         .library(
             name: "BranchSDK",
-            targets: ["BranchSDK", "BranchSwiftSDK", "BranchObjCSDK"]),
+            targets: ["BranchSDK", "BranchSwiftSDK"]),
     ],
     dependencies: [
+        // Add external dependencies here if needed
+        // .package(url: "https://github.com/google/GoogleUtilities.git", from: "7.0.0"),
+        // .package(url: "https://github.com/firebase/nanopb.git", from: "2.30909.0"),
     ],
     targets: [
-        .target(
-            name: "BranchObjCSDK",
-            path: "Sources/BranchSDK_ObjC",
-            publicHeadersPath: "Public"
-        ),
-        .target(
-            name: "BranchSwiftSDK",
-            dependencies: ["BranchObjCSDK"], // Swift code depends on Objective-C Constants
-            path: "Sources/BranchSDK_Swift"
-            
-        ),
+        // Main Objective-C SDK target
         .target(
             name: "BranchSDK",
-            dependencies: ["BranchSwiftSDK"],
+            dependencies: [],
             path: "Sources/BranchSDK",
             publicHeadersPath: "Public",
             cSettings: [
-                .headerSearchPath("Private")
+                .headerSearchPath("Private"),
+                .define("SWIFT_PACKAGE")
             ],
             linkerSettings: [
                 .linkedFramework("CoreServices"),
@@ -41,6 +36,15 @@ let package = Package(
                 .linkedFramework("WebKit", .when(platforms: [.iOS])),
                 .linkedFramework("CoreSpotlight", .when(platforms: [.iOS])),
                 .linkedFramework("AdServices", .when(platforms: [.iOS]))
+            ]
+        ),
+        // Swift Concurrency layer (depends on main SDK)
+        .target(
+            name: "BranchSwiftSDK",
+            dependencies: ["BranchSDK"],
+            path: "Sources/BranchSwiftSDK",
+            swiftSettings: [
+                .define("SWIFT_PACKAGE")
             ]
         )
     ]
