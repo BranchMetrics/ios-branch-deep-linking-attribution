@@ -3,29 +3,37 @@
 import PackageDescription
 
 let package = Package(
-    name: "BranchSDK",
+    name: "ios-branch-deep-linking-attribution",
     platforms: [
         .iOS(.v12),
         .tvOS(.v12),
     ],
     products: [
-        // Main product that clients will import
         .library(
             name: "BranchSDK",
-            targets: ["BranchSDK"]),
+            targets: ["BranchSDK", "BranchSwiftSDK", "BranchObjCSDK"]),
     ],
     dependencies: [
     ],
     targets: [
-        // Main Objective-C SDK target with modern NSOperationQueue implementation
+        .target(
+            name: "BranchObjCSDK",
+            path: "Sources/BranchSDK_ObjC",
+            publicHeadersPath: "Public"
+        ),
+        .target(
+            name: "BranchSwiftSDK",
+            dependencies: ["BranchObjCSDK"], // Swift code depends on Objective-C Constants
+            path: "Sources/BranchSDK_Swift"
+            
+        ),
         .target(
             name: "BranchSDK",
-            dependencies: [],
+            dependencies: ["BranchSwiftSDK"],
             path: "Sources/BranchSDK",
             publicHeadersPath: "Public",
             cSettings: [
-                .headerSearchPath("Private"),
-                .define("SWIFT_PACKAGE")
+                .headerSearchPath("Private")
             ],
             linkerSettings: [
                 .linkedFramework("CoreServices"),
