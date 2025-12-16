@@ -16,7 +16,6 @@
 #import "UIViewController+Branch.h"
 #import "BranchLogger.h"
 #import "BNCServerAPI.h"
-#import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
 
 @interface BranchQRCode()

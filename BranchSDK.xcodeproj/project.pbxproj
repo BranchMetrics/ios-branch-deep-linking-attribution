@@ -473,6 +473,8 @@
 		B70D0E272E8DC1F8002BD4FE /* BranchConfigurationController.m in Sources */ = {isa = PBXBuildFile; fileRef = B70D0E242E8DC1F8002BD4FE /* BranchConfigurationController.m */; };
 		B70D0E2C2E8DCEC6002BD4FE /* BNCServerRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = E74E438D2E2F56AC000DC427 /* BNCServerRequestOperation.m */; };
 		B70D0E2D2E8DCEC6002BD4FE /* BNCServerRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = E74E438D2E2F56AC000DC427 /* BNCServerRequestOperation.m */; };
+		B70D0E2E2E8DCEC6002BD4FE /* BNCServerRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = E74E438D2E2F56AC000DC427 /* BNCServerRequestOperation.m */; };
+		B70D0E2F2E8DCEC6002BD4FE /* BNCServerRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = E74E438D2E2F56AC000DC427 /* BNCServerRequestOperation.m */; };
 		E52E5B062CC79E4E00F553EE /* BranchFileLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = E52E5B052CC79E4E00F553EE /* BranchFileLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E52E5B072CC79E4E00F553EE /* BranchFileLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = E52E5B052CC79E4E00F553EE /* BranchFileLogger.h */; };
 		E52E5B0A2CC79E5C00F553EE /* BranchFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E52E5B092CC79E5C00F553EE /* BranchFileLogger.m */; };
@@ -1662,6 +1664,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B70D0E252E8DC1F8002BD4FE /* BranchConfigurationController.m in Sources */,
+				B70D0E2E2E8DCEC6002BD4FE /* BNCServerRequestOperation.m in Sources */,
 				5FCDD5AD2B7AC6A400EAF29F /* BNCCallbackMap.m in Sources */,
 				5FCDD40F2B7AC6A100EAF29F /* BNCApplication.m in Sources */,
 				5FCDD5652B7AC6A300EAF29F /* BranchDelegate.m in Sources */,
@@ -1740,6 +1743,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B70D0E2F2E8DCEC6002BD4FE /* BNCServerRequestOperation.m in Sources */,
 				5FCDD5AE2B7AC6A400EAF29F /* BNCCallbackMap.m in Sources */,
 				5FCDD4102B7AC6A100EAF29F /* BNCApplication.m in Sources */,
 				5FCDD5662B7AC6A300EAF29F /* BranchDelegate.m in Sources */,
