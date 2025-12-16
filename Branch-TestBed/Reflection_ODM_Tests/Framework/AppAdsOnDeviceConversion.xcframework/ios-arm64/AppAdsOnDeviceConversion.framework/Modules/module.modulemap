@@ -1,7 +1,0 @@
-framework module AppAdsOnDeviceConversion {
-  umbrella header "AppAdsOnDeviceConversion.h"
-  export *
-  module * { export * }
-  link framework "Foundation"
-  link "c++"
-}

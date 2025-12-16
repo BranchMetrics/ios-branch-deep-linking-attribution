@@ -100,6 +100,27 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
+      - name: Install the Apple certificate
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          # create variables
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+
+          # import certificate 
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+
+          # create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          # import certificate to keychain
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
       - name: Build xcframework
         run: |
             ./scripts/prep_xcframework_noidfa.sh
@@ -110,7 +131,7 @@ jobs:
           path: |
             ./Branch_noidfa.zip
             ./checksum_noidfa.txt
-            ./Branch_noidfa_signed_xcframework
+            ./Branch_noidfa_signed_xcframework.zip
             ./checksum_noidfa_signed_xcframework.txt
 
   build-static-framework:
@@ -177,7 +198,7 @@ jobs:
           bundle config set --local path vendor
           bundle check || bundle install
       - name: Download build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
       - name: Publish to CocoaPods
         run: |
           # TODO: Authenticate using repo secret

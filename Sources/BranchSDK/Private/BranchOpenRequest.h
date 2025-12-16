@@ -15,6 +15,9 @@
 @property (nonatomic, copy, readwrite) NSString *urlString;
 @property (assign, nonatomic) BOOL isFromArchivedQueue;
 @property (nonatomic, copy) callbackWithStatus callback;
+@property (nonatomic, copy) callbackForTracingRequests traceCallback;
+@property (strong, nonatomic) NSDictionary *requestParams;
+@property (nonatomic, copy, readwrite) NSString *requestServiceURL;
 
 + (void) waitForOpenResponseLock;
 + (void) releaseOpenResponseLock;

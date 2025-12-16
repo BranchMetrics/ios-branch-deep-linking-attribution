@@ -22,7 +22,10 @@
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
     NSDictionary *params = [factory dataForInstallWithURLString:self.urlString];
 
-    [serverInterface postRequest:params url:[[BNCServerAPI sharedInstance] installServiceURL] key:key callback:callback];
+    self.requestParams = [params copy];
+    self.requestServiceURL = [[BNCServerAPI sharedInstance] installServiceURL];
+    
+    [serverInterface postRequest:params url:self.requestServiceURL  key:key callback:callback];
 }
 
 - (NSString *)getActionName {

@@ -16,6 +16,7 @@
 #import "BNCSKAdNetwork.h"
 
 static const NSTimeInterval DEFAULT_TIMEOUT = 5.5;
+static const NSTimeInterval DEFAULT_THIRD_PARTY_APIS_TIMEOUT = 0.5; // 500ms default
 static const NSTimeInterval DEFAULT_RETRY_INTERVAL = 0;
 static const NSInteger DEFAULT_RETRY_COUNT = 3;
 static const NSTimeInterval DEFAULT_REFERRER_GBRAID_WINDOW = 2592000; // 30 days = 2,592,000 seconds
@@ -57,6 +58,7 @@ static NSString * const BRANCH_PREFS_KEY_SKAN_CURRENT_WINDOW = @"bnc_skan_curren
 static NSString * const BRANCH_PREFS_KEY_FIRST_APP_LAUNCH_TIME = @"bnc_first_app_launch_time";
 static NSString * const BRANCH_PREFS_KEY_SKAN_HIGHEST_CONV_VALUE_SENT = @"bnc_skan_send_highest_conv_value";
 static NSString * const BRANCH_PREFS_KEY_SKAN_INVOKE_REGISTER_APP = @"bnc_invoke_register_app";
+static NSString * const BRANCH_PREFS_KEY_THIRD_PARTY_APIS_TIMEOUT = @"bnc_third_party_apis_timeout";
                                                                 
 static NSString * const BRANCH_PREFS_KEY_USE_EU_SERVERS = @"bnc_use_EU_servers";
 
@@ -114,6 +116,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     retryCount = _retryCount,
     retryInterval = _retryInterval,
     timeout = _timeout,
+    thirdPartyAPIsWaitTime = _thirdPartyAPIsWaitTime,
     lastStrongMatchDate = _lastStrongMatchDate,
     requestMetadataDictionary = _requestMetadataDictionary,
     instrumentationDictionary = _instrumentationDictionary,
@@ -156,6 +159,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         _retryCount = DEFAULT_RETRY_COUNT;
         _retryInterval = DEFAULT_RETRY_INTERVAL;
         _odmInfoValidityWindow = DEFAULT_ODM_INFO_VALIDITY_WINDOW;
+        _thirdPartyAPIsWaitTime = DEFAULT_THIRD_PARTY_APIS_TIMEOUT;
         _isDebug = NO;
         _persistPrefsQueue = [[NSOperationQueue alloc] init];
         _persistPrefsQueue.maxConcurrentOperationCount = 1;
@@ -756,6 +760,23 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
             _odmInfoInitDate = initDate;
             [self writeObjectToDefaults:BRANCH_PREFS_KEY_ODM_INFO_INIT_DATE value:initDate];
         }
+    }
+}
+
+- (NSTimeInterval) thirdPartyAPIsWaitTime {
+    @synchronized (self) {
+        _thirdPartyAPIsWaitTime = [self readDoubleFromDefaults:BRANCH_PREFS_KEY_THIRD_PARTY_APIS_TIMEOUT];
+        if (_thirdPartyAPIsWaitTime == NSNotFound) {
+            _thirdPartyAPIsWaitTime = DEFAULT_THIRD_PARTY_APIS_TIMEOUT;
+        }
+        return _thirdPartyAPIsWaitTime;
+    }
+}
+
+- (void) setThirdPartyAPIsWaitTime:(NSTimeInterval)waitTime {
+    @synchronized (self) {
+        _thirdPartyAPIsWaitTime = waitTime;
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_THIRD_PARTY_APIS_TIMEOUT value:@(waitTime)];
     }
 }
 

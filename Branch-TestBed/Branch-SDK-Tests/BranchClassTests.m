@@ -20,6 +20,7 @@
 
 @interface BranchClassTests : XCTestCase
 @property (nonatomic, strong) Branch *branch;
+@property (nonatomic, strong, readwrite) BNCPreferenceHelper *prefHelper;
 @end
 
 @implementation BranchClassTests
@@ -27,6 +28,7 @@
 - (void)setUp {
     [super setUp];
     self.branch = [Branch getInstance];
+    self.prefHelper = [BNCPreferenceHelper sharedInstance];
 }
 
 - (void)tearDown {
@@ -261,5 +263,197 @@
     
 }
 
+- (void)testBranchSetSDKWaitTimeForThirdPartyAPIs {
+    // Test Branch instance method for setting timeout
+    NSTimeInterval testTimeout = 2.0;
+    [Branch setSDKWaitTimeForThirdPartyAPIs:testTimeout];
+    
+    // Verify it was set in the preference helper
+    XCTAssertEqual(self.prefHelper.thirdPartyAPIsWaitTime, testTimeout,
+                   @"Branch setSDKWaitTimeForThirdPartyAPIs should update preference helper");
+}
+
+- (void)testBranchSetSDKWaitTimeForThirdPartyAPIsMultipleValues {
+    // Test setting multiple different values
+    NSArray *testValues = @[@0.5, @1.0, @1.5, @3.0, @5.0];
+    
+    for (NSNumber *timeoutValue in testValues) {
+        NSTimeInterval timeout = [timeoutValue doubleValue];
+        [Branch setSDKWaitTimeForThirdPartyAPIs:timeout];
+        
+        XCTAssertEqual(self.prefHelper.thirdPartyAPIsWaitTime, timeout,
+                       @"Branch setSDKWaitTimeForThirdPartyAPIs should handle value %.1f", timeout);
+    }
+}
+
+- (void)testTimeoutIntegrationWithPreferenceHelper {
+    // Test that Branch and PreferenceHelper work together correctly
+    NSTimeInterval branchTimeout = 1.8;
+    NSTimeInterval directTimeout = 2.3;
+    
+    // Set via Branch
+    [Branch setSDKWaitTimeForThirdPartyAPIs:branchTimeout];
+    XCTAssertEqual(self.prefHelper.thirdPartyAPIsWaitTime, branchTimeout,
+                   @"Wait Time set via Branch should be readable from PreferenceHelper");
+    
+    // Set directly on PreferenceHelper
+    self.prefHelper.thirdPartyAPIsWaitTime = directTimeout;
+    XCTAssertEqual(self.prefHelper.thirdPartyAPIsWaitTime, directTimeout,
+                   @"Wait time set directly should be readable via Branch");
+}
+
+- (void)testTimeoutValueConsistency {
+    // Test that the same instance maintains consistent values
+    NSTimeInterval testTimeout = 1.25;
+    
+    [Branch setSDKWaitTimeForThirdPartyAPIs:testTimeout];
+    
+    // Read multiple times to ensure consistency
+    for (int i = 0; i < 5; i++) {
+        XCTAssertEqual(self.prefHelper.thirdPartyAPIsWaitTime, testTimeout,
+                       @"Timeout value should remain consistent across multiple reads");
+    }
+}
+
+- (void)testBranchSetSDKWaitTimeForThirdPartyAPIsInvalidLowValues {
+
+    NSArray *invalidLowValues = @[@0.0, @-1.0, @-0.5];
+    NSTimeInterval originalTimeout = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime;
+    
+    for (NSNumber *timeoutValue in invalidLowValues) {
+        NSTimeInterval timeout = [timeoutValue doubleValue];
+        [Branch setSDKWaitTimeForThirdPartyAPIs:timeout];
+        XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime, originalTimeout,
+                       @"Branch setSDKWaitTimeForThirdPartyAPIs should reject invalid low value %.3f", timeout);
+    }
+}
+
+- (void)testBranchsetSDKWaitTimeForThirdPartyAPIsInvalidHighValues {
+
+    NSArray *invalidHighValues = @[@10.1, @15.0, @30.0, @60.0];
+    NSTimeInterval originalTimeout = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime;
+    
+    for (NSNumber *timeoutValue in invalidHighValues) {
+        NSTimeInterval timeout = [timeoutValue doubleValue];
+        [Branch setSDKWaitTimeForThirdPartyAPIs:timeout];
+        XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime, originalTimeout,
+                       @"Branch setSDKWaitTimeForThirdPartyAPIs should reject invalid high value %.3f", timeout);
+    }
+}
+
+- (void)testBranchSetSDKWaitTimeForThirdPartyAPIsBoundaryValues {
+    
+    // Test exactly 10.0 (should be valid)
+    [Branch setSDKWaitTimeForThirdPartyAPIs:10.0];
+    XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime, 10.0,
+                   @"Timeout of exactly 10.0 seconds should be valid");
+    
+    // Test just over 10.0 (should be invalid)
+    [Branch setSDKWaitTimeForThirdPartyAPIs:10.0001];
+    XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime, 10.0,
+                   @"Timeout of 10.0001 seconds should be rejected");
+    
+    // Test very small positive value (should be valid)
+    [Branch setSDKWaitTimeForThirdPartyAPIs:0.0001];
+    XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime, 0.0001,
+                   @"Very small positive timeout should be valid");
+}
+
+- (void)testSetAnonID {
+    NSString *expectedAnonID = @"static-test-anon-id-12345";
+    
+    [Branch setAnonID:expectedAnonID];
+    
+    NSString *actualAnonID = [BNCPreferenceHelper sharedInstance].anonID;
+    XCTAssertEqualObjects(actualAnonID, expectedAnonID, @"setAnonID should set valid string");
+}
+
+- (void)testSetAnonID_UpdateExistingValue {
+    NSString *initialAnonID = @"initial-anon-id";
+    NSString *updatedAnonID = @"updated-anon-id";
+    
+    [Branch setAnonID:initialAnonID];
+    XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].anonID, initialAnonID);
+    
+    [Branch setAnonID:updatedAnonID];
+    XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].anonID, updatedAnonID);
+}
+
+- (void)testSetAnonID_NilValue {
+    NSString *initialAnonID = @"initial-anon-id";
+
+    [Branch setAnonID:initialAnonID];
+    XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].anonID, initialAnonID);
+    
+    [Branch setAnonID:nil];
+    XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].anonID, initialAnonID);
+}
+
+- (void)testSetAnonID_EmptyString {
+    NSString *emptyAnonID = @"";
+    
+    [Branch setAnonID:emptyAnonID];
+    
+    NSString *actualAnonID = [BNCPreferenceHelper sharedInstance].anonID;
+    XCTAssertEqualObjects(actualAnonID, emptyAnonID, @"Static setAnonID should accept empty string");
+}
+
+- (void)testSetAnonID_NonStringObject {
+    NSString *initialAnonID = @"initial-anon-id";
+    
+    [Branch setAnonID:initialAnonID];
+    XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].anonID, initialAnonID);
+    
+    // Try to set with a non-string object (NSNumber)
+    NSNumber *nonStringValue = @123;
+    [Branch setAnonID:(NSString *)nonStringValue];
+    
+    XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].anonID, initialAnonID);
+}
+
+- (void)testSetAnonID_LongString {
+    NSString *longAnonID = @"very-long-anon-id-with-many-characters-to-test-string-handling-1234567890-abcdefghijklmnopqrstuvwxyz";
+    
+    [Branch setAnonID:longAnonID];
+    
+    NSString *actualAnonID = [BNCPreferenceHelper sharedInstance].anonID;
+    XCTAssertEqualObjects(actualAnonID, longAnonID, @"setAnonID should handle long strings");
+}
+
+- (void)testSetAnonID_SpecialCharacters {
+    NSString *specialCharAnonID = @"static-anon-id-with-special-chars-!@#$%^&*()_+-=[]{}|;:,.<>?";
+    
+    [Branch setAnonID:specialCharAnonID];
+    
+    NSString *actualAnonID = [BNCPreferenceHelper sharedInstance].anonID;
+    XCTAssertEqualObjects(actualAnonID, specialCharAnonID, @"setAnonID should handle special characters");
+}
+
+- (void)testSetAnonID_ThreadSafety {
+    NSString *anonID1 = @"thread-test-anon-id-1";
+    NSString *anonID2 = @"thread-test-anon-id-2";
+    
+    // Test that the method is thread-safe by calling it from different queues
+    dispatch_group_t group = dispatch_group_create();
+    
+    dispatch_group_enter(group);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [Branch setAnonID:anonID1];
+        dispatch_group_leave(group);
+    });
+    
+    dispatch_group_enter(group);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [Branch setAnonID:anonID2];
+        dispatch_group_leave(group);
+    });
+    
+    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+    
+    // Verify that one of the values was set (we can't predict which due to concurrency)
+    NSString *finalAnonID = [BNCPreferenceHelper sharedInstance].anonID;
+    XCTAssertTrue([finalAnonID isEqualToString:anonID1] || [finalAnonID isEqualToString:anonID2],
+                  @"One of the anonID values should be set");
+}
 
 @end

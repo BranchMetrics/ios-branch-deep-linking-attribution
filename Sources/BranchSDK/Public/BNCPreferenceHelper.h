@@ -46,6 +46,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) NSInteger retryCount;
 @property (assign, nonatomic) NSTimeInterval retryInterval;
 @property (assign, nonatomic) NSTimeInterval timeout;
+@property (assign, nonatomic) NSTimeInterval thirdPartyAPIsWaitTime;
 @property (copy, nonatomic) NSString *externalIntentURI;
 @property (strong, nonatomic) NSMutableDictionary *savedAnalyticsData;
 @property (copy, nonatomic) NSString *lastSystemBuildVersion;
