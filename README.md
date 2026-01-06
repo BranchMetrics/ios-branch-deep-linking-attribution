@@ -1,6 +1,20 @@
-# Branch iOS SDK (Swift)
+# Branch iOS SDK v4 (Swift)
 
-Modern Swift implementation of the Branch deep linking and attribution SDK for iOS, macOS, watchOS, tvOS, and visionOS.
+Modern Swift 6 implementation of the Branch deep linking and attribution SDK for Apple platforms.
+
+[![Swift 6.0](https://img.shields.io/badge/Swift-6.0-orange.svg)](https://swift.org)
+[![Platforms](https://img.shields.io/badge/Platforms-iOS%2015%2B%20%7C%20macOS%2012%2B%20%7C%20watchOS%208%2B%20%7C%20tvOS%2015%2B%20%7C%20visionOS%201%2B-blue.svg)](https://developer.apple.com)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+## Overview
+
+Branch SDK v4 is a complete rewrite of the Branch iOS SDK using modern Swift patterns:
+
+- **Swift 6 Strict Concurrency** - Actor-based architecture with complete data race safety
+- **Async/Await** - Modern concurrency replacing callback-based APIs
+- **Protocol-Based DI** - Full testability with dependency injection
+- **Single Initialization** - One `initialize()` method replacing 15+ legacy methods
+- **Task Coalescing** - Prevents Double Open issues during Universal Link cold starts
 
 ## Requirements
 
@@ -16,7 +30,7 @@ Add Branch SDK to your project via Swift Package Manager:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/BranchMetrics/ios-branch-deep-linking-attribution-swift.git", from: "4.0.0")
+    .package(url: "https://github.com/BranchMetrics/ios-branch-deep-linking-attribution.git", from: "4.0.0")
 ]
 ```
 
@@ -24,6 +38,52 @@ dependencies: [
 
 ```ruby
 pod 'BranchSDK', '~> 4.0'
+```
+
+## Quick Start
+
+### Basic Integration
+
+```swift
+import BranchSDK
+
+// In AppDelegate or App init
+let config = BranchConfiguration(apiKey: "key_live_xxxxx")
+let session = try await Branch.shared.initialize(with: config)
+
+// Handle deep link data
+if let linkData = session.linkData {
+    print("Deep link URL: \(linkData.url)")
+}
+```
+
+### Universal Link Handling
+
+```swift
+// In SceneDelegate or App
+func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+    Task {
+        let options = InitializationOptions().with(userActivity: userActivity)
+        let session = try await Branch.shared.initialize(options: options)
+        // Handle session...
+    }
+}
+```
+
+### State Observation
+
+```swift
+// Observe session state changes
+for await state in await Branch.shared.observeState() {
+    switch state {
+    case .uninitialized:
+        print("SDK not initialized")
+    case .initializing:
+        print("Initializing...")
+    case .initialized(let session):
+        print("Ready: \(session.id)")
+    }
+}
 ```
 
 ## Development Setup
