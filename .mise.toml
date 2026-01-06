@@ -1,0 +1,31 @@
+# Branch iOS SDK - Tool Versioning
+# https://mise.jdx.dev/
+
+[tools]
+# Ruby for Fastlane/Danger (macOS default is too old)
+ruby = "3.3.0"
+
+# Project generation and management
+tuist = "4.44.0"
+
+# Code quality
+swiftlint = "0.58.2"
+# swiftformat - install via Homebrew (mise installs GUI app instead of CLI)
+
+# Dead code detection
+periphery = "2.21.0"
+
+# Build output beautifier
+xcbeautify = "2.17.0"
+
+# Dependency management (optional, for CI)
+# swift = "6.0"
+
+[settings]
+# Always use exact versions for reproducibility
+always_keep_download = true
+experimental = true
+
+[env]
+# Ensure Tuist uses SPM cache
+TUIST_CONFIG_CLOUD_TOKEN = ""

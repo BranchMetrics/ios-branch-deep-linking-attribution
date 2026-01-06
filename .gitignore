@@ -1,36 +1,119 @@
-# Mac
+# Branch iOS SDK - Git Ignore
 
-.build
-.vscode
-
-.DS_Store
-.LSOverride
-
+# ======================
 # Xcode
-[Bb]uild
-*.xcuserstate
-*.xcuserdatad
-# *.xcscmblueprint # We should probably check this in.
-*.o
-DerivedData
+# ======================
+## Build generated
+build/
+DerivedData/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
 
-# merge-repo commit/discard file
-merge-repo-commit
+## Xcode patch
+*.xcodeproj/**/xcuserdata/
+*.xcworkspace/**/**/xcuserdata/
 
-# Pods
+## Index
+*.xcindex/
+
+## Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+## Archives
+*.xcarchive
+
+## Xcode scheme
+*.xcscheme
+
+# ======================
+# Swift Package Manager
+# ======================
+.build/
+.swiftpm/
+Package.resolved
+
+# ======================
+# Tuist
+# ======================
+.tuist-bin/
+Tuist/Dependencies/
+*.xcworkspace
+*.xcodeproj
+graph.dot
+Derived/
+
+# ======================
+# CocoaPods (if used)
+# ======================
 Pods/
 
-# Carthage
-carthage-files/*.zip
-carthage-files/Carthage
+# ======================
+# Ruby / Bundler
+# ======================
+vendor/bundle/
+.bundle/
 
+# ======================
 # Fastlane
+# ======================
 fastlane/report.xml
 fastlane/Preview.html
-fastlane/screenshots
-fastlane/test_output
+fastlane/screenshots/**/*.png
+fastlane/test_output/
 
-# Ruby stuff
-vendor
-.bundle
-DeepLinkDemo/DeepLinkDemo.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
+# ======================
+# macOS
+# ======================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Thumbnails
+Thumbs.db
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+# ======================
+# IDE
+# ======================
+## VS Code
+.vscode/
+*.code-workspace
+
+## AppCode
+.idea/
+
+## Vim
+*.swp
+*.swo
+*~
+
+# ======================
+# Testing
+# ======================
+*.xcresult
+coverage/
+test_output/
+xcov_output/
+
+# ======================
+# Misc
+# ======================
+*.log
+*.tmp
+*.temp
+*.bak
+
+# Secrets / Environment
+.env
+.env.*
+*.pem
+*.p12
+*.mobileprovision
+
+# Crashlytics
+crashlytics-build.properties

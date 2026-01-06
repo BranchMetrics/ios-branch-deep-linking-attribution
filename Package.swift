@@ -1,51 +1,79 @@
-// swift-tools-version:5.9
+// swift-tools-version: 6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
+
 import PackageDescription
 
 let package = Package(
     name: "BranchSDK",
     platforms: [
-        .iOS(.v12),
-        .tvOS(.v12),
+        .iOS(.v15),
+        .macOS(.v12),
+        .tvOS(.v15),
+        .watchOS(.v8),
+        .visionOS(.v1),
     ],
     products: [
-        // Main product that clients will import
+        // Main SDK library
         .library(
             name: "BranchSDK",
-            targets: ["BranchSDK", "BranchSwiftSDK"]),
+            targets: ["BranchSDK"]
+        ),
+        // Test utilities for SDK integrators
+        .library(
+            name: "BranchSDKTestKit",
+            targets: ["BranchSDKTestKit"]
+        ),
     ],
     dependencies: [
-        // Add external dependencies here if needed
-        // .package(url: "https://github.com/google/GoogleUtilities.git", from: "7.0.0"),
-        // .package(url: "https://github.com/firebase/nanopb.git", from: "2.30909.0"),
+        // No external dependencies - pure Swift implementation
     ],
     targets: [
-        // Main Objective-C SDK target
+        // MARK: - Main SDK Target
+
         .target(
             name: "BranchSDK",
             dependencies: [],
             path: "Sources/BranchSDK",
-            publicHeadersPath: "Public",
-            cSettings: [
-                .headerSearchPath("Private"),
-                .define("SWIFT_PACKAGE")
-            ],
-            linkerSettings: [
-                .linkedFramework("CoreServices"),
-                .linkedFramework("SystemConfiguration"),
-                .linkedFramework("WebKit", .when(platforms: [.iOS])),
-                .linkedFramework("CoreSpotlight", .when(platforms: [.iOS])),
-                .linkedFramework("AdServices", .when(platforms: [.iOS]))
+            swiftSettings: [
+                // Swift 6 strict concurrency is enabled by default in Swift 6
+                // Enable upcoming Swift features (not yet standard in Swift 6)
+                .enableUpcomingFeature("ExistentialAny"),
+                // Warnings as errors for production code
+                .unsafeFlags(["-warnings-as-errors"], .when(configuration: .release)),
             ]
         ),
-        // Swift Concurrency layer (depends on main SDK)
+
+        // MARK: - Test Kit Target (for SDK integrators)
+
         .target(
-            name: "BranchSwiftSDK",
+            name: "BranchSDKTestKit",
             dependencies: ["BranchSDK"],
-            path: "Sources/BranchSwiftSDK",
-            swiftSettings: [
-                .define("SWIFT_PACKAGE")
-            ]
-        )
-    ]
+            path: "Sources/BranchSDKTestKit"
+        ),
+
+        // MARK: - Unit Tests
+
+        .testTarget(
+            name: "BranchSDKTests",
+            dependencies: ["BranchSDK", "BranchSDKTestKit"],
+            path: "Tests/BranchSDKTests"
+        ),
+
+        // MARK: - Integration Tests
+
+        .testTarget(
+            name: "BranchSDKIntegrationTests",
+            dependencies: ["BranchSDK", "BranchSDKTestKit"],
+            path: "Tests/BranchSDKIntegrationTests"
+        ),
+
+        // MARK: - Performance Tests
+
+        .testTarget(
+            name: "BranchSDKPerformanceTests",
+            dependencies: ["BranchSDK"],
+            path: "Tests/BranchSDKPerformanceTests"
+        ),
+    ],
+    swiftLanguageModes: [.v6]
 )

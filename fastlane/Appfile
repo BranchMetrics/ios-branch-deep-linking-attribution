@@ -1,0 +1,12 @@
+# Branch iOS SDK - Appfile
+# Copyright © 2024 Branch Metrics. All rights reserved.
+
+# App identifiers
+app_identifier "io.branch.sdk"
+
+# Apple Developer Portal
+# team_id "YOUR_TEAM_ID"
+
+# App Store Connect
+# apple_id "your@email.com"
+# itc_team_id "YOUR_ITC_TEAM_ID"

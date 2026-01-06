@@ -1,0 +1,195 @@
+# Branch iOS SDK - SwiftFormat Configuration
+# Modern Swift 6 formatting with strict concurrency
+
+# Swift Version
+--swiftversion 6.0
+
+# File Options
+--exclude .build,DerivedData,.tuist-bin,Tuist/Dependencies
+
+# Format Options
+--allman false
+--assetliterals visual-width
+--beforemarks
+--binarygrouping 4,8
+--categorymark "MARK: %c"
+--classthreshold 0
+--closingparen balanced
+--closurevoid remove
+--commas always
+--conflictmarkers reject
+--decimalgrouping 3,6
+--elseposition same-line
+--emptybraces no-space
+--enumnamespaces always
+--enumthreshold 0
+--exponentcase lowercase
+--exponentgrouping disabled
+--extensionacl on-extension
+--extensionlength 0
+--extensionmark "MARK: - %t + %c"
+--fractiongrouping disabled
+--fragment false
+--funcattributes prev-line
+--generictypes
+--groupedextension "MARK: %c"
+--guardelse auto
+--header "\n {file}\n Branch iOS SDK - Modern Swift Implementation\n\n Copyright © {year} Branch Metrics. All rights reserved.\n SPDX-License-Identifier: MIT\n"
+--hexgrouping 4,8
+--hexliteralcase uppercase
+--ifdef no-indent
+--importgrouping alpha
+--indent 4
+--indentcase false
+--indentstrings false
+--lifecycle
+--lineaftermarks true
+--linebreaks lf
+--markcategories true
+--markextensions always
+--marktypes always
+--maxwidth 120
+--modifierorder
+--nevertrailing
+--nospaceoperators
+--nowrapoperators
+--octalgrouping 4,8
+--onelineforeach ignore
+--operatorfunc spaced
+--organizetypes actor,class,struct,enum
+--patternlet hoist
+--ranges spaced
+--redundanttype infer-locals-only
+--self remove
+--selfrequired
+--semicolons inline
+--shortoptionals always
+--smarttabs enabled
+--someAny true
+--stripunusedargs always
+--structthreshold 0
+--tabwidth 4
+--trailingclosures
+--trimwhitespace always
+--typeattributes prev-line
+--typeblanklines remove
+--typemark "MARK: - %t"
+--varattributes preserve
+--voidtype void
+--wraparguments before-first
+--wrapcollections before-first
+--wrapconditions preserve
+--wrapeffects preserve
+--wrapenumcases always
+--wrapparameters before-first
+--wrapreturntype preserve
+--wrapternary default
+--wraptypealiases preserve
+--xcodeindentation disabled
+--yodaswap always
+
+# Acronyms (ID is not treated as acronym for Tuist compatibility)
+--acronyms URL,HTTP,HTTPS,JSON,XML,HTML,UUID,API
+
+# Enabled Rules (default + extras)
+--enable acronyms
+--enable andOperator
+--enable anyObjectProtocol
+--enable assertionFailures
+--enable blankLineAfterImports
+--enable blankLinesBetweenChainedFunctions
+--enable blankLinesBetweenImports
+--enable blankLinesAroundMark
+--enable blankLinesAtEndOfScope
+--enable blankLinesAtStartOfScope
+--enable blankLinesBetweenScopes
+--enable blockComments
+--enable braces
+--enable conditionalAssignment
+--enable consecutiveBlankLines
+--enable consecutiveSpaces
+--enable docComments
+--enable duplicateImports
+--enable elseOnSameLine
+--enable emptyBraces
+--enable enumNamespaces
+--enable extensionAccessControl
+--enable fileHeader
+--enable genericExtensions
+--enable hoistAwait
+--enable hoistPatternLet
+--enable hoistTry
+--enable indent
+--enable initCoderUnavailable
+--enable isEmpty
+--enable leadingDelimiters
+--enable linebreakAtEndOfFile
+--enable linebreaks
+--enable markTypes
+--enable modifierOrder
+--enable numberFormatting
+--enable opaqueGenericParameters
+--enable organizeDeclarations
+--enable preferForLoop
+--enable preferKeyPath
+--enable redundantBackticks
+--enable redundantBreak
+--enable redundantClosure
+--enable redundantExtensionACL
+--enable redundantFileprivate
+--enable redundantGet
+--enable redundantInit
+--enable redundantInternal
+--enable redundantLet
+--enable redundantLetError
+--enable redundantNilInit
+--enable redundantObjc
+--enable redundantOptionalBinding
+--enable redundantParens
+--enable redundantPattern
+--enable redundantRawValues
+--enable redundantReturn
+--enable redundantSelf
+--enable redundantStaticSelf
+--enable redundantType
+--enable redundantTypedThrows
+--enable redundantVoidReturnType
+--enable semicolons
+--enable sortDeclarations
+--enable sortImports
+--enable sortTypealiases
+--enable spaceAroundBraces
+--enable spaceAroundBrackets
+--enable spaceAroundComments
+--enable spaceAroundGenerics
+--enable spaceAroundOperators
+--enable spaceAroundParens
+--enable spaceInsideBraces
+--enable spaceInsideBrackets
+--enable spaceInsideComments
+--enable spaceInsideGenerics
+--enable spaceInsideParens
+--enable strongOutlets
+--enable strongifiedSelf
+--enable todos
+--enable trailingClosures
+--enable trailingCommas
+--enable trailingSpace
+--enable typeSugar
+--enable unusedArguments
+--enable void
+--enable wrap
+--enable wrapArguments
+--enable wrapAttributes
+--enable wrapConditionalBodies
+--enable wrapEnumCases
+--enable wrapLoopBodies
+--enable wrapMultilineStatementBraces
+--enable wrapSingleLineComments
+--enable wrapSwitchCases
+--enable yodaConditions
+
+# Disabled Rules
+--disable redundantProperty
+--disable sortSwitchCases
+--disable wrapMultilineConditionalAssignment

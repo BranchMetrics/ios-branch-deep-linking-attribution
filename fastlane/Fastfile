@@ -1,0 +1,247 @@
+# Branch iOS SDK - Fastlane Configuration
+# Copyright © 2024 Branch Metrics. All rights reserved.
+# SPDX-License-Identifier: MIT
+
+default_platform(:ios)
+
+# Constants
+SDK_NAME = "BranchSDK"
+SCHEME_MAIN = "BranchSDK"
+SCHEME_ALL_TESTS = "BranchSDK-All-Tests"
+DERIVED_DATA_PATH = "DerivedData"
+COVERAGE_OUTPUT = "coverage"
+
+platform :ios do
+  # =====================
+  # MARK: - Setup
+  # =====================
+
+  desc "Bootstrap development environment"
+  lane :bootstrap do
+    sh("mise install")
+    sh("tuist install")
+    sh("tuist generate --no-open")
+    UI.success("Development environment ready!")
+  end
+
+  # =====================
+  # MARK: - Build
+  # =====================
+
+  desc "Build the SDK for all platforms"
+  lane :build do |options|
+    configuration = options[:configuration] || "Debug"
+
+    # Build using xcodebuild via SPM
+    sh("swift build -c #{configuration.downcase}")
+    UI.success("Build completed successfully!")
+  end
+
+  desc "Build with Tuist-generated project"
+  lane :build_tuist do |options|
+    configuration = options[:configuration] || "Debug"
+
+    sh("tuist generate --no-open")
+    xcodebuild(
+      scheme: SCHEME_MAIN,
+      configuration: configuration,
+      derived_data_path: DERIVED_DATA_PATH,
+      build_settings: {
+        "CODE_SIGNING_REQUIRED" => "NO",
+        "CODE_SIGN_IDENTITY" => ""
+      },
+      xcargs: "-skipPackagePluginValidation"
+    )
+  end
+
+  # =====================
+  # MARK: - Testing
+  # =====================
+
+  desc "Run unit tests"
+  lane :test do |options|
+    platform = options[:platform] || "iOS Simulator,name=iPhone 15 Pro"
+
+    sh("swift test --parallel")
+    UI.success("All tests passed!")
+  end
+
+  desc "Run tests with Tuist project"
+  lane :test_tuist do |options|
+    sh("tuist generate --no-open")
+
+    scan(
+      scheme: SCHEME_ALL_TESTS,
+      derived_data_path: DERIVED_DATA_PATH,
+      output_directory: "test_output",
+      output_types: "junit,html",
+      code_coverage: true,
+      result_bundle: true,
+      xcargs: "-skipPackagePluginValidation"
+    )
+  end
+
+  desc "Run tests with coverage report"
+  lane :test_coverage do
+    test_tuist
+
+    # Generate coverage report
+    sh("xcrun llvm-cov export " \
+       "-format=lcov " \
+       "-instr-profile=#{DERIVED_DATA_PATH}/Build/ProfileData/*/Coverage.profdata " \
+       "#{DERIVED_DATA_PATH}/Build/Products/Debug-iphonesimulator/#{SDK_NAME}.framework/#{SDK_NAME} " \
+       "> #{COVERAGE_OUTPUT}/lcov.info")
+
+    # Generate HTML report
+    sh("genhtml #{COVERAGE_OUTPUT}/lcov.info --output-directory #{COVERAGE_OUTPUT}/html")
+    UI.success("Coverage report generated at #{COVERAGE_OUTPUT}/html/index.html")
+  end
+
+  # =====================
+  # MARK: - Quality
+  # =====================
+
+  desc "Run SwiftLint"
+  lane :lint do |options|
+    fix = options[:fix] || false
+
+    if fix
+      sh("swiftlint --fix")
+    end
+
+    sh("swiftlint lint --strict")
+    UI.success("Linting passed!")
+  end
+
+  desc "Run SwiftFormat"
+  lane :format do |options|
+    check_only = options[:check] || false
+
+    if check_only
+      sh("swiftformat . --lint")
+    else
+      sh("swiftformat .")
+    end
+    UI.success("Formatting completed!")
+  end
+
+  desc "Run Periphery for dead code detection"
+  lane :dead_code do
+    sh("tuist generate --no-open")
+    sh("periphery scan --project BranchSDK.xcodeproj " \
+       "--schemes #{SCHEME_MAIN} " \
+       "--targets #{SDK_NAME} " \
+       "--format xcode")
+  end
+
+  desc "Run all quality checks"
+  lane :quality do
+    lint
+    format(check: true)
+    dead_code
+    UI.success("All quality checks passed!")
+  end
+
+  # =====================
+  # MARK: - Documentation
+  # =====================
+
+  desc "Generate documentation with DocC"
+  lane :docs do
+    sh("swift package generate-documentation " \
+       "--target #{SDK_NAME} " \
+       "--disable-indexing " \
+       "--transform-for-static-hosting " \
+       "--hosting-base-path #{SDK_NAME} " \
+       "--output-path docs")
+    UI.success("Documentation generated at docs/")
+  end
+
+  desc "Preview documentation"
+  lane :docs_preview do
+    sh("swift package --disable-sandbox preview-documentation --target #{SDK_NAME}")
+  end
+
+  # =====================
+  # MARK: - Release
+  # =====================
+
+  desc "Prepare release"
+  lane :prepare_release do |options|
+    version = options[:version]
+    UI.user_error!("Version required (e.g., fastlane prepare_release version:4.0.0)") unless version
+
+    # Verify clean working directory
+    ensure_git_status_clean
+
+    # Update version in Package.swift
+    # (Version is defined in BranchSDK.swift as branchSDKVersion constant)
+
+    # Update CHANGELOG
+    stamp_changelog(section_identifier: version)
+
+    # Create git commit and tag
+    git_commit(
+      path: [".", "CHANGELOG.md"],
+      message: "Release #{version}"
+    )
+
+    add_git_tag(tag: version)
+
+    UI.success("Release #{version} prepared! Push with: git push origin main --tags")
+  end
+
+  desc "Publish to CocoaPods (if applicable)"
+  lane :publish_pods do
+    # Skip if not using CocoaPods
+    if File.exist?("../#{SDK_NAME}.podspec")
+      pod_push(
+        path: "#{SDK_NAME}.podspec",
+        allow_warnings: false,
+        verbose: true
+      )
+    else
+      UI.important("No podspec found, skipping CocoaPods publish")
+    end
+  end
+
+  # =====================
+  # MARK: - CI
+  # =====================
+
+  desc "CI pipeline - runs on every PR"
+  lane :ci do
+    # Install dependencies
+    bootstrap
+
+    # Run quality checks
+    lint
+    format(check: true)
+
+    # Build
+    build
+
+    # Test with coverage
+    test_tuist
+
+    UI.success("CI pipeline completed successfully!")
+  end
+
+  desc "Nightly build"
+  lane :nightly do
+    ci
+    dead_code
+    docs
+    UI.success("Nightly build completed!")
+  end
+end
+
+# =====================
+# MARK: - Helpers
+# =====================
+
+def sh(command)
+  Actions.sh(command, log: true, error_callback: ->(result) {
+    UI.user_error!("Command failed: #{command}")
+  })
+end
