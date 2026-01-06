@@ -222,9 +222,9 @@ public actor IntegrationValidator {
 // MARK: - Debug Helpers
 
 public extension IntegrationValidator {
-    /// Print validation results to console
-    func printValidation() async {
+    /// Log validation results using the SDK logger
+    func logValidation() async {
         let result = await validate()
-        print(result.description)
+        container.logger.log(.info, result.description, file: #file, function: #function, line: #line)
     }
 }

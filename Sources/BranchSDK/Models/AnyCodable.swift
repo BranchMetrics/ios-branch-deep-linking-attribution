@@ -30,6 +30,12 @@ public struct AnyCodable: @unchecked Sendable, Equatable, Codable {
         _value = NSNull()
     }
 
+    /// Private initializer for internal use with Any values
+    /// Safe because AnyCodable is @unchecked Sendable and only stores primitive types
+    private init(anyValue: Any) {
+        _value = anyValue
+    }
+
     // MARK: - Codable
 
     public init(from decoder: any Decoder) throws {
@@ -134,7 +140,8 @@ public struct AnyCodable: @unchecked Sendable, Equatable, Codable {
             AnyCodable(nilLiteral: ())
         default:
             // For complex types, wrap as-is (best effort)
-            AnyCodable(value as! (any Sendable))
+            // Uses private initializer to avoid Sendable cast issues
+            AnyCodable(anyValue: value)
         }
     }
 }
