@@ -5,7 +5,7 @@
 --swiftversion 6.0
 
 # File Options
---exclude .build,DerivedData,.tuist-bin,Tuist/Dependencies
+--exclude .build,DerivedData,.tuist-bin,Tuist/Dependencies,v3-legacy,vendor
 
 # Format Options
 --allman false

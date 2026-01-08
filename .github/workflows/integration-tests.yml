@@ -1,4 +1,7 @@
-name: Integration tests (manual)
+name: V3 Legacy - Integration tests (manual)
+
+# This workflow runs V3 Legacy SDK (Objective-C) integration tests
+# For V4 Swift SDK tests, see verify.yml
 
 # Manually triggered
 # $ gh workflow run integration-tests.yml
@@ -19,24 +22,29 @@ jobs:
         with:
           path: |
             vendor
-            Branch-TestBed/Pods
-          key: ${{ runner.os }}-${{ hashFiles('Gemfile.lock','Branch-TestBed/Podfile.lock') }}
+            v3-legacy/Branch-TestBed/Pods
+          key: ${{ runner.os }}-${{ hashFiles('v3-legacy/Gemfile.lock','v3-legacy/Branch-TestBed/Podfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-
       - name: Install Ruby dependencies
         run: |
+          cd v3-legacy
           bundle config set --local path vendor
           bundle check || bundle install
       # This happens automatically with the integration_tests lane, but adding it here
       # makes it easier to keep track of installation time via GHA without
       # adding execution time to the next step.
       - name: Install CocoaPods dependencies
-        run: bundle exec fastlane prepare_pods
+        run: |
+          cd v3-legacy
+          bundle exec fastlane prepare_pods
       - name: Run integration tests
-        run: bundle exec fastlane integration_tests
+        run: |
+          cd v3-legacy
+          bundle exec fastlane integration_tests
       - name: Upload test results
         uses: actions/upload-artifact@v3
         if: always() # even if tests fail
         with:
           name: test-results
-          path: fastlane/test_output
+          path: v3-legacy/fastlane/test_output
