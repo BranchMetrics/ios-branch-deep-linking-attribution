@@ -43,16 +43,16 @@ let releaseSettings: SettingsDictionary = [
 // MARK: - Deployment Targets
 
 let deploymentTargets = DeploymentTargets.multiplatform(
-    iOS: "15.0",
+    iOS: "12.0",
     macOS: "12.0",
     watchOS: "8.0",
-    tvOS: "15.0",
+    tvOS: "12.0",
     visionOS: "1.0"
 )
 
 /// Test targets only run on iOS/macOS
 let testDeploymentTargets = DeploymentTargets.multiplatform(
-    iOS: "15.0",
+    iOS: "12.0",
     macOS: "12.0"
 )
 
