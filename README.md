@@ -7,10 +7,12 @@ Modern Swift SDK for deep linking and attribution on Apple platforms.
 | | V4 Modern SDK | V3 Legacy SDK |
 |---|---|---|
 | **Language** | Swift 6 (strict concurrency) | Objective-C |
-| **Platforms** | iOS 15+, macOS 12+, watchOS 8+, tvOS 15+, visionOS 1+ | iOS 12+, tvOS 12+ |
-| **Distribution** | Swift Package Manager | CocoaPods, Carthage, SPM |
+| **Platforms** | iOS 12+, macOS 12+, watchOS 8+, tvOS 12+, visionOS 1+ | iOS 12+, tvOS 12+ |
+| **Distribution** | Swift Package Manager | CocoaPods, SPM, xcframework |
 | **Location** | `Sources/`, `Tests/` | `v3-legacy/` |
 | **Status** | Active Development | Maintenance Only |
+
+> **Note:** V3 Legacy Carthage support has been deprecated due to repository restructuring. V3 Legacy users should migrate to CocoaPods, SPM, or manual xcframework integration.
 
 ## Installation
 
@@ -63,10 +65,10 @@ let link = try await Branch.shared.createLink(
 
 | Platform | Minimum Version |
 |----------|-----------------|
-| iOS | 15.0 |
+| iOS | 12.0 |
 | macOS | 12.0 |
 | watchOS | 8.0 |
-| tvOS | 15.0 |
+| tvOS | 12.0 |
 | visionOS | 1.0 |
 
 ## Development
