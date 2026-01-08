@@ -57,5 +57,14 @@ let package = Package(
                 .define("SWIFT_PACKAGE"),
             ]
         ),
+        // Swift SDK Integration Tests
+        .testTarget(
+            name: "BranchSwiftSDKIntegrationTests",
+            dependencies: ["BranchSwiftSDK"],
+            path: "Tests/BranchSwiftSDKIntegrationTests",
+            swiftSettings: [
+                .define("SWIFT_PACKAGE"),
+            ]
+        ),
     ]
 )
