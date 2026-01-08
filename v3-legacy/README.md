@@ -9,6 +9,22 @@
 | **4.x (Swift 6)** | Active Development | Ongoing |
 | **3.x (Objective-C)** | Maintenance Only | January 2027 |
 
+## Important: Carthage Deprecation Notice
+
+**Carthage integration for V3 Legacy SDK has been deprecated** due to repository restructuring.
+
+The root `Package.swift` (V4 SDK) conflicts with Carthage builds for V3 Legacy. This is a known limitation that cannot be resolved without breaking other integration methods.
+
+### Recommended Alternatives
+
+| Method | Status | Notes |
+|--------|--------|-------|
+| **CocoaPods** | ✅ Supported | Recommended for V3 Legacy users |
+| **SPM** | ✅ Supported | Use `v3-legacy/Package.swift` |
+| **Manual xcframework** | ✅ Supported | Build with `xcodebuild -scheme xcframework` |
+| **Tagged releases** | ✅ Supported | Download from GitHub releases |
+| ~~Carthage~~ | ❌ Deprecated | Use alternatives above |
+
 ## About This Archive
 
 This directory contains the legacy Objective-C implementation of the Branch iOS SDK (v3.x). It has been preserved for:
@@ -21,15 +37,39 @@ This directory contains the legacy Objective-C implementation of the Branch iOS 
 
 If you need to use the v3.x SDK:
 
-1. **CocoaPods**: Use version constraints
-   ```ruby
-   pod 'Branch', '~> 3.0'
-   ```
+### 1. CocoaPods (Recommended)
 
-2. **SPM**: Reference the v3-legacy tag
-   ```swift
-   .package(url: "https://github.com/BranchMetrics/ios-branch-deep-linking-attribution.git", .upToNextMajor(from: "3.0.0"))
-   ```
+```ruby
+pod 'BranchSDK', '~> 3.0'
+```
+
+### 2. Swift Package Manager
+
+Reference the v3-legacy Package.swift:
+
+```swift
+.package(url: "https://github.com/BranchMetrics/ios-branch-deep-linking-attribution.git", .upToNextMajor(from: "3.0.0"))
+```
+
+### 3. Manual xcframework Integration
+
+Build the xcframework from source:
+
+```bash
+cd v3-legacy
+xcodebuild -project BranchSDK.xcodeproj -scheme xcframework
+```
+
+Then add `BranchSDK.xcframework` to your project.
+
+### 4. Static xcframework
+
+For static linking:
+
+```bash
+cd v3-legacy
+xcodebuild -project BranchSDK.xcodeproj -scheme static-xcframework
+```
 
 ## Migration to v4.x
 
