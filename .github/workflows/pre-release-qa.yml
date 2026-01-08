@@ -33,12 +33,13 @@ jobs:
         env:
             BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
         run: |
-            CURR_DIR=$(PWD)/v3-legacy
+            # V3 Legacy SDK Carthage test - point to repo root (not v3-legacy subdirectory)
+            REPO_ROOT=$(PWD)
             cd v3-legacy
             ./scripts/getSimulator
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd SDKIntegrationTestApps/iOSReleaseTest-Carthage/
-            echo "git \"file://${CURR_DIR}\" \"$BRANCH_NAME\" " >> cartfile
+            echo "git \"file://${REPO_ROOT}\" \"$BRANCH_NAME\" " >> cartfile
             carthage update --use-xcframeworks
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-SPM-iOS:

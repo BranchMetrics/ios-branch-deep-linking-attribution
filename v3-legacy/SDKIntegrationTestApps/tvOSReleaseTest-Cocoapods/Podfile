@@ -1,15 +1,21 @@
+# V3 Legacy SDK integration test
+platform :tvos, '12.0'
+
 target 'tvOSReleaseTest' do
-  # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
-
   pod 'BranchSDK', :path => './../../'
-
 end
 
 target 'tvOSReleaseTestTests' do
-  # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
-
   pod 'BranchSDK', :path => './../../'
+end
 
+# Force Swift 5.9 for V3 Legacy SDK (Swift 6 requires V4 SDK)
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['SWIFT_VERSION'] = '5.0'
+    end
+  end
 end
