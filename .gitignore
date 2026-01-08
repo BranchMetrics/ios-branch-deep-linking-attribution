@@ -34,3 +34,6 @@ fastlane/test_output
 vendor
 .bundle
 DeepLinkDemo/DeepLinkDemo.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
+
+# Claude Code development guide (local only)
+CLAUDE.md
