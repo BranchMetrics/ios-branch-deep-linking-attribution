@@ -7,6 +7,9 @@ on:
   push:
     paths:
       - 'v3-legacy/**'
+  pull_request:
+    paths:
+      - 'v3-legacy/**'
   workflow_dispatch:
 
 jobs:
