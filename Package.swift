@@ -6,9 +6,9 @@ import PackageDescription
 let package = Package(
     name: "BranchSDK",
     platforms: [
-        .iOS(.v15),
+        .iOS(.v12),
         .macOS(.v12),
-        .tvOS(.v15),
+        .tvOS(.v12),
         .watchOS(.v8),
         .visionOS(.v1),
     ],

@@ -1,4 +1,7 @@
-name: Version bump (manual)
+name: V3 Legacy - Version bump (manual)
+
+# This workflow bumps the V3 Legacy SDK (Objective-C) version
+# For V4 Swift SDK version management, use Package.swift directly
 
 # Manually triggered
 # $ gh workflow run -f version=1.40.0 version-bump.yml
@@ -25,12 +28,13 @@ jobs:
         with:
           path: |
             vendor
-            Branch-TestBed/Pods
-          key: ${{ runner.os }}-${{ hashFiles('Gemfile.lock','Branch-TestBed/Podfile.lock') }}
+            v3-legacy/Branch-TestBed/Pods
+          key: ${{ runner.os }}-${{ hashFiles('v3-legacy/Gemfile.lock','v3-legacy/Branch-TestBed/Podfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-
       - name: Install Ruby dependencies
         run: |
+          cd v3-legacy
           bundle config set --local path vendor
           bundle check || bundle install
       - name: Configure git
@@ -40,6 +44,7 @@ jobs:
       # Does not tag
       - name: Perform version bump & commit
         run: |
+          cd v3-legacy
           bundle exec fastlane version_bump version:${{ github.event.inputs.version }}
       - name: Push changes
         run: |

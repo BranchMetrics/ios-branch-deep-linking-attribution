@@ -3,9 +3,9 @@
 **RFC Number:** 001
 **Title:** Swift Rewrite Repository Strategy
 **Author:** Branch SDK Team
-**Status:** Draft / Open for Discussion
+**Status:** Implemented
 **Created:** 2026-01-06
-**Last Updated:** 2026-01-06
+**Last Updated:** 2026-01-08
 
 ---
 
@@ -362,14 +362,41 @@ Please provide input on the following:
 
 ## Decision Record
 
-*To be filled after team discussion*
+| Item | Decision | Date | Notes |
+|------|----------|------|-------|
+| Repository strategy | Option B: Replace in Original Repository | 2026-01-08 | V4 in root, V3 in `v3-legacy/` |
+| Support timeline | V3.x until January 2027 | 2026-01-08 | Security fixes only |
+| Migration approach | Dual-directory structure | 2026-01-08 | Both SDKs coexist in same repo |
+| Carthage support | Deprecated for V3 Legacy | 2026-01-08 | Root Package.swift conflicts |
 
-| Item | Decision | Date | Participants |
-|------|----------|------|--------------|
-| Repository strategy | TBD | | |
-| Support timeline | TBD | | |
-| Release date target | TBD | | |
-| Migration approach | TBD | | |
+### Implementation Notes
+
+The migration has been implemented with the following structure:
+
+```
+ios-branch-deep-linking-attribution/
+├── Sources/BranchSDK/           # V4 Swift 6 SDK (Active Development)
+├── Sources/BranchSDKTestKit/    # V4 Test utilities
+├── Tests/                       # V4 Tests
+├── v3-legacy/                   # V3 Objective-C SDK (Maintenance Only)
+│   ├── Sources/BranchSDK/       # V3 Objective-C implementation
+│   ├── Sources/BranchSwiftSDK/  # V3 Swift bridge
+│   └── SDKIntegrationTestApps/  # V3 Integration tests
+├── Package.swift                # V4 SPM manifest
+└── Project.swift                # V4 Tuist config
+```
+
+### CI/CD Configuration
+
+- **V4 SDK**: `verify.yml` workflow for `Sources/`, `Tests/`, `Package.swift` changes
+- **V3 Legacy**: `pre-release-qa.yml` workflow for `v3-legacy/**` changes
+
+### Known Limitations
+
+1. **Carthage for V3 Legacy**: Deprecated due to root Package.swift conflict
+   - Carthage resolves the root Package.swift (V4) instead of v3-legacy/Package.swift
+   - This creates nested path issues during builds
+   - Users should migrate to CocoaPods, SPM, or manual xcframework
 
 ---
 
