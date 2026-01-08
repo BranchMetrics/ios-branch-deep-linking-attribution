@@ -286,15 +286,21 @@ public actor SessionManager: SessionManaging {
     ///     }
     /// }
     /// ```
-    public func observeState() -> AsyncStream<SessionState> {
+    nonisolated public func observeState() -> AsyncStream<SessionState> {
         AsyncStream { continuation in
             let id = UUID()
 
-            // Send current state immediately
-            continuation.yield(_currentState)
+            // Access actor state via Task
+            Task { [weak self] in
+                guard let self = self else { return }
 
-            // Store continuation for future updates
-            stateObservers[id] = continuation
+                // Send current state immediately
+                let currentState = await self.currentState
+                continuation.yield(currentState)
+
+                // Store continuation for future updates
+                await self.addObserver(id: id, continuation: continuation)
+            }
 
             // Clean up on termination
             continuation.onTermination = { [weak self] _ in
@@ -303,6 +309,11 @@ public actor SessionManager: SessionManaging {
                 }
             }
         }
+    }
+
+    /// Adds a state observer.
+    private func addObserver(id: UUID, continuation: AsyncStream<SessionState>.Continuation) {
+        stateObservers[id] = continuation
     }
 
     /// Removes a state observer.
