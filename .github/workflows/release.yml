@@ -1,4 +1,7 @@
-name: Build & Release (manual)
+name: V3 Legacy - Build & Release (manual)
+
+# This workflow builds and releases the V3 Legacy SDK (Objective-C)
+# For V4 Swift SDK releases, see future v4-release.yml
 
 # Manually triggered
 # $ gh workflow run release.yml
@@ -23,6 +26,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Run static analysis
         run: |
+            cd v3-legacy
             xcodebuild analyze -project BranchSDK.xcodeproj
 
   # TODO: current repo merge controls are preventing this step from passing 
@@ -80,18 +84,19 @@ jobs:
           security list-keychain -d user -s $KEYCHAIN_PATH
       - name: Build xcframework
         run: |
+            cd v3-legacy
             ./scripts/prep_xcframework.sh
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release_framework
           path: |
-            ./Branch.zip
-            ./checksum.txt
-            ./Branch_signed_xcframework.zip
-            ./checksum_signed_xcframework.txt
-            ./Branch_xcframework_WithdSym.zip
-            ./checksum_xcframework_WithdSym.txt
+            ./v3-legacy/Branch.zip
+            ./v3-legacy/checksum.txt
+            ./v3-legacy/Branch_signed_xcframework.zip
+            ./v3-legacy/checksum_signed_xcframework.txt
+            ./v3-legacy/Branch_xcframework_WithdSym.zip
+            ./v3-legacy/checksum_xcframework_WithdSym.txt
 
   build-noidfa-framework:
     runs-on: macos-latest
@@ -123,16 +128,17 @@ jobs:
           security list-keychain -d user -s $KEYCHAIN_PATH
       - name: Build xcframework
         run: |
+            cd v3-legacy
             ./scripts/prep_xcframework_noidfa.sh
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: framework-noidfa
           path: |
-            ./Branch_noidfa.zip
-            ./checksum_noidfa.txt
-            ./Branch_noidfa_signed_xcframework.zip
-            ./checksum_noidfa_signed_xcframework.txt
+            ./v3-legacy/Branch_noidfa.zip
+            ./v3-legacy/checksum_noidfa.txt
+            ./v3-legacy/Branch_noidfa_signed_xcframework.zip
+            ./v3-legacy/checksum_noidfa_signed_xcframework.txt
 
   build-static-framework:
     runs-on: macos-latest
@@ -143,14 +149,15 @@ jobs:
         uses: actions/checkout@v4
       - name: Build static xcframework
         run: |
+            cd v3-legacy
             ./scripts/prep_static_xcframework.sh
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: static-framework
           path: |
-            ./Branch_static.zip
-            ./checksum_static.txt
+            ./v3-legacy/Branch_static.zip
+            ./v3-legacy/checksum_static.txt
 
   build-static-noidfa-framework:
     runs-on: macos-latest
@@ -161,14 +168,15 @@ jobs:
         uses: actions/checkout@v4
       - name: Build static xcframework
         run: |
+            cd v3-legacy
             ./scripts/prep_static_xcframework_noidfa.sh
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: static-framework-noidfa
           path: |
-            ./Branch_static_noidfa.zip
-            ./checksum_static_noidfa.txt
+            ./v3-legacy/Branch_static_noidfa.zip
+            ./v3-legacy/checksum_static_noidfa.txt
 
   release:
     runs-on: macos-latest
@@ -189,12 +197,13 @@ jobs:
         with:
           path: |
             vendor
-            Branch-TestBed/Pods
-          key: ${{ runner.os }}-${{ hashFiles('Gemfile.lock','Branch-TestBed/Podfile.lock') }}
+            v3-legacy/Branch-TestBed/Pods
+          key: ${{ runner.os }}-${{ hashFiles('v3-legacy/Gemfile.lock','v3-legacy/Branch-TestBed/Podfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-
       - name: Install Ruby dependencies
         run: |
+          cd v3-legacy
           bundle config set --local path vendor
           bundle check || bundle install
       - name: Download build artifacts
@@ -208,6 +217,7 @@ jobs:
       - name: Get current version
         id: get-version
         run: |
+          cd v3-legacy
           bundle exec fastlane current_version
           echo "Current version is $(cat fastlane/.version)."
           echo "version=$(cat fastlane/.version)" >> $GITHUB_OUTPUT

@@ -1,5 +1,13 @@
 //
 //  SessionManagerIntegrationTests.swift
+//  Branch iOS SDK - Modern Swift Implementation
+//
+//  Copyright © 2026 Branch Metrics. All rights reserved.
+//  SPDX-License-Identifier: MIT
+//
+
+//
+//  SessionManagerIntegrationTests.swift
 //  BranchSwiftSDKIntegrationTests
 //
 //  Branch iOS SDK - Modern Swift Implementation
@@ -10,17 +18,16 @@
 //  Integration tests for SessionManager - Tests component interactions
 //
 
+@testable import BranchSwiftSDK
 import XCTest
 
-@testable import BranchSwiftSDK
+// MARK: - SessionManagerIntegrationTests
 
 /// Integration tests for SessionManager that verify component interactions
 /// and end-to-end behavior across the session lifecycle.
 @available(iOS 13.0, tvOS 13.0, *)
 final class SessionManagerIntegrationTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sessionManager: SessionManager!
+    // MARK: Internal
 
     // MARK: - Setup / Teardown
 
@@ -320,9 +327,13 @@ final class SessionManagerIntegrationTests: XCTestCase {
             XCTAssertTrue(afterLogoutState.isUninitialized)
         }
     }
+
+    // MARK: Private
+
+    private var sessionManager: SessionManager!
 }
 
-// MARK: - Bridge Integration Tests
+// MARK: - SessionManagerBridgeIntegrationTests
 
 @available(iOS 13.0, tvOS 13.0, *)
 final class SessionManagerBridgeIntegrationTests: XCTestCase {

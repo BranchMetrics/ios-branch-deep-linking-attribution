@@ -1,5 +1,13 @@
 //
 //  BranchErrorTests.swift
+//  Branch iOS SDK - Modern Swift Implementation
+//
+//  Copyright © 2026 Branch Metrics. All rights reserved.
+//  SPDX-License-Identifier: MIT
+//
+
+//
+//  BranchErrorTests.swift
 //  BranchSwiftSDKTests
 //
 //  Branch iOS SDK - Modern Swift Implementation
@@ -10,9 +18,8 @@
 //  Unit tests for BranchError
 //
 
-import XCTest
-
 @testable import BranchSwiftSDK
+import XCTest
 
 @available(iOS 13.0, tvOS 13.0, *)
 final class BranchErrorTests: XCTestCase {

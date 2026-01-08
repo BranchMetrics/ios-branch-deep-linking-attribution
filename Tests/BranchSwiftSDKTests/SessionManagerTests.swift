@@ -1,5 +1,13 @@
 //
 //  SessionManagerTests.swift
+//  Branch iOS SDK - Modern Swift Implementation
+//
+//  Copyright © 2026 Branch Metrics. All rights reserved.
+//  SPDX-License-Identifier: MIT
+//
+
+//
+//  SessionManagerTests.swift
 //  BranchSwiftSDKTests
 //
 //  Branch iOS SDK - Modern Swift Implementation
@@ -10,15 +18,14 @@
 //  Unit tests for SessionManager - Critical for Double Open Issue fix validation
 //
 
+@testable import BranchSwiftSDK
 import XCTest
 
-@testable import BranchSwiftSDK
+// MARK: - SessionManagerTests
 
 @available(iOS 13.0, tvOS 13.0, *)
 final class SessionManagerTests: XCTestCase {
-    // MARK: - Properties
-
-    private var sessionManager: SessionManager!
+    // MARK: Internal
 
     // MARK: - Setup / Teardown
 
@@ -315,9 +322,13 @@ final class SessionManagerTests: XCTestCase {
 
         XCTAssertEqual(state1, state2)
     }
+
+    // MARK: Private
+
+    private var sessionManager: SessionManager!
 }
 
-// MARK: - SessionManagerBridge Tests
+// MARK: - SessionManagerBridgeTests
 
 @available(iOS 13.0, tvOS 13.0, *)
 final class SessionManagerBridgeTests: XCTestCase {

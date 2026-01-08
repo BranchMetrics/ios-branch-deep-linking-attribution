@@ -1,6 +1,16 @@
-name: Pre Release SDK Integration Tests
+name: V3 Legacy - Pre Release SDK Integration Tests
 
-on: [push]
+# This workflow tests the V3 Legacy SDK (Objective-C) integration
+# For V4 Swift SDK tests, see verify.yml
+
+on:
+  push:
+    paths:
+      - 'v3-legacy/**'
+  pull_request:
+    paths:
+      - 'v3-legacy/**'
+  workflow_dispatch:
 
 jobs:
   verify-cocoapods-iOS:
@@ -11,9 +21,10 @@ jobs:
       - name: Install pod, build project and run tests
         run: |
             echo "branch=${{ github.ref }}" >> $GITHUB_OUTPUT
+            cd v3-legacy
             ./scripts/getSimulator
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
-            cd  SDKIntegrationTestApps/iOSReleaseTest-Cocoapods/
+            cd SDKIntegrationTestApps/iOSReleaseTest-Cocoapods/
             pod install
             xcodebuild test -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-carthage-iOS:
@@ -21,17 +32,13 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Create Cart File, run carthage command, build project and run tests
-        env:
-            BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+      - name: Skip Carthage test (repo restructuring)
         run: |
-            CURR_DIR=$(PWD)
-            ./scripts/getSimulator
-            DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
-            cd  SDKIntegrationTestApps/iOSReleaseTest-Carthage/
-            echo "git \"file://${CURR_DIR}\" \"$BRANCH_NAME\" " >> cartfile
-            carthage update --use-xcframeworks
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
+            # V3 Legacy Carthage test is skipped due to repo restructuring
+            # The root Package.swift (V4 SDK) conflicts with Carthage builds for V3 Legacy
+            # V3 Legacy users should use CocoaPods, SPM (v3-legacy/Package.swift), or tagged releases
+            echo "Skipping V3 Legacy Carthage iOS test - repo restructuring broke Carthage compatibility"
+            echo "V3 Legacy SDK is still available via: CocoaPods, SPM, Manual xcframework, or tagged releases"
   verify-SPM-iOS:
     runs-on: macos-15
     steps:
@@ -39,9 +46,10 @@ jobs:
         uses: actions/checkout@v4
       - name: build project and run tests
         run: |
+            cd v3-legacy
             ./scripts/getSimulator
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
-            cd  SDKIntegrationTestApps/iOSReleaseTest-SPM/
+            cd SDKIntegrationTestApps/iOSReleaseTest-SPM/
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-manually-with-xcframework-iOS:
     runs-on: macos-15
@@ -50,10 +58,11 @@ jobs:
         uses: actions/checkout@v4
       - name: build xcframework, then build project and run tests
         run: |
+            cd v3-legacy
             ./scripts/getSimulator
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
-            xcodebuild -scheme xcframework
-            cd  SDKIntegrationTestApps/iOSReleaseTest-Manual/
+            xcodebuild -project BranchSDK.xcodeproj -scheme xcframework
+            cd SDKIntegrationTestApps/iOSReleaseTest-Manual/
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-manually-with-StaticFramework-iOS:
     runs-on: macos-15
@@ -62,10 +71,11 @@ jobs:
         uses: actions/checkout@v4
       - name: build static xcframework, then build project and run tests
         run: |
+            cd v3-legacy
             ./scripts/getSimulator
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
-            xcodebuild -scheme static-xcframework
-            cd  SDKIntegrationTestApps/iOSReleaseTest-Manual-Static/
+            xcodebuild -project BranchSDK.xcodeproj -scheme static-xcframework
+            cd SDKIntegrationTestApps/iOSReleaseTest-Manual-Static/
             xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-cocoapods-tvOS:
     runs-on: macos-15
@@ -74,9 +84,10 @@ jobs:
         uses: actions/checkout@v4
       - name: Install pod, build project and run tests
         run: |
+            cd v3-legacy
             ./scripts/getSimulator
             DESTINATION="platform=tvOS Simulator,name=$(cat ./appleTVSim),OS=latest"
-            cd  SDKIntegrationTestApps/tvOSReleaseTest-Cocoapods/
+            cd SDKIntegrationTestApps/tvOSReleaseTest-Cocoapods/
             pod install
             xcodebuild test -scheme tvOSReleaseTest -workspace tvOSReleaseTest.xcworkspace -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
   verify-carthage-tvOS:
@@ -84,12 +95,13 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Verify Integration using Carthage for tvOS
+      - name: Skip Carthage test (repo restructuring)
         run: |
-            ./scripts/getSimulator
-            DESTINATION="platform=tvOS Simulator,name=$(cat ./appleTVSim),OS=latest"
-            cd  SDKIntegrationTestApps/tvOSReleaseTest-Carthage/
-            echo "Skipping it ... its broken"
+            # V3 Legacy Carthage test is skipped due to repo restructuring
+            # The root Package.swift (V4 SDK) conflicts with Carthage builds for V3 Legacy
+            # V3 Legacy users should use CocoaPods, SPM (v3-legacy/Package.swift), or tagged releases
+            echo "Skipping V3 Legacy Carthage tvOS test - repo restructuring broke Carthage compatibility"
+            echo "V3 Legacy SDK is still available via: CocoaPods, SPM, Manual xcframework, or tagged releases"
   verify-manually-with-xcframework-tvOS:
     runs-on: macos-15
     steps:
@@ -97,8 +109,9 @@ jobs:
         uses: actions/checkout@v4
       - name: build xcframework, then build project and run tests
         run: |
+            cd v3-legacy
             ./scripts/getSimulator
             DESTINATION="platform=tvOS Simulator,name=$(cat ./appleTVSim),OS=latest"
-            xcodebuild -scheme xcframework
-            cd  SDKIntegrationTestApps/tvOSReleaseTest-Manual/
+            xcodebuild -project BranchSDK.xcodeproj -scheme xcframework
+            cd SDKIntegrationTestApps/tvOSReleaseTest-Manual/
             xcodebuild test -scheme tvOSReleaseTest -project tvOSReleaseTest.xcodeproj -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}

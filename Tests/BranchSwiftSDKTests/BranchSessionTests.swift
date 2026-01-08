@@ -1,5 +1,13 @@
 //
 //  BranchSessionTests.swift
+//  Branch iOS SDK - Modern Swift Implementation
+//
+//  Copyright © 2026 Branch Metrics. All rights reserved.
+//  SPDX-License-Identifier: MIT
+//
+
+//
+//  BranchSessionTests.swift
 //  BranchSwiftSDKTests
 //
 //  Branch iOS SDK - Modern Swift Implementation
@@ -10,9 +18,8 @@
 //  Unit tests for BranchSession
 //
 
-import XCTest
-
 @testable import BranchSwiftSDK
+import XCTest
 
 @available(iOS 13.0, tvOS 13.0, *)
 final class BranchSessionTests: XCTestCase {
@@ -78,7 +85,7 @@ final class BranchSessionTests: XCTestCase {
     }
 
     func testFromResponseWithDeepLinkData() {
-        let linkDataJson = """
+        let linkDataJSON = """
         {
             "+clicked_branch_link": true,
             "~referring_link": "https://example.app.link/test",
@@ -92,7 +99,7 @@ final class BranchSessionTests: XCTestCase {
 
         let response: [String: Any] = [
             "session_id": "deep-link-session",
-            "data": linkDataJson,
+            "data": linkDataJSON,
         ]
 
         let session = BranchSession.from(response: response)

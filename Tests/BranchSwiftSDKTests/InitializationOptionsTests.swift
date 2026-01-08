@@ -1,5 +1,13 @@
 //
 //  InitializationOptionsTests.swift
+//  Branch iOS SDK - Modern Swift Implementation
+//
+//  Copyright © 2026 Branch Metrics. All rights reserved.
+//  SPDX-License-Identifier: MIT
+//
+
+//
+//  InitializationOptionsTests.swift
 //  BranchSwiftSDKTests
 //
 //  Branch iOS SDK - Modern Swift Implementation
@@ -10,9 +18,8 @@
 //  Unit tests for InitializationOptions
 //
 
-import XCTest
-
 @testable import BranchSwiftSDK
+import XCTest
 
 @available(iOS 13.0, tvOS 13.0, *)
 final class InitializationOptionsTests: XCTestCase {
