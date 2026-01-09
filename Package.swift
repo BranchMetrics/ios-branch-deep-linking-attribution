@@ -6,11 +6,9 @@ import PackageDescription
 let package = Package(
     name: "BranchSDK",
     platforms: [
-        // iOS 13+ required for Swift concurrency (async/await, actors)
-        .iOS(.v13),
+        .iOS(.v12),
         .macOS(.v12),
-        // tvOS 13+ required for Swift concurrency
-        .tvOS(.v13),
+        .tvOS(.v12),
         .watchOS(.v8),
         .visionOS(.v1),
     ],
