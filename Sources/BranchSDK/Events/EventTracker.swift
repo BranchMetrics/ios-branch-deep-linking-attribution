@@ -102,7 +102,7 @@ public actor EventTracker: EventTracking {
         let payload = buildEventPayload(events)
         let data = try JSONSerialization.data(withJSONObject: payload)
 
-        let request = URLSessionNetworkClient.buildRequest(
+        let request = try URLSessionNetworkClient.buildRequest(
             endpoint: "/v2/event/standard",
             method: "POST",
             body: data

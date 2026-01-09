@@ -24,6 +24,6 @@ public protocol LinkGenerating: Sendable {
 
     /// Create a long URL (no server call)
     /// - Parameter properties: Link properties including parameters and metadata
-    /// - Returns: The generated long URL
-    func createLongURL(with properties: LinkProperties) -> URL
+    /// - Returns: The generated long URL, or nil if URL construction fails
+    func createLongURL(with properties: LinkProperties) -> URL?
 }

@@ -40,7 +40,7 @@ public actor LinkGenerator: LinkGenerating {
         let payload = buildLinkPayload(properties)
         let data = try JSONSerialization.data(withJSONObject: payload)
 
-        let request = URLSessionNetworkClient.buildRequest(
+        let request = try URLSessionNetworkClient.buildRequest(
             endpoint: "/v1/url",
             method: "POST",
             body: data
@@ -63,7 +63,7 @@ public actor LinkGenerator: LinkGenerating {
         return url
     }
 
-    public nonisolated func createLongURL(with properties: LinkProperties) -> URL {
+    public nonisolated func createLongURL(with properties: LinkProperties) -> URL? {
         var components = URLComponents()
         components.scheme = "https"
         components.host = Self.defaultDomain
@@ -117,7 +117,7 @@ public actor LinkGenerator: LinkGenerating {
             components.queryItems = queryItems
         }
 
-        return components.url!
+        return components.url
     }
 
     // MARK: - Cache Management

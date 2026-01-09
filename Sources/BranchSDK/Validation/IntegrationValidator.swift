@@ -178,12 +178,11 @@ public actor IntegrationValidator {
 
     private func validateNetworkReachability() async -> IntegrationValidation.ValidationItem {
         // Simple check - try to reach Branch API
-        let request = URLSessionNetworkClient.buildRequest(
-            endpoint: "/v1/app-link-settings",
-            method: "GET"
-        )
-
         do {
+            let request = try URLSessionNetworkClient.buildRequest(
+                endpoint: "/v1/app-link-settings",
+                method: "GET"
+            )
             let networkClient = await container.networkClient
             _ = try await networkClient.data(for: request)
             return IntegrationValidation.ValidationItem(

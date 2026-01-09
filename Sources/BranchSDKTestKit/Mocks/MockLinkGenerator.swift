@@ -73,7 +73,7 @@ public actor MockLinkGenerator: LinkGenerating {
         return generatedURL
     }
 
-    public nonisolated func createLongURL(with properties: LinkProperties) -> URL {
+    public nonisolated func createLongURL(with properties: LinkProperties) -> URL? {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "example.app.link"
@@ -94,7 +94,7 @@ public actor MockLinkGenerator: LinkGenerating {
             components.queryItems = queryItems
         }
 
-        return components.url ?? URL(string: "https://example.app.link/mock")!
+        return components.url
     }
 
     /// Clear all recorded requests

@@ -53,7 +53,7 @@ public final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
         }
 
         do {
-            let (data, response) = try await session.data(for: mutableRequest, delegate: delegate)
+            let (data, response) = try await performDataRequest(mutableRequest, delegate: delegate)
 
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw BranchError.invalidResponse
@@ -63,12 +63,15 @@ public final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
             switch httpResponse.statusCode {
             case 200 ... 299:
                 return (data, response)
+
             case 400 ... 499:
                 let message = Self.extractErrorMessage(from: data)
                 throw BranchError.serverError(statusCode: httpResponse.statusCode, message: message)
+
             case 500 ... 599:
                 let message = Self.extractErrorMessage(from: data)
                 throw BranchError.serverError(statusCode: httpResponse.statusCode, message: message)
+
             default:
                 throw BranchError.serverError(statusCode: httpResponse.statusCode, message: nil)
             }
@@ -78,9 +81,11 @@ public final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
             switch error.code {
             case .timedOut:
                 throw BranchError.timeout
+
             case .notConnectedToInternet,
                  .networkConnectionLost:
                 throw BranchError.networkError("No internet connection")
+
             default:
                 throw BranchError.networkError(error.localizedDescription)
             }
@@ -126,6 +131,33 @@ public final class URLSessionNetworkClient: NetworkClient, @unchecked Sendable {
         }
         return json["error"] as? String ?? json["message"] as? String
     }
+
+    /// Perform the actual data request with platform-appropriate implementation.
+    /// Uses native async URLSession on iOS 15+, continuation wrapper on iOS 13-14.
+    private func performDataRequest(
+        _ request: URLRequest,
+        delegate: (any URLSessionTaskDelegate)?
+    ) async throws -> (Data, URLResponse) {
+        if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
+            try await session.data(for: request, delegate: delegate)
+        } else {
+            // Fallback for iOS 13-14: wrap callback-based API in continuation
+            try await withCheckedThrowingContinuation { continuation in
+                let task = session.dataTask(with: request) { data, response, error in
+                    if let error {
+                        continuation.resume(throwing: error)
+                        return
+                    }
+                    guard let data, let response else {
+                        continuation.resume(throwing: BranchError.invalidResponse)
+                        return
+                    }
+                    continuation.resume(returning: (data, response))
+                }
+                task.resume()
+            }
+        }
+    }
 }
 
 // MARK: - Request Building
@@ -137,17 +169,22 @@ public extension URLSessionNetworkClient {
     ///   - method: HTTP method
     ///   - body: Optional request body
     /// - Returns: Configured URLRequest
+    /// - Throws: BranchError.invalidURL if the URL cannot be constructed
     static func buildRequest(
         endpoint: String,
         method: String = "POST",
         body: Data? = nil
-    ) -> URLRequest {
+    ) throws -> URLRequest {
         var components = URLComponents()
         components.scheme = "https"
         components.host = branchAPIHost
         components.path = endpoint
 
-        var request = URLRequest(url: components.url!)
+        guard let url = components.url else {
+            throw BranchError.invalidURL("Failed to construct URL for endpoint: \(endpoint)")
+        }
+
+        var request = URLRequest(url: url)
         request.httpMethod = method
         request.httpBody = body
 
