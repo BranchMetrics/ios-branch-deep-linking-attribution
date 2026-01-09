@@ -55,7 +55,17 @@ public protocol SessionManaging: Sendable {
     /// - Throws: `BranchError` if logout fails
     func logout() async throws
 
-    /// Observe session state changes
+    /// Force refresh the session by re-initializing
+    /// - Returns: The refreshed session
+    /// - Throws: `BranchError` if refresh fails
+    func refresh() async throws -> Session
+
+    /// Observe session state changes.
+    ///
+    /// This method is `nonisolated` to allow calling from synchronous contexts
+    /// (e.g., SwiftUI's `onAppear`). The returned `AsyncStream` can be consumed
+    /// in async contexts.
+    ///
     /// - Returns: An async stream of state changes
-    func observeState() async -> AsyncStream<SessionState>
+    nonisolated func observeState() -> AsyncStream<SessionState>
 }
