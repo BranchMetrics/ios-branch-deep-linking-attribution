@@ -136,6 +136,39 @@ public actor MockSessionManager: SessionManaging {
         _state = .initialized(updatedSession)
     }
 
+    public func refresh() async throws -> Session {
+        // Reset state
+        _state = .uninitialized
+
+        // Notify observers
+        for observer in stateObservers {
+            observer.yield(_state)
+        }
+
+        // Check for failure mode
+        if shouldFailInitialization {
+            throw initializationError ?? BranchError.networkError("Mock refresh failure")
+        }
+
+        // Create new session
+        let session = Session(
+            identityId: "mock_refreshed_\(UUID().uuidString.prefix(8))",
+            deviceFingerprintId: "mock_device_\(UUID().uuidString.prefix(8))",
+            isFirstSession: false,
+            linkData: nil
+        )
+
+        _session = session
+        _state = .initialized(session)
+
+        // Notify observers
+        for observer in stateObservers {
+            observer.yield(_state)
+        }
+
+        return session
+    }
+
     public nonisolated func observeState() -> AsyncStream<SessionState> {
         AsyncStream { continuation in
             Task {
