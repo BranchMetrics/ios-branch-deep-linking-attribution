@@ -41,6 +41,8 @@ public struct InitializationOptions: Sendable, Equatable {
         checkPasteboardOnInstall = true
         referralParams = nil
         sourceApplication = nil
+        isReferrable = nil
+        automaticallyDisplayDeepLinkController = false
     }
 
     // MARK: Public
@@ -66,6 +68,28 @@ public struct InitializationOptions: Sendable, Equatable {
     /// Source application bundle ID
     public var sourceApplication: String?
 
+    // MARK: - Legacy Compatibility Options
+
+    /// Whether the session should be marked as referred
+    ///
+    /// When `true`, forces the session to be counted as a referral.
+    /// When `false`, forces the session to not be counted as a referral.
+    /// When `nil`, uses Branch's automatic referral detection.
+    ///
+    /// - Note: This property exists for backward compatibility with legacy
+    ///   `initSession` methods that accepted an `isReferrable` parameter.
+    public var isReferrable: Bool?
+
+    /// Whether to automatically display a deep link controller
+    ///
+    /// When `true`, Branch will automatically present a view controller
+    /// registered via `registerDeepLinkController(_:forKey:)` if the
+    /// deep link data contains a matching key.
+    ///
+    /// - Note: This property exists for backward compatibility with legacy
+    ///   `initSession` methods that accepted an `automaticallyDisplayDeepLinkController` parameter.
+    public var automaticallyDisplayDeepLinkController: Bool
+
     // MARK: - Equatable
 
     public static func == (lhs: InitializationOptions, rhs: InitializationOptions) -> Bool {
@@ -75,7 +99,9 @@ public struct InitializationOptions: Sendable, Equatable {
             lhs.disableAutomaticSessionTracking == rhs.disableAutomaticSessionTracking &&
             lhs.checkPasteboardOnInstall == rhs.checkPasteboardOnInstall &&
             lhs.referralParams == rhs.referralParams &&
-            lhs.sourceApplication == rhs.sourceApplication
+            lhs.sourceApplication == rhs.sourceApplication &&
+            lhs.isReferrable == rhs.isReferrable &&
+            lhs.automaticallyDisplayDeepLinkController == rhs.automaticallyDisplayDeepLinkController
     }
 
     // MARK: - Builder Pattern
@@ -126,6 +152,28 @@ public struct InitializationOptions: Sendable, Equatable {
     public func with(sourceApplication: String?) -> InitializationOptions {
         var options = self
         options.sourceApplication = sourceApplication
+        return options
+    }
+
+    // MARK: - Legacy Compatibility Builder Methods
+
+    /// Set whether the session should be marked as referred
+    ///
+    /// - Parameter isReferrable: Whether to force referral status
+    /// - Returns: Updated options
+    public func with(isReferrable: Bool?) -> InitializationOptions {
+        var options = self
+        options.isReferrable = isReferrable
+        return options
+    }
+
+    /// Set whether to automatically display deep link controller
+    ///
+    /// - Parameter automaticallyDisplayDeepLinkController: Whether to auto-display
+    /// - Returns: Updated options
+    public func with(automaticallyDisplayDeepLinkController: Bool) -> InitializationOptions {
+        var options = self
+        options.automaticallyDisplayDeepLinkController = automaticallyDisplayDeepLinkController
         return options
     }
 
