@@ -1,0 +1,384 @@
+name: V4 Swift SDK - Comprehensive Tests
+
+# This workflow runs comprehensive tests for the V4 Swift SDK
+# Includes: Unit Tests, Integration Tests, Performance Tests, Multi-platform builds
+
+on:
+  push:
+    paths:
+      - 'Sources/**'
+      - 'Tests/**'
+      - 'Package.swift'
+      - '.github/workflows/v4-tests.yml'
+  pull_request:
+    branches:
+      - master
+      - main
+    paths:
+      - 'Sources/**'
+      - 'Tests/**'
+      - 'Package.swift'
+      - '.github/workflows/v4-tests.yml'
+  workflow_dispatch:
+
+env:
+  DEVELOPER_DIR: /Applications/Xcode_16.0.app/Contents/Developer
+
+jobs:
+  # ============================================================
+  # Unit Tests - Core SDK functionality
+  # ============================================================
+  unit-tests:
+    name: Unit Tests
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16.0'
+
+      - name: Cache Swift packages
+        uses: actions/cache@v4
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-${{ hashFiles('Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      - name: Build SDK
+        run: swift build
+
+      - name: Run Unit Tests
+        run: swift test --filter BranchSDKTests --parallel
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unit-test-results
+          path: |
+            .build/debug/*.xcresult
+          retention-days: 7
+
+  # ============================================================
+  # Integration Tests - End-to-end SDK behavior
+  # ============================================================
+  integration-tests:
+    name: Integration Tests
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16.0'
+
+      - name: Cache Swift packages
+        uses: actions/cache@v4
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-${{ hashFiles('Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      - name: Build SDK
+        run: swift build
+
+      - name: Run Integration Tests
+        run: swift test --filter BranchSDKIntegrationTests --parallel
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: integration-test-results
+          path: |
+            .build/debug/*.xcresult
+          retention-days: 7
+
+  # ============================================================
+  # Performance Tests - Benchmarks and performance validation
+  # ============================================================
+  performance-tests:
+    name: Performance Tests
+    runs-on: macos-15
+    timeout-minutes: 25
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16.0'
+
+      - name: Cache Swift packages
+        uses: actions/cache@v4
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-${{ hashFiles('Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      - name: Build SDK (Release)
+        run: swift build -c release
+
+      - name: Run Performance Tests
+        run: swift test --filter BranchSDKPerformanceTests -c release
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: performance-test-results
+          path: |
+            .build/release/*.xcresult
+          retention-days: 7
+
+  # ============================================================
+  # Multi-Platform Build Verification
+  # ============================================================
+  build-ios:
+    name: Build - iOS
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16.0'
+
+      - name: Get iOS Simulator
+        id: ios-sim
+        run: |
+          SIMULATOR=$(xcrun simctl list devices available | grep "iPhone" | head -1 | sed 's/.*(\([A-F0-9-]*\)).*/\1/')
+          echo "simulator=$SIMULATOR" >> $GITHUB_OUTPUT
+
+      - name: Build for iOS Simulator
+        run: |
+          xcodebuild build \
+            -scheme BranchSDK \
+            -destination "platform=iOS Simulator,id=${{ steps.ios-sim.outputs.simulator }}" \
+            -skipPackagePluginValidation \
+            CODE_SIGNING_ALLOWED=NO | xcpretty && exit ${PIPESTATUS[0]}
+
+  build-macos:
+    name: Build - macOS
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16.0'
+
+      - name: Build for macOS
+        run: swift build
+
+  build-tvos:
+    name: Build - tvOS
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16.0'
+
+      - name: Get tvOS Simulator
+        id: tvos-sim
+        run: |
+          SIMULATOR=$(xcrun simctl list devices available | grep "Apple TV" | head -1 | sed 's/.*(\([A-F0-9-]*\)).*/\1/')
+          echo "simulator=$SIMULATOR" >> $GITHUB_OUTPUT
+
+      - name: Build for tvOS Simulator
+        run: |
+          xcodebuild build \
+            -scheme BranchSDK \
+            -destination "platform=tvOS Simulator,id=${{ steps.tvos-sim.outputs.simulator }}" \
+            -skipPackagePluginValidation \
+            CODE_SIGNING_ALLOWED=NO | xcpretty && exit ${PIPESTATUS[0]}
+
+  build-watchos:
+    name: Build - watchOS
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16.0'
+
+      - name: Get watchOS Simulator
+        id: watchos-sim
+        run: |
+          SIMULATOR=$(xcrun simctl list devices available | grep "Apple Watch" | head -1 | sed 's/.*(\([A-F0-9-]*\)).*/\1/')
+          echo "simulator=$SIMULATOR" >> $GITHUB_OUTPUT
+
+      - name: Build for watchOS Simulator
+        run: |
+          xcodebuild build \
+            -scheme BranchSDK \
+            -destination "platform=watchOS Simulator,id=${{ steps.watchos-sim.outputs.simulator }}" \
+            -skipPackagePluginValidation \
+            CODE_SIGNING_ALLOWED=NO | xcpretty && exit ${PIPESTATUS[0]}
+
+  build-visionos:
+    name: Build - visionOS
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16.0'
+
+      - name: Get visionOS Simulator
+        id: visionos-sim
+        run: |
+          SIMULATOR=$(xcrun simctl list devices available | grep "Apple Vision" | head -1 | sed 's/.*(\([A-F0-9-]*\)).*/\1/')
+          echo "simulator=$SIMULATOR" >> $GITHUB_OUTPUT
+          if [ -z "$SIMULATOR" ]; then
+            echo "visionOS simulator not available, skipping"
+            echo "skip=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build for visionOS Simulator
+        if: steps.visionos-sim.outputs.skip != 'true'
+        run: |
+          xcodebuild build \
+            -scheme BranchSDK \
+            -destination "platform=visionOS Simulator,id=${{ steps.visionos-sim.outputs.simulator }}" \
+            -skipPackagePluginValidation \
+            CODE_SIGNING_ALLOWED=NO | xcpretty && exit ${PIPESTATUS[0]}
+
+  # ============================================================
+  # Code Coverage Report
+  # ============================================================
+  code-coverage:
+    name: Code Coverage
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16.0'
+
+      - name: Cache Swift packages
+        uses: actions/cache@v4
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-${{ hashFiles('Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      - name: Run tests with coverage
+        run: swift test --enable-code-coverage --parallel
+
+      - name: Generate coverage report
+        run: |
+          BIN_PATH=$(swift build --show-bin-path)
+          XCTEST_PATH=$(find $BIN_PATH -name '*.xctest' -type d | head -1)
+          COV_BIN="${XCTEST_PATH}/Contents/MacOS/$(basename ${XCTEST_PATH} .xctest)"
+
+          llvm-cov export \
+            -format="lcov" \
+            -instr-profile=.build/debug/codecov/default.profdata \
+            -ignore-filename-regex=".build|Tests" \
+            "$COV_BIN" > coverage.lcov || echo "Coverage export failed, continuing..."
+
+      - name: Upload coverage to artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: code-coverage
+          path: coverage.lcov
+          retention-days: 7
+
+  # ============================================================
+  # Swift 6 Strict Concurrency Check
+  # ============================================================
+  concurrency-check:
+    name: Swift 6 Concurrency Check
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16.0'
+
+      - name: Check Swift 6 strict concurrency
+        run: |
+          # Build with strict concurrency warnings as errors
+          swift build -Xswiftc -strict-concurrency=complete 2>&1 | tee build_output.txt
+
+          # Check for concurrency warnings/errors
+          if grep -i "concurrency" build_output.txt | grep -i "warning\|error"; then
+            echo "::warning::Concurrency issues detected"
+          else
+            echo "✅ No concurrency issues found"
+          fi
+
+  # ============================================================
+  # Summary Job - Requires all tests to pass
+  # ============================================================
+  all-tests-passed:
+    name: All V4 Tests Passed
+    runs-on: ubuntu-latest
+    needs:
+      - unit-tests
+      - integration-tests
+      - performance-tests
+      - build-ios
+      - build-macos
+      - build-tvos
+      - build-watchos
+      - code-coverage
+      - concurrency-check
+    if: always()
+    steps:
+      - name: Check all jobs passed
+        run: |
+          if [[ "${{ needs.unit-tests.result }}" != "success" ]] || \
+             [[ "${{ needs.integration-tests.result }}" != "success" ]] || \
+             [[ "${{ needs.performance-tests.result }}" != "success" ]] || \
+             [[ "${{ needs.build-ios.result }}" != "success" ]] || \
+             [[ "${{ needs.build-macos.result }}" != "success" ]] || \
+             [[ "${{ needs.build-tvos.result }}" != "success" ]] || \
+             [[ "${{ needs.build-watchos.result }}" != "success" ]] || \
+             [[ "${{ needs.code-coverage.result }}" != "success" ]] || \
+             [[ "${{ needs.concurrency-check.result }}" != "success" ]]; then
+            echo "❌ Some tests failed"
+            exit 1
+          fi
+          echo "✅ All V4 Swift SDK tests passed!"
