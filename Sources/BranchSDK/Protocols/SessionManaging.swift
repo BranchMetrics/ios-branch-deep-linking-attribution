@@ -21,8 +21,22 @@ import Foundation
 /// ## Usage
 ///
 /// ```swift
-/// let manager: any SessionManaging = SessionManager()
+/// let manager: any SessionManaging = SessionManager(container: container)
+///
+/// // Initialize session
 /// let session = try await manager.initialize(options: options)
+///
+/// // Observe state changes (nonisolated - works from SwiftUI)
+/// for await state in manager.observeState() {
+///     switch state {
+///     case .uninitialized: print("Not initialized")
+///     case .initializing: print("Initializing...")
+///     case .initialized(let session): print("Ready: \(session.identityId)")
+///     }
+/// }
+///
+/// // Force refresh when needed
+/// let refreshed = try await manager.refresh()
 /// ```
 public protocol SessionManaging: Sendable {
     /// The current session state
@@ -55,7 +69,19 @@ public protocol SessionManaging: Sendable {
     /// - Throws: `BranchError` if logout fails
     func logout() async throws
 
-    /// Force refresh the session by re-initializing
+    /// Force refresh the session by canceling any in-progress initialization and re-initializing.
+    ///
+    /// This method:
+    /// 1. Cancels any existing initialization task
+    /// 2. Clears pending link data
+    /// 3. Transitions state to `.uninitialized`
+    /// 4. Re-initializes with default options
+    ///
+    /// Use cases:
+    /// - User-triggered session refresh
+    /// - Recovery from stale session state
+    /// - Testing and debugging
+    ///
     /// - Returns: The refreshed session
     /// - Throws: `BranchError` if refresh fails
     func refresh() async throws -> Session
@@ -65,6 +91,23 @@ public protocol SessionManaging: Sendable {
     /// This method is `nonisolated` to allow calling from synchronous contexts
     /// (e.g., SwiftUI's `onAppear`). The returned `AsyncStream` can be consumed
     /// in async contexts.
+    ///
+    /// ## SwiftUI Integration
+    ///
+    /// ```swift
+    /// struct ContentView: View {
+    ///     @State private var sessionState: SessionState = .uninitialized
+    ///
+    ///     var body: some View {
+    ///         Text("State: \(sessionState.description)")
+    ///             .task {
+    ///                 for await state in sessionManager.observeState() {
+    ///                     sessionState = state
+    ///                 }
+    ///             }
+    ///     }
+    /// }
+    /// ```
     ///
     /// - Returns: An async stream of state changes
     nonisolated func observeState() -> AsyncStream<SessionState>
