@@ -1,4 +1,7 @@
-name: Unit tests (V4 Swift SDK)
+name: V4 Swift SDK - Quick Verify
+
+# Fast verification on every push - runs all tests in parallel
+# For comprehensive testing (multi-platform, coverage, etc.), see v4-tests.yml
 
 on:
   push:
@@ -8,7 +11,8 @@ on:
       - main
 
 jobs:
-  build-and-test:
+  quick-verify:
+    name: Build & Test (All Suites)
     runs-on: macos-15
     timeout-minutes: 20
     steps:
@@ -20,8 +24,16 @@ jobs:
         with:
           xcode-version: '16.0'
 
+      - name: Cache Swift packages
+        uses: actions/cache@v4
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-${{ hashFiles('Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
       - name: Build SDK
         run: swift build
 
-      - name: Run unit tests
+      - name: Run all tests (Unit + Integration + Performance)
         run: swift test --parallel
