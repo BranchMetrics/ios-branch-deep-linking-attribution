@@ -201,22 +201,74 @@ public actor SessionManager: SessionManaging {
         transitionTo(.initialized(updatedSession))
     }
 
-    public func observeState() async -> AsyncStream<SessionState> {
-        let observerId = UUID()
-        let currentState = _state
+    /// Force refresh the session by canceling any in-progress initialization
+    /// and re-initializing from scratch.
+    ///
+    /// - Returns: The refreshed session
+    /// - Throws: `BranchError` if refresh fails
+    public func refresh() async throws -> Session {
+        // Cancel existing task if any
+        initializationTask?.cancel()
+        initializationTask = nil
 
-        return AsyncStream { continuation in
-            // Send current state immediately
-            continuation.yield(currentState)
+        // Clear pending data
+        pendingLinkData = nil
 
-            // Store continuation for future updates
+        // Force transition to uninitialized for refresh
+        _state = .uninitialized
+
+        // Notify observers of state change
+        for (_, observer) in stateObservers {
+            observer.yield(.uninitialized)
+        }
+
+        log(.debug, "Session refresh initiated, re-initializing...")
+
+        // Re-initialize with default options
+        return try await initialize(options: InitializationOptions())
+    }
+
+    /// Observe session state changes.
+    ///
+    /// This method is `nonisolated` to allow calling from synchronous contexts
+    /// (e.g., SwiftUI's `onAppear`). The returned `AsyncStream` can be consumed
+    /// in async contexts.
+    ///
+    /// Usage:
+    /// ```swift
+    /// for await state in sessionManager.observeState() {
+    ///     switch state {
+    ///     case .initialized(let session):
+    ///         print("Session ready: \(session.identityId)")
+    ///     default:
+    ///         break
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// - Returns: An async stream of state changes
+    public nonisolated func observeState() -> AsyncStream<SessionState> {
+        AsyncStream { continuation in
+            let id = UUID()
+
+            // Access actor state via Task (required for nonisolated method)
             Task { [weak self] in
-                await self?.addObserver(id: observerId, continuation: continuation)
+                guard let self else {
+                    return
+                }
+
+                // Send current state immediately
+                let currentState = await state
+                continuation.yield(currentState)
+
+                // Store continuation for future updates
+                await addObserver(id: id, continuation: continuation)
             }
 
+            // Clean up on termination
             continuation.onTermination = { [weak self] _ in
                 Task { [weak self] in
-                    await self?.removeObserver(id: observerId)
+                    await self?.removeObserver(id: id)
                 }
             }
         }
