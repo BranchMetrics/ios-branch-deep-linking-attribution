@@ -147,6 +147,7 @@ jobs:
 
   # ============================================================
   # Multi-Platform Build Verification
+  # Uses generic destinations instead of UUIDs for reliability
   # ============================================================
   build-ios:
     name: Build - iOS
@@ -161,17 +162,11 @@ jobs:
         with:
           xcode-version: '16.0'
 
-      - name: Get iOS Simulator
-        id: ios-sim
-        run: |
-          SIMULATOR=$(xcrun simctl list devices available | grep "iPhone" | head -1 | sed 's/.*(\([A-F0-9-]*\)).*/\1/')
-          echo "simulator=$SIMULATOR" >> $GITHUB_OUTPUT
-
-      - name: Build for iOS Simulator
+      - name: Build for iOS
         run: |
           xcodebuild build \
             -scheme BranchSDK \
-            -destination "platform=iOS Simulator,id=${{ steps.ios-sim.outputs.simulator }}" \
+            -destination "generic/platform=iOS" \
             -skipPackagePluginValidation \
             CODE_SIGNING_ALLOWED=NO | xcpretty && exit ${PIPESTATUS[0]}
 
@@ -204,17 +199,11 @@ jobs:
         with:
           xcode-version: '16.0'
 
-      - name: Get tvOS Simulator
-        id: tvos-sim
-        run: |
-          SIMULATOR=$(xcrun simctl list devices available | grep "Apple TV" | head -1 | sed 's/.*(\([A-F0-9-]*\)).*/\1/')
-          echo "simulator=$SIMULATOR" >> $GITHUB_OUTPUT
-
-      - name: Build for tvOS Simulator
+      - name: Build for tvOS
         run: |
           xcodebuild build \
             -scheme BranchSDK \
-            -destination "platform=tvOS Simulator,id=${{ steps.tvos-sim.outputs.simulator }}" \
+            -destination "generic/platform=tvOS" \
             -skipPackagePluginValidation \
             CODE_SIGNING_ALLOWED=NO | xcpretty && exit ${PIPESTATUS[0]}
 
@@ -231,17 +220,11 @@ jobs:
         with:
           xcode-version: '16.0'
 
-      - name: Get watchOS Simulator
-        id: watchos-sim
-        run: |
-          SIMULATOR=$(xcrun simctl list devices available | grep "Apple Watch" | head -1 | sed 's/.*(\([A-F0-9-]*\)).*/\1/')
-          echo "simulator=$SIMULATOR" >> $GITHUB_OUTPUT
-
-      - name: Build for watchOS Simulator
+      - name: Build for watchOS
         run: |
           xcodebuild build \
             -scheme BranchSDK \
-            -destination "platform=watchOS Simulator,id=${{ steps.watchos-sim.outputs.simulator }}" \
+            -destination "generic/platform=watchOS" \
             -skipPackagePluginValidation \
             CODE_SIGNING_ALLOWED=NO | xcpretty && exit ${PIPESTATUS[0]}
 
@@ -249,6 +232,7 @@ jobs:
     name: Build - visionOS
     runs-on: macos-15
     timeout-minutes: 15
+    continue-on-error: true  # visionOS SDK may not be available on all runners
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -258,22 +242,22 @@ jobs:
         with:
           xcode-version: '16.0'
 
-      - name: Get visionOS Simulator
-        id: visionos-sim
+      - name: Check visionOS SDK availability
+        id: check-visionos
         run: |
-          SIMULATOR=$(xcrun simctl list devices available | grep "Apple Vision" | head -1 | sed 's/.*(\([A-F0-9-]*\)).*/\1/')
-          echo "simulator=$SIMULATOR" >> $GITHUB_OUTPUT
-          if [ -z "$SIMULATOR" ]; then
-            echo "visionOS simulator not available, skipping"
-            echo "skip=true" >> $GITHUB_OUTPUT
+          if xcodebuild -showsdks | grep -q "xros"; then
+            echo "available=true" >> $GITHUB_OUTPUT
+          else
+            echo "visionOS SDK not available, skipping build"
+            echo "available=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Build for visionOS Simulator
-        if: steps.visionos-sim.outputs.skip != 'true'
+      - name: Build for visionOS
+        if: steps.check-visionos.outputs.available == 'true'
         run: |
           xcodebuild build \
             -scheme BranchSDK \
-            -destination "platform=visionOS Simulator,id=${{ steps.visionos-sim.outputs.simulator }}" \
+            -destination "generic/platform=visionOS" \
             -skipPackagePluginValidation \
             CODE_SIGNING_ALLOWED=NO | xcpretty && exit ${PIPESTATUS[0]}
 
