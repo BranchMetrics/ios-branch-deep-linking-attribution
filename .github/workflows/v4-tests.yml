@@ -147,7 +147,8 @@ jobs:
 
   # ============================================================
   # Multi-Platform Build Verification
-  # Uses generic destinations instead of UUIDs for reliability
+  # Uses -sdk flag to compile against platform SDKs without requiring
+  # simulator runtimes to be installed (iphoneos, appletvos, watchos, xros)
   # ============================================================
   build-ios:
     name: Build - iOS
@@ -164,11 +165,13 @@ jobs:
 
       - name: Build for iOS
         run: |
+          # Use -sdk to compile against iOS SDK without requiring simulator runtime
           xcodebuild build \
             -scheme BranchSDK \
-            -destination "generic/platform=iOS" \
+            -sdk iphoneos \
             -skipPackagePluginValidation \
-            CODE_SIGNING_ALLOWED=NO | xcpretty && exit ${PIPESTATUS[0]}
+            CODE_SIGNING_ALLOWED=NO \
+            ONLY_ACTIVE_ARCH=NO | xcpretty && exit ${PIPESTATUS[0]}
 
   build-macos:
     name: Build - macOS
@@ -201,11 +204,13 @@ jobs:
 
       - name: Build for tvOS
         run: |
+          # Use -sdk to compile against tvOS SDK without requiring simulator runtime
           xcodebuild build \
             -scheme BranchSDK \
-            -destination "generic/platform=tvOS" \
+            -sdk appletvos \
             -skipPackagePluginValidation \
-            CODE_SIGNING_ALLOWED=NO | xcpretty && exit ${PIPESTATUS[0]}
+            CODE_SIGNING_ALLOWED=NO \
+            ONLY_ACTIVE_ARCH=NO | xcpretty && exit ${PIPESTATUS[0]}
 
   build-watchos:
     name: Build - watchOS
@@ -222,11 +227,13 @@ jobs:
 
       - name: Build for watchOS
         run: |
+          # Use -sdk to compile against watchOS SDK without requiring simulator runtime
           xcodebuild build \
             -scheme BranchSDK \
-            -destination "generic/platform=watchOS" \
+            -sdk watchos \
             -skipPackagePluginValidation \
-            CODE_SIGNING_ALLOWED=NO | xcpretty && exit ${PIPESTATUS[0]}
+            CODE_SIGNING_ALLOWED=NO \
+            ONLY_ACTIVE_ARCH=NO | xcpretty && exit ${PIPESTATUS[0]}
 
   build-visionos:
     name: Build - visionOS
@@ -255,11 +262,13 @@ jobs:
       - name: Build for visionOS
         if: steps.check-visionos.outputs.available == 'true'
         run: |
+          # Use -sdk to compile against visionOS SDK without requiring simulator runtime
           xcodebuild build \
             -scheme BranchSDK \
-            -destination "generic/platform=visionOS" \
+            -sdk xros \
             -skipPackagePluginValidation \
-            CODE_SIGNING_ALLOWED=NO | xcpretty && exit ${PIPESTATUS[0]}
+            CODE_SIGNING_ALLOWED=NO \
+            ONLY_ACTIVE_ARCH=NO | xcpretty && exit ${PIPESTATUS[0]}
 
   # ============================================================
   # Code Coverage Report
