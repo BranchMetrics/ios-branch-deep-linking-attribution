@@ -10,6 +10,9 @@ on:
       - master
       - main
 
+permissions:
+  contents: read
+
 jobs:
   quick-verify:
     name: Build & Test (All Suites)

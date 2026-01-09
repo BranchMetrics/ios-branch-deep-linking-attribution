@@ -21,6 +21,9 @@ on:
       - '.github/workflows/v4-tests.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 env:
   DEVELOPER_DIR: /Applications/Xcode_16.0.app/Contents/Developer
 
