@@ -183,6 +183,23 @@ public final class Branch: Sendable {
         await container.integrationValidator.validate()
     }
 
+    // MARK: Internal
+
+    // MARK: - Legacy Support
+
+    /// Initialize session without configuration (for legacy bridge).
+    ///
+    /// This method is used by `LegacySessionBridge` to support v3-style
+    /// initialization where configuration was set separately before init.
+    ///
+    /// - Parameter options: Initialization options
+    /// - Returns: The initialized session
+    /// - Throws: `BranchError.notConfigured` if configuration was not set
+    @discardableResult
+    func initializeSession(options: InitializationOptions) async throws -> Session {
+        try await container.sessionManager.initialize(options: options)
+    }
+
     // MARK: Private
 
     /// Dependency injection container
