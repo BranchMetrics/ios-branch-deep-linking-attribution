@@ -19,7 +19,12 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
 
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
+
+    // Reference BranchScene to prevent linker from dead-stripping it (needed for tests)
+    if (@available(iOS 13.0, *)) {
+        (void)[BranchScene class];
+    }
+
     [self setBranchLogFile];
 
     appDelegate = self;

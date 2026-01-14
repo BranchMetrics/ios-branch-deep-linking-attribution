@@ -56,16 +56,25 @@
     XCTAssertTrue([configDict[BRANCH_REQUEST_KEY_BRANCH_KEY_SOURCE] isEqualToString:BRANCH_KEY_SOURCE_INFO_PLIST]);
     XCTAssertEqualObjects(configDict[BRANCH_REQUEST_KEY_DEFER_INIT_FOR_PLUGIN_RUNTIME], @(YES));
     XCTAssertEqualObjects(configDict[BRANCH_REQUEST_KEY_CHECK_PASTEBOARD_ON_INSTALL], @(YES));
-    
+
     NSDictionary *frameworks = configDict[BRANCH_REQUEST_KEY_LINKED_FRAMEORKS];
     XCTAssertNotNil(frameworks);
-    
-    XCTAssertEqualObjects(frameworks[FRAMEWORK_AD_SUPPORT], @(YES));
-    XCTAssertEqualObjects(frameworks[FRAMEWORK_ATT_TRACKING_MANAGER], @(YES));
-    XCTAssertEqualObjects(frameworks[FRAMEWORK_AD_FIREBASE_CRASHLYTICS], @(YES));
-    XCTAssertEqualObjects(frameworks[FRAMEWORK_AD_SAFARI_SERVICES], @(NO));
-    XCTAssertEqualObjects(frameworks[FRAMEWORK_AD_APP_ADS_ONDEVICE_CONVERSION], @(NO));
-    
+
+    // Verify framework detection keys exist and contain boolean values
+    // The actual values depend on what's linked in the test environment
+    XCTAssertNotNil(frameworks[FRAMEWORK_AD_SUPPORT]);
+    XCTAssertNotNil(frameworks[FRAMEWORK_ATT_TRACKING_MANAGER]);
+    XCTAssertNotNil(frameworks[FRAMEWORK_AD_FIREBASE_CRASHLYTICS]);
+    XCTAssertNotNil(frameworks[FRAMEWORK_AD_SAFARI_SERVICES]);
+    XCTAssertNotNil(frameworks[FRAMEWORK_AD_APP_ADS_ONDEVICE_CONVERSION]);
+
+    // Verify values match actual runtime class availability
+    XCTAssertEqualObjects(frameworks[FRAMEWORK_AD_SUPPORT], @(NSClassFromString(@"ASIdentifierManager") != nil));
+    XCTAssertEqualObjects(frameworks[FRAMEWORK_ATT_TRACKING_MANAGER], @(NSClassFromString(@"ATTrackingManager") != nil));
+    XCTAssertEqualObjects(frameworks[FRAMEWORK_AD_FIREBASE_CRASHLYTICS], @(NSClassFromString(@"FIRCrashlytics") != nil));
+    XCTAssertEqualObjects(frameworks[FRAMEWORK_AD_SAFARI_SERVICES], @(NSClassFromString(@"SFSafariViewController") != nil));
+    XCTAssertEqualObjects(frameworks[FRAMEWORK_AD_APP_ADS_ONDEVICE_CONVERSION], @(NSClassFromString(@"ODCConversionManager") != nil));
+
 }
 
 - (void)testInstallRequestParams {
@@ -78,23 +87,32 @@
     NSNumber* requestCreationTimeStamp = BNCWireFormatFromDate([NSDate date]);
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:requestUUID TimeStamp:requestCreationTimeStamp];
     NSDictionary *installDict = [factory dataForInstallWithURLString:@"https://branch.io"];
-    
+
     NSDictionary *configDict = installDict[BRANCH_REQUEST_KEY_OPERATIONAL_METRICS];
     XCTAssertNotNil(configDict);
 
     XCTAssertTrue([configDict[BRANCH_REQUEST_KEY_BRANCH_KEY_SOURCE] isEqualToString:BRANCH_KEY_SOURCE_INFO_PLIST]);
     XCTAssertEqualObjects(configDict[BRANCH_REQUEST_KEY_DEFER_INIT_FOR_PLUGIN_RUNTIME], @(YES));
     XCTAssertEqualObjects(configDict[BRANCH_REQUEST_KEY_CHECK_PASTEBOARD_ON_INSTALL], @(YES));
-    
+
     NSDictionary *frameworks = configDict[BRANCH_REQUEST_KEY_LINKED_FRAMEORKS];
     XCTAssertNotNil(frameworks);
-    
-    XCTAssertEqualObjects(frameworks[FRAMEWORK_AD_SUPPORT], @(YES));
-    XCTAssertEqualObjects(frameworks[FRAMEWORK_ATT_TRACKING_MANAGER], @(YES));
-    XCTAssertEqualObjects(frameworks[FRAMEWORK_AD_FIREBASE_CRASHLYTICS], @(YES));
-    XCTAssertEqualObjects(frameworks[FRAMEWORK_AD_SAFARI_SERVICES], @(NO));
-    XCTAssertEqualObjects(frameworks[FRAMEWORK_AD_APP_ADS_ONDEVICE_CONVERSION], @(NO));
-    
+
+    // Verify framework detection keys exist and contain boolean values
+    // The actual values depend on what's linked in the test environment
+    XCTAssertNotNil(frameworks[FRAMEWORK_AD_SUPPORT]);
+    XCTAssertNotNil(frameworks[FRAMEWORK_ATT_TRACKING_MANAGER]);
+    XCTAssertNotNil(frameworks[FRAMEWORK_AD_FIREBASE_CRASHLYTICS]);
+    XCTAssertNotNil(frameworks[FRAMEWORK_AD_SAFARI_SERVICES]);
+    XCTAssertNotNil(frameworks[FRAMEWORK_AD_APP_ADS_ONDEVICE_CONVERSION]);
+
+    // Verify values match actual runtime class availability
+    XCTAssertEqualObjects(frameworks[FRAMEWORK_AD_SUPPORT], @(NSClassFromString(@"ASIdentifierManager") != nil));
+    XCTAssertEqualObjects(frameworks[FRAMEWORK_ATT_TRACKING_MANAGER], @(NSClassFromString(@"ATTrackingManager") != nil));
+    XCTAssertEqualObjects(frameworks[FRAMEWORK_AD_FIREBASE_CRASHLYTICS], @(NSClassFromString(@"FIRCrashlytics") != nil));
+    XCTAssertEqualObjects(frameworks[FRAMEWORK_AD_SAFARI_SERVICES], @(NSClassFromString(@"SFSafariViewController") != nil));
+    XCTAssertEqualObjects(frameworks[FRAMEWORK_AD_APP_ADS_ONDEVICE_CONVERSION], @(NSClassFromString(@"ODCConversionManager") != nil));
+
 }
 
 @end

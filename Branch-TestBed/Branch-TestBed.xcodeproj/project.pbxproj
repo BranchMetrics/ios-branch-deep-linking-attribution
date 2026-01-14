@@ -157,6 +157,7 @@
 		B77CB6C72E8EE36300FDF144 /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = B77CB6C62E8EE36300FDF144 /* BranchSDK */; };
 		C10A6DE629A995590061A851 /* StoreKitTestCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = C10A6DE529A995590061A851 /* StoreKitTestCertificate.cer */; };
 		C10C61AA282481FB00761D7E /* BranchShareLinkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10C61A9282481FB00761D7E /* BranchShareLinkTests.m */; };
+		F1A2B3C42026011400D0E816 /* BranchSceneDoubleOpenTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C32026011400D0E816 /* BranchSceneDoubleOpenTests.m */; };
 		C12320B52808DB90007771C0 /* BranchQRCodeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C12320B42808DB90007771C0 /* BranchQRCodeTests.m */; };
 		C15CC9DE2ABCB549003CC339 /* BNCCurrencyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C15CC9DD2ABCB549003CC339 /* BNCCurrencyTests.m */; };
 		C15CC9E02ABCF8C8003CC339 /* BranchActivityItemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C15CC9DF2ABCF8C8003CC339 /* BranchActivityItemTests.m */; };
@@ -581,6 +582,7 @@
 		C10A6DE029A97E440061A851 /* TestStoreKitConfig.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestStoreKitConfig.storekit; sourceTree = "<group>"; };
 		C10A6DE529A995590061A851 /* StoreKitTestCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = StoreKitTestCertificate.cer; sourceTree = "<group>"; };
 		C10C61A9282481FB00761D7E /* BranchShareLinkTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchShareLinkTests.m; sourceTree = "<group>"; };
+		F1A2B3C32026011400D0E816 /* BranchSceneDoubleOpenTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchSceneDoubleOpenTests.m; sourceTree = "<group>"; };
 		C10F393927A0872800BF5D36 /* BranchPluginSupportTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchPluginSupportTests.m; sourceTree = "<group>"; };
 		C12320B42808DB90007771C0 /* BranchQRCodeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchQRCodeTests.m; sourceTree = "<group>"; };
 		C15CC9DD2ABCB549003CC339 /* BNCCurrencyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCCurrencyTests.m; sourceTree = "<group>"; };
@@ -720,6 +722,7 @@
 				C10F393927A0872800BF5D36 /* BranchPluginSupportTests.m */,
 				C12320B42808DB90007771C0 /* BranchQRCodeTests.m */,
 				C10C61A9282481FB00761D7E /* BranchShareLinkTests.m */,
+				F1A2B3C32026011400D0E816 /* BranchSceneDoubleOpenTests.m */,
 				4D1683962098C901008819E3 /* BranchUniversalObjectTests.m */,
 				4AB16367239E3A2700D42931 /* DispatchToIsolationQueueTests.m */,
 				4D16839F2098C901008819E3 /* Info.plist */,
@@ -1459,6 +1462,7 @@
 				5F892EC5236116CD0023AEC1 /* NSErrorBranchTests.m in Sources */,
 				4D1683B62098C902008819E3 /* BNCURLFilterTests.m in Sources */,
 				C10C61AA282481FB00761D7E /* BranchShareLinkTests.m in Sources */,
+				F1A2B3C42026011400D0E816 /* BranchSceneDoubleOpenTests.m in Sources */,
 				5F437E40237E1A560052064B /* BNCDeviceSystemTests.m in Sources */,
 				4D1683C72098C902008819E3 /* BNCCrashlyticsWrapperTests.m in Sources */,
 				5FDF91592581CDF4009BE5A3 /* BNCPartnerParametersTests.m in Sources */,
