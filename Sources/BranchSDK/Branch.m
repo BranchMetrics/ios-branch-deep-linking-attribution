@@ -786,9 +786,11 @@ static NSString *bnc_branchKey = nil;
     }
     #endif
 
-    if(pushURL || [[options objectForKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"] isEqualToNumber:@1] || (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) ) {
-        [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:pushURL reset:NO];
-    }
+    // FIX REMOVED FOR TESTING DOUBLE-OPEN BUG (INTENG-21106)
+    // Original fix: Only send OPEN if NOT launched via deep link (checking UIApplicationLaunchOptionsURLKey / UIApplicationLaunchOptionsUserActivityDictionaryKey)
+    // Bug demonstration: Always send OPEN request regardless of launch type
+    // This will cause double OPEN when app is cold-launched via deep link
+    [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:pushURL reset:NO];
 }
 
 - (void)setDeepLinkDebugMode:(NSDictionary *)debugParams {

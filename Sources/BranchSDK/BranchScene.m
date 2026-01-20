@@ -38,29 +38,14 @@
 - (void)initSessionWithSceneConnectionOptions:(nullable UISceneConnectionOptions *)connectionOptions registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback NS_EXTENSION_UNAVAILABLE("BranchScene does not support Extensions") {
     [[BranchLogger shared] logVerbose:@"BranchScene initSession with sceneConnectionOptions" error:nil];
 
-    // Check if the scene was launched via a deep link (URL or Universal Link)
-    // If so, we should NOT send an immediate OPEN request - it will be sent when the link is handled
-    BOOL hasURLContexts = connectionOptions.URLContexts.count > 0;
-    BOOL hasUserActivities = connectionOptions.userActivities.count > 0;
-    BOOL isDeepLinkLaunch = hasURLContexts || hasUserActivities;
-
-    if (isDeepLinkLaunch) {
-        [[BranchLogger shared] logVerbose:@"BranchScene detected deep link launch - deferring OPEN request" error:nil];
-    }
-
-    // Create launch options dictionary with the deep link launch flag
-    // This tells Branch.m not to send an immediate OPEN request for deep link launches
+    // FIX REMOVED FOR TESTING DOUBLE-OPEN BUG (INTENG-21106)
+    // Original fix: Detected deep link launch from connectionOptions and added marker keys
+    //               to prevent Branch.m from sending OPEN request
+    // Bug demonstration: Pass empty options so Branch.m always sends OPEN request
+    // This will cause double OPEN when app is cold-launched via deep link:
+    //   1. OPEN from initSession (because no marker keys)
+    //   2. OPEN from scene:openURLContexts or scene:continueUserActivity
     NSMutableDictionary *options = [NSMutableDictionary dictionary];
-    if (isDeepLinkLaunch) {
-        // Add a marker key to signal that this is a deep link launch
-        // We use the same key pattern as UIApplicationLaunchOptionsURLKey to trigger the existing logic
-        if (hasURLContexts) {
-            options[UIApplicationLaunchOptionsURLKey] = @YES;
-        }
-        if (hasUserActivities) {
-            options[UIApplicationLaunchOptionsUserActivityDictionaryKey] = @YES;
-        }
-    }
 
     [[Branch getInstance] initSceneSessionWithLaunchOptions:options isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
         if (callback) {
