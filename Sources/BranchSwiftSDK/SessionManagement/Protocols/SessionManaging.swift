@@ -38,6 +38,7 @@ import Foundation
 /// // Force refresh when needed
 /// let refreshed = try await manager.refresh()
 /// ```
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public protocol SessionManaging: Sendable {
     /// The current session state
     var state: SessionState { get async }

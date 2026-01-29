@@ -27,6 +27,7 @@ import Foundation
 /// The `initializationTask` property ensures concurrent `initialize()` calls share
 /// a single network request, while `pendingLinkData` accumulates any URL that arrives
 /// during initialization.
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public actor SessionManager: SessionManaging {
     // MARK: Lifecycle
 
