@@ -467,7 +467,6 @@
 		5FCDD5B22B7AC89100EAF29F /* BranchSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FF2AFDF28E7C22100393216 /* BranchSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FCDD5B32B7AC89200EAF29F /* BranchSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FF2AFDF28E7C22100393216 /* BranchSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FCDD5B42B7AC89200EAF29F /* BranchSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FF2AFDF28E7C22100393216 /* BranchSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B70D0E162E8DB20C002BD4FE /* jira_task.xml in Sources */ = {isa = PBXBuildFile; fileRef = B70D0E152E8DB20A002BD4FE /* jira_task.xml */; };
 		B70D0E252E8DC1F8002BD4FE /* BranchConfigurationController.m in Sources */ = {isa = PBXBuildFile; fileRef = B70D0E242E8DC1F8002BD4FE /* BranchConfigurationController.m */; };
 		B70D0E262E8DC1F8002BD4FE /* BranchConfigurationController.m in Sources */ = {isa = PBXBuildFile; fileRef = B70D0E242E8DC1F8002BD4FE /* BranchConfigurationController.m */; };
 		B70D0E272E8DC1F8002BD4FE /* BranchConfigurationController.m in Sources */ = {isa = PBXBuildFile; fileRef = B70D0E242E8DC1F8002BD4FE /* BranchConfigurationController.m */; };
@@ -504,6 +503,51 @@
 		E7FAF6A02E26E497006C167F /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E7FAF69F2E26E497006C167F /* BranchConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E7FAF6A12E26E497006C167F /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E7FAF69F2E26E497006C167F /* BranchConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E7FAF6A22E26E497006C167F /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E7FAF69F2E26E497006C167F /* BranchConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3A643D3BCFEF880B3004640F /* BranchRequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322904D68BE09F8785AA8357 /* BranchRequestOperation.swift */; };
+		D52C9F961A8E35C96B8E4BE5 /* BranchRequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322904D68BE09F8785AA8357 /* BranchRequestOperation.swift */; };
+		7EAE0ECFA7DB0B153F9AE8E2 /* BranchRequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322904D68BE09F8785AA8357 /* BranchRequestOperation.swift */; };
+		A4B443901220CC1765440A86 /* BranchRequestQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 541E75E41C00A5CD65D3EA18 /* BranchRequestQueue.swift */; };
+		2B9B1985A0659938241DDAAC /* BranchRequestQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 541E75E41C00A5CD65D3EA18 /* BranchRequestQueue.swift */; };
+		3E60220B4A061284FEA14A59 /* BranchRequestQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 541E75E41C00A5CD65D3EA18 /* BranchRequestQueue.swift */; };
+		2ECEC0B4A79FFD7A33E05A47 /* ConfigurationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87EA367A3BBAF3DD5D4C678 /* ConfigurationController.swift */; };
+		826F50E528E9CEB3774FFD93 /* ConfigurationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87EA367A3BBAF3DD5D4C678 /* ConfigurationController.swift */; };
+		6986DA3C42698DCEB4FA175D /* ConfigurationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87EA367A3BBAF3DD5D4C678 /* ConfigurationController.swift */; };
+		4E162824F0C3ACD4EF1DB8E7 /* BranchLoggerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E002CA8C81697D1477A3E942 /* BranchLoggerAdapter.swift */; };
+		5F2ABFE7B92973EB0F928A90 /* BranchLoggerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E002CA8C81697D1477A3E942 /* BranchLoggerAdapter.swift */; };
+		6D5A8BD4BDE0000AAB95DE6C /* BranchLoggerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E002CA8C81697D1477A3E942 /* BranchLoggerAdapter.swift */; };
+		F0CB0B1B7BAFE355794A9735 /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5431635F706EF6561E40AB9 /* AnyCodable.swift */; };
+		98336EEDDA051101A0D488A6 /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5431635F706EF6561E40AB9 /* AnyCodable.swift */; };
+		6DD1CF49CE86777AE02B8E24 /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5431635F706EF6561E40AB9 /* AnyCodable.swift */; };
+		9C38FE347F1C8456DF36A29F /* BranchError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD830C286DF7324C4CC5ED60 /* BranchError.swift */; };
+		16998D1D1F27383CFC6F58A8 /* BranchError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD830C286DF7324C4CC5ED60 /* BranchError.swift */; };
+		49CEA46B8EB418718014BF07 /* BranchError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD830C286DF7324C4CC5ED60 /* BranchError.swift */; };
+		BAFE5DF3E19B828E3F7B56E4 /* InitializationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D956E2763625DE6340A56D /* InitializationOptions.swift */; };
+		E9C126B1D0A57E16AC49DA44 /* InitializationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D956E2763625DE6340A56D /* InitializationOptions.swift */; };
+		C90D79612B8D22C6C8AF95AD /* InitializationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D956E2763625DE6340A56D /* InitializationOptions.swift */; };
+		F7944AF1AA8E12FFA20AB81F /* LinkData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89876A79209AC85291745899 /* LinkData.swift */; };
+		F5CB1A2B9F2E0466B6305FFE /* LinkData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89876A79209AC85291745899 /* LinkData.swift */; };
+		782161B7D16D1EDBEB6FD932 /* LinkData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89876A79209AC85291745899 /* LinkData.swift */; };
+		B8674D5E79356292AAB1F2F4 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BBB81630CC7194C138ACD6 /* Session.swift */; };
+		70AD837BE5EC60CFD9EA747A /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BBB81630CC7194C138ACD6 /* Session.swift */; };
+		1F0A79FF991FC1BF84C9BD67 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BBB81630CC7194C138ACD6 /* Session.swift */; };
+		F8B60A9F4949E6F2FB038FE1 /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5A1027BDDD7592AA26B1B2 /* SessionState.swift */; };
+		2CE1FAF85553657DDA3F84FC /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5A1027BDDD7592AA26B1B2 /* SessionState.swift */; };
+		4B607B5F976C1542B678E62B /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5A1027BDDD7592AA26B1B2 /* SessionState.swift */; };
+		5CF36A51A1CFD8642CCBA0FA /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACF28E65891872A40078CDD /* SessionManager.swift */; };
+		E7666EB8743848D9A0D28131 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACF28E65891872A40078CDD /* SessionManager.swift */; };
+		FB3DDC1136C64ADB3650D68D /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACF28E65891872A40078CDD /* SessionManager.swift */; };
+		DC1E6563F4D5E398EA5FCB54 /* SessionManaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4890C55648E1048670873EB1 /* SessionManaging.swift */; };
+		1A30C8B2BF961E650A6FC321 /* SessionManaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4890C55648E1048670873EB1 /* SessionManaging.swift */; };
+		FC8C73A6E58FC6F5D9320C38 /* SessionManaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4890C55648E1048670873EB1 /* SessionManaging.swift */; };
+		EB591767900FE69079F11E06 /* BranchSessionIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D147E17CB8A0463C466938 /* BranchSessionIntegration.swift */; };
+		B94D98C1FB19389357DCE351 /* BranchSessionIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D147E17CB8A0463C466938 /* BranchSessionIntegration.swift */; };
+		FE6C286567E5839112276155 /* BranchSessionIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D147E17CB8A0463C466938 /* BranchSessionIntegration.swift */; };
+		21CDBD6D56C1DC72CE115808 /* BranchObservableState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5D352BDF23D40AF7204A7C /* BranchObservableState.swift */; };
+		4569E31566D80ECBA755EA66 /* BranchObservableState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5D352BDF23D40AF7204A7C /* BranchObservableState.swift */; };
+		C35C0545DC50E50AA40CC697 /* BranchObservableState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5D352BDF23D40AF7204A7C /* BranchObservableState.swift */; };
+		8BDAA37F2EC8F59B748E0601 /* BranchSessionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0A1D941AB9E25CD0AA7E92 /* BranchSessionCoordinator.swift */; };
+		782F85169F95E5E332B437FC /* BranchSessionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0A1D941AB9E25CD0AA7E92 /* BranchSessionCoordinator.swift */; };
+		62B6D8BB5FB30939D3D9F719 /* BranchSessionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0A1D941AB9E25CD0AA7E92 /* BranchSessionCoordinator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -694,7 +738,6 @@
 		5FF2AFDC28E7BF8A00393216 /* build_xcframework.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build_xcframework.sh; sourceTree = "<group>"; };
 		5FF2AFDE28E7C22100393216 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		5FF2AFDF28E7C22100393216 /* BranchSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchSDK.h; sourceTree = "<group>"; };
-		B70D0E152E8DB20A002BD4FE /* jira_task.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = jira_task.xml; sourceTree = "<group>"; };
 		B70D0E242E8DC1F8002BD4FE /* BranchConfigurationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchConfigurationController.m; sourceTree = "<group>"; };
 		E52E5B052CC79E4E00F553EE /* BranchFileLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchFileLogger.h; sourceTree = "<group>"; };
 		E52E5B092CC79E5C00F553EE /* BranchFileLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchFileLogger.m; sourceTree = "<group>"; };
@@ -709,6 +752,21 @@
 		E7F311AD2DACB4D400F824A7 /* BNCODMInfoCollector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCODMInfoCollector.m; sourceTree = "<group>"; };
 		E7F311B02DACB54100F824A7 /* BNCODMInfoCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCODMInfoCollector.h; sourceTree = "<group>"; };
 		E7FAF69F2E26E497006C167F /* BranchConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BranchConstants.h; path = Sources/BranchSDK/Public/BranchConstants.h; sourceTree = SOURCE_ROOT; };
+		322904D68BE09F8785AA8357 /* BranchRequestOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchRequestOperation.swift; sourceTree = "<group>"; };
+		541E75E41C00A5CD65D3EA18 /* BranchRequestQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchRequestQueue.swift; sourceTree = "<group>"; };
+		A87EA367A3BBAF3DD5D4C678 /* ConfigurationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationController.swift; sourceTree = "<group>"; };
+		E002CA8C81697D1477A3E942 /* BranchLoggerAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchLoggerAdapter.swift; sourceTree = "<group>"; };
+		D5431635F706EF6561E40AB9 /* AnyCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyCodable.swift; sourceTree = "<group>"; };
+		DD830C286DF7324C4CC5ED60 /* BranchError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchError.swift; sourceTree = "<group>"; };
+		E1D956E2763625DE6340A56D /* InitializationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitializationOptions.swift; sourceTree = "<group>"; };
+		89876A79209AC85291745899 /* LinkData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkData.swift; sourceTree = "<group>"; };
+		E1BBB81630CC7194C138ACD6 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+		2A5A1027BDDD7592AA26B1B2 /* SessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionState.swift; sourceTree = "<group>"; };
+		6ACF28E65891872A40078CDD /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
+		4890C55648E1048670873EB1 /* SessionManaging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManaging.swift; sourceTree = "<group>"; };
+		F7D147E17CB8A0463C466938 /* BranchSessionIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchSessionIntegration.swift; sourceTree = "<group>"; };
+		9C5D352BDF23D40AF7204A7C /* BranchObservableState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchObservableState.swift; sourceTree = "<group>"; };
+		9B0A1D941AB9E25CD0AA7E92 /* BranchSessionCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchSessionCoordinator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -758,7 +816,7 @@
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		E7CA74EC2E1B4F75002EFB40 /* BranchSDKTests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E7CA75552E1B504C002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E7CA75562E1B504C002EFB40 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, E7F2461F2E26B8F90083FDE1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = BranchSDKTests; sourceTree = "<group>"; };
+		E7CA74EC2E1B4F75002EFB40 /* BranchSDKTests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E7CA75552E1B504C002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E7CA75562E1B504C002EFB40 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, E7F2461F2E26B8F90083FDE1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tests/BranchSDKTests; sourceTree = "<group>"; };
 		E7CA75602E1B59F5002EFB40 /* BranchSDKTestsHostApp */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E7CA75B12E1B7B02002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E7CA758B2E1B59F7002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = BranchSDKTestsHostApp; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -808,6 +866,7 @@
 		5F2210132894A0DB00C5B190 = {
 			isa = PBXGroup;
 			children = (
+				3C7E7746166947D305CD7760 /* BranchSwiftSDK */,
 				5FCDD36B2B7AC6A100EAF29F /* BranchSDK */,
 				5FF2AFDD28E7C1F200393216 /* Framework */,
 				5FF2AFDB28E7BF5500393216 /* Scripts */,
@@ -815,7 +874,6 @@
 				E7CA75602E1B59F5002EFB40 /* BranchSDKTestsHostApp */,
 				E7CA75B72E1B994B002EFB40 /* Frameworks */,
 				5F22101E2894A0DB00C5B190 /* Products */,
-				B70D0E152E8DB20A002BD4FE /* jira_task.xml */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1032,6 +1090,93 @@
 				E7CA75B82E1B994B002EFB40 /* AdServices.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3C7E7746166947D305CD7760 /* BranchSwiftSDK */ = {
+			isa = PBXGroup;
+			children = (
+				322904D68BE09F8785AA8357 /* BranchRequestOperation.swift */,
+				541E75E41C00A5CD65D3EA18 /* BranchRequestQueue.swift */,
+				A87EA367A3BBAF3DD5D4C678 /* ConfigurationController.swift */,
+				B9807AE2C3C1D52D72483145 /* SessionManagement */,
+			);
+			name = BranchSwiftSDK;
+			path = Sources/BranchSwiftSDK;
+			sourceTree = "<group>";
+		};
+		B9807AE2C3C1D52D72483145 /* SessionManagement */ = {
+			isa = PBXGroup;
+			children = (
+				9BA4EE2CA16C7A041ED29ED8 /* Core */,
+				43046951EACF3046C7F62699 /* Coordinator */,
+				D5CA393EFA4AC2745EE895DB /* Integration */,
+				E399BE3C6FCDC24207D77ED0 /* Logging */,
+				D1461BA6CE6C37311F683ED2 /* Models */,
+				FC4ED337CE98F75DEFFD516C /* Observable */,
+				07F4467A43472BD6EAB2CB34 /* Protocols */,
+			);
+			path = SessionManagement;
+			sourceTree = "<group>";
+		};
+		9BA4EE2CA16C7A041ED29ED8 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				6ACF28E65891872A40078CDD /* SessionManager.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		43046951EACF3046C7F62699 /* Coordinator */ = {
+			isa = PBXGroup;
+			children = (
+				9B0A1D941AB9E25CD0AA7E92 /* BranchSessionCoordinator.swift */,
+			);
+			path = Coordinator;
+			sourceTree = "<group>";
+		};
+		D5CA393EFA4AC2745EE895DB /* Integration */ = {
+			isa = PBXGroup;
+			children = (
+				F7D147E17CB8A0463C466938 /* BranchSessionIntegration.swift */,
+			);
+			path = Integration;
+			sourceTree = "<group>";
+		};
+		E399BE3C6FCDC24207D77ED0 /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				E002CA8C81697D1477A3E942 /* BranchLoggerAdapter.swift */,
+			);
+			path = Logging;
+			sourceTree = "<group>";
+		};
+		D1461BA6CE6C37311F683ED2 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D5431635F706EF6561E40AB9 /* AnyCodable.swift */,
+				DD830C286DF7324C4CC5ED60 /* BranchError.swift */,
+				E1D956E2763625DE6340A56D /* InitializationOptions.swift */,
+				89876A79209AC85291745899 /* LinkData.swift */,
+				E1BBB81630CC7194C138ACD6 /* Session.swift */,
+				2A5A1027BDDD7592AA26B1B2 /* SessionState.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		FC4ED337CE98F75DEFFD516C /* Observable */ = {
+			isa = PBXGroup;
+			children = (
+				9C5D352BDF23D40AF7204A7C /* BranchObservableState.swift */,
+			);
+			path = Observable;
+			sourceTree = "<group>";
+		};
+		07F4467A43472BD6EAB2CB34 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				4890C55648E1048670873EB1 /* SessionManaging.swift */,
+			);
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1583,6 +1728,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A643D3BCFEF880B3004640F /* BranchRequestOperation.swift in Sources */,
+				A4B443901220CC1765440A86 /* BranchRequestQueue.swift in Sources */,
+				2ECEC0B4A79FFD7A33E05A47 /* ConfigurationController.swift in Sources */,
+				4E162824F0C3ACD4EF1DB8E7 /* BranchLoggerAdapter.swift in Sources */,
+				F0CB0B1B7BAFE355794A9735 /* AnyCodable.swift in Sources */,
+				9C38FE347F1C8456DF36A29F /* BranchError.swift in Sources */,
+				BAFE5DF3E19B828E3F7B56E4 /* InitializationOptions.swift in Sources */,
+				F7944AF1AA8E12FFA20AB81F /* LinkData.swift in Sources */,
+				B8674D5E79356292AAB1F2F4 /* Session.swift in Sources */,
+				F8B60A9F4949E6F2FB038FE1 /* SessionState.swift in Sources */,
+				5CF36A51A1CFD8642CCBA0FA /* SessionManager.swift in Sources */,
+				DC1E6563F4D5E398EA5FCB54 /* SessionManaging.swift in Sources */,
+				EB591767900FE69079F11E06 /* BranchSessionIntegration.swift in Sources */,
+				21CDBD6D56C1DC72CE115808 /* BranchObservableState.swift in Sources */,
+				8BDAA37F2EC8F59B748E0601 /* BranchSessionCoordinator.swift in Sources */,
 				E74E43902E2F56AC000DC427 /* BNCServerRequestOperation.m in Sources */,
 				5FCDD5AC2B7AC6A400EAF29F /* BNCCallbackMap.m in Sources */,
 				5FCDD40E2B7AC6A100EAF29F /* BNCApplication.m in Sources */,
@@ -1663,6 +1823,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D52C9F961A8E35C96B8E4BE5 /* BranchRequestOperation.swift in Sources */,
+				2B9B1985A0659938241DDAAC /* BranchRequestQueue.swift in Sources */,
+				826F50E528E9CEB3774FFD93 /* ConfigurationController.swift in Sources */,
+				5F2ABFE7B92973EB0F928A90 /* BranchLoggerAdapter.swift in Sources */,
+				98336EEDDA051101A0D488A6 /* AnyCodable.swift in Sources */,
+				16998D1D1F27383CFC6F58A8 /* BranchError.swift in Sources */,
+				E9C126B1D0A57E16AC49DA44 /* InitializationOptions.swift in Sources */,
+				F5CB1A2B9F2E0466B6305FFE /* LinkData.swift in Sources */,
+				70AD837BE5EC60CFD9EA747A /* Session.swift in Sources */,
+				2CE1FAF85553657DDA3F84FC /* SessionState.swift in Sources */,
+				E7666EB8743848D9A0D28131 /* SessionManager.swift in Sources */,
+				1A30C8B2BF961E650A6FC321 /* SessionManaging.swift in Sources */,
+				B94D98C1FB19389357DCE351 /* BranchSessionIntegration.swift in Sources */,
+				4569E31566D80ECBA755EA66 /* BranchObservableState.swift in Sources */,
+				782F85169F95E5E332B437FC /* BranchSessionCoordinator.swift in Sources */,
 				B70D0E252E8DC1F8002BD4FE /* BranchConfigurationController.m in Sources */,
 				B70D0E2E2E8DCEC6002BD4FE /* BNCServerRequestOperation.m in Sources */,
 				5FCDD5AD2B7AC6A400EAF29F /* BNCCallbackMap.m in Sources */,
@@ -1743,6 +1918,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7EAE0ECFA7DB0B153F9AE8E2 /* BranchRequestOperation.swift in Sources */,
+				3E60220B4A061284FEA14A59 /* BranchRequestQueue.swift in Sources */,
+				6986DA3C42698DCEB4FA175D /* ConfigurationController.swift in Sources */,
+				6D5A8BD4BDE0000AAB95DE6C /* BranchLoggerAdapter.swift in Sources */,
+				6DD1CF49CE86777AE02B8E24 /* AnyCodable.swift in Sources */,
+				49CEA46B8EB418718014BF07 /* BranchError.swift in Sources */,
+				C90D79612B8D22C6C8AF95AD /* InitializationOptions.swift in Sources */,
+				782161B7D16D1EDBEB6FD932 /* LinkData.swift in Sources */,
+				1F0A79FF991FC1BF84C9BD67 /* Session.swift in Sources */,
+				4B607B5F976C1542B678E62B /* SessionState.swift in Sources */,
+				FB3DDC1136C64ADB3650D68D /* SessionManager.swift in Sources */,
+				FC8C73A6E58FC6F5D9320C38 /* SessionManaging.swift in Sources */,
+				FE6C286567E5839112276155 /* BranchSessionIntegration.swift in Sources */,
+				C35C0545DC50E50AA40CC697 /* BranchObservableState.swift in Sources */,
+				62B6D8BB5FB30939D3D9F719 /* BranchSessionCoordinator.swift in Sources */,
 				B70D0E2F2E8DCEC6002BD4FE /* BNCServerRequestOperation.m in Sources */,
 				5FCDD5AE2B7AC6A400EAF29F /* BNCCallbackMap.m in Sources */,
 				5FCDD4102B7AC6A100EAF29F /* BNCApplication.m in Sources */,
@@ -1813,7 +2003,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B70D0E162E8DB20C002BD4FE /* jira_task.xml in Sources */,
 				B70D0E2C2E8DCEC6002BD4FE /* BNCServerRequestOperation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
