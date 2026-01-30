@@ -209,14 +209,36 @@ public final class BranchSessionIntegration: NSObject {
 ///
 /// Set this before initializing Branch to use the new SessionManager
 /// with task coalescing support.
+///
+/// Thread-safe: All access to the feature flag is synchronized via NSLock.
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 @objc(BranchSessionFeatureFlags)
 public final class BranchSessionFeatureFlags: NSObject {
+    // MARK: Private
+
+    private static let lock = NSLock()
+    private static var _useModernSessionManager: Bool = false
+
+    // MARK: Public
+
     /// Enable the modern Swift SessionManager with task coalescing.
     ///
     /// When enabled, session initialization uses the new actor-based
     /// SessionManager which prevents double OPEN requests.
     ///
     /// Default: false (uses legacy implementation)
-    @objc public nonisolated(unsafe) static var useModernSessionManager: Bool = false
+    ///
+    /// Thread-safe: Can be safely read and written from any thread.
+    @objc public static var useModernSessionManager: Bool {
+        get {
+            lock.lock()
+            defer { lock.unlock() }
+            return _useModernSessionManager
+        }
+        set {
+            lock.lock()
+            defer { lock.unlock() }
+            _useModernSessionManager = newValue
+        }
+    }
 }
