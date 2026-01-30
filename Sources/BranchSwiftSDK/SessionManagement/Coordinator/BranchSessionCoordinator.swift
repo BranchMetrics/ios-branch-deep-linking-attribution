@@ -37,7 +37,9 @@ public final class BranchSessionCoordinator: NSObject, @unchecked Sendable {
     // MARK: Lifecycle
 
     override private init() {
-        sessionManager = SessionManager()
+        let manager = SessionManager()
+        sessionManager = manager
+        observableState = BranchObservableState(sessionManager: manager)
         super.init()
         startStateObservation()
     }
@@ -67,7 +69,7 @@ public final class BranchSessionCoordinator: NSObject, @unchecked Sendable {
     ///     }
     /// }
     /// ```
-    public lazy var observableState: BranchObservableState = .init(sessionManager: sessionManager)
+    public let observableState: BranchObservableState
 
     // MARK: - Objective-C Bridge Methods
 
