@@ -108,15 +108,19 @@ public final class BranchSessionCoordinator: NSObject, @unchecked Sendable {
     /// Check if the SDK is currently initializing.
     ///
     /// Use this to prevent redundant initialize calls.
+    /// Thread-safe: acquires lock before reading cached value.
     @objc public var isInitializing: Bool {
-        // Access state synchronously through a cached value
-        // This is safe because we only need an approximate answer for the guard check
-        _cachedIsInitializing
+        stateLock.lock()
+        defer { stateLock.unlock() }
+        return _cachedIsInitializing
     }
 
     /// Check if the SDK is initialized.
+    /// Thread-safe: acquires lock before reading cached value.
     @objc public var isInitialized: Bool {
-        _cachedIsInitialized
+        stateLock.lock()
+        defer { stateLock.unlock() }
+        return _cachedIsInitialized
     }
 
     /// Handle a deep link URL.
