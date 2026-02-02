@@ -467,13 +467,14 @@ public actor SessionManager: SessionManaging {
             return nil
         }
 
-        typealias InitFn = @convention(c) (AnyObject, Selector, NSString, NSString, NSNumber) -> AnyObject?
+        // Use Unmanaged to correctly handle ARC: init returns +1 retained object
+        typealias InitFn = @convention(c) (AnyObject, Selector, NSString, NSString, NSNumber) -> Unmanaged<AnyObject>?
         let initIMP = unsafeBitCast(allocated.method(for: initSel), to: InitFn.self)
         let requestUUID = UUID().uuidString as NSString
         let timestamp = NSNumber(value: Date().timeIntervalSince1970 * 1000)
         guard let factory = initIMP(
             allocated, initSel, branchKey as NSString, requestUUID, timestamp
-        ) as? NSObject else {
+        )?.takeRetainedValue() as? NSObject else {
             log(.warning, "BNCRequestFactory initialization returned nil")
             return nil
         }
@@ -583,7 +584,7 @@ public actor SessionManager: SessionManaging {
     private func isReservedKey(_ key: String) -> Bool {
         let reservedKeys = [
             "session_id", "identity_id", "device_fingerprint_id", "identity",
-            "link", "data", "source", "branch_key"
+            "link", "data", "source", "branch_key",
         ]
         return reservedKeys.contains(key)
     }
