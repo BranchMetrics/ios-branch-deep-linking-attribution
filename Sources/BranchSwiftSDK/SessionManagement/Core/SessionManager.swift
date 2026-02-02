@@ -423,19 +423,49 @@ public actor SessionManager: SessionManaging {
 
     /// Bridge to legacy BNCRequestFactory via dynamic invocation.
     private func buildLegacyRequestData(url: URL?, isFirstSession: Bool) -> [String: Any]? {
-        guard let factoryClass = NSClassFromString("BNCRequestFactory") as? NSObject.Type,
-              let branchClass = NSClassFromString("Branch") as? NSObject.Type,
-              branchClass.responds(to: NSSelectorFromString("branchKey")),
-              let branchKey = branchClass.perform(NSSelectorFromString("branchKey"))?.takeUnretainedValue() as? String
-        else { return nil }
+        // Step 1: Get BNCRequestFactory class
+        guard let factoryClass = NSClassFromString("BNCRequestFactory") as? NSObject.Type else {
+            log(.warning, "BNCRequestFactory class not found")
+            return nil
+        }
 
-        // Create factory instance
+        // Step 2: Get Branch class
+        guard let branchClass = NSClassFromString("Branch") as? NSObject.Type else {
+            log(.warning, "Branch class not found")
+            return nil
+        }
+
+        // Step 3: Get branch key
+        let branchKeySel = NSSelectorFromString("branchKey")
+        guard branchClass.responds(to: branchKeySel) else {
+            log(.warning, "Branch doesn't respond to branchKey selector")
+            return nil
+        }
+
+        guard let branchKey = branchClass.perform(branchKeySel)?.takeUnretainedValue() as? String,
+              !branchKey.isEmpty
+        else {
+            log(.warning, "Branch key is nil or empty - was Branch.setBranchKey() called?")
+            return nil
+        }
+
+        log(.debug, "Got branch key: \(branchKey.prefix(20))...")
+
+        // Step 4: Allocate factory
         let allocSel = NSSelectorFromString("alloc")
-        let initSel = NSSelectorFromString("initWithBranchKey:UUID:TimeStamp:")
         guard factoryClass.responds(to: allocSel),
-              let allocated = factoryClass.perform(allocSel)?.takeUnretainedValue() as? NSObject,
-              allocated.responds(to: initSel)
-        else { return nil }
+              let allocated = factoryClass.perform(allocSel)?.takeUnretainedValue() as? NSObject
+        else {
+            log(.warning, "Failed to allocate BNCRequestFactory")
+            return nil
+        }
+
+        // Step 5: Initialize factory
+        let initSel = NSSelectorFromString("initWithBranchKey:UUID:TimeStamp:")
+        guard allocated.responds(to: initSel) else {
+            log(.warning, "BNCRequestFactory doesn't respond to init selector")
+            return nil
+        }
 
         typealias InitFn = @convention(c) (AnyObject, Selector, NSString, NSString, NSNumber) -> AnyObject?
         let initIMP = unsafeBitCast(allocated.method(for: initSel), to: InitFn.self)
@@ -443,23 +473,37 @@ public actor SessionManager: SessionManaging {
         let timestamp = NSNumber(value: Date().timeIntervalSince1970 * 1000)
         guard let factory = initIMP(
             allocated, initSel, branchKey as NSString, requestUUID, timestamp
-        ) as? NSObject else { return nil }
+        ) as? NSObject else {
+            log(.warning, "BNCRequestFactory initialization returned nil")
+            return nil
+        }
 
-        // Get request data
+        // Step 6: Get request data
         let dataSel = NSSelectorFromString(
             isFirstSession ? "dataForInstallWithURLString:" : "dataForOpenWithURLString:"
         )
-        guard factory.responds(to: dataSel) else { return nil }
+        guard factory.responds(to: dataSel) else {
+            log(.warning, "BNCRequestFactory doesn't respond to data selector")
+            return nil
+        }
 
         typealias DataFn = @convention(c) (AnyObject, Selector, NSString?) -> NSDictionary?
         let dataIMP = unsafeBitCast(factory.method(for: dataSel), to: DataFn.self)
         let urlStr = url?.absoluteString as NSString?
-        guard let dict = dataIMP(factory, dataSel, urlStr) else { return nil }
+
+        log(.debug, "Calling \(isFirstSession ? "dataForInstall" : "dataForOpen") with URL: \(urlStr ?? "nil")")
+
+        guard let dict = dataIMP(factory, dataSel, urlStr) else {
+            log(.warning, "BNCRequestFactory returned nil data")
+            return nil
+        }
 
         var result: [String: Any] = [:]
         for (key, value) in dict {
             if let keyStr = key as? String { result[keyStr] = value }
         }
+
+        log(.debug, "BNCRequestFactory returned \(result.count) fields")
         return result
     }
 
@@ -539,7 +583,7 @@ public actor SessionManager: SessionManaging {
     private func isReservedKey(_ key: String) -> Bool {
         let reservedKeys = [
             "session_id", "identity_id", "device_fingerprint_id", "identity",
-            "link", "data", "source", "branch_key",
+            "link", "data", "source", "branch_key"
         ]
         return reservedKeys.contains(key)
     }
