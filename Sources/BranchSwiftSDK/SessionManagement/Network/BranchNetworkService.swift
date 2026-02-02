@@ -54,6 +54,28 @@ public protocol BranchNetworkService: Sendable {
     func resolveLink(url: URL, sessionId: String) async throws -> [String: Any]
 }
 
+// MARK: - Network Logging Callback
+
+/// Callback type for network request/response logging.
+///
+/// This allows external observers (like BranchLinkSimulator) to receive
+/// network traffic for debugging purposes.
+///
+/// - Parameters:
+///   - url: The request URL
+///   - requestBody: The request body as a dictionary
+///   - responseBody: The response body as a dictionary (nil if request failed)
+///   - statusCode: The HTTP status code (nil if request failed)
+///   - error: Any error that occurred (nil if successful)
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+public typealias NetworkLogCallback = @Sendable (
+    _ url: String,
+    _ requestBody: [String: Any],
+    _ responseBody: [String: Any]?,
+    _ statusCode: Int?,
+    _ error: Error?
+) -> Void
+
 // MARK: - Default Implementation
 
 /// Default network service implementation that bridges to the Objective-C BNCServerInterface.
@@ -65,6 +87,21 @@ public protocol BranchNetworkService: Sendable {
 /// set via `Branch.setAPIUrl()`, EU servers, and tracking domains.
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked Sendable {
+    // MARK: - Static Logging Callback
+
+    /// Global callback for network logging. Set this to receive all network traffic.
+    ///
+    /// Example usage in BranchLinkSimulator:
+    /// ```swift
+    /// DefaultBranchNetworkService.logCallback = { url, request, response, status, error in
+    ///     print("Request to \(url): \(request)")
+    ///     if let response = response {
+    ///         print("Response (\(status ?? 0)): \(response)")
+    ///     }
+    /// }
+    /// ```
+    public static var logCallback: NetworkLogCallback?
+
     // MARK: - Properties
 
     private let logger: any Logging
@@ -285,6 +322,8 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
             (data, response) = try await URLSession.shared.data(for: request)
         } catch {
             log(.error, "performRequest - network request failed: \(error.localizedDescription)")
+            // Invoke log callback for network error
+            Self.logCallback?(fullURL, mutableRequestData, nil, nil, error)
             throw BranchError.networkError(error.localizedDescription)
         }
 
@@ -308,12 +347,17 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
         if !data.isEmpty {
             guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
                 log(.error, "performRequest - invalid JSON response")
+                // Invoke log callback for parse error
+                Self.logCallback?(fullURL, mutableRequestData, nil, httpResponse.statusCode, BranchError.networkError("Invalid JSON response"))
                 throw BranchError.networkError("Invalid JSON response")
             }
             responseData = json
         } else {
             responseData = [:]
         }
+
+        // Invoke log callback for successful parse (even if server returned error status)
+        Self.logCallback?(fullURL, mutableRequestData, responseData, httpResponse.statusCode, nil)
 
         // Check for server errors
         if httpResponse.statusCode >= 400 {
