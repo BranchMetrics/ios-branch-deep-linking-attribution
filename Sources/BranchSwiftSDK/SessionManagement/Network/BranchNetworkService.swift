@@ -75,6 +75,16 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
         logger = BranchLoggerAdapter.shared
     }
 
+    // MARK: - Constants
+
+    /// Constants for URL resolution and selector caching.
+    private enum Constants {
+        static let defaultURL = "https://api2.branch.io"
+        static let sharedSelector = NSSelectorFromString("sharedInstance")
+        static let installSelector = NSSelectorFromString("installServiceURL")
+        static let branchKeySelector = NSSelectorFromString("branchKey")
+    }
+
     // MARK: - Dynamic URL Resolution
 
     /// Get the base URL from BNCServerAPI, respecting custom URL configurations.
@@ -88,24 +98,22 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
         // Try to get installServiceURL from BNCServerAPI and extract base URL
         guard let serverAPIClass = NSClassFromString("BNCServerAPI") as? NSObject.Type else {
             log(.warning, "BNCServerAPI class not found, using default URL")
-            return "https://api2.branch.io"
+            return Constants.defaultURL
         }
 
-        let sharedSelector = NSSelectorFromString("sharedInstance")
-        guard serverAPIClass.responds(to: sharedSelector),
-              let sharedInstance = serverAPIClass.perform(sharedSelector)?.takeUnretainedValue() as? NSObject
+        guard serverAPIClass.responds(to: Constants.sharedSelector),
+              let sharedInstance = serverAPIClass.perform(Constants.sharedSelector)?.takeUnretainedValue() as? NSObject
         else {
             log(.warning, "BNCServerAPI.sharedInstance not available, using default URL")
-            return "https://api2.branch.io"
+            return Constants.defaultURL
         }
 
         // Get installServiceURL which includes the full URL with endpoint
-        let installURLSelector = NSSelectorFromString("installServiceURL")
-        guard sharedInstance.responds(to: installURLSelector),
-              let installURL = sharedInstance.perform(installURLSelector)?.takeUnretainedValue() as? String
+        guard sharedInstance.responds(to: Constants.installSelector),
+              let installURL = sharedInstance.perform(Constants.installSelector)?.takeUnretainedValue() as? String
         else {
             log(.warning, "installServiceURL not available, using default URL")
-            return "https://api2.branch.io"
+            return Constants.defaultURL
         }
 
         // Extract base URL by removing the endpoint suffix
@@ -117,7 +125,7 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
         }
 
         log(.warning, "Could not parse installServiceURL, using default URL")
-        return "https://api2.branch.io"
+        return Constants.defaultURL
     }
 
     // MARK: - Private Logging Helper
@@ -221,12 +229,11 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
             return nil
         }
 
-        let selector = NSSelectorFromString("branchKey")
-        guard branchClass.responds(to: selector) else {
+        guard branchClass.responds(to: Constants.branchKeySelector) else {
             return nil
         }
 
-        return branchClass.perform(selector)?.takeUnretainedValue() as? String
+        return branchClass.perform(Constants.branchKeySelector)?.takeUnretainedValue() as? String
     }
 
     /// Perform network request using URLSession (pure Swift implementation)
@@ -234,7 +241,9 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
         endpoint: String,
         requestData: [String: Any]
     ) async throws -> [String: Any] {
-        let fullURL = getBaseURL() + endpoint
+        // Safely concatenate base URL and endpoint, handling missing slashes
+        let baseURL = getBaseURL()
+        let fullURL = endpoint.hasPrefix("/") ? baseURL + endpoint : baseURL + "/" + endpoint
 
         guard let url = URL(string: fullURL) else {
             log(.error, "performRequest - invalid URL: \(fullURL)")
