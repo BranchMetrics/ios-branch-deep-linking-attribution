@@ -270,6 +270,15 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
 
         log(.debug, "performRequest - sending POST to \(endpoint)")
 
+        // Log request data for debugging (only in debug builds)
+        #if DEBUG
+            if let jsonData = try? JSONSerialization.data(withJSONObject: mutableRequestData, options: .prettyPrinted),
+               let jsonString = String(data: jsonData, encoding: .utf8)
+            {
+                log(.debug, "performRequest - request body:\n\(jsonString)")
+            }
+        #endif
+
         // Perform request
         let (data, response): (Data, URLResponse)
         do {
@@ -286,6 +295,13 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
         }
 
         log(.debug, "performRequest - received HTTP \(httpResponse.statusCode) from \(endpoint)")
+
+        // Log response data for debugging (only in debug builds)
+        #if DEBUG
+            if let responseString = String(data: data, encoding: .utf8) {
+                log(.debug, "performRequest - response body:\n\(responseString)")
+            }
+        #endif
 
         // Parse response
         let responseData: [String: Any]

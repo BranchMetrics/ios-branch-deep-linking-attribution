@@ -398,25 +398,69 @@ public actor SessionManager: SessionManaging {
 
     // MARK: - Request Building
 
-    /// Build request data dictionary for install/open requests
+    /// Build request data dictionary for install/open requests.
+    ///
+    /// This method bridges to the legacy `BNCRequestFactory` to ensure all required
+    /// device info, preferences, and metadata are included in the request.
     private func buildRequestData(options: InitializationOptions, isFirstSession: Bool) -> [String: Any] {
-        var data: [String: Any] = [:]
-
-        // Add URL if present
-        if let url = options.url {
-            data["external_intent_uri"] = url.absoluteString
+        // Try to use legacy BNCRequestFactory for complete request data
+        if let legacyData = buildLegacyRequestData(url: options.url, isFirstSession: isFirstSession) {
+            log(.debug, "Using legacy BNCRequestFactory (\(legacyData.count) fields)")
+            return legacyData
         }
 
-        // Add device information (simplified - in production this would use BNCDeviceInfo)
+        // Fallback to minimal data if legacy factory is not available
+        log(.warning, "BNCRequestFactory unavailable, using minimal request data")
+        var data: [String: Any] = [:]
+        if let url = options.url { data["external_intent_uri"] = url.absoluteString }
         data["os"] = "iOS"
         data["os_version"] = ProcessInfo.processInfo.operatingSystemVersionString
         data["sdk"] = "ios"
         data["sdk_version"] = "3.0.0"
-
-        // Add install/open flag
         data["is_first_session"] = isFirstSession
-
         return data
+    }
+
+    /// Bridge to legacy BNCRequestFactory via dynamic invocation.
+    private func buildLegacyRequestData(url: URL?, isFirstSession: Bool) -> [String: Any]? {
+        guard let factoryClass = NSClassFromString("BNCRequestFactory") as? NSObject.Type,
+              let branchClass = NSClassFromString("Branch") as? NSObject.Type,
+              branchClass.responds(to: NSSelectorFromString("branchKey")),
+              let branchKey = branchClass.perform(NSSelectorFromString("branchKey"))?.takeUnretainedValue() as? String
+        else { return nil }
+
+        // Create factory instance
+        let allocSel = NSSelectorFromString("alloc")
+        let initSel = NSSelectorFromString("initWithBranchKey:UUID:TimeStamp:")
+        guard factoryClass.responds(to: allocSel),
+              let allocated = factoryClass.perform(allocSel)?.takeUnretainedValue() as? NSObject,
+              allocated.responds(to: initSel)
+        else { return nil }
+
+        typealias InitFn = @convention(c) (AnyObject, Selector, NSString, NSString, NSNumber) -> AnyObject?
+        let initIMP = unsafeBitCast(allocated.method(for: initSel), to: InitFn.self)
+        let requestUUID = UUID().uuidString as NSString
+        let timestamp = NSNumber(value: Date().timeIntervalSince1970 * 1000)
+        guard let factory = initIMP(
+            allocated, initSel, branchKey as NSString, requestUUID, timestamp
+        ) as? NSObject else { return nil }
+
+        // Get request data
+        let dataSel = NSSelectorFromString(
+            isFirstSession ? "dataForInstallWithURLString:" : "dataForOpenWithURLString:"
+        )
+        guard factory.responds(to: dataSel) else { return nil }
+
+        typealias DataFn = @convention(c) (AnyObject, Selector, NSString?) -> NSDictionary?
+        let dataIMP = unsafeBitCast(factory.method(for: dataSel), to: DataFn.self)
+        let urlStr = url?.absoluteString as NSString?
+        guard let dict = dataIMP(factory, dataSel, urlStr) else { return nil }
+
+        var result: [String: Any] = [:]
+        for (key, value) in dict {
+            if let keyStr = key as? String { result[keyStr] = value }
+        }
+        return result
     }
 
     // MARK: - Response Parsing
