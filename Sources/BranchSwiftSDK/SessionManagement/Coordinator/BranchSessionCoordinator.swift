@@ -40,14 +40,63 @@ public final class BranchSessionCoordinator: NSObject, @unchecked Sendable {
         let manager = SessionManager()
         sessionManager = manager
         observableState = BranchObservableState(sessionManager: manager)
+        logger = BranchLoggerAdapter.shared
         super.init()
+        log(.debug, "BranchSessionCoordinator initialized")
+        startStateObservation()
+    }
+
+    /// Internal initializer for testing with custom dependencies.
+    ///
+    /// - Parameter networkService: Custom network service to use (e.g., mock for testing)
+    init(networkService: any BranchNetworkService) {
+        let manager = SessionManager(networkService: networkService)
+        sessionManager = manager
+        observableState = BranchObservableState(sessionManager: manager)
+        logger = BranchLoggerAdapter.shared
+        super.init()
+        log(.debug, "BranchSessionCoordinator initialized with custom network service")
         startStateObservation()
     }
 
     // MARK: Public
 
-    /// Shared coordinator instance
-    @objc public static let shared = BranchSessionCoordinator()
+    /// Lock for thread-safe access to shared instance
+    private static let sharedLock = NSLock()
+    private static var _shared: BranchSessionCoordinator = .init()
+
+    /// Shared coordinator instance (thread-safe)
+    @objc public static var shared: BranchSessionCoordinator {
+        sharedLock.lock()
+        defer { sharedLock.unlock() }
+        return _shared
+    }
+
+    /// Internal storage for test mock network service.
+    /// When set, the shared coordinator will be replaced with a new one using this service.
+    private(set) nonisolated(unsafe) static var testNetworkService: (any BranchNetworkService)?
+
+    /// Configure the shared coordinator with a mock network service for testing.
+    ///
+    /// - Parameter networkService: The mock network service to use, or nil to restore default behavior
+    public static func configureForTesting(networkService: (any BranchNetworkService)?) {
+        sharedLock.lock()
+        defer { sharedLock.unlock() }
+        testNetworkService = networkService
+        if let service = networkService {
+            _shared = BranchSessionCoordinator(networkService: service)
+        } else {
+            _shared = BranchSessionCoordinator()
+        }
+    }
+
+    /// Reset the shared coordinator to default behavior (for test teardown).
+    public static func resetTestConfiguration() {
+        sharedLock.lock()
+        defer { sharedLock.unlock() }
+        testNetworkService = nil
+        _shared = BranchSessionCoordinator()
+    }
 
     /// The underlying session manager (for Swift consumers)
     public let sessionManager: SessionManager
@@ -86,6 +135,8 @@ public final class BranchSessionCoordinator: NSObject, @unchecked Sendable {
         url: URL?,
         completion: @escaping (BranchObjCSession?, Error?) -> Void
     ) {
+        log(.debug, "initializeSession called - URL: \(url?.absoluteString ?? "none")")
+
         Task {
             do {
                 var options = InitializationOptions()
@@ -94,10 +145,14 @@ public final class BranchSessionCoordinator: NSObject, @unchecked Sendable {
                 let session = try await sessionManager.initialize(options: options)
                 let objcSession = BranchObjCSession(from: session)
 
+                log(.debug, "Session initialized successfully - sessionId: \(session.id)")
+
                 await MainActor.run {
                     completion(objcSession, nil)
                 }
             } catch {
+                log(.error, "Session initialization failed: \(error.localizedDescription)")
+
                 await MainActor.run {
                     completion(nil, error)
                 }
@@ -135,16 +190,21 @@ public final class BranchSessionCoordinator: NSObject, @unchecked Sendable {
         url: URL,
         completion: @escaping (BranchObjCSession?, Error?) -> Void
     ) {
+        log(.debug, "handleDeepLink called - URL: \(url.absoluteString)")
+
         Task {
             do {
                 // If we're currently initializing, queue this URL via initialize with URL
                 let state = await sessionManager.state
                 if state.isInitializing {
+                    log(.debug, "Initialization in progress, coalescing URL")
                     var options = InitializationOptions()
                     options.url = url
 
                     let session = try await sessionManager.initialize(options: options)
                     let objcSession = BranchObjCSession(from: session)
+
+                    log(.debug, "Deep link handled via coalescing - sessionId: \(session.id)")
 
                     await MainActor.run {
                         completion(objcSession, nil)
@@ -153,11 +213,15 @@ public final class BranchSessionCoordinator: NSObject, @unchecked Sendable {
                     let session = try await sessionManager.handleDeepLink(url)
                     let objcSession = BranchObjCSession(from: session)
 
+                    log(.debug, "Deep link handled successfully - sessionId: \(session.id)")
+
                     await MainActor.run {
                         completion(objcSession, nil)
                     }
                 }
             } catch {
+                log(.error, "handleDeepLink failed: \(error.localizedDescription)")
+
                 await MainActor.run {
                     completion(nil, error)
                 }
@@ -176,21 +240,27 @@ public final class BranchSessionCoordinator: NSObject, @unchecked Sendable {
         _ userActivity: NSUserActivity,
         completion: @escaping (BranchObjCSession?, Error?) -> Void
     ) {
+        log(.debug, "continueUserActivity called - activityType: \(userActivity.activityType)")
+
         guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
               let url = userActivity.webpageURL
         else {
+            log(.warning, "Invalid user activity - type: \(userActivity.activityType), webpageURL: \(userActivity.webpageURL?.absoluteString ?? "nil")")
             completion(nil, BranchError.invalidUserActivity)
             return
         }
 
+        log(.debug, "Processing Universal Link: \(url.absoluteString)")
         handleDeepLink(url: url, completion: completion)
     }
 
     /// Reset the session to uninitialized state.
     @objc public func resetSession() {
+        log(.debug, "resetSession called")
         Task {
             await sessionManager.reset()
             updateCachedState(.uninitialized)
+            log(.debug, "Session reset completed")
         }
     }
 
@@ -203,13 +273,17 @@ public final class BranchSessionCoordinator: NSObject, @unchecked Sendable {
         _ userId: String,
         completion: @escaping (Error?) -> Void
     ) {
+        log(.debug, "setIdentity called - userId: \(userId)")
+
         Task {
             do {
                 try await sessionManager.setIdentity(userId)
+                log(.debug, "Identity set successfully")
                 await MainActor.run {
                     completion(nil)
                 }
             } catch {
+                log(.error, "setIdentity failed: \(error.localizedDescription)")
                 await MainActor.run {
                     completion(error)
                 }
@@ -223,13 +297,17 @@ public final class BranchSessionCoordinator: NSObject, @unchecked Sendable {
     @objc public func logout(
         completion: @escaping (Error?) -> Void
     ) {
+        log(.debug, "logout called")
+
         Task {
             do {
                 try await sessionManager.logout()
+                log(.debug, "Logout completed successfully")
                 await MainActor.run {
                     completion(nil)
                 }
             } catch {
+                log(.error, "logout failed: \(error.localizedDescription)")
                 await MainActor.run {
                     completion(error)
                 }
@@ -262,10 +340,24 @@ public final class BranchSessionCoordinator: NSObject, @unchecked Sendable {
 
     // MARK: Private
 
+    /// Logger for SDK diagnostics
+    private let logger: any Logging
+
     /// Cached state flags for synchronous access from Objective-C
     private var _cachedIsInitializing: Bool = false
     private var _cachedIsInitialized: Bool = false
     private let stateLock = NSLock()
+
+    /// Convenience logging method using the logger.
+    private func log(
+        _ level: LogLevel,
+        _ message: @autoclosure () -> String,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        logger.log(level, message(), file: file, function: function, line: line)
+    }
 
     /// Start observing state to keep cached values updated.
     ///
