@@ -33,8 +33,12 @@ public actor SessionManager: SessionManaging {
 
     // MARK: - Initialization
 
-    public init(logger: any Logging = BranchLoggerAdapter.shared) {
+    public init(
+        logger: any Logging = BranchLoggerAdapter.shared,
+        networkService: (any BranchNetworkService)? = nil
+    ) {
         self.logger = logger
+        self.networkService = networkService ?? DefaultBranchNetworkService()
     }
 
     // MARK: Public
@@ -94,6 +98,7 @@ public actor SessionManager: SessionManaging {
             // Finalize any pending link data (handles race where coalescing caller
             // resumes before original caller runs finalizePendingLinkData)
             guard var finalSession = _currentSession else {
+                log(.error, "Session initialization completed but no session stored - unexpected state")
                 throw BranchError.sessionRequired
             }
             finalSession = finalizePendingLinkData(into: finalSession)
@@ -152,17 +157,30 @@ public actor SessionManager: SessionManaging {
         }
     }
 
-    public func handleDeepLink(_: URL) async throws -> Session {
+    public func handleDeepLink(_ url: URL) async throws -> Session {
         guard case let .initialized(session) = _state else {
+            log(.warning, "handleDeepLink called but session not initialized - current state: \(_state.description)")
             throw BranchError.sessionRequired
         }
 
-        // TODO: Implement deep link handling
-        // 1. Parse URL
-        // 2. Make API call to resolve link
-        // 3. Update session with link data
+        log(.debug, "Handling deep link: \(url)")
 
-        return session
+        // Resolve link via network service
+        let responseData = try await networkService.resolveLink(
+            url: url,
+            sessionId: session.id
+        )
+
+        // Parse link data from response
+        let linkData = parseLinkData(from: responseData, url: url)
+
+        // Update session with link data
+        let updatedSession = session.withLinkData(linkData)
+        _currentSession = updatedSession
+        transitionTo(.initialized(updatedSession))
+
+        log(.debug, "Deep link resolved successfully")
+        return updatedSession
     }
 
     public func reset() async {
@@ -172,34 +190,52 @@ public actor SessionManager: SessionManaging {
 
     public func setIdentity(_ userId: String) async throws {
         guard case let .initialized(session) = _state else {
+            log(.warning, "setIdentity called but session not initialized - current state: \(_state.description)")
             throw BranchError.sessionRequired
         }
 
         guard !userId.isEmpty else {
+            log(.warning, "setIdentity called with empty userId")
             throw BranchError.invalidIdentity("User ID cannot be empty")
         }
 
-        // TODO: Implement identity setting
-        // 1. Make API call to /v1/profile
-        // 2. Update session
+        log(.debug, "Setting identity: \(userId)")
 
+        // Make API call to set identity
+        _ = try await networkService.setIdentity(
+            userId: userId,
+            sessionId: session.id,
+            identityId: session.identityId
+        )
+
+        // Update session with new identity
         let updatedSession = session.withIdentity(userId)
         _currentSession = updatedSession
         transitionTo(.initialized(updatedSession))
+
+        log(.debug, "Identity set successfully")
     }
 
     public func logout() async throws {
         guard case let .initialized(session) = _state else {
+            log(.warning, "logout called but session not initialized - current state: \(_state.description)")
             throw BranchError.sessionRequired
         }
 
-        // TODO: Implement logout
-        // 1. Make API call to /v1/logout
-        // 2. Clear identity
+        log(.debug, "Logging out user")
 
+        // Make API call to logout
+        _ = try await networkService.logout(
+            sessionId: session.id,
+            identityId: session.identityId
+        )
+
+        // Clear identity from session
         let updatedSession = session.withoutIdentity()
         _currentSession = updatedSession
         transitionTo(.initialized(updatedSession))
+
+        log(.debug, "Logout completed successfully")
     }
 
     /// Force refresh the session by canceling any in-progress initialization
@@ -278,9 +314,15 @@ public actor SessionManager: SessionManaging {
     // MARK: Private
 
     private let logger: any Logging
+    private let networkService: any BranchNetworkService
     private var _state: SessionState = .uninitialized
     private var _currentSession: Session?
     private var stateObservers: [UUID: AsyncStream<SessionState>.Continuation] = [:]
+
+    // MARK: - Persistence Keys
+
+    /// Key for storing whether this device has had a previous install
+    private static let hasInstalledKey = "branch_has_installed"
 
     // MARK: - Task Coalescing (EMT-2740: Double Open Fix)
 
@@ -313,9 +355,10 @@ public actor SessionManager: SessionManaging {
     /// Performs the actual initialization logic.
     ///
     /// This is separated from `initialize()` to keep the coalescing logic clean.
-    private func performInitialization(options _: InitializationOptions) async throws -> Session {
+    private func performInitialization(options: InitializationOptions) async throws -> Session {
         // Validate state transition
         guard _state.canTransition(to: .initializing) else {
+            log(.error, "Invalid state transition from \(_state.description) to Initializing")
             throw BranchError.invalidStateTransition(
                 from: _state.description,
                 to: "Initializing"
@@ -325,29 +368,148 @@ public actor SessionManager: SessionManaging {
         // Transition to initializing
         transitionTo(.initializing)
 
-        // TODO: Implement actual initialization logic
-        // 1. Check for existing session
-        // 2. Make API call to /v1/open or /v1/install
-        // 3. Process response
+        // Determine if this is a first session (install) or returning session (open)
+        let isFirstSession = !hasInstalled()
 
-        // Simulate network latency to allow other tasks to run
-        // This ensures concurrent initialize() calls can coalesce properly
-        // In production, this will be replaced by actual network calls
-        try await Task.sleep(nanoseconds: 1_000_000) // 1ms
+        // Build request data
+        let requestData = buildRequestData(options: options, isFirstSession: isFirstSession)
 
-        // For now, create a mock session
-        // Note: Link data merging is handled by finalizePendingLinkData() in initialize()
-        let session = Session(
-            identityId: UUID().uuidString,
-            deviceFingerprintId: UUID().uuidString,
-            isFirstSession: true,
-            linkData: nil
-        )
+        // Make API call
+        let responseData: [String: Any]
+        if isFirstSession {
+            log(.debug, "Performing install request (first session)")
+            responseData = try await networkService.performInstall(requestData: requestData)
+            // Mark as installed for future sessions
+            markAsInstalled()
+        } else {
+            log(.debug, "Performing open request (returning session)")
+            responseData = try await networkService.performOpen(requestData: requestData)
+        }
+
+        // Parse response into session
+        let session = parseSession(from: responseData, isFirstSession: isFirstSession, options: options)
 
         _currentSession = session
         transitionTo(.initialized(session))
 
+        log(.debug, "Session initialized: \(session)")
         return session
+    }
+
+    // MARK: - Request Building
+
+    /// Build request data dictionary for install/open requests
+    private func buildRequestData(options: InitializationOptions, isFirstSession: Bool) -> [String: Any] {
+        var data: [String: Any] = [:]
+
+        // Add URL if present
+        if let url = options.url {
+            data["external_intent_uri"] = url.absoluteString
+        }
+
+        // Add device information (simplified - in production this would use BNCDeviceInfo)
+        data["os"] = "iOS"
+        data["os_version"] = ProcessInfo.processInfo.operatingSystemVersionString
+        data["sdk"] = "ios"
+        data["sdk_version"] = "3.0.0"
+
+        // Add install/open flag
+        data["is_first_session"] = isFirstSession
+
+        return data
+    }
+
+    // MARK: - Response Parsing
+
+    /// Parse session from API response
+    private func parseSession(
+        from responseData: [String: Any],
+        isFirstSession: Bool,
+        options: InitializationOptions
+    ) -> Session {
+        // Extract session fields from response
+        let sessionId = responseData["session_id"] as? String ?? UUID().uuidString
+        let identityId = responseData["identity_id"] as? String ?? UUID().uuidString
+        let deviceFingerprintId = responseData["device_fingerprint_id"] as? String ?? UUID().uuidString
+        let userId = responseData["identity"] as? String
+
+        // Parse link data if present
+        var linkData: LinkData?
+        if let clickedBranchLink = responseData["+clicked_branch_link"] as? Bool, clickedBranchLink {
+            linkData = parseLinkData(from: responseData, url: options.url)
+        } else if options.url != nil {
+            // Even if not a clicked link, store the URL that opened the app
+            linkData = LinkData(url: options.url, isClicked: false)
+        }
+
+        return Session(
+            id: sessionId,
+            createdAt: Date(),
+            identityId: identityId,
+            deviceFingerprintId: deviceFingerprintId,
+            isFirstSession: isFirstSession,
+            linkData: linkData,
+            userId: userId
+        )
+    }
+
+    /// Parse link data from API response
+    private func parseLinkData(from responseData: [String: Any], url: URL?) -> LinkData {
+        let isClicked = responseData["+clicked_branch_link"] as? Bool ?? false
+        let referringLink = responseData["~referring_link"] as? String
+        let campaign = responseData["~campaign"] as? String
+        let channel = responseData["~channel"] as? String
+        let feature = responseData["~feature"] as? String
+        let tags = responseData["~tags"] as? [String]
+        let stage = responseData["~stage"] as? String
+
+        // Extract custom parameters (keys that don't start with ~ or +)
+        var parameters: [String: AnyCodable] = [:]
+        for (key, value) in responseData {
+            if !key.hasPrefix("~"), !key.hasPrefix("+"), !isReservedKey(key) {
+                parameters[key] = AnyCodable(value)
+            }
+        }
+
+        // Store raw data
+        var rawData: [String: AnyCodable] = [:]
+        for (key, value) in responseData {
+            rawData[key] = AnyCodable(value)
+        }
+
+        return LinkData(
+            url: url,
+            isClicked: isClicked,
+            referringLink: referringLink,
+            parameters: parameters,
+            campaign: campaign,
+            channel: channel,
+            feature: feature,
+            tags: tags,
+            stage: stage,
+            rawData: rawData
+        )
+    }
+
+    /// Check if a key is a reserved Branch key
+    private func isReservedKey(_ key: String) -> Bool {
+        let reservedKeys = [
+            "session_id", "identity_id", "device_fingerprint_id", "identity",
+            "link", "data", "source", "branch_key",
+        ]
+        return reservedKeys.contains(key)
+    }
+
+    // MARK: - Install State
+
+    /// Check if this device has been installed before
+    private func hasInstalled() -> Bool {
+        UserDefaults.standard.bool(forKey: Self.hasInstalledKey)
+    }
+
+    /// Mark this device as having been installed
+    private func markAsInstalled() {
+        UserDefaults.standard.set(true, forKey: Self.hasInstalledKey)
     }
 
     // MARK: - Private Methods
