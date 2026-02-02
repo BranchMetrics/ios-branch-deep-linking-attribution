@@ -16,14 +16,25 @@ import XCTest
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 @MainActor
 final class BranchSessionIntegrationTests: XCTestCase {
+    nonisolated(unsafe) var mockNetworkService: MockBranchNetworkService!
+
     override func setUp() {
         super.setUp()
-        // Reset coordinator state between tests
-        BranchSessionCoordinator.shared.resetSession()
+        // Clean up UserDefaults to prevent test pollution
+        UserDefaults.standard.removeObject(forKey: "branch_has_installed")
+
+        // Configure shared coordinator with mock network service using standard responses
+        mockNetworkService = MockBranchNetworkService.withStandardResponses()
+        BranchSessionCoordinator.configureForTesting(networkService: mockNetworkService)
     }
 
     override func tearDown() {
         BranchSessionCoordinator.shared.resetSession()
+        BranchSessionCoordinator.resetTestConfiguration()
+        mockNetworkService?.resetCallTracking()
+        mockNetworkService = nil
+        // Clean up UserDefaults
+        UserDefaults.standard.removeObject(forKey: "branch_has_installed")
         super.tearDown()
     }
 

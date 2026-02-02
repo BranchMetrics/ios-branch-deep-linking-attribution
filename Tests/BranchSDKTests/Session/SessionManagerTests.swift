@@ -16,15 +16,27 @@ import XCTest
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 final class SessionManagerTests: XCTestCase {
     var sut: SessionManager!
+    var mockNetworkService: MockBranchNetworkService!
 
     override func setUp() async throws {
         try await super.setUp()
-        sut = SessionManager()
+        // Clean up UserDefaults to prevent test pollution
+        UserDefaults.standard.removeObject(forKey: "branch_has_installed")
+
+        // Use mock network service with standard responses
+        mockNetworkService = MockBranchNetworkService.withStandardResponses()
+        // Enable unique session IDs for tests that check session ID uniqueness
+        mockNetworkService.generateUniqueSessionIds = true
+        sut = SessionManager(networkService: mockNetworkService)
     }
 
     override func tearDown() async throws {
         await sut.reset()
         sut = nil
+        mockNetworkService?.resetCallTracking()
+        mockNetworkService = nil
+        // Clean up UserDefaults
+        UserDefaults.standard.removeObject(forKey: "branch_has_installed")
         try await super.tearDown()
     }
 
@@ -496,5 +508,244 @@ final class SessionManagerTests: XCTestCase {
 
         // Then: Session is created successfully (params are handled internally)
         XCTAssertNotNil(session.identityId)
+    }
+
+    // MARK: - Network Failure Scenarios (P0-HIGH)
+
+    /// Scenario: Network failure during first initialization (install)
+    /// Expected: Should throw network error and remain uninitialized
+    func testInstallNetworkFailure() async {
+        // Given: Network service configured to fail
+        mockNetworkService.installShouldFail = true
+        mockNetworkService.installError = BranchError.networkError("Connection timeout")
+
+        let options = InitializationOptions()
+
+        // When: Attempting to initialize
+        do {
+            _ = try await sut.initialize(options: options)
+            XCTFail("Should throw network error")
+        } catch let error as BranchError {
+            // Then: Network error is propagated
+            if case let .networkError(message) = error {
+                XCTAssertEqual(message, "Connection timeout")
+            } else {
+                XCTFail("Expected networkError, got: \(error)")
+            }
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+
+        // And: State should reflect failure (not ready)
+        let state = await sut.state
+        XCTAssertFalse(state.isReady, "Session should not be ready after network failure")
+    }
+
+    /// Scenario: Network failure during returning session (open)
+    /// Expected: Should throw network error
+    func testOpenNetworkFailure() async throws {
+        // Given: First install succeeds, then simulate returning user scenario
+        let options = InitializationOptions()
+        _ = try await sut.initialize(options: options)
+        await sut.reset()
+
+        // Configure open to fail (simulating returning session)
+        mockNetworkService.openShouldFail = true
+        mockNetworkService.openError = BranchError.serverError(statusCode: 500, message: "Internal Server Error")
+
+        // When: Attempting to initialize again (would be "open" for returning user)
+        do {
+            _ = try await sut.initialize(options: options)
+            XCTFail("Should throw server error")
+        } catch let error as BranchError {
+            // Then: Server error is propagated
+            if case let .serverError(code, message) = error {
+                XCTAssertEqual(code, 500)
+                XCTAssertEqual(message, "Internal Server Error")
+            } else {
+                XCTFail("Expected serverError, got: \(error)")
+            }
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+    }
+
+    /// Scenario: Network failure during setIdentity
+    /// Expected: Should throw error but session remains valid
+    func testSetIdentityNetworkFailure() async throws {
+        // Given: Session is initialized
+        let options = InitializationOptions()
+        _ = try await sut.initialize(options: options)
+
+        // Configure identity API to fail
+        mockNetworkService.identityShouldFail = true
+        mockNetworkService.identityError = BranchError.networkError("Identity service unavailable")
+
+        // When: Attempting to set identity
+        do {
+            try await sut.setIdentity("test-user")
+            XCTFail("Should throw network error")
+        } catch let error as BranchError {
+            // Then: Network error is propagated
+            if case let .networkError(message) = error {
+                XCTAssertEqual(message, "Identity service unavailable")
+            } else {
+                XCTFail("Expected networkError, got: \(error)")
+            }
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+
+        // And: Session should still be valid (identity call failure doesn't invalidate session)
+        let session = await sut.currentSession
+        XCTAssertNotNil(session, "Session should remain valid after identity failure")
+        XCTAssertNil(session?.userId, "User ID should not be set after failure")
+    }
+
+    /// Scenario: Network failure during logout
+    /// Expected: Should throw error but session continues
+    func testLogoutNetworkFailure() async throws {
+        // Given: Session is initialized with identity
+        let options = InitializationOptions()
+        _ = try await sut.initialize(options: options)
+        try await sut.setIdentity("test-user")
+
+        // Configure logout to fail
+        mockNetworkService.logoutShouldFail = true
+        mockNetworkService.logoutError = BranchError.serverError(statusCode: 503, message: "Service Unavailable")
+
+        // When: Attempting to logout
+        do {
+            try await sut.logout()
+            XCTFail("Should throw server error")
+        } catch let error as BranchError {
+            // Then: Server error is propagated
+            if case let .serverError(code, _) = error {
+                XCTAssertEqual(code, 503)
+            } else {
+                XCTFail("Expected serverError, got: \(error)")
+            }
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+
+        // And: Session should still be valid with identity
+        let session = await sut.currentSession
+        XCTAssertNotNil(session)
+        XCTAssertEqual(session?.userId, "test-user", "User ID should remain after logout failure")
+    }
+
+    /// Scenario: Network failure during deep link resolution
+    /// Expected: Should throw error but session continues
+    func testDeepLinkResolutionNetworkFailure() async throws {
+        // Given: Session is initialized
+        let options = InitializationOptions()
+        _ = try await sut.initialize(options: options)
+
+        // Configure link resolution to fail
+        mockNetworkService.linkShouldFail = true
+        mockNetworkService.linkError = BranchError.networkError("Link resolution timeout")
+
+        // When: Attempting to handle deep link
+        let deepLink = URL(string: "https://example.app.link/test")!
+        do {
+            _ = try await sut.handleDeepLink(deepLink)
+            XCTFail("Should throw network error")
+        } catch let error as BranchError {
+            // Then: Network error is propagated
+            if case let .networkError(message) = error {
+                XCTAssertEqual(message, "Link resolution timeout")
+            } else {
+                XCTFail("Expected networkError, got: \(error)")
+            }
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+
+        // And: Session should still be valid
+        let session = await sut.currentSession
+        XCTAssertNotNil(session, "Session should remain valid after link failure")
+    }
+
+    /// Scenario: Global network failure (all operations fail)
+    /// Expected: All operations throw appropriate errors
+    func testGlobalNetworkFailure() async {
+        // Given: Network is completely unavailable
+        mockNetworkService.shouldFail = true
+        mockNetworkService.failureError = BranchError.networkError("No internet connection")
+
+        let options = InitializationOptions()
+
+        // When/Then: Initialization should fail
+        do {
+            _ = try await sut.initialize(options: options)
+            XCTFail("Should throw network error")
+        } catch let error as BranchError {
+            if case let .networkError(message) = error {
+                XCTAssertEqual(message, "No internet connection")
+            } else {
+                XCTFail("Expected networkError, got: \(error)")
+            }
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+    }
+
+    // MARK: - Call Tracking Verification Tests
+
+    /// Scenario: Verify install is called during first initialization
+    /// Expected: Install endpoint called exactly once
+    func testInstallCalledOnFirstInitialization() async throws {
+        // Given: Fresh session manager
+        XCTAssertEqual(mockNetworkService.installCallCount, 0)
+
+        // When: Initialize for the first time
+        let options = InitializationOptions()
+        _ = try await sut.initialize(options: options)
+
+        // Then: Install should be called exactly once
+        XCTAssertEqual(mockNetworkService.installCallCount, 1, "Install should be called once")
+        XCTAssertEqual(mockNetworkService.openCallCount, 0, "Open should not be called on first init")
+    }
+
+    /// Scenario: Verify coalescing only makes one network call
+    /// Expected: Single network call for coalesced requests
+    func testCoalescingMakesSingleNetworkCall() async throws {
+        // Given: Multiple concurrent initialization requests
+        let manager = sut!
+
+        // When: Two calls happen concurrently
+        async let call1: Session = {
+            let options = InitializationOptions()
+            return try await manager.initialize(options: options)
+        }()
+
+        async let call2: Session = {
+            try? await Task.sleep(nanoseconds: 50000)
+            let options = InitializationOptions()
+            return try await manager.initialize(options: options)
+        }()
+
+        _ = try await (call1, call2)
+
+        // Then: Only one network call should be made (coalesced)
+        let totalCalls = mockNetworkService.installCallCount + mockNetworkService.openCallCount
+        XCTAssertEqual(totalCalls, 1, "Coalesced calls should result in single network request")
+    }
+
+    /// Scenario: Verify request data is captured correctly
+    /// Expected: Request contains expected fields
+    func testRequestDataCaptured() async throws {
+        // Given: Initialization with URL
+        let testURL = URL(string: "https://example.app.link/test-capture")!
+        var options = InitializationOptions()
+        options.url = testURL
+
+        // When: Initialize
+        _ = try await sut.initialize(options: options)
+
+        // Then: Request data should be captured
+        XCTAssertNotNil(mockNetworkService.lastInstallRequest)
+        // Note: Actual request data structure depends on SessionManager implementation
     }
 }

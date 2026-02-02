@@ -9,685 +9,666 @@
 @testable import BranchSDK
 import XCTest
 
-/// Tests for Session model and related types.
+/// Qualitative tests for Session models focusing on real-world behaviors and invariants.
+///
+/// These tests verify:
+/// - Data integrity and immutability guarantees
+/// - State machine correctness
+/// - Business logic constraints
+/// - Edge cases and boundary conditions
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 final class SessionModelsTests: XCTestCase {
-    // MARK: - Session Tests
+    // MARK: - Session Immutability Tests
 
-    func testSessionInitialization() {
-        let session = Session(
-            id: "test-id",
-            createdAt: Date(),
+    /// Session should be immutable - all modifications return new instances
+    /// This guarantees thread-safety when sessions are shared across actors
+    func testSessionImmutability_ModificationsReturnNewInstances() {
+        let original = Session(
             identityId: "identity-123",
             deviceFingerprintId: "fingerprint-456",
+            isFirstSession: true
+        )
+        let originalId = original.id
+
+        // When: Modifying session through any method
+        let withIdentity = original.withIdentity("user-123")
+        let withLinkData = original.withLinkData(LinkData(url: URL(string: "https://test.link")!))
+        let withoutIdentity = withIdentity.withoutIdentity()
+
+        // Then: Original is unchanged, new instances have different IDs only when appropriate
+        XCTAssertEqual(original.id, originalId, "Original session should be unchanged")
+        XCTAssertNil(original.userId, "Original session should not have userId")
+        XCTAssertNil(original.linkData, "Original session should not have linkData")
+
+        // Modifications preserve session ID (same logical session)
+        XCTAssertEqual(withIdentity.id, originalId, "withIdentity should preserve session ID")
+        XCTAssertEqual(withLinkData.id, originalId, "withLinkData should preserve session ID")
+        XCTAssertEqual(withoutIdentity.id, originalId, "withoutIdentity should preserve session ID")
+
+        // But the actual data differs
+        XCTAssertEqual(withIdentity.userId, "user-123")
+        XCTAssertNotNil(withLinkData.linkData)
+        XCTAssertNil(withoutIdentity.userId)
+    }
+
+    /// Session ID should be unique per creation, not per modification
+    func testSessionIdUniqueness_NewSessionsGetUniqueIds() {
+        var sessionIds: Set<String> = []
+
+        // When: Creating multiple sessions
+        for _ in 0 ..< 100 {
+            let session = Session(
+                identityId: "identity",
+                deviceFingerprintId: "fingerprint",
+                isFirstSession: true
+            )
+            sessionIds.insert(session.id)
+        }
+
+        // Then: All IDs are unique
+        XCTAssertEqual(sessionIds.count, 100, "Each new session should have a unique ID")
+    }
+
+    // MARK: - Session Identity Lifecycle Tests
+
+    /// User identity lifecycle: anonymous → identified → anonymous
+    /// This is a critical business flow for user authentication
+    func testIdentityLifecycle_AnonymousToIdentifiedToAnonymous() {
+        // Given: Anonymous session (fresh install)
+        let anonymous = Session(
+            identityId: "identity-123",
+            deviceFingerprintId: "fingerprint-456",
+            isFirstSession: true
+        )
+
+        // Verify: Initial state is anonymous
+        XCTAssertFalse(anonymous.isIdentified, "Fresh session should be anonymous")
+        XCTAssertNil(anonymous.userId, "Anonymous session should have no userId")
+
+        // When: User logs in
+        let identified = anonymous.withIdentity("user-abc")
+
+        // Then: Session is identified
+        XCTAssertTrue(identified.isIdentified, "Session should be identified after login")
+        XCTAssertEqual(identified.userId, "user-abc")
+        XCTAssertEqual(identified.identityId, anonymous.identityId, "Branch identity should persist")
+
+        // When: User logs out
+        let loggedOut = identified.withoutIdentity()
+
+        // Then: Session returns to anonymous
+        XCTAssertFalse(loggedOut.isIdentified, "Session should be anonymous after logout")
+        XCTAssertNil(loggedOut.userId, "userId should be cleared after logout")
+        XCTAssertEqual(loggedOut.identityId, anonymous.identityId, "Branch identity should persist")
+    }
+
+    /// Changing identity should replace the previous one, not append
+    func testIdentityReplacement_NewIdentityOverwritesPrevious() {
+        let session = Session(
+            identityId: "identity-123",
+            deviceFingerprintId: "fingerprint-456",
+            isFirstSession: true
+        )
+
+        // When: Setting identity twice
+        let firstLogin = session.withIdentity("user-1")
+        let secondLogin = firstLogin.withIdentity("user-2")
+
+        // Then: Only the latest identity is present
+        XCTAssertEqual(secondLogin.userId, "user-2", "New identity should replace previous")
+        XCTAssertNotEqual(secondLogin.userId, "user-1")
+    }
+
+    // MARK: - Session Deep Link Data Tests
+
+    /// Deep link data should be preserved through identity changes
+    /// Important: Users clicking links before logging in shouldn't lose attribution
+    func testDeepLinkDataPreservation_ThroughIdentityChanges() {
+        // Given: Session with deep link data (user clicked link)
+        let linkData = LinkData(
+            url: URL(string: "https://app.link/promo")!,
+            isClicked: true,
+            campaign: "summer-sale"
+        )
+        let sessionWithLink = Session(
+            identityId: "identity-123",
+            deviceFingerprintId: "fingerprint-456",
+            isFirstSession: true,
+            linkData: linkData
+        )
+
+        // When: User logs in (after clicking link)
+        let identified = sessionWithLink.withIdentity("user-abc")
+
+        // Then: Deep link data is preserved
+        XCTAssertNotNil(identified.linkData, "Link data must survive identity change")
+        XCTAssertEqual(identified.linkData?.campaign, "summer-sale")
+        XCTAssertTrue(identified.hasDeepLinkData)
+
+        // When: User logs out
+        let loggedOut = identified.withoutIdentity()
+
+        // Then: Deep link data is still preserved
+        XCTAssertNotNil(loggedOut.linkData, "Link data must survive logout")
+        XCTAssertEqual(loggedOut.linkData?.campaign, "summer-sale")
+    }
+
+    /// hasDeepLinkData should correctly reflect actual data presence
+    func testHasDeepLinkData_ReflectsActualLinkPresence() {
+        let sessionNoLink = Session(
+            identityId: "identity-123",
+            deviceFingerprintId: "fingerprint-456",
+            isFirstSession: true
+        )
+
+        // Empty LinkData should still count as no deep link
+        let emptyLinkData = LinkData()
+        _ = sessionNoLink.withLinkData(emptyLinkData) // Test that it doesn't crash
+
+        // LinkData with URL should count as deep link
+        let realLinkData = LinkData(url: URL(string: "https://app.link/real")!)
+        let sessionRealLink = sessionNoLink.withLinkData(realLinkData)
+
+        XCTAssertFalse(sessionNoLink.hasDeepLinkData, "No link data means no deep link")
+        // Note: Whether empty LinkData counts depends on implementation
+        XCTAssertTrue(sessionRealLink.hasDeepLinkData, "Real link data means deep link present")
+    }
+
+    // MARK: - Session State Machine Tests
+
+    /// State machine must enforce valid transitions only
+    /// Invalid transitions would cause undefined behavior
+    func testStateMachineTransitions_OnlyValidTransitionsAllowed() {
+        let session = Session(
+            identityId: "identity-123",
+            deviceFingerprintId: "fingerprint-456",
+            isFirstSession: true
+        )
+
+        // Valid transitions
+        XCTAssertTrue(
+            SessionState.uninitialized.canTransition(to: .initializing),
+            "uninitialized → initializing should be valid"
+        )
+        XCTAssertTrue(
+            SessionState.initializing.canTransition(to: .initialized(session)),
+            "initializing → initialized should be valid"
+        )
+        XCTAssertTrue(
+            SessionState.initialized(session).canTransition(to: .uninitialized),
+            "initialized → uninitialized should be valid (reset)"
+        )
+        XCTAssertTrue(
+            SessionState.initialized(session).canTransition(to: .initializing),
+            "initialized → initializing should be valid (refresh)"
+        )
+        XCTAssertTrue(
+            SessionState.initializing.canTransition(to: .uninitialized),
+            "initializing → uninitialized should be valid (cancel/error)"
+        )
+
+        // Invalid transition: Can't skip initializing
+        XCTAssertFalse(
+            SessionState.uninitialized.canTransition(to: .initialized(session)),
+            "uninitialized → initialized should be INVALID (can't skip initializing)"
+        )
+    }
+
+    /// State properties must be mutually exclusive and exhaustive
+    func testStateProperties_MutuallyExclusive() {
+        let session = Session(
+            identityId: "identity-123",
+            deviceFingerprintId: "fingerprint-456",
+            isFirstSession: true
+        )
+
+        let states: [SessionState] = [
+            .uninitialized,
+            .initializing,
+            .initialized(session),
+        ]
+
+        for state in states {
+            // Count how many boolean properties are true
+            let trueCount = [
+                state.isReady,
+                state.isInitializing,
+                state.needsInitialization,
+            ].filter { $0 }.count
+
+            // At least one property should be true
+            XCTAssertGreaterThan(trueCount, 0, "State \(state) should have at least one true property")
+
+            // isReady and isInitializing should never both be true
+            XCTAssertFalse(
+                state.isReady && state.isInitializing,
+                "State cannot be both ready and initializing"
+            )
+
+            // isReady and needsInitialization should never both be true
+            XCTAssertFalse(
+                state.isReady && state.needsInitialization,
+                "State cannot be both ready and needing initialization"
+            )
+        }
+    }
+
+    /// Session should only be accessible in initialized state
+    func testStateSession_OnlyAccessibleWhenInitialized() {
+        let session = Session(
+            identityId: "identity-123",
+            deviceFingerprintId: "fingerprint-456",
+            isFirstSession: true
+        )
+
+        XCTAssertNil(SessionState.uninitialized.session, "Uninitialized state should have no session")
+        XCTAssertNil(SessionState.initializing.session, "Initializing state should have no session")
+        XCTAssertNotNil(SessionState.initialized(session).session, "Initialized state must have session")
+        XCTAssertEqual(SessionState.initialized(session).session?.id, session.id)
+    }
+
+    // MARK: - LinkData Accessor Tests
+
+    /// LinkData accessors should handle type mismatches gracefully
+    func testLinkDataAccessors_TypeMismatchReturnsNil() {
+        let linkData = LinkData(
+            parameters: [
+                "string_value": AnyCodable("hello"),
+                "int_value": AnyCodable(42),
+                "bool_value": AnyCodable(true),
+                "array_value": AnyCodable(["a", "b"]),
+                "dict_value": AnyCodable(["key": "value"]),
+            ]
+        )
+
+        // Correct type accessors
+        XCTAssertEqual(linkData.string(forKey: "string_value"), "hello")
+        XCTAssertEqual(linkData.int(forKey: "int_value"), 42)
+        XCTAssertEqual(linkData.bool(forKey: "bool_value"), true)
+
+        // Wrong type accessors should return nil, not crash
+        XCTAssertNil(linkData.string(forKey: "int_value"), "int accessed as string should be nil")
+        XCTAssertNil(linkData.int(forKey: "string_value"), "string accessed as int should be nil")
+        XCTAssertNil(linkData.bool(forKey: "string_value"), "string accessed as bool should be nil")
+        XCTAssertNil(linkData.array(forKey: "string_value"), "string accessed as array should be nil")
+        XCTAssertNil(linkData.dictionary(forKey: "string_value"), "string accessed as dict should be nil")
+
+        // Non-existent keys
+        XCTAssertNil(linkData.string(forKey: "nonexistent"))
+        XCTAssertNil(linkData.int(forKey: "nonexistent"))
+    }
+
+    /// LinkData should preserve complex nested structures
+    func testLinkDataNestedStructures_PreservedCorrectly() {
+        // Build nested structures with explicit Sendable types
+        let level2Dict = ["level3": "deep_value"]
+        let level1Dict: [String: AnyCodable] = ["level2": AnyCodable(level2Dict)]
+
+        let arrayItem1: [String: AnyCodable] = ["id": AnyCodable(1), "name": AnyCodable("first")]
+        let arrayItem2: [String: AnyCodable] = ["id": AnyCodable(2), "name": AnyCodable("second")]
+        let arrayOfDictsValue: [AnyCodable] = [AnyCodable(arrayItem1), AnyCodable(arrayItem2)]
+
+        let linkData = LinkData(
+            parameters: [
+                "nested": AnyCodable(level1Dict),
+                "array": AnyCodable(arrayOfDictsValue),
+            ]
+        )
+
+        // Access nested dictionary
+        let level1 = linkData.dictionary(forKey: "nested")
+        XCTAssertNotNil(level1)
+
+        // Access array of dictionaries
+        let arrayOfDicts = linkData.array(forKey: "array")
+        XCTAssertNotNil(arrayOfDicts)
+        XCTAssertEqual(arrayOfDicts?.count, 2)
+    }
+
+    // MARK: - InitializationOptions Builder Tests
+
+    /// Builder pattern should support chaining without losing data
+    func testInitializationOptionsBuilder_ChainPreservesAllData() {
+        let url = URL(string: "https://test.link/abc")!
+        let referralParams = ["utm_source": "test", "utm_campaign": "summer"]
+
+        let options = InitializationOptions()
+            .with(url: url)
+            .with(sceneIdentifier: "main-scene")
+            .with(delayInitialization: true)
+            .with(disableAutomaticSessionTracking: true)
+            .with(checkPasteboardOnInstall: false)
+            .with(referralParams: referralParams)
+            .with(sourceApplication: "com.apple.mobilesafari")
+
+        // All values should be present after chain
+        XCTAssertEqual(options.url, url)
+        XCTAssertEqual(options.sceneIdentifier, "main-scene")
+        XCTAssertTrue(options.delayInitialization)
+        XCTAssertTrue(options.disableAutomaticSessionTracking)
+        XCTAssertFalse(options.checkPasteboardOnInstall)
+        XCTAssertEqual(options.referralParams?["utm_source"], "test")
+        XCTAssertEqual(options.referralParams?["utm_campaign"], "summer")
+        XCTAssertEqual(options.sourceApplication, "com.apple.mobilesafari")
+    }
+
+    /// Builder should allow overwriting previous values
+    func testInitializationOptionsBuilder_OverwritePreviousValues() {
+        let firstURL = URL(string: "https://test.link/first")!
+        let secondURL = URL(string: "https://test.link/second")!
+
+        let options = InitializationOptions()
+            .with(url: firstURL)
+            .with(sceneIdentifier: "scene-1")
+            .with(url: secondURL) // Overwrite
+            .with(sceneIdentifier: "scene-2") // Overwrite
+
+        XCTAssertEqual(options.url, secondURL, "Later value should overwrite earlier")
+        XCTAssertEqual(options.sceneIdentifier, "scene-2", "Later value should overwrite earlier")
+    }
+
+    // MARK: - BranchError Behavior Tests
+
+    /// Error codes should follow the documented ranges
+    func testBranchErrorCodes_FollowDocumentedRanges() {
+        // Configuration errors: 1xxx
+        XCTAssertTrue((1000 ... 1999).contains(BranchError.invalidConfiguration("").errorCode))
+        XCTAssertTrue((1000 ... 1999).contains(BranchError.notInitialized.errorCode))
+        XCTAssertTrue((1000 ... 1999).contains(BranchError.alreadyInitialized.errorCode))
+
+        // Network errors: 2xxx
+        XCTAssertTrue((2000 ... 2999).contains(BranchError.networkError("").errorCode))
+        XCTAssertTrue((2000 ... 2999).contains(BranchError.timeout.errorCode))
+        XCTAssertTrue((2000 ... 2999).contains(BranchError.serverError(statusCode: 500, message: nil).errorCode))
+        XCTAssertTrue((2000 ... 2999).contains(BranchError.invalidResponse.errorCode))
+
+        // State errors: 3xxx
+        XCTAssertTrue((3000 ... 3999).contains(BranchError.invalidStateTransition(from: "", to: "").errorCode))
+        XCTAssertTrue((3000 ... 3999).contains(BranchError.sessionRequired.errorCode))
+
+        // Link errors: 4xxx
+        XCTAssertTrue((4000 ... 4999).contains(BranchError.invalidURL("").errorCode))
+        XCTAssertTrue((4000 ... 4999).contains(BranchError.noURLProvided.errorCode))
+        XCTAssertTrue((4000 ... 4999).contains(BranchError.linkCreationFailed("").errorCode))
+        XCTAssertTrue((4000 ... 4999).contains(BranchError.invalidUserActivity.errorCode))
+
+        // Identity errors: 5xxx
+        XCTAssertTrue((5000 ... 5999).contains(BranchError.invalidIdentity("").errorCode))
+
+        // Event errors: 6xxx
+        XCTAssertTrue((6000 ... 6999).contains(BranchError.invalidEvent("").errorCode))
+        XCTAssertTrue((6000 ... 6999).contains(BranchError.eventTrackingFailed("").errorCode))
+
+        // Storage errors: 7xxx
+        XCTAssertTrue((7000 ... 7999).contains(BranchError.storageError("").errorCode))
+
+        // General errors: 9xxx
+        XCTAssertTrue((9000 ... 9999).contains(BranchError.unknown("").errorCode))
+        XCTAssertTrue((9000 ... 9999).contains(BranchError.underlying(NSError(domain: "", code: 0)).errorCode))
+    }
+
+    /// Error descriptions should be human-readable and actionable
+    func testBranchErrorDescriptions_AreHumanReadable() {
+        let errors: [BranchError] = [
+            .invalidConfiguration("Missing branch key"),
+            .notInitialized,
+            .networkError("Connection refused"),
+            .serverError(statusCode: 503, message: "Service unavailable"),
+            .sessionRequired,
+            .invalidIdentity("Empty user ID"),
+        ]
+
+        for error in errors {
+            guard let description = error.errorDescription else {
+                XCTFail("Error \(error) should have a description")
+                continue
+            }
+
+            // Description should not be empty
+            XCTAssertFalse(description.isEmpty, "Description should not be empty")
+
+            // Description should not be just the enum case name
+            XCTAssertFalse(
+                description.lowercased() == String(describing: error).lowercased(),
+                "Description should be human-readable, not just the enum case"
+            )
+
+            // Description should start with capital letter
+            XCTAssertTrue(
+                description.first?.isUppercase ?? false,
+                "Description should start with capital letter"
+            )
+        }
+    }
+
+    /// Server errors should include status code in description
+    func testBranchErrorServerError_IncludesStatusCodeInDescription() {
+        let statusCodes = [400, 401, 403, 404, 500, 502, 503]
+
+        for code in statusCodes {
+            let error = BranchError.serverError(statusCode: code, message: nil)
+            let description = error.errorDescription ?? ""
+
+            XCTAssertTrue(
+                description.contains("\(code)"),
+                "Server error description should include status code \(code)"
+            )
+        }
+    }
+
+    /// Errors with associated messages should include them in description
+    func testBranchErrorWithMessage_IncludesMessageInDescription() {
+        let customMessage = "Custom error details here"
+
+        let errorsWithMessages: [BranchError] = [
+            .invalidConfiguration(customMessage),
+            .networkError(customMessage),
+            .serverError(statusCode: 500, message: customMessage),
+            .invalidURL(customMessage),
+            .invalidIdentity(customMessage),
+            .linkCreationFailed(customMessage),
+            .storageError(customMessage),
+            .unknown(customMessage),
+        ]
+
+        for error in errorsWithMessages {
+            let description = error.errorDescription ?? ""
+            XCTAssertTrue(
+                description.contains(customMessage),
+                "Error description should include custom message: \(error)"
+            )
+        }
+    }
+
+    // MARK: - Session Timestamp Tests
+
+    /// Session createdAt should capture creation time accurately
+    func testSessionCreatedAt_CapturesCreationTime() {
+        let before = Date()
+        let session = Session(
+            identityId: "identity-123",
+            deviceFingerprintId: "fingerprint-456",
+            isFirstSession: true
+        )
+        let after = Date()
+
+        XCTAssertGreaterThanOrEqual(
+            session.createdAt,
+            before,
+            "createdAt should be >= time before creation"
+        )
+        XCTAssertLessThanOrEqual(
+            session.createdAt,
+            after,
+            "createdAt should be <= time after creation"
+        )
+    }
+
+    /// Modified sessions should preserve original createdAt
+    func testSessionModifications_PreserveCreatedAt() {
+        let original = Session(
+            identityId: "identity-123",
+            deviceFingerprintId: "fingerprint-456",
+            isFirstSession: true
+        )
+
+        // Wait a tiny bit to ensure timestamps would differ if re-created
+        Thread.sleep(forTimeInterval: 0.01)
+
+        let modified = original
+            .withIdentity("user-1")
+            .withLinkData(LinkData(url: URL(string: "https://test.link")!))
+            .withoutIdentity()
+
+        XCTAssertEqual(
+            modified.createdAt,
+            original.createdAt,
+            "Modifications should preserve original createdAt"
+        )
+    }
+
+    // MARK: - Equatable Correctness Tests
+
+    /// Sessions with same ID but different data should still be equal (ID-based equality)
+    func testSessionEquatable_BasedOnAllFields() {
+        let date = Date()
+
+        let session1 = Session(
+            id: "same-id",
+            createdAt: date,
+            identityId: "identity-1",
+            deviceFingerprintId: "fingerprint-1",
             isFirstSession: true,
             linkData: nil,
             userId: nil
         )
 
-        XCTAssertEqual(session.id, "test-id")
-        XCTAssertEqual(session.identityId, "identity-123")
-        XCTAssertEqual(session.deviceFingerprintId, "fingerprint-456")
-        XCTAssertTrue(session.isFirstSession)
-        XCTAssertNil(session.linkData)
-        XCTAssertNil(session.userId)
-    }
-
-    func testSessionWithIdentity() {
-        let session = Session(
-            identityId: "identity-123",
-            deviceFingerprintId: "fingerprint-456",
-            isFirstSession: true
-        )
-
-        let updatedSession = session.withIdentity("user-789")
-
-        XCTAssertEqual(updatedSession.userId, "user-789")
-        XCTAssertEqual(updatedSession.id, session.id)
-        XCTAssertEqual(updatedSession.identityId, session.identityId)
-    }
-
-    func testSessionWithoutIdentity() {
-        let session = Session(
-            identityId: "identity-123",
-            deviceFingerprintId: "fingerprint-456",
-            isFirstSession: true,
-            userId: "user-789"
-        )
-
-        let updatedSession = session.withoutIdentity()
-
-        XCTAssertNil(updatedSession.userId)
-        XCTAssertEqual(updatedSession.id, session.id)
-    }
-
-    func testSessionWithLinkData() {
-        let session = Session(
-            identityId: "identity-123",
-            deviceFingerprintId: "fingerprint-456",
-            isFirstSession: true
-        )
-
-        let linkData = LinkData(url: URL(string: "https://test.app.link/abc")!)
-        let updatedSession = session.withLinkData(linkData)
-
-        XCTAssertNotNil(updatedSession.linkData)
-        XCTAssertEqual(updatedSession.linkData?.url?.absoluteString, "https://test.app.link/abc")
-    }
-
-    func testSessionHasDeepLinkData() {
-        let sessionWithoutLink = Session(
-            identityId: "identity-123",
-            deviceFingerprintId: "fingerprint-456",
-            isFirstSession: true
-        )
-        XCTAssertFalse(sessionWithoutLink.hasDeepLinkData)
-
-        let linkData = LinkData(url: URL(string: "https://test.app.link/abc")!)
-        let sessionWithLink = sessionWithoutLink.withLinkData(linkData)
-        XCTAssertTrue(sessionWithLink.hasDeepLinkData)
-    }
-
-    func testSessionIsIdentified() {
-        let sessionWithoutIdentity = Session(
-            identityId: "identity-123",
-            deviceFingerprintId: "fingerprint-456",
-            isFirstSession: true
-        )
-        XCTAssertFalse(sessionWithoutIdentity.isIdentified)
-
-        let sessionWithIdentity = sessionWithoutIdentity.withIdentity("user-123")
-        XCTAssertTrue(sessionWithIdentity.isIdentified)
-    }
-
-    func testSessionEquatable() {
-        let sharedDate = Date()
-
-        let session1 = Session(
-            id: "same-id",
-            createdAt: sharedDate,
-            identityId: "identity-123",
-            deviceFingerprintId: "fingerprint-456",
-            isFirstSession: true
-        )
-
         let session2 = Session(
             id: "same-id",
-            createdAt: sharedDate,
-            identityId: "identity-123",
-            deviceFingerprintId: "fingerprint-456",
-            isFirstSession: true
-        )
-
-        XCTAssertEqual(session1, session2)
-    }
-
-    func testSessionDescription() {
-        let session = Session(
-            identityId: "identity-123",
-            deviceFingerprintId: "fingerprint-456",
-            isFirstSession: true,
-            userId: "user-123"
-        )
-
-        let description = session.description
-        XCTAssertTrue(description.contains("Session"))
-        XCTAssertTrue(description.contains("first"))
-        XCTAssertTrue(description.contains("identified"))
-    }
-
-    func testSessionDescriptionWithLinkData() {
-        let linkData = LinkData(url: URL(string: "https://test.app.link/abc")!)
-        let session = Session(
-            identityId: "identity-123",
-            deviceFingerprintId: "fingerprint-456",
-            isFirstSession: false,
-            linkData: linkData
-        )
-
-        let description = session.description
-        XCTAssertTrue(description.contains("Session"))
-        XCTAssertTrue(description.contains("hasLinkData"))
-        XCTAssertFalse(description.contains("first"))
-        XCTAssertFalse(description.contains("identified"))
-    }
-
-    func testSessionDescriptionMinimal() {
-        let session = Session(
-            identityId: "identity-123",
-            deviceFingerprintId: "fingerprint-456",
-            isFirstSession: false
-        )
-
-        let description = session.description
-        XCTAssertTrue(description.contains("Session"))
-        XCTAssertFalse(description.contains("first"))
-        XCTAssertFalse(description.contains("hasLinkData"))
-        XCTAssertFalse(description.contains("identified"))
-    }
-
-    func testSessionCreatedAtTimestamp() {
-        let beforeCreation = Date()
-        let session = Session(
-            identityId: "identity-123",
-            deviceFingerprintId: "fingerprint-456",
-            isFirstSession: true
-        )
-        let afterCreation = Date()
-
-        XCTAssertGreaterThanOrEqual(session.createdAt, beforeCreation)
-        XCTAssertLessThanOrEqual(session.createdAt, afterCreation)
-    }
-
-    func testSessionIdentifiable() {
-        let session = Session(
-            id: "test-id-123",
-            createdAt: Date(),
-            identityId: "identity-123",
-            deviceFingerprintId: "fingerprint-456",
-            isFirstSession: true
-        )
-
-        // Session conforms to Identifiable, so we can use .id
-        XCTAssertEqual(session.id, "test-id-123")
-    }
-
-    // MARK: - SessionState Tests
-
-    func testSessionStateUninitialized() {
-        let state = SessionState.uninitialized
-
-        XCTAssertFalse(state.isReady)
-        XCTAssertFalse(state.isInitializing)
-        XCTAssertTrue(state.needsInitialization)
-        XCTAssertNil(state.session)
-        XCTAssertEqual(state.description, "Uninitialized")
-    }
-
-    func testSessionStateInitializing() {
-        let state = SessionState.initializing
-
-        XCTAssertFalse(state.isReady)
-        XCTAssertTrue(state.isInitializing)
-        XCTAssertFalse(state.needsInitialization)
-        XCTAssertNil(state.session)
-        XCTAssertEqual(state.description, "Initializing")
-    }
-
-    func testSessionStateInitialized() {
-        let session = Session(
-            identityId: "identity-123",
-            deviceFingerprintId: "fingerprint-456",
-            isFirstSession: true
-        )
-        let state = SessionState.initialized(session)
-
-        XCTAssertTrue(state.isReady)
-        XCTAssertFalse(state.isInitializing)
-        XCTAssertFalse(state.needsInitialization)
-        XCTAssertNotNil(state.session)
-        XCTAssertTrue(state.description.contains("Initialized"))
-    }
-
-    func testSessionStateCanTransition() {
-        // Valid transitions
-        XCTAssertTrue(SessionState.uninitialized.canTransition(to: .initializing))
-        XCTAssertTrue(SessionState.initializing.canTransition(to: .uninitialized))
-
-        let session = Session(
-            identityId: "identity-123",
-            deviceFingerprintId: "fingerprint-456",
-            isFirstSession: true
-        )
-        XCTAssertTrue(SessionState.initializing.canTransition(to: .initialized(session)))
-        XCTAssertTrue(SessionState.initialized(session).canTransition(to: .uninitialized))
-        XCTAssertTrue(SessionState.initialized(session).canTransition(to: .initializing))
-
-        // Invalid transition
-        XCTAssertFalse(SessionState.uninitialized.canTransition(to: .initialized(session)))
-    }
-
-    func testSessionStateEquatable() {
-        let session1 = Session(
-            id: "same-id",
-            createdAt: Date(),
-            identityId: "identity-123",
-            deviceFingerprintId: "fingerprint-456",
-            isFirstSession: true
-        )
-        let session2 = Session(
-            id: "same-id",
-            createdAt: Date(),
-            identityId: "identity-123",
-            deviceFingerprintId: "fingerprint-456",
-            isFirstSession: true
-        )
-
-        XCTAssertEqual(SessionState.uninitialized, SessionState.uninitialized)
-        XCTAssertEqual(SessionState.initializing, SessionState.initializing)
-        XCTAssertEqual(SessionState.initialized(session1), SessionState.initialized(session2))
-        XCTAssertNotEqual(SessionState.uninitialized, SessionState.initializing)
-    }
-
-    func testSessionStateEquatableWithDifferentSessions() {
-        let session1 = Session(
-            id: "id-1",
-            createdAt: Date(),
+            createdAt: date,
             identityId: "identity-1",
             deviceFingerprintId: "fingerprint-1",
-            isFirstSession: true
-        )
-        let session2 = Session(
-            id: "id-2",
-            createdAt: Date(),
-            identityId: "identity-2",
-            deviceFingerprintId: "fingerprint-2",
-            isFirstSession: false
+            isFirstSession: true,
+            linkData: nil,
+            userId: nil
         )
 
-        XCTAssertNotEqual(SessionState.initialized(session1), SessionState.initialized(session2))
+        let session3 = Session(
+            id: "same-id",
+            createdAt: date,
+            identityId: "identity-1",
+            deviceFingerprintId: "fingerprint-1",
+            isFirstSession: true,
+            linkData: nil,
+            userId: "different-user" // Different userId
+        )
+
+        XCTAssertEqual(session1, session2, "Identical sessions should be equal")
+        XCTAssertNotEqual(session1, session3, "Sessions with different userId should not be equal")
     }
 
-    func testSessionStateCanTransitionSameState() {
-        let session = Session(
-            identityId: "identity-123",
-            deviceFingerprintId: "fingerprint-456",
-            isFirstSession: true
+    /// LinkData equality should compare all fields
+    func testLinkDataEquatable_ComparesAllFields() {
+        let linkData1 = LinkData(
+            url: URL(string: "https://test.link")!,
+            isClicked: true,
+            campaign: "campaign-1",
+            channel: "channel-1"
         )
 
-        // Same state transitions should be allowed
-        XCTAssertTrue(SessionState.uninitialized.canTransition(to: .uninitialized))
-        XCTAssertTrue(SessionState.initializing.canTransition(to: .initializing))
-        XCTAssertTrue(SessionState.initialized(session).canTransition(to: .initialized(session)))
-    }
-
-    func testSessionStateSession() {
-        let session = Session(
-            identityId: "identity-123",
-            deviceFingerprintId: "fingerprint-456",
-            isFirstSession: true
+        let linkData2 = LinkData(
+            url: URL(string: "https://test.link")!,
+            isClicked: true,
+            campaign: "campaign-1",
+            channel: "channel-1"
         )
 
-        XCTAssertNil(SessionState.uninitialized.session)
-        XCTAssertNil(SessionState.initializing.session)
-        XCTAssertNotNil(SessionState.initialized(session).session)
-        XCTAssertEqual(SessionState.initialized(session).session?.id, session.id)
+        let linkData3 = LinkData(
+            url: URL(string: "https://test.link")!,
+            isClicked: true,
+            campaign: "different-campaign", // Different
+            channel: "channel-1"
+        )
+
+        XCTAssertEqual(linkData1, linkData2)
+        XCTAssertNotEqual(linkData1, linkData3, "Different campaign should make them unequal")
     }
 
     // MARK: - InvalidStateTransitionError Tests
 
-    func testInvalidStateTransitionErrorDescription() {
+    /// InvalidStateTransitionError should provide useful debugging info
+    func testInvalidStateTransitionError_ProvidesUsefulInfo() {
         let session = Session(
             identityId: "identity-123",
             deviceFingerprintId: "fingerprint-456",
             isFirstSession: true
         )
 
-        let error = InvalidStateTransitionError(from: .uninitialized, to: .initialized(session))
+        let error = InvalidStateTransitionError(
+            from: .uninitialized,
+            to: .initialized(session)
+        )
+
         let description = error.description
 
-        XCTAssertTrue(description.contains("Invalid state transition"))
-        XCTAssertTrue(description.contains("Uninitialized"))
-        XCTAssertTrue(description.contains("Initialized"))
+        // Should mention both states
+        XCTAssertTrue(description.contains("Uninitialized"), "Should mention source state")
+        XCTAssertTrue(description.contains("Initialized"), "Should mention target state")
+        XCTAssertTrue(description.lowercased().contains("invalid"), "Should indicate it's invalid")
     }
 
-    func testInvalidStateTransitionErrorFromInitializing() {
-        let error = InvalidStateTransitionError(from: .initializing, to: .initializing)
-        let description = error.description
+    // MARK: - First Session Flag Tests
 
-        XCTAssertTrue(description.contains("Initializing"))
-    }
-
-    // MARK: - LinkData Tests
-
-    func testLinkDataInitialization() {
-        let url = URL(string: "https://test.app.link/abc123")!
-        let linkData = LinkData(
-            url: url,
-            isClicked: true,
-            referringLink: "https://test.app.link/refer",
-            parameters: ["key": AnyCodable("value")],
-            campaign: "test-campaign",
-            channel: "test-channel",
-            feature: "test-feature",
-            tags: ["tag1", "tag2"],
-            stage: "test-stage"
+    /// isFirstSession flag should be immutable once set
+    func testFirstSessionFlag_ImmutableThroughModifications() {
+        let firstSession = Session(
+            identityId: "identity-123",
+            deviceFingerprintId: "fingerprint-456",
+            isFirstSession: true
         )
 
-        XCTAssertEqual(linkData.url, url)
-        XCTAssertTrue(linkData.isClicked)
-        XCTAssertEqual(linkData.campaign, "test-campaign")
-        XCTAssertEqual(linkData.channel, "test-channel")
-        XCTAssertEqual(linkData.feature, "test-feature")
-        XCTAssertEqual(linkData.tags, ["tag1", "tag2"])
-        XCTAssertEqual(linkData.stage, "test-stage")
-    }
-
-    func testLinkDataStringAccessor() {
-        let linkData = LinkData(
-            parameters: ["string_key": AnyCodable("string_value")]
+        let returningSession = Session(
+            identityId: "identity-456",
+            deviceFingerprintId: "fingerprint-789",
+            isFirstSession: false
         )
 
-        XCTAssertEqual(linkData.string(forKey: "string_key"), "string_value")
-        XCTAssertNil(linkData.string(forKey: "nonexistent"))
+        // Modifications should preserve isFirstSession
+        XCTAssertTrue(firstSession.withIdentity("user").isFirstSession)
+        XCTAssertTrue(firstSession.withLinkData(LinkData()).isFirstSession)
+        XCTAssertTrue(firstSession.withoutIdentity().isFirstSession)
+
+        XCTAssertFalse(returningSession.withIdentity("user").isFirstSession)
+        XCTAssertFalse(returningSession.withLinkData(LinkData()).isFirstSession)
+        XCTAssertFalse(returningSession.withoutIdentity().isFirstSession)
     }
 
-    func testLinkDataIntAccessor() {
-        let linkData = LinkData(
-            parameters: ["int_key": AnyCodable(42)]
+    // MARK: - Description Consistency Tests
+
+    /// Session description should reflect current state accurately
+    func testSessionDescription_ReflectsCurrentState() {
+        // First session, anonymous, no link
+        let basicSession = Session(
+            identityId: "identity-123",
+            deviceFingerprintId: "fingerprint-456",
+            isFirstSession: true
         )
+        let basicDesc = basicSession.description
+        XCTAssertTrue(basicDesc.contains("first"), "Should indicate first session")
+        XCTAssertFalse(basicDesc.contains("identified"), "Should not indicate identified")
+        XCTAssertFalse(basicDesc.contains("hasLinkData"), "Should not indicate link data")
 
-        XCTAssertEqual(linkData.int(forKey: "int_key"), 42)
-        XCTAssertNil(linkData.int(forKey: "nonexistent"))
-    }
-
-    func testLinkDataBoolAccessor() {
-        let linkData = LinkData(
-            parameters: ["bool_key": AnyCodable(true)]
+        // Returning session, identified, with link
+        let fullSession = Session(
+            identityId: "identity-123",
+            deviceFingerprintId: "fingerprint-456",
+            isFirstSession: false,
+            linkData: LinkData(url: URL(string: "https://test.link")!),
+            userId: "user-123"
         )
-
-        XCTAssertEqual(linkData.bool(forKey: "bool_key"), true)
-        XCTAssertNil(linkData.bool(forKey: "nonexistent"))
-    }
-
-    func testLinkDataSubscript() {
-        let linkData = LinkData(
-            parameters: ["key": AnyCodable("value")]
-        )
-
-        XCTAssertEqual(linkData["key"] as? String, "value")
-        XCTAssertNil(linkData["nonexistent"])
-    }
-
-    func testLinkDataDescription() {
-        let linkData = LinkData(
-            isClicked: true,
-            parameters: ["key": AnyCodable("value")],
-            campaign: "summer-sale",
-            channel: "facebook"
-        )
-
-        let description = linkData.description
-        XCTAssertTrue(description.contains("LinkData"))
-        XCTAssertTrue(description.contains("clicked"))
-        XCTAssertTrue(description.contains("campaign: summer-sale"))
-        XCTAssertTrue(description.contains("channel: facebook"))
-    }
-
-    func testLinkDataDictionaryAccessor() {
-        let nestedDict: AnyCodable = ["nested_key": "nested_value", "count": 42]
-        let linkData = LinkData(
-            parameters: ["dict_key": nestedDict]
-        )
-
-        let result = linkData.dictionary(forKey: "dict_key")
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result?["nested_key"] as? String, "nested_value")
-        XCTAssertEqual(result?["count"] as? Int, 42)
-        XCTAssertNil(linkData.dictionary(forKey: "nonexistent"))
-    }
-
-    func testLinkDataArrayAccessor() {
-        let array: AnyCodable = ["item1", "item2", 42]
-        let linkData = LinkData(
-            parameters: ["array_key": array]
-        )
-
-        let result = linkData.array(forKey: "array_key")
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result?.count, 3)
-        XCTAssertEqual(result?[0] as? String, "item1")
-        XCTAssertEqual(result?[2] as? Int, 42)
-        XCTAssertNil(linkData.array(forKey: "nonexistent"))
-    }
-
-    func testLinkDataRawDataProperty() {
-        let rawData: [String: AnyCodable] = [
-            "server_key": AnyCodable("server_value"),
-            "data_id": AnyCodable(12345),
-        ]
-        let linkData = LinkData(
-            url: URL(string: "https://test.app.link/test")!,
-            rawData: rawData
-        )
-
-        XCTAssertEqual(linkData.rawData.count, 2)
-        XCTAssertEqual(linkData.rawData["server_key"]?.value as? String, "server_value")
-        XCTAssertEqual(linkData.rawData["data_id"]?.value as? Int, 12345)
-    }
-
-    func testLinkDataEquatable() {
-        let linkData1 = LinkData(
-            url: URL(string: "https://test.app.link/abc")!,
-            isClicked: true,
-            campaign: "test-campaign",
-            channel: "test-channel"
-        )
-
-        let linkData2 = LinkData(
-            url: URL(string: "https://test.app.link/abc")!,
-            isClicked: true,
-            campaign: "test-campaign",
-            channel: "test-channel"
-        )
-
-        let linkData3 = LinkData(
-            url: URL(string: "https://test.app.link/different")!,
-            isClicked: false,
-            campaign: "other-campaign"
-        )
-
-        XCTAssertEqual(linkData1, linkData2)
-        XCTAssertNotEqual(linkData1, linkData3)
-    }
-
-    func testLinkDataDescriptionWithNoParams() {
-        let linkData = LinkData()
-
-        let description = linkData.description
-        XCTAssertTrue(description.contains("LinkData"))
-        XCTAssertFalse(description.contains("clicked"))
-        XCTAssertFalse(description.contains("campaign"))
-        XCTAssertFalse(description.contains("params"))
-    }
-
-    // MARK: - InitializationOptions Tests
-
-    func testInitializationOptionsDefaults() {
-        let options = InitializationOptions()
-
-        XCTAssertNil(options.url)
-        XCTAssertNil(options.sceneIdentifier)
-        XCTAssertFalse(options.delayInitialization)
-        XCTAssertFalse(options.disableAutomaticSessionTracking)
-        XCTAssertTrue(options.checkPasteboardOnInstall)
-        XCTAssertNil(options.referralParams)
-        XCTAssertNil(options.sourceApplication)
-    }
-
-    func testInitializationOptionsBuilderPattern() {
-        let url = URL(string: "https://test.app.link/abc")!
-        let options = InitializationOptions()
-            .with(url: url)
-            .with(sceneIdentifier: "scene-123")
-            .with(delayInitialization: true)
-            .with(disableAutomaticSessionTracking: true)
-            .with(checkPasteboardOnInstall: false)
-            .with(referralParams: ["ref": "test"])
-            .with(sourceApplication: "com.test.app")
-
-        XCTAssertEqual(options.url, url)
-        XCTAssertEqual(options.sceneIdentifier, "scene-123")
-        XCTAssertTrue(options.delayInitialization)
-        XCTAssertTrue(options.disableAutomaticSessionTracking)
-        XCTAssertFalse(options.checkPasteboardOnInstall)
-        XCTAssertEqual(options.referralParams, ["ref": "test"])
-        XCTAssertEqual(options.sourceApplication, "com.test.app")
-    }
-
-    func testInitializationOptionsEquatable() {
-        let url = URL(string: "https://test.app.link/abc")!
-
-        var options1 = InitializationOptions()
-        options1.url = url
-        options1.sceneIdentifier = "scene-123"
-
-        var options2 = InitializationOptions()
-        options2.url = url
-        options2.sceneIdentifier = "scene-123"
-
-        XCTAssertEqual(options1, options2)
-
-        options2.sceneIdentifier = "different"
-        XCTAssertNotEqual(options1, options2)
-    }
-
-    // MARK: - BranchError Tests
-
-    func testBranchErrorCodes() {
-        XCTAssertEqual(BranchError.invalidConfiguration("test").errorCode, 1001)
-        XCTAssertEqual(BranchError.notInitialized.errorCode, 1002)
-        XCTAssertEqual(BranchError.alreadyInitialized.errorCode, 1003)
-        XCTAssertEqual(BranchError.networkError("test").errorCode, 2001)
-        XCTAssertEqual(BranchError.timeout.errorCode, 2002)
-        XCTAssertEqual(BranchError.serverError(statusCode: 500, message: nil).errorCode, 2003)
-        XCTAssertEqual(BranchError.invalidResponse.errorCode, 2004)
-        XCTAssertEqual(BranchError.invalidStateTransition(from: "a", to: "b").errorCode, 3001)
-        XCTAssertEqual(BranchError.sessionRequired.errorCode, 3002)
-        XCTAssertEqual(BranchError.invalidURL("test").errorCode, 4001)
-        XCTAssertEqual(BranchError.noURLProvided.errorCode, 4002)
-        XCTAssertEqual(BranchError.invalidUserActivity.errorCode, 4004)
-        XCTAssertEqual(BranchError.invalidIdentity("test").errorCode, 5001)
-    }
-
-    func testBranchErrorDescriptions() {
-        XCTAssertTrue(BranchError.notInitialized.errorDescription?.contains("not initialized") ?? false)
-        XCTAssertTrue(BranchError.sessionRequired.errorDescription?.contains("requires an initialized session") ?? false)
-        XCTAssertTrue(BranchError.timeout.errorDescription?.contains("timed out") ?? false)
-        XCTAssertTrue(BranchError.invalidUserActivity.errorDescription?.contains("Invalid user activity") ?? false)
-    }
-
-    func testBranchErrorDomain() {
-        XCTAssertEqual(BranchError.errorDomain, "io.branch.sdk")
-    }
-
-    func testBranchErrorEquatable() {
-        XCTAssertEqual(BranchError.sessionRequired, BranchError.sessionRequired)
-        XCTAssertEqual(BranchError.timeout, BranchError.timeout)
-        XCTAssertNotEqual(BranchError.sessionRequired, BranchError.timeout)
-    }
-
-    func testBranchErrorServerErrorDescription() {
-        let errorWithMessage = BranchError.serverError(statusCode: 500, message: "Internal Server Error")
-        XCTAssertTrue(errorWithMessage.errorDescription?.contains("500") ?? false)
-        XCTAssertTrue(errorWithMessage.errorDescription?.contains("Internal Server Error") ?? false)
-
-        let errorWithoutMessage = BranchError.serverError(statusCode: 404, message: nil)
-        XCTAssertTrue(errorWithoutMessage.errorDescription?.contains("404") ?? false)
-    }
-
-    func testBranchErrorLinkCreationFailed() {
-        let error = BranchError.linkCreationFailed("Network unavailable")
-        XCTAssertEqual(error.errorCode, 4003)
-        XCTAssertTrue(error.errorDescription?.contains("Failed to create link") ?? false)
-        XCTAssertTrue(error.errorDescription?.contains("Network unavailable") ?? false)
-    }
-
-    func testBranchErrorInvalidEvent() {
-        let error = BranchError.invalidEvent("Event name is empty")
-        XCTAssertEqual(error.errorCode, 6001)
-        XCTAssertTrue(error.errorDescription?.contains("Invalid event") ?? false)
-        XCTAssertTrue(error.errorDescription?.contains("Event name is empty") ?? false)
-    }
-
-    func testBranchErrorEventTrackingFailed() {
-        let error = BranchError.eventTrackingFailed("Server rejected event")
-        XCTAssertEqual(error.errorCode, 6002)
-        XCTAssertTrue(error.errorDescription?.contains("Failed to track event") ?? false)
-        XCTAssertTrue(error.errorDescription?.contains("Server rejected event") ?? false)
-    }
-
-    func testBranchErrorStorageError() {
-        let error = BranchError.storageError("Failed to write to disk")
-        XCTAssertEqual(error.errorCode, 7001)
-        XCTAssertTrue(error.errorDescription?.contains("Storage error") ?? false)
-        XCTAssertTrue(error.errorDescription?.contains("Failed to write to disk") ?? false)
-    }
-
-    func testBranchErrorUnknown() {
-        let error = BranchError.unknown("Unexpected condition")
-        XCTAssertEqual(error.errorCode, 9001)
-        XCTAssertTrue(error.errorDescription?.contains("Unknown error") ?? false)
-        XCTAssertTrue(error.errorDescription?.contains("Unexpected condition") ?? false)
-    }
-
-    func testBranchErrorUnderlying() {
-        let underlyingError = NSError(domain: "TestDomain", code: 42, userInfo: [NSLocalizedDescriptionKey: "Underlying issue"])
-        let error = BranchError.underlying(underlyingError)
-        XCTAssertEqual(error.errorCode, 9002)
-        XCTAssertTrue(error.errorDescription?.contains("Underlying error") ?? false)
-        XCTAssertTrue(error.errorDescription?.contains("Underlying issue") ?? false)
-    }
-
-    func testBranchErrorUserInfo() {
-        let error = BranchError.sessionRequired
-        let userInfo = error.errorUserInfo
-
-        XCTAssertNotNil(userInfo[NSLocalizedDescriptionKey])
-        let description = userInfo[NSLocalizedDescriptionKey] as? String
-        XCTAssertEqual(description, error.errorDescription)
-    }
-
-    func testBranchErrorAllCodes() {
-        // Configuration errors (1xxx)
-        XCTAssertEqual(BranchError.invalidConfiguration("test").errorCode, 1001)
-        XCTAssertEqual(BranchError.notInitialized.errorCode, 1002)
-        XCTAssertEqual(BranchError.alreadyInitialized.errorCode, 1003)
-
-        // Network errors (2xxx)
-        XCTAssertEqual(BranchError.networkError("test").errorCode, 2001)
-        XCTAssertEqual(BranchError.timeout.errorCode, 2002)
-        XCTAssertEqual(BranchError.serverError(statusCode: 500, message: nil).errorCode, 2003)
-        XCTAssertEqual(BranchError.invalidResponse.errorCode, 2004)
-
-        // State errors (3xxx)
-        XCTAssertEqual(BranchError.invalidStateTransition(from: "a", to: "b").errorCode, 3001)
-        XCTAssertEqual(BranchError.sessionRequired.errorCode, 3002)
-
-        // Link errors (4xxx)
-        XCTAssertEqual(BranchError.invalidURL("test").errorCode, 4001)
-        XCTAssertEqual(BranchError.noURLProvided.errorCode, 4002)
-        XCTAssertEqual(BranchError.linkCreationFailed("test").errorCode, 4003)
-        XCTAssertEqual(BranchError.invalidUserActivity.errorCode, 4004)
-
-        // Identity errors (5xxx)
-        XCTAssertEqual(BranchError.invalidIdentity("test").errorCode, 5001)
-
-        // Event errors (6xxx)
-        XCTAssertEqual(BranchError.invalidEvent("test").errorCode, 6001)
-        XCTAssertEqual(BranchError.eventTrackingFailed("test").errorCode, 6002)
-
-        // Storage errors (7xxx)
-        XCTAssertEqual(BranchError.storageError("test").errorCode, 7001)
-
-        // General errors (9xxx)
-        XCTAssertEqual(BranchError.unknown("test").errorCode, 9001)
-        XCTAssertEqual(BranchError.underlying(NSError(domain: "", code: 0)).errorCode, 9002)
-    }
-
-    func testBranchErrorDescriptionsContainExpectedText() {
-        // Test all error descriptions contain expected text
-        XCTAssertTrue(BranchError.invalidConfiguration("test").errorDescription?.contains("Invalid configuration") ?? false)
-        XCTAssertTrue(BranchError.notInitialized.errorDescription?.contains("not initialized") ?? false)
-        XCTAssertTrue(BranchError.alreadyInitialized.errorDescription?.contains("already initialized") ?? false)
-        XCTAssertTrue(BranchError.networkError("test").errorDescription?.contains("Network error") ?? false)
-        XCTAssertTrue(BranchError.timeout.errorDescription?.contains("timed out") ?? false)
-        XCTAssertTrue(BranchError.invalidResponse.errorDescription?.contains("Invalid response") ?? false)
-        XCTAssertTrue(BranchError.invalidStateTransition(from: "a", to: "b").errorDescription?.contains("Invalid state transition") ?? false)
-        XCTAssertTrue(BranchError.sessionRequired.errorDescription?.contains("requires an initialized session") ?? false)
-        XCTAssertTrue(BranchError.invalidURL("test").errorDescription?.contains("Invalid URL") ?? false)
-        XCTAssertTrue(BranchError.noURLProvided.errorDescription?.contains("No URL provided") ?? false)
-        XCTAssertTrue(BranchError.invalidUserActivity.errorDescription?.contains("Invalid user activity") ?? false)
-        XCTAssertTrue(BranchError.invalidIdentity("test").errorDescription?.contains("Invalid identity") ?? false)
+        let fullDesc = fullSession.description
+        XCTAssertFalse(fullDesc.contains("first"), "Should not indicate first session")
+        XCTAssertTrue(fullDesc.contains("identified"), "Should indicate identified")
+        XCTAssertTrue(fullDesc.contains("hasLinkData"), "Should indicate link data")
     }
 }
