@@ -166,8 +166,8 @@ public final class BranchLoggerAdapter: Logging, @unchecked Sendable {
 
     // MARK: Public
 
-    /// Shared adapter instance
-    public static let shared = BranchLoggerAdapter()
+    /// Shared adapter instance (uses verbose level to let BranchLogger control filtering)
+    public static let shared = BranchLoggerAdapter(minimumLevel: .verbose)
 
     public var minimumLevel: LogLevel {
         _minimumLevel
