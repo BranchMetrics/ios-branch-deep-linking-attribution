@@ -60,18 +60,64 @@ public protocol BranchNetworkService: Sendable {
 ///
 /// Uses dynamic invocation to avoid compile-time dependencies on Objective-C types,
 /// which enables SPM compatibility.
+///
+/// The base URL is determined dynamically from BNCServerAPI to respect configurations
+/// set via `Branch.setAPIUrl()`, EU servers, and tracking domains.
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked Sendable {
     // MARK: - Properties
 
-    private let baseURL: String
     private let logger: any Logging
 
     // MARK: - Initialization
 
-    public init(baseURL: String = "https://api2.branch.io") {
-        self.baseURL = baseURL
+    public init() {
         logger = BranchLoggerAdapter.shared
+    }
+
+    // MARK: - Dynamic URL Resolution
+
+    /// Get the base URL from BNCServerAPI, respecting custom URL configurations.
+    ///
+    /// This dynamically calls `[BNCServerAPI sharedInstance].installServiceURL` and extracts
+    /// the base URL, ensuring we respect:
+    /// - Custom API URL set via `Branch.setAPIUrl()`
+    /// - EU server configuration
+    /// - Tracking domain configuration
+    private func getBaseURL() -> String {
+        // Try to get installServiceURL from BNCServerAPI and extract base URL
+        guard let serverAPIClass = NSClassFromString("BNCServerAPI") as? NSObject.Type else {
+            log(.warning, "BNCServerAPI class not found, using default URL")
+            return "https://api2.branch.io"
+        }
+
+        let sharedSelector = NSSelectorFromString("sharedInstance")
+        guard serverAPIClass.responds(to: sharedSelector),
+              let sharedInstance = serverAPIClass.perform(sharedSelector)?.takeUnretainedValue() as? NSObject
+        else {
+            log(.warning, "BNCServerAPI.sharedInstance not available, using default URL")
+            return "https://api2.branch.io"
+        }
+
+        // Get installServiceURL which includes the full URL with endpoint
+        let installURLSelector = NSSelectorFromString("installServiceURL")
+        guard sharedInstance.responds(to: installURLSelector),
+              let installURL = sharedInstance.perform(installURLSelector)?.takeUnretainedValue() as? String
+        else {
+            log(.warning, "installServiceURL not available, using default URL")
+            return "https://api2.branch.io"
+        }
+
+        // Extract base URL by removing the endpoint suffix
+        // installServiceURL returns something like "https://api.stage.branch.io/v1/install"
+        if let range = installURL.range(of: "/v1/install") {
+            let baseURL = String(installURL[..<range.lowerBound])
+            log(.debug, "Using configured API base URL: \(baseURL)")
+            return baseURL
+        }
+
+        log(.warning, "Could not parse installServiceURL, using default URL")
+        return "https://api2.branch.io"
     }
 
     // MARK: - Private Logging Helper
@@ -188,7 +234,7 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
         endpoint: String,
         requestData: [String: Any]
     ) async throws -> [String: Any] {
-        let fullURL = baseURL + endpoint
+        let fullURL = getBaseURL() + endpoint
 
         guard let url = URL(string: fullURL) else {
             log(.error, "performRequest - invalid URL: \(fullURL)")
