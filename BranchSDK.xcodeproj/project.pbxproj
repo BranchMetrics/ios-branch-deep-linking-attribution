@@ -536,6 +536,10 @@
 		5CF36A51A1CFD8642CCBA0FA /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACF28E65891872A40078CDD /* SessionManager.swift */; };
 		E7666EB8743848D9A0D28131 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACF28E65891872A40078CDD /* SessionManager.swift */; };
 		FB3DDC1136C64ADB3650D68D /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACF28E65891872A40078CDD /* SessionManager.swift */; };
+		A774894F98CF4556A45FB792 /* BranchNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2027F549B4AE4C609154BF7E /* BranchNetworkService.swift */; };
+		9E2AE23DD0454CC081568FA9 /* BranchNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2027F549B4AE4C609154BF7E /* BranchNetworkService.swift */; };
+		90156F3E159E47B882D3AA6F /* BranchNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2027F549B4AE4C609154BF7E /* BranchNetworkService.swift */; };
+
 		DC1E6563F4D5E398EA5FCB54 /* SessionManaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4890C55648E1048670873EB1 /* SessionManaging.swift */; };
 		1A30C8B2BF961E650A6FC321 /* SessionManaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4890C55648E1048670873EB1 /* SessionManaging.swift */; };
 		FC8C73A6E58FC6F5D9320C38 /* SessionManaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4890C55648E1048670873EB1 /* SessionManaging.swift */; };
@@ -763,6 +767,8 @@
 		E1BBB81630CC7194C138ACD6 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		2A5A1027BDDD7592AA26B1B2 /* SessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionState.swift; sourceTree = "<group>"; };
 		6ACF28E65891872A40078CDD /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
+		2027F549B4AE4C609154BF7E /* BranchNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchNetworkService.swift; sourceTree = "<group>"; };
+
 		4890C55648E1048670873EB1 /* SessionManaging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManaging.swift; sourceTree = "<group>"; };
 		F7D147E17CB8A0463C466938 /* BranchSessionIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchSessionIntegration.swift; sourceTree = "<group>"; };
 		9C5D352BDF23D40AF7204A7C /* BranchObservableState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchObservableState.swift; sourceTree = "<group>"; };
@@ -1112,6 +1118,7 @@
 				D5CA393EFA4AC2745EE895DB /* Integration */,
 				E399BE3C6FCDC24207D77ED0 /* Logging */,
 				D1461BA6CE6C37311F683ED2 /* Models */,
+				1D84C90BBB154B7D95C2C04B /* Network */,
 				FC4ED337CE98F75DEFFD516C /* Observable */,
 				07F4467A43472BD6EAB2CB34 /* Protocols */,
 			);
@@ -1177,6 +1184,14 @@
 				4890C55648E1048670873EB1 /* SessionManaging.swift */,
 			);
 			path = Protocols;
+			sourceTree = "<group>";
+		};
+		1D84C90BBB154B7D95C2C04B /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				2027F549B4AE4C609154BF7E /* BranchNetworkService.swift */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1739,6 +1754,7 @@
 				B8674D5E79356292AAB1F2F4 /* Session.swift in Sources */,
 				F8B60A9F4949E6F2FB038FE1 /* SessionState.swift in Sources */,
 				5CF36A51A1CFD8642CCBA0FA /* SessionManager.swift in Sources */,
+				A774894F98CF4556A45FB792 /* BranchNetworkService.swift in Sources */,
 				DC1E6563F4D5E398EA5FCB54 /* SessionManaging.swift in Sources */,
 				EB591767900FE69079F11E06 /* BranchSessionIntegration.swift in Sources */,
 				21CDBD6D56C1DC72CE115808 /* BranchObservableState.swift in Sources */,
@@ -1834,6 +1850,7 @@
 				70AD837BE5EC60CFD9EA747A /* Session.swift in Sources */,
 				2CE1FAF85553657DDA3F84FC /* SessionState.swift in Sources */,
 				E7666EB8743848D9A0D28131 /* SessionManager.swift in Sources */,
+				9E2AE23DD0454CC081568FA9 /* BranchNetworkService.swift in Sources */,
 				1A30C8B2BF961E650A6FC321 /* SessionManaging.swift in Sources */,
 				B94D98C1FB19389357DCE351 /* BranchSessionIntegration.swift in Sources */,
 				4569E31566D80ECBA755EA66 /* BranchObservableState.swift in Sources */,
@@ -1929,6 +1946,7 @@
 				1F0A79FF991FC1BF84C9BD67 /* Session.swift in Sources */,
 				4B607B5F976C1542B678E62B /* SessionState.swift in Sources */,
 				FB3DDC1136C64ADB3650D68D /* SessionManager.swift in Sources */,
+				90156F3E159E47B882D3AA6F /* BranchNetworkService.swift in Sources */,
 				FC8C73A6E58FC6F5D9320C38 /* SessionManaging.swift in Sources */,
 				FE6C286567E5839112276155 /* BranchSessionIntegration.swift in Sources */,
 				C35C0545DC50E50AA40CC697 /* BranchObservableState.swift in Sources */,
