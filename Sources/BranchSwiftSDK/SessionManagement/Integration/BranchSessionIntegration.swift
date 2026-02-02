@@ -41,6 +41,22 @@ import Foundation
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 @objc(BranchSessionIntegration)
 public final class BranchSessionIntegration: NSObject {
+    // MARK: Private
+
+    /// Shared logger for static methods
+    private static let logger: any Logging = BranchLoggerAdapter.shared
+
+    /// Convenience logging method for static context.
+    private static func log(
+        _ level: LogLevel,
+        _ message: @autoclosure () -> String,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
+        logger.log(level, message(), file: file, function: function, line: line)
+    }
+
     // MARK: Public
 
     /// Process a Universal Link from NSUserActivity using task coalescing.
@@ -58,13 +74,17 @@ public final class BranchSessionIntegration: NSObject {
         sceneIdentifier: String?,
         completion: @escaping ([String: Any]?, Error?) -> Void
     ) {
+        log(.debug, "handleUserActivity called - activityType: \(userActivity.activityType), scene: \(sceneIdentifier ?? "nil")")
+
         guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
               let url = userActivity.webpageURL
         else {
+            log(.warning, "Invalid user activity - type: \(userActivity.activityType), webpageURL: \(userActivity.webpageURL?.absoluteString ?? "nil")")
             completion(nil, BranchError.invalidUserActivity)
             return
         }
 
+        log(.debug, "Processing Universal Link: \(url.absoluteString)")
         handleURL(url, sceneIdentifier: sceneIdentifier, completion: completion)
     }
 
@@ -79,6 +99,8 @@ public final class BranchSessionIntegration: NSObject {
         sceneIdentifier: String?,
         completion: @escaping ([String: Any]?, Error?) -> Void
     ) {
+        log(.debug, "handleURL called - URL: \(url.absoluteString), scene: \(sceneIdentifier ?? "nil")")
+
         Task {
             do {
                 let coordinator = BranchSessionCoordinator.shared
@@ -91,10 +113,14 @@ public final class BranchSessionIntegration: NSObject {
                 // Convert session to dictionary format expected by legacy SDK
                 let params = convertSessionToParams(session)
 
+                log(.debug, "handleURL completed successfully - sessionId: \(session.id)")
+
                 await MainActor.run {
                     completion(params, nil)
                 }
             } catch {
+                log(.error, "handleURL failed: \(error.localizedDescription)")
+
                 await MainActor.run {
                     completion(nil, error)
                 }
@@ -114,6 +140,8 @@ public final class BranchSessionIntegration: NSObject {
         sceneIdentifier: String?,
         completion: @escaping ([String: Any]?, Error?) -> Void
     ) {
+        log(.debug, "initializeSession called - scene: \(sceneIdentifier ?? "nil")")
+
         Task {
             do {
                 let coordinator = BranchSessionCoordinator.shared
@@ -123,10 +151,14 @@ public final class BranchSessionIntegration: NSObject {
                 let session = try await coordinator.sessionManager.initialize(options: options)
                 let params = convertSessionToParams(session)
 
+                log(.debug, "Session initialized successfully - sessionId: \(session.id), isFirstSession: \(session.isFirstSession)")
+
                 await MainActor.run {
                     completion(params, nil)
                 }
             } catch {
+                log(.error, "Session initialization failed: \(error.localizedDescription)")
+
                 await MainActor.run {
                     completion(nil, error)
                 }
