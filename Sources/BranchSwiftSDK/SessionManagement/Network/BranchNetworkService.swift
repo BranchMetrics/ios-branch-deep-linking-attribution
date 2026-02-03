@@ -76,6 +76,258 @@ public typealias NetworkLogCallback = @Sendable (
     _ error: Error?
 ) -> Void
 
+// MARK: - Network Log Entry (Modern Swift Approach)
+
+/// Represents a single network log entry with all request/response details.
+///
+/// This struct is `Sendable` and can be safely passed across actor boundaries.
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+public struct NetworkLogEntry: Sendable {
+    public let id: UUID
+    public let timestamp: Date
+    public let url: String
+    public let requestBody: [String: any Sendable]
+    public let responseBody: [String: any Sendable]?
+    public let statusCode: Int?
+    public let error: String?
+
+    public init(
+        url: String,
+        requestBody: [String: Any],
+        responseBody: [String: Any]?,
+        statusCode: Int?,
+        error: Error?
+    ) {
+        id = UUID()
+        timestamp = Date()
+        self.url = url
+        self.requestBody = Self.makeSendable(requestBody)
+        self.responseBody = responseBody.map { Self.makeSendable($0) }
+        self.statusCode = statusCode
+        self.error = error?.localizedDescription
+    }
+
+    /// Convert [String: Any] to [String: any Sendable] for actor isolation safety
+    private static func makeSendable(_ dict: [String: Any]) -> [String: any Sendable] {
+        dict.compactMapValues { makeSendableValue($0) }
+    }
+
+    /// Convert any value to a Sendable equivalent
+    private static func makeSendableValue(_ value: Any) -> (any Sendable)? {
+        switch value {
+        case let string as String:
+            return string
+        case let int as Int:
+            return int
+        case let double as Double:
+            return double
+        case let bool as Bool:
+            return bool
+        case let nsNumber as NSNumber:
+            return nsNumber.doubleValue
+        case let array as [Any]:
+            // Recursively convert array elements
+            return array.compactMap { makeSendableValue($0) }
+        case let nested as [String: Any]:
+            return makeSendable(nested)
+        case is NSNull:
+            return nil
+        default:
+            // Fallback: convert to string representation
+            return String(describing: value)
+        }
+    }
+}
+
+// MARK: - Branch Network Logger Actor
+
+/// Thread-safe network logger using Swift Concurrency.
+///
+/// This actor provides two ways to observe network logs:
+/// 1. **AsyncStream**: Modern reactive approach with automatic buffering
+/// 2. **Callback**: Legacy support for simple logging
+///
+/// Example usage with AsyncStream:
+/// ```swift
+/// Task {
+///     for await entry in BranchNetworkLogger.shared.logStream {
+///         print("[\(entry.timestamp)] \(entry.url) -> \(entry.statusCode ?? 0)")
+///     }
+/// }
+/// ```
+///
+/// Example usage with callback:
+/// ```swift
+/// await BranchNetworkLogger.shared.setCallback { entry in
+///     print("Request: \(entry.url)")
+/// }
+/// ```
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+public actor BranchNetworkLogger {
+    // MARK: - Singleton
+
+    /// Shared instance for global access
+    public static let shared = BranchNetworkLogger()
+
+    // MARK: - Properties
+
+    /// Buffer for logs received before any observer is attached
+    private var pendingLogs: [NetworkLogEntry] = []
+
+    /// Maximum number of pending logs to buffer (prevents memory issues)
+    private let maxPendingLogs = 100
+
+    /// Stream continuation for AsyncStream-based observation
+    private var streamContinuation: AsyncStream<NetworkLogEntry>.Continuation?
+
+    /// Legacy callback for simple logging
+    private var callback: (@Sendable (NetworkLogEntry) -> Void)?
+
+    /// Flag to track if stream has been accessed
+    private var streamStarted = false
+
+    // MARK: - Initialization
+
+    private init() {}
+
+    // MARK: - AsyncStream (Modern Approach)
+
+    /// AsyncStream of network log entries.
+    ///
+    /// This stream buffers entries until an observer attaches, then flushes
+    /// all pending logs followed by real-time logs.
+    ///
+    /// Usage:
+    /// ```swift
+    /// Task {
+    ///     for await entry in BranchNetworkLogger.shared.logStream {
+    ///         // Process each log entry
+    ///     }
+    /// }
+    /// ```
+    public nonisolated var logStream: AsyncStream<NetworkLogEntry> {
+        AsyncStream { continuation in
+            Task {
+                await self.attachStream(continuation)
+            }
+        }
+    }
+
+    /// Attach a stream continuation and flush pending logs
+    private func attachStream(_ continuation: AsyncStream<NetworkLogEntry>.Continuation) {
+        streamContinuation = continuation
+        streamStarted = true
+
+        // Flush all pending logs to the new stream
+        for entry in pendingLogs {
+            continuation.yield(entry)
+        }
+        pendingLogs.removeAll()
+
+        // Handle stream termination
+        continuation.onTermination = { @Sendable [weak self] _ in
+            Task { [weak self] in
+                await self?.detachStream()
+            }
+        }
+    }
+
+    /// Detach stream when observer stops listening
+    private func detachStream() {
+        streamContinuation = nil
+        streamStarted = false
+    }
+
+    // MARK: - Callback (Legacy Support)
+
+    /// Set a callback for receiving log entries.
+    ///
+    /// This is provided for simpler use cases where AsyncStream is overkill.
+    /// When set, pending logs are flushed to the callback.
+    ///
+    /// - Parameter callback: Closure called for each log entry
+    public func setCallback(_ callback: @escaping @Sendable (NetworkLogEntry) -> Void) {
+        self.callback = callback
+
+        // Flush pending logs to callback
+        for entry in pendingLogs {
+            callback(entry)
+        }
+        pendingLogs.removeAll()
+    }
+
+    /// Remove the callback
+    public func removeCallback() {
+        callback = nil
+    }
+
+    // MARK: - Logging
+
+    /// Log a network request/response.
+    ///
+    /// If no observer is attached, the entry is buffered (up to `maxPendingLogs`).
+    /// When an observer attaches, buffered entries are flushed.
+    ///
+    /// - Parameters:
+    ///   - url: The request URL
+    ///   - requestBody: The request body dictionary
+    ///   - responseBody: The response body dictionary (nil if failed)
+    ///   - statusCode: HTTP status code (nil if failed)
+    ///   - error: Error if request failed
+    public func log(
+        url: String,
+        requestBody: [String: Any],
+        responseBody: [String: Any]?,
+        statusCode: Int?,
+        error: Error?
+    ) {
+        let entry = NetworkLogEntry(
+            url: url,
+            requestBody: requestBody,
+            responseBody: responseBody,
+            statusCode: statusCode,
+            error: error
+        )
+
+        // Try to deliver to stream
+        if let continuation = streamContinuation {
+            continuation.yield(entry)
+            return
+        }
+
+        // Try to deliver to callback
+        if let callback = callback {
+            callback(entry)
+            return
+        }
+
+        // Buffer if no observer is attached
+        pendingLogs.append(entry)
+
+        // Trim buffer if too large
+        if pendingLogs.count > maxPendingLogs {
+            pendingLogs.removeFirst(pendingLogs.count - maxPendingLogs)
+        }
+    }
+
+    // MARK: - Utility
+
+    /// Check if any observer is currently attached
+    public var hasObserver: Bool {
+        streamContinuation != nil || callback != nil
+    }
+
+    /// Get the count of pending (unbuffered) logs
+    public var pendingLogCount: Int {
+        pendingLogs.count
+    }
+
+    /// Clear all pending logs
+    public func clearPendingLogs() {
+        pendingLogs.removeAll()
+    }
+}
+
 // MARK: - Default Implementation
 
 /// Default network service implementation that bridges to the Objective-C BNCServerInterface.
@@ -322,7 +574,15 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
             (data, response) = try await URLSession.shared.data(for: request)
         } catch {
             log(.error, "performRequest - network request failed: \(error.localizedDescription)")
-            // Invoke log callback for network error
+            // Log to modern actor-based logger (buffers if no observer)
+            await BranchNetworkLogger.shared.log(
+                url: fullURL,
+                requestBody: mutableRequestData,
+                responseBody: nil,
+                statusCode: nil,
+                error: error
+            )
+            // Also invoke legacy callback for backwards compatibility
             Self.logCallback?(fullURL, mutableRequestData, nil, nil, error)
             throw BranchError.networkError(error.localizedDescription)
         }
@@ -347,16 +607,33 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
         if !data.isEmpty {
             guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
                 log(.error, "performRequest - invalid JSON response")
-                // Invoke log callback for parse error
-                Self.logCallback?(fullURL, mutableRequestData, nil, httpResponse.statusCode, BranchError.networkError("Invalid JSON response"))
-                throw BranchError.networkError("Invalid JSON response")
+                let parseError = BranchError.networkError("Invalid JSON response")
+                // Log to modern actor-based logger
+                await BranchNetworkLogger.shared.log(
+                    url: fullURL,
+                    requestBody: mutableRequestData,
+                    responseBody: nil,
+                    statusCode: httpResponse.statusCode,
+                    error: parseError
+                )
+                // Also invoke legacy callback for backwards compatibility
+                Self.logCallback?(fullURL, mutableRequestData, nil, httpResponse.statusCode, parseError)
+                throw parseError
             }
             responseData = json
         } else {
             responseData = [:]
         }
 
-        // Invoke log callback for successful parse (even if server returned error status)
+        // Log to modern actor-based logger (always logs, buffers if no observer)
+        await BranchNetworkLogger.shared.log(
+            url: fullURL,
+            requestBody: mutableRequestData,
+            responseBody: responseData,
+            statusCode: httpResponse.statusCode,
+            error: nil
+        )
+        // Also invoke legacy callback for backwards compatibility
         Self.logCallback?(fullURL, mutableRequestData, responseData, httpResponse.statusCode, nil)
 
         // Check for server errors
