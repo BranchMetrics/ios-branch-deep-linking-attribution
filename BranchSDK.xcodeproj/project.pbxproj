@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 73;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -54,6 +54,16 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		02F17CA0314784290B9AE08D /* BranchNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530E462E6C3D9053B1654211 /* BranchNetworkService.swift */; };
+		1F0A79FF991FC1BF84C9BD67 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BBB81630CC7194C138ACD6 /* Session.swift */; };
+		1F19A9E676BB542C2BE15B86 /* BranchLinkSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B379F2D3B122C1D5888A815 /* BranchLinkSimulator.swift */; };
+		2CE1FAF85553657DDA3F84FC /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5A1027BDDD7592AA26B1B2 /* SessionState.swift */; };
+		2ECEC0B4A79FFD7A33E05A47 /* ConfigurationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87EA367A3BBAF3DD5D4C678 /* ConfigurationController.swift */; };
+		3A643D3BCFEF880B3004640F /* BranchRequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322904D68BE09F8785AA8357 /* BranchRequestOperation.swift */; };
+		4B607B5F976C1542B678E62B /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5A1027BDDD7592AA26B1B2 /* SessionState.swift */; };
+		4E162824F0C3ACD4EF1DB8E7 /* BranchLoggerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E002CA8C81697D1477A3E942 /* BranchLoggerAdapter.swift */; };
+		5CF36A51A1CFD8642CCBA0FA /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACF28E65891872A40078CDD /* SessionManager.swift */; };
+		5F2ABFE7B92973EB0F928A90 /* BranchLoggerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E002CA8C81697D1477A3E942 /* BranchLoggerAdapter.swift */; };
 		5F5FDA162B7DE2FE00F14A43 /* BranchLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F5FDA152B7DE2FE00F14A43 /* BranchLogger.m */; };
 		5F5FDA172B7DE2FE00F14A43 /* BranchLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F5FDA152B7DE2FE00F14A43 /* BranchLogger.m */; };
 		5F5FDA182B7DE2FE00F14A43 /* BranchLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F5FDA152B7DE2FE00F14A43 /* BranchLogger.m */; };
@@ -467,6 +477,17 @@
 		5FCDD5B22B7AC89100EAF29F /* BranchSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FF2AFDF28E7C22100393216 /* BranchSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FCDD5B32B7AC89200EAF29F /* BranchSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FF2AFDF28E7C22100393216 /* BranchSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FCDD5B42B7AC89200EAF29F /* BranchSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FF2AFDF28E7C22100393216 /* BranchSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		62B6D8BB5FB30939D3D9F719 /* BranchSessionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0A1D941AB9E25CD0AA7E92 /* BranchSessionCoordinator.swift */; };
+		6986DA3C42698DCEB4FA175D /* ConfigurationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87EA367A3BBAF3DD5D4C678 /* ConfigurationController.swift */; };
+		6D5A8BD4BDE0000AAB95DE6C /* BranchLoggerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E002CA8C81697D1477A3E942 /* BranchLoggerAdapter.swift */; };
+		6DD1CF49CE86777AE02B8E24 /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5431635F706EF6561E40AB9 /* AnyCodable.swift */; };
+		70AD837BE5EC60CFD9EA747A /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BBB81630CC7194C138ACD6 /* Session.swift */; };
+		782F85169F95E5E332B437FC /* BranchSessionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0A1D941AB9E25CD0AA7E92 /* BranchSessionCoordinator.swift */; };
+		7EAE0ECFA7DB0B153F9AE8E2 /* BranchRequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322904D68BE09F8785AA8357 /* BranchRequestOperation.swift */; };
+		826F50E528E9CEB3774FFD93 /* ConfigurationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87EA367A3BBAF3DD5D4C678 /* ConfigurationController.swift */; };
+		8BDAA37F2EC8F59B748E0601 /* BranchSessionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0A1D941AB9E25CD0AA7E92 /* BranchSessionCoordinator.swift */; };
+		8C5EB6570FD93A56D7201403 /* BranchNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530E462E6C3D9053B1654211 /* BranchNetworkService.swift */; };
+		98336EEDDA051101A0D488A6 /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5431635F706EF6561E40AB9 /* AnyCodable.swift */; };
 		B70D0E252E8DC1F8002BD4FE /* BranchConfigurationController.m in Sources */ = {isa = PBXBuildFile; fileRef = B70D0E242E8DC1F8002BD4FE /* BranchConfigurationController.m */; };
 		B70D0E262E8DC1F8002BD4FE /* BranchConfigurationController.m in Sources */ = {isa = PBXBuildFile; fileRef = B70D0E242E8DC1F8002BD4FE /* BranchConfigurationController.m */; };
 		B70D0E272E8DC1F8002BD4FE /* BranchConfigurationController.m in Sources */ = {isa = PBXBuildFile; fileRef = B70D0E242E8DC1F8002BD4FE /* BranchConfigurationController.m */; };
@@ -474,6 +495,14 @@
 		B70D0E2D2E8DCEC6002BD4FE /* BNCServerRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = E74E438D2E2F56AC000DC427 /* BNCServerRequestOperation.m */; };
 		B70D0E2E2E8DCEC6002BD4FE /* BNCServerRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = E74E438D2E2F56AC000DC427 /* BNCServerRequestOperation.m */; };
 		B70D0E2F2E8DCEC6002BD4FE /* BNCServerRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = E74E438D2E2F56AC000DC427 /* BNCServerRequestOperation.m */; };
+		B8674D5E79356292AAB1F2F4 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BBB81630CC7194C138ACD6 /* Session.swift */; };
+		B94D98C1FB19389357DCE351 /* BranchSessionIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D147E17CB8A0463C466938 /* BranchSessionIntegration.swift */; };
+		BAFE5DF3E19B828E3F7B56E4 /* InitializationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D956E2763625DE6340A56D /* InitializationOptions.swift */; };
+		C90D79612B8D22C6C8AF95AD /* InitializationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D956E2763625DE6340A56D /* InitializationOptions.swift */; };
+		CEDA019E78AB7BE6A8FBED55 /* BranchLinkSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B379F2D3B122C1D5888A815 /* BranchLinkSimulator.swift */; };
+		D3E0411E72F259C39C3A8064 /* BranchNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530E462E6C3D9053B1654211 /* BranchNetworkService.swift */; };
+		D52C9F961A8E35C96B8E4BE5 /* BranchRequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322904D68BE09F8785AA8357 /* BranchRequestOperation.swift */; };
+		DDE67B7B52789F84F2077D4B /* BranchLinkSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B379F2D3B122C1D5888A815 /* BranchLinkSimulator.swift */; };
 		E52E5B062CC79E4E00F553EE /* BranchFileLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = E52E5B052CC79E4E00F553EE /* BranchFileLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E52E5B072CC79E4E00F553EE /* BranchFileLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = E52E5B052CC79E4E00F553EE /* BranchFileLogger.h */; };
 		E52E5B0A2CC79E5C00F553EE /* BranchFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E52E5B092CC79E5C00F553EE /* BranchFileLogger.m */; };
@@ -490,6 +519,7 @@
 		E74E438E2E2F56AC000DC427 /* BNCServerRequestOperation.m in Headers */ = {isa = PBXBuildFile; fileRef = E74E438D2E2F56AC000DC427 /* BNCServerRequestOperation.m */; };
 		E74E438F2E2F56AC000DC427 /* BNCServerRequestOperation.m in Headers */ = {isa = PBXBuildFile; fileRef = E74E438D2E2F56AC000DC427 /* BNCServerRequestOperation.m */; };
 		E74E43902E2F56AC000DC427 /* BNCServerRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = E74E438D2E2F56AC000DC427 /* BNCServerRequestOperation.m */; };
+		E7666EB8743848D9A0D28131 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACF28E65891872A40078CDD /* SessionManager.swift */; };
 		E7CA74EF2E1B4F75002EFB40 /* BranchSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F22101D2894A0DB00C5B190 /* BranchSDK.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		E7CA75B92E1B994B002EFB40 /* AdServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7CA75B82E1B994B002EFB40 /* AdServices.framework */; };
 		E7CA75BB2E1B9951002EFB40 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7CA75BA2E1B9951002EFB40 /* AdSupport.framework */; };
@@ -503,55 +533,12 @@
 		E7FAF6A02E26E497006C167F /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E7FAF69F2E26E497006C167F /* BranchConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E7FAF6A12E26E497006C167F /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E7FAF69F2E26E497006C167F /* BranchConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E7FAF6A22E26E497006C167F /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E7FAF69F2E26E497006C167F /* BranchConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3A643D3BCFEF880B3004640F /* BranchRequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322904D68BE09F8785AA8357 /* BranchRequestOperation.swift */; };
-		D52C9F961A8E35C96B8E4BE5 /* BranchRequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322904D68BE09F8785AA8357 /* BranchRequestOperation.swift */; };
-		7EAE0ECFA7DB0B153F9AE8E2 /* BranchRequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322904D68BE09F8785AA8357 /* BranchRequestOperation.swift */; };
-		A4B443901220CC1765440A86 /* BranchRequestQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 541E75E41C00A5CD65D3EA18 /* BranchRequestQueue.swift */; };
-		2B9B1985A0659938241DDAAC /* BranchRequestQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 541E75E41C00A5CD65D3EA18 /* BranchRequestQueue.swift */; };
-		3E60220B4A061284FEA14A59 /* BranchRequestQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 541E75E41C00A5CD65D3EA18 /* BranchRequestQueue.swift */; };
-		2ECEC0B4A79FFD7A33E05A47 /* ConfigurationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87EA367A3BBAF3DD5D4C678 /* ConfigurationController.swift */; };
-		826F50E528E9CEB3774FFD93 /* ConfigurationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87EA367A3BBAF3DD5D4C678 /* ConfigurationController.swift */; };
-		6986DA3C42698DCEB4FA175D /* ConfigurationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87EA367A3BBAF3DD5D4C678 /* ConfigurationController.swift */; };
-		4E162824F0C3ACD4EF1DB8E7 /* BranchLoggerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E002CA8C81697D1477A3E942 /* BranchLoggerAdapter.swift */; };
-		5F2ABFE7B92973EB0F928A90 /* BranchLoggerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E002CA8C81697D1477A3E942 /* BranchLoggerAdapter.swift */; };
-		6D5A8BD4BDE0000AAB95DE6C /* BranchLoggerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E002CA8C81697D1477A3E942 /* BranchLoggerAdapter.swift */; };
-		F0CB0B1B7BAFE355794A9735 /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5431635F706EF6561E40AB9 /* AnyCodable.swift */; };
-		98336EEDDA051101A0D488A6 /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5431635F706EF6561E40AB9 /* AnyCodable.swift */; };
-		6DD1CF49CE86777AE02B8E24 /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5431635F706EF6561E40AB9 /* AnyCodable.swift */; };
-		9C38FE347F1C8456DF36A29F /* BranchError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD830C286DF7324C4CC5ED60 /* BranchError.swift */; };
-		16998D1D1F27383CFC6F58A8 /* BranchError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD830C286DF7324C4CC5ED60 /* BranchError.swift */; };
-		49CEA46B8EB418718014BF07 /* BranchError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD830C286DF7324C4CC5ED60 /* BranchError.swift */; };
-		BAFE5DF3E19B828E3F7B56E4 /* InitializationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D956E2763625DE6340A56D /* InitializationOptions.swift */; };
 		E9C126B1D0A57E16AC49DA44 /* InitializationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D956E2763625DE6340A56D /* InitializationOptions.swift */; };
-		C90D79612B8D22C6C8AF95AD /* InitializationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D956E2763625DE6340A56D /* InitializationOptions.swift */; };
-		F7944AF1AA8E12FFA20AB81F /* LinkData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89876A79209AC85291745899 /* LinkData.swift */; };
-		F5CB1A2B9F2E0466B6305FFE /* LinkData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89876A79209AC85291745899 /* LinkData.swift */; };
-		782161B7D16D1EDBEB6FD932 /* LinkData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89876A79209AC85291745899 /* LinkData.swift */; };
-		B8674D5E79356292AAB1F2F4 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BBB81630CC7194C138ACD6 /* Session.swift */; };
-		70AD837BE5EC60CFD9EA747A /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BBB81630CC7194C138ACD6 /* Session.swift */; };
-		1F0A79FF991FC1BF84C9BD67 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BBB81630CC7194C138ACD6 /* Session.swift */; };
-		F8B60A9F4949E6F2FB038FE1 /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5A1027BDDD7592AA26B1B2 /* SessionState.swift */; };
-		2CE1FAF85553657DDA3F84FC /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5A1027BDDD7592AA26B1B2 /* SessionState.swift */; };
-		4B607B5F976C1542B678E62B /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5A1027BDDD7592AA26B1B2 /* SessionState.swift */; };
-		5CF36A51A1CFD8642CCBA0FA /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACF28E65891872A40078CDD /* SessionManager.swift */; };
-		E7666EB8743848D9A0D28131 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACF28E65891872A40078CDD /* SessionManager.swift */; };
-		FB3DDC1136C64ADB3650D68D /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACF28E65891872A40078CDD /* SessionManager.swift */; };
-		A774894F98CF4556A45FB792 /* BranchNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2027F549B4AE4C609154BF7E /* BranchNetworkService.swift */; };
-		9E2AE23DD0454CC081568FA9 /* BranchNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2027F549B4AE4C609154BF7E /* BranchNetworkService.swift */; };
-		90156F3E159E47B882D3AA6F /* BranchNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2027F549B4AE4C609154BF7E /* BranchNetworkService.swift */; };
-
-		DC1E6563F4D5E398EA5FCB54 /* SessionManaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4890C55648E1048670873EB1 /* SessionManaging.swift */; };
-		1A30C8B2BF961E650A6FC321 /* SessionManaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4890C55648E1048670873EB1 /* SessionManaging.swift */; };
-		FC8C73A6E58FC6F5D9320C38 /* SessionManaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4890C55648E1048670873EB1 /* SessionManaging.swift */; };
 		EB591767900FE69079F11E06 /* BranchSessionIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D147E17CB8A0463C466938 /* BranchSessionIntegration.swift */; };
-		B94D98C1FB19389357DCE351 /* BranchSessionIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D147E17CB8A0463C466938 /* BranchSessionIntegration.swift */; };
+		F0CB0B1B7BAFE355794A9735 /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5431635F706EF6561E40AB9 /* AnyCodable.swift */; };
+		F8B60A9F4949E6F2FB038FE1 /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5A1027BDDD7592AA26B1B2 /* SessionState.swift */; };
+		FB3DDC1136C64ADB3650D68D /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACF28E65891872A40078CDD /* SessionManager.swift */; };
 		FE6C286567E5839112276155 /* BranchSessionIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D147E17CB8A0463C466938 /* BranchSessionIntegration.swift */; };
-		21CDBD6D56C1DC72CE115808 /* BranchObservableState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5D352BDF23D40AF7204A7C /* BranchObservableState.swift */; };
-		4569E31566D80ECBA755EA66 /* BranchObservableState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5D352BDF23D40AF7204A7C /* BranchObservableState.swift */; };
-		C35C0545DC50E50AA40CC697 /* BranchObservableState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5D352BDF23D40AF7204A7C /* BranchObservableState.swift */; };
-		8BDAA37F2EC8F59B748E0601 /* BranchSessionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0A1D941AB9E25CD0AA7E92 /* BranchSessionCoordinator.swift */; };
-		782F85169F95E5E332B437FC /* BranchSessionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0A1D941AB9E25CD0AA7E92 /* BranchSessionCoordinator.swift */; };
-		62B6D8BB5FB30939D3D9F719 /* BranchSessionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0A1D941AB9E25CD0AA7E92 /* BranchSessionCoordinator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -593,6 +580,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2A5A1027BDDD7592AA26B1B2 /* SessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionState.swift; sourceTree = "<group>"; };
+		322904D68BE09F8785AA8357 /* BranchRequestOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchRequestOperation.swift; sourceTree = "<group>"; };
+		530E462E6C3D9053B1654211 /* BranchNetworkService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BranchNetworkService.swift; sourceTree = "<group>"; };
+		5B379F2D3B122C1D5888A815 /* BranchLinkSimulator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BranchLinkSimulator.swift; sourceTree = "<group>"; };
 		5F22101D2894A0DB00C5B190 /* BranchSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BranchSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F5FDA152B7DE2FE00F14A43 /* BranchLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLogger.m; sourceTree = "<group>"; };
 		5F5FDA192B7DE31E00F14A43 /* BranchLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchLogger.h; sourceTree = "<group>"; };
@@ -742,7 +733,14 @@
 		5FF2AFDC28E7BF8A00393216 /* build_xcframework.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build_xcframework.sh; sourceTree = "<group>"; };
 		5FF2AFDE28E7C22100393216 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		5FF2AFDF28E7C22100393216 /* BranchSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchSDK.h; sourceTree = "<group>"; };
+		6ACF28E65891872A40078CDD /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
+		9B0A1D941AB9E25CD0AA7E92 /* BranchSessionCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchSessionCoordinator.swift; sourceTree = "<group>"; };
+		A87EA367A3BBAF3DD5D4C678 /* ConfigurationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationController.swift; sourceTree = "<group>"; };
 		B70D0E242E8DC1F8002BD4FE /* BranchConfigurationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchConfigurationController.m; sourceTree = "<group>"; };
+		D5431635F706EF6561E40AB9 /* AnyCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyCodable.swift; sourceTree = "<group>"; };
+		E002CA8C81697D1477A3E942 /* BranchLoggerAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchLoggerAdapter.swift; sourceTree = "<group>"; };
+		E1BBB81630CC7194C138ACD6 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+		E1D956E2763625DE6340A56D /* InitializationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitializationOptions.swift; sourceTree = "<group>"; };
 		E52E5B052CC79E4E00F553EE /* BranchFileLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchFileLogger.h; sourceTree = "<group>"; };
 		E52E5B092CC79E5C00F553EE /* BranchFileLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchFileLogger.m; sourceTree = "<group>"; };
 		E71E396D2DD3A92900110F59 /* BNCInAppBrowser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCInAppBrowser.h; sourceTree = "<group>"; };
@@ -756,41 +754,18 @@
 		E7F311AD2DACB4D400F824A7 /* BNCODMInfoCollector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCODMInfoCollector.m; sourceTree = "<group>"; };
 		E7F311B02DACB54100F824A7 /* BNCODMInfoCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCODMInfoCollector.h; sourceTree = "<group>"; };
 		E7FAF69F2E26E497006C167F /* BranchConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BranchConstants.h; path = Sources/BranchSDK/Public/BranchConstants.h; sourceTree = SOURCE_ROOT; };
-		322904D68BE09F8785AA8357 /* BranchRequestOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchRequestOperation.swift; sourceTree = "<group>"; };
-		541E75E41C00A5CD65D3EA18 /* BranchRequestQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchRequestQueue.swift; sourceTree = "<group>"; };
-		A87EA367A3BBAF3DD5D4C678 /* ConfigurationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationController.swift; sourceTree = "<group>"; };
-		E002CA8C81697D1477A3E942 /* BranchLoggerAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchLoggerAdapter.swift; sourceTree = "<group>"; };
-		D5431635F706EF6561E40AB9 /* AnyCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyCodable.swift; sourceTree = "<group>"; };
-		DD830C286DF7324C4CC5ED60 /* BranchError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchError.swift; sourceTree = "<group>"; };
-		E1D956E2763625DE6340A56D /* InitializationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitializationOptions.swift; sourceTree = "<group>"; };
-		89876A79209AC85291745899 /* LinkData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkData.swift; sourceTree = "<group>"; };
-		E1BBB81630CC7194C138ACD6 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
-		2A5A1027BDDD7592AA26B1B2 /* SessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionState.swift; sourceTree = "<group>"; };
-		6ACF28E65891872A40078CDD /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
-		2027F549B4AE4C609154BF7E /* BranchNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchNetworkService.swift; sourceTree = "<group>"; };
-
-		4890C55648E1048670873EB1 /* SessionManaging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManaging.swift; sourceTree = "<group>"; };
 		F7D147E17CB8A0463C466938 /* BranchSessionIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchSessionIntegration.swift; sourceTree = "<group>"; };
-		9C5D352BDF23D40AF7204A7C /* BranchObservableState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchObservableState.swift; sourceTree = "<group>"; };
-		9B0A1D941AB9E25CD0AA7E92 /* BranchSessionCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchSessionCoordinator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		E7CA75552E1B504C002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = E7CA74EA2E1B4F75002EFB40 /* BranchSDKTests */;
-		};
-		E7CA758B2E1B59F7002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		E7CA758B2E1B59F7002EFB40 /* Exceptions for "BranchSDKTestsHostApp" folder in "BranchSDKTestsHostApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
 			target = E7CA755E2E1B59F5002EFB40 /* BranchSDKTestsHostApp */;
 		};
-		E7CA75B12E1B7B02002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		E7CA75B12E1B7B02002EFB40 /* Exceptions for "BranchSDKTestsHostApp" folder in "BranchSDKTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				cannedData/example.json,
@@ -801,29 +776,33 @@
 			);
 			target = E7CA74EA2E1B4F75002EFB40 /* BranchSDKTests */;
 		};
-		E7F2461F2E26B8F90083FDE1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				BranchSDKTests.xctestplan,
-			);
-			target = E7CA755E2E1B59F5002EFB40 /* BranchSDKTestsHostApp */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		E7CA75562E1B504C002EFB40 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = E7CA74E72E1B4F75002EFB40 /* Sources */;
-			membershipExceptions = (
-				BNCJsonLoader.h,
-				"Branch-SDK-Tests-Bridging-Header.h",
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		E7CA74EC2E1B4F75002EFB40 /* BranchSDKTests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E7CA75552E1B504C002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E7CA75562E1B504C002EFB40 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, E7F2461F2E26B8F90083FDE1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tests/BranchSDKTests; sourceTree = "<group>"; };
-		E7CA75602E1B59F5002EFB40 /* BranchSDKTestsHostApp */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E7CA75B12E1B7B02002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, E7CA758B2E1B59F7002EFB40 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = BranchSDKTestsHostApp; sourceTree = "<group>"; };
+		E7CA74EC2E1B4F75002EFB40 /* Tests/BranchSDKTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Tests/BranchSDKTests;
+			sourceTree = "<group>";
+		};
+		E7CA75602E1B59F5002EFB40 /* BranchSDKTestsHostApp */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E7CA75B12E1B7B02002EFB40 /* Exceptions for "BranchSDKTestsHostApp" folder in "BranchSDKTests" target */,
+				E7CA758B2E1B59F7002EFB40 /* Exceptions for "BranchSDKTestsHostApp" folder in "BranchSDKTestsHostApp" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = BranchSDKTestsHostApp;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -869,6 +848,41 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		07F4467A43472BD6EAB2CB34 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		1D84C90BBB154B7D95C2C04B /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				530E462E6C3D9053B1654211 /* BranchNetworkService.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		3C7E7746166947D305CD7760 /* BranchSwiftSDK */ = {
+			isa = PBXGroup;
+			children = (
+				322904D68BE09F8785AA8357 /* BranchRequestOperation.swift */,
+				A87EA367A3BBAF3DD5D4C678 /* ConfigurationController.swift */,
+				B9807AE2C3C1D52D72483145 /* SessionManagement */,
+				B2E855A4CFCE884E9919BE0A /* BranchLinkSimulator */,
+			);
+			name = BranchSwiftSDK;
+			path = Sources/BranchSwiftSDK;
+			sourceTree = "<group>";
+		};
+		43046951EACF3046C7F62699 /* Coordinator */ = {
+			isa = PBXGroup;
+			children = (
+				9B0A1D941AB9E25CD0AA7E92 /* BranchSessionCoordinator.swift */,
+			);
+			path = Coordinator;
+			sourceTree = "<group>";
+		};
 		5F2210132894A0DB00C5B190 = {
 			isa = PBXGroup;
 			children = (
@@ -876,7 +890,7 @@
 				5FCDD36B2B7AC6A100EAF29F /* BranchSDK */,
 				5FF2AFDD28E7C1F200393216 /* Framework */,
 				5FF2AFDB28E7BF5500393216 /* Scripts */,
-				E7CA74EC2E1B4F75002EFB40 /* BranchSDKTests */,
+				E7CA74EC2E1B4F75002EFB40 /* Tests/BranchSDKTests */,
 				E7CA75602E1B59F5002EFB40 /* BranchSDKTestsHostApp */,
 				E7CA75B72E1B994B002EFB40 /* Frameworks */,
 				5F22101E2894A0DB00C5B190 /* Products */,
@@ -1089,25 +1103,21 @@
 			path = Framework;
 			sourceTree = "<group>";
 		};
-		E7CA75B72E1B994B002EFB40 /* Frameworks */ = {
+		9BA4EE2CA16C7A041ED29ED8 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				E7CA75BA2E1B9951002EFB40 /* AdSupport.framework */,
-				E7CA75B82E1B994B002EFB40 /* AdServices.framework */,
+				6ACF28E65891872A40078CDD /* SessionManager.swift */,
 			);
-			name = Frameworks;
+			path = Core;
 			sourceTree = "<group>";
 		};
-		3C7E7746166947D305CD7760 /* BranchSwiftSDK */ = {
+		B2E855A4CFCE884E9919BE0A /* BranchLinkSimulator */ = {
 			isa = PBXGroup;
 			children = (
-				322904D68BE09F8785AA8357 /* BranchRequestOperation.swift */,
-				541E75E41C00A5CD65D3EA18 /* BranchRequestQueue.swift */,
-				A87EA367A3BBAF3DD5D4C678 /* ConfigurationController.swift */,
-				B9807AE2C3C1D52D72483145 /* SessionManagement */,
+				5B379F2D3B122C1D5888A815 /* BranchLinkSimulator.swift */,
 			);
-			name = BranchSwiftSDK;
-			path = Sources/BranchSwiftSDK;
+			name = BranchLinkSimulator;
+			path = BranchLinkSimulator;
 			sourceTree = "<group>";
 		};
 		B9807AE2C3C1D52D72483145 /* SessionManagement */ = {
@@ -1125,20 +1135,15 @@
 			path = SessionManagement;
 			sourceTree = "<group>";
 		};
-		9BA4EE2CA16C7A041ED29ED8 /* Core */ = {
+		D1461BA6CE6C37311F683ED2 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				6ACF28E65891872A40078CDD /* SessionManager.swift */,
+				D5431635F706EF6561E40AB9 /* AnyCodable.swift */,
+				E1D956E2763625DE6340A56D /* InitializationOptions.swift */,
+				E1BBB81630CC7194C138ACD6 /* Session.swift */,
+				2A5A1027BDDD7592AA26B1B2 /* SessionState.swift */,
 			);
-			path = Core;
-			sourceTree = "<group>";
-		};
-		43046951EACF3046C7F62699 /* Coordinator */ = {
-			isa = PBXGroup;
-			children = (
-				9B0A1D941AB9E25CD0AA7E92 /* BranchSessionCoordinator.swift */,
-			);
-			path = Coordinator;
+			path = Models;
 			sourceTree = "<group>";
 		};
 		D5CA393EFA4AC2745EE895DB /* Integration */ = {
@@ -1157,41 +1162,20 @@
 			path = Logging;
 			sourceTree = "<group>";
 		};
-		D1461BA6CE6C37311F683ED2 /* Models */ = {
+		E7CA75B72E1B994B002EFB40 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D5431635F706EF6561E40AB9 /* AnyCodable.swift */,
-				DD830C286DF7324C4CC5ED60 /* BranchError.swift */,
-				E1D956E2763625DE6340A56D /* InitializationOptions.swift */,
-				89876A79209AC85291745899 /* LinkData.swift */,
-				E1BBB81630CC7194C138ACD6 /* Session.swift */,
-				2A5A1027BDDD7592AA26B1B2 /* SessionState.swift */,
+				E7CA75BA2E1B9951002EFB40 /* AdSupport.framework */,
+				E7CA75B82E1B994B002EFB40 /* AdServices.framework */,
 			);
-			path = Models;
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		FC4ED337CE98F75DEFFD516C /* Observable */ = {
 			isa = PBXGroup;
 			children = (
-				9C5D352BDF23D40AF7204A7C /* BranchObservableState.swift */,
 			);
 			path = Observable;
-			sourceTree = "<group>";
-		};
-		07F4467A43472BD6EAB2CB34 /* Protocols */ = {
-			isa = PBXGroup;
-			children = (
-				4890C55648E1048670873EB1 /* SessionManaging.swift */,
-			);
-			path = Protocols;
-			sourceTree = "<group>";
-		};
-		1D84C90BBB154B7D95C2C04B /* Network */ = {
-			isa = PBXGroup;
-			children = (
-				2027F549B4AE4C609154BF7E /* BranchNetworkService.swift */,
-			);
-			path = Network;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1520,11 +1504,9 @@
 				E7CA75A72E1B79CD002EFB40 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				E7CA74EC2E1B4F75002EFB40 /* BranchSDKTests */,
+				E7CA74EC2E1B4F75002EFB40 /* Tests/BranchSDKTests */,
 			);
 			name = BranchSDKTests;
-			packageProductDependencies = (
-			);
 			productName = BranchSDKTests;
 			productReference = E7CA74EB2E1B4F75002EFB40 /* BranchSDKTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -1547,8 +1529,6 @@
 				E7CA75602E1B59F5002EFB40 /* BranchSDKTestsHostApp */,
 			);
 			name = BranchSDKTestsHostApp;
-			packageProductDependencies = (
-			);
 			productName = BranchSDKTestsHostApp;
 			productReference = E7CA755F2E1B59F5002EFB40 /* BranchSDKTestsHostApp.app */;
 			productType = "com.apple.product-type.application";
@@ -1597,6 +1577,7 @@
 				};
 			};
 			buildConfigurationList = 5F2210172894A0DB00C5B190 /* Build configuration list for PBXProject "BranchSDK" */;
+			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -1604,7 +1585,6 @@
 				Base,
 			);
 			mainGroup = 5F2210132894A0DB00C5B190;
-			preferredProjectObjectVersion = 55;
 			productRefGroup = 5F22101E2894A0DB00C5B190 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1744,20 +1724,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				3A643D3BCFEF880B3004640F /* BranchRequestOperation.swift in Sources */,
-				A4B443901220CC1765440A86 /* BranchRequestQueue.swift in Sources */,
 				2ECEC0B4A79FFD7A33E05A47 /* ConfigurationController.swift in Sources */,
 				4E162824F0C3ACD4EF1DB8E7 /* BranchLoggerAdapter.swift in Sources */,
 				F0CB0B1B7BAFE355794A9735 /* AnyCodable.swift in Sources */,
-				9C38FE347F1C8456DF36A29F /* BranchError.swift in Sources */,
 				BAFE5DF3E19B828E3F7B56E4 /* InitializationOptions.swift in Sources */,
-				F7944AF1AA8E12FFA20AB81F /* LinkData.swift in Sources */,
 				B8674D5E79356292AAB1F2F4 /* Session.swift in Sources */,
 				F8B60A9F4949E6F2FB038FE1 /* SessionState.swift in Sources */,
 				5CF36A51A1CFD8642CCBA0FA /* SessionManager.swift in Sources */,
-				A774894F98CF4556A45FB792 /* BranchNetworkService.swift in Sources */,
-				DC1E6563F4D5E398EA5FCB54 /* SessionManaging.swift in Sources */,
 				EB591767900FE69079F11E06 /* BranchSessionIntegration.swift in Sources */,
-				21CDBD6D56C1DC72CE115808 /* BranchObservableState.swift in Sources */,
 				8BDAA37F2EC8F59B748E0601 /* BranchSessionCoordinator.swift in Sources */,
 				E74E43902E2F56AC000DC427 /* BNCServerRequestOperation.m in Sources */,
 				5FCDD5AC2B7AC6A400EAF29F /* BNCCallbackMap.m in Sources */,
@@ -1832,6 +1806,8 @@
 				5FCDD5852B7AC6A400EAF29F /* BNCInitSessionResponse.m in Sources */,
 				5FCDD4412B7AC6A100EAF29F /* BNCPreferenceHelper.m in Sources */,
 				5FCDD5792B7AC6A400EAF29F /* BranchContentPathProperties.m in Sources */,
+				CEDA019E78AB7BE6A8FBED55 /* BranchLinkSimulator.swift in Sources */,
+				02F17CA0314784290B9AE08D /* BranchNetworkService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1840,20 +1816,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				D52C9F961A8E35C96B8E4BE5 /* BranchRequestOperation.swift in Sources */,
-				2B9B1985A0659938241DDAAC /* BranchRequestQueue.swift in Sources */,
 				826F50E528E9CEB3774FFD93 /* ConfigurationController.swift in Sources */,
 				5F2ABFE7B92973EB0F928A90 /* BranchLoggerAdapter.swift in Sources */,
 				98336EEDDA051101A0D488A6 /* AnyCodable.swift in Sources */,
-				16998D1D1F27383CFC6F58A8 /* BranchError.swift in Sources */,
 				E9C126B1D0A57E16AC49DA44 /* InitializationOptions.swift in Sources */,
-				F5CB1A2B9F2E0466B6305FFE /* LinkData.swift in Sources */,
 				70AD837BE5EC60CFD9EA747A /* Session.swift in Sources */,
 				2CE1FAF85553657DDA3F84FC /* SessionState.swift in Sources */,
 				E7666EB8743848D9A0D28131 /* SessionManager.swift in Sources */,
-				9E2AE23DD0454CC081568FA9 /* BranchNetworkService.swift in Sources */,
-				1A30C8B2BF961E650A6FC321 /* SessionManaging.swift in Sources */,
 				B94D98C1FB19389357DCE351 /* BranchSessionIntegration.swift in Sources */,
-				4569E31566D80ECBA755EA66 /* BranchObservableState.swift in Sources */,
 				782F85169F95E5E332B437FC /* BranchSessionCoordinator.swift in Sources */,
 				B70D0E252E8DC1F8002BD4FE /* BranchConfigurationController.m in Sources */,
 				B70D0E2E2E8DCEC6002BD4FE /* BNCServerRequestOperation.m in Sources */,
@@ -1928,6 +1898,8 @@
 				5FCDD5862B7AC6A400EAF29F /* BNCInitSessionResponse.m in Sources */,
 				5FCDD4422B7AC6A100EAF29F /* BNCPreferenceHelper.m in Sources */,
 				5FCDD57A2B7AC6A400EAF29F /* BranchContentPathProperties.m in Sources */,
+				DDE67B7B52789F84F2077D4B /* BranchLinkSimulator.swift in Sources */,
+				D3E0411E72F259C39C3A8064 /* BranchNetworkService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1936,20 +1908,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				7EAE0ECFA7DB0B153F9AE8E2 /* BranchRequestOperation.swift in Sources */,
-				3E60220B4A061284FEA14A59 /* BranchRequestQueue.swift in Sources */,
 				6986DA3C42698DCEB4FA175D /* ConfigurationController.swift in Sources */,
 				6D5A8BD4BDE0000AAB95DE6C /* BranchLoggerAdapter.swift in Sources */,
 				6DD1CF49CE86777AE02B8E24 /* AnyCodable.swift in Sources */,
-				49CEA46B8EB418718014BF07 /* BranchError.swift in Sources */,
 				C90D79612B8D22C6C8AF95AD /* InitializationOptions.swift in Sources */,
-				782161B7D16D1EDBEB6FD932 /* LinkData.swift in Sources */,
 				1F0A79FF991FC1BF84C9BD67 /* Session.swift in Sources */,
 				4B607B5F976C1542B678E62B /* SessionState.swift in Sources */,
 				FB3DDC1136C64ADB3650D68D /* SessionManager.swift in Sources */,
-				90156F3E159E47B882D3AA6F /* BranchNetworkService.swift in Sources */,
-				FC8C73A6E58FC6F5D9320C38 /* SessionManaging.swift in Sources */,
 				FE6C286567E5839112276155 /* BranchSessionIntegration.swift in Sources */,
-				C35C0545DC50E50AA40CC697 /* BranchObservableState.swift in Sources */,
 				62B6D8BB5FB30939D3D9F719 /* BranchSessionCoordinator.swift in Sources */,
 				B70D0E2F2E8DCEC6002BD4FE /* BNCServerRequestOperation.m in Sources */,
 				5FCDD5AE2B7AC6A400EAF29F /* BNCCallbackMap.m in Sources */,
@@ -2014,6 +1980,8 @@
 				5FCDD5872B7AC6A400EAF29F /* BNCInitSessionResponse.m in Sources */,
 				5FCDD4432B7AC6A100EAF29F /* BNCPreferenceHelper.m in Sources */,
 				5FCDD57B2B7AC6A400EAF29F /* BranchContentPathProperties.m in Sources */,
+				1F19A9E676BB542C2BE15B86 /* BranchLinkSimulator.swift in Sources */,
+				8C5EB6570FD93A56D7201403 /* BranchNetworkService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

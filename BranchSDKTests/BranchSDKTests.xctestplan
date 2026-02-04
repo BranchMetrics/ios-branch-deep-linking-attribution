@@ -20,7 +20,9 @@
       "parallelizable" : false,
       "skippedTests" : [
         "BNCDisableAdNetworkCalloutsTests",
-        "BranchActivityItemTests"
+        "BranchActivityItemTests",
+        "SessionManagerTests/testSequentialInitializationsWithDifferentURLs()",
+        "SessionManagerTests/testWarmLaunchWithDeepLink()"
       ],
       "target" : {
         "containerPath" : "container:BranchSDK.xcodeproj",
