@@ -94,8 +94,9 @@
         if (_defaultTimeoutInterval != newTimeout) {
             _defaultTimeoutInterval = newTimeout;
             // Invalidate the cached session so it gets recreated with the new timeout
+            // Use finishTasksAndInvalidate to allow in-flight requests to complete
             if (_session) {
-                [_session invalidateAndCancel];
+                [_session finishTasksAndInvalidate];
                 _session = nil;
             }
         }
