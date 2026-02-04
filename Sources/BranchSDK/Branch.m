@@ -46,6 +46,7 @@
 #import "BranchPluginSupport.h"
 #import "BranchLogger.h"
 #import "Private/BranchConfigurationController.h"
+#import "BNCRequestFactory.h"
 
 
 
@@ -514,6 +515,52 @@ static NSString *bnc_branchKey = nil;
     } else {
         [[BranchLogger shared] logWarning:@"Ignoring invalid custom API URL" error:nil];
     }
+}
+
++ (NSString *)installServiceURL {
+    return [[BNCServerAPI sharedInstance] installServiceURL];
+}
+
++ (NSString *)openServiceURL {
+    return [[BNCServerAPI sharedInstance] openServiceURL];
+}
+
++ (void)markInitializationStarting {
+    Branch *branch = [Branch getInstance];
+    branch.initializationStatus = BNCInitStatusInitializing;
+    [[BranchLogger shared] logDebug:@"Branch marked as initializing by external session manager" error:nil];
+}
+
++ (void)markInitializationComplete {
+    Branch *branch = [Branch getInstance];
+    branch.initializationStatus = BNCInitStatusInitialized;
+    [[BranchLogger shared] logDebug:@"Branch marked as initialized by external session manager" error:nil];
+}
+
++ (NSDictionary *)requestDataForInstallWithURLString:(NSString *)urlString {
+    NSString *requestUUID = [[NSUUID UUID] UUIDString];
+    NSNumber *timestamp = @((long long)([[NSDate date] timeIntervalSince1970] * 1000.0));
+
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:[self branchKey]
+                                                                         UUID:requestUUID
+                                                                    TimeStamp:timestamp];
+
+    NSDictionary *data = [factory dataForInstallWithURLString:urlString];
+    [[BranchLogger shared] logDebug:@"Built install request data via BNCRequestFactory" error:nil];
+    return data;
+}
+
++ (NSDictionary *)requestDataForOpenWithURLString:(NSString *)urlString {
+    NSString *requestUUID = [[NSUUID UUID] UUIDString];
+    NSNumber *timestamp = @((long long)([[NSDate date] timeIntervalSince1970] * 1000.0));
+
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:[self branchKey]
+                                                                         UUID:requestUUID
+                                                                    TimeStamp:timestamp];
+
+    NSDictionary *data = [factory dataForOpenWithURLString:urlString];
+    [[BranchLogger shared] logDebug:@"Built open request data via BNCRequestFactory" error:nil];
+    return data;
 }
 
 + (void)setSafetrackAPIURL:(NSString *)url {
