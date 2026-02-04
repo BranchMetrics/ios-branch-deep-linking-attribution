@@ -17,7 +17,7 @@ import Foundation
 // MARK: - LogLevel
 
 /// Swift-native log levels that map to BranchLogLevel
-public enum LogLevel: Int, Comparable, Sendable {
+@objc public enum LogLevel: Int, Comparable {
     /// Detailed debugging information
     case verbose = 0
 
@@ -64,15 +64,15 @@ extension LogLevel: CustomStringConvertible {
     public var description: String {
         switch self {
         case .verbose:
-            "VERBOSE"
+            return "VERBOSE"
         case .debug:
-            "DEBUG"
+            return "DEBUG"
         case .warning:
-            "WARNING"
+            return "WARNING"
         case .error:
-            "ERROR"
+            return "ERROR"
         case .none:
-            "NONE"
+            return "NONE"
         }
     }
 }
@@ -83,7 +83,7 @@ extension LogLevel: CustomStringConvertible {
 ///
 /// Implementations should be thread-safe and efficient,
 /// avoiding expensive operations when logging is disabled.
-public protocol Logging: Sendable {
+public protocol Logging: AnyObject {
     /// The minimum log level to output
     var minimumLevel: LogLevel { get }
 
@@ -157,17 +157,18 @@ public extension Logging {
 ///
 /// When BranchSDK is not available (e.g., in standalone Swift builds),
 /// falls back to print statements in DEBUG mode.
-public final class BranchLoggerAdapter: Logging, @unchecked Sendable {
+@objc public final class BranchLoggerAdapter: NSObject, Logging {
     // MARK: Lifecycle
 
     public init(minimumLevel: LogLevel = .warning) {
         _minimumLevel = minimumLevel
+        super.init()
     }
 
     // MARK: Public
 
     /// Shared adapter instance (uses verbose level to let BranchLogger control filtering)
-    public static let shared = BranchLoggerAdapter(minimumLevel: .verbose)
+    @objc public static let shared = BranchLoggerAdapter(minimumLevel: .verbose)
 
     public var minimumLevel: LogLevel {
         _minimumLevel

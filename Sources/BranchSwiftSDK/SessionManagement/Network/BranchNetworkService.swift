@@ -536,7 +536,11 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
 
         guard let url = URL(string: fullURL) else {
             log(.error, "performRequest - invalid URL: \(fullURL)")
-            throw BranchError.networkError("Invalid URL: \(fullURL)")
+            throw NSError(
+                domain: "io.branch.sdk.error",
+                code: 1007, // BNCNetworkServiceInterfaceError
+                userInfo: [NSLocalizedDescriptionKey: "Invalid URL: \(fullURL)"]
+            )
         }
 
         var request = URLRequest(url: url)
@@ -584,13 +588,21 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
             )
             // Also invoke legacy callback for backwards compatibility
             Self.logCallback?(fullURL, mutableRequestData, nil, nil, error)
-            throw BranchError.networkError(error.localizedDescription)
+            throw NSError(
+                domain: "io.branch.sdk.error",
+                code: 1007, // BNCNetworkServiceInterfaceError
+                userInfo: [NSLocalizedDescriptionKey: error.localizedDescription]
+            )
         }
 
         // Validate response
         guard let httpResponse = response as? HTTPURLResponse else {
             log(.error, "performRequest - invalid response type")
-            throw BranchError.networkError("Invalid response type")
+            throw NSError(
+                domain: "io.branch.sdk.error",
+                code: 1007, // BNCNetworkServiceInterfaceError
+                userInfo: [NSLocalizedDescriptionKey: "Invalid response type"]
+            )
         }
 
         log(.debug, "performRequest - received HTTP \(httpResponse.statusCode) from \(endpoint)")
@@ -607,7 +619,11 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
         if !data.isEmpty {
             guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
                 log(.error, "performRequest - invalid JSON response")
-                let parseError = BranchError.networkError("Invalid JSON response")
+                let parseError = NSError(
+                    domain: "io.branch.sdk.error",
+                    code: 1007, // BNCNetworkServiceInterfaceError
+                    userInfo: [NSLocalizedDescriptionKey: "Invalid JSON response"]
+                )
                 // Log to modern actor-based logger
                 await BranchNetworkLogger.shared.log(
                     url: fullURL,
@@ -640,7 +656,11 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
         if httpResponse.statusCode >= 400 {
             let errorMessage = responseData["error"] as? String ?? "Server error"
             log(.error, "performRequest - server error \(httpResponse.statusCode): \(errorMessage)")
-            throw BranchError.serverError(statusCode: httpResponse.statusCode, message: errorMessage)
+            throw NSError(
+                domain: "io.branch.sdk.error",
+                code: httpResponse.statusCode, // Use HTTP status code for server errors
+                userInfo: [NSLocalizedDescriptionKey: errorMessage]
+            )
         }
 
         return responseData
@@ -666,7 +686,11 @@ public final class MockBranchNetworkService: BranchNetworkService, @unchecked Se
     // MARK: - Failure Simulation
 
     public var shouldFail: Bool = false
-    public var failureError: Error = BranchError.networkError("Mock network failure")
+    public var failureError: Error = NSError(
+        domain: "io.branch.sdk.error",
+        code: 1007, // BNCNetworkServiceInterfaceError
+        userInfo: [NSLocalizedDescriptionKey: "Mock network failure"]
+    )
 
     /// Per-operation failure configuration (overrides shouldFail for specific operations)
     public var installShouldFail: Bool = false

@@ -14,115 +14,83 @@ import Foundation
 
 // MARK: - BranchSessionCoordinator
 
-/// Coordinates session management between the modern Swift SessionManager and the legacy Objective-C SDK.
+/// Coordinates session management using SessionManager as single source of truth.
 ///
-/// This class provides the bridge layer that allows the existing Objective-C codebase to use
-/// the new actor-based SessionManager with task coalescing support for the Double Open Fix (INTENG-21106).
+/// This coordinator provides a simplified API for all SDK consumers.
+/// It uses GCD-based SessionManager for iOS 12+ compatibility.
 ///
 /// ## Thread Safety
 ///
-/// This class is thread-safe and uses Swift's structured concurrency to coordinate access
-/// to the underlying SessionManager actor. All public methods can be called from any thread.
+/// This class is thread-safe. All public methods can be called from any thread.
+/// Completion handlers are always called on the main thread.
 ///
-/// ## Usage from Objective-C
+/// ## Usage
+///
+/// ```swift
+/// BranchSessionCoordinator.shared.initialize(url: url) { session, error in
+///     if let session = session {
+///         print("Session ID: \(session.id)")
+///     }
+/// }
+/// ```
+///
+/// ## Objective-C Usage
 ///
 /// ```objc
-/// [[BranchSessionCoordinator shared] initializeSessionWithURL:url completion:^(BranchSession *session, NSError *error) {
+/// [[BranchSessionCoordinator shared] initializeWithUrl:url completion:^(Session *session, NSError *error) {
 ///     // Handle result
 /// }];
 /// ```
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 @objc(BranchSessionCoordinator)
-public final class BranchSessionCoordinator: NSObject, @unchecked Sendable {
-    // MARK: Lifecycle
+public final class BranchSessionCoordinator: NSObject {
+    // MARK: - Singleton
+
+    @objc public static let shared = BranchSessionCoordinator()
+
+    // MARK: - Session Manager
+
+    /// The session manager - single source of truth for all session operations.
+    ///
+    /// Note: This is the ONLY session manager. There is no iOS 13+ actor alternative.
+    @objc public let sessionManager = SessionManager.shared
+
+    // MARK: - Convenience Properties
+
+    /// Current session state
+    @objc public var state: SessionState {
+        sessionManager.state
+    }
+
+    /// Current session (nil if not initialized)
+    @objc public var currentSession: Session? {
+        sessionManager.currentSession
+    }
+
+    /// Whether initialization is in progress
+    @objc public var isInitializing: Bool {
+        sessionManager.isInitializing
+    }
+
+    /// Whether SDK is fully initialized
+    @objc public var isInitialized: Bool {
+        sessionManager.isInitialized
+    }
+
+    // MARK: - Private Properties
+
+    /// Logger for SDK diagnostics
+    private let logger: Logging = BranchLoggerAdapter.shared
+
+    // MARK: - Initialization
 
     override private init() {
-        let manager = SessionManager()
-        sessionManager = manager
-        observableState = BranchObservableState(sessionManager: manager)
-        logger = BranchLoggerAdapter.shared
         super.init()
         log(.debug, "BranchSessionCoordinator initialized")
-        startStateObservation()
     }
 
-    /// Internal initializer for testing with custom dependencies.
-    ///
-    /// - Parameter networkService: Custom network service to use (e.g., mock for testing)
-    init(networkService: any BranchNetworkService) {
-        let manager = SessionManager(networkService: networkService)
-        sessionManager = manager
-        observableState = BranchObservableState(sessionManager: manager)
-        logger = BranchLoggerAdapter.shared
-        super.init()
-        log(.debug, "BranchSessionCoordinator initialized with custom network service")
-        startStateObservation()
-    }
+    // MARK: - Public API
 
-    // MARK: Public
-
-    /// Lock for thread-safe access to shared instance
-    private static let sharedLock = NSLock()
-    private static var _shared: BranchSessionCoordinator = .init()
-
-    /// Shared coordinator instance (thread-safe)
-    @objc public static var shared: BranchSessionCoordinator {
-        sharedLock.lock()
-        defer { sharedLock.unlock() }
-        return _shared
-    }
-
-    /// Internal storage for test mock network service.
-    /// When set, the shared coordinator will be replaced with a new one using this service.
-    private(set) nonisolated(unsafe) static var testNetworkService: (any BranchNetworkService)?
-
-    /// Configure the shared coordinator with a mock network service for testing.
-    ///
-    /// - Parameter networkService: The mock network service to use, or nil to restore default behavior
-    public static func configureForTesting(networkService: (any BranchNetworkService)?) {
-        sharedLock.lock()
-        defer { sharedLock.unlock() }
-        testNetworkService = networkService
-        if let service = networkService {
-            _shared = BranchSessionCoordinator(networkService: service)
-        } else {
-            _shared = BranchSessionCoordinator()
-        }
-    }
-
-    /// Reset the shared coordinator to default behavior (for test teardown).
-    public static func resetTestConfiguration() {
-        sharedLock.lock()
-        defer { sharedLock.unlock() }
-        testNetworkService = nil
-        _shared = BranchSessionCoordinator()
-    }
-
-    /// The underlying session manager (for Swift consumers)
-    public let sessionManager: SessionManager
-
-    /// Observable state wrapper for SwiftUI and Combine integration.
-    ///
-    /// Use this property to observe session state changes in SwiftUI views
-    /// or with Combine publishers. The state is automatically synchronized
-    /// with the underlying SessionManager.
-    ///
-    /// ## SwiftUI Example
-    ///
-    /// ```swift
-    /// struct ContentView: View {
-    ///     @ObservedObject var branchState = BranchSessionCoordinator.shared.observableState
-    ///
-    ///     var body: some View {
-    ///         Text("Status: \(branchState.stateDescription)")
-    ///     }
-    /// }
-    /// ```
-    public let observableState: BranchObservableState
-
-    // MARK: - Objective-C Bridge Methods
-
-    /// Initialize a session, optionally with a URL.
+    /// Initialize session with optional URL.
     ///
     /// This method implements task coalescing - if called multiple times concurrently
     /// (e.g., from `didFinishLaunchingWithOptions` and `continueUserActivity`), only one
@@ -130,115 +98,67 @@ public final class BranchSessionCoordinator: NSObject, @unchecked Sendable {
     ///
     /// - Parameters:
     ///   - url: Optional URL that opened the app (Universal Link, URI scheme, etc.)
-    ///   - completion: Callback with the session result
-    @objc public func initializeSession(
+    ///   - completion: Callback with Session or error (called on main thread)
+    @objc public func initialize(
         url: URL?,
-        completion: @escaping (BranchObjCSession?, Error?) -> Void
+        completion: @escaping (Session?, NSError?) -> Void
     ) {
-        log(.debug, "initializeSession called - URL: \(url?.absoluteString ?? "none")")
+        log(.debug, "initialize called - URL: \(url?.absoluteString ?? "none")")
 
-        Task {
-            do {
-                var options = InitializationOptions()
-                options.url = url
-
-                let session = try await sessionManager.initialize(options: options)
-                let objcSession = BranchObjCSession(from: session)
-
-                log(.debug, "Session initialized successfully - sessionId: \(session.id)")
-
-                await MainActor.run {
-                    completion(objcSession, nil)
-                }
-            } catch {
-                log(.error, "Session initialization failed: \(error.localizedDescription)")
-
-                await MainActor.run {
-                    completion(nil, error)
-                }
-            }
-        }
+        let options = InitializationOptions()
+        options.url = url
+        sessionManager.initialize(options: options, completion: completion)
     }
 
-    /// Check if the SDK is currently initializing.
+    /// Initialize session with options.
     ///
-    /// Use this to prevent redundant initialize calls.
-    /// Thread-safe: acquires lock before reading cached value.
-    @objc public var isInitializing: Bool {
-        stateLock.lock()
-        defer { stateLock.unlock() }
-        return _cachedIsInitializing
+    /// - Parameters:
+    ///   - options: Initialization options
+    ///   - completion: Callback with Session or error (called on main thread)
+    @objc public func initialize(
+        options: InitializationOptions?,
+        completion: @escaping (Session?, NSError?) -> Void
+    ) {
+        log(.debug, "initialize with options called")
+        sessionManager.initialize(options: options, completion: completion)
     }
 
-    /// Check if the SDK is initialized.
-    /// Thread-safe: acquires lock before reading cached value.
-    @objc public var isInitialized: Bool {
-        stateLock.lock()
-        defer { stateLock.unlock() }
-        return _cachedIsInitialized
+    /// Initialize session without URL.
+    ///
+    /// - Parameter completion: Callback with Session or error (called on main thread)
+    @objc public func initialize(
+        completion: @escaping (Session?, NSError?) -> Void
+    ) {
+        log(.debug, "initialize called (no URL)")
+        sessionManager.initialize(options: nil, completion: completion)
     }
 
-    /// Handle a deep link URL.
+    /// Handle deep link URL.
     ///
     /// If initialization is in progress, the URL will be queued and processed
     /// when initialization completes (task coalescing).
     ///
     /// - Parameters:
     ///   - url: The deep link URL
-    ///   - completion: Callback with the updated session
+    ///   - completion: Callback with Session or error (called on main thread)
     @objc public func handleDeepLink(
-        url: URL,
-        completion: @escaping (BranchObjCSession?, Error?) -> Void
+        _ url: URL,
+        completion: @escaping (Session?, NSError?) -> Void
     ) {
         log(.debug, "handleDeepLink called - URL: \(url.absoluteString)")
-
-        Task {
-            do {
-                // If we're currently initializing, queue this URL via initialize with URL
-                let state = await sessionManager.state
-                if state.isInitializing {
-                    log(.debug, "Initialization in progress, coalescing URL")
-                    var options = InitializationOptions()
-                    options.url = url
-
-                    let session = try await sessionManager.initialize(options: options)
-                    let objcSession = BranchObjCSession(from: session)
-
-                    log(.debug, "Deep link handled via coalescing - sessionId: \(session.id)")
-
-                    await MainActor.run {
-                        completion(objcSession, nil)
-                    }
-                } else {
-                    let session = try await sessionManager.handleDeepLink(url)
-                    let objcSession = BranchObjCSession(from: session)
-
-                    log(.debug, "Deep link handled successfully - sessionId: \(session.id)")
-
-                    await MainActor.run {
-                        completion(objcSession, nil)
-                    }
-                }
-            } catch {
-                log(.error, "handleDeepLink failed: \(error.localizedDescription)")
-
-                await MainActor.run {
-                    completion(nil, error)
-                }
-            }
-        }
+        sessionManager.handleDeepLink(url, completion: completion)
     }
 
-    /// Handle a Universal Link via NSUserActivity.
+    /// Handle Universal Link via NSUserActivity.
     ///
     /// Extracts the URL from the user activity and processes it through the session manager.
     ///
     /// - Parameters:
     ///   - userActivity: The user activity containing the Universal Link
-    ///   - completion: Callback with the updated session
+    ///   - completion: Callback with Session or error (called on main thread)
     @objc public func continueUserActivity(
         _ userActivity: NSUserActivity,
-        completion: @escaping (BranchObjCSession?, Error?) -> Void
+        completion: @escaping (Session?, NSError?) -> Void
     ) {
         log(.debug, "continueUserActivity called - activityType: \(userActivity.activityType)")
 
@@ -246,107 +166,66 @@ public final class BranchSessionCoordinator: NSObject, @unchecked Sendable {
               let url = userActivity.webpageURL
         else {
             log(.warning, "Invalid user activity - type: \(userActivity.activityType), webpageURL: \(userActivity.webpageURL?.absoluteString ?? "nil")")
-            completion(nil, BranchError.invalidUserActivity)
+            let error = NSError(
+                domain: "io.branch.sdk",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Invalid user activity"]
+            )
+            DispatchQueue.main.async {
+                completion(nil, error)
+            }
             return
         }
 
         log(.debug, "Processing Universal Link: \(url.absoluteString)")
-        handleDeepLink(url: url, completion: completion)
+        handleDeepLink(url, completion: completion)
     }
 
-    /// Reset the session to uninitialized state.
-    @objc public func resetSession() {
-        log(.debug, "resetSession called")
-        Task {
-            await sessionManager.reset()
-            updateCachedState(.uninitialized)
-            log(.debug, "Session reset completed")
-        }
+    /// Reset session to uninitialized state.
+    @objc public func reset() {
+        log(.debug, "reset called")
+        sessionManager.reset()
     }
 
-    /// Set user identity.
+    // MARK: - Notification Observation (replaces AsyncStream)
+
+    /// Add observer for session state changes.
+    ///
+    /// This replaces the iOS 13+ `observeState()` AsyncStream pattern.
     ///
     /// - Parameters:
-    ///   - userId: The user identifier
-    ///   - completion: Callback with result
-    @objc public func setIdentity(
-        _ userId: String,
-        completion: @escaping (Error?) -> Void
-    ) {
-        log(.debug, "setIdentity called - userId: \(userId)")
-
-        Task {
-            do {
-                try await sessionManager.setIdentity(userId)
-                log(.debug, "Identity set successfully")
-                await MainActor.run {
-                    completion(nil)
-                }
-            } catch {
-                log(.error, "setIdentity failed: \(error.localizedDescription)")
-                await MainActor.run {
-                    completion(error)
-                }
-            }
-        }
+    ///   - observer: Object to receive notifications
+    ///   - selector: Selector to call when state changes
+    @objc public func addStateObserver(_ observer: Any, selector: Selector) {
+        NotificationCenter.default.addObserver(
+            observer,
+            selector: selector,
+            name: Notification.Name("BranchDidStartSessionNotification"),
+            object: sessionManager
+        )
+        NotificationCenter.default.addObserver(
+            observer,
+            selector: selector,
+            name: Notification.Name("BranchWillStartSessionNotification"),
+            object: sessionManager
+        )
     }
 
-    /// Clear user identity (logout).
-    ///
-    /// - Parameter completion: Callback with result
-    @objc public func logout(
-        completion: @escaping (Error?) -> Void
-    ) {
-        log(.debug, "logout called")
-
-        Task {
-            do {
-                try await sessionManager.logout()
-                log(.debug, "Logout completed successfully")
-                await MainActor.run {
-                    completion(nil)
-                }
-            } catch {
-                log(.error, "logout failed: \(error.localizedDescription)")
-                await MainActor.run {
-                    completion(error)
-                }
-            }
-        }
+    /// Remove observer for session state changes.
+    @objc public func removeStateObserver(_ observer: Any) {
+        NotificationCenter.default.removeObserver(
+            observer,
+            name: Notification.Name("BranchDidStartSessionNotification"),
+            object: sessionManager
+        )
+        NotificationCenter.default.removeObserver(
+            observer,
+            name: Notification.Name("BranchWillStartSessionNotification"),
+            object: sessionManager
+        )
     }
 
-    // MARK: - Swift-Native Methods
-
-    /// Observe session state changes (for Swift consumers).
-    ///
-    /// - Returns: AsyncStream of state changes
-    public func observeState() -> AsyncStream<SessionState> {
-        sessionManager.observeState()
-    }
-
-    /// Get current session state (async).
-    public var state: SessionState {
-        get async {
-            await sessionManager.state
-        }
-    }
-
-    /// Get current session (async).
-    public var currentSession: Session? {
-        get async {
-            await sessionManager.currentSession
-        }
-    }
-
-    // MARK: Private
-
-    /// Logger for SDK diagnostics
-    private let logger: any Logging
-
-    /// Cached state flags for synchronous access from Objective-C
-    private var _cachedIsInitializing: Bool = false
-    private var _cachedIsInitialized: Bool = false
-    private let stateLock = NSLock()
+    // MARK: - Private Methods
 
     /// Convenience logging method using the logger.
     private func log(
@@ -358,93 +237,53 @@ public final class BranchSessionCoordinator: NSObject, @unchecked Sendable {
     ) {
         logger.log(level, message(), file: file, function: function, line: line)
     }
-
-    /// Start observing state to keep cached values updated.
-    ///
-    /// Called automatically when the coordinator is first accessed.
-    private func startStateObservation() {
-        Task {
-            for await state in sessionManager.observeState() {
-                updateCachedState(state)
-            }
-        }
-    }
-
-    private func updateCachedState(_ state: SessionState) {
-        stateLock.lock()
-        defer { stateLock.unlock() }
-
-        _cachedIsInitializing = state.isInitializing
-        _cachedIsInitialized = state.isReady
-    }
 }
 
-// MARK: - BranchObjCSession
+// MARK: - Backward Compatibility Bridge
 
-/// Objective-C compatible session wrapper.
-///
-/// Wraps the Swift Session struct for use from Objective-C code.
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-@objc(BranchSession)
-public final class BranchObjCSession: NSObject {
-    // MARK: Lifecycle
-
-    init(from session: Session) {
-        sessionId = session.id
-        identityId = session.identityId
-        deviceFingerprintId = session.deviceFingerprintId
-        isFirstSession = session.isFirstSession
-        userId = session.userId
-        linkUrl = session.linkData?.url
-
-        // Convert [String: AnyCodable] to [String: Any] for Objective-C
-        if let parameters = session.linkData?.parameters {
-            var converted: [String: Any] = [:]
-            for (key, value) in parameters {
-                converted[key] = value.value
-            }
-            linkData = converted
-        } else {
-            linkData = [:]
-        }
-
-        super.init()
-    }
-
-    // MARK: Public
-
-    /// The unique session identifier
-    @objc public let sessionId: String
-
-    /// The Branch identity ID
-    @objc public let identityId: String
-
-    /// The device fingerprint ID
-    @objc public let deviceFingerprintId: String
-
-    /// Whether this is the first session (install)
-    @objc public let isFirstSession: Bool
-
-    /// The user ID, if set
-    @objc public let userId: String?
-
-    /// The URL that opened the app, if any
-    @objc public let linkUrl: URL?
-
-    /// The deep link parameters, if any
-    @objc public let linkData: [String: Any]
-}
-
-// MARK: - Initialization Convenience
-
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 public extension BranchSessionCoordinator {
-    /// Initialize with default options.
+    /// Convert Session to params dictionary for backward compatibility.
     ///
-    /// - Parameter completion: Callback with the session result
-    @objc func initializeSession(
-        completion: @escaping (BranchObjCSession?, Error?) -> Void
-    ) {
-        initializeSession(url: nil, completion: completion)
+    /// Use this when you need to pass session data to legacy callbacks
+    /// that expect a `[String: Any]` dictionary format.
+    ///
+    /// - Parameter session: The session to convert
+    /// - Returns: Dictionary in legacy params format
+    @objc func paramsFromSession(_ session: Session) -> [String: Any] {
+        var params: [String: Any] = session.params
+
+        // Ensure standard fields are present
+        params["session_id"] = session.id
+        params["identity_id"] = session.identityId
+        params["device_fingerprint_id"] = session.deviceFingerprintId
+        params["+is_first_session"] = session.isFirstSession
+
+        if let userId = session.userId {
+            params["identity"] = userId
+        }
+
+        #if canImport(BranchSDK)
+            if let linkData = session.linkData {
+                params["+clicked_branch_link"] = true
+                // Access data through the data dictionary
+                if let channel = linkData.data["channel"] as? String {
+                    params["~channel"] = channel
+                }
+                if let campaign = linkData.data["campaign"] as? String {
+                    params["~campaign"] = campaign
+                }
+                if let feature = linkData.data["feature"] as? String {
+                    params["~feature"] = feature
+                }
+                if let tags = linkData.data["tags"] as? [String] {
+                    params["~tags"] = tags
+                }
+                if let stage = linkData.data["stage"] as? String {
+                    params["~stage"] = stage
+                }
+            }
+        #endif
+
+        return params
     }
 }
