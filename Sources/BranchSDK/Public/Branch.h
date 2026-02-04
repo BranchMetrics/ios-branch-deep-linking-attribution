@@ -832,7 +832,7 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 + (void)disableNextForegroundForTimeInterval:(NSTimeInterval)timeout;
 
 /**
- Resumes automatic session open tracking after it was disabled by `disableNextForegroundFor:`.
+ Resumes automatic session open tracking after it was disabled by `disableNextForegroundForTimeInterval:`.
  If automatic tracking is already enabled, this method has no effect.
  */
 + (void)resumeSession;
