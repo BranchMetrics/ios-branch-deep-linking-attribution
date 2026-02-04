@@ -6,34 +6,59 @@
 //  SPDX-License-Identifier: MIT
 //
 
+import Foundation
+
 #if canImport(UIKit)
     import UIKit
 #endif
 
-import Foundation
-
 // MARK: - InitializationOptions
 
-/// Options for SDK initialization.
+/// Options for SDK initialization (iOS 12+ compatible).
 ///
-/// This struct consolidates the various parameters that can be passed
+/// This class consolidates the various parameters that can be passed
 /// during initialization, replacing the 15+ legacy methods with a
-/// single, composable options struct.
+/// single, composable options class.
 ///
 /// ## Example
 ///
 /// ```swift
 /// let options = InitializationOptions()
-///     .with(launchOptions: launchOptions)
+/// options.url = incomingURL
+/// options.delayInitialization = false
+///
+/// // Or using builder pattern
+/// let options = InitializationOptions()
 ///     .with(url: incomingURL)
 ///     .with(delayInitialization: false)
 /// ```
-public struct InitializationOptions: Sendable, Equatable {
-    // MARK: Lifecycle
+@objc public final class InitializationOptions: NSObject {
+    // MARK: - Properties
+
+    /// URL that opened the app (deep link or universal link)
+    @objc public var url: URL?
+
+    /// Scene identifier (iOS 13+ multi-window support)
+    @objc public var sceneIdentifier: String?
+
+    /// Whether to delay network requests
+    @objc public var delayInitialization: Bool
+
+    /// Whether to disable automatic session tracking
+    @objc public var disableAutomaticSessionTracking: Bool
+
+    /// Whether to check for deferred deep links
+    @objc public var checkPasteboardOnInstall: Bool
+
+    /// Custom referral parameters
+    @objc public var referralParams: [String: String]?
+
+    /// Source application bundle ID
+    @objc public var sourceApplication: String?
 
     // MARK: - Initialization
 
-    public init() {
+    @objc override public init() {
         url = nil
         sceneIdentifier = nil
         delayInitialization = false
@@ -41,109 +66,72 @@ public struct InitializationOptions: Sendable, Equatable {
         checkPasteboardOnInstall = true
         referralParams = nil
         sourceApplication = nil
+        super.init()
     }
 
-    // MARK: Public
+    // MARK: - Configuration Methods
 
-    /// URL that opened the app (deep link or universal link)
-    public var url: URL?
+    #if canImport(UIKit)
+        /// Configure from launch options
+        @objc public func configure(with launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
+            if let launchURL = launchOptions?[.url] as? URL {
+                url = launchURL
+            }
+            if let sourceApp = launchOptions?[.sourceApplication] as? String {
+                sourceApplication = sourceApp
+            }
+        }
+    #endif
 
-    /// Scene identifier (iOS 13+ multi-window support)
-    public var sceneIdentifier: String?
-
-    /// Whether to delay network requests
-    public var delayInitialization: Bool
-
-    /// Whether to disable automatic session tracking
-    public var disableAutomaticSessionTracking: Bool
-
-    /// Whether to check for deferred deep links
-    public var checkPasteboardOnInstall: Bool
-
-    /// Custom referral parameters
-    public var referralParams: [String: String]?
-
-    /// Source application bundle ID
-    public var sourceApplication: String?
-
-    // MARK: - Equatable
-
-    public static func == (lhs: InitializationOptions, rhs: InitializationOptions) -> Bool {
-        lhs.url == rhs.url &&
-            lhs.sceneIdentifier == rhs.sceneIdentifier &&
-            lhs.delayInitialization == rhs.delayInitialization &&
-            lhs.disableAutomaticSessionTracking == rhs.disableAutomaticSessionTracking &&
-            lhs.checkPasteboardOnInstall == rhs.checkPasteboardOnInstall &&
-            lhs.referralParams == rhs.referralParams &&
-            lhs.sourceApplication == rhs.sourceApplication
-    }
-
-    // MARK: - Builder Pattern
+    // MARK: - Builder Pattern (for Swift callers)
 
     /// Set the URL that opened the app
     public func with(url: URL?) -> InitializationOptions {
-        var options = self
-        options.url = url
-        return options
+        self.url = url
+        return self
     }
 
     /// Set the scene identifier
     public func with(sceneIdentifier: String?) -> InitializationOptions {
-        var options = self
-        options.sceneIdentifier = sceneIdentifier
-        return options
+        self.sceneIdentifier = sceneIdentifier
+        return self
     }
 
     /// Set whether to delay initialization
     public func with(delayInitialization: Bool) -> InitializationOptions {
-        var options = self
-        options.delayInitialization = delayInitialization
-        return options
+        self.delayInitialization = delayInitialization
+        return self
     }
 
     /// Set whether to disable automatic session tracking
     public func with(disableAutomaticSessionTracking: Bool) -> InitializationOptions {
-        var options = self
-        options.disableAutomaticSessionTracking = disableAutomaticSessionTracking
-        return options
+        self.disableAutomaticSessionTracking = disableAutomaticSessionTracking
+        return self
     }
 
     /// Set whether to check pasteboard on install
     public func with(checkPasteboardOnInstall: Bool) -> InitializationOptions {
-        var options = self
-        options.checkPasteboardOnInstall = checkPasteboardOnInstall
-        return options
+        self.checkPasteboardOnInstall = checkPasteboardOnInstall
+        return self
     }
 
     /// Set custom referral parameters
     public func with(referralParams: [String: String]?) -> InitializationOptions {
-        var options = self
-        options.referralParams = referralParams
-        return options
+        self.referralParams = referralParams
+        return self
     }
 
     /// Set the source application
     public func with(sourceApplication: String?) -> InitializationOptions {
-        var options = self
-        options.sourceApplication = sourceApplication
-        return options
+        self.sourceApplication = sourceApplication
+        return self
     }
 
     #if canImport(UIKit)
-        /// Configure from launch options
-        @MainActor
+        /// Configure from launch options (builder pattern)
         public func with(launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> InitializationOptions {
-            var options = self
-
-            if let launchURL = launchOptions?[.url] as? URL {
-                options.url = launchURL
-            }
-
-            if let sourceApp = launchOptions?[.sourceApplication] as? String {
-                options.sourceApplication = sourceApp
-            }
-
-            return options
+            configure(with: launchOptions)
+            return self
         }
     #endif
 }

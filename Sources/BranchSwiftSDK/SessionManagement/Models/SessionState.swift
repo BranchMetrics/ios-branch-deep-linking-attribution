@@ -32,8 +32,7 @@ import Foundation
 ///              ▼                               │
 ///     ┌─────────────────┐                      │
 ///     │   Initialized   │ ─────────────────────┘
-///     │   (session)     │        reset()
-///     └─────────────────┘
+///     └─────────────────┘        reset()
 /// ```
 ///
 /// ## Valid Transitions
@@ -44,122 +43,108 @@ import Foundation
 /// - `initialized` → `uninitialized`: When `reset()` is called
 /// - `initialized` → `initializing`: When re-initializing with new link
 ///
-public enum SessionState: Sendable, Equatable, CustomStringConvertible {
+/// ## Note on iOS 12 Compatibility
+///
+/// Unlike the iOS 13+ version, this enum does NOT have an associated value
+/// for the `.initialized` case. Use `SessionManager.currentSession`
+/// or `BranchSessionCoordinator.currentSession` to access the current session.
+@objc public enum SessionState: Int {
     /// SDK not configured, no operations allowed
-    case uninitialized
+    case uninitialized = 0
 
     /// Configuration in progress, operations queued
-    case initializing
+    case initializing = 1
 
     /// Fully operational, all features available
-    case initialized(Session)
+    case initialized = 2
+}
 
-    // MARK: Public
+// MARK: - Properties
 
+public extension SessionState {
     /// Human-readable description of the state
-    public var description: String {
+    var stateDescription: String {
         switch self {
         case .uninitialized:
-            "Uninitialized"
+            return "Uninitialized"
         case .initializing:
-            "Initializing"
-        case let .initialized(session):
-            "Initialized (Session: \(session.id.prefix(8))...)"
+            return "Initializing"
+        case .initialized:
+            return "Initialized"
         }
     }
 
     /// Whether the SDK is ready for operations
-    public var isReady: Bool {
-        if case .initialized = self {
-            return true
-        }
-        return false
+    var isReady: Bool {
+        self == .initialized
     }
 
     /// Whether the SDK is currently initializing
-    public var isInitializing: Bool {
-        if case .initializing = self {
-            return true
-        }
-        return false
+    var isInitializing: Bool {
+        self == .initializing
     }
 
     /// Whether the SDK needs initialization
-    public var needsInitialization: Bool {
-        if case .uninitialized = self {
-            return true
-        }
-        return false
+    var needsInitialization: Bool {
+        self == .uninitialized
     }
+}
 
-    /// The current session, if initialized
-    public var session: Session? {
-        if case let .initialized(session) = self {
-            return session
-        }
-        return nil
-    }
+// MARK: - Transition Validation
 
-    // MARK: Internal
-
-    // MARK: - Transition Validation
-
+public extension SessionState {
     /// Validates if a transition to the target state is allowed
     func canTransition(to target: SessionState) -> Bool {
         switch (self, target) {
         // From uninitialized
         case (.uninitialized, .initializing):
-            true
+            return true
 
         // From initializing
         case (.initializing, .initialized):
-            true
+            return true
 
         case (.initializing, .uninitialized):
-            true // Error case
+            return true // Error case
 
         // From initialized
         case (.initialized, .uninitialized):
-            true // Reset
+            return true // Reset
         case (.initialized, .initializing):
-            true // Re-init with new link
+            return true // Re-init with new link
 
         // Same state transitions
         case (.uninitialized, .uninitialized),
              (.initializing, .initializing),
              (.initialized, .initialized):
-            true
+            return true
 
         // Invalid transitions
         default:
-            false
+            return false
         }
     }
 }
 
-// MARK: - Equatable Conformance
+// MARK: - CustomStringConvertible
 
-public extension SessionState {
-    static func == (lhs: SessionState, rhs: SessionState) -> Bool {
-        switch (lhs, rhs) {
-        case (.uninitialized, .uninitialized):
-            true
-        case (.initializing, .initializing):
-            true
-        case let (.initialized(lhsSession), .initialized(rhsSession)):
-            lhsSession.id == rhsSession.id
-        default:
-            false
-        }
+extension SessionState: CustomStringConvertible {
+    public var description: String {
+        stateDescription
     }
 }
 
 // MARK: - InvalidStateTransitionError
 
 /// Error thrown when an invalid state transition is attempted
-public struct InvalidStateTransitionError: Error, Sendable, CustomStringConvertible {
+public struct InvalidStateTransitionError: Error, CustomStringConvertible {
     public let from: SessionState
     public let to: SessionState
+
+    public init(from: SessionState, to: SessionState) {
+        self.from = from
+        self.to = to
+    }
 
     public var description: String {
         "Invalid state transition from \(from) to \(to)"
