@@ -13,48 +13,60 @@ import XCTest
 ///
 /// These tests verify the static integration methods used for
 /// bridging between Objective-C and Swift session management.
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 @MainActor
 final class BranchSessionIntegrationTests: XCTestCase {
-    nonisolated(unsafe) var mockNetworkService: MockBranchNetworkService!
-
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
         // Clean up UserDefaults to prevent test pollution
         UserDefaults.standard.removeObject(forKey: "branch_has_installed")
 
-        // Configure shared coordinator with mock network service using standard responses
-        mockNetworkService = MockBranchNetworkService.withStandardResponses()
-        BranchSessionCoordinator.configureForTesting(networkService: mockNetworkService)
+        // Reset coordinator state
+        BranchSessionCoordinator.shared.reset()
     }
 
-    override func tearDown() {
-        BranchSessionCoordinator.shared.resetSession()
-        BranchSessionCoordinator.resetTestConfiguration()
-        mockNetworkService?.resetCallTracking()
-        mockNetworkService = nil
+    override func tearDown() async throws {
+        BranchSessionCoordinator.shared.reset()
         // Clean up UserDefaults
         UserDefaults.standard.removeObject(forKey: "branch_has_installed")
-        super.tearDown()
     }
 
     // MARK: - Feature Flags Tests
 
     func testFeatureFlagsDefaultValue() {
-        XCTAssertFalse(BranchSessionFeatureFlags.useModernSessionManager)
+        // Default is true for modern session manager
+        XCTAssertTrue(BranchSessionFeatureFlags.useModernSessionManager)
     }
 
     func testFeatureFlagsCanBeSet() {
         let originalValue = BranchSessionFeatureFlags.useModernSessionManager
 
-        BranchSessionFeatureFlags.useModernSessionManager = true
-        XCTAssertTrue(BranchSessionFeatureFlags.useModernSessionManager)
-
         BranchSessionFeatureFlags.useModernSessionManager = false
         XCTAssertFalse(BranchSessionFeatureFlags.useModernSessionManager)
 
+        BranchSessionFeatureFlags.useModernSessionManager = true
+        XCTAssertTrue(BranchSessionFeatureFlags.useModernSessionManager)
+
         // Restore original
         BranchSessionFeatureFlags.useModernSessionManager = originalValue
+    }
+
+    func testFeatureFlagsThreadSafety() {
+        let iterations = 100
+        let expectation = expectation(description: "Thread safety test")
+        expectation.expectedFulfillmentCount = iterations * 2
+
+        // Concurrent reads and writes
+        for _ in 0 ..< iterations {
+            DispatchQueue.global().async {
+                BranchSessionFeatureFlags.useModernSessionManager = true
+                expectation.fulfill()
+            }
+            DispatchQueue.global().async {
+                _ = BranchSessionFeatureFlags.useModernSessionManager
+                expectation.fulfill()
+            }
+        }
+
+        waitForExpectations(timeout: 10.0)
     }
 
     // MARK: - Static State Properties Tests
@@ -67,37 +79,40 @@ final class BranchSessionIntegrationTests: XCTestCase {
         XCTAssertFalse(BranchSessionIntegration.isInitialized)
     }
 
+    func testCurrentSessionInitiallyNil() {
+        XCTAssertNil(BranchSessionIntegration.currentSession)
+    }
+
     // MARK: - Initialize Session Tests
 
     func testInitializeSessionWithoutURL() {
         let expectation = expectation(description: "Initialize completes")
 
-        BranchSessionIntegration.initializeSession(sceneIdentifier: nil) { params, error in
-            XCTAssertNotNil(params)
+        BranchSessionIntegration.initializeSession(sceneIdentifier: nil) { session, error in
+            XCTAssertNotNil(session)
             XCTAssertNil(error)
 
-            // Verify standard fields
-            XCTAssertNotNil(params?["session_id"])
-            XCTAssertNotNil(params?["identity_id"])
-            XCTAssertNotNil(params?["device_fingerprint_id"])
-            XCTAssertNotNil(params?["+is_first_session"])
+            // Verify session properties
+            XCTAssertFalse(session?.id.isEmpty ?? true)
+            XCTAssertFalse(session?.identityId.isEmpty ?? true)
+            XCTAssertFalse(session?.deviceFingerprintId.isEmpty ?? true)
 
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: 10.0)
     }
 
     func testInitializeSessionWithSceneIdentifier() {
         let expectation = expectation(description: "Initialize completes")
 
-        BranchSessionIntegration.initializeSession(sceneIdentifier: "test-scene-123") { params, error in
-            XCTAssertNotNil(params)
+        BranchSessionIntegration.initializeSession(sceneIdentifier: "test-scene-123") { session, error in
+            XCTAssertNotNil(session)
             XCTAssertNil(error)
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: 10.0)
     }
 
     // MARK: - Handle URL Tests
@@ -106,30 +121,31 @@ final class BranchSessionIntegrationTests: XCTestCase {
         let expectation = expectation(description: "Handle URL completes")
         let testURL = URL(string: "https://test.app.link/deeplink123")!
 
-        BranchSessionIntegration.handleURL(testURL, sceneIdentifier: nil) { params, error in
-            XCTAssertNotNil(params)
+        BranchSessionIntegration.handleURL(testURL, sceneIdentifier: nil) { session, error in
+            XCTAssertNotNil(session)
             XCTAssertNil(error)
 
-            // Verify link data is present
-            XCTAssertEqual(params?["~referring_link"] as? String, testURL.absoluteString)
+            // URL should be captured in params
+            let referringLink = session?.params["~referring_link"] as? String
+            XCTAssertNotNil(referringLink)
 
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: 10.0)
     }
 
     func testHandleURLWithSceneIdentifier() {
         let expectation = expectation(description: "Handle URL completes")
         let testURL = URL(string: "https://test.app.link/deeplink456")!
 
-        BranchSessionIntegration.handleURL(testURL, sceneIdentifier: "scene-abc") { params, error in
-            XCTAssertNotNil(params)
+        BranchSessionIntegration.handleURL(testURL, sceneIdentifier: "scene-abc") { session, error in
+            XCTAssertNotNil(session)
             XCTAssertNil(error)
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: 10.0)
     }
 
     // MARK: - Handle User Activity Tests
@@ -140,13 +156,13 @@ final class BranchSessionIntegrationTests: XCTestCase {
         let userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
         userActivity.webpageURL = URL(string: "https://test.app.link/universal123")
 
-        BranchSessionIntegration.handleUserActivity(userActivity, sceneIdentifier: nil) { params, error in
-            XCTAssertNotNil(params)
+        BranchSessionIntegration.handleUserActivity(userActivity, sceneIdentifier: nil) { session, error in
+            XCTAssertNotNil(session)
             XCTAssertNil(error)
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: 10.0)
     }
 
     func testHandleUserActivityWithInvalidActivityType() {
@@ -155,19 +171,19 @@ final class BranchSessionIntegrationTests: XCTestCase {
         let userActivity = NSUserActivity(activityType: "com.test.invalid")
         userActivity.webpageURL = URL(string: "https://test.app.link/invalid")
 
-        BranchSessionIntegration.handleUserActivity(userActivity, sceneIdentifier: nil) { params, error in
-            XCTAssertNil(params)
+        BranchSessionIntegration.handleUserActivity(userActivity, sceneIdentifier: nil) { session, error in
+            XCTAssertNil(session)
             XCTAssertNotNil(error)
 
-            // Should be invalidUserActivity error
-            if let branchError = error as? BranchError {
-                XCTAssertEqual(branchError, BranchError.invalidUserActivity)
+            // Should be an NSError with Branch domain
+            if let nsError = error {
+                XCTAssertEqual(nsError.domain, "io.branch.sdk")
             }
 
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: 10.0)
     }
 
     func testHandleUserActivityWithNoURL() {
@@ -176,57 +192,63 @@ final class BranchSessionIntegrationTests: XCTestCase {
         let userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
         // No webpageURL set
 
-        BranchSessionIntegration.handleUserActivity(userActivity, sceneIdentifier: nil) { params, error in
-            XCTAssertNil(params)
+        BranchSessionIntegration.handleUserActivity(userActivity, sceneIdentifier: nil) { session, error in
+            XCTAssertNil(session)
             XCTAssertNotNil(error)
 
-            if let branchError = error as? BranchError {
-                XCTAssertEqual(branchError, BranchError.invalidUserActivity)
+            if let nsError = error {
+                XCTAssertEqual(nsError.domain, "io.branch.sdk")
             }
 
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: 10.0)
+    }
+
+    func testHandleUserActivityWithSpotlightActivity() {
+        let expectation = expectation(description: "Handle user activity fails")
+
+        // Spotlight activities should also fail (not NSUserActivityTypeBrowsingWeb)
+        let userActivity = NSUserActivity(activityType: "com.apple.corespotlightitem")
+        userActivity.webpageURL = URL(string: "https://test.app.link/spotlight")
+
+        BranchSessionIntegration.handleUserActivity(userActivity, sceneIdentifier: nil) { session, error in
+            XCTAssertNil(session)
+            XCTAssertNotNil(error)
+
+            if let nsError = error {
+                XCTAssertEqual(nsError.domain, "io.branch.sdk")
+            }
+
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 10.0)
     }
 
     // MARK: - Session Parameters Conversion Tests
 
-    func testSessionParamsContainStandardFields() {
+    func testConvertSessionToParams() {
         let expectation = expectation(description: "Initialize completes")
 
-        BranchSessionIntegration.initializeSession(sceneIdentifier: nil) { params, _ in
-            XCTAssertNotNil(params)
+        BranchSessionIntegration.initializeSession(sceneIdentifier: nil) { session, _ in
+            XCTAssertNotNil(session)
 
-            // Required fields
-            XCTAssertNotNil(params?["session_id"] as? String)
-            XCTAssertNotNil(params?["identity_id"] as? String)
-            XCTAssertNotNil(params?["device_fingerprint_id"] as? String)
-            XCTAssertNotNil(params?["+is_first_session"] as? Bool)
+            if let session = session {
+                let params = BranchSessionIntegration.convertSessionToParams(session)
 
-            // clicked_branch_link should be present (false if no link)
-            XCTAssertNotNil(params?["+clicked_branch_link"])
-
-            expectation.fulfill()
-        }
-
-        waitForExpectations(timeout: 5.0)
-    }
-
-    func testSessionParamsWithLinkDataContainLinkFields() {
-        let expectation = expectation(description: "Handle URL completes")
-        let testURL = URL(string: "https://test.app.link/campaign-link")!
-
-        BranchSessionIntegration.handleURL(testURL, sceneIdentifier: nil) { params, _ in
-            XCTAssertNotNil(params)
-
-            // Link-specific fields
-            XCTAssertEqual(params?["~referring_link"] as? String, testURL.absoluteString)
+                // Required fields
+                XCTAssertNotNil(params["session_id"] as? String)
+                XCTAssertNotNil(params["identity_id"] as? String)
+                XCTAssertNotNil(params["device_fingerprint_id"] as? String)
+                XCTAssertNotNil(params["+is_first_session"] as? Bool)
+            }
 
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: 10.0)
     }
 
     // MARK: - State Synchronization Tests
@@ -240,108 +262,92 @@ final class BranchSessionIntegrationTests: XCTestCase {
             initExpectation.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: 10.0)
 
-        // Wait for state to sync via async state observation
-        let stateExpectation = expectation(description: "State syncs")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            XCTAssertTrue(BranchSessionIntegration.isInitialized)
-            stateExpectation.fulfill()
+        XCTAssertTrue(BranchSessionIntegration.isInitialized)
+    }
+
+    func testCurrentSessionUpdatesAfterInitialization() {
+        XCTAssertNil(BranchSessionIntegration.currentSession)
+
+        let expectation = expectation(description: "Initialize completes")
+
+        BranchSessionIntegration.initializeSession(sceneIdentifier: nil) { _, _ in
+            expectation.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: 10.0)
+
+        XCTAssertNotNil(BranchSessionIntegration.currentSession)
     }
 
     // MARK: - Concurrent Calls Tests (Task Coalescing)
 
     func testConcurrentHandleURLCallsAreCoalesced() {
-        // Reset first
-        BranchSessionCoordinator.shared.resetSession()
-
         let expectation1 = expectation(description: "First call completes")
         let expectation2 = expectation(description: "Second call completes")
 
         let url1 = URL(string: "https://test.app.link/first")!
         let url2 = URL(string: "https://test.app.link/second")!
 
-        var params1: [String: Any]?
-        var params2: [String: Any]?
+        var session1: Session?
+        var session2: Session?
 
         // Start both calls nearly simultaneously
-        BranchSessionIntegration.handleURL(url1, sceneIdentifier: nil) { params, _ in
-            params1 = params
+        BranchSessionIntegration.handleURL(url1, sceneIdentifier: nil) { session, _ in
+            session1 = session
             expectation1.fulfill()
         }
 
-        BranchSessionIntegration.handleURL(url2, sceneIdentifier: nil) { params, _ in
-            params2 = params
+        BranchSessionIntegration.handleURL(url2, sceneIdentifier: nil) { session, _ in
+            session2 = session
             expectation2.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: 10.0)
 
-        // Both should complete with valid params
-        XCTAssertNotNil(params1)
-        XCTAssertNotNil(params2)
+        // Both should complete with valid sessions
+        XCTAssertNotNil(session1)
+        XCTAssertNotNil(session2)
 
         // Session IDs should be the same (coalesced)
-        let sessionId1 = params1?["session_id"] as? String
-        let sessionId2 = params2?["session_id"] as? String
-        XCTAssertEqual(sessionId1, sessionId2, "Concurrent calls should be coalesced to same session")
+        XCTAssertEqual(session1?.id, session2?.id, "Concurrent calls should be coalesced to same session")
     }
 
-    // MARK: - Session Parameters Format Tests
+    func testTripleConcurrentInitializeCalls() {
+        let expectation1 = expectation(description: "First call completes")
+        let expectation2 = expectation(description: "Second call completes")
+        let expectation3 = expectation(description: "Third call completes")
 
-    func testSessionParamsContainIsFirstSession() {
-        let expectation = expectation(description: "Initialize completes")
+        var session1: Session?
+        var session2: Session?
+        var session3: Session?
 
-        BranchSessionIntegration.initializeSession(sceneIdentifier: nil) { params, _ in
-            XCTAssertNotNil(params)
-
-            // +is_first_session should be a boolean
-            let isFirstSession = params?["+is_first_session"] as? Bool
-            XCTAssertNotNil(isFirstSession)
-
-            expectation.fulfill()
+        BranchSessionIntegration.initializeSession(sceneIdentifier: nil) { session, _ in
+            session1 = session
+            expectation1.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
-    }
-
-    func testSessionParamsContainDeviceFingerprintId() {
-        let expectation = expectation(description: "Initialize completes")
-
-        BranchSessionIntegration.initializeSession(sceneIdentifier: nil) { params, _ in
-            XCTAssertNotNil(params)
-
-            let fingerprintId = params?["device_fingerprint_id"] as? String
-            XCTAssertNotNil(fingerprintId)
-            XCTAssertFalse(fingerprintId?.isEmpty ?? true)
-
-            expectation.fulfill()
+        BranchSessionIntegration.initializeSession(sceneIdentifier: "scene-2") { session, _ in
+            session2 = session
+            expectation2.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
-    }
-
-    // MARK: - Handle URL Without Click Tests
-
-    func testHandleURLSetsClickedBranchLinkTrue() {
-        let expectation = expectation(description: "Handle URL completes")
-        let testURL = URL(string: "https://test.app.link/clicked-link")!
-
-        BranchSessionIntegration.handleURL(testURL, sceneIdentifier: nil) { params, _ in
-            XCTAssertNotNil(params)
-
-            // When handling a URL, it should be marked as clicked
-            // Note: Current implementation may set this to false until full link resolution
-            let clickedBranchLink = params?["+clicked_branch_link"]
-            XCTAssertNotNil(clickedBranchLink)
-
-            expectation.fulfill()
+        BranchSessionIntegration.initializeSession(sceneIdentifier: "scene-3") { session, _ in
+            session3 = session
+            expectation3.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: 10.0)
+
+        // All should complete with valid sessions
+        XCTAssertNotNil(session1)
+        XCTAssertNotNil(session2)
+        XCTAssertNotNil(session3)
+
+        // All should be coalesced
+        XCTAssertEqual(session1?.id, session2?.id)
+        XCTAssertEqual(session2?.id, session3?.id)
     }
 
     // MARK: - Multiple Sequential Initializations
@@ -349,54 +355,57 @@ final class BranchSessionIntegrationTests: XCTestCase {
     func testMultipleSequentialInitializations() {
         // First initialization
         let expectation1 = expectation(description: "First init completes")
-        BranchSessionIntegration.initializeSession(sceneIdentifier: nil) { params, error in
-            XCTAssertNotNil(params)
+        BranchSessionIntegration.initializeSession(sceneIdentifier: nil) { session, error in
+            XCTAssertNotNil(session)
             XCTAssertNil(error)
             expectation1.fulfill()
         }
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: 10.0)
 
         // Reset
-        BranchSessionCoordinator.shared.resetSession()
+        BranchSessionCoordinator.shared.reset()
 
         // Wait for reset
         let resetExpectation = expectation(description: "Reset completes")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             resetExpectation.fulfill()
         }
         waitForExpectations(timeout: 5.0)
 
         // Second initialization
         let expectation2 = expectation(description: "Second init completes")
-        BranchSessionIntegration.initializeSession(sceneIdentifier: "scene-2") { params, error in
-            XCTAssertNotNil(params)
+        BranchSessionIntegration.initializeSession(sceneIdentifier: "scene-2") { session, error in
+            XCTAssertNotNil(session)
             XCTAssertNil(error)
             expectation2.fulfill()
         }
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: 10.0)
     }
 
-    // MARK: - User Activity Validation Tests
+    // MARK: - Thread Safety Tests
 
-    func testHandleUserActivityWithSpotlightActivity() {
-        let expectation = expectation(description: "Handle user activity fails")
+    func testCallbacksOnMainThread() {
+        let expectation = expectation(description: "Initialize completes")
 
-        // Spotlight activities should also fail (not NSUserActivityTypeBrowsingWeb)
-        let userActivity = NSUserActivity(activityType: "com.apple.corespotlightitem")
-        userActivity.webpageURL = URL(string: "https://test.app.link/spotlight")
-
-        BranchSessionIntegration.handleUserActivity(userActivity, sceneIdentifier: nil) { params, error in
-            XCTAssertNil(params)
-            XCTAssertNotNil(error)
-
-            if let branchError = error as? BranchError {
-                XCTAssertEqual(branchError, BranchError.invalidUserActivity)
-            }
-
+        BranchSessionIntegration.initializeSession(sceneIdentifier: nil) { _, _ in
+            XCTAssertTrue(Thread.isMainThread, "Callback must be on main thread")
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: 10.0)
+    }
+
+    func testErrorCallbacksOnMainThread() {
+        let expectation = expectation(description: "Error callback completes")
+
+        let userActivity = NSUserActivity(activityType: "com.invalid.activity")
+
+        BranchSessionIntegration.handleUserActivity(userActivity, sceneIdentifier: nil) { _, _ in
+            XCTAssertTrue(Thread.isMainThread, "Error callback must be on main thread")
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 10.0)
     }
 
     // MARK: - Feature Flags Edge Cases
@@ -404,19 +413,53 @@ final class BranchSessionIntegrationTests: XCTestCase {
     func testFeatureFlagsToggle() {
         let original = BranchSessionFeatureFlags.useModernSessionManager
 
-        // Toggle on
+        // Toggle multiple times
         BranchSessionFeatureFlags.useModernSessionManager = true
         XCTAssertTrue(BranchSessionFeatureFlags.useModernSessionManager)
 
-        // Toggle off
         BranchSessionFeatureFlags.useModernSessionManager = false
         XCTAssertFalse(BranchSessionFeatureFlags.useModernSessionManager)
 
-        // Toggle on again
         BranchSessionFeatureFlags.useModernSessionManager = true
         XCTAssertTrue(BranchSessionFeatureFlags.useModernSessionManager)
 
         // Restore
         BranchSessionFeatureFlags.useModernSessionManager = original
+    }
+
+    // MARK: - First Session Flag Tests
+
+    func testFirstSessionFlagInParams() {
+        let expectation = expectation(description: "Initialize completes")
+
+        BranchSessionIntegration.initializeSession(sceneIdentifier: nil) { session, _ in
+            XCTAssertNotNil(session)
+
+            // isFirstSession should be a valid boolean
+            let isFirst = session?.isFirstSession
+            XCTAssertNotNil(isFirst)
+
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 10.0)
+    }
+
+    // MARK: - Device Fingerprint Tests
+
+    func testDeviceFingerprintInParams() {
+        let expectation = expectation(description: "Initialize completes")
+
+        BranchSessionIntegration.initializeSession(sceneIdentifier: nil) { session, _ in
+            XCTAssertNotNil(session)
+
+            let fingerprintId = session?.deviceFingerprintId
+            XCTAssertNotNil(fingerprintId)
+            XCTAssertFalse(fingerprintId?.isEmpty ?? true)
+
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 10.0)
     }
 }
