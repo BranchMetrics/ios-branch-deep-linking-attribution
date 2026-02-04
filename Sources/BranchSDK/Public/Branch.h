@@ -816,6 +816,27 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 ///Returns the current tracking state.
 + (BOOL) trackingDisabled;
 
+/**
+ Disables automatic session open tracking for the next foreground event with a default timeout of 30 seconds.
+. This is useful for scenarios like Bio Auth Dialogs,  Apple pay Dialogs or other cases where the app may briefly go to
+ background and return without needing a new session open.
+ */
++ (void)disableNextForeground;
+
+/**
+ Disables automatic session open tracking for the next foreground event for the defined time interval.
+
+ @param timeout    The duration in seconds to disable automatic open tracking. After this time,
+                 automatic tracking resumes. Pass 0 to disable indefinitely until `resumeSession` is called.
+ */
++ (void)disableNextForegroundForTimeInterval:(NSTimeInterval)timeout;
+
+/**
+ Resumes automatic session open tracking after it was disabled by `disableNextForegroundFor:`.
+ If automatic tracking is already enabled, this method has no effect.
+ */
++ (void)resumeSession;
+
 /*
  
  Sets the time window for which referrer_graid is valid starting from now.
