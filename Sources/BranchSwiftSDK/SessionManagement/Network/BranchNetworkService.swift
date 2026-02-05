@@ -5,6 +5,8 @@
 //  Copyright © 2026 Branch Metrics. All rights reserved.
 //  SPDX-License-Identifier: MIT
 //
+//  iOS 12+ compatible using GCD synchronization patterns.
+//
 
 import Foundation
 
@@ -14,44 +16,61 @@ import Foundation
 ///
 /// This abstraction allows SessionManager to remain decoupled from the
 /// underlying network implementation (BNCServerInterface).
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-public protocol BranchNetworkService: Sendable {
+///
+/// All methods use completion handlers for iOS 12 compatibility.
+public protocol BranchNetworkService: AnyObject {
     /// Perform an install request (first session).
-    /// - Parameter requestData: Dictionary of request parameters
-    /// - Returns: Server response dictionary
-    /// - Throws: Network or API errors
-    func performInstall(requestData: [String: Any]) async throws -> [String: Any]
+    /// - Parameters:
+    ///   - requestData: Dictionary of request parameters
+    ///   - completion: Callback with response dictionary or error
+    func performInstall(
+        requestData: [String: Any],
+        completion: @escaping ([String: Any]?, Error?) -> Void
+    )
 
     /// Perform an open request (returning session).
-    /// - Parameter requestData: Dictionary of request parameters
-    /// - Returns: Server response dictionary
-    /// - Throws: Network or API errors
-    func performOpen(requestData: [String: Any]) async throws -> [String: Any]
+    /// - Parameters:
+    ///   - requestData: Dictionary of request parameters
+    ///   - completion: Callback with response dictionary or error
+    func performOpen(
+        requestData: [String: Any],
+        completion: @escaping ([String: Any]?, Error?) -> Void
+    )
 
     /// Set user identity.
     /// - Parameters:
     ///   - userId: The user identifier to set
     ///   - sessionId: Current session ID
     ///   - identityId: Current identity ID
-    /// - Returns: Server response dictionary
-    /// - Throws: Network or API errors
-    func setIdentity(userId: String, sessionId: String, identityId: String) async throws -> [String: Any]
+    ///   - completion: Callback with response dictionary or error
+    func setIdentity(
+        userId: String,
+        sessionId: String,
+        identityId: String,
+        completion: @escaping ([String: Any]?, Error?) -> Void
+    )
 
     /// Clear user identity (logout).
     /// - Parameters:
     ///   - sessionId: Current session ID
     ///   - identityId: Current identity ID
-    /// - Returns: Server response dictionary
-    /// - Throws: Network or API errors
-    func logout(sessionId: String, identityId: String) async throws -> [String: Any]
+    ///   - completion: Callback with response dictionary or error
+    func logout(
+        sessionId: String,
+        identityId: String,
+        completion: @escaping ([String: Any]?, Error?) -> Void
+    )
 
     /// Resolve a deep link URL.
     /// - Parameters:
     ///   - url: The deep link URL to resolve
     ///   - sessionId: Current session ID
-    /// - Returns: Link data dictionary
-    /// - Throws: Network or API errors
-    func resolveLink(url: URL, sessionId: String) async throws -> [String: Any]
+    ///   - completion: Callback with link data dictionary or error
+    func resolveLink(
+        url: URL,
+        sessionId: String,
+        completion: @escaping ([String: Any]?, Error?) -> Void
+    )
 }
 
 // MARK: - Network Logging Callback
@@ -67,8 +86,7 @@ public protocol BranchNetworkService: Sendable {
 ///   - responseBody: The response body as a dictionary (nil if request failed)
 ///   - statusCode: The HTTP status code (nil if request failed)
 ///   - error: Any error that occurred (nil if successful)
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-public typealias NetworkLogCallback = @Sendable (
+public typealias NetworkLogCallback = (
     _ url: String,
     _ requestBody: [String: Any],
     _ responseBody: [String: Any]?,
@@ -76,18 +94,17 @@ public typealias NetworkLogCallback = @Sendable (
     _ error: Error?
 ) -> Void
 
-// MARK: - Network Log Entry (Modern Swift Approach)
+// MARK: - Network Log Entry
 
 /// Represents a single network log entry with all request/response details.
 ///
-/// This struct is `Sendable` and can be safely passed across actor boundaries.
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-public struct NetworkLogEntry: Sendable {
+/// This struct captures network traffic for debugging and monitoring.
+public struct NetworkLogEntry {
     public let id: UUID
     public let timestamp: Date
     public let url: String
-    public let requestBody: [String: any Sendable]
-    public let responseBody: [String: any Sendable]?
+    public let requestBody: [String: Any]
+    public let responseBody: [String: Any]?
     public let statusCode: Int?
     public let error: String?
 
@@ -101,69 +118,47 @@ public struct NetworkLogEntry: Sendable {
         id = UUID()
         timestamp = Date()
         self.url = url
-        self.requestBody = Self.makeSendable(requestBody)
-        self.responseBody = responseBody.map { Self.makeSendable($0) }
+        self.requestBody = requestBody
+        self.responseBody = responseBody
         self.statusCode = statusCode
         self.error = error?.localizedDescription
     }
-
-    /// Convert [String: Any] to [String: any Sendable] for actor isolation safety
-    private static func makeSendable(_ dict: [String: Any]) -> [String: any Sendable] {
-        dict.compactMapValues { makeSendableValue($0) }
-    }
-
-    /// Convert any value to a Sendable equivalent
-    private static func makeSendableValue(_ value: Any) -> (any Sendable)? {
-        switch value {
-        case let string as String:
-            return string
-        case let int as Int:
-            return int
-        case let double as Double:
-            return double
-        case let bool as Bool:
-            return bool
-        case let nsNumber as NSNumber:
-            return nsNumber.doubleValue
-        case let array as [Any]:
-            // Recursively convert array elements
-            return array.compactMap { makeSendableValue($0) }
-        case let nested as [String: Any]:
-            return makeSendable(nested)
-        case is NSNull:
-            return "<null>"
-        default:
-            // Fallback: convert to string representation
-            return String(describing: value)
-        }
-    }
 }
 
-// MARK: - Branch Network Logger Actor
+// MARK: - Branch Network Logger
 
-/// Thread-safe network logger using Swift Concurrency.
+/// Thread-safe network logger using GCD synchronization (iOS 12+ compatible).
 ///
-/// This actor provides two ways to observe network logs:
-/// 1. **AsyncStream**: Modern reactive approach with automatic buffering
-/// 2. **Callback**: Legacy support for simple logging
-///
-/// Example usage with AsyncStream:
-/// ```swift
-/// Task {
-///     for await entry in BranchNetworkLogger.shared.logStream {
-///         print("[\(entry.timestamp)] \(entry.url) -> \(entry.statusCode ?? 0)")
-///     }
-/// }
-/// ```
+/// This class provides two ways to observe network logs:
+/// 1. **Callback**: Simple callback-based observation
+/// 2. **NotificationCenter**: For decoupled observation
 ///
 /// Example usage with callback:
 /// ```swift
-/// await BranchNetworkLogger.shared.setCallback { entry in
+/// BranchNetworkLogger.shared.setCallback { entry in
 ///     print("Request: \(entry.url)")
 /// }
 /// ```
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-public actor BranchNetworkLogger {
+///
+/// Example usage with NotificationCenter:
+/// ```swift
+/// NotificationCenter.default.addObserver(
+///     forName: BranchNetworkLogger.didLogEntryNotification,
+///     object: nil,
+///     queue: .main
+/// ) { notification in
+///     if let entry = notification.userInfo?["entry"] as? NetworkLogEntry {
+///         print("Request: \(entry.url)")
+///     }
+/// }
+/// ```
+public final class BranchNetworkLogger {
+    // MARK: - Notifications
+
+    /// Notification posted when a new log entry is recorded.
+    /// The `userInfo` dictionary contains the `NetworkLogEntry` under the key "entry".
+    public static let didLogEntryNotification = Notification.Name("BranchNetworkLoggerDidLogEntry")
+
     // MARK: - Singleton
 
     /// Shared instance for global access
@@ -171,135 +166,97 @@ public actor BranchNetworkLogger {
 
     // MARK: - Properties
 
+    /// Serial queue for thread-safe access (iOS 12 compatible pattern)
+    private let isolationQueue = DispatchQueue(
+        label: "io.branch.networklogger.isolation",
+        qos: .utility
+    )
+
     /// Buffer for logs received before any observer is attached
     private var pendingLogs: [NetworkLogEntry] = []
 
     /// Maximum number of pending logs to buffer (prevents memory issues)
     private let maxPendingLogs = 100
 
-    /// Stream continuation for AsyncStream-based observation
-    private var streamContinuation: AsyncStream<NetworkLogEntry>.Continuation?
+    /// Callback for log entries
+    private var callback: ((NetworkLogEntry) -> Void)?
 
-    /// Legacy callback for simple logging
-    private var callback: (@Sendable (NetworkLogEntry) -> Void)?
-
-    /// Flag to track if stream has been accessed
-    private var streamStarted = false
+    /// Flag to track if callback is set
+    private var hasCallback = false
 
     // MARK: - Initialization
 
     private init() {}
 
-    // MARK: - AsyncStream (Modern Approach)
-
-    /// AsyncStream of network log entries.
-    ///
-    /// This stream buffers entries until an observer attaches, then flushes
-    /// all pending logs followed by real-time logs.
-    ///
-    /// Usage:
-    /// ```swift
-    /// Task {
-    ///     for await entry in BranchNetworkLogger.shared.logStream {
-    ///         // Process each log entry
-    ///     }
-    /// }
-    /// ```
-    public nonisolated var logStream: AsyncStream<NetworkLogEntry> {
-        AsyncStream { continuation in
-            Task {
-                await self.attachStream(continuation)
-            }
-        }
-    }
-
-    /// Attach a stream continuation and flush pending logs
-    private func attachStream(_ continuation: AsyncStream<NetworkLogEntry>.Continuation) {
-        // Finish previous stream if exists to prevent zombie listeners
-        streamContinuation?.finish()
-        streamContinuation = continuation
-        streamStarted = true
-
-        // Flush all pending logs to the new stream
-        for entry in pendingLogs {
-            continuation.yield(entry)
-        }
-        pendingLogs.removeAll()
-
-        // Handle stream termination
-        continuation.onTermination = { @Sendable [weak self] _ in
-            Task { [weak self] in
-                await self?.detachStream()
-            }
-        }
-    }
-
-    /// Detach stream when observer stops listening
-    private func detachStream() {
-        streamContinuation = nil
-        streamStarted = false
-    }
-
-    // MARK: - Callback (Legacy Support)
+    // MARK: - Callback-Based Observation
 
     /// Set a callback for receiving log entries.
     ///
-    /// This is provided for simpler use cases where AsyncStream is overkill.
     /// When set, pending logs are flushed to the callback.
     ///
     /// - Parameter callback: Closure called for each log entry
-    public func setCallback(_ callback: @escaping @Sendable (NetworkLogEntry) -> Void) {
-        self.callback = callback
+    public func setCallback(_ callback: @escaping (NetworkLogEntry) -> Void) {
+        isolationQueue.async { [weak self] in
+            guard let self = self else { return }
 
-        // Flush pending logs to callback
-        for entry in pendingLogs {
-            callback(entry)
+            self.callback = callback
+            self.hasCallback = true
+
+            // Flush pending logs to callback
+            for entry in self.pendingLogs {
+                callback(entry)
+            }
+            self.pendingLogs.removeAll()
         }
-        pendingLogs.removeAll()
     }
 
     /// Remove the callback
     public func removeCallback() {
-        callback = nil
+        isolationQueue.async { [weak self] in
+            self?.callback = nil
+            self?.hasCallback = false
+        }
     }
 
     // MARK: - Logging
 
-    /// Log a pre-constructed network log entry.
-    ///
-    /// This is the preferred method as it allows the caller to perform the
-    /// expensive Sendable conversion off the actor (e.g., on the network thread).
+    /// Log a network request/response entry.
     ///
     /// If no observer is attached, the entry is buffered (up to `maxPendingLogs`).
     /// When an observer attaches, buffered entries are flushed.
     ///
-    /// - Parameter entry: The pre-constructed log entry
+    /// Thread-safe: can be called from any thread.
+    ///
+    /// - Parameter entry: The log entry to record
     public func log(_ entry: NetworkLogEntry) {
-        // Try to deliver to stream
-        if let continuation = streamContinuation {
-            continuation.yield(entry)
-            return
-        }
+        isolationQueue.async { [weak self] in
+            guard let self = self else { return }
 
-        // Try to deliver to callback
-        if let callback = callback {
-            callback(entry)
-            return
-        }
+            // Try to deliver to callback
+            if let callback = self.callback {
+                callback(entry)
+            } else {
+                // Buffer if no observer is attached
+                self.pendingLogs.append(entry)
 
-        // Buffer if no observer is attached
-        pendingLogs.append(entry)
+                // Trim buffer if too large
+                if self.pendingLogs.count > self.maxPendingLogs {
+                    self.pendingLogs.removeFirst(self.pendingLogs.count - self.maxPendingLogs)
+                }
+            }
 
-        // Trim buffer if too large
-        if pendingLogs.count > maxPendingLogs {
-            pendingLogs.removeFirst(pendingLogs.count - maxPendingLogs)
+            // Always post notification for decoupled observers
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(
+                    name: BranchNetworkLogger.didLogEntryNotification,
+                    object: self,
+                    userInfo: ["entry": entry]
+                )
+            }
         }
     }
 
-    /// Convenience method to log raw components (delegates to main log method).
-    ///
-    /// Note: Prefer using `log(_ entry:)` with a pre-constructed `NetworkLogEntry`
-    /// to offload the Sendable conversion work from the actor.
+    /// Convenience method to log raw components.
     ///
     /// - Parameters:
     ///   - url: The request URL
@@ -326,19 +283,29 @@ public actor BranchNetworkLogger {
 
     // MARK: - Utility
 
-    /// Check if any observer is currently attached
+    /// Check if any observer is currently attached (thread-safe read)
     public var hasObserver: Bool {
-        streamContinuation != nil || callback != nil
+        var result = false
+        isolationQueue.sync {
+            result = hasCallback
+        }
+        return result
     }
 
-    /// Get the count of pending (unbuffered) logs
+    /// Get the count of pending (unbuffered) logs (thread-safe read)
     public var pendingLogCount: Int {
-        pendingLogs.count
+        var result = 0
+        isolationQueue.sync {
+            result = pendingLogs.count
+        }
+        return result
     }
 
     /// Clear all pending logs
     public func clearPendingLogs() {
-        pendingLogs.removeAll()
+        isolationQueue.async { [weak self] in
+            self?.pendingLogs.removeAll()
+        }
     }
 }
 
@@ -351,8 +318,7 @@ public actor BranchNetworkLogger {
 ///
 /// The base URL is determined dynamically from BNCServerAPI to respect configurations
 /// set via `Branch.setAPIUrl()`, EU servers, and tracking domains.
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked Sendable {
+public final class DefaultBranchNetworkService: BranchNetworkService {
     // MARK: - Static Logging Callback
 
     /// Global callback for network logging. Set this to receive all network traffic.
@@ -371,6 +337,12 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
     // MARK: - Properties
 
     private let logger: any Logging
+
+    /// Serial queue for network operations
+    private let networkQueue = DispatchQueue(
+        label: "io.branch.networkservice.network",
+        qos: .userInitiated
+    )
 
     // MARK: - Initialization
 
@@ -445,27 +417,38 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
 
     // MARK: - BranchNetworkService Implementation
 
-    public func performInstall(requestData: [String: Any]) async throws -> [String: Any] {
+    public func performInstall(
+        requestData: [String: Any],
+        completion: @escaping ([String: Any]?, Error?) -> Void
+    ) {
         log(.debug, "performInstall - starting request")
-        let response = try await performRequest(
-            endpoint: "/v1/install",
-            requestData: requestData
-        )
-        log(.debug, "performInstall - completed successfully")
-        return response
+        performRequest(endpoint: "/v1/install", requestData: requestData) { [weak self] response, error in
+            if error == nil {
+                self?.log(.debug, "performInstall - completed successfully")
+            }
+            completion(response, error)
+        }
     }
 
-    public func performOpen(requestData: [String: Any]) async throws -> [String: Any] {
+    public func performOpen(
+        requestData: [String: Any],
+        completion: @escaping ([String: Any]?, Error?) -> Void
+    ) {
         log(.debug, "performOpen - starting request")
-        let response = try await performRequest(
-            endpoint: "/v1/open",
-            requestData: requestData
-        )
-        log(.debug, "performOpen - completed successfully")
-        return response
+        performRequest(endpoint: "/v1/open", requestData: requestData) { [weak self] response, error in
+            if error == nil {
+                self?.log(.debug, "performOpen - completed successfully")
+            }
+            completion(response, error)
+        }
     }
 
-    public func setIdentity(userId: String, sessionId: String, identityId: String) async throws -> [String: Any] {
+    public func setIdentity(
+        userId: String,
+        sessionId: String,
+        identityId: String,
+        completion: @escaping ([String: Any]?, Error?) -> Void
+    ) {
         log(.debug, "setIdentity - starting request for userId: \(userId)")
         var requestData: [String: Any] = [
             "identity": userId,
@@ -478,15 +461,19 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
             requestData["branch_key"] = branchKey
         }
 
-        let response = try await performRequest(
-            endpoint: "/v1/profile",
-            requestData: requestData
-        )
-        log(.debug, "setIdentity - completed successfully")
-        return response
+        performRequest(endpoint: "/v1/profile", requestData: requestData) { [weak self] response, error in
+            if error == nil {
+                self?.log(.debug, "setIdentity - completed successfully")
+            }
+            completion(response, error)
+        }
     }
 
-    public func logout(sessionId: String, identityId: String) async throws -> [String: Any] {
+    public func logout(
+        sessionId: String,
+        identityId: String,
+        completion: @escaping ([String: Any]?, Error?) -> Void
+    ) {
         log(.debug, "logout - starting request for sessionId: \(sessionId)")
         var requestData: [String: Any] = [
             "session_id": sessionId,
@@ -497,15 +484,19 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
             requestData["branch_key"] = branchKey
         }
 
-        let response = try await performRequest(
-            endpoint: "/v1/logout",
-            requestData: requestData
-        )
-        log(.debug, "logout - completed successfully")
-        return response
+        performRequest(endpoint: "/v1/logout", requestData: requestData) { [weak self] response, error in
+            if error == nil {
+                self?.log(.debug, "logout - completed successfully")
+            }
+            completion(response, error)
+        }
     }
 
-    public func resolveLink(url: URL, sessionId: String) async throws -> [String: Any] {
+    public func resolveLink(
+        url: URL,
+        sessionId: String,
+        completion: @escaping ([String: Any]?, Error?) -> Void
+    ) {
         log(.debug, "resolveLink - starting request for URL: \(url.absoluteString)")
         var requestData: [String: Any] = [
             "url": url.absoluteString,
@@ -516,12 +507,12 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
             requestData["branch_key"] = branchKey
         }
 
-        let response = try await performRequest(
-            endpoint: "/v1/url",
-            requestData: requestData
-        )
-        log(.debug, "resolveLink - completed successfully")
-        return response
+        performRequest(endpoint: "/v1/url", requestData: requestData) { [weak self] response, error in
+            if error == nil {
+                self?.log(.debug, "resolveLink - completed successfully")
+            }
+            completion(response, error)
+        }
     }
 
     // MARK: - Private Methods
@@ -539,22 +530,25 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
         return branchClass.perform(Constants.branchKeySelector)?.takeUnretainedValue() as? String
     }
 
-    /// Perform network request using URLSession (pure Swift implementation)
+    /// Perform network request using URLSession with completion handler (iOS 12 compatible)
     private func performRequest(
         endpoint: String,
-        requestData: [String: Any]
-    ) async throws -> [String: Any] {
+        requestData: [String: Any],
+        completion: @escaping ([String: Any]?, Error?) -> Void
+    ) {
         // Safely concatenate base URL and endpoint, handling missing slashes
         let baseURL = getBaseURL()
         let fullURL = endpoint.hasPrefix("/") ? baseURL + endpoint : baseURL + "/" + endpoint
 
         guard let url = URL(string: fullURL) else {
             log(.error, "performRequest - invalid URL: \(fullURL)")
-            throw NSError(
+            let error = NSError(
                 domain: "io.branch.sdk.error",
                 code: 1007, // BNCNetworkServiceInterfaceError
                 userInfo: [NSLocalizedDescriptionKey: "Invalid URL: \(fullURL)"]
             )
+            completion(nil, error)
+            return
         }
 
         var request = URLRequest(url: url)
@@ -572,7 +566,8 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
             request.httpBody = try JSONSerialization.data(withJSONObject: mutableRequestData)
         } catch {
             log(.error, "performRequest - JSON serialization failed: \(error.localizedDescription)")
-            throw error
+            completion(nil, error)
+            return
         }
 
         log(.debug, "performRequest - sending POST to \(endpoint)")
@@ -586,102 +581,131 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
             }
         #endif
 
-        // Perform request
-        let (data, response): (Data, URLResponse)
-        do {
-            (data, response) = try await URLSession.shared.data(for: request)
-        } catch {
-            log(.error, "performRequest - network request failed: \(error.localizedDescription)")
-            // Log to modern actor-based logger (non-blocking to avoid latency)
-            // Construct entry locally to offload Sendable conversion from actor
-            let entry = NetworkLogEntry(
-                url: fullURL,
-                requestBody: mutableRequestData,
-                responseBody: nil,
-                statusCode: nil,
-                error: error
-            )
-            Task { await BranchNetworkLogger.shared.log(entry) }
-            // Also invoke legacy callback for backwards compatibility
-            Self.logCallback?(fullURL, mutableRequestData, nil, nil, error)
-            throw NSError(
-                domain: "io.branch.sdk.error",
-                code: 1007, // BNCNetworkServiceInterfaceError
-                userInfo: [NSLocalizedDescriptionKey: error.localizedDescription]
-            )
-        }
-
-        // Validate response
-        guard let httpResponse = response as? HTTPURLResponse else {
-            log(.error, "performRequest - invalid response type")
-            throw NSError(
-                domain: "io.branch.sdk.error",
-                code: 1007, // BNCNetworkServiceInterfaceError
-                userInfo: [NSLocalizedDescriptionKey: "Invalid response type"]
-            )
-        }
-
-        log(.debug, "performRequest - received HTTP \(httpResponse.statusCode) from \(endpoint)")
-
-        // Log response data for debugging (only in debug builds)
-        #if DEBUG
-            if let responseString = String(data: data, encoding: .utf8) {
-                log(.debug, "performRequest - response body:\n\(responseString)")
+        // Perform request using completion-based API (iOS 12 compatible)
+        let task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            guard let self = self else {
+                completion(nil, NSError(
+                    domain: "io.branch.sdk.error",
+                    code: 1007,
+                    userInfo: [NSLocalizedDescriptionKey: "Service deallocated"]
+                ))
+                return
             }
-        #endif
 
-        // Parse response
-        let responseData: [String: Any]
-        if !data.isEmpty {
-            guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-                log(.error, "performRequest - invalid JSON response")
-                let parseError = NSError(
+            // Handle network error
+            if let error = error {
+                self.log(.error, "performRequest - network request failed: \(error.localizedDescription)")
+
+                // Log to network logger (non-blocking)
+                self.networkQueue.async {
+                    let entry = NetworkLogEntry(
+                        url: fullURL,
+                        requestBody: mutableRequestData,
+                        responseBody: nil,
+                        statusCode: nil,
+                        error: error
+                    )
+                    BranchNetworkLogger.shared.log(entry)
+                }
+
+                // Also invoke legacy callback for backwards compatibility
+                Self.logCallback?(fullURL, mutableRequestData, nil, nil, error)
+
+                let nsError = NSError(
                     domain: "io.branch.sdk.error",
                     code: 1007, // BNCNetworkServiceInterfaceError
-                    userInfo: [NSLocalizedDescriptionKey: "Invalid JSON response"]
+                    userInfo: [NSLocalizedDescriptionKey: error.localizedDescription]
                 )
-                // Log to modern actor-based logger (non-blocking)
-                let parseEntry = NetworkLogEntry(
+                completion(nil, nsError)
+                return
+            }
+
+            // Validate response
+            guard let httpResponse = response as? HTTPURLResponse else {
+                self.log(.error, "performRequest - invalid response type")
+                let invalidResponseError = NSError(
+                    domain: "io.branch.sdk.error",
+                    code: 1007, // BNCNetworkServiceInterfaceError
+                    userInfo: [NSLocalizedDescriptionKey: "Invalid response type"]
+                )
+                completion(nil, invalidResponseError)
+                return
+            }
+
+            self.log(.debug, "performRequest - received HTTP \(httpResponse.statusCode) from \(endpoint)")
+
+            // Log response data for debugging (only in debug builds)
+            #if DEBUG
+                if let data = data, let responseString = String(data: data, encoding: .utf8) {
+                    self.log(.debug, "performRequest - response body:\n\(responseString)")
+                }
+            #endif
+
+            // Parse response
+            let responseData: [String: Any]
+            if let data = data, !data.isEmpty {
+                guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                    self.log(.error, "performRequest - invalid JSON response")
+                    let parseError = NSError(
+                        domain: "io.branch.sdk.error",
+                        code: 1007, // BNCNetworkServiceInterfaceError
+                        userInfo: [NSLocalizedDescriptionKey: "Invalid JSON response"]
+                    )
+
+                    // Log to network logger (non-blocking)
+                    self.networkQueue.async {
+                        let parseEntry = NetworkLogEntry(
+                            url: fullURL,
+                            requestBody: mutableRequestData,
+                            responseBody: nil,
+                            statusCode: httpResponse.statusCode,
+                            error: parseError
+                        )
+                        BranchNetworkLogger.shared.log(parseEntry)
+                    }
+
+                    // Also invoke legacy callback for backwards compatibility
+                    Self.logCallback?(fullURL, mutableRequestData, nil, httpResponse.statusCode, parseError)
+
+                    completion(nil, parseError)
+                    return
+                }
+                responseData = json
+            } else {
+                responseData = [:]
+            }
+
+            // Log to network logger (non-blocking)
+            self.networkQueue.async {
+                let successEntry = NetworkLogEntry(
                     url: fullURL,
                     requestBody: mutableRequestData,
-                    responseBody: nil,
+                    responseBody: responseData,
                     statusCode: httpResponse.statusCode,
-                    error: parseError
+                    error: nil
                 )
-                Task { await BranchNetworkLogger.shared.log(parseEntry) }
-                // Also invoke legacy callback for backwards compatibility
-                Self.logCallback?(fullURL, mutableRequestData, nil, httpResponse.statusCode, parseError)
-                throw parseError
+                BranchNetworkLogger.shared.log(successEntry)
             }
-            responseData = json
-        } else {
-            responseData = [:]
+
+            // Also invoke legacy callback for backwards compatibility
+            Self.logCallback?(fullURL, mutableRequestData, responseData, httpResponse.statusCode, nil)
+
+            // Check for server errors
+            if httpResponse.statusCode >= 400 {
+                let errorMessage = responseData["error"] as? String ?? "Server error"
+                self.log(.error, "performRequest - server error \(httpResponse.statusCode): \(errorMessage)")
+                let serverError = NSError(
+                    domain: "io.branch.sdk.error",
+                    code: httpResponse.statusCode, // Use HTTP status code for server errors
+                    userInfo: [NSLocalizedDescriptionKey: errorMessage]
+                )
+                completion(nil, serverError)
+                return
+            }
+
+            completion(responseData, nil)
         }
-
-        // Log to modern actor-based logger (non-blocking to reduce request latency)
-        let successEntry = NetworkLogEntry(
-            url: fullURL,
-            requestBody: mutableRequestData,
-            responseBody: responseData,
-            statusCode: httpResponse.statusCode,
-            error: nil
-        )
-        Task { await BranchNetworkLogger.shared.log(successEntry) }
-        // Also invoke legacy callback for backwards compatibility
-        Self.logCallback?(fullURL, mutableRequestData, responseData, httpResponse.statusCode, nil)
-
-        // Check for server errors
-        if httpResponse.statusCode >= 400 {
-            let errorMessage = responseData["error"] as? String ?? "Server error"
-            log(.error, "performRequest - server error \(httpResponse.statusCode): \(errorMessage)")
-            throw NSError(
-                domain: "io.branch.sdk.error",
-                code: httpResponse.statusCode, // Use HTTP status code for server errors
-                userInfo: [NSLocalizedDescriptionKey: errorMessage]
-            )
-        }
-
-        return responseData
+        task.resume()
     }
 }
 
@@ -691,8 +715,7 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
 ///
 /// Provides configurable responses, failure simulation, call tracking,
 /// and request capture for comprehensive test verification.
-@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-public final class MockBranchNetworkService: BranchNetworkService, @unchecked Sendable {
+public final class MockBranchNetworkService: BranchNetworkService {
     // MARK: - Response Configuration
 
     public var installResponse: [String: Any] = [:]
@@ -732,7 +755,13 @@ public final class MockBranchNetworkService: BranchNetworkService, @unchecked Se
     /// Counter for generating unique session IDs
     private var sessionCounter: Int = 0
 
+    /// Lock for thread-safe counter access
+    private let counterLock = NSLock()
+
     // MARK: - Call Tracking
+
+    /// Thread-safe call tracking using lock
+    private let trackingLock = NSLock()
 
     /// Number of times performInstall was called
     public private(set) var installCallCount: Int = 0
@@ -751,7 +780,9 @@ public final class MockBranchNetworkService: BranchNetworkService, @unchecked Se
 
     /// Total number of network calls made
     public var totalCallCount: Int {
-        installCallCount + openCallCount + identityCallCount + logoutCallCount + linkCallCount
+        trackingLock.lock()
+        defer { trackingLock.unlock() }
+        return installCallCount + openCallCount + identityCallCount + logoutCallCount + linkCallCount
     }
 
     // MARK: - Request Capture
@@ -779,8 +810,8 @@ public final class MockBranchNetworkService: BranchNetworkService, @unchecked Se
 
     // MARK: - Timing Configuration
 
-    /// Simulated network delay in nanoseconds (default: 10ms)
-    public var simulatedDelay: UInt64 = 10_000_000
+    /// Simulated network delay in seconds (default: 0.01s / 10ms)
+    public var simulatedDelay: TimeInterval = 0.01
 
     // MARK: - Initialization
 
@@ -808,6 +839,9 @@ public final class MockBranchNetworkService: BranchNetworkService, @unchecked Se
 
     /// Reset all call counts and captured requests
     public func resetCallTracking() {
+        trackingLock.lock()
+        defer { trackingLock.unlock() }
+
         installCallCount = 0
         openCallCount = 0
         identityCallCount = 0
@@ -820,46 +854,130 @@ public final class MockBranchNetworkService: BranchNetworkService, @unchecked Se
         lastLinkURL = nil
         allInstallRequests = []
         allOpenRequests = []
+
+        counterLock.lock()
         sessionCounter = 0
+        counterLock.unlock()
     }
 
     // MARK: - BranchNetworkService Implementation
 
-    public func performInstall(requestData: [String: Any]) async throws -> [String: Any] {
+    public func performInstall(
+        requestData: [String: Any],
+        completion: @escaping ([String: Any]?, Error?) -> Void
+    ) {
+        trackingLock.lock()
         installCallCount += 1
         lastInstallRequest = requestData
         allInstallRequests.append(requestData)
-        try await simulateNetworkCall(operationShouldFail: installShouldFail, operationError: installError)
-        return withUniqueSessionId(installResponse)
+        trackingLock.unlock()
+
+        simulateNetworkCall(
+            operationShouldFail: installShouldFail,
+            operationError: installError
+        ) { [weak self] error in
+            if let error = error {
+                completion(nil, error)
+            } else {
+                completion(self?.withUniqueSessionId(self?.installResponse ?? [:]), nil)
+            }
+        }
     }
 
-    public func performOpen(requestData: [String: Any]) async throws -> [String: Any] {
+    public func performOpen(
+        requestData: [String: Any],
+        completion: @escaping ([String: Any]?, Error?) -> Void
+    ) {
+        trackingLock.lock()
         openCallCount += 1
         lastOpenRequest = requestData
         allOpenRequests.append(requestData)
-        try await simulateNetworkCall(operationShouldFail: openShouldFail, operationError: openError)
-        return withUniqueSessionId(openResponse)
+        trackingLock.unlock()
+
+        simulateNetworkCall(
+            operationShouldFail: openShouldFail,
+            operationError: openError
+        ) { [weak self] error in
+            if let error = error {
+                completion(nil, error)
+            } else {
+                completion(self?.withUniqueSessionId(self?.openResponse ?? [:]), nil)
+            }
+        }
     }
 
-    public func setIdentity(userId: String, sessionId _: String, identityId _: String) async throws -> [String: Any] {
+    public func setIdentity(
+        userId: String,
+        sessionId: String,
+        identityId: String,
+        completion: @escaping ([String: Any]?, Error?) -> Void
+    ) {
+        _ = sessionId // Suppress unused parameter warning
+        _ = identityId
+
+        trackingLock.lock()
         identityCallCount += 1
         lastIdentityUserId = userId
-        try await simulateNetworkCall(operationShouldFail: identityShouldFail, operationError: identityError)
-        return identityResponse
+        trackingLock.unlock()
+
+        simulateNetworkCall(
+            operationShouldFail: identityShouldFail,
+            operationError: identityError
+        ) { [weak self] error in
+            if let error = error {
+                completion(nil, error)
+            } else {
+                completion(self?.identityResponse, nil)
+            }
+        }
     }
 
-    public func logout(sessionId: String, identityId _: String) async throws -> [String: Any] {
+    public func logout(
+        sessionId: String,
+        identityId: String,
+        completion: @escaping ([String: Any]?, Error?) -> Void
+    ) {
+        _ = identityId // Suppress unused parameter warning
+
+        trackingLock.lock()
         logoutCallCount += 1
         lastLogoutSessionId = sessionId
-        try await simulateNetworkCall(operationShouldFail: logoutShouldFail, operationError: logoutError)
-        return logoutResponse
+        trackingLock.unlock()
+
+        simulateNetworkCall(
+            operationShouldFail: logoutShouldFail,
+            operationError: logoutError
+        ) { [weak self] error in
+            if let error = error {
+                completion(nil, error)
+            } else {
+                completion(self?.logoutResponse, nil)
+            }
+        }
     }
 
-    public func resolveLink(url: URL, sessionId _: String) async throws -> [String: Any] {
+    public func resolveLink(
+        url: URL,
+        sessionId: String,
+        completion: @escaping ([String: Any]?, Error?) -> Void
+    ) {
+        _ = sessionId // Suppress unused parameter warning
+
+        trackingLock.lock()
         linkCallCount += 1
         lastLinkURL = url
-        try await simulateNetworkCall(operationShouldFail: linkShouldFail, operationError: linkError)
-        return linkResponse
+        trackingLock.unlock()
+
+        simulateNetworkCall(
+            operationShouldFail: linkShouldFail,
+            operationError: linkError
+        ) { [weak self] error in
+            if let error = error {
+                completion(nil, error)
+            } else {
+                completion(self?.linkResponse, nil)
+            }
+        }
     }
 
     // MARK: - Private Methods
@@ -867,25 +985,48 @@ public final class MockBranchNetworkService: BranchNetworkService, @unchecked Se
     /// Optionally modifies response to include unique session_id
     private func withUniqueSessionId(_ response: [String: Any]) -> [String: Any] {
         guard generateUniqueSessionIds else { return response }
-        var modified = response
+
+        counterLock.lock()
         sessionCounter += 1
-        modified["session_id"] = "test-session-\(sessionCounter)"
+        let counter = sessionCounter
+        counterLock.unlock()
+
+        var modified = response
+        modified["session_id"] = "test-session-\(counter)"
         return modified
     }
 
-    private func simulateNetworkCall(operationShouldFail: Bool = false, operationError: Error? = nil) async throws {
-        if simulatedDelay > 0 {
-            try await Task.sleep(nanoseconds: simulatedDelay)
-        }
+    private func simulateNetworkCall(
+        operationShouldFail: Bool = false,
+        operationError: Error? = nil,
+        completion: @escaping (Error?) -> Void
+    ) {
+        // Simulate network delay using GCD (iOS 12 compatible)
+        let delay = simulatedDelay > 0 ? simulatedDelay : 0.001
 
-        // Per-operation failure takes precedence
-        if operationShouldFail {
-            throw operationError ?? failureError
-        }
+        DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + delay) { [weak self] in
+            guard let self = self else {
+                completion(NSError(
+                    domain: "io.branch.sdk.error",
+                    code: 1007,
+                    userInfo: [NSLocalizedDescriptionKey: "Mock deallocated"]
+                ))
+                return
+            }
 
-        // Global failure check
-        if shouldFail {
-            throw failureError
+            // Per-operation failure takes precedence
+            if operationShouldFail {
+                completion(operationError ?? self.failureError)
+                return
+            }
+
+            // Global failure check
+            if self.shouldFail {
+                completion(self.failureError)
+                return
+            }
+
+            completion(nil)
         }
     }
 }
