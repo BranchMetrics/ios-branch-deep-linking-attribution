@@ -61,3 +61,6 @@ FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 #import "BNCLinkData.h"
 
 #import "BranchConstants.h"
+
+// Initialization options
+#import "BNCInitializationOptions.h"
