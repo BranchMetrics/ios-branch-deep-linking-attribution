@@ -919,6 +919,11 @@ static NSString *bnc_branchKey = nil;
     // Configure behavior flags
     self.shouldAutomaticallyDeepLink = optionsCopy.automaticallyDisplayController;
 
+    // Propagate configuration properties from options
+    if (optionsCopy.checkPasteboardOnInstall && !self.preferenceHelper.randomizedBundleToken) {
+        [self checkPasteboardOnInstall];
+    }
+
     // Store callback if provided - use dispatch_async on isolationQueue for thread safety
     if (optionsCopy.callback) {
         // Capture callback in local variable to avoid retain cycle through optionsCopy
@@ -946,12 +951,6 @@ static NSString *bnc_branchKey = nil;
 
     // Determine URL string for initialization
     NSString *urlString = optionsCopy.url.absoluteString;
-
-    // Check for pasteboard on install if enabled
-    if (optionsCopy.checkPasteboardOnInstall && !self.preferenceHelper.randomizedBundleToken) {
-        // First install - pasteboard check will happen during request processing
-        [[BranchLogger shared] logDebug:@"First install - pasteboard check enabled" error:nil];
-    }
 
     // Perform initialization with proper state management
     BOOL shouldReset = optionsCopy.resetSession;

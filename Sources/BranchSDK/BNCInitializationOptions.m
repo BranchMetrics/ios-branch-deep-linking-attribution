@@ -96,12 +96,17 @@
 #pragma mark - Description
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<BNCInitializationOptions: url=%@, sceneIdentifier=%@, isReferrable=%@, resetSession=%@, delayInitialization=%@>",
+    return [NSString stringWithFormat:@"<BNCInitializationOptions: url=%@, sceneIdentifier=%@, sourceApplication=%@, isReferrable=%@, resetSession=%@, delayInitialization=%@, automaticallyDisplayController=%@, disableAutomaticSessionTracking=%@, checkPasteboardOnInstall=%@, referralParams=%@>",
             self.url,
             self.sceneIdentifier,
+            self.sourceApplication,
             self.isReferrable ? @"YES" : @"NO",
             self.resetSession ? @"YES" : @"NO",
-            self.delayInitialization ? @"YES" : @"NO"];
+            self.delayInitialization ? @"YES" : @"NO",
+            self.automaticallyDisplayController ? @"YES" : @"NO",
+            self.disableAutomaticSessionTracking ? @"YES" : @"NO",
+            self.checkPasteboardOnInstall ? @"YES" : @"NO",
+            self.referralParams];
 }
 
 @end
