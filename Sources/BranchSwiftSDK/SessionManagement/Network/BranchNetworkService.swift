@@ -131,7 +131,7 @@ public struct NetworkLogEntry: Sendable {
         case let nested as [String: Any]:
             return makeSendable(nested)
         case is NSNull:
-            return nil
+            return "<null>"
         default:
             // Fallback: convert to string representation
             return String(describing: value)
@@ -215,6 +215,8 @@ public actor BranchNetworkLogger {
 
     /// Attach a stream continuation and flush pending logs
     private func attachStream(_ continuation: AsyncStream<NetworkLogEntry>.Continuation) {
+        // Finish previous stream if exists to prevent zombie listeners
+        streamContinuation?.finish()
         streamContinuation = continuation
         streamStarted = true
 
@@ -263,10 +265,41 @@ public actor BranchNetworkLogger {
 
     // MARK: - Logging
 
-    /// Log a network request/response.
+    /// Log a pre-constructed network log entry.
+    ///
+    /// This is the preferred method as it allows the caller to perform the
+    /// expensive Sendable conversion off the actor (e.g., on the network thread).
     ///
     /// If no observer is attached, the entry is buffered (up to `maxPendingLogs`).
     /// When an observer attaches, buffered entries are flushed.
+    ///
+    /// - Parameter entry: The pre-constructed log entry
+    public func log(_ entry: NetworkLogEntry) {
+        // Try to deliver to stream
+        if let continuation = streamContinuation {
+            continuation.yield(entry)
+            return
+        }
+
+        // Try to deliver to callback
+        if let callback = callback {
+            callback(entry)
+            return
+        }
+
+        // Buffer if no observer is attached
+        pendingLogs.append(entry)
+
+        // Trim buffer if too large
+        if pendingLogs.count > maxPendingLogs {
+            pendingLogs.removeFirst(pendingLogs.count - maxPendingLogs)
+        }
+    }
+
+    /// Convenience method to log raw components (delegates to main log method).
+    ///
+    /// Note: Prefer using `log(_ entry:)` with a pre-constructed `NetworkLogEntry`
+    /// to offload the Sendable conversion work from the actor.
     ///
     /// - Parameters:
     ///   - url: The request URL
@@ -288,26 +321,7 @@ public actor BranchNetworkLogger {
             statusCode: statusCode,
             error: error
         )
-
-        // Try to deliver to stream
-        if let continuation = streamContinuation {
-            continuation.yield(entry)
-            return
-        }
-
-        // Try to deliver to callback
-        if let callback = callback {
-            callback(entry)
-            return
-        }
-
-        // Buffer if no observer is attached
-        pendingLogs.append(entry)
-
-        // Trim buffer if too large
-        if pendingLogs.count > maxPendingLogs {
-            pendingLogs.removeFirst(pendingLogs.count - maxPendingLogs)
-        }
+        log(entry)
     }
 
     // MARK: - Utility
@@ -578,14 +592,16 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
             (data, response) = try await URLSession.shared.data(for: request)
         } catch {
             log(.error, "performRequest - network request failed: \(error.localizedDescription)")
-            // Log to modern actor-based logger (buffers if no observer)
-            await BranchNetworkLogger.shared.log(
+            // Log to modern actor-based logger (non-blocking to avoid latency)
+            // Construct entry locally to offload Sendable conversion from actor
+            let entry = NetworkLogEntry(
                 url: fullURL,
                 requestBody: mutableRequestData,
                 responseBody: nil,
                 statusCode: nil,
                 error: error
             )
+            Task { await BranchNetworkLogger.shared.log(entry) }
             // Also invoke legacy callback for backwards compatibility
             Self.logCallback?(fullURL, mutableRequestData, nil, nil, error)
             throw NSError(
@@ -624,14 +640,15 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
                     code: 1007, // BNCNetworkServiceInterfaceError
                     userInfo: [NSLocalizedDescriptionKey: "Invalid JSON response"]
                 )
-                // Log to modern actor-based logger
-                await BranchNetworkLogger.shared.log(
+                // Log to modern actor-based logger (non-blocking)
+                let parseEntry = NetworkLogEntry(
                     url: fullURL,
                     requestBody: mutableRequestData,
                     responseBody: nil,
                     statusCode: httpResponse.statusCode,
                     error: parseError
                 )
+                Task { await BranchNetworkLogger.shared.log(parseEntry) }
                 // Also invoke legacy callback for backwards compatibility
                 Self.logCallback?(fullURL, mutableRequestData, nil, httpResponse.statusCode, parseError)
                 throw parseError
@@ -641,14 +658,15 @@ public final class DefaultBranchNetworkService: BranchNetworkService, @unchecked
             responseData = [:]
         }
 
-        // Log to modern actor-based logger (always logs, buffers if no observer)
-        await BranchNetworkLogger.shared.log(
+        // Log to modern actor-based logger (non-blocking to reduce request latency)
+        let successEntry = NetworkLogEntry(
             url: fullURL,
             requestBody: mutableRequestData,
             responseBody: responseData,
             statusCode: httpResponse.statusCode,
             error: nil
         )
+        Task { await BranchNetworkLogger.shared.log(successEntry) }
         // Also invoke legacy callback for backwards compatibility
         Self.logCallback?(fullURL, mutableRequestData, responseData, httpResponse.statusCode, nil)
 
