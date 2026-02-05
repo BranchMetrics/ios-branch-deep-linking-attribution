@@ -909,51 +909,55 @@ static NSString *bnc_branchKey = nil;
         options = [[BNCInitializationOptions alloc] init];
     }
 
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"initSessionWithOptions: %@", options] error:nil];
+    // Copy options early to prevent external mutation during async operations
+    BNCInitializationOptions *optionsCopy = [options copy];
+
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"initSessionWithOptions: %@", optionsCopy] error:nil];
 
     [self.class addBranchSDKVersionToCrashlyticsReport];
 
     // Configure behavior flags
-    self.shouldAutomaticallyDeepLink = options.automaticallyDisplayController;
+    self.shouldAutomaticallyDeepLink = optionsCopy.automaticallyDisplayController;
 
-    // Store callback if provided
-    if (options.callback) {
-        // Store the options callback for use in session completion
-        __weak typeof(self) weakSelf = self;
-        self.sceneSessionInitWithCallback = ^(BNCInitSessionResponse *response, NSError *error) {
-            __strong typeof(weakSelf) strongSelf = weakSelf;
-            if (strongSelf && options.callback) {
-                options.callback(response, error);
-            }
-        };
+    // Store callback if provided - use dispatch_async on isolationQueue for thread safety
+    if (optionsCopy.callback) {
+        // Capture callback in local variable to avoid retain cycle through optionsCopy
+        BNCInitializationCallback callback = optionsCopy.callback;
+        dispatch_async(self.isolationQueue, ^{
+            self.sceneSessionInitWithCallback = ^(BNCInitSessionResponse *response, NSError *error) {
+                if (callback) {
+                    callback(response, error);
+                }
+            };
+        });
     }
 
     // Handle deferred initialization
-    if (options.delayInitialization) {
-        @synchronized (self) {
+    if (optionsCopy.delayInitialization) {
+        dispatch_async(self.isolationQueue, ^{
             self.deferInitForPluginRuntime = YES;
-            if (options.url) {
-                self.cachedURLString = options.url.absoluteString;
+            if (optionsCopy.url) {
+                self.cachedURLString = optionsCopy.url.absoluteString;
             }
-        }
+        });
         [[BranchLogger shared] logDebug:@"Branch initialization deferred" error:nil];
         return;
     }
 
     // Determine URL string for initialization
-    NSString *urlString = options.url.absoluteString;
+    NSString *urlString = optionsCopy.url.absoluteString;
 
     // Check for pasteboard on install if enabled
-    if (options.checkPasteboardOnInstall && !self.preferenceHelper.randomizedBundleToken) {
+    if (optionsCopy.checkPasteboardOnInstall && !self.preferenceHelper.randomizedBundleToken) {
         // First install - pasteboard check will happen during request processing
         [[BranchLogger shared] logDebug:@"First install - pasteboard check enabled" error:nil];
     }
 
     // Perform initialization with proper state management
-    BOOL shouldReset = options.resetSession;
-    NSString *sceneIdentifier = options.sceneIdentifier;
+    BOOL shouldReset = optionsCopy.resetSession;
+    NSString *sceneIdentifier = optionsCopy.sceneIdentifier;
 
-    [self initUserSessionAndCallCallback:(options.callback != nil)
+    [self initUserSessionAndCallCallback:(optionsCopy.callback != nil)
                          sceneIdentifier:sceneIdentifier
                                urlString:urlString
                                    reset:shouldReset];
@@ -970,21 +974,26 @@ static NSString *bnc_branchKey = nil;
         return;
     }
 
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"handleDeepLinkWithOptions: %@", options] error:nil];
+    // Copy options early to prevent external mutation during async operations
+    BNCInitializationOptions *optionsCopy = [options copy];
 
-    // Store callback if provided
-    if (options.callback) {
-        __weak typeof(self) weakSelf = self;
-        self.sceneSessionInitWithCallback = ^(BNCInitSessionResponse *response, NSError *error) {
-            __strong typeof(weakSelf) strongSelf = weakSelf;
-            if (strongSelf && options.callback) {
-                options.callback(response, error);
-            }
-        };
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"handleDeepLinkWithOptions: %@", optionsCopy] error:nil];
+
+    // Store callback if provided - use dispatch_async on isolationQueue for thread safety
+    if (optionsCopy.callback) {
+        // Capture callback in local variable to avoid retain cycle through optionsCopy
+        BNCInitializationCallback callback = optionsCopy.callback;
+        dispatch_async(self.isolationQueue, ^{
+            self.sceneSessionInitWithCallback = ^(BNCInitSessionResponse *response, NSError *error) {
+                if (callback) {
+                    callback(response, error);
+                }
+            };
+        });
     }
 
     // Use the existing deep link handling logic with the URL
-    [self handleDeepLink:options.url sceneIdentifier:options.sceneIdentifier];
+    [self handleDeepLink:optionsCopy.url sceneIdentifier:optionsCopy.sceneIdentifier];
 }
 
 - (void)setDeepLinkDebugMode:(NSDictionary *)debugParams {

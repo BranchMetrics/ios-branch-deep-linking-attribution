@@ -57,7 +57,7 @@ typedef void (^BNCInitializationCallback)(BNCInitSessionResponse * _Nullable res
 #pragma mark - URL and Source
 
 /// URL that opened the app (deep link or universal link)
-@property (nonatomic, strong, nullable) NSURL *url;
+@property (nonatomic, copy, nullable) NSURL *url;
 
 /// Scene identifier (iOS 13+ multi-window support)
 @property (nonatomic, copy, nullable) NSString *sceneIdentifier;

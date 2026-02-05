@@ -13,17 +13,11 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        _url = nil;
-        _sceneIdentifier = nil;
-        _sourceApplication = nil;
-        _callback = nil;
+        // Object properties are automatically nil in Objective-C
+        // Only set non-default values explicitly
         _isReferrable = YES;
-        _automaticallyDisplayController = NO;
-        _delayInitialization = NO;
-        _disableAutomaticSessionTracking = NO;
         _checkPasteboardOnInstall = YES;
-        _referralParams = nil;
-        _resetSession = NO;
+        // All other properties default to NO/nil which is correct
     }
     return self;
 }
