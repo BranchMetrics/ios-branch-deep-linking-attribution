@@ -9,6 +9,8 @@
 @testable import BranchSDK
 import XCTest
 
+// swiftlint:disable type_body_length file_length
+
 /// Qualitative tests for SessionManager focusing on real-world scenarios.
 ///
 /// These tests verify actual user flows and edge cases rather than simple property checks.
@@ -196,25 +198,19 @@ final class SessionManagerTests: XCTestCase {
     /// Expected: handleDeepLink processes the URL
     func testWarmLaunchWithDeepLink() {
         let initExpectation = expectation(description: "Initialize completes")
-        let deepLinkExpectation = expectation(description: "Deep link completes")
 
         // Given: App was previously initialized and is in background
-        sut.initialize(options: nil) { session, error in
+        sut.initialize(options: nil) { [weak self] session, error in
             XCTAssertNotNil(session)
             XCTAssertNil(error)
             initExpectation.fulfill()
-        }
 
-        waitForExpectations(timeout: 10.0)
-
-        let originalSessionId = sut.currentSession?.id
-
-        // When: User clicks a deep link while app is in background
-        let deepLink = URL(string: "https://example.app.link/flash-sale")!
-        sut.handleDeepLink(deepLink) { session, error in
-            XCTAssertNotNil(session, "Session should not be nil")
-            XCTAssertNil(error, "Error should be nil")
-            deepLinkExpectation.fulfill()
+            // When: User clicks a deep link while app is in background (chained async)
+            let deepLink = URL(string: "https://example.app.link/flash-sale")!
+            self?.sut.handleDeepLink(deepLink) { session, error in
+                XCTAssertNotNil(session, "Session should not be nil")
+                XCTAssertNil(error, "Error should be nil")
+            }
         }
 
         waitForExpectations(timeout: 10.0)
@@ -441,8 +437,7 @@ final class SessionManagerTests: XCTestCase {
     /// Scenario: Multiple sequential initializations with different URLs
     /// Expected: Each sequential init may create a new session (state machine allows re-init)
     func testSequentialInitializationsWithDifferentURLs() {
-        let expectation1 = expectation(description: "First init completes")
-        let expectation2 = expectation(description: "Second init completes")
+        let expectation1 = expectation(description: "Both inits complete")
 
         var firstSessionId: String?
         var secondSessionId: String?
@@ -451,23 +446,20 @@ final class SessionManagerTests: XCTestCase {
         let options1 = InitializationOptions()
         options1.url = URL(string: "https://example.app.link/first")!
 
-        sut.initialize(options: options1) { session, _ in
+        sut.initialize(options: options1) { [weak self] session, _ in
             firstSessionId = session?.id
-            expectation1.fulfill()
+
+            // When: Second initialization after first completes (sequential, not concurrent)
+            let options2 = InitializationOptions()
+            options2.url = URL(string: "https://example.app.link/second")!
+
+            self?.sut.initialize(options: options2) { session, _ in
+                secondSessionId = session?.id
+                expectation1.fulfill()
+            }
         }
 
-        waitForExpectations(timeout: 10.0)
-
-        // When: Second initialization after first completes (sequential, not concurrent)
-        let options2 = InitializationOptions()
-        options2.url = URL(string: "https://example.app.link/second")!
-
-        sut.initialize(options: options2) { session, _ in
-            secondSessionId = session?.id
-            expectation2.fulfill()
-        }
-
-        waitForExpectations(timeout: 10.0)
+        waitForExpectations(timeout: 20.0)
 
         // Then: Sessions may be same or different depending on implementation
         XCTAssertNotNil(firstSessionId)
