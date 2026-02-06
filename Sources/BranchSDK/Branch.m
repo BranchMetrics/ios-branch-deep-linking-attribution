@@ -872,7 +872,9 @@ static NSString *bnc_branchKey = nil;
     }
     [self deferInitBlock:^{
         if (callback) {
-            [self.pendingSessionCallbacks addObject:[callback copy]];
+            dispatch_async(self.isolationQueue, ^{
+                [self.pendingSessionCallbacks addObject:[callback copy]];
+            });
         }
         [self initSessionWithLaunchOptions:(NSDictionary *)optionsWithDeferredInit isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
     }];
