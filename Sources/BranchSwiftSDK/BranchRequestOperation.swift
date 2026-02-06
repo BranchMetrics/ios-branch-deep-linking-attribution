@@ -183,7 +183,7 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
     // MARK: - Session Validation
 
     /// Validates session requirements based on request type
-    /// Matches Android's session validation logic in BranchRequestQueue.kt
+    /// Matches Objective-C session validation logic in BNCServerRequestOperation.m
     /// - Returns: true if session is valid for this request type
     private func validateSession() -> Bool {
         // Use string-based type checking because BranchInstallRequest/BranchOpenRequest
@@ -191,37 +191,16 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
         let requestClassName = String(describing: type(of: request))
         let requestUUID = request.requestUUID ?? "unknown"
 
-        // Install requests only need bundle token
+        // Install requests establish the session — no validation needed.
+        // BranchInstallRequest inherits from BranchOpenRequest, so check install first.
         if requestClassName.contains("BranchInstallRequest") {
-            guard preferenceHelper.randomizedBundleToken != nil else {
-                BranchLogger.shared().logError(
-                    "User session not initialized (missing bundle token). Dropping request: \(requestUUID)",
-                    error: nil
-                )
-                return false
-            }
             return true
         }
 
-        // Open requests need bundle token
-        if requestClassName.contains("BranchOpenRequest") {
-            guard preferenceHelper.randomizedBundleToken != nil else {
-                BranchLogger.shared().logError(
-                    "User session not initialized (missing bundle token). Dropping request: \(requestUUID)",
-                    error: nil
-                )
-                return false
-            }
-            return true
-        }
-
-        // All other requests need full session (device token, session ID, bundle token)
-        guard preferenceHelper.randomizedDeviceToken != nil,
-              preferenceHelper.sessionID != nil,
-              preferenceHelper.randomizedBundleToken != nil
-        else {
+        // Open requests and all other requests need bundle token
+        guard preferenceHelper.randomizedBundleToken != nil else {
             BranchLogger.shared().logError(
-                "Missing session items (device token or session ID or bundle token). Dropping request: \(requestUUID)",
+                "User session not initialized (missing bundle token). Dropping request: \(requestUUID)",
                 error: nil
             )
             return false
