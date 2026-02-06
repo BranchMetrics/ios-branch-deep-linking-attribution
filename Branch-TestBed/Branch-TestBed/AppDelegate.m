@@ -117,8 +117,10 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         if (error) {
             NSLog(@"Branch TestBed: initSessionWithOptions error: %@", error.localizedDescription);
         } else {
-            NSLog(@"Branch TestBed: initSessionWithOptions succeeded with params: %@", response.params);
-            [self handleDeepLinkObject:response.universalObject linkProperties:response.linkProperties error:nil];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSLog(@"Branch TestBed: initSessionWithOptions succeeded with params: %@", response.params);
+                [self handleDeepLinkObject:response.universalObject linkProperties:response.linkProperties error:nil];
+            });
         }
     };
 
