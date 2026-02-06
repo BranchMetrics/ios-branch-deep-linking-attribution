@@ -2453,7 +2453,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 
     // INTENG-21106: Invoke ALL pending callbacks (coalesced from concurrent init calls)
-    // Snapshot and clear on isolationQueue, then dispatch callbacks on main thread.
+    // Snapshot and clear on isolationQueue, then dispatch callbacks and notification on main thread.
     // Use dispatch_async to avoid potential deadlock if ever called from isolationQueue.
     dispatch_async(self.isolationQueue, ^{
         NSArray *callbacks = nil;
@@ -2462,8 +2462,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             [self.pendingSessionCallbacks removeAllObjects];
         }
 
-        if (callbacks.count > 0) {
-            dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (callbacks.count > 0) {
                 BNCInitSessionResponse *response = [BNCInitSessionResponse new];
                 response.params = latestReferringParams;
                 response.universalObject = [self getLatestReferringBranchUniversalObject];
@@ -2473,11 +2473,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 for (void (^callback)(BNCInitSessionResponse *, NSError *) in callbacks) {
                     callback(response, nil);
                 }
-            });
-        }
-    });
+            }
 
-    [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
+            [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
+        });
+    });
 
     [self.urlFilter updatePatternListFromServerWithCompletion:nil];
 
@@ -2669,7 +2669,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
 
     // INTENG-21106: Invoke ALL pending callbacks with error (coalesced from concurrent init calls)
-    // Snapshot and clear on isolationQueue, then dispatch callbacks on main thread.
+    // Snapshot and clear on isolationQueue, then dispatch callbacks and notification on main thread.
     // Use dispatch_async to avoid potential deadlock if ever called from isolationQueue.
     dispatch_async(self.isolationQueue, ^{
         NSArray *callbacks = nil;
@@ -2678,8 +2678,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             [self.pendingSessionCallbacks removeAllObjects];
         }
 
-        if (callbacks.count > 0) {
-            dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (callbacks.count > 0) {
                 BNCInitSessionResponse *response = [BNCInitSessionResponse new];
                 response.error = error;
                 response.params = [NSDictionary new];
@@ -2690,11 +2690,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 for (void (^callback)(BNCInitSessionResponse *, NSError *) in callbacks) {
                     callback(response, error);
                 }
-            });
-        }
-    });
+            }
 
-    [self sendOpenNotificationWithLinkParameters:@{} error:error];
+            [self sendOpenNotificationWithLinkParameters:@{} error:error];
+        });
+    });
 }
 
 - (void)dealloc {
