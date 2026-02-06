@@ -2453,26 +2453,29 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 
     // INTENG-21106: Invoke ALL pending callbacks (coalesced from concurrent init calls)
-    // Snapshot and clear on isolationQueue to prevent race with concurrent callback additions
-    __block NSArray *callbacks = nil;
-    dispatch_sync(self.isolationQueue, ^{
+    // Snapshot and clear on isolationQueue, then dispatch callbacks on main thread.
+    // Use dispatch_async to avoid potential deadlock if ever called from isolationQueue.
+    dispatch_async(self.isolationQueue, ^{
+        NSArray *callbacks = nil;
         if (self.pendingSessionCallbacks.count > 0) {
             callbacks = [self.pendingSessionCallbacks copy];
             [self.pendingSessionCallbacks removeAllObjects];
         }
-    });
 
-    if (callbacks.count > 0) {
-        BNCInitSessionResponse *response = [BNCInitSessionResponse new];
-        response.params = latestReferringParams;
-        response.universalObject = [self getLatestReferringBranchUniversalObject];
-        response.linkProperties = [self getLatestReferringBranchLinkProperties];
-        response.sceneIdentifier = sceneIdentifier;
+        if (callbacks.count > 0) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                BNCInitSessionResponse *response = [BNCInitSessionResponse new];
+                response.params = latestReferringParams;
+                response.universalObject = [self getLatestReferringBranchUniversalObject];
+                response.linkProperties = [self getLatestReferringBranchLinkProperties];
+                response.sceneIdentifier = sceneIdentifier;
 
-        for (void (^callback)(BNCInitSessionResponse *, NSError *) in callbacks) {
-            callback(response, nil);
+                for (void (^callback)(BNCInitSessionResponse *, NSError *) in callbacks) {
+                    callback(response, nil);
+                }
+            });
         }
-    }
+    });
 
     [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
 
@@ -2666,27 +2669,30 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
 
     // INTENG-21106: Invoke ALL pending callbacks with error (coalesced from concurrent init calls)
-    // Snapshot and clear on isolationQueue to prevent race with concurrent callback additions
-    __block NSArray *callbacks = nil;
-    dispatch_sync(self.isolationQueue, ^{
+    // Snapshot and clear on isolationQueue, then dispatch callbacks on main thread.
+    // Use dispatch_async to avoid potential deadlock if ever called from isolationQueue.
+    dispatch_async(self.isolationQueue, ^{
+        NSArray *callbacks = nil;
         if (self.pendingSessionCallbacks.count > 0) {
             callbacks = [self.pendingSessionCallbacks copy];
             [self.pendingSessionCallbacks removeAllObjects];
         }
-    });
 
-    if (callbacks.count > 0) {
-        BNCInitSessionResponse *response = [BNCInitSessionResponse new];
-        response.error = error;
-        response.params = [NSDictionary new];
-        response.universalObject = [BranchUniversalObject new];
-        response.linkProperties = [BranchLinkProperties new];
-        response.sceneIdentifier = sceneIdentifier;
+        if (callbacks.count > 0) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                BNCInitSessionResponse *response = [BNCInitSessionResponse new];
+                response.error = error;
+                response.params = [NSDictionary new];
+                response.universalObject = [BranchUniversalObject new];
+                response.linkProperties = [BranchLinkProperties new];
+                response.sceneIdentifier = sceneIdentifier;
 
-        for (void (^callback)(BNCInitSessionResponse *, NSError *) in callbacks) {
-            callback(response, error);
+                for (void (^callback)(BNCInitSessionResponse *, NSError *) in callbacks) {
+                    callback(response, error);
+                }
+            });
         }
-    }
+    });
 
     [self sendOpenNotificationWithLinkParameters:@{} error:error];
 }
