@@ -864,6 +864,14 @@ static NSString *bnc_branchKey = nil;
 
 - (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
                   registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback {
+    // INTENG-21106: Enqueue callback into pendingSessionCallbacks on isolationQueue
+    // before deferring init. This replaces the old sceneSessionInitWithCallback property.
+    if (callback) {
+        dispatch_async(self.isolationQueue, ^{
+            [self.pendingSessionCallbacks addObject:[callback copy]];
+        });
+    }
+
     NSMutableDictionary * optionsWithDeferredInit = [[NSMutableDictionary alloc ] initWithDictionary:options];
     if (self.deferInitForPluginRuntime) {
         [optionsWithDeferredInit setObject:@1 forKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"];
