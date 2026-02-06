@@ -106,11 +106,6 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
 
         _isExecuting = true
 
-        BranchLogger.shared().logVerbose(
-            "BranchRequestOperation starting for request: \(request.requestUUID ?? "unknown")",
-            error: nil
-        )
-
         // Launch async task with structured concurrency
         executionTask = Task { [weak self] in
             await self?.executeRequest()
@@ -181,11 +176,6 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
                 }
             }
         }
-
-        BranchLogger.shared().logVerbose(
-            "BranchRequestOperation finished for request: \(request.requestUUID ?? "unknown")",
-            error: nil
-        )
 
         finish()
     }
