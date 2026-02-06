@@ -29,7 +29,6 @@
 
 // Reconsider how this one is exposed. BNC classes should be used internal.
 #import "BNCInitSessionResponse.h"
-#import "BNCInitializationOptions.h"
 
 // Block typedefs. Consider deprecating this
 #import "BNCCallbacks.h"
@@ -442,49 +441,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 - (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
                   registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback;
 
-#pragma mark - Modern Initialization API
-
-/**
- Initialize the Branch session with options.
-
- This is the recommended method for initializing the Branch SDK. It provides a cleaner API
- with better state management to avoid issues like "double open".
-
- @param options The initialization options containing URL, callbacks, and behavior flags.
-
- Example usage:
- @code
- BNCInitializationOptions *options = [BNCInitializationOptions optionsWithLaunchOptions:launchOptions];
- options.callback = ^(BNCInitSessionResponse *response, NSError *error) {
-     if (error) {
-         NSLog(@"Branch init failed: %@", error);
-     } else {
-         NSLog(@"Params: %@", response.params);
-     }
- };
- [[Branch getInstance] initSessionWithOptions:options];
- @endcode
- */
-- (void)initSessionWithOptions:(BNCInitializationOptions *)options;
-
-/**
- Handle a deep link URL with options.
-
- Use this method when your app receives a deep link (URL scheme or universal link).
- This provides better state management than the legacy handleDeepLink: method.
-
- @param options The initialization options with the URL and optional scene identifier.
-
- Example usage:
- @code
- BNCInitializationOptions *options = [BNCInitializationOptions optionsWithURL:url];
- options.callback = ^(BNCInitSessionResponse *response, NSError *error) {
-     // Handle deep link data
- };
- [[Branch getInstance] handleDeepLinkWithOptions:options];
- @endcode
- */
-- (void)handleDeepLinkWithOptions:(BNCInitializationOptions *)options;
+// TODO: initSessionWithOptions and handleDeepLinkWithOptions are not in alpha release scope.
+// BNCInitializationOptions class and related APIs will be made public in a future release.
 
 /**
  Initialize the Branch session.

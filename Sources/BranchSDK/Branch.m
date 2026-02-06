@@ -901,7 +901,9 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
-#pragma mark - Modern Initialization API
+// TODO: initSessionWithOptions and handleDeepLinkWithOptions are not in alpha release scope.
+// BNCInitializationOptions class and related APIs will be made public in a future release.
+// Implementations kept for internal testing via Branch+InitOptions.h
 
 - (void)initSessionWithOptions:(BNCInitializationOptions *)options {
     if (!options) {

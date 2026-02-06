@@ -256,9 +256,9 @@
 		5FCDD4CB2B7AC6A200EAF29F /* BNCPreferenceHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3B12B7AC6A100EAF29F /* BNCPreferenceHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FCDD4CC2B7AC6A200EAF29F /* BNCPreferenceHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3B12B7AC6A100EAF29F /* BNCPreferenceHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FCDD4CD2B7AC6A200EAF29F /* BNCPreferenceHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3B12B7AC6A100EAF29F /* BNCPreferenceHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E099A2B53E914DE3AE0ABF4E /* BNCInitializationOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = D6F02F55967B4AF2B1CC1A3F /* BNCInitializationOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		545CD42F42CE4C30B54D0172 /* BNCInitializationOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = D6F02F55967B4AF2B1CC1A3F /* BNCInitializationOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F805A1D58090428B868F22E4 /* BNCInitializationOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = D6F02F55967B4AF2B1CC1A3F /* BNCInitializationOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E099A2B53E914DE3AE0ABF4E /* BNCInitializationOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = D6F02F55967B4AF2B1CC1A3F /* BNCInitializationOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		545CD42F42CE4C30B54D0172 /* BNCInitializationOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = D6F02F55967B4AF2B1CC1A3F /* BNCInitializationOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F805A1D58090428B868F22E4 /* BNCInitializationOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = D6F02F55967B4AF2B1CC1A3F /* BNCInitializationOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CCAED387074247D0A7C9D00E /* BNCInitializationOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 64DC19D7DC334B6893832118 /* BNCInitializationOptions.m */; };
 		682BCE9CEB444BA8A94ABC6B /* BNCInitializationOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 64DC19D7DC334B6893832118 /* BNCInitializationOptions.m */; };
 		A41C28014A5242179D04653D /* BNCInitializationOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 64DC19D7DC334B6893832118 /* BNCInitializationOptions.m */; };
@@ -868,6 +868,7 @@
 				5FCDD3932B7AC6A100EAF29F /* BNCPartnerParameters.m */,
 				5FCDD3ED2B7AC6A100EAF29F /* BNCPasteboard.m */,
 				5FCDD3822B7AC6A100EAF29F /* BNCPreferenceHelper.m */,
+				D6F02F55967B4AF2B1CC1A3F /* BNCInitializationOptions.h */,
 				64DC19D7DC334B6893832118 /* BNCInitializationOptions.m */,
 				5FCDD38E2B7AC6A100EAF29F /* BNCProductCategory.m */,
 				5FCDD3FB2B7AC6A100EAF29F /* BNCQRCodeCache.m */,
@@ -934,7 +935,6 @@
 				5FCDD3992B7AC6A100EAF29F /* BNCLinkData.h */,
 				5FCDD3A92B7AC6A100EAF29F /* BNCNetworkServiceProtocol.h */,
 				5FCDD3B12B7AC6A100EAF29F /* BNCPreferenceHelper.h */,
-				D6F02F55967B4AF2B1CC1A3F /* BNCInitializationOptions.h */,
 				5FCDD3B32B7AC6A100EAF29F /* BNCProductCategory.h */,
 				5FCDD3B22B7AC6A100EAF29F /* BNCServerInterface.h */,
 				5FCDD3AD2B7AC6A100EAF29F /* BNCServerRequest.h */,
