@@ -871,11 +871,6 @@ static NSString *bnc_branchKey = nil;
         [optionsWithDeferredInit setObject:@0 forKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"];
     }
     [self deferInitBlock:^{
-        if (callback) {
-            dispatch_async(self.isolationQueue, ^{
-                [self.pendingSessionCallbacks addObject:[callback copy]];
-            });
-        }
         [self initSessionWithLaunchOptions:(NSDictionary *)optionsWithDeferredInit isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
     }];
 }
@@ -2342,23 +2337,27 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         }
         // If the session was initialized, but callCallback was specified, do so.
         else if (callCallback && self.initializationStatus == BNCInitStatusInitialized) {
-            // callback on main, this is generally what the client expects and maintains our previous behavior
-            dispatch_async(dispatch_get_main_queue(), ^ {
-                if (self.pendingSessionCallbacks.count > 0) {
+            // Snapshot and clear callbacks on isolationQueue (current queue) to avoid race condition
+            NSArray *callbacks = nil;
+            if (self.pendingSessionCallbacks.count > 0) {
+                callbacks = [self.pendingSessionCallbacks copy];
+                [self.pendingSessionCallbacks removeAllObjects];
+            }
+
+            if (callbacks.count > 0) {
+                // callback on main, this is generally what the client expects and maintains our previous behavior
+                dispatch_async(dispatch_get_main_queue(), ^ {
                     BNCInitSessionResponse *response = [BNCInitSessionResponse new];
                     response.params = [self getLatestReferringParams];
                     response.universalObject = [self getLatestReferringBranchUniversalObject];
                     response.linkProperties = [self getLatestReferringBranchLinkProperties];
                     response.sceneIdentifier = sceneIdentifier;
 
-                    NSArray *callbacks = [self.pendingSessionCallbacks copy];
-                    [self.pendingSessionCallbacks removeAllObjects];
-
                     for (void (^callback)(BNCInitSessionResponse *, NSError *) in callbacks) {
                         callback(response, nil);
                     }
-                }
-            });
+                });
+            }
         }
     });
 }
@@ -2454,15 +2453,21 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 
     // INTENG-21106: Invoke ALL pending callbacks (coalesced from concurrent init calls)
-    if (self.pendingSessionCallbacks.count > 0) {
+    // Snapshot and clear on isolationQueue to prevent race with concurrent callback additions
+    __block NSArray *callbacks = nil;
+    dispatch_sync(self.isolationQueue, ^{
+        if (self.pendingSessionCallbacks.count > 0) {
+            callbacks = [self.pendingSessionCallbacks copy];
+            [self.pendingSessionCallbacks removeAllObjects];
+        }
+    });
+
+    if (callbacks.count > 0) {
         BNCInitSessionResponse *response = [BNCInitSessionResponse new];
         response.params = latestReferringParams;
         response.universalObject = [self getLatestReferringBranchUniversalObject];
         response.linkProperties = [self getLatestReferringBranchLinkProperties];
         response.sceneIdentifier = sceneIdentifier;
-
-        NSArray *callbacks = [self.pendingSessionCallbacks copy];
-        [self.pendingSessionCallbacks removeAllObjects];
 
         for (void (^callback)(BNCInitSessionResponse *, NSError *) in callbacks) {
             callback(response, nil);
@@ -2661,16 +2666,22 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
 
     // INTENG-21106: Invoke ALL pending callbacks with error (coalesced from concurrent init calls)
-    if (self.pendingSessionCallbacks.count > 0) {
+    // Snapshot and clear on isolationQueue to prevent race with concurrent callback additions
+    __block NSArray *callbacks = nil;
+    dispatch_sync(self.isolationQueue, ^{
+        if (self.pendingSessionCallbacks.count > 0) {
+            callbacks = [self.pendingSessionCallbacks copy];
+            [self.pendingSessionCallbacks removeAllObjects];
+        }
+    });
+
+    if (callbacks.count > 0) {
         BNCInitSessionResponse *response = [BNCInitSessionResponse new];
         response.error = error;
         response.params = [NSDictionary new];
         response.universalObject = [BranchUniversalObject new];
         response.linkProperties = [BranchLinkProperties new];
         response.sceneIdentifier = sceneIdentifier;
-
-        NSArray *callbacks = [self.pendingSessionCallbacks copy];
-        [self.pendingSessionCallbacks removeAllObjects];
 
         for (void (^callback)(BNCInitSessionResponse *, NSError *) in callbacks) {
             callback(response, error);
