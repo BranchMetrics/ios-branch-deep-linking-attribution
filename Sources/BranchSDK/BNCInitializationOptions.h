@@ -38,8 +38,14 @@ typedef void (^BNCInitializationCallback)(BNCInitSessionResponse * _Nullable res
  This class consolidates the various parameters that can be passed
  during initialization, providing a cleaner API and better state management.
 
- Example usage:
+ @note This class is currently private and not part of the alpha public API.
+ It will be made public in a future release. For internal testing, import
+ @c Branch+InitOptions.h to access the related Branch methods.
+
+ Example usage (internal only):
  @code
+ #import "Branch+InitOptions.h"
+
  BNCInitializationOptions *options = [[BNCInitializationOptions alloc] init];
  options.url = incomingURL;
  options.callback = ^(BNCInitSessionResponse *response, NSError *error) {
