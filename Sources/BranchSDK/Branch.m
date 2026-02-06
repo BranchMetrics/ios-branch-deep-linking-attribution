@@ -176,7 +176,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (strong, nonatomic) BNCContentDiscoveryManager *contentDiscoveryManager;
 #endif
 
-@property (nonatomic, copy, nullable) void (^sceneSessionInitWithCallback)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error);
+@property (nonatomic, strong) NSMutableArray<void(^)(BNCInitSessionResponse * _Nullable, NSError * _Nullable)> *pendingSessionCallbacks;
 
 // Support for deferred SDK initialization. Used to support slow plugin runtime startup.
 // This is enabled by setting deferInitForPluginRuntime to true in branch.json
@@ -226,6 +226,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     _linkCache = cache;
     _preferenceHelper = preferenceHelper;
     _initializationStatus = BNCInitStatusUninitialized;
+    _pendingSessionCallbacks = [NSMutableArray new];
     _processing_sema = dispatch_semaphore_create(1);
     _networkCount = 0;
     _deepLinkControllers = [[NSMutableDictionary alloc] init];
@@ -870,7 +871,9 @@ static NSString *bnc_branchKey = nil;
         [optionsWithDeferredInit setObject:@0 forKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"];
     }
     [self deferInitBlock:^{
-        self.sceneSessionInitWithCallback = callback;
+        if (callback) {
+            [self.pendingSessionCallbacks addObject:[callback copy]];
+        }
         [self initSessionWithLaunchOptions:(NSDictionary *)optionsWithDeferredInit isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
     }];
 }
@@ -931,11 +934,11 @@ static NSString *bnc_branchKey = nil;
         // Capture callback in local variable to avoid retain cycle through optionsCopy
         BNCInitializationCallback callback = optionsCopy.callback;
         dispatch_async(self.isolationQueue, ^{
-            self.sceneSessionInitWithCallback = ^(BNCInitSessionResponse *response, NSError *error) {
+            [self.pendingSessionCallbacks addObject:[^(BNCInitSessionResponse *response, NSError *error) {
                 if (callback) {
                     callback(response, error);
                 }
-            };
+            } copy]];
         });
     }
 
@@ -985,11 +988,11 @@ static NSString *bnc_branchKey = nil;
         // Capture callback in local variable to avoid retain cycle through optionsCopy
         BNCInitializationCallback callback = optionsCopy.callback;
         dispatch_async(self.isolationQueue, ^{
-            self.sceneSessionInitWithCallback = ^(BNCInitSessionResponse *response, NSError *error) {
+            [self.pendingSessionCallbacks addObject:[^(BNCInitSessionResponse *response, NSError *error) {
                 if (callback) {
                     callback(response, error);
                 }
-            };
+            } copy]];
         });
     }
 
@@ -1026,10 +1029,10 @@ static NSString *bnc_branchKey = nil;
 - (BOOL)handleDeepLink:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier {
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Handle deep link %@", url] error:nil];
 
-    // we've been resetting the session on all deeplinks for quite some time
-    // this allows foreground links to callback
-    self.initializationStatus = BNCInitStatusUninitialized;
-    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
+    // INTENG-21106: Removed unsafe main-thread initializationStatus reset.
+    // The reset:YES parameter passed to initUserSessionAndCallCallback: ensures
+    // initializeSessionAndCallCallback: is entered regardless of current status (line 2264).
+    // Status is safely set to BNCInitStatusInitializing inside isolationQueue.
 
     //Check the referring url/uri for query parameters and save them
     BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
@@ -2339,14 +2342,19 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         else if (callCallback && self.initializationStatus == BNCInitStatusInitialized) {
             // callback on main, this is generally what the client expects and maintains our previous behavior
             dispatch_async(dispatch_get_main_queue(), ^ {
-                if (self.sceneSessionInitWithCallback) {
+                if (self.pendingSessionCallbacks.count > 0) {
                     BNCInitSessionResponse *response = [BNCInitSessionResponse new];
                     response.params = [self getLatestReferringParams];
                     response.universalObject = [self getLatestReferringBranchUniversalObject];
                     response.linkProperties = [self getLatestReferringBranchLinkProperties];
                     response.sceneIdentifier = sceneIdentifier;
 
-                    self.sceneSessionInitWithCallback(response, nil);
+                    NSArray *callbacks = [self.pendingSessionCallbacks copy];
+                    [self.pendingSessionCallbacks removeAllObjects];
+
+                    for (void (^callback)(BNCInitSessionResponse *, NSError *) in callbacks) {
+                        callback(response, nil);
+                    }
                 }
             });
         }
@@ -2401,19 +2409,15 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 [[BranchLogger shared] logDebug:message error:nil];
 
             } else {
-                
-                // new link arrival but an install or open is already on queue? need a new open for link resolution.
-                if (urlString) {
-                    req = [[BranchOpenRequest alloc] initWithCallback:initSessionCallback];
-                    req.callback = initSessionCallback;
-                    req.urlString = urlString;
-                    
-                    // put it behind the one that's already on queue
-                    [self.requestQueue enqueue:req withPriority:NSOperationQueuePriorityHigh];
 
-                    [[BranchLogger shared] logDebug:@"Link resolution request" error:nil];
-                    NSString *message = [NSString stringWithFormat:@"Request %@ callback %@ link %@", req, req.callback, req.urlString];
-                    [[BranchLogger shared] logDebug:message error:nil];
+                // INTENG-21106: Merge URL into existing request instead of creating a duplicate.
+                // This prevents the "Double Open" bug where two /v1/open requests are sent
+                // when an app cold-starts via a Universal Link.
+                if (urlString) {
+                    req.urlString = urlString;
+                    [[BranchLogger shared] logDebug:
+                        [NSString stringWithFormat:@"Coalesced URL %@ into existing request %@", urlString, req]
+                        error:nil];
                 }
             }
             
@@ -2447,17 +2451,22 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         [self validateSDKIntegration];
     }
 
-    if (callCallback) {
+    // INTENG-21106: Invoke ALL pending callbacks (coalesced from concurrent init calls)
+    if (self.pendingSessionCallbacks.count > 0) {
+        BNCInitSessionResponse *response = [BNCInitSessionResponse new];
+        response.params = latestReferringParams;
+        response.universalObject = [self getLatestReferringBranchUniversalObject];
+        response.linkProperties = [self getLatestReferringBranchLinkProperties];
+        response.sceneIdentifier = sceneIdentifier;
 
-        if (self.sceneSessionInitWithCallback) {
-            BNCInitSessionResponse *response = [BNCInitSessionResponse new];
-            response.params = [self getLatestReferringParams];
-            response.universalObject = [self getLatestReferringBranchUniversalObject];
-            response.linkProperties = [self getLatestReferringBranchLinkProperties];
-            response.sceneIdentifier = sceneIdentifier;
-            self.sceneSessionInitWithCallback(response, nil);
+        NSArray *callbacks = [self.pendingSessionCallbacks copy];
+        [self.pendingSessionCallbacks removeAllObjects];
+
+        for (void (^callback)(BNCInitSessionResponse *, NSError *) in callbacks) {
+            callback(response, nil);
         }
     }
+
     [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
 
     [self.urlFilter updatePatternListFromServerWithCompletion:nil];
@@ -2649,15 +2658,20 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     self.initializationStatus = BNCInitStatusUninitialized;
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
 
-    if (callCallback) {
-        if (self.sceneSessionInitWithCallback) {
-            BNCInitSessionResponse *response = [BNCInitSessionResponse new];
-            response.error = error;
-            response.params = [NSDictionary new];
-            response.universalObject = [BranchUniversalObject new];
-            response.linkProperties = [BranchLinkProperties new];
-            response.sceneIdentifier = sceneIdentifier;
-            self.sceneSessionInitWithCallback(response, error);
+    // INTENG-21106: Invoke ALL pending callbacks with error (coalesced from concurrent init calls)
+    if (self.pendingSessionCallbacks.count > 0) {
+        BNCInitSessionResponse *response = [BNCInitSessionResponse new];
+        response.error = error;
+        response.params = [NSDictionary new];
+        response.universalObject = [BranchUniversalObject new];
+        response.linkProperties = [BranchLinkProperties new];
+        response.sceneIdentifier = sceneIdentifier;
+
+        NSArray *callbacks = [self.pendingSessionCallbacks copy];
+        [self.pendingSessionCallbacks removeAllObjects];
+
+        for (void (^callback)(BNCInitSessionResponse *, NSError *) in callbacks) {
+            callback(response, error);
         }
     }
 
