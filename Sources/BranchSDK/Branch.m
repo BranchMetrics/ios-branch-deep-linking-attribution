@@ -2466,17 +2466,24 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
 
         NSArray *callbacks = nil;
+        BranchUniversalObject *universalObject = nil;
+        BranchLinkProperties *linkProperties = nil;
+
         if (self.pendingSessionCallbacks.count > 0) {
             callbacks = [self.pendingSessionCallbacks copy];
             [self.pendingSessionCallbacks removeAllObjects];
+            // Capture session-derived objects on isolationQueue to prevent stale reads
+            // if another request updates session state before main queue executes.
+            universalObject = [self getLatestReferringBranchUniversalObject];
+            linkProperties = [self getLatestReferringBranchLinkProperties];
         }
 
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callbacks.count > 0) {
                 BNCInitSessionResponse *response = [BNCInitSessionResponse new];
                 response.params = latestReferringParams;
-                response.universalObject = [self getLatestReferringBranchUniversalObject];
-                response.linkProperties = [self getLatestReferringBranchLinkProperties];
+                response.universalObject = universalObject;
+                response.linkProperties = linkProperties;
                 response.sceneIdentifier = sceneIdentifier;
 
                 for (void (^callback)(BNCInitSessionResponse *, NSError *) in callbacks) {
