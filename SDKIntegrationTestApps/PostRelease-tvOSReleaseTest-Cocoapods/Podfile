@@ -1,3 +1,6 @@
+
+platform :tvos, '18.0'
+
 target 'tvOSReleaseTest' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
