@@ -1893,9 +1893,11 @@ static NSString *bnc_branchKey = nil;
 - (void)applicationDidBecomeActive {
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive"] error:nil];
 
-    if (bnc_disableAutomaticOpenTracking) {
-        [[BranchLogger shared] logVerbose:@"applicationDidBecomeActive: automatic open tracking is disabled, skipping" error:nil];
-        return;
+    @synchronized ([Branch class]) {
+        if (bnc_disableAutomaticOpenTracking) {
+            [[BranchLogger shared] logVerbose:@"applicationDidBecomeActive: automatic open tracking is disabled, skipping" error:nil];
+            return;
+        }
     }
 
     dispatch_async(self.isolationQueue, ^(){
