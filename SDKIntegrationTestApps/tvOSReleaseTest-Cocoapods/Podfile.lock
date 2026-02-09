@@ -1,5 +1,5 @@
 PODS:
-  - BranchSDK (2.0.0)
+  - BranchSDK (3.13.3)
 
 DEPENDENCIES:
   - BranchSDK (from `./../../`)
@@ -9,8 +9,8 @@ EXTERNAL SOURCES:
     :path: "./../../"
 
 SPEC CHECKSUMS:
-  BranchSDK: dbecf9d1da931c2cf57393b233347b3587d11acb
+  BranchSDK: 19a6e97115350db916a57823c7f6ed96d1e70e46
 
 PODFILE CHECKSUM: 03b123b37ef62488cc2febccc7e8d47e6a8d0768
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.15.2
