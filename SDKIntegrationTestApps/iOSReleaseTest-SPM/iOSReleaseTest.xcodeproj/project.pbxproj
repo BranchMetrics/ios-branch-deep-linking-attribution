@@ -16,6 +16,7 @@
 		C119B02C27ADC92A00E8C7BF /* iOSReleaseTest.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = C119B02B27ADC8FB00E8C7BF /* iOSReleaseTest.entitlements */; };
 		E71D371D29A5707800A0FDEF /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E71D371C29A5707800A0FDEF /* BranchSDK */; };
 		E71D371F29A570D500A0FDEF /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E71D371E29A570D500A0FDEF /* BranchSDK */; };
+		E77DEAF22E9FFEE300EDEAB4 /* TestObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DEAF12E9FFEE300EDEAB4 /* TestObserver.swift */; };
 		E7939C0429749D3C00B90B82 /* iOSReleaseTestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */; };
 		E7A0C3052989AB200024497D /* BranchSDKTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A0C3042989AB200024497D /* BranchSDKTest.swift */; };
 /* End PBXBuildFile section */
@@ -41,6 +42,7 @@
 		C119B02527ADC85E00E8C7BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C119B02B27ADC8FB00E8C7BF /* iOSReleaseTest.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iOSReleaseTest.entitlements; sourceTree = "<group>"; };
 		E73878F62988A82600BD3981 /* ios-branch-deep-linking-attribution */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "ios-branch-deep-linking-attribution"; path = ../..; sourceTree = "<group>"; };
+		E77DEAF12E9FFEE300EDEAB4 /* TestObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestObserver.swift; sourceTree = "<group>"; };
 		E7939C0129749D3C00B90B82 /* iOSReleaseTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSReleaseTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSReleaseTestTests.swift; sourceTree = "<group>"; };
 		E7A0C3042989AB200024497D /* BranchSDKTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchSDKTest.swift; sourceTree = "<group>"; };
@@ -71,7 +73,7 @@
 			children = (
 				E73878F42988A7DC00BD3981 /* Packages */,
 				C119B01627ADC85C00E8C7BF /* iOSReleaseTest */,
-				E7939C0229749D3C00B90B82 /* iOSReleaseTestTests */,
+				E7939C0229749D3C00B90B82 /* IntegrationTests */,
 				C119B01527ADC85C00E8C7BF /* Products */,
 				E73878F02988A44100BD3981 /* Frameworks */,
 			);
@@ -99,7 +101,8 @@
 				C119B02227ADC85E00E8C7BF /* LaunchScreen.storyboard */,
 				C119B02527ADC85E00E8C7BF /* Info.plist */,
 			);
-			path = iOSReleaseTest;
+			name = iOSReleaseTest;
+			path = ../Source/iOSReleaseTest;
 			sourceTree = "<group>";
 		};
 		E73878F02988A44100BD3981 /* Frameworks */ = {
@@ -117,12 +120,14 @@
 			name = Packages;
 			sourceTree = "<group>";
 		};
-		E7939C0229749D3C00B90B82 /* iOSReleaseTestTests */ = {
+		E7939C0229749D3C00B90B82 /* IntegrationTests */ = {
 			isa = PBXGroup;
 			children = (
+				E77DEAF12E9FFEE300EDEAB4 /* TestObserver.swift */,
 				E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */,
 			);
-			path = iOSReleaseTestTests;
+			name = IntegrationTests;
+			path = ../Source/IntegrationTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -245,6 +250,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E7939C0429749D3C00B90B82 /* iOSReleaseTestTests.swift in Sources */,
+				E77DEAF22E9FFEE300EDEAB4 /* TestObserver.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -399,12 +405,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = iOSReleaseTest/iOSReleaseTest.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/../Source/iOSReleaseTest/iOSReleaseTest.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = R63EM248DP;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = R63EM248DP;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = iOSReleaseTest/Info.plist;
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../Source/iOSReleaseTest/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -415,8 +423,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.NipunSingh.iOSReleaseTest;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.link-simulator";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Branch Link Simulator";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -428,12 +438,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = iOSReleaseTest/iOSReleaseTest.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/../Source/iOSReleaseTest/iOSReleaseTest.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = R63EM248DP;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = R63EM248DP;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = iOSReleaseTest/Info.plist;
+				INFOPLIST_FILE = "$(PROJECT_DIR)/../Source/iOSReleaseTest/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -444,8 +456,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.NipunSingh.iOSReleaseTest;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.link-simulator";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Branch Link Simulator";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -457,15 +471,19 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = R63EM248DP;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = R63EM248DP;
 				GENERATE_INFOPLIST_FILE = YES;
 				GENERATE_PKGINFO_FILE = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.SamSolutions.iOSReleaseTestTests;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.link-simulator";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Branch Link Simulator";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -478,15 +496,19 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = R63EM248DP;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = R63EM248DP;
 				GENERATE_INFOPLIST_FILE = YES;
 				GENERATE_PKGINFO_FILE = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.SamSolutions.iOSReleaseTestTests;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.link-simulator";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Branch Link Simulator";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
