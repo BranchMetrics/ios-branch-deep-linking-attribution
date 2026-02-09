@@ -1,6 +1,7 @@
 # Mac
 .DS_Store
 .LSOverride
+.build
 
 # Xcode
 [Bb]uild
