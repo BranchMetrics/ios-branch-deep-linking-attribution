@@ -649,6 +649,12 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
++ (BOOL)automaticOpenTrackingDisabled {
+    @synchronized (self) {
+        return bnc_disableAutomaticOpenTracking;
+    }
+}
+
 + (void)setReferrerGbraidValidityWindow:(NSTimeInterval)validityWindow{
     @synchronized(self) {
         [BNCPreferenceHelper sharedInstance].referringURLQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID][BRANCH_URL_QUERY_PARAMETERS_VALIDITY_WINDOW_KEY] = @(validityWindow);
