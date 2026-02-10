@@ -816,6 +816,39 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 ///Returns the current tracking state.
 + (BOOL) trackingDisabled;
 
+/**
+ Disables automatic session open tracking for the next foreground event with a default timeout of 30 seconds.
+ This is useful for scenarios like Bio Auth Dialogs, Apple Pay Dialogs or other cases where the app may briefly go to
+ background and return without needing a new session open.
+
+ @warning If the app goes to background and returns to foreground before `resumeSession` is called or the timeout expires,
+ the SDK may remain in an uninitialized state until the next foreground event. Ensure `resumeSession` is called promptly
+ after the expected user interaction completes.
+ */
++ (void)disableNextForeground;
+
+/**
+ Disables automatic session open tracking for the next foreground event for the defined time interval.
+
+ @param timeout    The duration in seconds to disable automatic open tracking. After this time,
+                 automatic tracking resumes. Pass 0 to disable indefinitely until `resumeSession` is called.
+
+ @warning If the app goes to background and returns to foreground before `resumeSession` is called or the timeout expires,
+ the SDK may remain in an uninitialized state until the next foreground event. Ensure `resumeSession` is called promptly
+ after the expected user interaction completes.
+ */
++ (void)disableNextForegroundForTimeInterval:(NSTimeInterval)timeout;
+
+/**
+ Resumes automatic session open tracking after it was disabled by `disableNextForegroundForTimeInterval:`.
+ If automatic tracking is already enabled, this method has no effect.
+
+ @warning If the app transitioned to background and foreground while automatic tracking was disabled,
+ the SDK may be in an uninitialized state. The SDK will re-initialize on the next foreground event or
+ when an API method protected by an internal safety check is called.
+ */
++ (void)resumeSession;
+
 /*
  
  Sets the time window for which referrer_graid is valid starting from now.
