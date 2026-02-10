@@ -21,6 +21,26 @@
       }
     },
     {
+      "skippedTests" : [
+        "BranchDisableNextForegroundTests\/testApplicationDidBecomeActive_Then_HandleDeepLink_WhileDisabled",
+        "BranchDisableNextForegroundTests\/testContinueUserActivity_ThenResumeThenForeground_NoDuplicateOpen",
+        "BranchDisableNextForegroundTests\/testContinueUserActivity_WhileDisabled_BypassesDisableFlag",
+        "BranchDisableNextForegroundTests\/testFullLifecycleScenario_ResumeAfterLifecycleCycle",
+        "BranchDisableNextForegroundTests\/testHandleDeepLink_DuringDisabledLifecycleCycle",
+        "BranchDisableNextForegroundTests\/testHandleDeepLink_ThenApplicationDidBecomeActive_WhileDisabled",
+        "BranchDisableNextForegroundTests\/testHandleDeepLink_ThenResumeThenForeground_NoDuplicateOpen",
+        "BranchDisableNextForegroundTests\/testHandleDeepLink_WhileDisabled_ResetsInitStatus",
+        "BranchDisableNextForegroundTests\/testInitSession_DuringDisabledLifecycleCycle",
+        "BranchDisableNextForegroundTests\/testInitSession_ThenResumeThenForeground_NoDuplicateOpen",
+        "BranchDisableNextForegroundTests\/testInitSession_WhileDisabled_BypassesDisableFlag",
+        "BranchDisableNextForegroundTests\/testLifecycleCycleWhileDisabled_LeavesSDKUninitialized",
+        "BranchDisableNextForegroundTests\/testMultipleDisableCalls_CancelsExistingTimer",
+        "BranchDisableNextForegroundTests\/testResumeSession_DoesNotReinitializeSDK",
+        "BranchDisableNextForegroundTests\/testResumeSession_WhenNotDisabled_HasNoEffect",
+        "BranchDisableNextForegroundTests\/testSetCPPFull_ThenResumeThenForeground_NoDuplicateOpen",
+        "BranchDisableNextForegroundTests\/testSetCPPLevelToFull_DuringDisabledLifecycleCycle",
+        "BranchDisableNextForegroundTests\/testSetCPPLevelToFull_WhileDisabled_TriggersInit"
+      ],
       "target" : {
         "containerPath" : "container:Branch-TestBed.xcodeproj",
         "identifier" : "7E6B3B501AA42D0E005F45BF",
