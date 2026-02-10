@@ -624,8 +624,9 @@ static NSString *bnc_branchKey = nil;
             dispatch_source_t currentTimer = bnc_disableAutomaticOpenTimer;
             __weak dispatch_source_t weakTimer = currentTimer;
             dispatch_source_set_event_handler(currentTimer, ^{
+                dispatch_source_t strongTimer = weakTimer;
                 @synchronized ([Branch class]) {
-                    if (weakTimer != nil && bnc_disableAutomaticOpenTimer == weakTimer) {
+                    if (strongTimer != nil && bnc_disableAutomaticOpenTimer == strongTimer) {
                         [Branch resumeSession];
                     }
                 }
