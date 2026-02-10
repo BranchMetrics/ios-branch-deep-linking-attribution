@@ -400,8 +400,8 @@
 #pragma mark - Race condition: continueUserActivity while disabled
 
 - (void)testContinueUserActivity_WhileDisabled_BypassesDisableFlag {
-    // continueUserActivity calls handleDeepLink or initUserSessionAndCallCallback
-    // Neither checks bnc_disableAutomaticOpenTracking
+    // continueUserActivity calls handleDeepLink which synchronously sets
+    // initializationStatus = 0, bypassing the disable flag entirely.
     [self setInitializationStatus:2]; // Start initialized
 
     [Branch disableNextForegroundForTimeInterval:30.0];
@@ -409,11 +409,11 @@
     NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
     activity.webpageURL = [NSURL URLWithString:@"https://testbed.app.link/test123"];
     [self.branch continueUserActivity:activity];
-    [self drainIsolationQueueWithCount:3];
 
-    // continueUserActivity calls handleDeepLink which resets and re-initializes
-    NSInteger status = [self initializationStatus];
-    XCTAssertTrue(status != 2, @"continueUserActivity should trigger re-init even while disable is active (status: %ld)", (long)status);
+    // Verify handleDeepLink synchronously reset initializationStatus to 0.
+    // After async init completes it will go back to 2 (Initialized), so check BEFORE draining.
+    NSInteger statusAfterCall = [self initializationStatus];
+    XCTAssertEqual(statusAfterCall, 0, @"continueUserActivity should synchronously reset initializationStatus to Uninitialized even while disable is active");
 }
 
 #pragma mark - Race condition: handleDeepLink concurrent with applicationDidBecomeActive
