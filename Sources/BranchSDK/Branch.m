@@ -620,10 +620,12 @@ static NSString *bnc_branchKey = nil;
             // Capture current timer to guard against a stale handler firing after a new
             // disableNextForegroundForTimeInterval: call replaced the timer.
             // dispatch_source_cancel prevents future events but cannot dequeue an already-dispatched handler.
+            // Use __weak to avoid a retain cycle (source → handler block → source).
             dispatch_source_t currentTimer = bnc_disableAutomaticOpenTimer;
-            dispatch_source_set_event_handler(bnc_disableAutomaticOpenTimer, ^{
+            __weak dispatch_source_t weakTimer = currentTimer;
+            dispatch_source_set_event_handler(currentTimer, ^{
                 @synchronized ([Branch class]) {
-                    if (bnc_disableAutomaticOpenTimer == currentTimer) {
+                    if (weakTimer != nil && bnc_disableAutomaticOpenTimer == weakTimer) {
                         [Branch resumeSession];
                     }
                 }
