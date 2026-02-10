@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.3.14.0
+— Added APIs `disableNextForegroundForTimeInterval:`, `disableNextForeground` and `resumeSession` to disable and resume automatic tracking of `OPEN` events. These are experimental APIs. Please refer to warning message in API documentation/comments.
+
 v.3.13.3 
 — Fixed Bug - Missing Apple Attribution Token in Install Requests (impacted versions: 3.13.0 - 3.13.2).
 
