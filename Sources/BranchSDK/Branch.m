@@ -617,8 +617,16 @@ static NSString *bnc_branchKey = nil;
                                       dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeout * NSEC_PER_SEC)),
                                       DISPATCH_TIME_FOREVER,
                                       (int64_t)(0.1 * NSEC_PER_SEC));
+            // Capture current timer to guard against a stale handler firing after a new
+            // disableNextForegroundForTimeInterval: call replaced the timer.
+            // dispatch_source_cancel prevents future events but cannot dequeue an already-dispatched handler.
+            dispatch_source_t currentTimer = bnc_disableAutomaticOpenTimer;
             dispatch_source_set_event_handler(bnc_disableAutomaticOpenTimer, ^{
-                [Branch resumeSession];
+                @synchronized ([Branch class]) {
+                    if (bnc_disableAutomaticOpenTimer == currentTimer) {
+                        [Branch resumeSession];
+                    }
+                }
             });
             dispatch_resume(bnc_disableAutomaticOpenTimer);
         }
