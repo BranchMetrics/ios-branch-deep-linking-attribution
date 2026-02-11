@@ -29,7 +29,6 @@
 #import "BNCPartnerParameters.h"
 #import "BNCDeviceInfo.h"
 #import "BNCPreferenceHelper.h"
-#import "BNCAppleReceipt.h"
 #import "BNCAppGroupsData.h"
 #import "BNCSKAdNetwork.h"
 
@@ -54,10 +53,11 @@
 @property (nonatomic, strong, readwrite) BNCApplication *application;
 @property (nonatomic, strong, readwrite) BNCAppGroupsData *appGroupsData;
 @property (nonatomic, strong, readwrite) BNCSKAdNetwork *skAdNetwork;
-@property (nonatomic, strong, readwrite) BNCAppleReceipt *appleReceipt;
 @property (nonatomic, strong, readwrite) BNCPasteboard *pasteboard;
 @property (nonatomic, strong, readwrite) NSNumber *requestCreationTimeStamp;
 @property (nonatomic, strong, readwrite) NSString *requestUUID;
+@property (nonatomic, strong, readwrite) NSString *odmInfo;
+@property (nonatomic, strong, readwrite) NSString *appleAttributionToken;
 
 @end
 
@@ -74,12 +74,42 @@
         self.application = [BNCApplication currentApplication];
         self.appGroupsData = [BNCAppGroupsData shared];
         self.skAdNetwork = [BNCSKAdNetwork sharedInstance];
-        self.appleReceipt = [BNCAppleReceipt sharedInstance];
         self.pasteboard = [BNCPasteboard sharedInstance];
         self.requestUUID = requestUUID;
         self.requestCreationTimeStamp = requestTimeStamp;
     }
     return self;
+}
+
+- (void) loadDataFromThirdPartyAPIs {
+#if !TARGET_OS_TV
+    dispatch_group_t apiGroup = dispatch_group_create();
+    dispatch_queue_t concurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    
+    if (![self.preferenceHelper attributionLevelInitialized] || [[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelFull])
+    {
+        dispatch_group_enter(apiGroup);
+        dispatch_async(concurrentQueue, ^{
+            [[BNCODMInfoCollector instance] loadODMInfoWithCompletionHandler:^(NSString * _Nullable odmInfo, NSError * _Nullable error) {
+                self.odmInfo = odmInfo;
+                dispatch_group_leave(apiGroup);
+            }];
+        });
+    }
+    
+    if (!self.preferenceHelper.appleAttributionTokenChecked) {
+        dispatch_group_enter(apiGroup);
+        dispatch_async(concurrentQueue, ^{
+            self.appleAttributionToken = [BNCSystemObserver appleAttributionToken];
+            dispatch_group_leave(apiGroup);
+        });
+    }
+    
+    NSTimeInterval timeoutSeconds = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime;
+    dispatch_time_t timeOut = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeoutSeconds * NSEC_PER_SEC));
+    dispatch_group_wait(apiGroup, timeOut);
+#endif
+    
 }
 
 // SDK level tracking control
@@ -91,6 +121,8 @@
 
 - (NSDictionary *)dataForInstallWithURLString:(NSString *)urlString {
     NSMutableDictionary *json = [NSMutableDictionary new];
+    
+    [self loadDataFromThirdPartyAPIs];
     
     // All requests
     [self addDefaultRequestDataToJSON:json];
@@ -110,7 +142,6 @@
     [self addSystemObserverDataToJSON:json];
     [self addPreferenceHelperDataToJSON:json];
     [self addPartnerParametersToJSON:json];
-    [self addAppleReceiptSourceToJSON:json];
     [self addTimestampsToJSON:json];
     
     // Check if the urlString is a valid URL to ensure it's a universal link, not the external intent uri
@@ -126,7 +157,6 @@
     [self addAppleAttributionTokenToJSON:json];
 
     // Install Only
-    [self addAppleReceiptDataToJSON:json];
     [self addAppClipDataToJSON:json];
     [self addLocalURLToInstallJSON:json];
     
@@ -153,6 +183,8 @@
 - (NSDictionary *)dataForOpenWithURLString:(NSString *)urlString {
     NSMutableDictionary *json = [NSMutableDictionary new];
     
+    [self loadDataFromThirdPartyAPIs];
+    
     // All requests
     [self addDefaultRequestDataToJSON:json];
         
@@ -174,7 +206,6 @@
     [self addSystemObserverDataToJSON:json];
     [self addPreferenceHelperDataToJSON:json];
     [self addPartnerParametersToJSON:json];
-    [self addAppleReceiptSourceToJSON:json];
     [self addTimestampsToJSON:json];
     
     
@@ -344,25 +375,13 @@
     [self safeSetValue:[BNCSystemObserver applicationVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:json];
     [self safeSetValue:[BNCSystemObserver defaultURIScheme] forKey:BRANCH_REQUEST_KEY_URI_SCHEME onDict:json];
 }
-
-- (void)addAppleReceiptDataToJSON:(NSMutableDictionary *)json {
-    [self safeSetValue:[self.appleReceipt installReceipt] forKey:BRANCH_REQUEST_KEY_APPLE_RECEIPT onDict:json];
-}
-
-- (void)addAppleReceiptSourceToJSON:(NSMutableDictionary *)json {
-    NSNumber *isSandboxReceipt = [NSNumber numberWithBool:[self.appleReceipt isTestFlight]];
-    
-    // The JSON key name is misleading, really indicates if the receipt is real or a sandbox receipt
-    [self safeSetValue:isSandboxReceipt forKey:BRANCH_REQUEST_KEY_APPLE_TESTFLIGHT onDict:json];
-}
  
 - (void)addAppleAttributionTokenToJSON:(NSMutableDictionary *)json {
     // This value is only sent once usually on install
     if (!self.preferenceHelper.appleAttributionTokenChecked) {
-        NSString *appleAttributionToken = [BNCSystemObserver appleAttributionToken];
-        if (appleAttributionToken) {
+        if (self.appleAttributionToken) {
             self.preferenceHelper.appleAttributionTokenChecked = YES;
-            [self safeSetValue:appleAttributionToken forKey:BRANCH_REQUEST_KEY_APPLE_ATTRIBUTION_TOKEN onDict:json];
+            [self safeSetValue:self.appleAttributionToken forKey:BRANCH_REQUEST_KEY_APPLE_ATTRIBUTION_TOKEN onDict:json];
         }
     }
 }
@@ -370,10 +389,9 @@
 
 - (void)addODMInfoToJSON:(NSMutableDictionary *)json {
 #if !TARGET_OS_TV
-    if ([[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelFull]) {
-        NSString *odmInfo = [BNCODMInfoCollector instance].odmInfo ;
-        if (odmInfo) {
-            [self safeSetValue:odmInfo forKey:BRANCH_REQUEST_KEY_ODM_INFO onDict:json];
+    if (![self.preferenceHelper attributionLevelInitialized] || [[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelFull]) {
+        if (self.odmInfo) {
+            [self safeSetValue:self.odmInfo forKey:BRANCH_REQUEST_KEY_ODM_INFO onDict:json];
             NSNumber* odmInitDateInNumberFormat = BNCWireFormatFromDate(self.preferenceHelper.odmInfoInitDate);
             [self safeSetValue:odmInitDateInNumberFormat forKey:BRANCH_REQUEST_KEY_ODM_FIRST_OPEN_TIMESTAMP onDict:json];
         }

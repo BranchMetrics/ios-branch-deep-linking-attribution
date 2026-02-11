@@ -98,6 +98,9 @@ BranchAttributionLevel const BranchAttributionLevelReduced = @"REDUCED";
 BranchAttributionLevel const BranchAttributionLevelMinimal = @"MINIMAL";
 BranchAttributionLevel const BranchAttributionLevelNone = @"NONE";
 
+static BOOL bnc_disableAutomaticOpenTracking = NO;
+static dispatch_source_t bnc_disableAutomaticOpenTimer = nil;
+static NSTimeInterval const BNC_DEFAULT_DISABLE_FOREGROUND_TIMEOUT = 30.0;
 
 #ifndef CSSearchableItemActivityIdentifier
 #define CSSearchableItemActivityIdentifier @"kCSSearchableItemActivityIdentifier"
@@ -250,7 +253,6 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     // queue up async data loading
     [self loadApplicationData];
     [self loadUserAgent];
-    [self startLoadingOfODMInfo];
     
     BranchJsonConfig *config = BranchJsonConfig.instance;
     self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
@@ -286,6 +288,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 }
 
 static Class bnc_networkServiceClass = NULL;
+static callbackForTracingRequests bnc_tracingCallback = nil;
 
 + (void)setNetworkServiceClass:(Class)networkServiceClass {
     @synchronized ([Branch class]) {
@@ -545,6 +548,19 @@ static NSString *bnc_branchKey = nil;
     self.preferenceHelper.retryInterval = retryInterval;
 }
 
++ (void)setSDKWaitTimeForThirdPartyAPIs:(NSTimeInterval)waitTime {
+    @synchronized(self) {
+        if (waitTime <= 0) {
+            [[BranchLogger shared] logWarning:@"Invalid waitTime value. It must be greater than 0. Using default value." error:nil];
+            return;
+        }
+        if (waitTime > 10) {
+            [[BranchLogger shared] logWarning:@"Invalid waitTime value. It must not exceed 10 seconds. Using default value." error:nil];
+            return;
+        }
+        [BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime = waitTime;
+    }
+}
 
 - (void)setRequestMetadataKey:(NSString *)key value:(NSString *)value {
     [self.preferenceHelper setRequestMetadataKey:key value:value];
@@ -586,6 +602,65 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
++ (void)disableNextForeground {
+    [self disableNextForegroundForTimeInterval:BNC_DEFAULT_DISABLE_FOREGROUND_TIMEOUT];
+}
+
++ (void)disableNextForegroundForTimeInterval:(NSTimeInterval)timeout {
+    @synchronized(self) {
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"disableNextForegroundForTimeInterval: %.2f seconds", timeout] error:nil];
+
+        if (bnc_disableAutomaticOpenTimer) {
+            dispatch_source_cancel(bnc_disableAutomaticOpenTimer);
+            bnc_disableAutomaticOpenTimer = nil;
+        }
+
+        bnc_disableAutomaticOpenTracking = YES;
+
+        if (timeout > 0) {
+            bnc_disableAutomaticOpenTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
+            dispatch_source_set_timer(bnc_disableAutomaticOpenTimer,
+                                      dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeout * NSEC_PER_SEC)),
+                                      DISPATCH_TIME_FOREVER,
+                                      (int64_t)(0.1 * NSEC_PER_SEC));
+            // Capture current timer to guard against a stale handler firing after a new
+            // disableNextForegroundForTimeInterval: call replaced the timer.
+            // dispatch_source_cancel prevents future events but cannot dequeue an already-dispatched handler.
+            // Use __weak to avoid a retain cycle (source → handler block → source).
+            dispatch_source_t currentTimer = bnc_disableAutomaticOpenTimer;
+            __weak dispatch_source_t weakTimer = currentTimer;
+            dispatch_source_set_event_handler(currentTimer, ^{
+                dispatch_source_t strongTimer = weakTimer;
+                @synchronized ([Branch class]) {
+                    if (strongTimer != nil && bnc_disableAutomaticOpenTimer == strongTimer) {
+                        [Branch resumeSession];
+                    }
+                }
+            });
+            dispatch_resume(bnc_disableAutomaticOpenTimer);
+        }
+    }
+}
+
++ (void)resumeSession {
+    @synchronized(self) {
+        [[BranchLogger shared] logVerbose:@"resumeSession: re-enabling automatic open tracking" error:nil];
+
+        if (bnc_disableAutomaticOpenTimer) {
+            dispatch_source_cancel(bnc_disableAutomaticOpenTimer);
+            bnc_disableAutomaticOpenTimer = nil;
+        }
+
+        bnc_disableAutomaticOpenTracking = NO;
+    }
+}
+
++ (BOOL)automaticOpenTrackingDisabled {
+    @synchronized (self) {
+        return bnc_disableAutomaticOpenTracking;
+    }
+}
+
 + (void)setReferrerGbraidValidityWindow:(NSTimeInterval)validityWindow{
     @synchronized(self) {
         [BNCPreferenceHelper sharedInstance].referringURLQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID][BRANCH_URL_QUERY_PARAMETERS_VALIDITY_WINDOW_KEY] = @(validityWindow);
@@ -603,12 +678,21 @@ static NSString *bnc_branchKey = nil;
     @synchronized (self) {
         [[BNCPreferenceHelper sharedInstance] setOdmInfo:odmInfo];
         [BNCPreferenceHelper sharedInstance].odmInfoInitDate = firstOpenTimestamp;
-        [[BNCODMInfoCollector instance] loadODMInfo];
     }
 #else
     [[BranchLogger shared] logWarning:@"setODMInfo not supported on tvOS." error:nil];
 #endif
     
+}
+
++ (void)setAnonID:(NSString *)anonID {
+    @synchronized (self) {
+        if (anonID && [anonID isKindOfClass:[NSString class]]) {
+            [BNCPreferenceHelper sharedInstance].anonID = anonID;
+        } else {
+            [[BranchLogger shared] logWarning:@"Invalid anonID provided. Must be a non-nil NSString." error:nil];
+        }
+    }
 }
 
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level {
@@ -689,6 +773,10 @@ static NSString *bnc_branchKey = nil;
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController isReferrable:(BOOL)isReferrable deepLinkHandler:(callbackWithParams)callback {
     [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:YES automaticallyDisplayController:automaticallyDisplayController registerDeepLinkHandler:callback];
+}
+
++ (void) setCallbackForTracingRequests: (callbackForTracingRequests) callback {
+    bnc_tracingCallback = callback;
 }
 
 #pragma mark - Actual Init Session
@@ -998,15 +1086,6 @@ static NSString *bnc_branchKey = nil;
         }];
         dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     });
-}
-
-- (void)startLoadingOfODMInfo {
-    #if !TARGET_OS_TV
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [[BranchLogger shared] logVerbose:@"Loading ODM info ..." error:nil];
-        [[BNCODMInfoCollector instance] loadODMInfo];
-    });
-   #endif
 }
 
 
@@ -1835,7 +1914,15 @@ static NSString *bnc_branchKey = nil;
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
-    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive installOrOpenInQueue"] error:nil];
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive"] error:nil];
+
+    @synchronized ([Branch class]) {
+        if (bnc_disableAutomaticOpenTracking) {
+            [[BranchLogger shared] logVerbose:@"applicationDidBecomeActive: automatic open tracking is disabled, skipping" error:nil];
+            return;
+        }
+    }
+
     dispatch_async(self.isolationQueue, ^(){
         //  if necessary, creates a new organic open
         BOOL installOrOpenInQueue = [self.requestQueue containsInstallOrOpen];
@@ -1851,6 +1938,7 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)applicationWillResignActive {
+    [[BranchLogger shared] logVerbose:@"applicationWillResignActive" error:nil];
 
     dispatch_async(self.isolationQueue, ^(){
         if (!Branch.trackingDisabled) {
@@ -1893,19 +1981,18 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
-//static inline void BNCPerformBlockOnMainThreadAsync(dispatch_block_t block) {
-//    dispatch_async(dispatch_get_main_queue(), block);
-//}
 
 - (void) processRequest:(BNCServerRequest*)req
                response:(BNCServerResponse*)response
                   error:(NSError*)error {
 
     // If the request was successful, or was a bad user request, continue processing.
+    // Also skipping retry for 1xx(Informational), 2xx(Success), 3xx(Redirectional Message) and 4xx(Client)error codes.
     if (!error ||
         error.code == BNCTrackingDisabledError ||
         error.code == BNCBadRequestError ||
-        error.code == BNCDuplicateResourceError) {
+        error.code == BNCDuplicateResourceError ||
+        ((100 <= error.code) && (error.code <= 499))) {
 
         BNCPerformBlockOnMainThreadSync(^{
             [req processResponse:response error:error];
@@ -2165,6 +2252,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 }
                 req.callback = initSessionCallback;
                 req.urlString = urlString;
+                req.traceCallback = bnc_tracingCallback;
                 
                 [self.requestQueue insert:req at:0];
                 

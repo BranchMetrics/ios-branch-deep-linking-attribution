@@ -50,14 +50,20 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
     NSDictionary *params = [factory dataForOpenWithURLString:self.urlString];
-
+    self.requestParams = [params copy];
+    self.requestServiceURL = [[BNCServerAPI sharedInstance] openServiceURL];
     [serverInterface postRequest:params
-        url:[[BNCServerAPI sharedInstance] openServiceURL]
+        url: self.requestServiceURL
         key:key
         callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
+    
+    if (self.traceCallback) {
+        self.traceCallback(self.urlString, self.requestParams, response.data, error, self.requestServiceURL);
+    }
+    
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     if (error && preferenceHelper.dropURLOpen) {
         // Ignore this response from the server. Dummy up a response:

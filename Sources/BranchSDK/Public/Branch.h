@@ -602,6 +602,8 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 
 + (void)setSafetrackAPIURL:(NSString *)url ;
 
++ (void)setCallbackForTracingRequests: (callbackForTracingRequests) callback ;
+
 /**
   @brief        Use the `validateSDKIntegration` method as a debugging aid to assure that you've
                 integrated the Branch SDK correctly.
@@ -753,6 +755,14 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 - (void)setNetworkTimeout:(NSTimeInterval)timeout;
 
 /**
+ Set the SDK wait time for third party APIs (for fetching ODM info and Apple Attribution Token) to finish
+ This timeout should be > 0 and <= 10 seconds.
+ 
+ @param waitTime Number of seconds before third party API calls are considered timed out. Default is 0.5 seconds (500ms).
+ */
++ (void)setSDKWaitTimeForThirdPartyAPIs:(NSTimeInterval)waitTime;
+
+/**
  Disable callouts to ad networks for all events for a user; by default Branch sends callouts to ad networks.
  
  By calling this method with YES, Branch will not send any events to the ad networks specified in your Branch account.  If ad networks are not specified in your Branch account, this method will be ignored and events will still be sent.
@@ -806,6 +816,39 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 ///Returns the current tracking state.
 + (BOOL) trackingDisabled;
 
+/**
+ Disables automatic session open tracking for the next foreground event with a default timeout of 30 seconds.
+ This is useful for scenarios like Bio Auth Dialogs, Apple Pay Dialogs or other cases where the app may briefly go to
+ background and return without needing a new session open.
+
+ @warning If the app goes to background and returns to foreground before `resumeSession` is called or the timeout expires,
+ the SDK may remain in an uninitialized state until the next foreground event. Ensure `resumeSession` is called promptly
+ after the expected user interaction completes.
+ */
++ (void)disableNextForeground;
+
+/**
+ Disables automatic session open tracking for the next foreground event for the defined time interval.
+
+ @param timeout    The duration in seconds to disable automatic open tracking. After this time,
+                 automatic tracking resumes. Pass 0 to disable indefinitely until `resumeSession` is called.
+
+ @warning If the app goes to background and returns to foreground before `resumeSession` is called or the timeout expires,
+ the SDK may remain in an uninitialized state until the next foreground event. Ensure `resumeSession` is called promptly
+ after the expected user interaction completes.
+ */
++ (void)disableNextForegroundForTimeInterval:(NSTimeInterval)timeout;
+
+/**
+ Resumes automatic session open tracking after it was disabled by `disableNextForegroundForTimeInterval:`.
+ If automatic tracking is already enabled, this method has no effect.
+
+ @warning If the app transitioned to background and foreground while automatic tracking was disabled,
+ the SDK may be in an uninitialized state. The SDK will re-initialize on the next foreground event or
+ when an API method protected by an internal safety check is called.
+ */
++ (void)resumeSession;
+
 /*
  
  Sets the time window for which referrer_graid is valid starting from now.
@@ -835,6 +878,12 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
  */
 
 + (void)setODMInfo:(NSString *)odmInfo andFirstOpenTimestamp:(NSDate *) firstOpenTimestamp;
+
+/**
+ Sets a custom Meta Anon ID for the current user.
+ @param anonID The custom Meta Anon ID to be used by Branch.
+ */
++ (void)setAnonID:(NSString *)anonID;
 
 /**
  * Enumeration representing different levels of consumer protection attribution levels

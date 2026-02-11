@@ -19,8 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BNCODMInfoCollector : NSObject
 
 + (BNCODMInfoCollector *_Nullable) instance;
-
-@property (nonatomic, copy, readwrite) NSString * _Nullable odmInfo;
 /**
  * Checks if the given date is within the specified validity window from the current time.
  * @param initTime The reference date to check against.
@@ -30,16 +28,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)isWithinValidityWindow:(NSDate *)initTime timeInterval:(NSTimeInterval)timeInterval;
 
 /**
- * Loads ODM information either from cache or from the device.
- */
-- (void)loadODMInfo;
-
-/**
  * Loads ODM information with a specified timeout.
- * @param timeOut The maximum time to wait for ODM information.
  * @param completion Optional completion handler called when ODM info is loaded.
  */
-- (void)loadODMInfoWithTimeOut:(dispatch_time_t) timeOut andCompletionHandler:(void (^_Nullable)(NSString * _Nullable odmInfo,  NSError * _Nullable error))completion; // Added completion handler for unit tests
+- (void)loadODMInfoWithCompletionHandler:(void (^_Nullable)(NSString * _Nullable odmInfo,  NSError * _Nullable error))completion;
 
 - (void)fetchODMInfoFromDeviceWithInitDate:(NSDate *) date  andCompletion:(void (^)(NSString *odmInfo, NSError *error))completion;
 
