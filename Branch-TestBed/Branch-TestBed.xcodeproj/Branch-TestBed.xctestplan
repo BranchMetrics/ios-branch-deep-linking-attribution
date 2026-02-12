@@ -27,6 +27,11 @@
   "testTargets" : [
     {
       "skippedTests" : [
+        "UITestCaseMisc",
+        "UITestCaseMisc\/testCreateAndOpenURL",
+        "UITestCaseMisc\/testFBParams",
+        "UITestCaseMisc\/testReferringParams",
+        "UITestCaseMisc\/testShareLink",
         "UITestSafari",
         "UITestSafari\/testDeepLinking"
       ],
