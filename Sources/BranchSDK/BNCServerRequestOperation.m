@@ -140,9 +140,9 @@
     [invocation setArgument:&preferenceHelper atIndex:5];
     [invocation invoke];
 
-    id __unsafe_unretained tempOperation;
-    [invocation getReturnValue:&tempOperation];
-    self.swiftOperation = tempOperation;
+    void *tempResult = NULL;
+    [invocation getReturnValue:&tempResult];
+    self.swiftOperation = (__bridge_transfer id)tempResult;
 
     if (!self.swiftOperation) {
         [[BranchLogger shared] logWarning:@"Failed to create Swift operation. Falling back to Objective-C implementation." error:nil];
@@ -184,8 +184,11 @@
         } else if ([keyPath isEqualToString:@"isFinished"]) {
             self.finished = [[change objectForKey:NSKeyValueChangeNewKey] boolValue];
             // Clean up observers when finished
-            [self.swiftOperation removeObserver:self forKeyPath:@"isExecuting"];
-            [self.swiftOperation removeObserver:self forKeyPath:@"isFinished"];
+            if (self.swiftOperation) {
+                [self.swiftOperation removeObserver:self forKeyPath:@"isExecuting"];
+                [self.swiftOperation removeObserver:self forKeyPath:@"isFinished"];
+                self.swiftOperation = nil;
+            }
         }
     }
 }
