@@ -59,8 +59,11 @@ final class tvOSReleaseTestTests: XCTestCase {
         let cppLevel = BNCPreferenceHelper.sharedInstance().attributionLevel
         print("[Test] CPP Level: \(String(describing: cppLevel))")
 
-        let isNone = cppLevel?.isEqual(to: BranchAttributionLevel.none.rawValue) ?? false
-        XCTAssertTrue(isNone, "Tracking should be disabled (true)")
+        XCTAssertEqual(
+            cppLevel,
+            BranchAttributionLevel.none.rawValue as NSNumber,
+            "Tracking should be disabled"
+        )
 
         print("[Test] Disabling tracking again...")
         sdk.setCPPLevel(status: BranchAttributionLevel.full)
