@@ -31,6 +31,7 @@ USAGE
 }
 
 version=3.14.0
+
 prev_version="$version"
 
 if (( $# == 0 )); then
