@@ -56,12 +56,12 @@ final class iOSReleaseTestTests: XCTestCase {
         print("Setting CPP Level to none.")
         sdk.setCPPLevel(status: BranchAttributionLevel.none)
 
-        let cppLevel: String? = BNCPreferenceHelper.sharedInstance().attributionLevel
+        let cppLevel = BNCPreferenceHelper.sharedInstance().attributionLevel
         print("[Test] CPP Level: \(String(describing: cppLevel))")
 
         XCTAssertEqual(
-            cppLevel,
-            BranchAttributionLevel.none.rawValue,
+            cppLevel as NSString?,
+            BranchAttributionLevel.none.rawValue as NSString?,
             "Tracking should be disabled"
         )
 
