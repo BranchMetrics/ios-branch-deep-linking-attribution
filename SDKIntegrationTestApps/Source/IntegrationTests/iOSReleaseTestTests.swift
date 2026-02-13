@@ -59,13 +59,11 @@ final class iOSReleaseTestTests: XCTestCase {
         let cppLevel = BNCPreferenceHelper.sharedInstance().attributionLevel
         print("[Test] CPP Level: \(String(describing: cppLevel))")
 
+        // Explicitly bridge to String to avoid NSString/String type ambiguity
+        // across build configurations (SPM, CocoaPods, Carthage, XCFramework)
+        let currentLevel = cppLevel as? String
         let expectedLevel = BranchAttributionLevel.none.rawValue
-        // XCTAssertEqual has type ambiguity with ObjC NSString/Swift String bridging
-        // across different build configurations (SPM, CocoaPods, Carthage, XCFramework)
-        XCTAssertTrue(
-            cppLevel == expectedLevel,
-            "CPP Level should be '\(expectedLevel)' but was '\(String(describing: cppLevel))'"
-        )
+        XCTAssertEqual(currentLevel, expectedLevel, "Tracking should be disabled")
 
         print("[Test] Disabling tracking again...")
         sdk.setCPPLevel(status: BranchAttributionLevel.full)
