@@ -157,7 +157,8 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
 
         // Validate session (similar to Android session checks)
         guard validateSession() else {
-            await processError(Int(BNCInitError), message: "Session validation failed")
+            // BNCInitError = 1000 (from NSError+Branch.h, Private header not visible in SPM)
+            await processError(1000, message: "Session validation failed")
             finish()
             return
         }
@@ -195,10 +196,13 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
     /// Matches Android's session validation logic in BranchRequestQueue.kt
     /// - Returns: true if session is valid for this request type
     private func validateSession() -> Bool {
+        // Use string-based type checking because BranchInstallRequest/BranchOpenRequest
+        // are in Private headers, not accessible from Swift in SPM builds
+        let requestClassName = String(describing: type(of: request))
         let requestUUID = request.requestUUID ?? "unknown"
 
         // Install requests only need bundle token
-        if request is BranchInstallRequest {
+        if requestClassName.contains("BranchInstallRequest") {
             guard preferenceHelper.randomizedBundleToken != nil else {
                 BranchLogger.shared().logError(
                     "User session not initialized (missing bundle token). Dropping request: \(requestUUID)",
@@ -210,7 +214,7 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
         }
 
         // Open requests need bundle token
-        if request is BranchOpenRequest {
+        if requestClassName.contains("BranchOpenRequest") {
             guard preferenceHelper.randomizedBundleToken != nil else {
                 BranchLogger.shared().logError(
                     "User session not initialized (missing bundle token). Dropping request: \(requestUUID)",
@@ -249,7 +253,10 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
         request.processResponse(response, error: error)
 
         // Handle event-specific callbacks
-        if request is BranchEventRequest {
+        // Use string-based check: BranchEventRequest is in Public headers but may not
+        // be directly usable from Swift SPM module due to bridging constraints
+        let requestClassName = String(describing: type(of: request))
+        if requestClassName.contains("BranchEventRequest") {
             // Use dynamic method invocation for Objective-C callback
             let callbackMap = NSClassFromString("BNCCallbackMap")
             let sharedSelector = NSSelectorFromString("shared")
