@@ -56,7 +56,7 @@ final class iOSReleaseTestTests: XCTestCase {
         print("Setting CPP Level to none.")
         sdk.setCPPLevel(status: BranchAttributionLevel.none)
 
-        let cppLevel = BNCPreferenceHelper.sharedInstance().attributionLevel
+        let cppLevel: String? = BNCPreferenceHelper.sharedInstance().attributionLevel
         print("[Test] CPP Level: \(String(describing: cppLevel))")
 
         XCTAssertEqual(
