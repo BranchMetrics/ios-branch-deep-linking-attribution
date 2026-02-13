@@ -9,9 +9,11 @@
 @testable import iOSReleaseTest
 import XCTest
 
+// swiftlint:disable:next type_name
 final class iOSReleaseTestTests: XCTestCase {
     private static var testObserver: TestObserver?
 
+    // swiftlint:disable:next static_over_final_class
     override class func setUp() {
         super.setUp()
         testObserver = TestObserver()
@@ -19,6 +21,7 @@ final class iOSReleaseTestTests: XCTestCase {
         print("[TestSetup] Test observer registered for enhanced GitHub Actions logging")
     }
 
+    // swiftlint:disable:next static_over_final_class
     override class func tearDown() {
         if let observer = testObserver {
             XCTestObservationCenter.shared.removeTestObserver(observer)
@@ -56,7 +59,8 @@ final class iOSReleaseTestTests: XCTestCase {
         let cppLevel = BNCPreferenceHelper.sharedInstance().attributionLevel
         print("[Test] CPP Level: \(String(describing: cppLevel))")
 
-        XCTAssertTrue(cppLevel!.isEqual(to: BranchAttributionLevel.none.rawValue), "Tracking should be disabled (true)")
+        let isNone = cppLevel?.isEqual(to: BranchAttributionLevel.none.rawValue) ?? false
+        XCTAssertTrue(isNone, "Tracking should be disabled (true)")
 
         print("[Test] Disabling tracking again...")
         sdk.setCPPLevel(status: BranchAttributionLevel.full)
