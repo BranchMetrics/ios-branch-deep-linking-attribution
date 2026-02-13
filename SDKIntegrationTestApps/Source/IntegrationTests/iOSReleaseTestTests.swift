@@ -61,7 +61,7 @@ final class iOSReleaseTestTests: XCTestCase {
 
         XCTAssertEqual(
             cppLevel,
-            BranchAttributionLevel.none.rawValue as NSNumber,
+            BranchAttributionLevel.none.rawValue,
             "Tracking should be disabled"
         )
 
