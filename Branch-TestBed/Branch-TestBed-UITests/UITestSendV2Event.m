@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "Branch.h"
+@import BranchSDK;
 #import "BranchEvent.h"
 #import "UITestCaseTestBed.h"
 

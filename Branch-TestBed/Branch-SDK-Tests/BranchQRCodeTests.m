@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "Branch.h"
+@import BranchSDK;
 #import "BranchQRCode.h"
 #import "BNCQRCodeCache.h"
 
