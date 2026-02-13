@@ -2353,12 +2353,17 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             }
 
             if (callbacks.count > 0) {
+                // Capture session-derived objects on isolationQueue (current queue) to prevent stale reads
+                NSDictionary *params = [self getLatestReferringParams];
+                BranchUniversalObject *universalObject = [self getLatestReferringBranchUniversalObject];
+                BranchLinkProperties *linkProperties = [self getLatestReferringBranchLinkProperties];
+
                 // callback on main, this is generally what the client expects and maintains our previous behavior
                 dispatch_async(dispatch_get_main_queue(), ^ {
                     BNCInitSessionResponse *response = [BNCInitSessionResponse new];
-                    response.params = [self getLatestReferringParams];
-                    response.universalObject = [self getLatestReferringBranchUniversalObject];
-                    response.linkProperties = [self getLatestReferringBranchLinkProperties];
+                    response.params = params;
+                    response.universalObject = universalObject;
+                    response.linkProperties = linkProperties;
                     response.sceneIdentifier = sceneIdentifier;
 
                     for (void (^callback)(BNCInitSessionResponse *, NSError *) in callbacks) {
