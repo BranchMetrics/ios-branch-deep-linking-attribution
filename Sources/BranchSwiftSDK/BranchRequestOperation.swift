@@ -157,8 +157,7 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
 
         // Validate session (similar to Android session checks)
         guard validateSession() else {
-            // BNCInitError code from NSError+Branch.h
-            await processError(1001, message: "Session validation failed")
+            await processError(Int(BNCInitError), message: "Session validation failed")
             finish()
             return
         }
@@ -196,11 +195,10 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
     /// Matches Android's session validation logic in BranchRequestQueue.kt
     /// - Returns: true if session is valid for this request type
     private func validateSession() -> Bool {
-        let requestClassName = String(describing: type(of: request))
         let requestUUID = request.requestUUID ?? "unknown"
 
         // Install requests only need bundle token
-        if requestClassName.contains("BranchInstallRequest") {
+        if request is BranchInstallRequest {
             guard preferenceHelper.randomizedBundleToken != nil else {
                 BranchLogger.shared().logError(
                     "User session not initialized (missing bundle token). Dropping request: \(requestUUID)",
@@ -212,7 +210,7 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
         }
 
         // Open requests need bundle token
-        if requestClassName.contains("BranchOpenRequest") {
+        if request is BranchOpenRequest {
             guard preferenceHelper.randomizedBundleToken != nil else {
                 BranchLogger.shared().logError(
                     "User session not initialized (missing bundle token). Dropping request: \(requestUUID)",
@@ -251,9 +249,7 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
         request.processResponse(response, error: error)
 
         // Handle event-specific callbacks
-        // Check if request is BranchEventRequest by class name (Objective-C class)
-        let requestClassName = String(describing: type(of: request))
-        if requestClassName.contains("BranchEventRequest") {
+        if request is BranchEventRequest {
             // Use dynamic method invocation for Objective-C callback
             let callbackMap = NSClassFromString("BNCCallbackMap")
             let sharedSelector = NSSelectorFromString("shared")
