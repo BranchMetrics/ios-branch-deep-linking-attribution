@@ -10,7 +10,7 @@ import Foundation
 
 // Import BranchSDK when building as Swift Package
 #if SWIFT_PACKAGE
-    import BranchSDK
+import BranchSDK
 #endif
 
 // When building as part of Xcode project, types are available through module
@@ -29,6 +29,7 @@ import Foundation
 @available(iOS 13.0, tvOS 13.0, *)
 @objc(BranchRequestOperation)
 public final class BranchRequestOperation: Operation, @unchecked Sendable {
+
     // MARK: - Properties
 
     /// The server request to be processed
@@ -66,9 +67,9 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
         }
     }
 
-    override public var isExecuting: Bool { _isExecuting }
-    override public var isFinished: Bool { _isFinished }
-    override public var isAsynchronous: Bool { true }
+    public override var isExecuting: Bool { _isExecuting }
+    public override var isFinished: Bool { _isFinished }
+    public override var isAsynchronous: Bool { true }
 
     // MARK: - Initialization
 
@@ -94,7 +95,7 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
 
     // MARK: - Operation Lifecycle
 
-    override public func start() {
+    public override func start() {
         guard !isCancelled else {
             BranchLogger.shared().logDebug(
                 "Operation cancelled before starting: \(request.requestUUID ?? "unknown")",
@@ -117,7 +118,7 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
         }
     }
 
-    override public func cancel() {
+    public override func cancel() {
         executionTask?.cancel()
         super.cancel()
 
@@ -228,8 +229,7 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
         // All other requests need full session (device token, session ID, bundle token)
         guard preferenceHelper.randomizedDeviceToken != nil,
               preferenceHelper.sessionID != nil,
-              preferenceHelper.randomizedBundleToken != nil
-        else {
+              preferenceHelper.randomizedBundleToken != nil else {
             BranchLogger.shared().logError(
                 "Missing session items (device token or session ID or bundle token). Dropping request: \(requestUUID)",
                 error: nil
@@ -262,8 +262,7 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
             let sharedSelector = NSSelectorFromString("shared")
             if let callbackMapClass = callbackMap as? NSObject.Type,
                callbackMapClass.responds(to: sharedSelector),
-               let shared = callbackMapClass.perform(sharedSelector)?.takeUnretainedValue()
-            {
+               let shared = callbackMapClass.perform(sharedSelector)?.takeUnretainedValue() {
                 let callSelector = NSSelectorFromString("callCompletionForRequest:withSuccessStatus:error:")
                 if shared.responds(to: callSelector) {
                     // Perform with proper selector invocation
@@ -271,6 +270,7 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
                     let implementation = shared.method(for: callSelector)
                     let callCompletion = unsafeBitCast(implementation, to: CallCompletionFunc.self)
                     callCompletion(shared, callSelector, request as AnyObject, error == nil, error)
+
                 }
             }
         }

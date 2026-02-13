@@ -12,8 +12,7 @@ let package = Package(
         // Main product that clients will import
         .library(
             name: "BranchSDK",
-            targets: ["BranchSDK", "BranchSwiftSDK"]
-        ),
+            targets: ["BranchSDK", "BranchSwiftSDK"]),
     ],
     dependencies: [
         // Add external dependencies here if needed
@@ -29,14 +28,14 @@ let package = Package(
             publicHeadersPath: "Public",
             cSettings: [
                 .headerSearchPath("Private"),
-                .define("SWIFT_PACKAGE"),
+                .define("SWIFT_PACKAGE")
             ],
             linkerSettings: [
                 .linkedFramework("CoreServices"),
                 .linkedFramework("SystemConfiguration"),
                 .linkedFramework("WebKit", .when(platforms: [.iOS])),
                 .linkedFramework("CoreSpotlight", .when(platforms: [.iOS])),
-                .linkedFramework("AdServices", .when(platforms: [.iOS])),
+                .linkedFramework("AdServices", .when(platforms: [.iOS]))
             ]
         ),
         // Swift Concurrency layer (depends on main SDK)
@@ -45,8 +44,8 @@ let package = Package(
             dependencies: ["BranchSDK"],
             path: "Sources/BranchSwiftSDK",
             swiftSettings: [
-                .define("SWIFT_PACKAGE"),
+                .define("SWIFT_PACKAGE")
             ]
-        ),
+        )
     ]
 )

@@ -10,7 +10,7 @@ import Foundation
 
 // Import BranchSDK when building as Swift Package
 #if SWIFT_PACKAGE
-    import BranchSDK
+import BranchSDK
 #endif
 
 // When building as part of Xcode project, types are available through module
@@ -33,6 +33,7 @@ import Foundation
 /// - Android: Dispatchers.Main -> iOS: MainActor
 @available(iOS 13.0, tvOS 13.0, *)
 public actor BranchRequestQueue {
+
     // MARK: - Properties
 
     /// Operation queue for managing request operations
@@ -115,8 +116,7 @@ public actor BranchRequestQueue {
     public func enqueue(_ request: BNCServerRequest, priority: Operation.QueuePriority) async {
         guard let serverInterface = serverInterface,
               let branchKey = branchKey,
-              let preferenceHelper = preferenceHelper
-        else {
+              let preferenceHelper = preferenceHelper else {
             BranchLogger.shared().logError(
                 "BranchRequestQueue not configured. Call configure() first.",
                 error: nil
@@ -174,12 +174,10 @@ public actor BranchRequestQueue {
         for operation in operationQueue.operations {
             if let requestOp = operation as? BranchRequestOperation,
                let mirror = Mirror(reflecting: requestOp).descendant("request"),
-               let request = mirror as? BNCServerRequest
-            {
+               let request = mirror as? BNCServerRequest {
                 let requestClassName = String(describing: type(of: request))
                 if requestClassName.contains("BranchOpenRequest") ||
-                    requestClassName.contains("BranchInstallRequest")
-                {
+                   requestClassName.contains("BranchInstallRequest") {
                     return true
                 }
             }
@@ -193,12 +191,10 @@ public actor BranchRequestQueue {
         for operation in operationQueue.operations {
             if let requestOp = operation as? BranchRequestOperation,
                let mirror = Mirror(reflecting: requestOp).descendant("request"),
-               let request = mirror as? BNCServerRequest
-            {
+               let request = mirror as? BNCServerRequest {
                 let requestClassName = String(describing: type(of: request))
                 if requestClassName.contains("BranchOpenRequest") ||
-                    requestClassName.contains("BranchInstallRequest")
-                {
+                   requestClassName.contains("BranchInstallRequest") {
                     return request
                 }
             }
@@ -216,8 +212,7 @@ public actor BranchRequestQueue {
             if let requestOp = operation as? BranchRequestOperation,
                let mirror = Mirror(reflecting: requestOp).descendant("request"),
                let request = mirror as? BNCServerRequest,
-               let uuid = request.requestUUID
-            {
+               let uuid = request.requestUUID {
                 if operation.isFinished || operation.isCancelled {
                     return "(Completed/Cancelled: \(uuid))"
                 } else {
@@ -242,11 +237,12 @@ public actor BranchRequestQueue {
 @available(iOS 13.0, tvOS 13.0, *)
 @objc(BranchRequestQueueModern)
 public class BranchRequestQueueBridge: NSObject {
+
     private let queue: BranchRequestQueue
 
     @objc public static let shared = BranchRequestQueueBridge()
 
-    override private init() {
+    private override init() {
         queue = BranchRequestQueue.shared()
         super.init()
     }
