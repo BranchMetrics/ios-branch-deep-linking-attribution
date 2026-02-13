@@ -75,14 +75,14 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // ========================================
     // Try SPM module name first (BranchSwiftSDK), then fallback to BranchSDK
     Class swiftOperationClass = NSClassFromString(@"BranchSwiftSDK.BranchRequestOperation");
-    Class swiftQueueClass = NSClassFromString(@"BranchSwiftSDK.BranchRequestQueue");
+    Class swiftQueueClass = NSClassFromString(@"BranchRequestQueueModern");
 
     // Fallback to BranchSDK namespace (for non-SPM builds)
     if (!swiftOperationClass) {
         swiftOperationClass = NSClassFromString(@"BranchSDK.BranchRequestOperation");
     }
     if (!swiftQueueClass) {
-        swiftQueueClass = NSClassFromString(@"BranchSDK.BranchRequestQueue");
+        swiftQueueClass = NSClassFromString(@"BranchSDK.BranchRequestQueueModern");
     }
 
     if (swiftOperationClass && swiftQueueClass) {
