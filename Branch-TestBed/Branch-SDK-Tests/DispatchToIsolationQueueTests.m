@@ -7,7 +7,6 @@
 //
 
 #import <XCTest/XCTest.h>
-// @import BranchSDK;
 
 @interface DispatchToIsolationQueueTests : XCTestCase
 // @property (nonatomic, strong, readwrite) Branch *branch;

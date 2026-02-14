@@ -109,8 +109,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         }
         if (!swiftQueueClass) {
             NSLog(@"❌ BranchRequestQueue (Swift): NOT FOUND");
-            NSLog(@"   Tried: BranchSwiftSDK.BranchRequestQueue");
-            NSLog(@"   Tried: BranchSDK.BranchRequestQueue");
+            NSLog(@"   Tried: BranchRequestQueueModern");
+            NSLog(@"   Tried: BranchSDK.BranchRequestQueueModern");
         }
         NSLog(@"⚠️  Using legacy Objective-C implementation");
         NSLog(@"💡 Make sure BranchSDK package is properly linked");
