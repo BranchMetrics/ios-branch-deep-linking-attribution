@@ -11,11 +11,7 @@
 #import "BNCRequestFactory.h"
 #import "BNCEncodingUtils.h"
 
-#if SWIFT_PACKAGE
-@import BranchSwiftSDK;
-#else
-#import "BranchSDK/BranchSDK-Swift.h"
-#endif
+#import "BranchConfigurationController.h"
 
 @interface BranchConfigurationControllerTests : XCTestCase
 @end
@@ -24,15 +20,15 @@
 
 - (void)testSingletonInstance {
     
-    ConfigurationController *instance1 = [ConfigurationController shared];
+    BranchConfigurationController *instance1 = [BranchConfigurationController sharedInstance];
     XCTAssertNotNil(instance1);
 
-    ConfigurationController *instance2 = [ConfigurationController shared];
+    BranchConfigurationController *instance2 = [BranchConfigurationController sharedInstance];
     XCTAssertEqual(instance1, instance2);
 }
 
 - (void)testPropertySettersAndGetters {
-    ConfigurationController *configController = [ConfigurationController shared];
+    BranchConfigurationController *configController = [BranchConfigurationController sharedInstance];
     
     NSString *keySource = BRANCH_KEY_SOURCE_GET_INSTANCE_API;
     configController.branchKeySource = keySource;
@@ -50,7 +46,7 @@
 }
 
 - (void)testGetConfiguration {
-    ConfigurationController *configController = [ConfigurationController shared];
+    BranchConfigurationController *configController = [BranchConfigurationController sharedInstance];
     configController.branchKeySource = BRANCH_KEY_SOURCE_INFO_PLIST;
     configController.deferInitForPluginRuntime = YES;
     configController.checkPasteboardOnInstall = YES;
@@ -74,7 +70,7 @@
 }
 
 - (void)testInstallRequestParams {
-    ConfigurationController *configController = [ConfigurationController shared];
+    BranchConfigurationController *configController = [BranchConfigurationController sharedInstance];
     configController.branchKeySource = BRANCH_KEY_SOURCE_INFO_PLIST;
     configController.deferInitForPluginRuntime = YES;
     configController.checkPasteboardOnInstall = YES;
