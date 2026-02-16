@@ -233,62 +233,12 @@
 
 - (void)handleSKANWithResponseData:(NSDictionary *)data {
 #if !TARGET_OS_TV
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    [[BNCSKAdNetwork sharedInstance] registerAndUpdateConversionFromResponse:data isInstall:self.isInstall];
 
-    if ([data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP] isKindOfClass:NSNumber.class]) {
-        NSNumber *invokeRegister = (NSNumber *)data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP];
-        preferenceHelper.invokeRegisterApp = invokeRegister.boolValue;
-        if (invokeRegister.boolValue && self.isInstall) {
-            void (^completionHandler)(NSError *) = [self skanCompletionHandlerWithSuccessDescription:@"INSTALL Event"];
-            if (@available(iOS 16.1, macCatalyst 16.1, *)){
-                NSString *defaultCoarseConValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:@{}];
-                [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:0 coarseValue:defaultCoarseConValue
-                    lockWindow:NO completionHandler:completionHandler];
-            } else if (@available(iOS 15.4, macCatalyst 15.4, *)){
-                [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:0 completionHandler:completionHandler];
-            }
-            else {
-                [[BNCSKAdNetwork sharedInstance] registerAppForAdNetworkAttribution];
-            }
-        }
-    } else {
-        preferenceHelper.invokeRegisterApp = NO;
-    }
-
-    if (data && [data[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE] isKindOfClass:NSNumber.class] && !self.isInstall) {
-        NSNumber *conversionValue = (NSNumber *)data[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
-        // Regardless of SKAN opted-in in dashboard, we always get conversionValue, so adding check to find out if install/open response had "invoke_register_app" true
-        if (conversionValue && preferenceHelper.invokeRegisterApp ) {
-            void (^completionHandler)(NSError *) = [self skanCompletionHandlerWithSuccessDescription:
-                [NSString stringWithFormat:@"Conversion Value - %@", conversionValue]];
-            if (@available(iOS 16.1, macCatalyst 16.1, *)){
-                NSString* coarseConversionValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:data] ;
-                BOOL lockWin = [[BNCSKAdNetwork sharedInstance] getLockedStatusFromDataResponse:data];
-                BOOL shouldCallUpdatePostback = [[BNCSKAdNetwork sharedInstance] shouldCallPostbackForDataResponse:data];
-
-                [[BranchLogger shared] logDebug: [NSString stringWithFormat:@"SKAN 4.0 params - conversionValue:%@ coarseValue:%@, locked:%d, shouldCallPostback:%d, currentWindow:%d, firstAppLaunchTime: %@", conversionValue, coarseConversionValue, lockWin, shouldCallUpdatePostback, (int)preferenceHelper.skanCurrentWindow, preferenceHelper.firstAppLaunchTime] error:nil];
-
-                if(shouldCallUpdatePostback){
-                    [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue: conversionValue.longValue coarseValue:coarseConversionValue lockWindow:lockWin completionHandler:completionHandler];
-                }
-            } else if (@available(iOS 15.4, macCatalyst 15.4, *)) {
-                [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:conversionValue.intValue completionHandler:completionHandler];
-            } else {
-                [[BNCSKAdNetwork sharedInstance] updateConversionValue:conversionValue.integerValue];
-            }
-        }
+    if (!self.isInstall) {
+        [[BNCSKAdNetwork sharedInstance] updateConversionValueFromResponse:data];
     }
 #endif
-}
-
-- (void (^)(NSError *))skanCompletionHandlerWithSuccessDescription:(NSString *)description {
-    return ^(NSError * _Nullable error) {
-        if (error) {
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
-        } else {
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful for %@", description] error:nil];
-        }
-    };
 }
 
 - (BOOL) invokeFeatures:(NSDictionary *)invokeFeatures {

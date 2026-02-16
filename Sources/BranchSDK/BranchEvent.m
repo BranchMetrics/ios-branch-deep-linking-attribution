@@ -14,7 +14,6 @@
 #import "BNCReachability.h"
 #import "BNCSKAdNetwork.h"
 #import "BNCPartnerParameters.h"
-#import "BNCPreferenceHelper.h"
 #import "BNCEventUtils.h"
 #import "BNCRequestFactory.h"
 #import "BNCServerAPI.h"
@@ -88,38 +87,8 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
 		? (NSDictionary*) response.data : nil;
     
 #if !TARGET_OS_TV
-    if (dictionary && [dictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE] isKindOfClass:NSNumber.class]) {
-        NSNumber *conversionValue = (NSNumber *)dictionary[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
-        // Regardless of SKAN opted-in in dashboard, we always get conversionValue, so adding check to find out if install/open response had "invoke_register_app" true
-        if (conversionValue && [BNCPreferenceHelper sharedInstance].invokeRegisterApp) {
-            if (@available(iOS 16.1, macCatalyst 16.1, *)){
-                NSString * coarseConversionValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:dictionary] ;
-                BOOL lockWin = [[BNCSKAdNetwork sharedInstance] getLockedStatusFromDataResponse:dictionary];
-                BOOL shouldCallUpdatePostback = [[BNCSKAdNetwork sharedInstance] shouldCallPostbackForDataResponse:dictionary];
-            
-                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"SKAN 4.0 params - conversionValue:%@ coarseValue:%@, locked:%d, shouldCallPostback:%d, currentWindow:%d, firstAppLaunchTime: %@", conversionValue, coarseConversionValue, lockWin, shouldCallUpdatePostback, (int)[BNCPreferenceHelper sharedInstance].skanCurrentWindow, [BNCPreferenceHelper sharedInstance].firstAppLaunchTime] error:nil];
-                if(shouldCallUpdatePostback){
-                    [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue: conversionValue.longValue coarseValue:coarseConversionValue lockWindow:lockWin completionHandler:^(NSError * _Nullable error) {
-                        if (error) {
-                            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
-                        } else {
-                            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue] error:nil];
-                        }
-                    }];
-                }
-                
-            } else if (@available(iOS 15.4, macCatalyst 15.4, *)) {
-                [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:conversionValue.intValue completionHandler: ^(NSError *error){
-                    if (error) {
-                        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
-                    } else {
-                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue] error:nil];
-                    }
-                }];
-            } else {
-                [[BNCSKAdNetwork sharedInstance] updateConversionValue:conversionValue.integerValue];
-            }
-        }
+    if (dictionary) {
+        [[BNCSKAdNetwork sharedInstance] updateConversionValueFromResponse:dictionary];
     }
 #endif
     
