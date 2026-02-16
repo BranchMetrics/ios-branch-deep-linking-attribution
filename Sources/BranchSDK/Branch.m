@@ -45,7 +45,7 @@
 #import "BNCServerAPI.h"
 #import "BranchPluginSupport.h"
 #import "BranchLogger.h"
-#import "Private/BranchConfigurationController.h"
+#import "BranchConfigurationController.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"

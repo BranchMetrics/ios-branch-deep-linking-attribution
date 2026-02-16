@@ -32,7 +32,7 @@
 #import "BNCAppGroupsData.h"
 #import "BNCSKAdNetwork.h"
 
-#import "Private/BranchConfigurationController.h"
+#import "BranchConfigurationController.h"
 #import "BNCReferringURLUtility.h"
 #import "BNCPasteboard.h"
 #import "BNCODMInfoCollector.h"
