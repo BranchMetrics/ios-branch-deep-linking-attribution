@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "ios-branch-deep-linking-attribution",
+    name: "BranchSDK",
     platforms: [
         .iOS(.v12),
         .tvOS(.v12),
@@ -11,37 +11,25 @@ let package = Package(
     products: [
         .library(
             name: "BranchSDK",
-            targets: ["BranchSDK", "BranchSwiftSDK", "BranchObjCSDK"]),
-    ],
-    dependencies: [
+            targets: ["BranchSDK"]
+        ),
     ],
     targets: [
         .target(
-            name: "BranchObjCSDK",
-            path: "Sources/BranchSDK_ObjC",
-            publicHeadersPath: "Public"
-        ),
-        .target(
-            name: "BranchSwiftSDK",
-            dependencies: ["BranchObjCSDK"], // Swift code depends on Objective-C Constants
-            path: "Sources/BranchSDK_Swift"
-            
-        ),
-        .target(
             name: "BranchSDK",
-            dependencies: ["BranchSwiftSDK"],
+            dependencies: [],
             path: "Sources/BranchSDK",
             publicHeadersPath: "Public",
             cSettings: [
-                .headerSearchPath("Private")
+                .headerSearchPath("Private"),
             ],
             linkerSettings: [
                 .linkedFramework("CoreServices"),
                 .linkedFramework("SystemConfiguration"),
                 .linkedFramework("WebKit", .when(platforms: [.iOS])),
                 .linkedFramework("CoreSpotlight", .when(platforms: [.iOS])),
-                .linkedFramework("AdServices", .when(platforms: [.iOS]))
+                .linkedFramework("AdServices", .when(platforms: [.iOS])),
             ]
-        )
+        ),
     ]
 )
