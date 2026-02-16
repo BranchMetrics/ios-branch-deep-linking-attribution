@@ -178,13 +178,10 @@
     return token;
 }
 
-// Handle possibly mis-parsed identity.
-- (id)userIdentityFromResponseData:(NSDictionary *)data {
+- (NSString *)userIdentityFromResponseData:(NSDictionary *)data {
     id userIdentity = data[BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY];
-    if ([userIdentity isKindOfClass:[NSNumber class]]) {
-        userIdentity = [userIdentity stringValue];
-    }
-    return userIdentity;
+    // Handle possibly mis-parsed identity first and then return value.
+    return BNCStringFromWireFormat(userIdentity);
 }
 
 - (NSString *)sessionDataFromResponseData:(NSDictionary *)data {
