@@ -23,6 +23,7 @@
 @property (strong, nonatomic) BNCServerInterface *serverInterface;
 @property (copy, nonatomic) NSString *branchKey;
 @property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
+@property (weak, nonatomic) BNCServerRequestOperation *currentInitOperation;
 
 @end
 
@@ -51,19 +52,21 @@
     [self enqueue:request withPriority:NSOperationQueuePriorityNormal];
 }
 
-- (void)enqueue:(BNCServerRequest *)request withPriority:(NSOperationQueuePriority)priority{
+- (void)enqueue:(BNCServerRequest *)request withPriority:(NSOperationQueuePriority)priority {
     if (!request) {
         [[BranchLogger shared] logError:@"Attempted to enqueue nil request." error:nil];
         return;
     }
-    
+
     BNCServerRequestOperation *operation = [[BNCServerRequestOperation alloc] initWithRequest:request];
-    
+
     operation.serverInterface = self.serverInterface;
     operation.branchKey = self.branchKey;
     operation.preferenceHelper = self.preferenceHelper;
     operation.queuePriority = priority;
+    operation.requestQueue = self;
 
+    [self addInitDependencyIfNeeded:operation];
     [self.operationQueue addOperation:operation];
 
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enqueued request: %@. Current queue depth: %lu", request.requestUUID, (unsigned long)self.operationQueue.operationCount] error:nil];
@@ -72,7 +75,35 @@
 - (NSInteger)queueDepth {
     return (NSInteger) self.operationQueue.operationCount;
 }
- 
+
+- (void)enqueueRetry:(BNCServerRequest *)request withRetryCount:(NSInteger)retryCount {
+    if (!request) return;
+
+    BNCServerRequestOperation *operation = [[BNCServerRequestOperation alloc] initWithRequest:request];
+    operation.serverInterface = self.serverInterface;
+    operation.branchKey = self.branchKey;
+    operation.preferenceHelper = self.preferenceHelper;
+    operation.retryCount = retryCount;
+    operation.requestQueue = self;
+
+    [self addInitDependencyIfNeeded:operation];
+    [self.operationQueue addOperation:operation];
+
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Enqueued retry %ld for request: %@", (long)retryCount, request.requestUUID] error:nil];
+}
+
+- (void)addInitDependencyIfNeeded:(BNCServerRequestOperation *)operation {
+    if ([operation.request isKindOfClass:[BranchOpenRequest class]]) {
+        // This is an init/open request — track it as the current init operation
+        self.currentInitOperation = operation;
+    } else {
+        // Non-init requests depend on the current init operation (if one is active)
+        BNCServerRequestOperation *initOp = self.currentInitOperation;
+        if (initOp && !initOp.isFinished && !initOp.isCancelled) {
+            [operation addDependency:initOp];
+        }
+    }
+}
 
 - (void)clearQueue {
     [[BranchLogger shared] logDebug:@"Clearing all pending operations from the queue." error:nil];

@@ -1,21 +1,31 @@
 {
-  "originHash" : "d56bc7728e41c97a44136d6183fac55f67109eb4ddd481e77850df5331f07c38",
+  "originHash" : "e2a4510c0851b6102742fa418f51d7581e1ad90d9c4676d13c81883afbfacd68",
   "pins" : [
+    {
+      "identity" : "google-ads-on-device-conversion-ios-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/googleads/google-ads-on-device-conversion-ios-sdk",
+      "state" : {
+        "revision" : "a2d0f1f1666de591eb1a811f40b1706f5c63a2ed",
+        "version" : "2.3.0"
+      }
+    },
     {
       "identity" : "googleutilities",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/google/GoogleUtilities",
+      "location" : "https://github.com/google/GoogleUtilities.git",
       "state" : {
-        "revision" : "53156c7ec267db846e6b64c9f4c4e31ba4cf75eb",
-        "version" : "8.0.2"
+        "revision" : "60da361632d0de02786f709bdc0c4df340f7613e",
+        "version" : "8.1.0"
       }
     },
     {
       "identity" : "nanopb",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nanopb/nanopb",
+      "location" : "https://github.com/firebase/nanopb.git",
       "state" : {
-        "revision" : "b7e1104502eca3a213b46303391ca4d3bc8ddec1"
+        "revision" : "b7e1104502eca3a213b46303391ca4d3bc8ddec1",
+        "version" : "2.30910.0"
       }
     }
   ],
