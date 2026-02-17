@@ -95,12 +95,12 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
     // MARK: - Operation Lifecycle
 
     override public func start() {
-        guard !isCancelled else {
+        if isCancelled {
             BranchLogger.shared().logDebug(
                 "Operation cancelled before starting: \(request.requestUUID ?? "unknown")",
                 error: nil
             )
-            finish()
+            _isFinished = true
             return
         }
 
@@ -197,8 +197,23 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
             return true
         }
 
-        // Open requests and all other requests need bundle token
-        guard preferenceHelper.randomizedBundleToken != nil else {
+        // Open requests need bundle token
+        if requestClassName.contains("BranchOpenRequest") {
+            guard preferenceHelper.randomizedBundleToken != nil else {
+                BranchLogger.shared().logError(
+                    "User session not initialized (missing bundle token). Dropping request: \(requestUUID)",
+                    error: nil
+                )
+                return false
+            }
+            return true
+        }
+
+        // All other requests need full session (device token, session ID, bundle token)
+        guard preferenceHelper.randomizedDeviceToken != nil,
+              preferenceHelper.sessionID != nil,
+              preferenceHelper.randomizedBundleToken != nil
+        else {
             BranchLogger.shared().logError(
                 "User session not initialized (missing bundle token). Dropping request: \(requestUUID)",
                 error: nil

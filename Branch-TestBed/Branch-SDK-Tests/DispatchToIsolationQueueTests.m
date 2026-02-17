@@ -7,11 +7,8 @@
 //
 
 #import <XCTest/XCTest.h>
-// @import BranchSDK;
 
 @interface DispatchToIsolationQueueTests : XCTestCase
-// @property (nonatomic, strong, readwrite) Branch *branch;
-// @property (nonatomic, strong, readwrite) BNCPreferenceHelper *prefHelper;
 @end
 
 // this is an integration test, needs to be moved to a new target
