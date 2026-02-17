@@ -2354,7 +2354,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
             if (callbacks.count > 0) {
                 // Capture session-derived objects on isolationQueue (current queue) to prevent stale reads
-                NSDictionary *params = [self getLatestReferringParams];
+                NSDictionary *params = [[self getLatestReferringParams] copy];
                 BranchUniversalObject *universalObject = [self getLatestReferringBranchUniversalObject];
                 BranchLinkProperties *linkProperties = [self getLatestReferringBranchLinkProperties];
 
@@ -2444,7 +2444,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 - (void)handleInitSuccessAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
 
-    NSDictionary *latestReferringParams = [self getLatestReferringParams];
+    NSDictionary *latestReferringParams = [[self getLatestReferringParams] copy];
 
     if ([latestReferringParams[@"_branch_validate"] isEqualToString:@"060514"]) {
         [self validateDeeplinkRouting:latestReferringParams];
