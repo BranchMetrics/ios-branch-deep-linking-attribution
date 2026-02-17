@@ -441,9 +441,12 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 - (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
                   registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback;
 
+// TODO: initSessionWithOptions and handleDeepLinkWithOptions are not in alpha release scope.
+// BNCInitializationOptions class and related APIs will be made public in a future release.
+
 /**
  Initialize the Branch session.
- 
+
  @warning This function is an internal helper function for session initalization and should not be used by apps.
  **/
 - (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString reset:(BOOL)reset;
@@ -597,6 +600,57 @@ Sets a custom base URL for all calls to the Branch API.
 @param url  Base URL that the Branch API will use.
 */
 + (void)setAPIUrl:(NSString *)url;
+
+/**
+ Returns the current API URL for install requests.
+ Used by Modern SessionManager to ensure consistent URL configuration.
+ */
++ (NSString *)installServiceURL;
+
+/**
+ Returns the current API URL for open requests.
+ Used by Modern SessionManager to ensure consistent URL configuration.
+ */
++ (NSString *)openServiceURL;
+
+/**
+ Marks the Branch SDK as initializing by an external session manager (e.g., Modern SessionManager).
+
+ Call this BEFORE starting your external session manager initialization.
+ This prevents the Legacy SDK from triggering its own initialization in applicationDidBecomeActive.
+ */
++ (void)markInitializationStarting;
+
+/**
+ Marks the Branch SDK as initialized by an external session manager (e.g., Modern SessionManager).
+
+ Use this method when using the Modern Swift SessionManager to tell the Legacy SDK
+ that initialization is complete. This prevents the Legacy SDK from attempting
+ its own initialization when calling features like events, links, or QR codes.
+
+ @warning Only call this after your external session manager has successfully initialized.
+ */
++ (void)markInitializationComplete;
+
+/**
+ Returns complete request data for an install request.
+ Uses BNCRequestFactory to build all required fields (os, os_version, hardware_id, etc.).
+ Used by Modern SessionManager for making complete API requests.
+
+ @param urlString Optional URL string from deep link (can be nil for organic installs)
+ @return Dictionary with all required request fields
+ */
++ (NSDictionary *)requestDataForInstallWithURLString:(nullable NSString *)urlString;
+
+/**
+ Returns complete request data for an open request.
+ Uses BNCRequestFactory to build all required fields (os, os_version, hardware_id, etc.).
+ Used by Modern SessionManager for making complete API requests.
+
+ @param urlString Optional URL string from deep link (can be nil for organic opens)
+ @return Dictionary with all required request fields
+ */
++ (NSDictionary *)requestDataForOpenWithURLString:(nullable NSString *)urlString;
 
 /**
 Sets a custom base safetrack URL for non-linking calls to the Branch API.

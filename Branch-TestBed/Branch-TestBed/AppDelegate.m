@@ -10,7 +10,42 @@
 #import "LogOutputViewController.h"
 #import "NavigationController.h"
 #import "ViewController.h"
+
 @import BranchSDK;
+
+// ============================================================================
+// BNCInitializationOptions - Forward declarations for internal testing.
+// These APIs are NOT in alpha release scope. The class and methods are private
+// in the SDK (not in Public/). We declare them here to test the implementation.
+// See: Sources/BranchSDK/BNCInitializationOptions.h
+//      Sources/BranchSDK/Branch+InitOptions.h
+// ============================================================================
+
+@class BNCInitSessionResponse;
+
+typedef void (^BNCInitializationCallback)(BNCInitSessionResponse * _Nullable response, NSError * _Nullable error);
+
+@interface BNCInitializationOptions : NSObject
+@property (nonatomic, copy, nullable) NSURL *url;
+@property (nonatomic, copy, nullable) NSString *sceneIdentifier;
+@property (nonatomic, copy, nullable) NSString *sourceApplication;
+@property (nonatomic, copy, nullable) BNCInitializationCallback callback;
+@property (nonatomic, assign) BOOL isReferrable;
+@property (nonatomic, assign) BOOL automaticallyDisplayController;
+@property (nonatomic, assign) BOOL delayInitialization;
+@property (nonatomic, assign) BOOL checkPasteboardOnInstall;
+@property (nonatomic, assign) BOOL resetSession;
++ (instancetype)optionsWithURL:(NSURL *)url;
++ (nullable instancetype)optionsWithUserActivity:(NSUserActivity *)userActivity;
+#if !TARGET_OS_TV
+- (void)configureWithLaunchOptions:(nullable NSDictionary<UIApplicationLaunchOptionsKey, id> *)launchOptions;
+#endif
+@end
+
+@interface Branch (InitOptions)
+- (void)initSessionWithOptions:(BNCInitializationOptions *)options;
+- (void)handleDeepLinkWithOptions:(BNCInitializationOptions *)options;
+@end
 
 AppDelegate* appDelegate = nil;
 void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSString*_Nullable message);
@@ -68,87 +103,32 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // partner parameter sample
     //[branch addFacebookPartnerParameterWithName:@"em" value:@"11234e56af071e9c79927651156bd7a10bca8ac34672aba121056e2698ee7088"];
     
-    [branch checkPasteboardOnInstall];
+    [branch setIdentity:@"Bobby Branch"];
 
-    // ========================================
-    // 🔍 VERIFICATION: Swift Concurrency Active?
-    // ========================================
-    // Try SPM module name first (BranchSwiftSDK), then fallback to BranchSDK
-    Class swiftOperationClass = NSClassFromString(@"BranchSwiftSDK.BranchRequestOperation");
-    Class swiftQueueClass = NSClassFromString(@"BranchRequestQueueModern");
-
-    // Fallback to BranchSDK namespace (for non-SPM builds)
-    if (!swiftOperationClass) {
-        swiftOperationClass = NSClassFromString(@"BranchSDK.BranchRequestOperation");
-    }
-    if (!swiftQueueClass) {
-        swiftQueueClass = NSClassFromString(@"BranchSDK.BranchRequestQueueModern");
-    }
-
-    if (swiftOperationClass && swiftQueueClass) {
-        NSLog(@"");
-        NSLog(@"🎉 ================================================");
-        NSLog(@"   ✅ SWIFT CONCURRENCY IS ACTIVE!");
-        NSLog(@"================================================");
-        NSLog(@"✅ BranchRequestOperation (Swift): FOUND");
-        NSLog(@"✅ BranchRequestQueue (Swift): FOUND");
-        NSLog(@"🚀 Using modern async/await patterns");
-        NSLog(@"🧵 Thread safety via Swift Actor");
-        NSLog(@"📊 Architecture mirroring Android Kotlin Coroutines");
-        NSLog(@"================================================");
-        NSLog(@"");
-    } else {
-        NSLog(@"");
-        NSLog(@"⚠️  ================================================");
-        NSLog(@"   ❌ SWIFT CONCURRENCY NOT ACTIVE");
-        NSLog(@"================================================");
-        if (!swiftOperationClass) {
-            NSLog(@"❌ BranchRequestOperation (Swift): NOT FOUND");
-            NSLog(@"   Tried: BranchSwiftSDK.BranchRequestOperation");
-            NSLog(@"   Tried: BranchSDK.BranchRequestOperation");
-        }
-        if (!swiftQueueClass) {
-            NSLog(@"❌ BranchRequestQueue (Swift): NOT FOUND");
-            NSLog(@"   Tried: BranchRequestQueueModern");
-            NSLog(@"   Tried: BranchSDK.BranchRequestQueueModern");
-        }
-        NSLog(@"⚠️  Using legacy Objective-C implementation");
-        NSLog(@"💡 Make sure BranchSDK package is properly linked");
-        NSLog(@"================================================");
-        NSLog(@"");
-    }
-
-    // Additional verification: Try to get shared instance
-    if (swiftQueueClass) {
-        SEL sharedSelector = NSSelectorFromString(@"shared");
-        if ([swiftQueueClass respondsToSelector:sharedSelector]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-            id sharedQueue = [swiftQueueClass performSelector:sharedSelector];
-            if (sharedQueue) {
-                NSLog(@"✅ BranchRequestQueue.shared: Accessible via runtime");
-            }
-#pragma clang diagnostic pop
-        }
-    }
-
+    //[[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
 
     /*
-     *    Required: Initialize Branch, passing a deep link handler block:
+     *    Initialize Branch using BNCInitializationOptions (new API, private for alpha).
+     *    This replaces the legacy initSessionWithLaunchOptions: call.
      */
+    BNCInitializationOptions *options = [[BNCInitializationOptions alloc] init];
+    options.checkPasteboardOnInstall = YES;
+    options.callback = ^(BNCInitSessionResponse * _Nullable response, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"Branch TestBed: initSessionWithOptions error: %@", error.localizedDescription);
+        } else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSLog(@"Branch TestBed: initSessionWithOptions succeeded with params: %@", response.params);
+                [self handleDeepLinkObject:response.universalObject linkProperties:response.linkProperties error:nil];
+            });
+        }
+    };
 
-    //[self setLogFile:@"OpenNInstall"];
-    
-    [branch setIdentity:@"Bobby Branch"];
-    
-    //[[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
-    
-    [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandlerUsingBranchUniversalObject:
-     ^ (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) {
+#if !TARGET_OS_TV
+    [options configureWithLaunchOptions:launchOptions];
+#endif
 
-        //[self setLogFile:nil];
-        [self handleDeepLinkObject:universalObject linkProperties:linkProperties error:error];
-    }];
+    [branch initSessionWithOptions:options];
 
     
     BranchEvent *earlyEvent = [BranchEvent standardEvent:BNCAddToCartEvent];
@@ -233,13 +213,19 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
          annotation:(id)annotation {
 
     NSLog(@"application:openURL:sourceApplication:annotation: invoked with URL: %@", [url description]);
-    
-    // Required. Returns YES if Branch link, else returns NO
-    [[Branch getInstance]
-        application:application
-            openURL:url
-  sourceApplication:sourceApplication
-         annotation:annotation];
+
+    // Handle deep link using BNCInitializationOptions (new API, private for alpha)
+    BNCInitializationOptions *options = [BNCInitializationOptions optionsWithURL:url];
+    options.sourceApplication = sourceApplication;
+    options.callback = ^(BNCInitSessionResponse * _Nullable response, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"Branch TestBed: handleDeepLinkWithOptions error: %@", error.localizedDescription);
+        } else {
+            NSLog(@"Branch TestBed: handleDeepLinkWithOptions succeeded with params: %@", response.params);
+            [self handleDeepLinkObject:response.universalObject linkProperties:response.linkProperties error:nil];
+        }
+    };
+    [[Branch getInstance] handleDeepLinkWithOptions:options];
 
     // Process non-Branch URIs here...
     return YES;
@@ -253,11 +239,21 @@ continueUserActivity:(NSUserActivity *)userActivity
            "ActivityType: %@ userActivity.webpageURL: %@",
            userActivity.activityType,
            userActivity.webpageURL.absoluteString);
-    
-    // Required. Returns YES if Branch Universal Link, else returns NO.
-    // Add `branch_universal_link_domains` to .plist (String or Array) for custom domain(s).
-    [[Branch getInstance] continueUserActivity:userActivity];
-    
+
+    // Handle universal link using BNCInitializationOptions (new API, private for alpha)
+    BNCInitializationOptions *options = [BNCInitializationOptions optionsWithUserActivity:userActivity];
+    if (options) {
+        options.callback = ^(BNCInitSessionResponse * _Nullable response, NSError * _Nullable error) {
+            if (error) {
+                NSLog(@"Branch TestBed: handleDeepLinkWithOptions (universal link) error: %@", error.localizedDescription);
+            } else {
+                NSLog(@"Branch TestBed: handleDeepLinkWithOptions (universal link) succeeded with params: %@", response.params);
+                [self handleDeepLinkObject:response.universalObject linkProperties:response.linkProperties error:nil];
+            }
+        };
+        [[Branch getInstance] handleDeepLinkWithOptions:options];
+    }
+
     // Process non-Branch userActivities here...
     return YES;
 }

@@ -150,8 +150,6 @@
         return;
     }
 
-    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Using Swift Concurrency implementation for request: %@", self.request.requestUUID] error:nil];
-
     // Forward operation lifecycle to Swift implementation
     SEL startSelector = NSSelectorFromString(@"start");
     if ([self.swiftOperation respondsToSelector:startSelector]) {

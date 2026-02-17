@@ -46,6 +46,8 @@
 #import "BranchPluginSupport.h"
 #import "BranchLogger.h"
 #import "Private/BranchConfigurationController.h"
+#import "BNCRequestFactory.h"
+#import "BNCInitializationOptions.h"
 
 
 
@@ -516,6 +518,52 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
++ (NSString *)installServiceURL {
+    return [[BNCServerAPI sharedInstance] installServiceURL];
+}
+
++ (NSString *)openServiceURL {
+    return [[BNCServerAPI sharedInstance] openServiceURL];
+}
+
++ (void)markInitializationStarting {
+    Branch *branch = [Branch getInstance];
+    branch.initializationStatus = BNCInitStatusInitializing;
+    [[BranchLogger shared] logDebug:@"Branch marked as initializing by external session manager" error:nil];
+}
+
++ (void)markInitializationComplete {
+    Branch *branch = [Branch getInstance];
+    branch.initializationStatus = BNCInitStatusInitialized;
+    [[BranchLogger shared] logDebug:@"Branch marked as initialized by external session manager" error:nil];
+}
+
++ (NSDictionary *)requestDataForInstallWithURLString:(NSString *)urlString {
+    NSString *requestUUID = [[NSUUID UUID] UUIDString];
+    NSNumber *timestamp = @((long long)([[NSDate date] timeIntervalSince1970] * 1000.0));
+
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:[self branchKey]
+                                                                         UUID:requestUUID
+                                                                    TimeStamp:timestamp];
+
+    NSDictionary *data = [factory dataForInstallWithURLString:urlString];
+    [[BranchLogger shared] logDebug:@"Built install request data via BNCRequestFactory" error:nil];
+    return data;
+}
+
++ (NSDictionary *)requestDataForOpenWithURLString:(NSString *)urlString {
+    NSString *requestUUID = [[NSUUID UUID] UUIDString];
+    NSNumber *timestamp = @((long long)([[NSDate date] timeIntervalSince1970] * 1000.0));
+
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:[self branchKey]
+                                                                         UUID:requestUUID
+                                                                    TimeStamp:timestamp];
+
+    NSDictionary *data = [factory dataForOpenWithURLString:urlString];
+    [[BranchLogger shared] logDebug:@"Built open request data via BNCRequestFactory" error:nil];
+    return data;
+}
+
 + (void)setSafetrackAPIURL:(NSString *)url {
     if ([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
         [BNCServerAPI sharedInstance].customSafeTrackAPIURL = url;
@@ -851,6 +899,102 @@ static NSString *bnc_branchKey = nil;
     if(pushURL || [[options objectForKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"] isEqualToNumber:@1] || (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) ) {
         [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:pushURL reset:NO];
     }
+}
+
+// TODO: initSessionWithOptions and handleDeepLinkWithOptions are not in alpha release scope.
+// BNCInitializationOptions class and related APIs will be made public in a future release.
+// Implementations kept for internal testing via Branch+InitOptions.h
+
+- (void)initSessionWithOptions:(BNCInitializationOptions *)options {
+    if (!options) {
+        [[BranchLogger shared] logWarning:@"initSessionWithOptions called with nil options" error:nil];
+        options = [[BNCInitializationOptions alloc] init];
+    }
+
+    // Copy options early to prevent external mutation during async operations
+    BNCInitializationOptions *optionsCopy = [options copy];
+
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"initSessionWithOptions: %@", optionsCopy] error:nil];
+
+    [self.class addBranchSDKVersionToCrashlyticsReport];
+
+    // Configure behavior flags
+    self.shouldAutomaticallyDeepLink = optionsCopy.automaticallyDisplayController;
+
+    // Propagate configuration properties from options
+    if (optionsCopy.checkPasteboardOnInstall && !self.preferenceHelper.randomizedBundleToken) {
+        [self checkPasteboardOnInstall];
+    }
+
+    // Store callback if provided - use dispatch_async on isolationQueue for thread safety
+    if (optionsCopy.callback) {
+        // Capture callback in local variable to avoid retain cycle through optionsCopy
+        BNCInitializationCallback callback = optionsCopy.callback;
+        dispatch_async(self.isolationQueue, ^{
+            self.sceneSessionInitWithCallback = ^(BNCInitSessionResponse *response, NSError *error) {
+                if (callback) {
+                    callback(response, error);
+                }
+            };
+        });
+    }
+
+    // Handle deferred initialization
+    if (optionsCopy.delayInitialization) {
+        dispatch_async(self.isolationQueue, ^{
+            self.deferInitForPluginRuntime = YES;
+            if (optionsCopy.url) {
+                self.cachedURLString = optionsCopy.url.absoluteString;
+            }
+        });
+        [[BranchLogger shared] logDebug:@"Branch initialization deferred" error:nil];
+        return;
+    }
+
+    // Determine URL string for initialization
+    NSString *urlString = optionsCopy.url.absoluteString;
+
+    // Perform initialization with proper state management
+    BOOL shouldReset = optionsCopy.resetSession;
+    NSString *sceneIdentifier = optionsCopy.sceneIdentifier;
+
+    [self initUserSessionAndCallCallback:(optionsCopy.callback != nil)
+                         sceneIdentifier:sceneIdentifier
+                               urlString:urlString
+                                   reset:shouldReset];
+}
+
+- (void)handleDeepLinkWithOptions:(BNCInitializationOptions *)options {
+    if (!options) {
+        [[BranchLogger shared] logWarning:@"handleDeepLinkWithOptions called with nil options" error:nil];
+        return;
+    }
+
+    if (!options.url) {
+        [[BranchLogger shared] logWarning:@"handleDeepLinkWithOptions called without URL" error:nil];
+        return;
+    }
+
+    // Copy options early to prevent external mutation during async operations
+    BNCInitializationOptions *optionsCopy = [options copy];
+
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"handleDeepLinkWithOptions: %@", optionsCopy] error:nil];
+
+    // Store callback if provided - use dispatch_async on isolationQueue for thread safety
+    if (optionsCopy.callback) {
+        // Capture callback in local variable to avoid retain cycle through optionsCopy
+        BNCInitializationCallback callback = optionsCopy.callback;
+        dispatch_async(self.isolationQueue, ^{
+            self.sceneSessionInitWithCallback = ^(BNCInitSessionResponse *response, NSError *error) {
+                if (callback) {
+                    callback(response, error);
+                }
+            };
+        });
+    }
+
+    // Use the existing deep link handling logic with the URL
+    [self handleDeepLink:optionsCopy.url sceneIdentifier:optionsCopy.sceneIdentifier];
 }
 
 - (void)setDeepLinkDebugMode:(NSDictionary *)debugParams {

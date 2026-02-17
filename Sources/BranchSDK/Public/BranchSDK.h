@@ -61,3 +61,5 @@ FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 #import "BNCLinkData.h"
 
 #import "BranchConstants.h"
+
+// TODO: BNCInitializationOptions is not in alpha release scope. Keep private for now.
