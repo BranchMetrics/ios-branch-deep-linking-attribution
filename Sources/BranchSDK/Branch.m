@@ -1230,9 +1230,11 @@ static NSString *bnc_branchKey = nil;
         if (self.initializationStatus == BNCInitStatusUninitialized) {
             NSError *error = [NSError branchErrorWithCode:BNCInitError];
             [[BranchLogger shared] logWarning:@"Branch SDK is not initialized, cannot send this request. Please intialize session before calling this API." error:error];
-            BNCPerformBlockOnMainThreadSync(^{
-                [[BNCCallbackMap shared] callCompletionForRequest:request withSuccessStatus:NO error:error];
-            });
+            if ([[BNCCallbackMap shared] containsRequest:request]) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[BNCCallbackMap shared] callCompletionForRequest:request withSuccessStatus:NO error:error];
+                });
+            }
             return;
         }
     }
@@ -1317,7 +1319,9 @@ static NSString *bnc_branchKey = nil;
         if (self.initializationStatus == BNCInitStatusUninitialized) {
             NSError *error = [NSError branchErrorWithCode:BNCInitError];
             [[BranchLogger shared] logWarning:@"Branch SDK is not initialized, cannot request LATD. Please intialize session before calling this API." error:error];
-            if (completion) { completion(nil, error); }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (completion) { completion(nil, error); }
+            });
             return;
         }
     }
@@ -1445,7 +1449,7 @@ static NSString *bnc_branchKey = nil;
         if (self.initializationStatus == BNCInitStatusUninitialized) {
             NSError *error = [NSError branchErrorWithCode:BNCInitError];
             [[BranchLogger shared] logWarning:@"Branch SDK is not initialized, cannot create Spotlight URL. Please intialize session before calling this API." error:error];
-            BNCPerformBlockOnMainThreadSync(^{
+            dispatch_async(dispatch_get_main_queue(), ^{
                 if (callback) { callback(nil, error); }
             });
             return;
