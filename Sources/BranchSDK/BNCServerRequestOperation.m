@@ -155,7 +155,10 @@
     // Forward operation lifecycle to Swift implementation
     SEL startSelector = NSSelectorFromString(@"start");
     if ([self.swiftOperation respondsToSelector:startSelector]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
         [self.swiftOperation performSelector:startSelector];
+#pragma clang diagnostic pop
     }
 
     // Monitor Swift operation state and reflect in Objective-C operation
@@ -205,15 +208,15 @@
     self.executing = YES;
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"BNCServerRequestOperation (Objective-C) starting for request: %@", self.request.requestUUID] error:nil];
 
+    BNCPreferenceHelper *preferenceHelper = self.preferenceHelper ?: [BNCPreferenceHelper sharedInstance];
+
     // Check if tracking is disabled
-    if (Branch.trackingDisabled) {
+    if (preferenceHelper.trackingDisabled) {
         [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Tracking disabled. Skipping request: %@", self.request.requestUUID] error:nil];
         self.executing = NO;
         self.finished = YES;
         return;
     }
-
-    BNCPreferenceHelper *preferenceHelper = self.preferenceHelper ?: [BNCPreferenceHelper sharedInstance];
 
     //  Session validation for requests
     if (!([self.request isKindOfClass:[BranchInstallRequest class]])) {
@@ -271,7 +274,10 @@
         if (self.swiftOperation) {
             SEL cancelSelector = NSSelectorFromString(@"cancel");
             if ([self.swiftOperation respondsToSelector:cancelSelector]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
                 [self.swiftOperation performSelector:cancelSelector];
+#pragma clang diagnostic pop
             }
         }
     }

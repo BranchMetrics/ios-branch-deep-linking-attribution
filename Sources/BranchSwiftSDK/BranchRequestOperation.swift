@@ -258,7 +258,7 @@ public final class BranchRequestOperation: Operation, @unchecked Sendable {
         let requestClassName = String(describing: type(of: request))
         if requestClassName.contains("BranchEventRequest") {
             // Use dynamic method invocation for Objective-C callback
-            let callbackMap = NSClassFromString("BNCCallbackMap")
+            let callbackMap: AnyClass? = NSClassFromString("BNCCallbackMap")
             let sharedSelector = NSSelectorFromString("shared")
             if let callbackMapClass = callbackMap as? NSObject.Type,
                callbackMapClass.responds(to: sharedSelector),
