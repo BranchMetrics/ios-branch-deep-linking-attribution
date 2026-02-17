@@ -32,13 +32,7 @@
 #import "BNCAppGroupsData.h"
 #import "BNCSKAdNetwork.h"
 
-#if SWIFT_PACKAGE
-@import BranchSwiftSDK;
-#else
-#import "BranchSDK/BranchSDK-Swift.h"
-#endif
-
-
+#import "BranchConfigurationController.h"
 #import "BNCReferringURLUtility.h"
 #import "BNCPasteboard.h"
 #import "BNCODMInfoCollector.h"
@@ -456,7 +450,7 @@
 
 // If the client uses a UIPasteControl, force a new open to fetch the payload
 - (void)addOperationalMetrics:(NSMutableDictionary *)json {
-    [self safeSetValue:[[ConfigurationController shared] getConfiguration] forKey:BRANCH_REQUEST_KEY_OPERATIONAL_METRICS onDict:json];
+    [self safeSetValue:[[BranchConfigurationController sharedInstance] getConfiguration] forKey:BRANCH_REQUEST_KEY_OPERATIONAL_METRICS onDict:json];
 }
 
 
