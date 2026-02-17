@@ -80,8 +80,12 @@
 }
 
 // These methods now need to iterate through the operations in the NSOperationQueue.
+// Skip cancelled/finished operations — they may have exited early (e.g. tracking disabled
+// during Swift Task startup) without invoking their callback. Returning a stale operation
+// would prevent a fresh request from being created, causing callbacks to never fire.
 - (BOOL)containsInstallOrOpen {
     for (NSOperation *op in self.operationQueue.operations) {
+        if (op.isCancelled || op.isFinished) continue;
         if ([op isKindOfClass:[BNCServerRequestOperation class]]) {
             BNCServerRequestOperation *requestOp = (BNCServerRequestOperation *)op;
             if ([requestOp.request isKindOfClass:[BranchOpenRequest class]]) {
@@ -94,6 +98,7 @@
 
 - (BranchOpenRequest *)findExistingInstallOrOpen {
     for (NSOperation *op in self.operationQueue.operations) {
+        if (op.isCancelled || op.isFinished) continue;
         if ([op isKindOfClass:[BNCServerRequestOperation class]]) {
             BNCServerRequestOperation *requestOp = (BNCServerRequestOperation *)op;
             BNCServerRequest *request = requestOp.request;

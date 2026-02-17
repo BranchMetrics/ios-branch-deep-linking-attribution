@@ -72,6 +72,11 @@
 }
 
 - (void)start {
+    if (self.isCancelled) {
+        self.finished = YES;
+        return;
+    }
+
     // Use modern Swift Concurrency implementation on iOS 13+
     if (@available(iOS 13.0, tvOS 13.0, *)) {
         if ([self shouldUseSwiftImplementation]) {
