@@ -1230,11 +1230,9 @@ static NSString *bnc_branchKey = nil;
         if (self.initializationStatus == BNCInitStatusUninitialized) {
             NSError *error = [NSError branchErrorWithCode:BNCInitError];
             [[BranchLogger shared] logWarning:@"Branch SDK is not initialized, cannot send this request. Please intialize session before calling this API." error:error];
-            if ([[BNCCallbackMap shared] containsRequest:request]) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [[BNCCallbackMap shared] callCompletionForRequest:request withSuccessStatus:NO error:error];
-                });
-            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[BNCCallbackMap shared] callCompletionForRequest:request withSuccessStatus:NO error:error];
+            });
             return;
         }
     }
