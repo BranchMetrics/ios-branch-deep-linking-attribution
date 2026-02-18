@@ -504,6 +504,12 @@
 		E7FAF6A02E26E497006C167F /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E7FAF69F2E26E497006C167F /* BranchConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E7FAF6A12E26E497006C167F /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E7FAF69F2E26E497006C167F /* BranchConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E7FAF6A22E26E497006C167F /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E7FAF69F2E26E497006C167F /* BranchConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BB00000001000000000000B1 /* BranchConfigurationController.h in Headers */ = {isa = PBXBuildFile; fileRef = BB00000001000000000000A1 /* BranchConfigurationController.h */; };
+		BB00000002000000000000B1 /* BranchConfigurationController.h in Headers */ = {isa = PBXBuildFile; fileRef = BB00000001000000000000A1 /* BranchConfigurationController.h */; };
+		BB00000003000000000000B1 /* BranchConfigurationController.h in Headers */ = {isa = PBXBuildFile; fileRef = BB00000001000000000000A1 /* BranchConfigurationController.h */; };
+		BB00000004000000000000B1 /* BranchConfigurationController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB00000004000000000000A1 /* BranchConfigurationController.m */; };
+		BB00000005000000000000B1 /* BranchConfigurationController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB00000004000000000000A1 /* BranchConfigurationController.m */; };
+		BB00000006000000000000B1 /* BranchConfigurationController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB00000004000000000000A1 /* BranchConfigurationController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -709,6 +715,8 @@
 		E7F311AD2DACB4D400F824A7 /* BNCODMInfoCollector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCODMInfoCollector.m; sourceTree = "<group>"; };
 		E7F311B02DACB54100F824A7 /* BNCODMInfoCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCODMInfoCollector.h; sourceTree = "<group>"; };
 		E7FAF69F2E26E497006C167F /* BranchConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BranchConstants.h; path = Sources/BranchSDK/Public/BranchConstants.h; sourceTree = SOURCE_ROOT; };
+		BB00000001000000000000A1 /* BranchConfigurationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchConfigurationController.h; sourceTree = "<group>"; };
+		BB00000004000000000000A1 /* BranchConfigurationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchConfigurationController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -881,6 +889,7 @@
 				5FCDD3792B7AC6A100EAF29F /* Branch+Validator.m */,
 				5FCDD3952B7AC6A100EAF29F /* BranchActivityItemProvider.m */,
 				5FCDD3842B7AC6A100EAF29F /* BranchConstants.m */,
+				BB00000004000000000000A1 /* BranchConfigurationController.m */,
 				5FCDD3882B7AC6A100EAF29F /* BranchContentDiscoverer.m */,
 				5FCDD3852B7AC6A100EAF29F /* BranchContentDiscoveryManifest.m */,
 				5FCDD3EC2B7AC6A100EAF29F /* BranchContentPathProperties.m */,
@@ -1000,6 +1009,7 @@
 				E52E5B052CC79E4E00F553EE /* BranchFileLogger.h */,
 				5FCDD3BB2B7AC6A100EAF29F /* UIViewController+Branch.h */,
 				E71E396D2DD3A92900110F59 /* BNCInAppBrowser.h */,
+				BB00000001000000000000A1 /* BranchConfigurationController.h */,
 			);
 			path = Private;
 			sourceTree = "<group>";
@@ -1076,6 +1086,7 @@
 				5FCDD4E62B7AC6A200EAF29F /* UIViewController+Branch.h in Headers */,
 				5F5FDA1A2B7DE31E00F14A43 /* BranchLogger.h in Headers */,
 				E7F311B22DACB54100F824A7 /* BNCODMInfoCollector.h in Headers */,
+				BB00000002000000000000B1 /* BranchConfigurationController.h in Headers */,
 				5FCDD5402B7AC6A300EAF29F /* BranchSpotlightUrlRequest.h in Headers */,
 				5FCDD5552B7AC6A300EAF29F /* BNCCrashlyticsWrapper.h in Headers */,
 				5FCDD52B2B7AC6A300EAF29F /* BranchInstallRequest.h in Headers */,
@@ -1161,6 +1172,7 @@
 				5F5FDA1B2B7DE31E00F14A43 /* BranchLogger.h in Headers */,
 				5FCDD4E72B7AC6A200EAF29F /* UIViewController+Branch.h in Headers */,
 				E7F311B12DACB54100F824A7 /* BNCODMInfoCollector.h in Headers */,
+				BB00000001000000000000B1 /* BranchConfigurationController.h in Headers */,
 				5FCDD5412B7AC6A300EAF29F /* BranchSpotlightUrlRequest.h in Headers */,
 				5FCDD5562B7AC6A300EAF29F /* BNCCrashlyticsWrapper.h in Headers */,
 				5FCDD52C2B7AC6A300EAF29F /* BranchInstallRequest.h in Headers */,
@@ -1244,6 +1256,7 @@
 				5FCDD4E82B7AC6A200EAF29F /* UIViewController+Branch.h in Headers */,
 				5F5FDA1C2B7DE31E00F14A43 /* BranchLogger.h in Headers */,
 				E7F311B32DACB54100F824A7 /* BNCODMInfoCollector.h in Headers */,
+				BB00000003000000000000B1 /* BranchConfigurationController.h in Headers */,
 				5FCDD5422B7AC6A300EAF29F /* BranchSpotlightUrlRequest.h in Headers */,
 				5FCDD5B42B7AC89200EAF29F /* BranchSDK.h in Headers */,
 				5FCDD5572B7AC6A300EAF29F /* BNCCrashlyticsWrapper.h in Headers */,
@@ -1647,6 +1660,7 @@
 				E71E39732DD3A92900110F59 /* BNCInAppBrowser.m in Sources */,
 				5FCDD44A2B7AC6A100EAF29F /* BranchContentDiscoveryManifest.m in Sources */,
 				5FCDD4682B7AC6A100EAF29F /* BNCCrashlyticsWrapper.m in Sources */,
+				BB00000004000000000000B1 /* BranchConfigurationController.m in Sources */,
 				5FCDD5912B7AC6A400EAF29F /* BranchShareLink.m in Sources */,
 				5FCDD43B2B7AC6A100EAF29F /* BNCServerRequest.m in Sources */,
 				5FCDD5822B7AC6A400EAF29F /* BranchLinkProperties.m in Sources */,
@@ -1727,6 +1741,7 @@
 				E71E39712DD3A92900110F59 /* BNCInAppBrowser.m in Sources */,
 				5FCDD44B2B7AC6A100EAF29F /* BranchContentDiscoveryManifest.m in Sources */,
 				5FCDD4692B7AC6A100EAF29F /* BNCCrashlyticsWrapper.m in Sources */,
+				BB00000005000000000000B1 /* BranchConfigurationController.m in Sources */,
 				5FCDD5922B7AC6A400EAF29F /* BranchShareLink.m in Sources */,
 				5FCDD43C2B7AC6A100EAF29F /* BNCServerRequest.m in Sources */,
 				5FCDD5832B7AC6A400EAF29F /* BranchLinkProperties.m in Sources */,
@@ -1798,6 +1813,7 @@
 				5FCDD5692B7AC6A400EAF29F /* BNCLinkData.m in Sources */,
 				5FCDD44C2B7AC6A100EAF29F /* BranchContentDiscoveryManifest.m in Sources */,
 				5FCDD46A2B7AC6A100EAF29F /* BNCCrashlyticsWrapper.m in Sources */,
+				BB00000006000000000000B1 /* BranchConfigurationController.m in Sources */,
 				5FCDD43D2B7AC6A100EAF29F /* BNCServerRequest.m in Sources */,
 				5FCDD5842B7AC6A400EAF29F /* BranchLinkProperties.m in Sources */,
 				5FCDD59F2B7AC6A400EAF29F /* BranchEvent.m in Sources */,
