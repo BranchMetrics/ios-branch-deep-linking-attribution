@@ -12,15 +12,10 @@ let package = Package(
         // Main product that clients will import
         .library(
             name: "BranchSDK",
-            targets: ["BranchSDK", "BranchSwiftSDK"]),
-    ],
-    dependencies: [
-        // Add external dependencies here if needed
-        // .package(url: "https://github.com/google/GoogleUtilities.git", from: "7.0.0"),
-        // .package(url: "https://github.com/firebase/nanopb.git", from: "2.30909.0"),
+            targets: ["BranchSDK"]
+        ),
     ],
     targets: [
-        // Main Objective-C SDK target
         .target(
             name: "BranchSDK",
             dependencies: [],
@@ -28,24 +23,14 @@ let package = Package(
             publicHeadersPath: "Public",
             cSettings: [
                 .headerSearchPath("Private"),
-                .define("SWIFT_PACKAGE")
             ],
             linkerSettings: [
                 .linkedFramework("CoreServices"),
                 .linkedFramework("SystemConfiguration"),
                 .linkedFramework("WebKit", .when(platforms: [.iOS])),
                 .linkedFramework("CoreSpotlight", .when(platforms: [.iOS])),
-                .linkedFramework("AdServices", .when(platforms: [.iOS]))
+                .linkedFramework("AdServices", .when(platforms: [.iOS])),
             ]
         ),
-        // Swift Concurrency layer (depends on main SDK)
-        .target(
-            name: "BranchSwiftSDK",
-            dependencies: ["BranchSDK"],
-            path: "Sources/BranchSwiftSDK",
-            swiftSettings: [
-                .define("SWIFT_PACKAGE")
-            ]
-        )
     ]
 )
