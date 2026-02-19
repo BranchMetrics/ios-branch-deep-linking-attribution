@@ -9,6 +9,7 @@ let package = Package(
         .tvOS(.v12),
     ],
     products: [
+        // Main product that clients will import
         .library(
             name: "BranchSDK",
             targets: ["BranchSDK"]
