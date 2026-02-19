@@ -125,12 +125,15 @@ static const NSTimeInterval kBNCRetryDelay = 1.0;
         } else if (self.retryCount < kBNCMaxRetryCount) {
             self.retryCount++;
             [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Scheduling retry %ld/%ld for request: %@", (long)self.retryCount, (long)kBNCMaxRetryCount, self.request.requestUUID] error:nil];
+            __weak typeof(self) weakSelf = self;
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kBNCRetryDelay * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                if (self.isCancelled) {
-                    [self finishOperation];
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+                if (!strongSelf) return;
+                if (strongSelf.isCancelled) {
+                    [strongSelf finishOperation];
                     return;
                 }
-                [self executeWithRetry];
+                [strongSelf executeWithRetry];
             });
             // Do not call finishOperation — keep executing = YES so dependents remain blocked.
         } else {
