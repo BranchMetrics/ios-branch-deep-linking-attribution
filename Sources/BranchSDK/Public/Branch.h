@@ -150,9 +150,6 @@ extern NSString * __nonnull const BNCShareCompletedEvent;
 // Spotlight Constant
 extern NSString * __nonnull const BNCSpotlightFeature;
 
-// Forward declarations for types used in testing APIs
-@class BNCServerRequestQueue;
-@class BNCServerRequest;
 
 #pragma mark - BranchLink
 
