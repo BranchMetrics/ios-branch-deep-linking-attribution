@@ -252,6 +252,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
     [BranchConfigurationController sharedInstance].deferInitForPluginRuntime = self.deferInitForPluginRuntime;
 
+
     if (config.apiUrl) {
         [Branch setAPIUrl:config.apiUrl];
     }

@@ -249,6 +249,8 @@
 		AA00000003000000000000B1 /* BranchConfigurationController.h in Headers */ = {isa = PBXBuildFile; fileRef = AA00000003000000000000A1 /* BranchConfigurationController.h */; };
 		AA00000004000000000000B1 /* BranchConfigurationController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA00000004000000000000A1 /* BranchConfigurationController.m */; };
 		F1CF14111F4CC79F00BB2694 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		AA00000003000000000000B1 /* BranchConfigurationController.h in Headers */ = {isa = PBXBuildFile; fileRef = AA00000003000000000000A1 /* BranchConfigurationController.h */; };
+		AA00000004000000000000B1 /* BranchConfigurationController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA00000004000000000000A1 /* BranchConfigurationController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -804,6 +806,7 @@
 				5F644B2D2B7AA810000DCD78 /* NSMutableDictionary+Branch.m */,
 				5F644B362B7AA810000DCD78 /* NSString+Branch.m */,
 				5F644BAF2B7AA811000DCD78 /* UIViewController+Branch.m */,
+				AA00000004000000000000A1 /* BranchConfigurationController.m */,
 				5F644B6E2B7AA810000DCD78 /* Private */,
 				5F644B522B7AA810000DCD78 /* Public */,
 			);
@@ -899,6 +902,7 @@
 				E51F64292CF46899000858D2 /* BranchFileLogger.h */,
 				5F644B752B7AA810000DCD78 /* UIViewController+Branch.h */,
 				E7AC74782DB06D47002D8C40 /* NSError+Branch.h */,
+				AA00000003000000000000A1 /* BranchConfigurationController.h */,
 			);
 			path = Private;
 			sourceTree = "<group>";
@@ -1450,6 +1454,7 @@
 				5F644C3B2B7AA811000DCD78 /* BNCInitSessionResponse.m in Sources */,
 				5F644BCF2B7AA811000DCD78 /* BNCPreferenceHelper.m in Sources */,
 				5F644C372B7AA811000DCD78 /* BranchContentPathProperties.m in Sources */,
+				AA00000004000000000000B1 /* BranchConfigurationController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
