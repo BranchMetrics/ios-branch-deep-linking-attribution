@@ -221,6 +221,9 @@
 		670016701940F51400A9E103 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6700166F1940F51400A9E103 /* main.m */; };
 		6700167A1940F51400A9E103 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016791940F51400A9E103 /* ViewController.m */; };
 		67F270891BA9FCFF002546A7 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		AA00000003000000000000B1 /* BranchConfigurationController.h in Headers */ = {isa = PBXBuildFile; fileRef = AA00000003000000000000A1 /* BranchConfigurationController.h */; };
+		AA00000004000000000000B1 /* BranchConfigurationController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA00000004000000000000A1 /* BranchConfigurationController.m */; };
+		AA12345600010000000000B1 /* BranchDisableNextForegroundTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AA12345600010000000000A1 /* BranchDisableNextForegroundTests.m */; };
 		C10A6DE629A995590061A851 /* StoreKitTestCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = C10A6DE529A995590061A851 /* StoreKitTestCertificate.cer */; };
 		C10C61AA282481FB00761D7E /* BranchShareLinkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10C61A9282481FB00761D7E /* BranchShareLinkTests.m */; };
 		C12320B52808DB90007771C0 /* BranchQRCodeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C12320B42808DB90007771C0 /* BranchQRCodeTests.m */; };
@@ -228,7 +231,6 @@
 		C15CC9E02ABCF8C8003CC339 /* BranchActivityItemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C15CC9DF2ABCF8C8003CC339 /* BranchActivityItemTests.m */; };
 		C1614D56285BC8A00098946B /* LinkPresentation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1614D55285BC8A00098946B /* LinkPresentation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		C17DAF7B2AC20C2000B16B1A /* BranchClassTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C17DAF7A2AC20C2000B16B1A /* BranchClassTests.m */; };
-		AA12345600010000000000B1 /* BranchDisableNextForegroundTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AA12345600010000000000A1 /* BranchDisableNextForegroundTests.m */; };
 		C1CC888229BAAFC000BDD2B5 /* BNCReferringURLUtilityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C1CC888129BAAFC000BDD2B5 /* BNCReferringURLUtilityTests.m */; };
 		E51F642A2CF46899000858D2 /* BranchFileLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = E51F64292CF46899000858D2 /* BranchFileLogger.h */; };
 		E56394312CC7AC9F00E18E65 /* BranchFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E563942F2CC7AC9500E18E65 /* BranchFileLogger.m */; };
@@ -244,9 +246,9 @@
 		E7AE4A092DFB2C4400696805 /* BranchConfigurationControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AE4A082DFB2C4400696805 /* BranchConfigurationControllerTests.m */; };
 		E7CA74B22E1B4890002EFB40 /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E7CA74B12E1B4890002EFB40 /* BranchConstants.h */; };
 		E7E28ECA2DD2424C00F75D0D /* BNCInAppBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = E7E28EC82DD2424C00F75D0D /* BNCInAppBrowser.m */; };
+		E7F1BF932F47A7F800372BF2 /* BNCServerRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = E7F1BF922F47A7F800372BF2 /* BNCServerRequestOperation.m */; };
+		E7F1BF952F47A80A00372BF2 /* BNCServerRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = E7F1BF942F47A80A00372BF2 /* BNCServerRequestOperation.h */; };
 		F1CF14111F4CC79F00BB2694 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		AA00000003000000000000B1 /* BranchConfigurationController.h in Headers */ = {isa = PBXBuildFile; fileRef = AA00000003000000000000A1 /* BranchConfigurationController.h */; };
-		AA00000004000000000000B1 /* BranchConfigurationController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA00000004000000000000A1 /* BranchConfigurationController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -547,6 +549,9 @@
 		67BBCF271A69E49A009C7DAE /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = System/Library/Frameworks/CoreSpotlight.framework; sourceTree = SDKROOT; };
 		7E6B3B511AA42D0E005F45BF /* Branch-SDK-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-SDK-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA00000003000000000000A1 /* BranchConfigurationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchConfigurationController.h; sourceTree = "<group>"; };
+		AA00000004000000000000A1 /* BranchConfigurationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchConfigurationController.m; sourceTree = "<group>"; };
+		AA12345600010000000000A1 /* BranchDisableNextForegroundTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchDisableNextForegroundTests.m; sourceTree = "<group>"; };
 		C10A6DE029A97E440061A851 /* TestStoreKitConfig.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestStoreKitConfig.storekit; sourceTree = "<group>"; };
 		C10A6DE529A995590061A851 /* StoreKitTestCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = StoreKitTestCertificate.cer; sourceTree = "<group>"; };
 		C10C61A9282481FB00761D7E /* BranchShareLinkTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchShareLinkTests.m; sourceTree = "<group>"; };
@@ -556,7 +561,6 @@
 		C15CC9DF2ABCF8C8003CC339 /* BranchActivityItemTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchActivityItemTests.m; sourceTree = "<group>"; };
 		C1614D55285BC8A00098946B /* LinkPresentation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LinkPresentation.framework; path = System/Library/Frameworks/LinkPresentation.framework; sourceTree = SDKROOT; };
 		C17DAF7A2AC20C2000B16B1A /* BranchClassTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchClassTests.m; sourceTree = "<group>"; };
-		AA12345600010000000000A1 /* BranchDisableNextForegroundTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchDisableNextForegroundTests.m; sourceTree = "<group>"; };
 		C1CC888129BAAFC000BDD2B5 /* BNCReferringURLUtilityTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCReferringURLUtilityTests.m; sourceTree = "<group>"; };
 		E51F64292CF46899000858D2 /* BranchFileLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchFileLogger.h; sourceTree = "<group>"; };
 		E563942F2CC7AC9500E18E65 /* BranchFileLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchFileLogger.m; sourceTree = "<group>"; };
@@ -575,8 +579,8 @@
 		E7AE4A082DFB2C4400696805 /* BranchConfigurationControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchConfigurationControllerTests.m; sourceTree = "<group>"; };
 		E7CA74B12E1B4890002EFB40 /* BranchConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchConstants.h; sourceTree = "<group>"; };
 		E7E28EC82DD2424C00F75D0D /* BNCInAppBrowser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCInAppBrowser.m; sourceTree = "<group>"; };
-		AA00000003000000000000A1 /* BranchConfigurationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchConfigurationController.h; sourceTree = "<group>"; };
-		AA00000004000000000000A1 /* BranchConfigurationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchConfigurationController.m; sourceTree = "<group>"; };
+		E7F1BF922F47A7F800372BF2 /* BNCServerRequestOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCServerRequestOperation.m; sourceTree = "<group>"; };
+		E7F1BF942F47A80A00372BF2 /* BNCServerRequestOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCServerRequestOperation.h; sourceTree = "<group>"; };
 		F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-TestBed-UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -726,6 +730,7 @@
 		5F644B252B7AA810000DCD78 /* BranchSDK */ = {
 			isa = PBXGroup;
 			children = (
+				E7F1BF922F47A7F800372BF2 /* BNCServerRequestOperation.m */,
 				E563942F2CC7AC9500E18E65 /* BranchFileLogger.m */,
 				5F644BB02B7AA811000DCD78 /* BNCAppGroupsData.m */,
 				5F644B2B2B7AA810000DCD78 /* BNCApplication.m */,
@@ -845,6 +850,7 @@
 		5F644B6E2B7AA810000DCD78 /* Private */ = {
 			isa = PBXGroup;
 			children = (
+				E7F1BF942F47A80A00372BF2 /* BNCServerRequestOperation.h */,
 				E71E397A2DD3C14800110F59 /* BNCInAppBrowser.h */,
 				5F644B762B7AA810000DCD78 /* BNCAppGroupsData.h */,
 				5F644B812B7AA811000DCD78 /* BNCApplication.h */,
@@ -1044,6 +1050,7 @@
 				5F644BF92B7AA811000DCD78 /* BNCServerRequest.h in Headers */,
 				5F644BFA2B7AA811000DCD78 /* BranchDeepLinkingController.h in Headers */,
 				5F644BFB2B7AA811000DCD78 /* BranchPluginSupport.h in Headers */,
+				E7F1BF952F47A80A00372BF2 /* BNCServerRequestOperation.h in Headers */,
 				5F644BFC2B7AA811000DCD78 /* BranchScene.h in Headers */,
 				5F644BFD2B7AA811000DCD78 /* BNCPreferenceHelper.h in Headers */,
 				5F644BFE2B7AA811000DCD78 /* BNCServerInterface.h in Headers */,
@@ -1371,6 +1378,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5F644BB92B7AA811000DCD78 /* NSError+Branch.m in Sources */,
+				E7F1BF932F47A7F800372BF2 /* BNCServerRequestOperation.m in Sources */,
 				5F644C482B7AA811000DCD78 /* BNCCallbackMap.m in Sources */,
 				5F644BBE2B7AA811000DCD78 /* BNCApplication.m in Sources */,
 				5F644C302B7AA811000DCD78 /* BranchDelegate.m in Sources */,
