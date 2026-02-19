@@ -20,7 +20,6 @@
                     preferenceHelper:(BNCPreferenceHelper *)preferenceHelper;
 - (void)enqueue:(BNCServerRequest *)request;
 - (void)enqueue:(BNCServerRequest *)request withPriority:(NSOperationQueuePriority)priority;
-- (void)enqueueRetry:(BNCServerRequest *)request withRetryCount:(NSInteger)retryCount;
 - (void)clearQueue;
 - (BOOL)containsInstallOrOpen;
 - (BranchOpenRequest *)findExistingInstallOrOpen;

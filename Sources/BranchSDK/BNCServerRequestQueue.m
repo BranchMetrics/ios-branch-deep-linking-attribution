@@ -64,7 +64,6 @@
     operation.branchKey = self.branchKey;
     operation.preferenceHelper = self.preferenceHelper;
     operation.queuePriority = priority;
-    operation.requestQueue = self;
 
     [self addInitDependencyIfNeeded:operation];
     [self.operationQueue addOperation:operation];
@@ -73,23 +72,13 @@
 }
 
 - (NSInteger)queueDepth {
-    return (NSInteger) self.operationQueue.operationCount;
-}
-
-- (void)enqueueRetry:(BNCServerRequest *)request withRetryCount:(NSInteger)retryCount {
-    if (!request) return;
-
-    BNCServerRequestOperation *operation = [[BNCServerRequestOperation alloc] initWithRequest:request];
-    operation.serverInterface = self.serverInterface;
-    operation.branchKey = self.branchKey;
-    operation.preferenceHelper = self.preferenceHelper;
-    operation.retryCount = retryCount;
-    operation.requestQueue = self;
-
-    [self addInitDependencyIfNeeded:operation];
-    [self.operationQueue addOperation:operation];
-
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Enqueued retry %ld for request: %@", (long)retryCount, request.requestUUID] error:nil];
+    NSInteger count = 0;
+    for (NSOperation *op in self.operationQueue.operations) {
+        if (!op.isExecuting && !op.isFinished && !op.isCancelled) {
+            count++;
+        }
+    }
+    return count;
 }
 
 - (void)addInitDependencyIfNeeded:(BNCServerRequestOperation *)operation {

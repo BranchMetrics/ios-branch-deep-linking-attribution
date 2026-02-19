@@ -6,7 +6,6 @@
 //
 
 #import "BNCServerRequestOperation.h"
-#import "BNCServerRequestQueue.h"
 #import "BranchOpenRequest.h"
 #import "BranchInstallRequest.h"
 #import "BranchEvent.h"
@@ -20,6 +19,7 @@ static const NSTimeInterval kBNCRetryDelay = 1.0;
 @interface BNCServerRequestOperation ()
 @property (nonatomic, assign, readwrite, getter = isExecuting) BOOL executing;
 @property (nonatomic, assign, readwrite, getter = isFinished) BOOL finished;
+@property (nonatomic, assign) NSInteger retryCount;
 @end
 
 @implementation BNCServerRequestOperation {
@@ -98,15 +98,14 @@ static const NSTimeInterval kBNCRetryDelay = 1.0;
         }
     }
 
-    // TODO: Handle specific `BranchOpenRequest` lock
-    // `waitForOpenResponseLock` will block the current thread (the NSOperation's background thread)
-    // until the global open response lock is released. This ensures proper sequencing
-    // if another init session is in progress.
-    /* if ([self.request isKindOfClass:[BranchOpenRequest class]]) {
-        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"BranchOpenRequest detected. Waiting for open response lock for %@", self.request.requestUUID] error:nil];
-        [BranchOpenRequest waitForOpenResponseLock];
-    }*/
+    if ([self.request isKindOfClass:[BranchOpenRequest class]]) {
+        [BranchOpenRequest setWaitNeededForOpenResponseLock];
+    }
 
+    [self executeWithRetry];
+}
+
+- (void)executeWithRetry {
     [self.request makeRequest:self.serverInterface
                           key:self.branchKey
                      callback:^(BNCServerResponse *response, NSError *error) {
@@ -123,15 +122,17 @@ static const NSTimeInterval kBNCRetryDelay = 1.0;
                 }
             });
             [self finishOperation];
-        } else if ([self isReplayableRequest] && self.retryCount < kBNCMaxRetryCount) {
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Scheduling retry %ld/%ld for request: %@", (long)(self.retryCount + 1), (long)kBNCMaxRetryCount, self.request.requestUUID] error:nil];
+        } else if (self.retryCount < kBNCMaxRetryCount) {
+            self.retryCount++;
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Scheduling retry %ld/%ld for request: %@", (long)self.retryCount, (long)kBNCMaxRetryCount, self.request.requestUUID] error:nil];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kBNCRetryDelay * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                BNCServerRequestQueue *queue = self.requestQueue;
-                if (queue && !self.isCancelled) {
-                    [queue enqueueRetry:self.request withRetryCount:self.retryCount + 1];
+                if (self.isCancelled) {
+                    [self finishOperation];
+                    return;
                 }
+                [self executeWithRetry];
             });
-            [self finishOperation];
+            // Do not call finishOperation — keep executing = YES so dependents remain blocked.
         } else {
             BNCPerformBlockOnMainThreadSync(^{
                 [self.request processResponse:response error:error];
@@ -156,17 +157,6 @@ static const NSTimeInterval kBNCRetryDelay = 1.0;
         return YES;
     }
     return NO;
-}
-
-- (BOOL)isReplayableRequest {
-    if (![self.request isKindOfClass:[BranchEventRequest class]]) {
-        return NO;
-    }
-    // Requests with explicit callbacks should not be silently retried
-    if ([[BNCCallbackMap shared] containsRequest:self.request]) {
-        return NO;
-    }
-    return YES;
 }
 
 - (void)finishOperation {
