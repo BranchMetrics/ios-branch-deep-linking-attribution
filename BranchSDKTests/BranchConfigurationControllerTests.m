@@ -11,11 +11,7 @@
 #import "BNCRequestFactory.h"
 #import "BNCEncodingUtils.h"
 
-#if SWIFT_PACKAGE
-@import BranchSwiftSDK;
-#else
-#import "Private/BranchConfigurationController.h"
-#endif
+#import "BranchConfigurationController.h"
 
 @interface BranchConfigurationControllerTests : XCTestCase
 @end
@@ -23,27 +19,16 @@
 @implementation BranchConfigurationControllerTests
 
 - (void)testSingletonInstance {
-#if SWIFT_PACKAGE
-    ConfigurationController *instance1 = [ConfigurationController shared];
-    XCTAssertNotNil(instance1);
 
-    ConfigurationController *instance2 = [ConfigurationController shared];
-    XCTAssertEqual(instance1, instance2);
-#else
     BranchConfigurationController *instance1 = [BranchConfigurationController sharedInstance];
     XCTAssertNotNil(instance1);
 
     BranchConfigurationController *instance2 = [BranchConfigurationController sharedInstance];
     XCTAssertEqual(instance1, instance2);
-#endif
 }
 
 - (void)testPropertySettersAndGetters {
-#if SWIFT_PACKAGE
-    ConfigurationController *configController = [ConfigurationController shared];
-#else
     BranchConfigurationController *configController = [BranchConfigurationController sharedInstance];
-#endif
 
     NSString *keySource = BRANCH_KEY_SOURCE_GET_INSTANCE_API;
     configController.branchKeySource = keySource;
@@ -61,11 +46,7 @@
 }
 
 - (void)testGetConfiguration {
-#if SWIFT_PACKAGE
-    ConfigurationController *configController = [ConfigurationController shared];
-#else
     BranchConfigurationController *configController = [BranchConfigurationController sharedInstance];
-#endif
     configController.branchKeySource = BRANCH_KEY_SOURCE_INFO_PLIST;
     configController.deferInitForPluginRuntime = YES;
     configController.checkPasteboardOnInstall = YES;
@@ -91,11 +72,7 @@
 }
 
 - (void)testInstallRequestParams {
-#if SWIFT_PACKAGE
-    ConfigurationController *configController = [ConfigurationController shared];
-#else
     BranchConfigurationController *configController = [BranchConfigurationController sharedInstance];
-#endif
     configController.branchKeySource = BRANCH_KEY_SOURCE_INFO_PLIST;
     configController.deferInitForPluginRuntime = YES;
     configController.checkPasteboardOnInstall = YES;
