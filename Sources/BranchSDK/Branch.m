@@ -45,7 +45,7 @@
 #import "BNCServerAPI.h"
 #import "BranchPluginSupport.h"
 #import "BranchLogger.h"
-#import "BranchConfigurationController.h"
+#import "Private/BranchConfigurationController.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
@@ -251,7 +251,8 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     BranchJsonConfig *config = BranchJsonConfig.instance;
     self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
     [BranchConfigurationController sharedInstance].deferInitForPluginRuntime = self.deferInitForPluginRuntime;
-    
+
+
     if (config.apiUrl) {
         [Branch setAPIUrl:config.apiUrl];
     }
@@ -278,6 +279,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
         }
     }
 
+    [self.requestQueue configureWithServerInterface:_serverInterface branchKey:key preferenceHelper:preferenceHelper];
     return self;
 }
 
@@ -1223,7 +1225,6 @@ static NSString *bnc_branchKey = nil;
     [self initSafetyCheck];
     dispatch_async(self.isolationQueue, ^(){
         [self.requestQueue enqueue:request];
-        [self processNextQueueItem];
     });
 }
 
@@ -1423,7 +1424,6 @@ static NSString *bnc_branchKey = nil;
     dispatch_async(self.isolationQueue, ^(){
         BranchSpotlightUrlRequest *req = [[BranchSpotlightUrlRequest alloc] initWithParams:params callback:callback];
         [self.requestQueue enqueue:req];
-        [self processNextQueueItem];
     });
 }
 
@@ -1719,7 +1719,6 @@ static NSString *bnc_branchKey = nil;
                                                                        linkCache:self.linkCache
                                                                         callback:callback];
         [self.requestQueue enqueue:req];
-        [self processNextQueueItem];
     });
 }
 
@@ -1957,14 +1956,6 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
-- (void)insertRequestAtFront:(BNCServerRequest *)req {
-    if (self.networkCount == 0) {
-        [self.requestQueue insert:req at:0];
-    } else {
-        [self.requestQueue insert:req at:1];
-    }
-}
-
 static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     if (block) {
         if ([NSThread isMainThread]) {
@@ -1972,142 +1963,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         } else {
             dispatch_sync(dispatch_get_main_queue(), block);
         }
-    }
-}
-
-
-- (void) processRequest:(BNCServerRequest*)req
-               response:(BNCServerResponse*)response
-                  error:(NSError*)error {
-
-    // If the request was successful, or was a bad user request, continue processing.
-    // Also skipping retry for 1xx(Informational), 2xx(Success), 3xx(Redirectional Message) and 4xx(Client)error codes.
-    if (!error ||
-        error.code == BNCTrackingDisabledError ||
-        error.code == BNCBadRequestError ||
-        error.code == BNCDuplicateResourceError ||
-        ((100 <= error.code) && (error.code <= 499))) {
-
-        BNCPerformBlockOnMainThreadSync(^{
-            [req processResponse:response error:error];
-            if ([req isKindOfClass:[BranchEventRequest class]]) {
-                [[BNCCallbackMap shared] callCompletionForRequest:req withSuccessStatus:(error == nil) error:error];
-            }
-        });
-
-        [self.requestQueue remove:req];
-        self.networkCount = 0;
-        dispatch_async(self.isolationQueue, ^{
-            [self processNextQueueItem];
-        });
-    }
-    // On network problems, or Branch down, call the other callbacks and stop processing.
-    else {
-        [[BranchLogger shared] logDebug:@"Network error: failing queued requests." error:nil];
-        // First, gather all the requests to fail
-        NSMutableArray *requestsToFail = [[NSMutableArray alloc] init];
-        for (int i = 0; i < self.requestQueue.queueDepth; i++) {
-            BNCServerRequest *request = [self.requestQueue peekAt:i];
-            if (request) {
-                [requestsToFail addObject:request];
-            }
-        }
-
-        // Next, remove all the requests that should not be replayed. Note, we do this before
-        // calling callbacks, in case any of the callbacks try to kick off another request, which
-        // could potentially start another request (and call these callbacks again)
-        for (BNCServerRequest *request in requestsToFail) {
-            if (Branch.trackingDisabled || ![self isReplayableRequest:request]) {
-                [self.requestQueue remove:request];
-            }
-        }
-
-        // Then, set the network count to zero, indicating that requests can be started again
-        self.networkCount = 0;
-
-        // Finally, call all the requests callbacks with the error
-        for (BNCServerRequest *request in requestsToFail) {
-            BNCPerformBlockOnMainThreadSync(^ {
-                [request processResponse:nil error:error];
-
-                // BranchEventRequests can have callbacks directly tied to them.
-                if ([request isKindOfClass:[BranchEventRequest class]]) {
-                    NSError *error = [NSError branchErrorWithCode:BNCGeneralError localizedMessage:@"Cancelling queued network requests due to a previous network error."];
-                    [[BNCCallbackMap shared] callCompletionForRequest:req withSuccessStatus:NO error:error];
-                }
-            });
-        }
-    }
-}
-
-- (BOOL)isReplayableRequest:(BNCServerRequest *)request {
-
-    // These request types
-    NSSet<Class> *replayableRequests = [[NSSet alloc] initWithArray:@[
-        BranchEventRequest.class
-    ]];
-
-    if ([replayableRequests containsObject:request.class]) {
-
-        // Check if the client registered a callback for this request.
-        // This indicates the client will handle retry themselves, so fail it.
-        if ([[BNCCallbackMap shared] containsRequest:request]) {
-            return NO;
-        } else {
-            return YES;
-        }
-    }
-    return NO;
-}
-
-- (void)processNextQueueItem {
-    dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
-    
-    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Processing next queue item. Network Count: %ld. Queue depth: %ld", (long)self.networkCount, (long)self.requestQueue.queueDepth] error:nil];
-   
-    if (self.networkCount == 0 &&
-        self.requestQueue.queueDepth > 0) {
-
-        self.networkCount = 1;
-        dispatch_semaphore_signal(self.processing_sema);
-        BNCServerRequest *req = [self.requestQueue peek];
-        
-        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Processing %@", req]error:nil];
-
-        if (req) {
-
-            // If tracking is disabled, then do not check for install event. It won't exist.
-            if (!Branch.trackingDisabled) {
-                if (![req isKindOfClass:[BranchInstallRequest class]] && !self.preferenceHelper.randomizedBundleToken) {
-                    [[BranchLogger shared] logError:@"User session has not been initialized!" error:nil];
-                    self.networkCount = 0;                    
-                    BNCPerformBlockOnMainThreadSync(^{
-                        [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
-                    });
-                    return;
-
-                } else if (![req isKindOfClass:[BranchOpenRequest class]] &&
-                    (!self.preferenceHelper.randomizedDeviceToken || !self.preferenceHelper.sessionID)) {
-                    [[BranchLogger shared] logError:@"Missing session items!" error:nil];
-                    self.networkCount = 0;
-                    BNCPerformBlockOnMainThreadSync(^{
-                        [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
-                    });
-                    return;
-                }
-            }
-            
-            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-            dispatch_async(queue, ^ {
-                [req makeRequest:self.serverInterface key:self.class.branchKey callback:
-                    ^(BNCServerResponse* response, NSError* error) {
-                        [self processRequest:req response:response error:error];
-                }];
-            });
-        }
-    }
-    else {
-        dispatch_semaphore_signal(self.processing_sema);
     }
 }
 
@@ -2248,7 +2103,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 req.urlString = urlString;
                 req.traceCallback = bnc_tracingCallback;
                 
-                [self.requestQueue insert:req at:0];
+                [self.requestQueue enqueue:req withPriority:NSOperationQueuePriorityHigh];
                 
                 NSString *message = [NSString stringWithFormat:@"Request %@ callback %@ link %@", req, req.callback, req.urlString];
                 [[BranchLogger shared] logDebug:message error:nil];
@@ -2262,7 +2117,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                     req.urlString = urlString;
                     
                     // put it behind the one that's already on queue
-                    [self.requestQueue insert:req at:1];
+                    [self.requestQueue enqueue:req withPriority:NSOperationQueuePriorityHigh];
 
                     [[BranchLogger shared] logDebug:@"Link resolution request" error:nil];
                     NSString *message = [NSString stringWithFormat:@"Request %@ callback %@ link %@", req, req.callback, req.urlString];
@@ -2272,8 +2127,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             
             self.initializationStatus = BNCInitStatusInitializing;
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
-
-            [self processNextQueueItem];
         });
     }
 }
