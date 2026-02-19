@@ -5,23 +5,21 @@
 //  Created by Nidhi Dixit on 1/30/23.
 //
 
-@testable import BranchSDK
-@testable import tvOSReleaseTest
 import XCTest
+@testable import tvOSReleaseTest
+@testable import BranchSDK
 
-// swiftlint:disable:next type_name
 final class tvOSReleaseTestTests: XCTestCase {
+    
     private static var testObserver: TestObserver?
 
-    // swiftlint:disable:next static_over_final_class
     override class func setUp() {
         super.setUp()
         testObserver = TestObserver()
         XCTestObservationCenter.shared.addTestObserver(testObserver!)
         print("[TestSetup] Test observer registered for enhanced GitHub Actions logging")
     }
-
-    // swiftlint:disable:next static_over_final_class
+    
     override class func tearDown() {
         if let observer = testObserver {
             XCTestObservationCenter.shared.removeTestObserver(observer)
@@ -31,13 +29,13 @@ final class tvOSReleaseTestTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        print("[Setup] Setting up test: \(name)")
+        print("[Setup] Setting up test: \(self.name)")
     }
 
     override func tearDownWithError() throws {
-        print("[Teardown] Cleaning up test: \(name)")
+        print("[Teardown] Cleaning up test: \(self.name)")
     }
-
+    
     func testDummy() throws {
         print("[Test] Running dummy test")
         XCTAssertTrue(true, "Dummy test should always pass")
@@ -49,29 +47,23 @@ final class tvOSReleaseTestTests: XCTestCase {
 
         let expectation = expectation(description: "InitSession should complete.")
 
-        let sdk = BranchSDKTest { params, _ in
+        let sdk = BranchSDKTest(){  params, error in
             print(params as? [String: AnyObject] ?? {})
             expectation.fulfill()
         }
         print("Setting CPP Level to none.")
         sdk.setCPPLevel(status: BranchAttributionLevel.none)
-
+        
         let cppLevel = BNCPreferenceHelper.sharedInstance().attributionLevel
         print("[Test] CPP Level: \(String(describing: cppLevel))")
-
-        // Explicitly bridge to String to avoid NSString/String type ambiguity
-        // across build configurations (SPM, CocoaPods, Carthage, XCFramework)
-        let currentLevel = cppLevel as? String
-        let expectedLevel = BranchAttributionLevel.none.rawValue
-        XCTAssertEqual(currentLevel, expectedLevel, "Tracking should be disabled")
-
+        
+        XCTAssertTrue(cppLevel!.isEqual(to: BranchAttributionLevel.none.rawValue) , "Tracking should be disabled (true)")
+        
         print("[Test] Disabling tracking again...")
         sdk.setCPPLevel(status: BranchAttributionLevel.full)
-
-        let result = XCTWaiter().wait(for: [expectation], timeout: 10)
-        if result == .timedOut {
-            print("[Test] initSession callback timed out (expected in CI without network)")
-        }
+        
+        waitForExpectations(timeout: 180, handler: nil)
         print("[Test] testInitSessionAndSetCPPLevel completed")
     }
+
 }

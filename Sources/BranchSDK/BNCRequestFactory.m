@@ -32,10 +32,10 @@
 #import "BNCAppGroupsData.h"
 #import "BNCSKAdNetwork.h"
 
+#import "BranchConfigurationController.h"
 #import "BNCReferringURLUtility.h"
 #import "BNCPasteboard.h"
 #import "BNCODMInfoCollector.h"
-#import "Private/BranchConfigurationController.h"
 
 @interface BNCRequestFactory()
 

@@ -8,7 +8,6 @@
 #import <LinkPresentation/LPLinkMetadata.h>
 #import "BranchQRCode.h"
 #import "Branch.h"
-#import "BNCServerRequest.h"
 #import "BNCQRCodeCache.h"
 #import "BNCConfig.h"
 #import "BranchConstants.h"
@@ -16,6 +15,7 @@
 #import "UIViewController+Branch.h"
 #import "BranchLogger.h"
 #import "BNCServerAPI.h"
+#import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
 
 @interface BranchQRCode()
