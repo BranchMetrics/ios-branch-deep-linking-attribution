@@ -9,116 +9,143 @@
 
 #import "BNCServerRequestQueue.h"
 #import "BNCPreferenceHelper.h"
+
+// Analytics requests
 #import "BranchInstallRequest.h"
 #import "BranchOpenRequest.h"
 #import "BranchEvent.h"
+
 #import "BranchLogger.h"
-#import "Private/BNCServerRequestOperation.h"
-#import "Branch.h"
 
-
-
-@interface BNCServerRequestQueue ()
-@property (strong, nonatomic) NSOperationQueue *operationQueue;
-@property (strong, nonatomic) BNCServerInterface *serverInterface;
-@property (copy, nonatomic) NSString *branchKey;
-@property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
-
+@interface BNCServerRequestQueue()
+@property (strong, nonatomic) NSMutableArray<BNCServerRequest *> *queue;
 @end
+
 
 @implementation BNCServerRequestQueue
 
 - (instancetype)init {
     self = [super init];
-    if (self) {
-        self.operationQueue = [NSOperationQueue new];
-        // Set maxConcurrentOperationCount to 1 for serial execution
-        self.operationQueue.maxConcurrentOperationCount = 1;
-        self.operationQueue.name = @"com.branch.sdk.serverRequestQueue";
-    }
+    if (!self) return self;
+
+    self.queue = [NSMutableArray<BNCServerRequest *> new];
     return self;
 }
 
-- (void)configureWithServerInterface:(BNCServerInterface *)serverInterface
-                           branchKey:(NSString *)branchKey
-                    preferenceHelper:(BNCPreferenceHelper *)preferenceHelper {
-    self.serverInterface = serverInterface;
-    self.branchKey = branchKey;
-    self.preferenceHelper = preferenceHelper;
-}
-
-- (void)enqueue:(BNCServerRequest *)request{
-    [self enqueue:request withPriority:NSOperationQueuePriorityNormal];
-}
-
-- (void)enqueue:(BNCServerRequest *)request withPriority:(NSOperationQueuePriority)priority{
-    if (!request) {
-        [[BranchLogger shared] logError:@"Attempted to enqueue nil request." error:nil];
-        return;
+- (void)enqueue:(BNCServerRequest *)request {
+    @synchronized (self) {
+        if (request) {
+            [self.queue addObject:request];
+        }
     }
-    
-    BNCServerRequestOperation *operation = [[BNCServerRequestOperation alloc] initWithRequest:request];
-    
-    operation.serverInterface = self.serverInterface;
-    operation.branchKey = self.branchKey;
-    operation.preferenceHelper = self.preferenceHelper;
-    operation.queuePriority = priority;
+}
 
-    [self.operationQueue addOperation:operation];
+- (void)insert:(BNCServerRequest *)request at:(NSUInteger)index {
+    @synchronized (self) {
+        if (index > self.queue.count) {
+            [[BranchLogger shared] logError:@"Invalid queue operation: index out of bound!" error:nil];
+            return;
+        }
+        if (request) {
+            [self.queue insertObject:request atIndex:index];
+        }
+    }
+}
 
-    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enqueued request: %@. Current queue depth: %lu", request.requestUUID, (unsigned long)self.operationQueue.operationCount] error:nil];
+- (BNCServerRequest *)dequeue {
+    @synchronized (self) {
+        BNCServerRequest *request = nil;
+        if (self.queue.count > 0) {
+            request = [self.queue objectAtIndex:0];
+            [self.queue removeObjectAtIndex:0];
+        }
+        return request;
+    }
+}
+
+- (BNCServerRequest *)removeAt:(NSUInteger)index {
+    @synchronized (self) {
+        BNCServerRequest *request = nil;
+        if (index >= self.queue.count) {
+            [[BranchLogger shared] logError:@"Invalid queue operation: index out of bound!" error:nil];
+            return nil;
+        }
+        request = [self.queue objectAtIndex:index];
+        [self.queue removeObjectAtIndex:index];
+        return request;
+    }
+}
+
+- (void)remove:(BNCServerRequest *)request {
+    @synchronized (self) {
+        [self.queue removeObject:request];
+    }
+}
+
+- (BNCServerRequest *)peek {
+    @synchronized (self) {
+        return [self peekAt:0];
+    }
+}
+
+- (BNCServerRequest *)peekAt:(NSUInteger)index {
+    @synchronized (self) {
+        if (index >= self.queue.count) {
+            [[BranchLogger shared] logError:@"Invalid queue operation: index out of bound!" error:nil];
+            return nil;
+        }
+        BNCServerRequest *request = nil;
+        request = [self.queue objectAtIndex:index];
+        return request;
+    }
 }
 
 - (NSInteger)queueDepth {
-    return (NSInteger) self.operationQueue.operationCount;
-}
- 
-
-- (void)clearQueue {
-    [[BranchLogger shared] logDebug:@"Clearing all pending operations from the queue." error:nil];
-    [self.operationQueue cancelAllOperations];
-}
-
-// These methods now need to iterate through the operations in the NSOperationQueue.
-- (BOOL)containsInstallOrOpen {
-    for (NSOperation *op in self.operationQueue.operations) {
-        if ([op isKindOfClass:[BNCServerRequestOperation class]]) {
-            BNCServerRequestOperation *requestOp = (BNCServerRequestOperation *)op;
-            if ([requestOp.request isKindOfClass:[BranchOpenRequest class]]) {
-                return YES;
-            }
-        }
+    @synchronized (self) {
+        return (NSInteger) self.queue.count;
     }
-    return NO;
-}
-
-- (BranchOpenRequest *)findExistingInstallOrOpen {
-    for (NSOperation *op in self.operationQueue.operations) {
-        if ([op isKindOfClass:[BNCServerRequestOperation class]]) {
-            BNCServerRequestOperation *requestOp = (BNCServerRequestOperation *)op;
-            BNCServerRequest *request = requestOp.request;
-            if ([request isKindOfClass:[BranchOpenRequest class]]) {
-                BranchOpenRequest *openRequest = (BranchOpenRequest *)request;
-                return openRequest;
-            }
-        }
-    }
-    return nil;
 }
 
 - (NSString *)description {
-    NSMutableArray<NSString *> *requestUUIDs = [NSMutableArray array];
-    for (NSOperation *op in self.operationQueue.operations) {
-        if ([op isKindOfClass:[BNCServerRequestOperation class]]) {
-            if (!op.isFinished && !op.isCancelled) {
-                [requestUUIDs addObject:((BNCServerRequestOperation *)op).request.requestUUID];
-            } else {
-                [requestUUIDs addObject:[NSString stringWithFormat:@"(Completed/Cancelled: %@)", ((BNCServerRequestOperation *)op).request.requestUUID]];
+    @synchronized(self) {
+        return [self.queue description];
+    }
+}
+
+- (void)clearQueue {
+    @synchronized (self) {
+        [self.queue removeAllObjects];
+    }
+}
+
+- (BOOL)containsInstallOrOpen {
+    @synchronized (self) {
+        for (NSUInteger i = 0; i < self.queue.count; i++) {
+            BNCServerRequest *req = [self.queue objectAtIndex:i];
+            // Install extends open, so only need to check open.
+            if ([req isKindOfClass:[BranchOpenRequest class]]) {
+                return YES;
             }
         }
+        return NO;
     }
-    return [NSString stringWithFormat:@"<BNCServerRequestQueue: %p> Operations (%ld): %@", self, (long)self.queueDepth, [requestUUIDs description]];
 }
+
+- (BranchOpenRequest *)findExistingInstallOrOpen {
+    @synchronized (self) {
+        for (NSUInteger i = 0; i < self.queue.count; i++) {
+            BNCServerRequest *request = [self.queue objectAtIndex:i];
+
+            // Install subclasses open, so only need to check open
+            // Request should not be the one added from archived queue
+            if ([request isKindOfClass:[BranchOpenRequest class]] && !((BranchOpenRequest *)request).isFromArchivedQueue) {
+                return (BranchOpenRequest *)request;
+            }
+        }
+        return nil;
+    }
+}
+
 
 + (instancetype)getInstance {
     static BNCServerRequestQueue *sharedQueue = nil;
