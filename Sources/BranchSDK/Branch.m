@@ -45,12 +45,14 @@
 #import "BNCServerAPI.h"
 #import "BranchPluginSupport.h"
 #import "BranchLogger.h"
+#import "BranchConfigurationController.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
 #import "BNCSpotlightService.h"
 #import "BNCContentDiscoveryManager.h"
 #import "BranchContentDiscoverer.h"
+#import "BNCODMInfoCollector.h"
 #endif
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
@@ -84,6 +86,15 @@ NSString * const BNCShareInitiatedEvent = @"Share Started";
 NSString * const BNCShareCompletedEvent = @"Share Completed";
 
 NSString * const BNCSpotlightFeature = @"spotlight";
+
+BranchAttributionLevel const BranchAttributionLevelFull = @"FULL";
+BranchAttributionLevel const BranchAttributionLevelReduced = @"REDUCED";
+BranchAttributionLevel const BranchAttributionLevelMinimal = @"MINIMAL";
+BranchAttributionLevel const BranchAttributionLevelNone = @"NONE";
+
+static BOOL bnc_disableAutomaticOpenTracking = NO;
+static dispatch_source_t bnc_disableAutomaticOpenTimer = nil;
+static NSTimeInterval const BNC_DEFAULT_DISABLE_FOREGROUND_TIMEOUT = 30.0;
 
 #ifndef CSSearchableItemActivityIdentifier
 #define CSSearchableItemActivityIdentifier @"kCSSearchableItemActivityIdentifier"
@@ -180,6 +191,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 
 + (Branch *)getInstance:(NSString *)branchKey {
     self.branchKey = branchKey;
+    [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_GET_INSTANCE_API;
     return [Branch getInstanceInternal:self.branchKey];
 }
 
@@ -238,6 +250,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     
     BranchJsonConfig *config = BranchJsonConfig.instance;
     self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
+    [BranchConfigurationController sharedInstance].deferInitForPluginRuntime = self.deferInitForPluginRuntime;
     
     if (config.apiUrl) {
         [Branch setAPIUrl:config.apiUrl];
@@ -250,11 +263,26 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     if (config.checkPasteboardOnInstall) {
         [self checkPasteboardOnInstall];
     }
+    
+    if (config.cppLevel) {
+        if ([config.cppLevel caseInsensitiveCompare:@"FULL"] == NSOrderedSame) {
+            [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
+        } else if ([config.cppLevel caseInsensitiveCompare:@"REDUCED"] == NSOrderedSame) {
+            [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
+        } else if ([config.cppLevel caseInsensitiveCompare:@"MINIMAL"] == NSOrderedSame) {
+            [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelMinimal];
+        } else if ([config.cppLevel caseInsensitiveCompare:@"NONE"] == NSOrderedSame) {
+            [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelNone];
+        } else {
+            NSLog(@"Invalid CPP Level set in branch.json: %@", config.cppLevel);
+        }
+    }
 
     return self;
 }
 
 static Class bnc_networkServiceClass = NULL;
+static callbackForTracingRequests bnc_tracingCallback = nil;
 
 + (void)setNetworkServiceClass:(Class)networkServiceClass {
     @synchronized ([Branch class]) {
@@ -385,7 +413,7 @@ static NSString *bnc_branchKey = nil;
             [[BranchLogger shared] logError:[NSString stringWithFormat:@"Invalid Branch key format. Did you add your Branch key to your Info.plist? Passed key is '%@'.", branchKey] error:*error];
             return;
         }
-
+        [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_SET_BRANCH_KEY_API;
         bnc_branchKey = branchKey;
     }
 }
@@ -395,13 +423,16 @@ static NSString *bnc_branchKey = nil;
         if (bnc_branchKey) return bnc_branchKey;
         
         NSString *branchKey = nil;
+        NSString *branchKeySource = @"Unknown";
         
         BranchJsonConfig *config = BranchJsonConfig.instance;
         BOOL usingTestInstance = bnc_useTestBranchKey || config.useTestInstance;
         branchKey = config.branchKey ?: usingTestInstance ? config.testKey : config.liveKey;
         [self setUseTestBranchKey:usingTestInstance];
         
-        if (branchKey == nil) {
+        if (branchKey) {
+            branchKeySource = BRANCH_KEY_SOURCE_CONFIG_JSON;
+        } else {
             NSDictionary *branchDictionary = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_key"];
             if ([branchDictionary isKindOfClass:[NSString class]]) {
                 branchKey = (NSString*) branchDictionary;
@@ -410,12 +441,15 @@ static NSString *bnc_branchKey = nil;
                 branchKey =
                     (self.useTestBranchKey) ? branchDictionary[@"test"] : branchDictionary[@"live"];
             }
+            if (branchKey)
+                branchKeySource = BRANCH_KEY_SOURCE_INFO_PLIST;
         }
 
         self.branchKey = branchKey;
         if (!bnc_branchKey) {
             [[BranchLogger shared] logError:@"Your Branch key is not set in your Info.plist file. See https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/#configure-xcode-project for configuration instructions." error:nil];
         }
+        [BranchConfigurationController sharedInstance].branchKeySource = branchKeySource;
         return bnc_branchKey;
     }
 }
@@ -449,6 +483,15 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
++ (void)enableLoggingAtLevel:(BranchLogLevel)logLevel withAdvancedCallback:(BranchAdvancedLogCallback)callback {
+    BranchLogger *logger = [BranchLogger shared];
+    logger.loggingEnabled = YES;
+    logger.logLevelThreshold = logLevel;
+    if (callback) {
+        logger.advancedLogCallback = callback;
+    }
+}
+
 - (void)useEUEndpoints {
     [BNCServerAPI sharedInstance].useEUServers = YES;
 }
@@ -458,6 +501,14 @@ static NSString *bnc_branchKey = nil;
         [BNCServerAPI sharedInstance].customAPIURL = url;
     } else {
         [[BranchLogger shared] logWarning:@"Ignoring invalid custom API URL" error:nil];
+    }
+}
+
++ (void)setSafetrackAPIURL:(NSString *)url {
+    if ([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] ){
+        [BNCServerAPI sharedInstance].customSafeTrackAPIURL = url;
+    } else {
+        [[BranchLogger shared] logWarning:@"Ignoring invalid custom Safe Track API URL" error:nil];
     }
 }
 
@@ -491,6 +542,19 @@ static NSString *bnc_branchKey = nil;
     self.preferenceHelper.retryInterval = retryInterval;
 }
 
++ (void)setSDKWaitTimeForThirdPartyAPIs:(NSTimeInterval)waitTime {
+    @synchronized(self) {
+        if (waitTime <= 0) {
+            [[BranchLogger shared] logWarning:@"Invalid waitTime value. It must be greater than 0. Using default value." error:nil];
+            return;
+        }
+        if (waitTime > 10) {
+            [[BranchLogger shared] logWarning:@"Invalid waitTime value. It must not exceed 10 seconds. Using default value." error:nil];
+            return;
+        }
+        [BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime = waitTime;
+    }
+}
 
 - (void)setRequestMetadataKey:(NSString *)key value:(NSString *)value {
     [self.preferenceHelper setRequestMetadataKey:key value:value];
@@ -532,6 +596,65 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
++ (void)disableNextForeground {
+    [self disableNextForegroundForTimeInterval:BNC_DEFAULT_DISABLE_FOREGROUND_TIMEOUT];
+}
+
++ (void)disableNextForegroundForTimeInterval:(NSTimeInterval)timeout {
+    @synchronized(self) {
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"disableNextForegroundForTimeInterval: %.2f seconds", timeout] error:nil];
+
+        if (bnc_disableAutomaticOpenTimer) {
+            dispatch_source_cancel(bnc_disableAutomaticOpenTimer);
+            bnc_disableAutomaticOpenTimer = nil;
+        }
+
+        bnc_disableAutomaticOpenTracking = YES;
+
+        if (timeout > 0) {
+            bnc_disableAutomaticOpenTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
+            dispatch_source_set_timer(bnc_disableAutomaticOpenTimer,
+                                      dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeout * NSEC_PER_SEC)),
+                                      DISPATCH_TIME_FOREVER,
+                                      (int64_t)(0.1 * NSEC_PER_SEC));
+            // Capture current timer to guard against a stale handler firing after a new
+            // disableNextForegroundForTimeInterval: call replaced the timer.
+            // dispatch_source_cancel prevents future events but cannot dequeue an already-dispatched handler.
+            // Use __weak to avoid a retain cycle (source → handler block → source).
+            dispatch_source_t currentTimer = bnc_disableAutomaticOpenTimer;
+            __weak dispatch_source_t weakTimer = currentTimer;
+            dispatch_source_set_event_handler(currentTimer, ^{
+                dispatch_source_t strongTimer = weakTimer;
+                @synchronized ([Branch class]) {
+                    if (strongTimer != nil && bnc_disableAutomaticOpenTimer == strongTimer) {
+                        [Branch resumeSession];
+                    }
+                }
+            });
+            dispatch_resume(bnc_disableAutomaticOpenTimer);
+        }
+    }
+}
+
++ (void)resumeSession {
+    @synchronized(self) {
+        [[BranchLogger shared] logVerbose:@"resumeSession: re-enabling automatic open tracking" error:nil];
+
+        if (bnc_disableAutomaticOpenTimer) {
+            dispatch_source_cancel(bnc_disableAutomaticOpenTimer);
+            bnc_disableAutomaticOpenTimer = nil;
+        }
+
+        bnc_disableAutomaticOpenTracking = NO;
+    }
+}
+
++ (BOOL)automaticOpenTrackingDisabled {
+    @synchronized (self) {
+        return bnc_disableAutomaticOpenTracking;
+    }
+}
+
 + (void)setReferrerGbraidValidityWindow:(NSTimeInterval)validityWindow{
     @synchronized(self) {
         [BNCPreferenceHelper sharedInstance].referringURLQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID][BRANCH_URL_QUERY_PARAMETERS_VALIDITY_WINDOW_KEY] = @(validityWindow);
@@ -542,6 +665,66 @@ static NSString *bnc_branchKey = nil;
     [BNCPreferenceHelper sharedInstance].eeaRegion = eeaRegion;
     [BNCPreferenceHelper sharedInstance].adPersonalizationConsent = adPersonalizationConsent;
     [BNCPreferenceHelper sharedInstance].adUserDataUsageConsent = adUserDataUsageConsent;
+}
+
++ (void)setODMInfo:(NSString *)odmInfo andFirstOpenTimestamp:(NSDate *) firstOpenTimestamp {
+#if !TARGET_OS_TV
+    @synchronized (self) {
+        [[BNCPreferenceHelper sharedInstance] setOdmInfo:odmInfo];
+        [BNCPreferenceHelper sharedInstance].odmInfoInitDate = firstOpenTimestamp;
+    }
+#else
+    [[BranchLogger shared] logWarning:@"setODMInfo not supported on tvOS." error:nil];
+#endif
+    
+}
+
++ (void)setAnonID:(NSString *)anonID {
+    @synchronized (self) {
+        if (anonID && [anonID isKindOfClass:[NSString class]]) {
+            [BNCPreferenceHelper sharedInstance].anonID = anonID;
+        } else {
+            [[BranchLogger shared] logWarning:@"Invalid anonID provided. Must be a non-nil NSString." error:nil];
+        }
+    }
+}
+
+- (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level {
+    self.preferenceHelper.attributionLevel = level;
+    
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Setting Consumer Protection Attribution Level to %@", level] error:nil];
+    
+    //Set tracking to disabled if consumer protection attribution level is changed to BranchAttributionLevelNone. Otherwise, keep tracking enabled.
+    if (level == BranchAttributionLevelNone) {
+        if ([Branch trackingDisabled] == false) {
+            //Disable Tracking
+            [[BranchLogger shared] logVerbose:@"Disabling attribution events due to Consumer Protection Attribution Level being BranchAttributionLevelNone." error:nil];
+            
+            // Clear partner parameters
+            [[BNCPartnerParameters shared] clearAllParameters];
+            
+            // Set the flag (which also clears the settings):
+            [BNCPreferenceHelper sharedInstance].trackingDisabled = YES;
+            Branch *branch = Branch.getInstance;
+            [branch clearNetworkQueue];
+            branch.initializationStatus = BNCInitStatusUninitialized;
+            [branch.linkCache clear];
+            // Release the lock in case it's locked:
+            [BranchOpenRequest releaseOpenResponseLock];
+        }
+    } else {
+        if ([Branch trackingDisabled]) {
+            //Enable Tracking
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enabling attribution events due to Consumer Protection Attribution Level being %@.", level] error:nil];
+            
+            // Set the flag:
+            [BNCPreferenceHelper sharedInstance].trackingDisabled = NO;
+
+            // Initialize a Branch session:
+            [[Branch getInstance] initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil reset:true];
+        }
+    }
+    
 }
 
 #pragma mark - InitSession Permutation methods
@@ -586,9 +769,13 @@ static NSString *bnc_branchKey = nil;
     [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:YES automaticallyDisplayController:automaticallyDisplayController registerDeepLinkHandler:callback];
 }
 
++ (void) setCallbackForTracingRequests: (callbackForTracingRequests) callback {
+    bnc_tracingCallback = callback;
+}
+
 #pragma mark - Actual Init Session
 
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController registerDeepLinkHandlerUsingBranchUniversalObject:(callbackWithBranchUniversalObject)callback {    
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController registerDeepLinkHandlerUsingBranchUniversalObject:(callbackWithBranchUniversalObject)callback {
     [self initSceneSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController
                     registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
         if (callback) {
@@ -807,6 +994,7 @@ static NSString *bnc_branchKey = nil;
         self.preferenceHelper.initialReferrer = userActivity.referrerURL.absoluteString;
     }
     
+    [[BranchLogger shared] logVerbose:userActivity.debugDescription error:nil];
     // Check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
         return [self handleDeepLink:userActivity.webpageURL sceneIdentifier:sceneIdentifier];
@@ -901,10 +1089,12 @@ static NSString *bnc_branchKey = nil;
     });
 }
 
+
 #pragma mark - Apple Search Ad Check
 
 - (void)checkPasteboardOnInstall {
     [BNCPasteboard sharedInstance].checkOnInstall = YES;
+    [BranchConfigurationController sharedInstance].checkPasteboardOnInstall = YES;
 }
 
 - (BOOL)willShowPasteboardToast {
@@ -1070,8 +1260,8 @@ static NSString *bnc_branchKey = nil;
 
     if (self.deepLinkDebugParams) {
         NSMutableDictionary* debugInstallParams =
-			[[BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams]
-				mutableCopy];
+            [[BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams]
+                mutableCopy];
         [debugInstallParams addEntriesFromDictionary:self.deepLinkDebugParams];
         return debugInstallParams;
     }
@@ -1725,6 +1915,15 @@ static NSString *bnc_branchKey = nil;
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive"] error:nil];
+
+    @synchronized ([Branch class]) {
+        if (bnc_disableAutomaticOpenTracking) {
+            [[BranchLogger shared] logVerbose:@"applicationDidBecomeActive: automatic open tracking is disabled, skipping" error:nil];
+            return;
+        }
+    }
+
     dispatch_async(self.isolationQueue, ^(){
         //  if necessary, creates a new organic open
         BOOL installOrOpenInQueue = [self.requestQueue containsInstallOrOpen];
@@ -1783,19 +1982,18 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
-//static inline void BNCPerformBlockOnMainThreadAsync(dispatch_block_t block) {
-//    dispatch_async(dispatch_get_main_queue(), block);
-//}
 
 - (void) processRequest:(BNCServerRequest*)req
                response:(BNCServerResponse*)response
                   error:(NSError*)error {
 
     // If the request was successful, or was a bad user request, continue processing.
+    // Also skipping retry for 1xx(Informational), 2xx(Success), 3xx(Redirectional Message) and 4xx(Client)error codes.
     if (!error ||
         error.code == BNCTrackingDisabledError ||
         error.code == BNCBadRequestError ||
-        error.code == BNCDuplicateResourceError) {
+        error.code == BNCDuplicateResourceError ||
+        ((100 <= error.code) && (error.code <= 499))) {
 
         BNCPerformBlockOnMainThreadSync(^{
             [req processResponse:response error:error];
@@ -1871,7 +2069,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 - (void)processNextQueueItem {
     dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
-
+    
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Processing next queue item. Network Count: %ld. Queue depth: %ld", (long)self.networkCount, (long)self.requestQueue.queueDepth] error:nil];
+   
     if (self.networkCount == 0 &&
         self.requestQueue.queueDepth > 0) {
 
@@ -1883,10 +2083,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
         if (req) {
 
-            // If tracking is disabled, then do not check for install event.  It won't exist.
+            // If tracking is disabled, then do not check for install event. It won't exist.
             if (!Branch.trackingDisabled) {
                 if (![req isKindOfClass:[BranchInstallRequest class]] && !self.preferenceHelper.randomizedBundleToken) {
                     [[BranchLogger shared] logError:@"User session has not been initialized!" error:nil];
+                    self.networkCount = 0;                    
                     BNCPerformBlockOnMainThreadSync(^{
                         [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
                     });
@@ -1895,6 +2096,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 } else if (![req isKindOfClass:[BranchOpenRequest class]] &&
                     (!self.preferenceHelper.randomizedDeviceToken || !self.preferenceHelper.sessionID)) {
                     [[BranchLogger shared] logError:@"Missing session items!" error:nil];
+                    self.networkCount = 0;
                     BNCPerformBlockOnMainThreadSync(^{
                         [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
                     });
@@ -2014,7 +2216,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 // only called from initUserSessionAndCallCallback!
 - (void)initializeSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString {
 
-	// BranchDelegate willStartSessionWithURL notification
+    // BranchDelegate willStartSessionWithURL notification
     NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;
     if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)]) {
         [self.delegate branch:self willStartSessionWithURL:URL];
@@ -2051,6 +2253,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 }
                 req.callback = initSessionCallback;
                 req.urlString = urlString;
+                req.traceCallback = bnc_tracingCallback;
                 
                 [self.requestQueue insert:req at:0];
                 
@@ -2079,7 +2282,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
             [self processNextQueueItem];
         });
-	}
+    }
 }
 
 
@@ -2102,6 +2305,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         id<NSObject> sharedApplication = [applicationClass performSelector:@selector(sharedApplication)];
         if ([sharedApplication respondsToSelector:@selector(openURL:)])
             [sharedApplication performSelector:@selector(openURL:) withObject:comp.URL];
+    } else if ([latestReferringParams[@"validate_integration"] isEqualToString:@"true"]) {
+        [self validateSDKIntegration];
     }
 
     if (callCallback) {

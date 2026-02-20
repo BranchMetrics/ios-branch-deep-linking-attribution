@@ -1,13 +1,15 @@
 name: Unit tests
 
 on:
+  push:
   pull_request:
     branches:
       - master
 
 jobs:
   verify:
-    runs-on: macos-latest
+    runs-on: macos-15
+    timeout-minutes: 20
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -36,12 +38,12 @@ jobs:
       - name: Run unit tests
         run: bundle exec fastlane unit_tests
       - name: Upload test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always() # even if tests fail
         with:
           name: test-results
           path: fastlane/test_output
       - name: Upload codecov  results
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           files: ./fastlane/test_output/cobertura.xml

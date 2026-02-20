@@ -9,6 +9,10 @@
 #import <XCTest/XCTest.h>
 #import "BNCSystemObserver.h"
 
+@interface BNCSystemObserver ()
++ (BOOL)compareUriSchemes:(NSString *)serverUriScheme With:(NSArray *)urlTypes;
+@end
+
 @interface BNCSystemObserverTests : XCTestCase
 
 @end
@@ -98,6 +102,37 @@
 - (void)testIsAppClip {
     // currently not running unit tests on extensions
     XCTAssert(![BNCSystemObserver isAppClip]);
+}
+
+- (void)testCompareURIScemes {
+    
+    NSString *serverUriScheme = @"bnctest://";
+    NSArray *urlTypes = @[@{@"CFBundleURLSchemes" : @[@""]}, @{@"CFBundleURLSchemes" : @[@"bnctest", @"xyzs"]}];
+    
+    XCTAssertTrue([BNCSystemObserver compareUriSchemes:serverUriScheme With:urlTypes]);
+    
+    XCTAssertFalse([BNCSystemObserver compareUriSchemes:serverUriScheme With:nil]);
+    
+    XCTAssertFalse([BNCSystemObserver compareUriSchemes:nil With:nil]);
+    
+    XCTAssertFalse([BNCSystemObserver compareUriSchemes:nil With:urlTypes]);
+    
+    serverUriScheme = @":/";
+    XCTAssertFalse([BNCSystemObserver compareUriSchemes:serverUriScheme With:urlTypes]);
+    
+    serverUriScheme = @"bnctest";
+    XCTAssertTrue([BNCSystemObserver compareUriSchemes:serverUriScheme With:urlTypes]);
+    
+    serverUriScheme = @"bnctest://";
+    urlTypes = @[ @{@"CFBundleURLSchemes" : @[@"bnctestX", @"xyzs"]}];
+    XCTAssertFalse([BNCSystemObserver compareUriSchemes:serverUriScheme With:urlTypes]);
+    
+    serverUriScheme = @"://";
+    XCTAssertFalse([BNCSystemObserver compareUriSchemes:serverUriScheme With:urlTypes]);
+    
+    XCTAssertFalse([BNCSystemObserver compareUriSchemes:@"" With:urlTypes]);
+    
+    XCTAssertFalse([BNCSystemObserver compareUriSchemes:@"" With:@[@{}]]);
 }
 
 @end

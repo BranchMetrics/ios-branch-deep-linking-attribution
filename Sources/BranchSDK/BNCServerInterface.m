@@ -148,7 +148,24 @@
                         NSError *error = [NSError branchErrorWithCode:BNCVPNAdBlockerError];
                         [[BranchLogger shared] logError:[NSString stringWithFormat:@"Possible VPN Ad Blocker. Giving up on request with HTTP status code %ld. Underlying error: %@", (long)status, underlyingError] error:error];
                     } else {
-                        [[BranchLogger shared] logWarning: [NSString stringWithFormat:@"Giving up on request with HTTP status code %ld", (long)status] error:underlyingError];
+                        // If a network request is successful, the `data` field will be populated with the error response from the service
+                        // We have to create an NSError object here to pass down to callback.
+                        
+                        if(serverResponse.data && serverResponse.data[@"error"] != nil){
+                            id errorJson = serverResponse.data[@"error"];
+                            
+                            if(errorJson[@"message"] != nil){
+                                NSString *errorString = errorJson[@"message"];
+                                NSDictionary *userInfo = @{
+                                    NSLocalizedDescriptionKey: errorString,
+                                };
+                                underlyingError = [NSError errorWithDomain:[NSError bncErrorDomain]
+                                                                      code:[(errorJson[@"code"]) integerValue]
+                                                                  userInfo:userInfo];
+                            }
+                        }
+                        
+                        [[BranchLogger shared] logError: [NSString stringWithFormat:@"Giving up on request with HTTP status code %ld", (long)status] error:underlyingError];
                     }
                 }
 
@@ -289,7 +306,7 @@
     [request setHTTPBody:postData];
     
     if ([[BranchLogger shared] shouldLog:BranchLogLevelDebug]) {
-        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"%@\nHeaders %@\nBody %@", request, [request allHTTPHeaderFields], [BNCEncodingUtils prettyPrintJSON:updatedParams]] error:nil];
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"%@\nHeaders %@\nBody %@", request, [request allHTTPHeaderFields], [BNCEncodingUtils prettyPrintJSON:updatedParams]] error:nil request:request response:nil];
     }
     
     return request;
@@ -310,7 +327,7 @@
         serverResponse.requestId = requestId;
      
         if ([[BranchLogger shared] shouldLog:BranchLogLevelDebug]) {
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"%@\nBody %@", response, [BNCEncodingUtils prettyPrintJSON:serverResponse.data]] error:nil];
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"%@\nBody %@", response, [BNCEncodingUtils prettyPrintJSON:serverResponse.data]] error:nil request:nil response:serverResponse];
         }
         
     } else {

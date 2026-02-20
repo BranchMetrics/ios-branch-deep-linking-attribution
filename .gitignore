@@ -1,6 +1,8 @@
 # Mac
+.build
 .DS_Store
 .LSOverride
+.build
 
 # Xcode
 [Bb]uild
@@ -29,3 +31,4 @@ fastlane/test_output
 # Ruby stuff
 vendor
 .bundle
+DeepLinkDemo/DeepLinkDemo.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings

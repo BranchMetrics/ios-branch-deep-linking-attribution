@@ -42,6 +42,9 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
         [messages setObject:@"User tracking is disabled and the request is not allowed" forKey:@(BNCTrackingDisabledError)];
         [messages setObject:@"Possible DNS Ad Blocker. Giving up on request." forKey:@(BNCDNSAdBlockerError)];
         [messages setObject:@"Possible VPN Ad Blocker. Giving up on request." forKey:@(BNCVPNAdBlockerError)];
+        [messages setObject:@"Class not found (for Dynamic Method invocation)." forKey:@(BNCClassNotFoundError)];
+        [messages setObject:@"Method not dound (for Dynamic Method invocation)." forKey:@(BNCMethodNotFoundError)];
+        [messages setObject:@"ODCConversionManager API failed." forKey:@(BNCODCConversionManagerError)];
     });
     
     NSString *errorMessage = [messages objectForKey:@(code)];

@@ -8,6 +8,7 @@ TVOS_PATH="./build/tvos/tvos.xcarchive"
 TVOS_SIM_PATH="./build/tvos/tvos_sim.xcarchive"
 CATALYST_PATH="./build/catalyst/catalyst.xcarchive"
 XCFRAMEWORK_PATH="./build/BranchSDK.xcframework"
+XCFRAMEWORK_PATH_SIGNED="./build/signedNoIDFAFramework/"
 
 # delete previous build
 rm -rf "./build" 
@@ -61,5 +62,7 @@ xcodebuild -create-xcframework \
     -framework "${CATALYST_PATH}/Products/Library/Frameworks/BranchSDK.framework" \
     -output "${XCFRAMEWORK_PATH}"
 
-    
-    
+# create signed binary
+mkdir -p "${XCFRAMEWORK_PATH_SIGNED}"
+cp -rf "${XCFRAMEWORK_PATH}" "${XCFRAMEWORK_PATH_SIGNED}"
+codesign --deep --timestamp -s  "Apple Distribution: Branch Metrics, Inc. (R63EM248DP)" "${XCFRAMEWORK_PATH_SIGNED}/BranchSDK.xcframework"

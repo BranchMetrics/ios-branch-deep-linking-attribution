@@ -57,6 +57,27 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
+      - name: Install the Apple certificate
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          # create variables
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+
+          # import certificate 
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+
+          # create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          # import certificate to keychain
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
       - name: Build xcframework
         run: |
             ./scripts/prep_xcframework.sh
@@ -67,6 +88,10 @@ jobs:
           path: |
             ./Branch.zip
             ./checksum.txt
+            ./Branch_signed_xcframework.zip
+            ./checksum_signed_xcframework.txt
+            ./Branch_xcframework_WithdSym.zip
+            ./checksum_xcframework_WithdSym.txt
 
   build-noidfa-framework:
     runs-on: macos-latest
@@ -75,6 +100,27 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
+      - name: Install the Apple certificate
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          # create variables
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+
+          # import certificate 
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
+
+          # create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          # import certificate to keychain
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
       - name: Build xcframework
         run: |
             ./scripts/prep_xcframework_noidfa.sh
@@ -85,6 +131,8 @@ jobs:
           path: |
             ./Branch_noidfa.zip
             ./checksum_noidfa.txt
+            ./Branch_noidfa_signed_xcframework.zip
+            ./checksum_noidfa_signed_xcframework.txt
 
   build-static-framework:
     runs-on: macos-latest
@@ -150,7 +198,7 @@ jobs:
           bundle config set --local path vendor
           bundle check || bundle install
       - name: Download build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
       - name: Publish to CocoaPods
         run: |
           # TODO: Authenticate using repo secret
@@ -247,6 +295,48 @@ jobs:
               releaseId,
               assetName: 'checksum',
               path: 'release_framework/checksum.txt',
+            });
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
+              assetName: 'Branch_signed_xcframework',
+              path: 'release_framework/Branch_signed_xcframework.zip',
+            });
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
+              assetName: 'checksum_signed_xcframework',
+              path: 'release_framework/checksum_signed_xcframework.txt',
+            });
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
+              assetName: 'Branch_xcframework_WithdSym',
+              path: 'release_framework/Branch_xcframework_WithdSym.zip',
+            });
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
+              assetName: 'checksum_xcframework_WithdSym',
+              path: 'release_framework/checksum_xcframework_WithdSym.txt',
+            });
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
+              assetName: 'Branch_noidfa_signed_xcframework',
+              path: 'framework-noidfa/Branch_noidfa_signed_xcframework.zip',
+            });
+            await uploadAsset({
+              github,
+              context,
+              releaseId,
+              assetName: 'checksum_noidfa_signed_xcframework',
+              path: 'framework-noidfa/checksum_noidfa_signed_xcframework.txt',
             });
 
       - name: Trigger workflow in iOS Branch SDK spm repo for updating code and creating release

@@ -1,5 +1,65 @@
 Branch iOS SDK Change Log
 
+v.3.14.0
+— Added APIs `disableNextForegroundForTimeInterval:`, `disableNextForeground` and `resumeSession` to disable and resume automatic tracking of `OPEN` events. These are experimental APIs. Please refer to warning message in API documentation/comments.
+
+v.3.13.3 
+— Fixed Bug - Missing Apple Attribution Token in Install Requests (impacted versions: 3.13.0 - 3.13.2).
+
+v.3.13.2 
+— Suppressed deprecated StoreKit API warnings. These APIs will be replaced with StoreKit 2 APIs in upcoming releases.
+— Added defensive fix to improve reliability of NSInvocation calls.
+— Added some additional debug logging API.
+
+v.3.13.1
+- SDK Request Queue will not cache request objects failed with Https Response Codes - 1xx, 2xx, 3xx and 4xx.
+- Fixed bug - SDK will send odm_info if Consumer Protection Attribution Level is not set or is set to Full.
+
+v.3.13.0
+- Added API 'setAnonID' to set custom Meta Anon ID for the current user.
+- Added API 'setSDKWaitTimeForThirdPartyAPIs' to set time for which SDK will wait for fetching data from third-party APIs, such as ODM info and Apple Attribution Token.
+- Removed apple_receipt and apple_testflight params from the Server Requests.
+
+v.3.12.2
+- Fixed bug where error object was not being forwarded when receiving error from service.
+- Fixed bug with Advanced Compliance and Integration Validator.
+- Added param 'operational_metrics' in v1/install request.
+
+v.3.12.1
+- Fixed bug - SDK crashes when Meta AEM query param `al_applink_data` is empty.
+
+v.3.12.0
+- Added browser experience for apps that have opted in. WebURL will open in in-app browser if app is linked with SafariServices.framework otherwise it will open in external browser.
+
+v.3.11.0
+- Added Google ODM Event Data support. SDK will fetch, cache and send ODM event data with v1/install and v1/open requests for 180 days.
+- Added new API `setODMInfo:andFirstOpenTimestamp` to set ODM Event data and first open timestamp if app developer wants to set it instead of SDK.
+
+v.3.10.0
+- Added new API `setSafetrackAPIURL` for setting custom safetrack URL.
+- Fixed Bug - Clear initial referrer after init.
+
+v.3.9.1
+- Fix for the warning 'Missing header files from umbrella header' when integrating BranchSDK into a hybrid app using SPM.
+
+v.3.9.0
+- Integration Validator 2.0 - Improved integration validator to provide references to how to fix when a check fails, export logs from the app and invoke it using query parameter
+- Fixed Integration Validator crash when URIs and bundle ids from the server are empty.
+- Fixed Init Race for Push notifications
+- Fixed issue which was not sending linking request when tracking is disabled and app is launched via spotlight results.
+- Added test apps for Mobileboost.
+- Added GHA for Mobileboost.
+- Fix for early branch init on install.
+- Fixed compilation error for enableLoggingAtLevel API when used without callback.
+
+v.3.8.0
+- Added new `BranchAdvancedLogCallback` which contains request and response data for Branch network requests
+- Added ability to set Consumer Protection Attribution Level through the `branch.json` file
+
+v.3.7.0
+- Added `setConsumerProtectionAttributionLevel` for controlling attribution data collection
+- Deprecated `setTrackingDisabled` in favor of `setConsumerProtectionAttributionLevel(NONE)`
+
 v.3.6.5
 - Removed on-disk caching and replay of server request objects.
 

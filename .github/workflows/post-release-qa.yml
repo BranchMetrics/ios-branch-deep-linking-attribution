@@ -6,49 +6,108 @@ on:
 jobs:
   verify-cocoapods-iOS:
     runs-on: macos-latest
+    timeout-minutes: 30
     steps:
       - name: Check out code
         uses: actions/checkout@v4
       - name: Install pod, build project and run tests
         run: |
+            mkdir -p test-results
             ./scripts/getSimulator
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/PostRelease-iOSReleaseTest-Cocoapods/
             pod install
-            xcodebuild test -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace -destination "$DESTINATION"| xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild -configuration Debug \
+            -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace \
+            -sdk iphonesimulator \
+            -destination "$DESTINATION" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            DEVELOPMENT_TEAM="" \
+            -resultBundlePath ../../test-results/ios-cocoapods.xcresult \
+            clean test 
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-report-cocoapods-iOS
+          path: test-results
   verify-carthage-iOS:
     runs-on: macos-latest
+    timeout-minutes: 30
     steps:
       - name: Check out code
         uses: actions/checkout@v4
       - name: Run carthage command, build project and run tests
         run: |
+            mkdir -p test-results
             ./scripts/getSimulator
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/PostRelease-iOSReleaseTest-Carthage/
             carthage update --use-xcframeworks
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION"| xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild -configuration Debug \
+            -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj \
+            -sdk iphonesimulator \
+            -destination "$DESTINATION" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            DEVELOPMENT_TEAM="" \
+            -resultBundlePath ../../test-results/ios-carthage.xcresult \
+            clean test
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-report-carthage-iOS
+          path: test-results
   verify-SPM-iOS:
     runs-on: macos-latest
+    timeout-minutes: 30
     steps:
       - name: Check out code
         uses: actions/checkout@v4
       - name: build project and run tests
         run: |
+            mkdir -p test-results
             ./scripts/getSimulator
             DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
             cd  SDKIntegrationTestApps/PostRelease-iOSReleaseTest-SPM/
-            xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination "$DESTINATION"| xcpretty && exit ${PIPESTATUS[0]}
+            xcodebuild -resolvePackageDependencies -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj 
+            xcodebuild -configuration Debug \
+            -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj \
+            -sdk iphonesimulator \
+            -destination "$DESTINATION" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            DEVELOPMENT_TEAM="" \
+            -resultBundlePath ../../test-results/ios-spm.xcresult \
+            clean test
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-report-spm-iOS
+          path: test-results
   verify-cocoapods-tvOS:
     runs-on: macos-latest
+    timeout-minutes: 30
     steps:
       - name: Check out code
         uses: actions/checkout@v4
       - name: Install pod, build project and run tests
         run: |
+            mkdir -p test-results
             ./scripts/getSimulator
             DESTINATION="platform=tvOS Simulator,name=$(cat ./appleTVSim),OS=latest"
             cd  SDKIntegrationTestApps/PostRelease-tvOSReleaseTest-Cocoapods/
             pod install
-            xcodebuild test -scheme tvOSReleaseTest -workspace tvOSReleaseTest.xcworkspace -destination "$DESTINATION" | xcpretty && exit ${PIPESTATUS[0]}
-
+            xcodebuild test -scheme tvOSReleaseTest -workspace tvOSReleaseTest.xcworkspace -destination "$DESTINATION" -resultBundlePath ../../test-results/tvOS-cocoapods.xcresult
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-report-cocoapods-tvOS
+          path: test-results

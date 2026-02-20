@@ -24,6 +24,7 @@
 #import "BNCRequestFactory.h"
 
 #import "BNCServerAPI.h"
+#import "BNCInAppBrowser.h"
 
 @interface BranchOpenRequest ()
 @property (assign, nonatomic) BOOL isInstall;
@@ -49,14 +50,20 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
     NSDictionary *params = [factory dataForOpenWithURLString:self.urlString];
-
+    self.requestParams = [params copy];
+    self.requestServiceURL = [[BNCServerAPI sharedInstance] openServiceURL];
     [serverInterface postRequest:params
-        url:[[BNCServerAPI sharedInstance] openServiceURL]
+        url: self.requestServiceURL
         key:key
         callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
+    
+    if (self.traceCallback) {
+        self.traceCallback(self.urlString, self.requestParams, response.data, error, self.requestServiceURL);
+    }
+    
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     if (error && preferenceHelper.dropURLOpen) {
         // Ignore this response from the server. Dummy up a response:
@@ -74,7 +81,6 @@
         }
         return;
     }
-
     NSDictionary *data = response.data;
     
     // Handle possibly mis-parsed identity.
@@ -159,7 +165,10 @@
     preferenceHelper.universalLinkUrl = nil;
     preferenceHelper.externalIntentURI = nil;
     preferenceHelper.referringURL = referringURL;
+    preferenceHelper.initialReferrer = nil;
     preferenceHelper.dropURLOpen = NO;
+    preferenceHelper.uxType = nil;
+    preferenceHelper.urlLoadMs = nil;
     
     NSString *string = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN]);
     if (!string) {
@@ -244,9 +253,92 @@
         }
     }
 #endif
-    
+
+    NSDictionary *invokeFeatures = data[BRANCH_RESPONSE_KEY_INVOKE_FEATURES];
+    if (invokeFeatures) {
+        if ([self invokeFeatures:invokeFeatures]) {
+            return; // Return - Dont call callback since weblink in launched
+        }
+    }
+
     if (self.callback) {
         self.callback(YES, nil);
+    }
+}
+
+- (BOOL) invokeFeatures:(NSDictionary *)invokeFeatures {
+    
+    NSString *uxType = invokeFeatures[BRANCH_RESPONSE_KEY_ENHANCED_WEB_LINK_UX];
+    
+    if (uxType) {
+        NSURL *webLinkRedirectUrl = [NSURL URLWithString:invokeFeatures[BRANCH_RESPONSE_KEY_WEB_LINK_REDIRECT_URL]];
+        if (webLinkRedirectUrl) {
+            if ([uxType isEqualToString:WEB_UX_IN_APP_WEBVIEW]) {
+                id inAppBrowser = nil;
+#if !TARGET_OS_TV
+                inAppBrowser = [BNCInAppBrowser sharedInstance];
+# endif
+                if (inAppBrowser) {
+#if !TARGET_OS_TV
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [(BNCInAppBrowser *)inAppBrowser openURLInSafariVC:webLinkRedirectUrl];
+                    });
+                    [BNCPreferenceHelper sharedInstance].uxType = uxType;
+                    [BNCPreferenceHelper sharedInstance].urlLoadMs = [NSDate date];
+                    return TRUE;
+# endif
+                } else {
+                    uxType = WEB_UX_EXTERNAL_BROWSER;
+                }
+            }
+            if ([uxType isEqualToString:WEB_UX_EXTERNAL_BROWSER]) {
+                BOOL isAppExtension = [[[NSBundle mainBundle] bundlePath] hasSuffix:@".appex"];
+                if (!isAppExtension) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self openURLInDefaultBrowser:webLinkRedirectUrl];
+                    });
+                    [BNCPreferenceHelper sharedInstance].uxType = uxType;
+                    [BNCPreferenceHelper sharedInstance].urlLoadMs = [NSDate date];
+                    return TRUE;
+                } else {
+                    [[BranchLogger shared] logDebug:@"Will not load URL for app extensions" error:nil];
+                }
+            }
+        } else {
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Invalid  URL: %@", webLinkRedirectUrl] error:nil];
+        }
+    }
+    return FALSE;
+}
+
+- (void)openURLInDefaultBrowser:(NSURL *)url{
+    
+    if (!url) return;
+
+    Class applicationClass = NSClassFromString(@"UIApplication");
+    SEL sharedAppSel = NSSelectorFromString(@"sharedApplication");
+
+    if ([applicationClass respondsToSelector:sharedAppSel]) {
+        id sharedApp = ((id (*)(id, SEL))[applicationClass methodForSelector:sharedAppSel])
+                (applicationClass, sharedAppSel);
+
+        SEL openURLSel = NSSelectorFromString(@"openURL:options:completionHandler:");
+        if ([sharedApp respondsToSelector:openURLSel]) {
+            NSDictionary *options = @{};
+
+            NSMethodSignature *signature = [sharedApp methodSignatureForSelector:openURLSel];
+            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+            [invocation setSelector:openURLSel];
+            [invocation setTarget:sharedApp];
+
+            [invocation setArgument:&url atIndex:2];
+            [invocation setArgument:&options atIndex:3];
+
+            void (^nilHandler)(BOOL) = nil;
+            [invocation setArgument:&nilHandler atIndex:4];
+
+            [invocation invoke];
+        }
     }
 }
 

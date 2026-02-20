@@ -55,8 +55,6 @@ NSString * const BRANCH_REQUEST_KEY_SCREEN_HEIGHT = @"screen_height";
 NSString * const BRANCH_REQUEST_KEY_IS_SIMULATOR = @"is_simulator";
 NSString * const BRANCH_REQUEST_KEY_LOG = @"log";
 NSString * const BRANCH_REQUEST_KEY_INSTRUMENTATION = @"instrumentation";
-NSString * const BRANCH_REQUEST_KEY_APPLE_RECEIPT = @"apple_receipt";
-NSString * const BRANCH_REQUEST_KEY_APPLE_TESTFLIGHT = @"apple_testflight";
 
 NSString * const BRANCH_REQUEST_KEY_APP_CLIP_BUNDLE_ID = @"app_clip_bundle_id";
 NSString * const BRANCH_REQUEST_KEY_LATEST_APP_CLIP_INSTALL_TIME = @"latest_app_clip_time";
@@ -70,6 +68,8 @@ NSString * const BRANCH_REQUEST_KEY_REFERRER_GBRAID = @"gbraid";
 NSString * const BRANCH_REQUEST_KEY_REFERRER_GBRAID_TIMESTAMP = @"gbraid_timestamp";
 NSString * const BRANCH_REQUEST_KEY_IS_DEEPLINK_GBRAID = @"is_deeplink_gbraid";
 NSString * const BRANCH_REQUEST_KEY_GCLID = @"gclid";
+NSString * const BRANCH_REQUEST_KEY_ODM_INFO = @"odm_info";
+NSString * const BRANCH_REQUEST_KEY_ODM_FIRST_OPEN_TIMESTAMP = @"odm_first_open_timestamp";
 NSString * const BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS = @"meta_campaign_ids";
 NSString * const BRANCH_URL_QUERY_PARAMETERS_NAME_KEY = @"name";
 NSString * const BRANCH_URL_QUERY_PARAMETERS_VALUE_KEY = @"value";
@@ -77,6 +77,9 @@ NSString * const BRANCH_URL_QUERY_PARAMETERS_TIMESTAMP_KEY = @"timestamp";
 NSString * const BRANCH_URL_QUERY_PARAMETERS_IS_DEEPLINK_KEY = @"isDeepLink";
 NSString * const BRANCH_URL_QUERY_PARAMETERS_VALIDITY_WINDOW_KEY = @"validityWindow";
 NSString * const BRANCH_REQUEST_KEY_SCCID = @"sccid";
+NSString * const BRANCH_REQUEST_KEY_WEB_LINK_CONTEXT = @"web_link_context";
+NSString * const BRANCH_REQUEST_KEY_UX_TYPE = @"ux_type";
+NSString * const BRANCH_REQUEST_KEY_URL_LOAD_MS = @"url_load_ms";
 
 NSString * const BRANCH_REQUEST_ENDPOINT_APP_LINK_SETTINGS = @"app-link-settings";
 NSString * const BRANCH_REQUEST_ENDPOINT_USER_COMPLETED_ACTION = @"event";
@@ -105,6 +108,9 @@ NSString * const BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE = @"update_conversi
 NSString * const BRANCH_RESPONSE_KEY_COARSE_KEY = @"coarse_key";
 NSString * const BRANCH_RESPONSE_KEY_UPDATE_IS_LOCKED = @"locked";
 NSString * const BRANCH_RESPONSE_KEY_ASCENDING_ONLY = @"ascending_only";
+NSString * const BRANCH_RESPONSE_KEY_INVOKE_FEATURES = @"invoke_features";
+NSString * const BRANCH_RESPONSE_KEY_ENHANCED_WEB_LINK_UX = @"enhanced_web_link_ux";
+NSString * const BRANCH_RESPONSE_KEY_WEB_LINK_REDIRECT_URL = @"web_link_redirect_url";
 
 NSString * const BRANCH_LINK_DATA_KEY_OG_TITLE = @"$og_title";
 NSString * const BRANCH_LINK_DATA_KEY_OG_DESCRIPTION = @"$og_description";
@@ -166,6 +172,28 @@ NSString * const BRANCH_REQUEST_KEY_DMA_EEA = @"dma_eea";
 NSString * const BRANCH_REQUEST_KEY_DMA_AD_PEROSALIZATION = @"dma_ad_personalization";
 NSString * const BRANCH_REQUEST_KEY_DMA_AD_USER_DATA = @"dma_ad_user_data";
 
+NSString * const BRANCH_REQUEST_KEY_CPP_LEVEL = @"cpp_level";
+
 NSString * const BRANCH_REQUEST_KEY_REQUEST_UUID = @"branch_sdk_request_unique_id";
 NSString * const BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP = @"branch_sdk_request_timestamp";
 
+NSString * const WEB_UX_IN_APP_WEBVIEW = @"IN_APP_WEBVIEW";
+NSString * const WEB_UX_EXTERNAL_BROWSER = @"EXTERNAL_BROWSER";
+
+NSString * const BRANCH_REQUEST_KEY_OPERATIONAL_METRICS = @"operational_metrics";
+NSString * const BRANCH_REQUEST_KEY_DEFER_INIT_FOR_PLUGIN_RUNTIME = @"deferInitForPluginRuntime";
+NSString * const BRANCH_REQUEST_KEY_CHECK_PASTEBOARD_ON_INSTALL= @"checkPasteboardOnInstall";
+
+NSString * const BRANCH_REQUEST_KEY_BRANCH_KEY_SOURCE = @"branch_key_source";
+NSString * const BRANCH_KEY_SOURCE_UNKNOWN = @"Unknown";
+NSString * const BRANCH_KEY_SOURCE_CONFIG_JSON = @"config_json";
+NSString * const BRANCH_KEY_SOURCE_INFO_PLIST = @"info_plist";
+NSString * const BRANCH_KEY_SOURCE_GET_INSTANCE_API = @"getInstance_api";
+NSString * const BRANCH_KEY_SOURCE_SET_BRANCH_KEY_API= @"setBranchKey_api";
+
+NSString * const BRANCH_REQUEST_KEY_LINKED_FRAMEORKS = @"linked_frameworks";
+NSString * const FRAMEWORK_ATT_TRACKING_MANAGER = @"ATTrackingManager";
+NSString * const FRAMEWORK_AD_SUPPORT = @"AdSupport";
+NSString * const FRAMEWORK_AD_SAFARI_SERVICES = @"SafariServices";
+NSString * const FRAMEWORK_AD_APP_ADS_ONDEVICE_CONVERSION = @"AppAdsOnDeviceConversion";
+NSString * const FRAMEWORK_AD_FIREBASE_CRASHLYTICS = @"FirebaseCrashlytics";

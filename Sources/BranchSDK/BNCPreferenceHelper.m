@@ -16,9 +16,11 @@
 #import "BNCSKAdNetwork.h"
 
 static const NSTimeInterval DEFAULT_TIMEOUT = 5.5;
+static const NSTimeInterval DEFAULT_THIRD_PARTY_APIS_TIMEOUT = 0.5; // 500ms default
 static const NSTimeInterval DEFAULT_RETRY_INTERVAL = 0;
 static const NSInteger DEFAULT_RETRY_COUNT = 3;
 static const NSTimeInterval DEFAULT_REFERRER_GBRAID_WINDOW = 2592000; // 30 days = 2,592,000 seconds
+static const NSTimeInterval DEFAULT_ODM_INFO_VALIDITY_WINDOW = 15552000; // 180 days = 15,552,000 seconds
 
 static NSString * const BRANCH_PREFS_FILE = @"BNCPreferences";
 
@@ -48,11 +50,15 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID = @"bnc_referrer_gbraid";
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID_WINDOW = @"bnc_referrer_gbraid_window";
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID_INIT_DATE = @"bnc_referrer_gbraid_init_date";
+static NSString * const BRANCH_PREFS_KEY_ODM_INFO = @"bnc_odm_info";
+static NSString * const BRANCH_PREFS_KEY_ODM_INFO_VALIDITY_WINDOW = @"bnc_odm_info_validity_window";
+static NSString * const BRANCH_PREFS_KEY_ODM_INFO_INIT_DATE = @"bnc_odm_info_init_date";
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GCLID = @"bnc_referrer_gclid";
 static NSString * const BRANCH_PREFS_KEY_SKAN_CURRENT_WINDOW = @"bnc_skan_current_window";
 static NSString * const BRANCH_PREFS_KEY_FIRST_APP_LAUNCH_TIME = @"bnc_first_app_launch_time";
 static NSString * const BRANCH_PREFS_KEY_SKAN_HIGHEST_CONV_VALUE_SENT = @"bnc_skan_send_highest_conv_value";
 static NSString * const BRANCH_PREFS_KEY_SKAN_INVOKE_REGISTER_APP = @"bnc_invoke_register_app";
+static NSString * const BRANCH_PREFS_KEY_THIRD_PARTY_APIS_TIMEOUT = @"bnc_third_party_apis_timeout";
                                                                 
 static NSString * const BRANCH_PREFS_KEY_USE_EU_SERVERS = @"bnc_use_EU_servers";
 
@@ -64,6 +70,10 @@ static NSString * const BRANCH_PREFS_KEY_DMA_EEA = @"bnc_dma_eea";
 static NSString * const BRANCH_PREFS_KEY_DMA_AD_PERSONALIZATION = @"bnc_dma_ad_personalization";
 static NSString * const BRANCH_PREFS_KEY_DMA_AD_USER_DATA = @"bnc_dma_ad_user_data";
 
+static NSString * const BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL = @"bnc_attribution_level";
+
+static NSString * const BRANCH_PREFS_KEY_UX_TYPE = @"bnc_ux_type";
+static NSString * const BRANCH_PREFS_KEY_URL_LOAD_MS = @"bnc_url_load_ms";
 
 NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
@@ -106,11 +116,15 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     retryCount = _retryCount,
     retryInterval = _retryInterval,
     timeout = _timeout,
+    thirdPartyAPIsWaitTime = _thirdPartyAPIsWaitTime,
     lastStrongMatchDate = _lastStrongMatchDate,
     requestMetadataDictionary = _requestMetadataDictionary,
     instrumentationDictionary = _instrumentationDictionary,
     referrerGBRAID = _referrerGBRAID,
     referrerGBRAIDValidityWindow = _referrerGBRAIDValidityWindow,
+    odmInfo = _odmInfo,
+    odmInfoValidityWindow = _odmInfoValidityWindow,
+    odmInfoInitDate = _odmInfoInitDate,
     skanCurrentWindow = _skanCurrentWindow,
     firstAppLaunchTime = _firstAppLaunchTime,
     highestConversionValueSent = _highestConversionValueSent,
@@ -119,7 +133,10 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     patternListURL = _patternListURL,
     eeaRegion = _eeaRegion,
     adPersonalizationConsent = _adPersonalizationConsent,
-    adUserDataUsageConsent = _adUserDataUsageConsent;
+    adUserDataUsageConsent = _adUserDataUsageConsent,
+    attributionLevel = _attributionLevel,
+    uxType = _uxType,
+    urlLoadMs = _urlLoadMs;
 
 + (BNCPreferenceHelper *)sharedInstance {
     static BNCPreferenceHelper *preferenceHelper = nil;
@@ -141,6 +158,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         _timeout = DEFAULT_TIMEOUT;
         _retryCount = DEFAULT_RETRY_COUNT;
         _retryInterval = DEFAULT_RETRY_INTERVAL;
+        _odmInfoValidityWindow = DEFAULT_ODM_INFO_VALIDITY_WINDOW;
+        _thirdPartyAPIsWaitTime = DEFAULT_THIRD_PARTY_APIS_TIMEOUT;
         _isDebug = NO;
         _persistPrefsQueue = [[NSOperationQueue alloc] init];
         _persistPrefsQueue.maxConcurrentOperationCount = 1;
@@ -627,7 +646,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
 }
 
-
 - (BOOL) trackingDisabled {
     @synchronized(self) {
         NSNumber *b = (id) [self readObjectFromDefaults:@"trackingDisabled"];
@@ -705,6 +723,60 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (void)setReferrerGBRAIDInitDate:(NSDate *)initDate {
     @synchronized (self) {
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_REFERRER_GBRAID_INIT_DATE value:initDate];
+    }
+}
+
+
+- (NSString *) odmInfo {
+    if (!_odmInfo) {
+        _odmInfo = [self readStringFromDefaults:BRANCH_PREFS_KEY_ODM_INFO];
+    }
+    return _odmInfo;
+}
+
+- (void) setOdmInfo:(NSString *)odmInfo {
+    @synchronized(self) {
+        if (![_odmInfo isEqualToString:odmInfo]) {
+            _odmInfo = odmInfo;
+            [self writeObjectToDefaults:BRANCH_PREFS_KEY_ODM_INFO value:odmInfo];
+        }
+    }
+}
+
+- (NSDate*) odmInfoInitDate {
+    @synchronized (self) {
+        if (!_odmInfoInitDate) {
+            _odmInfoInitDate = (NSDate*)[self readObjectFromDefaults:BRANCH_PREFS_KEY_ODM_INFO_INIT_DATE];
+            if ([_odmInfoInitDate isKindOfClass:[NSDate class]]) return _odmInfoInitDate;
+            return nil;
+        }
+        return _odmInfoInitDate;
+    }
+}
+
+- (void) setOdmInfoInitDate:(NSDate *)initDate {
+    @synchronized (self) {
+        if (![_odmInfoInitDate isEqualToDate:initDate]) {
+            _odmInfoInitDate = initDate;
+            [self writeObjectToDefaults:BRANCH_PREFS_KEY_ODM_INFO_INIT_DATE value:initDate];
+        }
+    }
+}
+
+- (NSTimeInterval) thirdPartyAPIsWaitTime {
+    @synchronized (self) {
+        _thirdPartyAPIsWaitTime = [self readDoubleFromDefaults:BRANCH_PREFS_KEY_THIRD_PARTY_APIS_TIMEOUT];
+        if (_thirdPartyAPIsWaitTime == NSNotFound) {
+            _thirdPartyAPIsWaitTime = DEFAULT_THIRD_PARTY_APIS_TIMEOUT;
+        }
+        return _thirdPartyAPIsWaitTime;
+    }
+}
+
+- (void) setThirdPartyAPIsWaitTime:(NSTimeInterval)waitTime {
+    @synchronized (self) {
+        _thirdPartyAPIsWaitTime = waitTime;
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_THIRD_PARTY_APIS_TIMEOUT value:@(waitTime)];
     }
 }
 
@@ -820,6 +892,58 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     @synchronized(self) {
         NSNumber *b = [NSNumber numberWithBool:hasConsent];
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_DMA_AD_USER_DATA value:b];
+    }
+}
+
+- (BOOL) attributionLevelInitialized {
+    @synchronized(self) {
+        if([self readObjectFromDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL])
+            return YES;
+        return NO;
+    }
+}
+
+- (BranchAttributionLevel)attributionLevel {
+    return [self readStringFromDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL];
+}
+
+- (void)setAttributionLevel:(BranchAttributionLevel)level {
+    [self writeObjectToDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL value:level];
+}
+
+- (NSString *) uxType {
+    if (!_uxType) {
+        _uxType = [self readStringFromDefaults:BRANCH_PREFS_KEY_UX_TYPE];
+    }
+    return _uxType;
+}
+
+- (void) setUxType:(NSString *)uxType {
+    @synchronized(self) {
+        if (![_uxType isEqualToString:uxType]) {
+            _uxType = uxType;
+            [self writeObjectToDefaults:BRANCH_PREFS_KEY_UX_TYPE value:uxType];
+        }
+    }
+}
+
+- (NSDate*) urlLoadMs {
+    @synchronized (self) {
+        if (!_urlLoadMs) {
+            _urlLoadMs = (NSDate*)[self readObjectFromDefaults:BRANCH_PREFS_KEY_URL_LOAD_MS];
+            if ([_urlLoadMs isKindOfClass:[NSDate class]]) return _urlLoadMs;
+            return nil;
+        }
+        return _urlLoadMs;
+    }
+}
+
+- (void) setUrlLoadMs:(NSDate *)urlLoadMs {
+    @synchronized (self) {
+        if (![_urlLoadMs isEqualToDate:urlLoadMs]) {
+            _urlLoadMs = urlLoadMs;
+            [self writeObjectToDefaults:BRANCH_PREFS_KEY_URL_LOAD_MS value:urlLoadMs];
+        }
     }
 }
 

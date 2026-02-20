@@ -8,6 +8,8 @@
 
 #import "BNCSystemObserver.h"
 #import "BranchLogger.h"
+#import "BNCPreferenceHelper.h"
+
 #if __has_feature(modules)
 @import UIKit;
 @import SystemConfiguration;
@@ -35,32 +37,20 @@
         return nil;
     }
     
-    __block NSString *token = nil;
-    
 #if !TARGET_OS_TV
     if (@available(iOS 14.3, macCatalyst 14.3, *)) {
-
-        // We are getting reports on iOS 14.5 that this API can hang, adding a short timeout for now.
-        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            NSError *error;
-            NSString *appleAttributionToken = [AAAttribution attributionTokenWithError:&error];
-            if (!error) {
-                token = appleAttributionToken;
-            }
-            dispatch_semaphore_signal(semaphore);
-        });
-
-        // Apple said this API should respond within 50ms, lets give up after 500 ms
-        dispatch_semaphore_wait(semaphore, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(500 * NSEC_PER_MSEC)));
-        if (token == nil) {
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"AppleAttributionToken request timed out"] error:nil];
+        NSError *error;
+        NSString *appleAttributionToken = [AAAttribution attributionTokenWithError:&error];
+        if (error) {
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"AppleAttributionToken API failed, error: %@", [error description]] error:error];
         }
+        if (appleAttributionToken == nil) {
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"AppleAttributionToken returned nil token"] error:nil];
+        }
+        return appleAttributionToken;
     }
 #endif
-    
-    return token;
+    return nil;
 }
 
 + (NSString *)advertiserIdentifier {
@@ -84,6 +74,8 @@
         if ([uid isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"IDFA is all 0's. Probably running on a simulator or an App Clip."] error:nil];
             uid = nil;
+        } else {
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"IDFA found: %@", uid] error:nil];
         }
     }
     return uid;
@@ -150,17 +142,37 @@
 
 + (BOOL)compareUriSchemes : (NSString *) serverUriScheme {
     NSArray *urlTypes = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"];
+    return [self compareUriSchemes:serverUriScheme With:urlTypes];
+}
+
++ (BOOL)compareUriSchemes:(NSString *)serverUriScheme With:(NSArray *)urlTypes {
+    NSString * serverUriSchemeWithoutSuffix ;
+    
+    if ([serverUriScheme hasSuffix:@"://"]) {
+        serverUriSchemeWithoutSuffix = [serverUriScheme substringToIndex:[serverUriScheme length] - 3];
+    } else {
+        serverUriSchemeWithoutSuffix = serverUriScheme;
+    }
 
     for (NSDictionary *urlType in urlTypes) {
 
         NSArray *urlSchemes = [urlType objectForKey:@"CFBundleURLSchemes"];
         for (NSString *uriScheme in urlSchemes) {
-            NSString * serverUriSchemeWithoutSuffix = [serverUriScheme substringToIndex:[serverUriScheme length] - 3];
             if ([uriScheme isEqualToString:serverUriSchemeWithoutSuffix]) {
-                return true; }
+                return true;
+            }
         }
-        // If no Uri schemes match the one set on the dashboard
-        return false;
+    }
+    return false;
+}
+
++ (BOOL)compareLinkDomain:(NSString *)serverLinkDomain {
+    NSArray *linkDomains = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"branch_universal_link_domains"];
+    
+    for (NSString *domain in linkDomains) {
+        if ([domain isEqualToString:serverLinkDomain]) {
+            return true;
+        }
     }
     return false;
 }

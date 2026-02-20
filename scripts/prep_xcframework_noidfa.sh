@@ -5,6 +5,8 @@ set -euo pipefail
 scheme='xcframework-noidfa'
 checksum_file=checksum_noidfa.txt
 zip_file=Branch_noidfa.zip
+checksum_file_noidfa_signed_xcframework=checksum_noidfa_signed_xcframework.txt
+zip_file_noidfa_signed_xcframework=Branch_noidfa_signed_xcframework.zip
 
 scriptname=$(basename "${BASH_SOURCE[0]}")
 scriptpath="${BASH_SOURCE[0]}"
@@ -33,3 +35,9 @@ mv $checksum_file ..
 # Remove source frameworks
 echo "Cleaning up"
 rm -rf BranchSDK.xcframework
+
+echo "Packaging signed BranchSDK.xcframework"
+zip -rqy $zip_file_noidfa_signed_xcframework ./signedNoIDFAFramework/BranchSDK.xcframework/
+shasum $zip_file_noidfa_signed_xcframework >> $checksum_file_noidfa_signed_xcframework
+mv $zip_file_noidfa_signed_xcframework ..
+mv $checksum_file_noidfa_signed_xcframework ..

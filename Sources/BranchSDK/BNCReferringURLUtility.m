@@ -48,6 +48,11 @@
 - (void)parseReferringURL:(NSURL *)url {
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Parsing URL %@", url] error:nil];
     
+    if (!url) {
+        [[BranchLogger shared] logVerbose:@"URL is nil" error:nil];
+        return;
+    }
+    
     NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
     for  (NSURLQueryItem *item in components.queryItems) {
         if ([self isSupportedQueryParameter:item.name]) {
@@ -115,6 +120,11 @@
     if (jsonData) {
         NSError *error;
         NSDictionary *json = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
+        if (![json isKindOfClass:[NSDictionary class]]) {
+            [[BranchLogger shared] logVerbose:@"Encoded json string did not decode to a dictionary; skipping" error:nil];
+            json = nil;
+        }
+
         if (!error) {
             return json;
         } else {
