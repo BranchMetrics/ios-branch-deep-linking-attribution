@@ -11,7 +11,7 @@
 #import "BNCSystemObserver.h"
 #import "BNCConfig.h"
 #import "BranchConstants.h"
-#import "Branch.h"
+@import BranchSDK;
 
 @interface BNCAPIServerTest : XCTestCase
 
