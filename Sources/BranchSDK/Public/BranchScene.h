@@ -20,8 +20,10 @@ API_AVAILABLE(ios(13.0), macCatalyst(13.1))
 + (BranchScene *)shared;
 
 - (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options
+             registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback __attribute__((deprecated(("Use `initSessionWithSceneOptions:scene:registerDeepLinkHandler:` instead."))));
+- (void)initSessionWithSceneOptions:(nullable UISceneConnectionOptions *)options
+                              scene:(UIScene *)scene
              registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback;
-
 - (void)scene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity;
 
 - (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts;
