@@ -1,0 +1,56 @@
+#!/bin/sh
+
+DESTINATION='platform=iOS Simulator,name=iPhone 13,OS=16.0'
+DESTINATION_TVOS='platform=tvOS Simulator,name=Apple TV,OS=16.1'
+
+echo "[iOS] 1.Verify Integration using CocoaPods"
+
+cd  SDKIntegrationTestApps/iOSReleaseTest-Cocoapods/
+pod install
+xcodebuild test -scheme iOSReleaseTest -workspace iOSReleaseTest.xcworkspace -destination $DESTINATION
+cd ../../
+
+echo "[iOS] 2.Verify Integration using Carthage"
+BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+cd  SDKIntegrationTestApps/iOSReleaseTest-Carthage/
+echo "git \"file://${CURR_DIR}\" \"$BRANCH_NAME\" " >> cartfile
+carthage update --use-xcframeworks
+xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination $DESTINATION
+cd ../../
+
+echo "[iOS] 3.Verify Integration using SPM"
+cd  SDKIntegrationTestApps/iOSReleaseTest-SPM/
+xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination $DESTINATION
+cd ../../
+
+echo "[iOS] 4.Verify Manual Integration with Branch.xcframework"
+cd carthage-files/
+xcodebuild -scheme Branch-xcframework
+cd  ../SDKIntegrationTestApps/iOSReleaseTest-Manual/
+xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination $DESTINATION
+cd ../../
+
+echo "[iOS] 5.Verify Manual Integration with static Branch.xcframework"
+cd carthage-files/
+xcodebuild -scheme Branch-static-xcframework
+cd  ../SDKIntegrationTestApps/iOSReleaseTest-Manual-Static/
+xcodebuild test -scheme iOSReleaseTest -project iOSReleaseTest.xcodeproj -destination $DESTINATION
+cd ../../
+
+echo "[tvOS] 6.Verify Integration using Cocoapods"
+cd SDKIntegrationTestApps/tvOSReleaseTest-Cocoapods/
+pod install
+xcodebuild test -scheme tvOSReleaseTest -workspace tvOSReleaseTest.xcworkspace -destination $DESTINATION_TVOS
+cd ../../
+
+echo "[tvOS] 7.Verify Integration using Carthage"
+echo "Skipping it ... its broken"
+
+echo "[tvOS] 8.Verify Integration manually"
+cd carthage-files/
+xcodebuild -scheme Branch-xcframework
+cd  ../SDKIntegrationTestApps/tvOSReleaseTest-Manual/
+xcodebuild test -scheme tvOSReleaseTest -project tvOSReleaseTest.xcodeproj -destination $DESTINATION_TVOS
+cd ../../
+
+ 
