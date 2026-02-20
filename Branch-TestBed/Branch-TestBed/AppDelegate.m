@@ -70,68 +70,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     [branch checkPasteboardOnInstall];
 
-    // ========================================
-    // 🔍 VERIFICATION: Swift Concurrency Active?
-    // ========================================
-    // Try SPM module name first (BranchSwiftSDK), then fallback to BranchSDK
-    Class swiftOperationClass = NSClassFromString(@"BranchSwiftSDK.BranchRequestOperation");
-    Class swiftQueueClass = NSClassFromString(@"BranchRequestQueueModern");
-
-    // Fallback to BranchSDK namespace (for non-SPM builds)
-    if (!swiftOperationClass) {
-        swiftOperationClass = NSClassFromString(@"BranchSDK.BranchRequestOperation");
-    }
-    if (!swiftQueueClass) {
-        swiftQueueClass = NSClassFromString(@"BranchSDK.BranchRequestQueueModern");
-    }
-
-    if (swiftOperationClass && swiftQueueClass) {
-        NSLog(@"");
-        NSLog(@"🎉 ================================================");
-        NSLog(@"   ✅ SWIFT CONCURRENCY IS ACTIVE!");
-        NSLog(@"================================================");
-        NSLog(@"✅ BranchRequestOperation (Swift): FOUND");
-        NSLog(@"✅ BranchRequestQueue (Swift): FOUND");
-        NSLog(@"🚀 Using modern async/await patterns");
-        NSLog(@"🧵 Thread safety via Swift Actor");
-        NSLog(@"📊 Architecture mirroring Android Kotlin Coroutines");
-        NSLog(@"================================================");
-        NSLog(@"");
-    } else {
-        NSLog(@"");
-        NSLog(@"⚠️  ================================================");
-        NSLog(@"   ❌ SWIFT CONCURRENCY NOT ACTIVE");
-        NSLog(@"================================================");
-        if (!swiftOperationClass) {
-            NSLog(@"❌ BranchRequestOperation (Swift): NOT FOUND");
-            NSLog(@"   Tried: BranchSwiftSDK.BranchRequestOperation");
-            NSLog(@"   Tried: BranchSDK.BranchRequestOperation");
-        }
-        if (!swiftQueueClass) {
-            NSLog(@"❌ BranchRequestQueue (Swift): NOT FOUND");
-            NSLog(@"   Tried: BranchRequestQueueModern");
-            NSLog(@"   Tried: BranchSDK.BranchRequestQueueModern");
-        }
-        NSLog(@"⚠️  Using legacy Objective-C implementation");
-        NSLog(@"💡 Make sure BranchSDK package is properly linked");
-        NSLog(@"================================================");
-        NSLog(@"");
-    }
-
-    // Additional verification: Try to get shared instance
-    if (swiftQueueClass) {
-        SEL sharedSelector = NSSelectorFromString(@"shared");
-        if ([swiftQueueClass respondsToSelector:sharedSelector]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-            id sharedQueue = [swiftQueueClass performSelector:sharedSelector];
-            if (sharedQueue) {
-                NSLog(@"✅ BranchRequestQueue.shared: Accessible via runtime");
-            }
-#pragma clang diagnostic pop
-        }
-    }
-
 
     /*
      *    Required: Initialize Branch, passing a deep link handler block:
