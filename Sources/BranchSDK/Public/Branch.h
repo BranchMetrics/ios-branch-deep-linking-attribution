@@ -941,6 +941,15 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  */
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level;
 
+/**
+ Sets the consumer protection attribution level with an option to reset the session.
+
+ @param level The desired consumer protection attribution level, represented by the BranchAttributionLevel enum (Full, Reduced, Minimal, None).
+ @param resetSession If YES, a new session will be initialized when transitioning from BranchAttributionLevelNone to other higher levels.
+                     If NO, the session will not be re-initialized automatically when transitioning from BranchAttributionLevelNone to other higher levels.
+ */
+- (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level resetSession:(BOOL)resetSession;
+
 
 #pragma mark - Session Item methods
 
