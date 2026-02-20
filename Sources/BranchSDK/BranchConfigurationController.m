@@ -5,7 +5,7 @@
 //  Created by Nidhi Dixit on 6/2/25.
 //
 
-#import "Private/BranchConfigurationController.h"
+#import "BranchConfigurationController.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchLogger.h"
 #import "BranchConstants.h"
