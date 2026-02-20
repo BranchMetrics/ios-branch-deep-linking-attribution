@@ -488,6 +488,9 @@
 		E52E5B0A2CC79E5C00F553EE /* BranchFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E52E5B092CC79E5C00F553EE /* BranchFileLogger.m */; };
 		E52E5B0B2CC79E5C00F553EE /* BranchFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E52E5B092CC79E5C00F553EE /* BranchFileLogger.m */; };
 		E563942E2CC7A8E600E18E65 /* BranchFileLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = E52E5B052CC79E4E00F553EE /* BranchFileLogger.h */; };
+		E710E5E72EB48AB90051AE51 /* BranchEvent+StoreKit2.swift in Sources */ = {isa = PBXBuildFile; fileRef = E710E5E52EB48AB90051AE51 /* BranchEvent+StoreKit2.swift */; };
+		E710E5E82EB48AB90051AE51 /* BranchEvent+StoreKit2.swift in Sources */ = {isa = PBXBuildFile; fileRef = E710E5E52EB48AB90051AE51 /* BranchEvent+StoreKit2.swift */; };
+		E710E5E92EB48AB90051AE51 /* BranchEvent+StoreKit2.swift in Sources */ = {isa = PBXBuildFile; fileRef = E710E5E52EB48AB90051AE51 /* BranchEvent+StoreKit2.swift */; };
 		E71E396F2DD3A92900110F59 /* BNCInAppBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = E71E396D2DD3A92900110F59 /* BNCInAppBrowser.h */; };
 		E71E39712DD3A92900110F59 /* BNCInAppBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = E71E396E2DD3A92900110F59 /* BNCInAppBrowser.m */; };
 		E71E39722DD3A92900110F59 /* BNCInAppBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = E71E396D2DD3A92900110F59 /* BNCInAppBrowser.h */; };
@@ -713,6 +716,7 @@
 		5FF2AFDF28E7C22100393216 /* BranchSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchSDK.h; sourceTree = "<group>"; };
 		E52E5B052CC79E4E00F553EE /* BranchFileLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchFileLogger.h; sourceTree = "<group>"; };
 		E52E5B092CC79E5C00F553EE /* BranchFileLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchFileLogger.m; sourceTree = "<group>"; };
+		E710E5E52EB48AB90051AE51 /* BranchEvent+StoreKit2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BranchEvent+StoreKit2.swift"; sourceTree = "<group>"; };
 		E71E396D2DD3A92900110F59 /* BNCInAppBrowser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCInAppBrowser.h; sourceTree = "<group>"; };
 		E71E396E2DD3A92900110F59 /* BNCInAppBrowser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCInAppBrowser.m; sourceTree = "<group>"; };
 		E73D027F2DEE8AE90076C3F1 /* BranchConfigurationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchConfigurationController.h; sourceTree = "<group>"; };
@@ -773,6 +777,7 @@
 			isa = PBXGroup;
 			children = (
 				5FCDD36B2B7AC6A100EAF29F /* BranchSDK */,
+				E710E5E62EB48AB90051AE51 /* BranchSDK_Swift */,
 				5F2211702894A9C000C5B190 /* TestHost */,
 				5F2211872894A9C100C5B190 /* TestHostTests */,
 				5F2211912894A9C100C5B190 /* TestHostUITests */,
@@ -1020,6 +1025,15 @@
 				5FC446642ACCB96000FF1C87 /* PrivacyInfo.xcprivacy */,
 			);
 			path = Framework;
+			sourceTree = "<group>";
+		};
+		E710E5E62EB48AB90051AE51 /* BranchSDK_Swift */ = {
+			isa = PBXGroup;
+			children = (
+				E710E5E52EB48AB90051AE51 /* BranchEvent+StoreKit2.swift */,
+			);
+			name = BranchSDK_Swift;
+			path = Sources/BranchSDK_Swift;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1660,6 +1674,7 @@
 				5FCDD59A2B7AC6A400EAF29F /* BNCServerResponse.m in Sources */,
 				5FCDD5852B7AC6A400EAF29F /* BNCInitSessionResponse.m in Sources */,
 				5FCDD4412B7AC6A100EAF29F /* BNCPreferenceHelper.m in Sources */,
+				E710E5E92EB48AB90051AE51 /* BranchEvent+StoreKit2.swift in Sources */,
 				5FCDD5792B7AC6A400EAF29F /* BranchContentPathProperties.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1767,6 +1782,7 @@
 				5FCDD59B2B7AC6A400EAF29F /* BNCServerResponse.m in Sources */,
 				5FCDD5862B7AC6A400EAF29F /* BNCInitSessionResponse.m in Sources */,
 				5FCDD4422B7AC6A100EAF29F /* BNCPreferenceHelper.m in Sources */,
+				E710E5E82EB48AB90051AE51 /* BranchEvent+StoreKit2.swift in Sources */,
 				5FCDD57A2B7AC6A400EAF29F /* BranchContentPathProperties.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1786,6 +1802,7 @@
 				5FCDD4732B7AC6A100EAF29F /* BranchLATDRequest.m in Sources */,
 				5FCDD57E2B7AC6A400EAF29F /* BNCPasteboard.m in Sources */,
 				5F5FDA182B7DE2FE00F14A43 /* BranchLogger.m in Sources */,
+				E710E5E72EB48AB90051AE51 /* BranchEvent+StoreKit2.swift in Sources */,
 				5FCDD4612B7AC6A100EAF29F /* BNCRequestFactory.m in Sources */,
 				5FCDD41F2B7AC6A100EAF29F /* BNCDeepLinkViewControllerInstance.m in Sources */,
 				5FCDD58A2B7AC6A400EAF29F /* BNCLinkCache.m in Sources */,
@@ -1884,6 +1901,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -1936,6 +1954,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1945,6 +1964,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -1990,6 +2010,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -2027,6 +2048,7 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -2062,6 +2084,7 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -2069,20 +2092,24 @@
 		5F2211692894A90500C5B190 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R63EM248DP;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
 		5F22116A2894A90500C5B190 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R63EM248DP;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -2344,6 +2371,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 			};
@@ -2379,6 +2407,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 			};
@@ -2387,60 +2416,72 @@
 		5FF9DEEE28EE7C0D00D62DE1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R63EM248DP;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
 		5FF9DEEF28EE7C0D00D62DE1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R63EM248DP;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
 		5FF9DEF228EE7C2200D62DE1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R63EM248DP;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
 		5FF9DEF328EE7C2200D62DE1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R63EM248DP;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
 		5FF9DEF628EE7C3600D62DE1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R63EM248DP;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
 		5FF9DEF728EE7C3600D62DE1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R63EM248DP;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};

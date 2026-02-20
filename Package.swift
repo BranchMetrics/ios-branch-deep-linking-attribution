@@ -11,7 +11,7 @@ let package = Package(
     products: [
         .library(
             name: "BranchSDK",
-            targets: ["BranchSDK"]),
+            targets: ["BranchSDK", "BranchSwiftSDK"]),
     ],
     dependencies: [
     ],
@@ -37,5 +37,10 @@ let package = Package(
                 .linkedFramework("AdServices", .when(platforms: [.iOS]))
             ]
         ),
+        .target(
+            name: "BranchSwiftSDK",
+            dependencies: ["BranchSDK"],
+            path: "Sources/BranchSDK_Swift"
+        )
     ]
 )
