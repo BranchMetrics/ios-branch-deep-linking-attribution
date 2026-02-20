@@ -8,7 +8,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install pod, build project and run tests
         run: |
             mkdir -p test-results
@@ -38,7 +38,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Create Cart File, run carthage command, build project and run tests
         env:
             BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
@@ -71,7 +71,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: build project and run tests
         run: |
             mkdir -p test-results
@@ -99,7 +99,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: build xcframework, then build project and run tests
         run: |
             mkdir -p test-results
@@ -128,7 +128,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: build static xcframework, then build project and run tests
         run: |
             mkdir -p test-results
@@ -157,7 +157,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install pod, build project and run tests
         run: |
             mkdir -p test-results
@@ -177,7 +177,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Verify Integration using Carthage for tvOS
         run: |
             mkdir -p test-results
@@ -190,7 +190,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: build xcframework, then build project and run tests
         run: |
             mkdir -p test-results
