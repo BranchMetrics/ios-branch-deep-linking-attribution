@@ -34,4 +34,8 @@ typedef void (^BNCServerCallback)(BNCServerResponse *response, NSError *error);
               retryHandler:(NSURLRequest *(^)(NSInteger))retryHandler;
 
 @property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
+
+/// Updates the network service timeout and invalidates any cached session
+- (void)updateNetworkServiceTimeout:(NSTimeInterval)timeout;
+
 @end
