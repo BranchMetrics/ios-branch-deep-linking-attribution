@@ -35,6 +35,36 @@
     }];
 }
 
+- (void)initSessionWithSceneOptions:(nullable UISceneConnectionOptions *)connectionOptions scene:(UIScene *)scene
+             registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback {
+    
+    NSMutableDictionary *launchOptions = [[NSMutableDictionary alloc] init];
+    
+    if (connectionOptions.userActivities.count ) {
+        launchOptions[UIApplicationLaunchOptionsUserActivityDictionaryKey] = connectionOptions.userActivities.allObjects ;
+    }
+    
+    if (connectionOptions.URLContexts.count ) {
+        launchOptions[UIApplicationLaunchOptionsURLKey] = connectionOptions.URLContexts.allObjects ;
+    }
+
+    [[Branch getInstance] initSceneSessionWithLaunchOptions:launchOptions sceneIdentifier:scene.session.persistentIdentifier isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
+        if (callback) {
+            if (initResponse) {
+                callback(initResponse.params, error, [self sceneForIdentifier:initResponse.sceneIdentifier]);
+            } else {
+                callback([NSDictionary new], error, [self sceneForIdentifier:initResponse.sceneIdentifier]);
+            }
+        }
+    }];
+    
+    if (connectionOptions.userActivities.count) {
+        [self scene:scene continueUserActivity:connectionOptions.userActivities.allObjects.firstObject];
+    } else if (connectionOptions.URLContexts.count) {
+        [self scene:scene openURLContexts:connectionOptions.URLContexts];
+    }
+}
+
 - (void)scene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity NS_EXTENSION_UNAVAILABLE("BranchScene does not support Extensions") {
     [[BranchLogger shared] logVerbose:@"BranchScene continueUserActivity" error:nil];
 
