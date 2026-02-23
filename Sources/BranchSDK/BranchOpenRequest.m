@@ -104,7 +104,7 @@
     
     preferenceHelper.previousAppBuildDate = [BNCApplication currentApplication].currentBuildDate;
 
-    NSString *sessionData = [self sessionDataFromResponseData:data];
+    NSString *sessionData = [self sessionDataFromResponseData:data error:error];
 
     preferenceHelper.sessionParams = sessionData;
 
@@ -141,9 +141,9 @@
         [[BNCAppGroupsData shared] saveAppClipData];
     }
 
-    [self handleSKANWithResponseData:data];
-
     [BranchOpenRequest releaseOpenResponseLock];
+
+    [self handleSKANWithResponseData:data];
 
     NSDictionary *invokeFeatures = data[BRANCH_RESPONSE_KEY_INVOKE_FEATURES];
     if (invokeFeatures) {
@@ -167,6 +167,9 @@
 }
 
 - (NSString *)randomizedDeviceTokenFromResponseData:(NSDictionary *)data {
+    if (![data objectForKey:BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN]) {
+        return nil;
+    }
     NSString *token = data[BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN];
     if (!token) {
         // fallback to deprecated name. Fingerprinting was removed long ago, hence the name change.
@@ -181,7 +184,7 @@
     return BNCStringFromWireFormat(userIdentity);
 }
 
-- (NSString *)sessionDataFromResponseData:(NSDictionary *)data {
+- (NSString *)sessionDataFromResponseData:(NSDictionary *)data error:(NSError *)error {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
 
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
@@ -195,7 +198,7 @@
         [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Received session data of type '%@' data is '%@'.", NSStringFromClass(sessionData.class), sessionData] error:nil];
         sessionData = [BNCEncodingUtils encodeArrayToJsonString:(NSArray*)sessionData];
     } else {
-        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Received session data of type '%@' data is '%@'.", NSStringFromClass(sessionData.class), sessionData] error:nil];
+        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Received session data of type '%@' data is '%@'.", NSStringFromClass(sessionData.class), sessionData] error:error];
         sessionData = nil;
     }
 
