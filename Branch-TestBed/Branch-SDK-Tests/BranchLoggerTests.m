@@ -8,7 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "BranchLogger.h"
-#import "Branch.h"
+@import BranchSDK;
 
 @interface BranchLoggerTests : XCTestCase
 
