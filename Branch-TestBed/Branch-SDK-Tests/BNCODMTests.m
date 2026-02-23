@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "Branch.h"
+@import BranchSDK;
 #import "BNCPreferenceHelper.h"
 #import "BNCRequestFactory.h"
 #import "BNCEncodingUtils.h"

@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "Branch.h"
+@import BranchSDK;
 #import "NSError+Branch.h"
 
 // expose private methods used by tests

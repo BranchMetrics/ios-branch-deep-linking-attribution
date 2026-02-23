@@ -10,9 +10,7 @@
 #import "LogOutputViewController.h"
 #import "NavigationController.h"
 #import "ViewController.h"
-#import "Branch.h"
-#import "BNCEncodingUtils.h"
-#import "BranchEvent.h"
+@import BranchSDK;
 
 AppDelegate* appDelegate = nil;
 void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSString*_Nullable message);
@@ -71,7 +69,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     //[branch addFacebookPartnerParameterWithName:@"em" value:@"11234e56af071e9c79927651156bd7a10bca8ac34672aba121056e2698ee7088"];
     
     [branch checkPasteboardOnInstall];
-    
+
+
     /*
      *    Required: Initialize Branch, passing a deep link handler block:
      */
