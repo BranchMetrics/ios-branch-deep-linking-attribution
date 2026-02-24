@@ -45,24 +45,30 @@ final class tvOSReleaseTestTests: XCTestCase {
     func testInitSessionAndSetCPPLevel() throws {
         print("[Test] Starting testInitSessionAndSetCPPLevel")
 
+        Branch.enableLogging(at: .verbose, withCallback: { message, logLevel, error in
+            print(message)
+            if let error = error {
+                print(error)
+            }
+        })
         let expectation = expectation(description: "InitSession should complete.")
-
-        let sdk = BranchSDKTest(){  params, error in
-            print(params as? [String: AnyObject] ?? {})
+        Branch.getInstance().setConsumerProtectionAttributionLevel(BranchAttributionLevel.none)
+        Branch.getInstance().setConsumerProtectionAttributionLevel(BranchAttributionLevel.full, resetSession:false)
+        let sdk = BranchSDKTest() { params, error in
+            print(params as? [String: AnyObject] ?? [:])
+            print("InitSession callback called.")
             expectation.fulfill()
         }
+        
+        waitForExpectations(timeout: 30, handler: nil)
+        
         print("Setting CPP Level to none.")
         sdk.setCPPLevel(status: BranchAttributionLevel.none)
         
         let cppLevel = BNCPreferenceHelper.sharedInstance().attributionLevel
-        print("[Test] CPP Level: \(String(describing: cppLevel))")
+        XCTAssertNotNil(cppLevel, "CPP level should not be nil")
+        XCTAssertEqual(cppLevel as? String, BranchAttributionLevel.none.rawValue, "CPP level should be none")
         
-        XCTAssertTrue(cppLevel!.isEqual(to: BranchAttributionLevel.none.rawValue) , "Tracking should be disabled (true)")
-        
-        print("[Test] Disabling tracking again...")
-        sdk.setCPPLevel(status: BranchAttributionLevel.full)
-        
-        waitForExpectations(timeout: 180, handler: nil)
         print("[Test] testInitSessionAndSetCPPLevel completed")
     }
 
