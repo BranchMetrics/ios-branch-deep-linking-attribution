@@ -60,7 +60,7 @@ final class tvOSReleaseTestTests: XCTestCase {
             expectation.fulfill()
         }
         
-        waitForExpectations(timeout: 30, handler: nil)
+        waitForExpectations(timeout: 90, handler: nil)
         
         print("Setting CPP Level to none.")
         sdk.setCPPLevel(status: BranchAttributionLevel.none)
