@@ -13,13 +13,9 @@
 #import "NSError+Branch.h"
 #import "BNCCallbackMap.h"
 
-static const NSInteger kBNCMaxRetryCount = 3;
-static const NSTimeInterval kBNCRetryDelay = 1.0;
-
 @interface BNCServerRequestOperation ()
 @property (nonatomic, assign, readwrite, getter = isExecuting) BOOL executing;
 @property (nonatomic, assign, readwrite, getter = isFinished) BOOL finished;
-@property (nonatomic, assign) NSInteger retryCount;
 @end
 
 @implementation BNCServerRequestOperation {
@@ -102,10 +98,10 @@ static const NSTimeInterval kBNCRetryDelay = 1.0;
         [BranchOpenRequest setWaitNeededForOpenResponseLock];
     }
 
-    [self executeWithRetry];
+    [self executeRequest];
 }
 
-- (void)executeWithRetry {
+- (void)executeRequest {
     [self.request makeRequest:self.serverInterface
                           key:self.branchKey
                      callback:^(BNCServerResponse *response, NSError *error) {
@@ -114,52 +110,14 @@ static const NSTimeInterval kBNCRetryDelay = 1.0;
             return;
         }
 
-        if ([self shouldProcessWithoutRetry:error]) {
-            BNCPerformBlockOnMainThreadSync(^{
-                [self.request processResponse:response error:error];
-                if ([self.request isKindOfClass:[BranchEventRequest class]]) {
-                    [[BNCCallbackMap shared] callCompletionForRequest:self.request withSuccessStatus:(error == nil) error:error];
-                }
-            });
-            [self finishOperation];
-        } else if (self.retryCount < kBNCMaxRetryCount) {
-            self.retryCount++;
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Scheduling retry %ld/%ld for request: %@", (long)self.retryCount, (long)kBNCMaxRetryCount, self.request.requestUUID] error:nil];
-            __weak typeof(self) weakSelf = self;
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kBNCRetryDelay * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                __strong typeof(weakSelf) strongSelf = weakSelf;
-                if (!strongSelf) return;
-                if (strongSelf.isCancelled) {
-                    [strongSelf finishOperation];
-                    return;
-                }
-                [strongSelf executeWithRetry];
-            });
-            // Do not call finishOperation — keep executing = YES so dependents remain blocked.
-        } else {
-            BNCPerformBlockOnMainThreadSync(^{
-                [self.request processResponse:response error:error];
-                if ([self.request isKindOfClass:[BranchEventRequest class]]) {
-                    [[BNCCallbackMap shared] callCompletionForRequest:self.request withSuccessStatus:NO error:error];
-                }
-            });
-            [self finishOperation];
-        }
+        BNCPerformBlockOnMainThreadSync(^{
+            [self.request processResponse:response error:error];
+            if ([self.request isKindOfClass:[BranchEventRequest class]]) {
+                [[BNCCallbackMap shared] callCompletionForRequest:self.request withSuccessStatus:(error == nil) error:error];
+            }
+        });
+        [self finishOperation];
     }];
-}
-
-- (BOOL)shouldProcessWithoutRetry:(NSError *)error {
-    if (!error) return YES;
-
-    NSInteger code = error.code;
-    if (code == BNCTrackingDisabledError || code == BNCBadRequestError || code == BNCDuplicateResourceError) {
-        return YES;
-    }
-    // HTTP client errors (4xx mapped to 100-499 range) are not retryable
-    if (code >= 100 && code <= 499) {
-        return YES;
-    }
-    return NO;
 }
 
 - (void)finishOperation {
