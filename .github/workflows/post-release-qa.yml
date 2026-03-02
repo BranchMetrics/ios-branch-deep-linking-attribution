@@ -28,7 +28,7 @@ jobs:
             -resultBundlePath ../../test-results/ios-cocoapods.xcresult \
             clean test 
       - name: Upload test report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-report-cocoapods-iOS
@@ -57,7 +57,7 @@ jobs:
             -resultBundlePath ../../test-results/ios-carthage.xcresult \
             clean test
       - name: Upload test report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-report-carthage-iOS
@@ -86,7 +86,7 @@ jobs:
             -resultBundlePath ../../test-results/ios-spm.xcresult \
             clean test
       - name: Upload test report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-report-spm-iOS
@@ -106,7 +106,7 @@ jobs:
             pod install
             xcodebuild test -scheme tvOSReleaseTest -workspace tvOSReleaseTest.xcworkspace -destination "$DESTINATION" -resultBundlePath ../../test-results/tvOS-cocoapods.xcresult
       - name: Upload test report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-report-cocoapods-tvOS
