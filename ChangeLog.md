@@ -1,5 +1,20 @@
 Branch iOS SDK Change Log
 
+v.4.0.0-alpha.0
+- Removed silent SDK initialization - initSafetyCheck removed.Now following APIs will return or log BNCInitError error.
+    * logEvent 
+    * lastAttributedTouchData
+    * getSpotlightUrl
+    * generateShortUrl
+    * registerView  
+- Added API  `(void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level resetSession:(BOOL)resetSession` to enable/disable restting of session when attribution level is changed from `none` to other level.
+- Added NSOperation-based network request processing replacing the old manual array-and-semaphore request queue.
+- Refactoring of BranchOpenRequest and BranchEvent classes.
+- New Init Session API for Scene Based Apps -
+    * - (void)initSessionWithSceneOptions:(nullable UISceneConnectionOptions *)options scene:(UIScene *)scene registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback;
+    * Deprecated API  -  (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options  registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback __attribute__((deprecated(("Use `initSessionWithSceneOptions:scene:registerDeepLinkHandler:` instead."))));
+- SPM Repo Cleanup - Removed all Extra files
+
 v.3.14.0
 — Added APIs `disableNextForegroundForTimeInterval:`, `disableNextForeground` and `resumeSession` to disable and resume automatic tracking of `OPEN` events. These are experimental APIs. Please refer to warning message in API documentation/comments.
 
