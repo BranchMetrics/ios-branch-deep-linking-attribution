@@ -8,6 +8,8 @@
 
 #import "BNCServerRequest.h"
 @class BranchOpenRequest;
+@class BNCRequestOpen;
+@class BNCRequestDeepLink;
 
 @interface BNCServerRequestQueue : NSObject
 
@@ -24,6 +26,8 @@
 - (BOOL)containsInstallOrOpen;
 
 - (BranchOpenRequest *)findExistingInstallOrOpen;
+- (BNCRequestOpen *)findExistingInstallOrOpenNewRoutes;
+- (BNCRequestDeepLink *)findExistingInstallOrOpenNewRoutesDeepLink;
 
 + (id)getInstance;
 @end

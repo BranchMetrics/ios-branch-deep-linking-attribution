@@ -46,6 +46,9 @@
 #import "BranchPluginSupport.h"
 #import "BranchLogger.h"
 #import "BranchConfigurationController.h"
+#import "BNCRequestDeepLink.h"
+#import "BNCRequestOpen.h"
+#import "BNCRequestInstall.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
@@ -2111,6 +2114,69 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
+- (void)processNextQueueItemNewRoutes {
+    dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
+    
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Processing next queue item. Network Count: %ld. Queue depth: %ld", (long)self.networkCount, (long)self.requestQueue.queueDepth] error:nil];
+   
+    if (self.networkCount == 0 &&
+        self.requestQueue.queueDepth > 0) {
+
+        self.networkCount = 1;
+        dispatch_semaphore_signal(self.processing_sema);
+        BNCServerRequest *req = [self.requestQueue peek];
+        
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Processing %@", req]error:nil];
+
+        if (req) {
+
+            // If tracking is disabled, then do not check for install event. It won't exist.
+            if (![[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelNone]) {
+                if (![req isKindOfClass:[BranchInstallRequest class]] && !self.preferenceHelper.randomizedBundleToken) {
+                    [[BranchLogger shared] logError:@"User session has not been initialized!" error:nil];
+                    self.networkCount = 0;
+                    BNCPerformBlockOnMainThreadSync(^{
+                        [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
+                    });
+                    return;
+
+                } else if (![req isKindOfClass:[BranchOpenRequest class]] &&
+                    (!self.preferenceHelper.randomizedDeviceToken || !self.preferenceHelper.sessionID)) {
+                    [[BranchLogger shared] logError:@"Missing session items!" error:nil];
+                    self.networkCount = 0;
+                    BNCPerformBlockOnMainThreadSync(^{
+                        [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
+                    });
+                    return;
+                }
+            } else {
+                if ([req isKindOfClass:[BNCRequestDeepLink class]]) {
+                    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+                    dispatch_async(queue, ^ {
+                        [req makeRequest:self.serverInterface key:self.class.branchKey callback:
+                            ^(BNCServerResponse* response, NSError* error) {
+                                [self processRequest:req response:response error:error];
+                        }];
+                    });
+                }
+                
+                return;
+            }
+            
+            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+            dispatch_async(queue, ^ {
+                [req makeRequest:self.serverInterface key:self.class.branchKey callback:
+                    ^(BNCServerResponse* response, NSError* error) {
+                        [self processRequest:req response:response error:error];
+                }];
+            });
+        }
+    }
+    else {
+        dispatch_semaphore_signal(self.processing_sema);
+    }
+}
+
 - (void)clearNetworkQueue {
     dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
     self.networkCount = 0;
@@ -2278,6 +2344,100 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
+// only called from initUserSessionAndCallCallback!
+- (void)initializeSessionAndCallCallbackNewRoutes:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString {
+
+    // BranchDelegate willStartSessionWithURL notification
+    NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;
+    if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)]) {
+        [self.delegate branch:self willStartSessionWithURL:URL];
+    }
+
+    // BranchWilLStartSession NSNotification
+    NSMutableDictionary *userInfo = [NSMutableDictionary new];
+    userInfo[BranchURLKey] = URL;
+    [[NSNotificationCenter defaultCenter] postNotificationName:BranchWillStartSessionNotification object:self userInfo:userInfo];
+    
+    // Prepare callback block
+    callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
+        // callback on main, this is generally what the client expects and maintains our previous behavior
+        dispatch_async(dispatch_get_main_queue(), ^ {
+            if (error) {
+                [self handleInitFailure:error callCallback:callCallback sceneIdentifier:(NSString *)sceneIdentifier];
+            } else {
+                [self handleInitSuccessAndCallCallback:callCallback sceneIdentifier:(NSString *)sceneIdentifier];
+            }
+        });
+    };
+
+    @synchronized (self) {
+        dispatch_async(self.isolationQueue, ^(){
+            [BNCRequestOpen setWaitNeededForOpenResponseLock];
+            BNCRequestOpen *reqOpen = [self.requestQueue findExistingInstallOrOpenNewRoutes];
+            BNCRequestDeepLink *reqDeepLink = [self.requestQueue findExistingInstallOrOpenNewRoutesDeepLink];
+            
+            // nothing on queue, we need an new install or open. This may have link data
+            if (!reqOpen) {
+                if (self.preferenceHelper.randomizedBundleToken) {
+                    reqDeepLink = [[BNCRequestDeepLink alloc] initWithCallback:initSessionCallback];
+                    reqOpen = [[BNCRequestOpen alloc] initWithCallback:initSessionCallback];
+                } else {
+                    reqDeepLink = [[BNCRequestDeepLink alloc] initWithCallback:initSessionCallback];
+                    reqOpen = [[BNCRequestInstall alloc] initWithCallback:initSessionCallback];
+                }
+                
+                reqOpen.callback = initSessionCallback;
+                reqOpen.urlString = urlString;
+                reqOpen.traceCallback = bnc_tracingCallback;
+                
+                [self.requestQueue insert:reqOpen at:0];
+                
+                NSString *message = [NSString stringWithFormat:@"Request %@ callback %@ link %@", reqOpen, reqOpen.callback, reqOpen.urlString];
+                [[BranchLogger shared] logDebug:message error:nil];
+                
+                reqDeepLink.callback = initSessionCallback;
+                reqDeepLink.urlString = urlString;
+                reqDeepLink.traceCallback = bnc_tracingCallback;
+                
+                [self.requestQueue insert:reqDeepLink at:0];
+                
+                message = [NSString stringWithFormat:@"Request %@ callback %@ link %@", reqDeepLink, reqDeepLink.callback, reqDeepLink.urlString];
+                [[BranchLogger shared] logDebug:message error:nil];
+
+            } else {
+                
+                // new link arrival but an install or open is already on queue? need a new open for link resolution.
+                if (urlString) {
+                    reqOpen = [[BNCRequestOpen alloc] initWithCallback:initSessionCallback];
+                    reqOpen.callback = initSessionCallback;
+                    reqOpen.urlString = urlString;
+                    
+                    // put it behind the one that's already on queue
+                    [self.requestQueue insert:reqOpen at:1];
+                    
+                    [[BranchLogger shared] logDebug:@"Link resolution request" error:nil];
+                    NSString *message = [NSString stringWithFormat:@"Request %@ callback %@ link %@", reqOpen, reqOpen.callback, reqOpen.urlString];
+                    [[BranchLogger shared] logDebug:message error:nil];
+                    
+                    reqDeepLink = [[BNCRequestDeepLink alloc] initWithCallback:initSessionCallback];
+                    reqDeepLink.callback = initSessionCallback;
+                    reqDeepLink.urlString = urlString;
+                    
+                    [self.requestQueue insert:reqDeepLink at:1];
+
+                    [[BranchLogger shared] logDebug:@"Link resolution request" error:nil];
+                    message = [NSString stringWithFormat:@"Request %@ callback %@ link %@", reqDeepLink, reqDeepLink.callback, reqDeepLink.urlString];
+                    [[BranchLogger shared] logDebug:message error:nil];
+                }
+            }
+            
+            self.initializationStatus = BNCInitStatusInitializing;
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
+
+            [self processNextQueueItemNewRoutes];
+        });
+    }
+}
 
 - (void)handleInitSuccessAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
 

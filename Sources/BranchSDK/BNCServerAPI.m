@@ -68,6 +68,14 @@
     return [[self getBaseURLForLinkingEndpoints:NO] stringByAppendingString: @"/v1/app-link-settings"];
 }
 
+- (NSString *)eventsOpenServiceURL {
+    return [[self getBaseURL] stringByAppendingString: @"/v3/events/open"];
+}
+
+- (NSString *)deepLinkServiceURL {
+    return [[self getBaseURL] stringByAppendingString: @"/v3/deeplink"];
+}
+
 // Currently we switch to tracking domains if we detect IDFA, indicating that Ad Tracking is enabled
 - (BOOL)optedIntoIDFA {
     NSString* optedInStatus = [BNCSystemObserver attOptedInStatus];

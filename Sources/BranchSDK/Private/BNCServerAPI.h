@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)installServiceURL;
 - (NSString *)openServiceURL;
+- (NSString *)eventsOpenServiceURL;
+- (NSString *)deepLinkServiceURL;
 - (NSString *)standardEventServiceURL;
 - (NSString *)customEventServiceURL;
 - (NSString *)linkServiceURL;

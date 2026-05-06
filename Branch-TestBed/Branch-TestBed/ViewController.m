@@ -906,6 +906,20 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     [bsl presentActivityViewControllerFromViewController:self anchor:nil];
 }
 
+// MARK: - New Routes Actions
+
+- (IBAction)simulateRealOpenTouchUpInside:(id)sender {
+    NSLog(@"Simulate Real Open button working.");
+}
+
+- (IBAction)sendDeepLinkToNewRouteTouchUpInside:(id)sender {
+    NSLog(@"Send Deep Link to New Route Button Working");
+}
+
+- (IBAction)sendOpenToNewRouteTouchUpInside:(id)sender {
+    NSLog(@"Send Open to New Route Button Working.");
+}
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 50;
 }

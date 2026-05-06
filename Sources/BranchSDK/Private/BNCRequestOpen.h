@@ -6,16 +6,24 @@
 //  Copyright © 2026 Branch Metrics. All rights reserved.
 //
 
-#import "BranchLogger.h"
+#import "BNCServerRequest.h"
+#import "BNCCallbacks.h"
 
-@protocol BranchReferralInitListener;
-@class Context;
+@interface BNCRequestOpen : BNCServerRequest
 
-@interface BNCRequestOpen : ServerRequestInitSession
+// URL that triggered this install or open event
+@property (nonatomic, copy, readwrite) NSString *urlString;
+@property (assign, nonatomic) BOOL isFromArchivedQueue;
+@property (nonatomic, copy) callbackWithStatus callback;
+@property (nonatomic, copy) callbackForTracingRequests traceCallback;
+@property (strong, nonatomic) NSDictionary *requestParams;
+@property (nonatomic, copy, readwrite) NSString *requestServiceURL;
 
-@property (nonatomic, strong) id<BranchReferralInitListener> callback;
-@property (nonatomic, assign) BOOL constructError;
++ (void) waitForOpenResponseLock;
++ (void) releaseOpenResponseLock;
++ (void) setWaitNeededForOpenResponseLock;
 
-- (instancetype)initWithContext:(Context *)context callback:(id<BranchReferralInitListener>)callback isAutoInitialization:(BOOL)isAutoInitialization;
+- (id)initWithCallback:(callbackWithStatus)callback;
+- (id)initWithCallback:(callbackWithStatus)callback isInstall:(BOOL)isInstall;
 
 @end

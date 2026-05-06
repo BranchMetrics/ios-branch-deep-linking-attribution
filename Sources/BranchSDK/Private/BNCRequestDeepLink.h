@@ -6,8 +6,24 @@
 //  Copyright © 2026 Branch Metrics. All rights reserved.
 //
 
-#import "BranchLogger.h"
+#import "BNCServerRequest.h"
+#import "BNCCallbacks.h"
 
-@implementation BNCRequestDeepLink
+@interface BNCRequestDeepLink : BNCServerRequest
+
+// URL that triggered this install or open event
+@property (nonatomic, copy, readwrite) NSString *urlString;
+@property (assign, nonatomic) BOOL isFromArchivedQueue;
+@property (nonatomic, copy) callbackWithStatus callback;
+@property (nonatomic, copy) callbackForTracingRequests traceCallback;
+@property (strong, nonatomic) NSDictionary *requestParams;
+@property (nonatomic, copy, readwrite) NSString *requestServiceURL;
+
++ (void) waitForOpenResponseLock;
++ (void) releaseOpenResponseLock;
++ (void) setWaitNeededForOpenResponseLock;
+
+- (id)initWithCallback:(callbackWithStatus)callback;
+- (id)initWithCallback:(callbackWithStatus)callback isInstall:(BOOL)isInstall;
 
 @end

@@ -14,6 +14,8 @@
 #import "BranchInstallRequest.h"
 #import "BranchOpenRequest.h"
 #import "BranchEvent.h"
+#import "BNCRequestOpen.h"
+#import "BNCRequestDeepLink.h"
 
 #import "BranchLogger.h"
 
@@ -140,6 +142,36 @@
             // Request should not be the one added from archived queue
             if ([request isKindOfClass:[BranchOpenRequest class]] && !((BranchOpenRequest *)request).isFromArchivedQueue) {
                 return (BranchOpenRequest *)request;
+            }
+        }
+        return nil;
+    }
+}
+
+- (BNCRequestOpen *)findExistingInstallOrOpenNewRoutes {
+    @synchronized (self) {
+        for (NSUInteger i = 0; i < self.queue.count; i++) {
+            BNCServerRequest *request = [self.queue objectAtIndex:i];
+
+            // Install subclasses open, so only need to check open
+            // Request should not be the one added from archived queue
+            if ([request isKindOfClass:[BNCRequestOpen class]] && !((BNCRequestOpen *)request).isFromArchivedQueue) {
+                return (BNCRequestOpen *)request;
+            }
+        }
+        return nil;
+    }
+}
+
+- (BNCRequestDeepLink *)findExistingInstallOrOpenNewRoutesDeepLink {
+    @synchronized (self) {
+        for (NSUInteger i = 0; i < self.queue.count; i++) {
+            BNCServerRequest *request = [self.queue objectAtIndex:i];
+
+            // Install subclasses open, so only need to check open
+            // Request should not be the one added from archived queue
+            if ([request isKindOfClass:[BNCRequestDeepLink class]] && !((BNCRequestDeepLink *)request).isFromArchivedQueue) {
+                return (BNCRequestDeepLink *)request;
             }
         }
         return nil;
