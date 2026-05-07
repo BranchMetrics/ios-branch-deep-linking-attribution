@@ -99,13 +99,6 @@
 			remoteGlobalIDString = 6700165F1940F51400A9E103;
 			remoteInfo = "Branch-TestBed";
 		};
-		F1D4F9B11F323F01002D13FF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 670016581940F51400A9E103 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6700165F1940F51400A9E103;
-			remoteInfo = "Branch-TestBed";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -223,7 +216,6 @@
 		E7AC74762DB06B42002D8C40 /* Reflection_ODM_Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Reflection_ODM_Tests.xctestplan; sourceTree = "<group>"; };
 		E7AC747D2DB07145002D8C40 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		E7AE4A082DFB2C4400696805 /* BranchConfigurationControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchConfigurationControllerTests.m; sourceTree = "<group>"; };
-		F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-TestBed-UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -270,13 +262,6 @@
 				E7AC747E2DB0714B002D8C40 /* libc++.tbd in Frameworks */,
 				E7AC747B2DB0700D002D8C40 /* BranchSDK in Frameworks */,
 				E732827F2E5F7D92005CACC8 /* GoogleAdsOnDeviceConversion in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F1D4F9A91F323F01002D13FF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -380,7 +365,6 @@
 			children = (
 				670016601940F51400A9E103 /* Branch-TestBed.app */,
 				7E6B3B511AA42D0E005F45BF /* Branch-SDK-Tests.xctest */,
-				F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */,
 				5F8B7B3B21B5F5CD009CE0A6 /* Branch-SDK-Unhosted-Tests.xctest */,
 				E7AC74602DB064BC002D8C40 /* Reflection_ODM_Tests.xctest */,
 			);
@@ -531,24 +515,6 @@
 			productReference = E7AC74602DB064BC002D8C40 /* Reflection_ODM_Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		F1D4F9AB1F323F01002D13FF /* Branch-TestBed-UITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F1D4F9B51F323F01002D13FF /* Build configuration list for PBXNativeTarget "Branch-TestBed-UITests" */;
-			buildPhases = (
-				F1D4F9A81F323F01002D13FF /* Sources */,
-				F1D4F9A91F323F01002D13FF /* Frameworks */,
-				F1D4F9AA1F323F01002D13FF /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				F1D4F9B21F323F01002D13FF /* PBXTargetDependency */,
-			);
-			name = "Branch-TestBed-UITests";
-			productName = "Branch-TestBedUITests";
-			productReference = F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -587,12 +553,6 @@
 						CreatedOnToolsVersion = 16.2;
 						TestTargetID = 6700165F1940F51400A9E103;
 					};
-					F1D4F9AB1F323F01002D13FF = {
-						CreatedOnToolsVersion = 8.3.1;
-						DevelopmentTeam = R63EM248DP;
-						ProvisioningStyle = Automatic;
-						TestTargetID = 6700165F1940F51400A9E103;
-					};
 				};
 			};
 			buildConfigurationList = 6700165B1940F51400A9E103 /* Build configuration list for PBXProject "Branch-TestBed" */;
@@ -615,7 +575,6 @@
 				6700165F1940F51400A9E103 /* Branch-TestBed */,
 				7E6B3B501AA42D0E005F45BF /* Branch-SDK-Tests */,
 				5F8B7B3A21B5F5CD009CE0A6 /* Branch-SDK-Unhosted-Tests */,
-				F1D4F9AB1F323F01002D13FF /* Branch-TestBed-UITests */,
 				E7AC745F2DB064BC002D8C40 /* Reflection_ODM_Tests */,
 			);
 		};
@@ -654,13 +613,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		E7AC745E2DB064BC002D8C40 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F1D4F9AA1F323F01002D13FF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -769,13 +721,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F1D4F9A81F323F01002D13FF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -788,11 +733,6 @@
 			isa = PBXTargetDependency;
 			target = 6700165F1940F51400A9E103 /* Branch-TestBed */;
 			targetProxy = E73282812E5F81C9005CACC8 /* PBXContainerItemProxy */;
-		};
-		F1D4F9B21F323F01002D13FF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6700165F1940F51400A9E103 /* Branch-TestBed */;
-			targetProxy = F1D4F9B11F323F01002D13FF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -819,6 +759,10 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = R63EM248DP;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../Sources/BranchSDK/Private",
+				);
 				INFOPLIST_FILE = "Branch-SDK-Unhosted-Tests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -846,6 +790,10 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = R63EM248DP;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../Sources/BranchSDK/Private",
+				);
 				INFOPLIST_FILE = "Branch-SDK-Unhosted-Tests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -992,6 +940,10 @@
 				DEVELOPMENT_TEAM = R63EM248DP;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Branch-TestBed/Branch-TestBed-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../Sources/BranchSDK/Private",
+				);
 				INFOPLIST_FILE = "Branch-TestBed/Branch-TestBed-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
@@ -1014,6 +966,10 @@
 				DEVELOPMENT_TEAM = R63EM248DP;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Branch-TestBed/Branch-TestBed-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../Sources/BranchSDK/Private",
+				);
 				INFOPLIST_FILE = "Branch-TestBed/Branch-TestBed-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
@@ -1099,6 +1055,10 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../Sources/BranchSDK/Private",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
@@ -1130,6 +1090,10 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../Sources/BranchSDK/Private",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
@@ -1141,53 +1105,6 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Branch-TestBed.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Branch-TestBed";
-			};
-			name = Release;
-		};
-		F1D4F9B31F323F01002D13FF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = R63EM248DP;
-				INFOPLIST_FILE = "Branch-TestBed-UITests/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_TARGET_NAME = "Branch-TestBed";
-			};
-			name = Debug;
-		};
-		F1D4F9B41F323F01002D13FF /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = R63EM248DP;
-				INFOPLIST_FILE = "Branch-TestBed-UITests/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_TARGET_NAME = "Branch-TestBed";
 			};
 			name = Release;
 		};
@@ -1235,15 +1152,6 @@
 			buildConfigurations = (
 				E7AC74682DB064BC002D8C40 /* Debug */,
 				E7AC74692DB064BC002D8C40 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		F1D4F9B51F323F01002D13FF /* Build configuration list for PBXNativeTarget "Branch-TestBed-UITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F1D4F9B31F323F01002D13FF /* Debug */,
-				F1D4F9B41F323F01002D13FF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
