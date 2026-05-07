@@ -10,6 +10,7 @@
 #import <Foundation/Foundation.h>
 
 @class BranchOpenRequest;
+@class BranchRequestOpen;
 
 @interface BNCServerRequestQueue : NSObject
 
@@ -23,5 +24,6 @@
 - (void)clearQueue;
 - (BOOL)containsInstallOrOpen;
 - (BranchOpenRequest *)findExistingInstallOrOpen;
+- (BranchRequestOpen *)findExistingInstallOrOpenNewRoutes;
 
 @end

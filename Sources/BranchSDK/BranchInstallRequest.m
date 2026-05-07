@@ -21,6 +21,7 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
     NSDictionary *params = [factory dataForInstallWithURLString:self.urlString];
+    NSLog(@"Post Request sent for BranchInstallRequest");
 
     self.requestParams = [params copy];
     self.requestServiceURL = [[BNCServerAPI sharedInstance] installServiceURL];

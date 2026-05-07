@@ -15,7 +15,8 @@
 #import "BranchLogger.h"
 #import "Private/BNCServerRequestOperation.h"
 #import "Branch.h"
-
+#import "BranchRequestOpen.h"
+#import "BranchRequestDeepLink.h"
 
 
 @interface BNCServerRequestQueue ()
@@ -126,6 +127,23 @@
     return nil;
 }
 
+- (BranchRequestOpen *)findExistingInstallOrOpenNewRoutes {
+    for (NSOperation *op in self.operationQueue.operations) {
+        if ([op isKindOfClass:[BNCServerRequestOperation class]]) {
+            BNCServerRequestOperation *requestOp = (BNCServerRequestOperation *)op;
+            BNCServerRequest *request = requestOp.request;
+            if ([request isKindOfClass:[BranchRequestOpen class]]) {
+                BranchRequestOpen *openRequest = (BranchRequestOpen *)request;
+                return openRequest;
+            }
+            if ([request isKindOfClass:[BranchRequestDeepLink class]]) {
+                BranchRequestDeepLink *deepLinkRequest = (BranchRequestDeepLink *)request;
+                return deepLinkRequest;
+            }
+        }
+    }
+    return nil;
+}
 - (NSString *)description {
     NSMutableArray<NSString *> *requestUUIDs = [NSMutableArray array];
     for (NSOperation *op in self.operationQueue.operations) {

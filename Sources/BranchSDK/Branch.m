@@ -2220,8 +2220,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             
             NSLog(@"Set up init to call new routes");
             [BranchRequestOpen setWaitNeededForOpenResponseLock];
-            BranchRequestOpen *reqOpen = [self.requestQueue findExistingInstallOrOpen];
-            BranchRequestDeepLink *reqDeepLink = [self.requestQueue findExistingInstallOrOpen];
+            BranchRequestOpen *reqOpen = [self.requestQueue findExistingInstallOrOpenNewRoutes];
+            BranchRequestDeepLink *reqDeepLink = [self.requestQueue findExistingInstallOrOpenNewRoutes];
             
             // nothing on queue, we need an new install or open. This may have link data
             if (!reqOpen || !reqDeepLink) {
