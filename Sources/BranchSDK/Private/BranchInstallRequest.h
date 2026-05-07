@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-#import "BranchOpenRequest.h"
+#import "BranchRequestOpen.h"
 
-@interface BranchInstallRequest : BranchOpenRequest
+@interface BranchInstallRequest : BranchRequestOpen
 - (NSString *)getActionName;
 @end

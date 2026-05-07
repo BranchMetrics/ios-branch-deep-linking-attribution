@@ -52,6 +52,8 @@
     NSDictionary *params = [factory dataForOpenWithURLString:self.urlString];
     self.requestParams = [params copy];
     self.requestServiceURL = [[BNCServerAPI sharedInstance] openServiceURL];
+    NSLog(@"Post Request sent for BranchOpenRequest");
+    
     [serverInterface postRequest:params
         url: self.requestServiceURL
         key:key
