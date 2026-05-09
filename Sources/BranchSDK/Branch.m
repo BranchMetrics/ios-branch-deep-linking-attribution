@@ -2510,14 +2510,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     deepLinkReq.traceCallback = bnc_tracingCallback;
     
     [self.requestQueue enqueue:deepLinkReq withPriority:NSOperationQueuePriorityHigh];
-    
-    if (_preferenceHelper.attributionLevel != BranchAttributionLevelNone) {
-        NSLog(@"Also sending open event");
-        // TODO: Insert Branch data into send open call from get instance
-        [self sendOpen: [Branch getInstance]];
-    } else {
-        NSLog(@"No sendOpen event sent CPP Set to None");
-    }
 }
 
 - (void) sendOpen {
