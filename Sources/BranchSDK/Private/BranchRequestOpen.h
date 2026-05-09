@@ -17,6 +17,7 @@
 @property (nonatomic, copy) callbackForTracingRequests traceCallback;
 @property (strong, nonatomic) NSDictionary *requestParams;
 @property (nonatomic, copy, readwrite) NSString *requestServiceURL;
+@property (nonatomic, copy, readwrite, nullable) NSDictionary *linkData;
 
 + (void) waitForOpenResponseLock;
 + (void) releaseOpenResponseLock;

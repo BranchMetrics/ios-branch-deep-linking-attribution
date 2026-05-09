@@ -833,12 +833,37 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                </cells>
-                            </tableViewSection>
-                            <tableViewSection headerTitle="Splitting New Routes" id="TKi-r4-Fb5">
-                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="Fnk-6f-nvv">
+                                        <rect key="frame" x="16" y="1218" width="343" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Fnk-6f-nvv" id="67K-H2-Gix">
+                                            <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B08-Xj-VD3">
+                                                    <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="tracking"/>
+                                                    <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                    <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                    <state key="normal" title="Consumer Protection Preference" image="checkmark.shield" catalog="system">
+                                                        <color key="titleColor" systemColor="linkColor"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="changeConsumerProtectionAttributionLevel:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="1O2-0G-ODA"/>
+                                                        <action selector="goToPasteControlPressed:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="cBJ-Fu-bvO"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="bottom" secondItem="B08-Xj-VD3" secondAttribute="bottom" id="YxG-zE-Ozx"/>
+                                                <constraint firstItem="B08-Xj-VD3" firstAttribute="leading" secondItem="67K-H2-Gix" secondAttribute="leading" id="Z5t-WB-lQs"/>
+                                                <constraint firstItem="B08-Xj-VD3" firstAttribute="top" secondItem="67K-H2-Gix" secondAttribute="top" id="fBd-fg-VWa"/>
+                                                <constraint firstAttribute="trailing" secondItem="B08-Xj-VD3" secondAttribute="trailing" id="gzX-gY-T4Y"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="QxR-ER-AVt">
-                                        <rect key="frame" x="16" y="1274" width="343" height="44"/>
+                                        <rect key="frame" x="16" y="1262" width="343" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="QxR-ER-AVt" id="TeU-im-aLH">
                                             <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
@@ -848,11 +873,11 @@
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                    <state key="normal" title="Simulate Full Open" image="rainbow" catalog="system">
+                                                    <state key="normal" title="Request DeepLink" image="link" catalog="system">
                                                         <color key="titleColor" systemColor="linkColor"/>
                                                     </state>
                                                     <connections>
-                                                        <action selector="simulateFullOpenTouchUpInside:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="6G9-PK-v3v"/>
+                                                        <action selector="requestDeepLinkTouchUpInside:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="jlx-Cc-uA1"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
@@ -861,60 +886,6 @@
                                                 <constraint firstAttribute="bottom" secondItem="Lne-al-hhn" secondAttribute="bottom" id="eRj-ah-pWc"/>
                                                 <constraint firstItem="Lne-al-hhn" firstAttribute="top" secondItem="TeU-im-aLH" secondAttribute="top" id="gfa-4L-bKO"/>
                                                 <constraint firstAttribute="trailing" secondItem="Lne-al-hhn" secondAttribute="trailing" id="yal-Ct-PWq"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="sce-wI-NGl">
-                                        <rect key="frame" x="16" y="1318" width="343" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="sce-wI-NGl" id="6m4-mM-HTp">
-                                            <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uDD-V0-7n8">
-                                                    <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
-                                                    <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                    <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                    <state key="normal" title="Simulate DeepLink Success" image="paperplane" catalog="system">
-                                                        <color key="titleColor" systemColor="linkColor"/>
-                                                    </state>
-                                                    <connections>
-                                                        <action selector="simulateDeepLinkSuccessTouchUpInside:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="ZTP-sF-0P4"/>
-                                                    </connections>
-                                                </button>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstAttribute="bottom" secondItem="uDD-V0-7n8" secondAttribute="bottom" id="5Sc-AG-MWc"/>
-                                                <constraint firstAttribute="trailing" secondItem="uDD-V0-7n8" secondAttribute="trailing" id="AFf-4L-SO0"/>
-                                                <constraint firstItem="uDD-V0-7n8" firstAttribute="leading" secondItem="6m4-mM-HTp" secondAttribute="leading" id="FS2-hR-dAd"/>
-                                                <constraint firstItem="uDD-V0-7n8" firstAttribute="top" secondItem="6m4-mM-HTp" secondAttribute="top" id="Sp1-I8-PGD"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="ueN-SH-WRA">
-                                        <rect key="frame" x="16" y="1362" width="343" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ueN-SH-WRA" id="RyT-bF-Ac9">
-                                            <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2eg-7x-Yzc">
-                                                    <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
-                                                    <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                    <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                    <state key="normal" title="Simulate Open Success" image="paperplane.fill" catalog="system">
-                                                        <color key="titleColor" systemColor="linkColor"/>
-                                                    </state>
-                                                    <connections>
-                                                        <action selector="simulateOpenSuccessTouchUpInside:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="mVO-Q9-UKs"/>
-                                                    </connections>
-                                                </button>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstAttribute="bottom" secondItem="2eg-7x-Yzc" secondAttribute="bottom" id="2wJ-Eh-T4g"/>
-                                                <constraint firstItem="2eg-7x-Yzc" firstAttribute="top" secondItem="RyT-bF-Ac9" secondAttribute="top" id="caf-FP-ewv"/>
-                                                <constraint firstItem="2eg-7x-Yzc" firstAttribute="leading" secondItem="RyT-bF-Ac9" secondAttribute="leading" id="msH-cR-hpJ"/>
-                                                <constraint firstAttribute="trailing" secondItem="2eg-7x-Yzc" secondAttribute="trailing" id="tCp-HD-daC"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -971,12 +942,9 @@
         <image name="link" catalog="system" width="128" height="124"/>
         <image name="moonphase.first.quarter" catalog="system" width="128" height="123"/>
         <image name="moonphase.first.quarter.inverse" catalog="system" width="128" height="123"/>
-        <image name="paperplane" catalog="system" width="128" height="119"/>
-        <image name="paperplane.fill" catalog="system" width="128" height="119"/>
         <image name="person" catalog="system" width="128" height="121"/>
         <image name="photo.artframe" catalog="system" width="128" height="93"/>
         <image name="qrcode" catalog="system" width="128" height="114"/>
-        <image name="rainbow" catalog="system" width="128" height="71"/>
         <image name="rectangle.and.paperclip" catalog="system" width="128" height="106"/>
         <image name="rectangle.portrait.and.arrow.right" catalog="system" width="128" height="109"/>
         <image name="square.and.arrow.up" catalog="system" width="110" height="128"/>

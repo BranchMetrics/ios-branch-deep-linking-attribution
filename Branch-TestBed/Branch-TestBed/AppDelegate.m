@@ -81,13 +81,20 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     //[[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
     
-    [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandlerUsingBranchUniversalObject:
-     ^ (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) {
+    // Previous Branch InitSession calls
+    
+//    [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandlerUsingBranchUniversalObject:
+//     ^ (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) {
+//
+//        //[self setLogFile:nil];
+//        [self handleDeepLinkObject:universalObject linkProperties:linkProperties error:error];
+//    }];
+    
+    
+    [branch sendDeepLink:nil];
+    
 
-        //[self setLogFile:nil];
-        [self handleDeepLinkObject:universalObject linkProperties:linkProperties error:error];
-    }];
-
+    [branch sendOpen];
     
     BranchEvent *earlyEvent = [BranchEvent standardEvent:BNCAddToCartEvent];
     NSLog(@"Logging Early Event: %@", earlyEvent);

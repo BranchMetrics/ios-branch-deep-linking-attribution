@@ -901,16 +901,9 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     [bsl presentActivityViewControllerFromViewController:self anchor:nil];
 }
 
-- (IBAction)simulateFullOpenTouchUpInside:(id)sender {
-    NSLog(@"Simulate Real Open Success");
-}
-
-- (IBAction)simulateDeepLinkSuccessTouchUpInside:(id)sender {
-    NSLog(@"Simulate Deep Link Only Success");
-}
-
-- (IBAction)simulateOpenSuccessTouchUpInside:(id)sender {
-    NSLog(@"Simulate Open Only Success");
+- (IBAction)requestDeepLinkTouchUpInside:(id)sender {
+    NSLog(@"Branch TestBed: Requesting DeepLink.");
+    [[Branch getInstance] sendDeepLink:@"https://bnctestbed.app.link/QVJX0ZzIY2b"];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {

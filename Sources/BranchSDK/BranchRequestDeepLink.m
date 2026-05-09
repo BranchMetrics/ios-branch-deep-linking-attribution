@@ -52,7 +52,7 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
-    NSDictionary *params = [factory dataForOpenWithURLString:self.urlString];
+    NSDictionary *params = [factory dataForDeepLinkWithURLString:self.urlString];
     self.requestParams = [params copy];
     self.requestServiceURL = [self getRequestUrl];
     NSLog(@"Post Request sent for BranchRequestDeepLink");
@@ -267,6 +267,10 @@
 
     if (self.callback) {
         self.callback(YES, nil);
+    }
+    
+    if (preferenceHelper.attributionLevel != BranchAttributionLevelNone) {
+        [[Branch getInstance] sendOpen:response.data];
     }
 }
 

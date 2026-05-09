@@ -12,6 +12,8 @@
 #import "BranchLogger.h"
 #import "NSError+Branch.h"
 #import "BNCCallbackMap.h"
+#import "BranchRequestOpen.h"
+#import "BranchRequestDeepLink.h"
 
 @interface BNCServerRequestOperation ()
 @property (nonatomic, assign, readwrite, getter = isExecuting) BOOL executing;
@@ -72,7 +74,7 @@
 
     if ([self.request isKindOfClass:[BranchInstallRequest class]]) {
         // Install requests: no session validation needed
-    } else if ([self.request isKindOfClass:[BranchOpenRequest class]]) {
+    } else if ([self.request isKindOfClass:[BranchOpenRequest class]] || [self.request isKindOfClass:[BranchRequestOpen class]] || [self.request isKindOfClass:[BranchRequestDeepLink class]]) {
         if (!preferenceHelper.randomizedBundleToken) {
             [[BranchLogger shared] logError:[NSString stringWithFormat:@"User session not initialized (missing bundle token). Dropping request: %@", self.request.requestUUID] error:nil];
             BNCPerformBlockOnMainThreadSync(^{
@@ -96,6 +98,14 @@
 
     if ([self.request isKindOfClass:[BranchOpenRequest class]]) {
         [BranchOpenRequest setWaitNeededForOpenResponseLock];
+    }
+    
+    if ([self.request isKindOfClass:[BranchRequestDeepLink class]]) {
+        [BranchRequestDeepLink setWaitNeededForOpenResponseLock];
+    }
+    
+    if ([self.request isKindOfClass:[BranchRequestOpen class]]) {
+        [BranchRequestOpen setWaitNeededForOpenResponseLock];
     }
 
     [self executeRequest];

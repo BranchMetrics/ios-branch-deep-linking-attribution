@@ -52,7 +52,12 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
-    NSDictionary *params = [factory dataForOpenWithURLString:self.urlString];
+    NSDictionary *params;
+    if (self.linkData) {
+        params = [factory dataForRequestOpenWithURLString:self.urlString linkData:_linkData];
+    } else {
+        params = [factory dataForRequestOpenWithURLString:self.urlString linkData:nil];
+    }
     self.requestParams = [params copy];
     self.requestServiceURL = [self getRequestUrl];
     NSLog(@"Post Request sent for BranchRequestOpen");

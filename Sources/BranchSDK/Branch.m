@@ -2098,7 +2098,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         // If the session is already initialized or is initializing but we need to reset it.
         if ( reset || self.initializationStatus == BNCInitStatusUninitialized) {
             [self initializeSessionAndCallCallback:callCallback sceneIdentifier:sceneIdentifier urlString:urlString];
-            [self initializeSessionAndCallCallbackNewRoutes:callCallback sceneIdentifier:sceneIdentifier urlString:urlString];
         }
         // If the session was initialized, but callCallback was specified, do so.
         else if (callCallback && self.initializationStatus == BNCInitStatusInitialized) {
@@ -2147,7 +2146,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     @synchronized (self) {
         dispatch_async(self.isolationQueue, ^(){
             
-            NSLog(@"set up init sync to fire off old BranchOpenRequests");
             [BranchOpenRequest setWaitNeededForOpenResponseLock];
             BranchOpenRequest *req = [self.requestQueue findExistingInstallOrOpen];
             
@@ -2180,99 +2178,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
                     [[BranchLogger shared] logDebug:@"Link resolution request" error:nil];
                     NSString *message = [NSString stringWithFormat:@"Request %@ callback %@ link %@", req, req.callback, req.urlString];
-                    [[BranchLogger shared] logDebug:message error:nil];
-                }
-            }
-            
-            self.initializationStatus = BNCInitStatusInitializing;
-            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
-        });
-    }
-}
-// Called from Branch Init User s
-- (void)initializeSessionAndCallCallbackNewRoutes:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString {
-
-    // BranchDelegate willStartSessionWithURL notification
-    NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;
-    if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)]) {
-        [self.delegate branch:self willStartSessionWithURL:URL];
-    }
-
-    // BranchWilLStartSession NSNotification
-    NSMutableDictionary *userInfo = [NSMutableDictionary new];
-    userInfo[BranchURLKey] = URL;
-    [[NSNotificationCenter defaultCenter] postNotificationName:BranchWillStartSessionNotification object:self userInfo:userInfo];
-    
-    // Prepare callback block
-    callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
-        // callback on main, this is generally what the client expects and maintains our previous behavior
-        dispatch_async(dispatch_get_main_queue(), ^ {
-            if (error) {
-                [self handleInitFailure:error callCallback:callCallback sceneIdentifier:(NSString *)sceneIdentifier];
-            } else {
-                [self handleInitSuccessAndCallCallback:callCallback sceneIdentifier:(NSString *)sceneIdentifier];
-            }
-        });
-    };
-
-    @synchronized (self) {
-        dispatch_async(self.isolationQueue, ^(){
-            
-            NSLog(@"Set up init to call new routes");
-            [BranchRequestOpen setWaitNeededForOpenResponseLock];
-            BranchRequestOpen *reqOpen = [self.requestQueue findExistingInstallOrOpenNewRoutes];
-            BranchRequestDeepLink *reqDeepLink = [self.requestQueue findExistingInstallOrOpenNewRoutes];
-            
-            // nothing on queue, we need an new install or open. This may have link data
-            if (!reqOpen || !reqDeepLink) {
-                if (self.preferenceHelper.randomizedBundleToken) {
-                    reqDeepLink = [[BranchRequestDeepLink alloc] initWithCallback:initSessionCallback];
-                    reqOpen = [[BranchRequestOpen alloc] initWithCallback:initSessionCallback];
-                } else {
-                    reqDeepLink = [[BranchRequestDeepLink alloc] initWithCallback:initSessionCallback];
-                    reqOpen = [[BranchInstallRequest alloc] initWithCallback:initSessionCallback];
-                }
-                reqOpen.callback = initSessionCallback;
-                reqOpen.urlString = urlString;
-                reqOpen.traceCallback = bnc_tracingCallback;
-                [self.requestQueue enqueue:reqOpen withPriority:NSOperationQueuePriorityHigh];
-                
-                reqDeepLink.callback = initSessionCallback;
-                reqDeepLink.urlString = urlString;
-                reqDeepLink.traceCallback = bnc_tracingCallback;
-                
-                NSLog(@"reqOpen and reqDeepLink called and enqueued");
-                [self.requestQueue enqueue:reqDeepLink withPriority:NSOperationQueuePriorityHigh];
-
-                
-                NSString *message = [NSString stringWithFormat:@"NEW ROUTE: Branch Request Open: Request %@ callback %@ link %@", reqOpen, reqOpen.callback, reqOpen.urlString];
-                [[BranchLogger shared] logDebug:message error:nil];
-                
-                message = [NSString stringWithFormat:@"NEW ROUTE: Branch Request DeepLink: Request %@ callback %@ link %@", reqDeepLink, reqDeepLink.callback, reqDeepLink.urlString];
-                [[BranchLogger shared] logDebug:message error:nil];
-
-            } else {
-                NSLog(@"reqOpen and reqDeepLink called and enqueued from else method");
-
-                // new link arrival but an install or open is already on queue? need a new open for link resolution.
-                if (urlString) {
-                    reqOpen.callback = initSessionCallback;
-                    reqOpen.urlString = urlString;
-                    reqOpen.traceCallback = bnc_tracingCallback;
-                    
-                    [self.requestQueue enqueue:reqOpen withPriority:NSOperationQueuePriorityHigh];
-                    
-                    reqDeepLink.callback = initSessionCallback;
-                    reqDeepLink.urlString = urlString;
-                    reqDeepLink.traceCallback = bnc_tracingCallback;
-                    
-                    [self.requestQueue enqueue:reqDeepLink withPriority:NSOperationQueuePriorityHigh];
-
-                    
-                    NSString *message = [NSString stringWithFormat:@"NEW ROUTE: Branch Request Open: Request %@ callback %@ link %@", reqOpen, reqOpen.callback, reqOpen.urlString];
-                    [[BranchLogger shared] logDebug:message error:nil];
-                    
-                    message = [NSString stringWithFormat:@"NEW ROUTE: Branch Request DeepLink: Request %@ callback %@ link %@", reqDeepLink, reqDeepLink.callback, reqDeepLink.urlString];
                     [[BranchLogger shared] logDebug:message error:nil];
                 }
             }
@@ -2584,6 +2489,76 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [[BNCServerRequestQueue getInstance] clearQueue];
     [BranchOpenRequest releaseOpenResponseLock];
     [BNCPreferenceHelper clearAll];
+}
+
+- (void) sendDeepLink:(NSString *)branchLink {
+    // Prepare callback block
+    callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
+        // callback on main, this is generally what the client expects and maintains our previous behavior
+        dispatch_async(dispatch_get_main_queue(), ^ {
+            if (error) {
+                [self handleInitFailure:error callCallback:YES sceneIdentifier:nil];
+            } else {
+                [self handleInitSuccessAndCallCallback:YES sceneIdentifier:nil];
+            }
+        });
+    };
+    
+    BranchRequestDeepLink *deepLinkReq = [[BranchRequestDeepLink alloc] initWithCallback:initSessionCallback];
+    deepLinkReq.callback = initSessionCallback;
+    deepLinkReq.urlString = nil;
+    deepLinkReq.traceCallback = bnc_tracingCallback;
+    
+    [self.requestQueue enqueue:deepLinkReq withPriority:NSOperationQueuePriorityHigh];
+    
+    if (_preferenceHelper.attributionLevel != BranchAttributionLevelNone) {
+        NSLog(@"Also sending open event");
+        // TODO: Insert Branch data into send open call from get instance
+        [self sendOpen: [Branch getInstance]];
+    } else {
+        NSLog(@"No sendOpen event sent CPP Set to None");
+    }
+}
+
+- (void) sendOpen {
+    // Prepare callback block
+    callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
+        // callback on main, this is generally what the client expects and maintains our previous behavior
+        dispatch_async(dispatch_get_main_queue(), ^ {
+            if (error) {
+                [self handleInitFailure:error callCallback:YES sceneIdentifier:nil];
+            } else {
+                [self handleInitSuccessAndCallCallback:YES sceneIdentifier:nil];
+            }
+        });
+    };
+    BranchRequestOpen *openReq = [[BranchRequestOpen alloc] initWithCallback:initSessionCallback];
+    openReq.callback = initSessionCallback;
+    openReq.urlString = nil;
+    openReq.traceCallback = bnc_tracingCallback;
+    
+    [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
+}
+
+- (void) sendOpen:(NSDictionary *)responseData {
+    // Prepare callback block
+    callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
+        // callback on main, this is generally what the client expects and maintains our previous behavior
+        dispatch_async(dispatch_get_main_queue(), ^ {
+            if (error) {
+                [self handleInitFailure:error callCallback:YES sceneIdentifier:nil];
+            } else {
+                [self handleInitSuccessAndCallCallback:YES sceneIdentifier:nil];
+            }
+        });
+    };
+    BranchRequestOpen *openReq = [[BranchRequestOpen alloc] initWithCallback:initSessionCallback];
+    openReq.callback = initSessionCallback;
+    openReq.urlString = nil;
+    openReq.traceCallback = bnc_tracingCallback;
+    openReq.linkData = responseData;
+    
+    [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
 }
 
 @end
