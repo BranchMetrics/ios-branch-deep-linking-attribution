@@ -2506,7 +2506,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     
     BranchRequestDeepLink *deepLinkReq = [[BranchRequestDeepLink alloc] initWithCallback:initSessionCallback];
     deepLinkReq.callback = initSessionCallback;
-    deepLinkReq.urlString = nil;
+    deepLinkReq.urlString = branchLink;
     deepLinkReq.traceCallback = bnc_tracingCallback;
     
     [self.requestQueue enqueue:deepLinkReq withPriority:NSOperationQueuePriorityHigh];

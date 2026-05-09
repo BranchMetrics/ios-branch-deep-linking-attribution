@@ -303,7 +303,7 @@
     return json;
 }
 
-- (NSDictionary *)dataForRequestOpenWithURLString:(NSString *)urlString responseData:(nullable NSDictionary *)linkData{
+- (NSDictionary *)dataForRequestOpenWithURLString:(NSString *)urlString linkData:(nullable NSDictionary *)linkData{
     if (linkData) {
         return linkData;
     }
