@@ -65,11 +65,14 @@
 
     BNCPreferenceHelper *preferenceHelper = self.preferenceHelper ?: [BNCPreferenceHelper sharedInstance];
 
-    if (preferenceHelper.trackingDisabled) {
-        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Tracking disabled. Skipping request: %@", self.request.requestUUID] error:nil];
-        self.executing = NO;
-        self.finished = YES;
-        return;
+    // TEMPORARILY WRAPPING TrackingDisabled in old class name
+    if ([self.request isKindOfClass:[BranchOpenRequest class]]) {
+        if (preferenceHelper.trackingDisabled) {
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Tracking disabled. Skipping request: %@", self.request.requestUUID] error:nil];
+            self.executing = NO;
+            self.finished = YES;
+            return;
+        }
     }
 
     if ([self.request isKindOfClass:[BranchInstallRequest class]]) {

@@ -269,9 +269,20 @@
         self.callback(YES, nil);
     }
     
-    if (preferenceHelper.attributionLevel != BranchAttributionLevelNone) {
-        [[Branch getInstance] sendOpen:response.data];
+    // START Temporary test for Deeplink Path call
+    NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
+    if ([sessionDataDict objectForKey:@"$deeplink_path"] != nil) {
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Found $deeplink_path in session data: %@", sessionDataDict[@"$deeplink_path"]] error:nil];
+        if ([sessionDataDict[@"$deeplink_path"] isEqualToString:@"routeExampleLogs"]) {
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Found routeExampleLogs $deeplink_path. Route to location."] error:nil];
+        } else {
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Other deeplink value found"] error:nil];
+        }
     }
+    // END Temporary test for Deeplink Path call
+    
+    NSLog(@"SendOpen test. Currently receiving SSL errors but will be fine when switched to production.");
+    [[Branch getInstance] sendOpen:response.data];
 }
 
 - (BOOL) invokeFeatures:(NSDictionary *)invokeFeatures {
@@ -390,6 +401,7 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
         dispatch_queue_create("io.branch.sdk.openqueue", DISPATCH_QUEUE_CONCURRENT);
 }
 
+// Need to Update names for all of these to deepLinkRespone Lock
 + (void) setWaitNeededForOpenResponseLock {
     @synchronized (self) {
         if (!openRequestWaitQueueIsSuspended) {
@@ -400,6 +412,7 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
     }
 }
 
+// Need to Update names for all of these to deepLinkRespone Lock
 + (void) waitForOpenResponseLock {
     [[BranchLogger shared] logVerbose:@"Waiting for openRequestWaitQueue." error:nil];
     dispatch_sync(openRequestWaitQueue, ^ {
@@ -407,6 +420,7 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
     });
 }
 
+// Need to Update names for all of these to deepLinkRespone Lock
 + (void) releaseOpenResponseLock {
     @synchronized (self) {
         if (openRequestWaitQueueIsSuspended) {

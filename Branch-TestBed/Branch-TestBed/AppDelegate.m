@@ -30,11 +30,14 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
        Dashboard) instead of the live environment.
     */
 
-    // Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
+    Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
     Branch *branch = [Branch getInstance];
 
     // Change the Branch base API URL
     //[Branch setAPIUrl:@"https://api3.branch.io"];
+    
+    // IF UNCOMMENTED, CHANGE FROM STAGING URL BEFORE RELEASE
+    [Branch setAPIUrl:@"https://api.stage.branch.io"];
     
     // test pre init support
     //[self testDispatchToIsolationQueue:branch]
@@ -81,7 +84,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     //[[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
     
-    // Previous Branch InitSession calls
+    // START Previous Branch InitSession calls
     
 //    [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandlerUsingBranchUniversalObject:
 //     ^ (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) {
@@ -90,10 +93,9 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 //        [self handleDeepLinkObject:universalObject linkProperties:linkProperties error:error];
 //    }];
     
+    // END Previous Branch InitSession calls
     
-    [branch sendDeepLink:nil];
-    
-
+    [branch requestDeepLinkData:nil];
     [branch sendOpen];
     
     BranchEvent *earlyEvent = [BranchEvent standardEvent:BNCAddToCartEvent];

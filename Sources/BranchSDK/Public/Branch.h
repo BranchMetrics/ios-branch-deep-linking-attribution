@@ -525,7 +525,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 /**
  Sends a Branch Deep Link info to our new route.
  */
-- (void)sendDeepLink:(nullable NSString *)branchLink;
+- (void)requestDeepLinkData:(nullable NSString *)branchLink;
 /**
  Sends a Branch Open event with attribution to our new route.
  */

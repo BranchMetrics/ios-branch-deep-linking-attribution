@@ -903,7 +903,7 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
 
 - (IBAction)requestDeepLinkTouchUpInside:(id)sender {
     NSLog(@"Branch TestBed: Requesting DeepLink.");
-    [[Branch getInstance] sendDeepLink:@"https://bnctestbed.app.link/QVJX0ZzIY2b"];
+    [[Branch getInstance] requestDeepLinkData:@"https://qa.bnc.lt/Ojqd/tHqriohdf3b?$deeplink_path=routeExampleLogs"];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {

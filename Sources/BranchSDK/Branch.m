@@ -2488,10 +2488,12 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 + (void) clearAll {
     [[BNCServerRequestQueue getInstance] clearQueue];
     [BranchOpenRequest releaseOpenResponseLock];
+    [BranchRequestDeepLink releaseOpenResponseLock];
+    [BranchRequestOpen releaseOpenResponseLock];
     [BNCPreferenceHelper clearAll];
 }
 
-- (void) sendDeepLink:(NSString *)branchLink {
+- (void) requestDeepLinkData:(NSString *)branchLink {
     // Prepare callback block
     callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
         // callback on main, this is generally what the client expects and maintains our previous behavior
@@ -2507,12 +2509,18 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     BranchRequestDeepLink *deepLinkReq = [[BranchRequestDeepLink alloc] initWithCallback:initSessionCallback];
     deepLinkReq.callback = initSessionCallback;
     deepLinkReq.urlString = branchLink;
+    deepLinkReq.uri = branchLink;
     deepLinkReq.traceCallback = bnc_tracingCallback;
     
     [self.requestQueue enqueue:deepLinkReq withPriority:NSOperationQueuePriorityHigh];
 }
 
 - (void) sendOpen {
+    NSLog(@"Attribution Level value: '%@'", _preferenceHelper.attributionLevel);
+    if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
+        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented." error:nil];
+        return;
+    }
     // Prepare callback block
     callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
         // callback on main, this is generally what the client expects and maintains our previous behavior
@@ -2529,10 +2537,17 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     openReq.urlString = nil;
     openReq.traceCallback = bnc_tracingCallback;
     
+    NSLog(@"Branch sendOpen network request queued");
     [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
 }
 
 - (void) sendOpen:(NSDictionary *)responseData {
+    NSLog(@"Attribution Level value: '%@'", _preferenceHelper.attributionLevel); 
+    if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
+        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented." error:nil];
+        return;
+    }
+    
     // Prepare callback block
     callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
         // callback on main, this is generally what the client expects and maintains our previous behavior
@@ -2550,6 +2565,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     openReq.traceCallback = bnc_tracingCallback;
     openReq.linkData = responseData;
     
+    NSLog(@"Branch sendOpen network request queued");
     [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
 }
 
