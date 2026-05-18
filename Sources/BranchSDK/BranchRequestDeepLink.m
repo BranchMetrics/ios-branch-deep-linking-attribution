@@ -280,9 +280,13 @@
         }
     }
     // END Temporary test for Deeplink Path call
-    
-    NSLog(@"SendOpen test. Currently receiving SSL errors but will be fine when switched to production.");
-    [[Branch getInstance] sendOpen:response.data];
+
+    if (preferenceHelper.referringURL != nil) {
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"~referring_link found in response: %@, sending sendOpen network request." ,preferenceHelper.referringURL] error:nil];
+        [[Branch getInstance] sendOpen:response.data];
+    } else {
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"No referring URL on deeplink data. Not sending sendOpen network request."] error:nil];
+    }
 }
 
 - (BOOL) invokeFeatures:(NSDictionary *)invokeFeatures {

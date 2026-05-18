@@ -2145,7 +2145,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     @synchronized (self) {
         dispatch_async(self.isolationQueue, ^(){
-            
             [BranchOpenRequest setWaitNeededForOpenResponseLock];
             BranchOpenRequest *req = [self.requestQueue findExistingInstallOrOpen];
             
@@ -2516,7 +2515,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 - (void) sendOpen {
-    NSLog(@"Attribution Level value: '%@'", _preferenceHelper.attributionLevel);
     if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
         [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented." error:nil];
         return;
@@ -2537,12 +2535,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     openReq.urlString = nil;
     openReq.traceCallback = bnc_tracingCallback;
     
-    NSLog(@"Branch sendOpen network request queued");
+    [[BranchLogger shared] logDebug: @"Branch sendOpen network request queued." error:nil];
     [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
 }
 
 - (void) sendOpen:(NSDictionary *)responseData {
-    NSLog(@"Attribution Level value: '%@'", _preferenceHelper.attributionLevel); 
     if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
         [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented." error:nil];
         return;
@@ -2565,7 +2562,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     openReq.traceCallback = bnc_tracingCallback;
     openReq.linkData = responseData;
     
-    NSLog(@"Branch sendOpen network request queued");
+    [[BranchLogger shared] logDebug: @"Branch sendOpen network request queued." error:nil];
     [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
 }
 

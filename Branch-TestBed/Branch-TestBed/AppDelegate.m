@@ -96,6 +96,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // END Previous Branch InitSession calls
     
     [branch requestDeepLinkData:nil];
+    
+    // Calling sendOpen with no logs for test without deep link
     [branch sendOpen];
     
     BranchEvent *earlyEvent = [BranchEvent standardEvent:BNCAddToCartEvent];
