@@ -903,7 +903,22 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
 
 - (IBAction)requestDeepLinkTouchUpInside:(id)sender {
     NSLog(@"Branch TestBed: Requesting DeepLink.");
-    [[Branch getInstance] requestDeepLinkData:@"https://qa.bnc.lt/Ojqd/tHqriohdf3b?$deeplink_path=routeExampleLogs"];
+
+    NSString *deepLinkUrl = @"https://qa.bnc.lt/Ojqd/tqjciOimh3b?$deeplink_path=routeExampleLogs";
+
+    [[Branch getInstance] requestDeepLinkData:deepLinkUrl callback:^(NSDictionary *params, NSError *error) {
+        if (error == nil) {
+            if (params != nil) {
+                NSLog(@"Deep Link Params: %@", params);
+
+                // Access specific values
+                NSString *campaign = params[@"~campaign"];
+                NSLog(@"Campaign Name: %@", campaign);
+            }
+        } else {
+            NSLog(@"Deep Link Error: %@ (Code: %ld)", [error localizedDescription], (long)[error code]);
+        }
+    }];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {

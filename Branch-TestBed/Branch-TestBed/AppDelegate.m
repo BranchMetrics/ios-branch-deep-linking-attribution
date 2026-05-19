@@ -95,7 +95,23 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     // END Previous Branch InitSession calls
     
-    [branch requestDeepLinkData:nil];
+    
+    // Testing new routes
+     //NSString *stagingUrlString = @"https://qa.bnc.lt/Ojqd/tHqriohdf3b?$deeplink_path=routeExampleLogs"; // or from deeplink
+
+    [branch requestDeepLinkData:nil callback:^(NSDictionary *params, NSError *error) {
+        if (error == nil) {
+            if (params != nil) {
+                NSLog(@"Deep Link Params: %@", params);
+
+                // Access specific values
+                NSString *campaign = params[@"~campaign"];
+                NSLog(@"Campaign name: %@", campaign);
+            }
+        } else {
+            NSLog(@"Deep Link Error: %@ (Code: %ld)", [error localizedDescription], (long)[error code]);
+        }
+    }];
     
     // Calling sendOpen with no logs for test without deep link
     [branch sendOpen];
