@@ -304,9 +304,6 @@
 }
 
 - (NSDictionary *)dataForRequestOpenWithURLString:(NSString *)urlString linkData:(nullable NSDictionary *)linkData{
-    if (linkData) {
-        return linkData;
-    }
     
     NSMutableDictionary *json = [NSMutableDictionary new];
     

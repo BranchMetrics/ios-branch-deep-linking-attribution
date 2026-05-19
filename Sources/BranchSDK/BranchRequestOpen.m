@@ -52,12 +52,26 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
-    NSDictionary *params;
-    if (self.linkData) {
-        params = [factory dataForRequestOpenWithURLString:self.urlString linkData:_linkData];
-    } else {
-        params = [factory dataForRequestOpenWithURLString:self.urlString linkData:nil];
+    NSMutableDictionary *params = [[factory dataForRequestOpenWithURLString:self.urlString linkData:nil] mutableCopy];
+
+    // Add link_data if we have linkData from the deeplink response
+    if (self.linkData && [self.linkData objectForKey:@"data"]) {
+        id dataValue = self.linkData[@"data"];
+        NSDictionary *linkDataDict = nil;
+
+        // If "data" is a JSON string, parse it to a dictionary
+        if ([dataValue isKindOfClass:[NSString class]]) {
+            linkDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:(NSString *)dataValue];
+        } else if ([dataValue isKindOfClass:[NSDictionary class]]) {
+            linkDataDict = (NSDictionary *)dataValue;
+        }
+
+        // Add the parsed link data to the request
+        if (linkDataDict) {
+            params[@"link_data"] = linkDataDict;
+        }
     }
+
     self.requestParams = [params copy];
     self.requestServiceURL = [self getRequestUrl];
     NSLog(@"Post Request sent for BranchRequestOpen");
