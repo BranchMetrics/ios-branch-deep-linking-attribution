@@ -67,7 +67,7 @@
     self.requestEndpoint = url;
     
     // Drops non-linking requests when BranchAttributionLevel is set to 'NONE'.
-    if ([self.preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
+    if ([self.preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone] && url != @"https://api.stage.branch.io/v3/deeplink") {
     
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Tracking is disabled, checking if %@ is linking request.", url] error:nil];
 
