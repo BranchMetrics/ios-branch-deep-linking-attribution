@@ -50,7 +50,7 @@
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
     NSDictionary *params = [factory dataForDeepLinkWithURLString:self.urlString];
     self.requestParams = [params copy];
-    self.requestServiceURL = self.requestServiceURL = [[BNCServerAPI sharedInstance] deepLinkServiceURL];
+    self.requestServiceURL = [[BNCServerAPI sharedInstance] deepLinkServiceURL];
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Post Request sent for BranchRequestDeepLink"] error:nil];
     [serverInterface postRequest:params
         url: self.requestServiceURL
