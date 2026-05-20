@@ -52,7 +52,7 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
-    NSMutableDictionary *params = [[factory dataForRequestOpenWithURLString:self.urlString linkData:nil] mutableCopy];
+    NSMutableDictionary *params = [[factory dataForRequestOpenWithURLString:self.urlString] mutableCopy];
 
     // Add link_data if we have linkData from the deeplink response
     if (self.linkData && [self.linkData objectForKey:@"data"]) {
