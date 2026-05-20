@@ -113,9 +113,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         }
     }];
     
-    // Calling sendOpen with no logs for test without deep link
-    [branch sendOpen];
-    
     BranchEvent *earlyEvent = [BranchEvent standardEvent:BNCAddToCartEvent];
     NSLog(@"Logging Early Event: %@", earlyEvent);
     [earlyEvent logEvent];
