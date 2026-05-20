@@ -730,6 +730,7 @@ static NSString *bnc_branchKey = nil;
 
             if (resetSession) {
                 // Initialize a Branch session:
+                // TODO: Replace with sendOpen API
                 [[Branch getInstance] initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil reset:true];
             }
         }
@@ -1988,7 +1989,8 @@ static NSString *bnc_branchKey = nil;
 
         if (!Branch.trackingDisabled && self.initializationStatus == BNCInitStatusUninitialized && !installOrOpenInQueue) {
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive trackingDisabled %d initializationStatus %d installOrOpenInQueue %d", Branch.trackingDisabled, self.initializationStatus, installOrOpenInQueue] error:nil];
-
+            
+            // TODO: Replace with sendOpen
             [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:nil reset:NO];
         }
     });

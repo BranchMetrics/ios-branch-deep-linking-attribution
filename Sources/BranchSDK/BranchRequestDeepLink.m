@@ -47,7 +47,7 @@
 }
 
 - (NSString *)getRequestUrl {
-    return @"https://api.stage.branch.io/v3/deeplink";
+    return @"https://api2.branch.io/v3/deeplink";
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
@@ -268,18 +268,6 @@
     if (self.callback) {
         self.callback(YES, nil);
     }
-    
-    // START Temporary test for Deeplink Path call
-    NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
-    if ([sessionDataDict objectForKey:@"$deeplink_path"] != nil) {
-        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Found $deeplink_path in session data: %@", sessionDataDict[@"$deeplink_path"]] error:nil];
-        if ([sessionDataDict[@"$deeplink_path"] isEqualToString:@"routeExampleLogs"]) {
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Found routeExampleLogs $deeplink_path. Route to location."] error:nil];
-        } else {
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Other deeplink value found"] error:nil];
-        }
-    }
-    // END Temporary test for Deeplink Path call
 
     if (preferenceHelper.referringURL != nil) {
         [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"~referring_link found in response: %@, sending sendOpen network request." ,preferenceHelper.referringURL] error:nil];

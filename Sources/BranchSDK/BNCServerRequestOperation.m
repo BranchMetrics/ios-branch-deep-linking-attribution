@@ -66,7 +66,7 @@
     BNCPreferenceHelper *preferenceHelper = self.preferenceHelper ?: [BNCPreferenceHelper sharedInstance];
 
     // TEMPORARILY WRAPPING TrackingDisabled in old class name
-    if ([self.request isKindOfClass:[BranchOpenRequest class]]) {
+    if (![self.request isKindOfClass:[BranchRequestDeepLink class]]) {
         if (preferenceHelper.trackingDisabled) {
             [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Tracking disabled. Skipping request: %@", self.request.requestUUID] error:nil];
             self.executing = NO;
@@ -78,15 +78,8 @@
     if ([self.request isKindOfClass:[BranchInstallRequest class]]) {
         // Install requests: no session validation needed
     } else if ([self.request isKindOfClass:[BranchOpenRequest class]] || [self.request isKindOfClass:[BranchRequestOpen class]] || [self.request isKindOfClass:[BranchRequestDeepLink class]]) {
-        if (!preferenceHelper.randomizedBundleToken) {
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"User session not initialized (missing bundle token). Dropping request: %@", self.request.requestUUID] error:nil];
-            BNCPerformBlockOnMainThreadSync(^{
-                [self.request processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
-            });
-            self.executing = NO;
-            self.finished = YES;
-            return;
-        }
+       // If we do not have a randomized bundle token, we should receive one from the service
+        // We will receive from callback in v3/deeplink
     } else {
         if (!preferenceHelper.randomizedDeviceToken || !preferenceHelper.sessionID || !preferenceHelper.randomizedBundleToken) {
             [[BranchLogger shared] logError:[NSString stringWithFormat:@"Missing session items (device token or session ID or bundle token). Dropping request: %@", self.request.requestUUID] error:nil];

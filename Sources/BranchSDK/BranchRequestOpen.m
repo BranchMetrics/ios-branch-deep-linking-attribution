@@ -47,7 +47,7 @@
 }
 
 - (NSString *)getRequestUrl {
-    return @"https://api.stage.branch.io/v3/events/open";
+    return @"https://api2.branch.io/v3/events/open";
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {

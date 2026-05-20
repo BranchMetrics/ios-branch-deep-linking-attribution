@@ -24,102 +24,16 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     appDelegate = self;
 
-    /*
-       Set Branch.useTestBranchKey = YES; to have Branch use the test key that's in the app's
-       Info.plist file. This makes Branch test against your test environment (As shown in the Branch
-       Dashboard) instead of the live environment.
-    */
-
-    Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
     Branch *branch = [Branch getInstance];
 
     // Change the Branch base API URL
-    //[Branch setAPIUrl:@"https://api3.branch.io"];
+    [Branch setAPIUrl:@"https://api2.branch.io"];
     
-    // IF UNCOMMENTED, CHANGE FROM STAGING URL BEFORE RELEASE
-    [Branch setAPIUrl:@"https://api.stage.branch.io"];
-    
-    // test pre init support
-    //[self testDispatchToIsolationQueue:branch]
-    
-    [Branch enableLoggingAtLevel:BranchLogLevelVerbose withAdvancedCallback:^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error, NSMutableURLRequest * _Nullable request, BNCServerResponse * _Nullable response) {
-        // Handle the log message and error here. For example, printing to the console:
-        if (error) {
-            NSLog(@"[BranchLog] Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription);
-        } else {
-            NSLog(@"[BranchLog] Level: %lu, Message: %@", (unsigned long)logLevel, message);
-        }
-        
-        if (request) {
-            NSString *jsonString = [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding];
-            NSLog(@"[BranchLog] Got %@ Request: %@", request.URL , jsonString);
-        }
-        
-        if (response) {
-            NSLog(@"[BranchLog] Got Response for request (%@): %@", response.requestId, response.data);
-        }
-        
-        NSString *logEntry = error ? [NSString stringWithFormat:@"Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription]
-                                   : [NSString stringWithFormat:@"Level: %lu, Message: %@", (unsigned long)logLevel, message];
-        APPLogHookFunction([NSDate date], logLevel, logEntry);
-    }];
-    
-    
-    // Comment out in production. Un-comment to test your Branch SDK Integration:
-    //[branch validateSDKIntegration];
-
-    // partner parameter sample
-    //[branch addFacebookPartnerParameterWithName:@"em" value:@"11234e56af071e9c79927651156bd7a10bca8ac34672aba121056e2698ee7088"];
+    [Branch enableLogging];
     
     [branch checkPasteboardOnInstall];
-
-
-    /*
-     *    Required: Initialize Branch, passing a deep link handler block:
-     */
-
-    //[self setLogFile:@"OpenNInstall"];
     
-    [branch setIdentity:@"Bobby Branch"];
-    
-    //[[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
-    
-    // START Previous Branch InitSession calls
-    
-//    [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandlerUsingBranchUniversalObject:
-//     ^ (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) {
-//
-//        //[self setLogFile:nil];
-//        [self handleDeepLinkObject:universalObject linkProperties:linkProperties error:error];
-//    }];
-    
-    // END Previous Branch InitSession calls
-    
-    
-    // Testing new routes
-     //NSString *stagingUrlString = @"https://qa.bnc.lt/Ojqd/tHqriohdf3b?$deeplink_path=routeExampleLogs"; // or from deeplink
-
-    [branch requestDeepLinkData:nil callback:^(NSDictionary *params, NSError *error) {
-        if (error == nil) {
-            if (params != nil) {
-                NSLog(@"Deep Link Params: %@", params);
-
-                // Access specific values
-                NSString *campaign = params[@"~campaign"];
-                NSLog(@"Campaign name: %@", campaign);
-            }
-        } else {
-            NSLog(@"Deep Link Error: %@ (Code: %ld)", [error localizedDescription], (long)[error code]);
-        }
-    }];
-    
-    BranchEvent *earlyEvent = [BranchEvent standardEvent:BNCAddToCartEvent];
-    NSLog(@"Logging Early Event: %@", earlyEvent);
-    [earlyEvent logEvent];
-
-    
-    // Push notification support (Optional)
-    // [self registerForPushNotifications:application];
+    //[[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
 
     return YES;
 }
@@ -195,13 +109,20 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
          annotation:(id)annotation {
 
     NSLog(@"application:openURL:sourceApplication:annotation: invoked with URL: %@", [url description]);
-    
-    // Required. Returns YES if Branch link, else returns NO
-    [[Branch getInstance]
-        application:application
-            openURL:url
-  sourceApplication:sourceApplication
-         annotation:annotation];
+    Branch *branch = [Branch getInstance];
+    [branch requestDeepLinkData:[url absoluteString] callback:^(NSDictionary *params, NSError *error) {
+        if (error == nil) {
+            if (params != nil) {
+                NSLog(@"Deep Link Params: %@", params);
+
+                // Access specific values
+                NSString *campaign = params[@"~campaign"];
+                NSLog(@"Campaign name: %@", campaign);
+            }
+        } else {
+            NSLog(@"Deep Link Error: %@ (Code: %ld)", [error localizedDescription], (long)[error code]);
+        }
+    }];
 
     // Process non-Branch URIs here...
     return YES;
@@ -218,7 +139,22 @@ continueUserActivity:(NSUserActivity *)userActivity
     
     // Required. Returns YES if Branch Universal Link, else returns NO.
     // Add `branch_universal_link_domains` to .plist (String or Array) for custom domain(s).
-    [[Branch getInstance] continueUserActivity:userActivity];
+    
+    
+    Branch *branch = [Branch getInstance];
+    [branch requestDeepLinkData:userActivity.webpageURL.absoluteString callback:^(NSDictionary *params, NSError *error) {
+        if (error == nil) {
+            if (params != nil) {
+                NSLog(@"Deep Link Params: %@", params);
+
+                // Access specific values
+                NSString *campaign = params[@"~campaign"];
+                NSLog(@"Campaign name: %@", campaign);
+            }
+        } else {
+            NSLog(@"Deep Link Error: %@ (Code: %ld)", [error localizedDescription], (long)[error code]);
+        }
+    }];
     
     // Process non-Branch userActivities here...
     return YES;
