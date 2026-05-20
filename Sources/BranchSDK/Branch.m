@@ -2548,7 +2548,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         });
     };
     BranchRequestOpen *openReq = [[BranchRequestOpen alloc] initWithCallback:openCallback];
-    openReq.callback = openCallback;
     openReq.urlString = nil;
     openReq.traceCallback = bnc_tracingCallback;
 
@@ -2579,7 +2578,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         });
     };
     BranchRequestOpen *openReq = [[BranchRequestOpen alloc] initWithCallback:openCallback];
-    openReq.callback = openCallback;
     openReq.urlString = nil;
     openReq.traceCallback = bnc_tracingCallback;
     openReq.linkData = responseData;
