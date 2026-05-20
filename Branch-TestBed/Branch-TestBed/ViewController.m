@@ -904,7 +904,7 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
 - (IBAction)requestDeepLinkTouchUpInside:(id)sender {
     NSLog(@"Branch TestBed: Requesting DeepLink.");
 
-    NSString *deepLinkUrl = @"https://qa.bnc.lt/Ojqd/tqjciOimh3b?$deeplink_path=routeExampleLogs";
+    NSString *deepLinkUrl = @"https://bnctestbed.app.link/7HTLJ2jXi3b";
 
     [[Branch getInstance] requestDeepLinkData:deepLinkUrl callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
