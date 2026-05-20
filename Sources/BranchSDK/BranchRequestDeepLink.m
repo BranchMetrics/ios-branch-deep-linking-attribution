@@ -46,16 +46,12 @@
     return self;
 }
 
-- (NSString *)getRequestUrl {
-    return @"https://api2.branch.io/v3/deeplink";
-}
-
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
     NSDictionary *params = [factory dataForDeepLinkWithURLString:self.urlString];
     self.requestParams = [params copy];
-    self.requestServiceURL = [self getRequestUrl];
-    NSLog(@"Post Request sent for BranchRequestDeepLink");
+    self.requestServiceURL = self.requestServiceURL = [[BNCServerAPI sharedInstance] deepLinkServiceURL];
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Post Request sent for BranchRequestDeepLink"] error:nil];
     [serverInterface postRequest:params
         url: self.requestServiceURL
         key:key
@@ -354,7 +350,7 @@
 }
 
 - (NSString *)getActionName {
-    return @"open";
+    return @"deepLink";
 }
 
 - (instancetype)initWithCoder:(NSCoder *)decoder {

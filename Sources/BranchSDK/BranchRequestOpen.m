@@ -46,10 +46,6 @@
     return self;
 }
 
-- (NSString *)getRequestUrl {
-    return @"https://api2.branch.io/v3/events/open";
-}
-
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
     NSMutableDictionary *params = [[factory dataForRequestOpenWithURLString:self.urlString] mutableCopy];
@@ -73,8 +69,8 @@
     }
 
     self.requestParams = [params copy];
-    self.requestServiceURL = [self getRequestUrl];
-    NSLog(@"Post Request sent for BranchRequestOpen");
+    self.requestServiceURL = [[BNCServerAPI sharedInstance] openServiceURL];
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Post Request sent for BranchRequestOpen"] error:nil];
     [serverInterface postRequest:params
         url: self.requestServiceURL
         key:key
