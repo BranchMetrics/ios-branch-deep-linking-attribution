@@ -521,6 +521,18 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 /// @name Push Notification Support
 ///--------------------------------
 
+
+/**
+ Sends a Branch Deep Link info to our new route.
+ */
+- (void)requestDeepLinkData:(nullable NSString *)branchLink callback:(nullable callbackWithParams)callback;
+/**
+ Sends a Branch Open event with attribution to our new route.
+ */
+- (void)sendOpen;
+
+- (void)sendOpen:(NSDictionary *)responseData;
+
 #pragma mark - Pre-initialization support
 
 /**

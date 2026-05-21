@@ -237,6 +237,76 @@
     return json;
 }
 
+- (NSDictionary *)dataForDeepLinkWithURLString:(NSString *)urlString {
+    NSMutableDictionary *json = [[self dataForRequestOpenWithURLString:urlString] mutableCopy];
+    json[@"ios_app_link_url"] = urlString;
+    return json;
+}
+
+- (NSDictionary *)dataForRequestOpenWithURLString:(NSString *)urlString {
+    
+    NSMutableDictionary *json = [NSMutableDictionary new];
+    
+    [self loadDataFromThirdPartyAPIs];
+    
+    // All requests
+    [self addDefaultRequestDataToJSON:json];
+        
+    // All POST requests
+    [self addInstrumentationToJSON:json];
+    
+    // Install, Open and Event
+    [self addMetadataWithSKANMaxTimeToJSON:json];
+    
+    // Open and Event
+    [self addSKANWindowToJSON:json];
+    
+    // All POST requests other than Events
+    [self addSDKVersionToJSON:json];
+    [self addV1DictionaryToJSON:json];
+    
+    // Install and Open
+    [self addDeveloperUserIDToJSON:json];
+    [self addSystemObserverDataToJSON:json];
+    [self addPreferenceHelperDataToJSON:json];
+    [self addPartnerParametersToJSON:json];
+    [self addTimestampsToJSON:json];
+    
+    
+    // Check if the urlString is a valid URL to ensure it's a universal link, not the external intent uri
+    if (urlString) {
+        NSURL *url = [NSURL URLWithString:urlString];
+        if (url && ([url.scheme isEqualToString:@"http"] || [url.scheme isEqualToString:@"https"])) {
+            [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:json];
+        } else {
+            [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:json];
+        }
+    }
+    
+    // Usually sent with install, but retry on open if it didn't get sent
+    [self addAppleAttributionTokenToJSON:json];
+    
+    // Only for opens
+    [self addOpenTokensToJSON:json];
+    [self addLocalURLToOpenJSON:json];
+    
+    // TODO: refactor to simply request values for open
+    [self addReferringURLsToJSON:json forEndpoint:@"/v1/open"];
+    
+    // Add DMA Compliance Params for Google
+    [self addDMAConsentParamsToJSON:json];
+    
+    [self addConsumerProtectionAttributionLevel:json];
+    
+    // Add ODM Data if available
+    [self addODMInfoToJSON:json];
+
+    // Add Enhanced Web UX params
+    [self addWebUXParams:json];
+    
+    return json;
+}
+
 // The event data dictionary is NOT checked or changed
 - (NSDictionary *)dataForEventWithEventDictionary:(NSMutableDictionary *)dictionary {
     

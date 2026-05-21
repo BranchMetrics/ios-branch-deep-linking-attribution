@@ -16,8 +16,6 @@
 #import "Private/BNCServerRequestOperation.h"
 #import "Branch.h"
 
-
-
 @interface BNCServerRequestQueue ()
 @property (strong, nonatomic) NSOperationQueue *operationQueue;
 @property (strong, nonatomic) BNCServerInterface *serverInterface;

@@ -46,6 +46,8 @@
 #import "BranchPluginSupport.h"
 #import "BranchLogger.h"
 #import "Private/BranchConfigurationController.h"
+#import "BranchRequestOpen.h"
+#import "BranchRequestDeepLink.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
@@ -728,6 +730,7 @@ static NSString *bnc_branchKey = nil;
 
             if (resetSession) {
                 // Initialize a Branch session:
+                // TODO: Replace with sendOpen API
                 [[Branch getInstance] initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil reset:true];
             }
         }
@@ -1986,7 +1989,8 @@ static NSString *bnc_branchKey = nil;
 
         if (!Branch.trackingDisabled && self.initializationStatus == BNCInitStatusUninitialized && !installOrOpenInQueue) {
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive trackingDisabled %d initializationStatus %d installOrOpenInQueue %d", Branch.trackingDisabled, self.initializationStatus, installOrOpenInQueue] error:nil];
-
+            
+            // TODO: Replace with sendOpen
             [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:nil reset:NO];
         }
     });
@@ -2184,7 +2188,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         });
     }
 }
-
 
 - (void)handleInitSuccessAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
 
@@ -2486,7 +2489,103 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 + (void) clearAll {
     [[BNCServerRequestQueue getInstance] clearQueue];
     [BranchOpenRequest releaseOpenResponseLock];
+    [BranchRequestDeepLink releaseOpenResponseLock];
+    [BranchRequestOpen releaseOpenResponseLock];
     [BNCPreferenceHelper clearAll];
+}
+
+- (void) requestDeepLinkData:(NSString *)branchLink callback:(nullable callbackWithParams)callback {
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData called with branchLink: %@", branchLink] error:nil];
+
+    // Prepare callback block that will be called when the deeplink request completes
+    callbackWithStatus deepLinkCallback = ^(BOOL success, NSError *error) {
+        // callback on main, this is generally what the client expects and maintains our previous behavior
+        dispatch_async(dispatch_get_main_queue(), ^ {
+            if (error) {
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData failed with error: %@", error] error:error];
+                // Call the user's callback with error
+                if (callback) {
+                    callback(@{}, error);
+                }
+            } else {
+                // Get the session params (which should have the deeplink data)
+                NSDictionary *params = [self getLatestReferringParams];
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData completed with params: %@", params] error:nil];
+                // Call the user's callback with the params
+                if (callback) {
+                    callback(params ?: @{}, nil);
+                }
+            }
+        });
+    };
+
+    BranchRequestDeepLink *deepLinkReq = [[BranchRequestDeepLink alloc] initWithCallback:deepLinkCallback];
+    deepLinkReq.callback = deepLinkCallback;
+    deepLinkReq.urlString = branchLink;
+    deepLinkReq.uri = branchLink;
+    deepLinkReq.traceCallback = bnc_tracingCallback;
+
+    [self.requestQueue enqueue:deepLinkReq withPriority:NSOperationQueuePriorityHigh];
+}
+
+- (void) sendOpen {
+    [[BranchLogger shared] logDebug:@"sendOpen called" error:nil];
+
+    if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
+        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented." error:nil];
+        return;
+    }
+    // Prepare callback block
+    callbackWithStatus openCallback = ^(BOOL success, NSError *error) {
+        // callback on main, this is generally what the client expects and maintains our previous behavior
+        dispatch_async(dispatch_get_main_queue(), ^ {
+            if (error) {
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen failed with error: %@", error] error:error];
+                [self handleInitFailure:error callCallback:YES sceneIdentifier:nil];
+            } else {
+                [self handleInitSuccessAndCallCallback:YES sceneIdentifier:nil];
+                NSDictionary *params = [self getLatestReferringParams];
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen completed with params: %@", params] error:nil];
+            }
+        });
+    };
+    BranchRequestOpen *openReq = [[BranchRequestOpen alloc] initWithCallback:openCallback];
+    openReq.urlString = nil;
+    openReq.traceCallback = bnc_tracingCallback;
+
+    [[BranchLogger shared] logDebug: @"Branch sendOpen network request queued." error:nil];
+    [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
+}
+
+- (void) sendOpen:(NSDictionary *)responseData {
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen called with responseData: %@", responseData] error:nil];
+
+    if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
+        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented." error:nil];
+        return;
+    }
+
+    // Prepare callback block
+    callbackWithStatus openCallback = ^(BOOL success, NSError *error) {
+        // callback on main, this is generally what the client expects and maintains our previous behavior
+        dispatch_async(dispatch_get_main_queue(), ^ {
+            if (error) {
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen failed with error: %@", error] error:error];
+                [self handleInitFailure:error callCallback:YES sceneIdentifier:nil];
+            } else {
+                [self handleInitSuccessAndCallCallback:YES sceneIdentifier:nil];
+                NSDictionary *params = [self getLatestReferringParams];
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen completed with params: %@", params] error:nil];
+            }
+        });
+    };
+    BranchRequestOpen *openReq = [[BranchRequestOpen alloc] initWithCallback:openCallback];
+    openReq.urlString = nil;
+    openReq.traceCallback = bnc_tracingCallback;
+    openReq.linkData = responseData;
+
+    [[BranchLogger shared] logDebug: @"Branch sendOpen network request queued." error:nil];
+    [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
 }
 
 @end

@@ -40,7 +40,11 @@
 }
 
 - (NSString *)openServiceURL {
-    return [[self getBaseURL] stringByAppendingString: @"/v1/open"];
+    return [[self getBaseURL] stringByAppendingString: @"/v3/events/open"];
+}
+
+- (NSString *)deepLinkServiceURL {
+    return [[self getBaseURL] stringByAppendingString: @"/v3/deeplink"];
 }
 
 - (NSString *)standardEventServiceURL{

@@ -66,8 +66,7 @@
     // TODO: confirm it's ok to send full URL instead of with the domain trimmed off
     self.requestEndpoint = url;
     
-    // Drops non-linking requests when tracking is disabled
-    if (Branch.trackingDisabled) {
+    if (Branch.trackingDisabled && ![url containsString:@"/v3/deeplink"]) {
     
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Tracking is disabled, checking if %@ is linking request.", url] error:nil];
 
