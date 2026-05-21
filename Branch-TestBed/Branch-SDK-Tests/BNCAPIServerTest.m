@@ -126,7 +126,7 @@
     serverAPI.useTrackingDomain = YES;
     
     NSString *url = [serverAPI openServiceURL];
-    NSString *expectedUrlStr = @"https://api-safetrack.branch.io/v1/open";
+    NSString *expectedUrlStr = @"https://api-safetrack.branch.io/v3/events/open";
     
     XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
@@ -520,10 +520,6 @@
     [BNCServerAPI sharedInstance].customAPIURL = nil;
     [BNCServerAPI sharedInstance].customSafeTrackAPIURL = nil;
     
-}
-
-- (void)setUp {
-    [Branch setAPIUrl:@"https://api3.branch.io"];
 }
 
 @end
