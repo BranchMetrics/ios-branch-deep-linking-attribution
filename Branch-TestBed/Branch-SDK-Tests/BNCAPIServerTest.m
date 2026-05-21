@@ -214,7 +214,7 @@
     serverAPI.useEUServers = YES;
 
     NSString *url = [serverAPI openServiceURL];
-    NSString *expectedUrlStr = @"https://api3-eu.branch.io/v1/open";
+    NSString *expectedUrlStr = @"https://api3-eu.branch.io/v3/events/open";
     
     XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
@@ -304,7 +304,7 @@
     serverAPI.useTrackingDomain = YES;
 
     NSString *url = [serverAPI openServiceURL];
-    NSString *expectedUrlStr = @"https://api-safetrack-eu.branch.io/v1/open";
+    NSString *expectedUrlStr = @"https://api-safetrack-eu.branch.io/v3/events/open";
     
     XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
@@ -436,7 +436,7 @@
     XCTAssertEqualObjects(storedUrl, expectedUrl);
     
     storedUrl = [[BNCServerAPI sharedInstance] openServiceURL];
-    expectedUrl = @"https://links.toTestDomain-safeTrack.com/v1/open";
+    expectedUrl = @"https://links.toTestDomain-safeTrack.com/v3/events/open";
     XCTAssertEqualObjects(storedUrl, expectedUrl);
     
     storedUrl = [[BNCServerAPI sharedInstance] standardEventServiceURL];
@@ -487,7 +487,7 @@
     XCTAssertEqualObjects(storedUrl, expectedUrl);
     
     storedUrl = [[BNCServerAPI sharedInstance] openServiceURL];
-    expectedUrl = @"https://links.toTestDomain.com/v1/open";
+    expectedUrl = @"https://links.toTestDomain.com/v3/events/open";
     XCTAssertEqualObjects(storedUrl, expectedUrl);
     
     storedUrl = [[BNCServerAPI sharedInstance] standardEventServiceURL];
@@ -520,6 +520,10 @@
     [BNCServerAPI sharedInstance].customAPIURL = nil;
     [BNCServerAPI sharedInstance].customSafeTrackAPIURL = nil;
     
+}
+
+- (void)setUp {
+    [Branch setAPIUrl:@"https://api3.branch.io"];
 }
 
 @end
