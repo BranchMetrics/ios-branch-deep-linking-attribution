@@ -34,7 +34,17 @@
     serverAPI.automaticallyEnableTrackingDomain = NO;
     
     NSString *url = [serverAPI openServiceURL];
-    NSString *expectedUrlStr = @"https://api3.branch.io/v1/open";
+    NSString *expectedUrlStr = @"https://api3.branch.io/v3/events/open";
+    
+    XCTAssertTrue([url isEqualToString:expectedUrlStr]);
+}
+
+- (void)testDeepLinkServiceURL {
+    BNCServerAPI *serverAPI = [BNCServerAPI new];
+    serverAPI.automaticallyEnableTrackingDomain = NO;
+    
+    NSString *url = [serverAPI deepLinkServiceURL];
+    NSString *expectedUrlStr = @"https://api3.branch.io/v3/deeplink";
     
     XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
