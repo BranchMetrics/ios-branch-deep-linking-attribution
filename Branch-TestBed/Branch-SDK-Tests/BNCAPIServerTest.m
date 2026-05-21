@@ -522,8 +522,4 @@
     
 }
 
-- (void)setUp {
-    [Branch setAPIUrl:@"https://api3.branch.io"];
-}
-
 @end
