@@ -514,7 +514,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 - (NSMutableString*) sanitizedMutableBaseURL:(NSString*)baseUrl_ {
     NSMutableString *baseUrl = [baseUrl_ mutableCopy];
-    if (self.trackingDisabled) {
+    if (self.attributionLevelNone) {
         NSString *id_string = [NSString stringWithFormat:@"%%24randomized_bundle_token=%@", self.randomizedBundleToken];
         NSRange range = [baseUrl rangeOfString:id_string];
         if (range.location != NSNotFound) [baseUrl replaceCharactersInRange:range withString:@""];
@@ -643,22 +643,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (void) setDropURLOpen:(BOOL)value {
     @synchronized(self) {
         [self writeBoolToDefaults:@"dropURLOpen" value:value];
-    }
-}
-
-- (BOOL) trackingDisabled {
-    @synchronized(self) {
-        NSNumber *b = (id) [self readObjectFromDefaults:@"trackingDisabled"];
-        if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
-        return false;
-    }
-}
-
-- (void) setTrackingDisabled:(BOOL)disabled {
-    @synchronized(self) {
-        NSNumber *b = [NSNumber numberWithBool:disabled];
-        [self writeObjectToDefaults:@"trackingDisabled" value:b];
-        if (disabled) [self clearTrackingInformation];
     }
 }
 
@@ -909,6 +893,22 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 - (void)setAttributionLevel:(BranchAttributionLevel)level {
     [self writeObjectToDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL value:level];
+}
+
+- (BOOL)attributionLevelFull:(BranchAttributionLevel)level {
+    return [_attributionLevel isEqualToString:@"FULL"];
+}
+
+- (BOOL)attributionLevelReduced:(BranchAttributionLevel)level {
+    return [_attributionLevel isEqualToString:@"REDUCED"];
+}
+
+- (BOOL)attributionLevelMinimal:(BranchAttributionLevel)level {
+    return [_attributionLevel isEqualToString:@"MINIMAL"];
+}
+
+- (BOOL)attributionLevelNone:(BranchAttributionLevel)level {
+    return [_attributionLevel isEqualToString:@"NONE"];
 }
 
 - (NSString *) uxType {

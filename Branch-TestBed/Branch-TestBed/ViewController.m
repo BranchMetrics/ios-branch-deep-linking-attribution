@@ -121,18 +121,6 @@ bool hasSetPartnerParams = false;
         [appDelegate setLogFile:nil];
     };
     
-    if ([Branch trackingDisabled]) {
-        [self.disableTrackingButton setTitle:@"Enable Tracking" forState:UIControlStateNormal];
-        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
-            [self.disableTrackingButton setImage:[UIImage systemImageNamed:@"eye.fill"] forState:UIControlStateNormal];
-        }
-    } else {
-        [self.disableTrackingButton setTitle:@"Disable Tracking" forState:UIControlStateNormal];
-        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
-            [self.disableTrackingButton setImage:[UIImage systemImageNamed:@"eye.slash.fill"] forState:UIControlStateNormal];
-        }
-    }
-    
     if (hasSetPartnerParams) {
         [self.setParnerParamsButton setTitle:@"Clear Partner Params" forState:UIControlStateNormal];
         if (@available(iOS 13.0, macCatalyst 13.1, *)) {
@@ -828,26 +816,6 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     NSString *logFileContents = [NSString stringWithContentsOfFile:appDelegate.logFileName encoding:NSUTF8StringEncoding error:nil];
     NSLog(@"Got log file (%@) contents: %@", appDelegate.logFileName, logFileContents);
     logOutputViewController.logOutput = [NSString stringWithFormat:@"%@", logFileContents];
-}
-
-- (IBAction)disableTracking:(id)sender {
-    
-    NSString *title = [self.disableTrackingButton titleForState:UIControlStateNormal];
-    
-    if ([title isEqualToString:@"Disable Tracking"]) {
-        [Branch setTrackingDisabled:YES];
-        [self.disableTrackingButton setTitle:@"Enable Tracking" forState:UIControlStateNormal];
-        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
-            [self.disableTrackingButton setImage:[UIImage systemImageNamed:@"eye.fill"] forState:UIControlStateNormal];
-        }
-    } else {
-        [Branch setTrackingDisabled:NO];
-        [self.disableTrackingButton setTitle:@"Disable Tracking" forState:UIControlStateNormal];
-        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
-            [self.disableTrackingButton setImage:[UIImage systemImageNamed:@"eye.slash.fill"] forState:UIControlStateNormal];
-        }
-    }
-    
 }
 
 - (IBAction)createQRCode:(id)sender {
