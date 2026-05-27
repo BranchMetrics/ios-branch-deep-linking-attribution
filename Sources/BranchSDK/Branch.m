@@ -2497,6 +2497,10 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 - (void) requestDeepLinkData:(NSString *)branchLink callback:(nullable callbackWithParams)callback {
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData called with branchLink: %@", branchLink] error:nil];
 
+    if (branchLink.length > 0) {
+        [self.requestQueue cancelPendingDeepLinkRequests];
+    }
+
     // Prepare callback block that will be called when the deeplink request completes
     callbackWithStatus deepLinkCallback = ^(BOOL success, NSError *error) {
         // callback on main, this is generally what the client expects and maintains our previous behavior
@@ -2527,6 +2531,53 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     [self.requestQueue enqueue:deepLinkReq withPriority:NSOperationQueuePriorityHigh];
 }
+
+- (void)requestDeepLinkDataWithLaunchOptions:(NSDictionary *)options
+                                    callback:(nullable callbackWithParams)callback {
+    [[BranchLogger shared] logDebug:@"requestDeepLinkDataWithLaunchOptions called" error:nil];
+
+    NSString *pushURL = nil;
+#if !TARGET_OS_TV
+    id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
+    if ([branchUrlFromPush isKindOfClass:[NSString class]]) {
+        pushURL = (NSString *)branchUrlFromPush;
+    }
+#endif
+
+    // When opening via URL scheme or Universal Link, the URL-bearing call arrives separately
+    // via application:openURL: or continueUserActivity: — skip here to avoid double enqueue.
+    BOOL hasURLScheme = [options.allKeys containsObject:UIApplicationLaunchOptionsURLKey];
+    BOOL hasUniversalLink = [options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey];
+    if (!pushURL && (hasURLScheme || hasUniversalLink)) {
+        return;
+    }
+
+    [self requestDeepLinkData:pushURL callback:callback];
+}
+
+#if !TARGET_OS_TV
+- (void)requestDeepLinkDataWithSceneOptions:(nullable UISceneConnectionOptions *)connectionOptions
+                                      scene:(UIScene *)scene
+                                   callback:(nullable callbackWithParams)callback
+    API_AVAILABLE(ios(13.0), macCatalyst(13.1)) {
+    [[BranchLogger shared] logDebug:@"requestDeepLinkDataWithSceneOptions called" error:nil];
+
+    NSString *urlString = nil;
+    if (@available(iOS 13.0, macCatalyst 13.1, *)) {
+        if (connectionOptions.userActivities.count > 0) {
+            NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject;
+            if ([activity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
+                urlString = activity.webpageURL.absoluteString;
+            }
+        } else if (connectionOptions.URLContexts.count > 0) {
+            UIOpenURLContext *context = connectionOptions.URLContexts.allObjects.firstObject;
+            urlString = context.URL.absoluteString;
+        }
+    }
+
+    [self requestDeepLinkData:urlString callback:callback];
+}
+#endif
 
 - (void) sendOpen {
     [[BranchLogger shared] logDebug:@"sendOpen called" error:nil];
