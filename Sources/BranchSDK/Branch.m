@@ -2562,20 +2562,32 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     API_AVAILABLE(ios(13.0), macCatalyst(13.1)) {
     [[BranchLogger shared] logDebug:@"requestDeepLinkDataWithSceneOptions called" error:nil];
 
-    NSString *urlString = nil;
-    if (@available(iOS 13.0, macCatalyst 13.1, *)) {
-        if (connectionOptions.userActivities.count > 0) {
-            NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject;
-            if ([activity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-                urlString = activity.webpageURL.absoluteString;
-            }
-        } else if (connectionOptions.URLContexts.count > 0) {
-            UIOpenURLContext *context = connectionOptions.URLContexts.allObjects.firstObject;
-            urlString = context.URL.absoluteString;
-        }
+    // Mirror BranchScene.initSessionWithSceneOptions: build the same synthetic launchOptions
+    // so requestDeepLinkDataWithLaunchOptions applies the same early-return logic.
+    NSMutableDictionary *launchOptions = [[NSMutableDictionary alloc] init];
+    if (connectionOptions.userActivities.count) {
+        launchOptions[UIApplicationLaunchOptionsUserActivityDictionaryKey] = connectionOptions.userActivities.allObjects;
+    }
+    if (connectionOptions.URLContexts.count) {
+        launchOptions[UIApplicationLaunchOptionsURLKey] = connectionOptions.URLContexts.allObjects;
     }
 
-    [self requestDeepLinkData:urlString callback:callback];
+    // Handles the no-link cold start (enqueues a nil-URL request).
+    // Returns early without enqueueing when a URL scheme or Universal Link is present.
+    [self requestDeepLinkDataWithLaunchOptions:launchOptions callback:callback];
+
+    // Mirror BranchScene: explicitly resolve the URL from connectionOptions,
+    // equivalent to the continueUserActivity: / openURLContexts: calls BranchScene makes
+    // after its initSceneSession call.
+    if (connectionOptions.userActivities.count) {
+        NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject;
+        if ([activity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
+            [self requestDeepLinkData:activity.webpageURL.absoluteString callback:callback];
+        }
+    } else if (connectionOptions.URLContexts.count) {
+        UIOpenURLContext *context = connectionOptions.URLContexts.allObjects.firstObject;
+        [self requestDeepLinkData:context.URL.absoluteString callback:callback];
+    }
 }
 #endif
 
