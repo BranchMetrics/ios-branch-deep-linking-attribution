@@ -807,7 +807,7 @@ static NSString *bnc_branchKey = nil;
                     registerDeepLinkHandler:callback];
 }
 
-- (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options sceneIdentifier:(NSString *)sceneIdentifier isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
+- (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options sceneIdentifier:(nullable NSString *)sceneIdentifier isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
                   registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback {
     NSMutableDictionary * optionsWithDeferredInit = [[NSMutableDictionary alloc ] initWithDictionary:options];
     if (self.deferInitForPluginRuntime) {
@@ -822,7 +822,7 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options
-                     sceneIdentifier:(NSString *)sceneIdentifier
+                     sceneIdentifier:(nullable NSString *)sceneIdentifier
                         isReferrable:(BOOL)isReferrable
        explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable
       automaticallyDisplayController:(BOOL)automaticallyDisplayController {
