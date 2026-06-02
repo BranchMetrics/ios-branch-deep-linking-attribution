@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gem 'cocoapods', '~> 1.9'
 gem 'activesupport', '~> 7.0', '<= 7.0.8'
-gem 'fastlane', '~> 2.69'
+gem 'fastlane', '~> 2.235'
 gem 'pattern_patch', '~> 0.5'
 gem 'slather'  
 
