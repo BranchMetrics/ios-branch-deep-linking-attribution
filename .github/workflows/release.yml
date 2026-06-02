@@ -176,10 +176,10 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v6
-      - name: Set up Ruby 2.7
+      - name: Set up Ruby 3.3
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.7'
+          ruby-version: '3.3'
       # The CocoaPods dependencies are only used by the
       # Branch-TestBed.xcworkspace (for unit tests).
       # Bring in the Ruby deps from the cache for quick availability of
