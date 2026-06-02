@@ -75,7 +75,7 @@
         };
     } else
     if (error) {
-        [BranchRequestDeepLink releaseOpenResponseLock];
+        [BranchRequestDeepLink releaseDeepLinkResponseLock];
         if (self.callback) {
             self.callback(NO, error);
         }
@@ -180,7 +180,7 @@
         preferenceHelper.randomizedBundleToken = string;
     }
     
-    [BranchRequestDeepLink releaseOpenResponseLock];
+    [BranchRequestDeepLink releaseDeepLinkResponseLock];
     
     if (self.isInstall) {
         [[BNCAppGroupsData shared] saveAppClipData];
@@ -257,7 +257,9 @@
     NSDictionary *invokeFeatures = data[BRANCH_RESPONSE_KEY_INVOKE_FEATURES];
     if (invokeFeatures) {
         if ([self invokeFeatures:invokeFeatures]) {
-            return; // Return - Dont call callback since weblink in launched
+            // Redirect is happening - send attribution but skip initialization callback
+            [self attemptToSendOpen:preferenceHelper response:response skipCallback:YES];
+            return; // Return - Dont call callback since weblink is launched
         }
     }
 
@@ -265,12 +267,8 @@
         self.callback(YES, nil);
     }
 
-    if (preferenceHelper.referringURL != nil) {
-        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"~referring_link found in response: %@, sending sendOpen network request." ,preferenceHelper.referringURL] error:nil];
-        [[Branch getInstance] sendOpen:response.data];
-    } else {
-        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"No referring URL on deeplink data. Not sending sendOpen network request."] error:nil];
-    }
+    // Normal flow - send attribution and allow initialization callback
+    [self attemptToSendOpen:preferenceHelper response:response skipCallback:NO];
 }
 
 - (BOOL) invokeFeatures:(NSDictionary *)invokeFeatures {
@@ -369,7 +367,7 @@
     return YES;
 }
 
-#pragma - Open Response Lock Handling
+#pragma - Deep Link Data Response Lock Handling
 
 
 //    Instead of semaphores, the lock is handled by scheduled dispatch_queues.
@@ -378,44 +376,53 @@
 //    prone.
 
 
-static dispatch_queue_t openRequestWaitQueue = NULL;
-static BOOL openRequestWaitQueueIsSuspended = NO;
+static dispatch_queue_t deepLinkRequestWaitQueue = NULL;
+static BOOL deepLinkRequestWaitQueueIsSuspended = NO;
 
 
 + (void) initialize {
     if (self != [BranchRequestDeepLink self])
         return;
-    openRequestWaitQueue =
+    deepLinkRequestWaitQueue =
         dispatch_queue_create("io.branch.sdk.openqueue", DISPATCH_QUEUE_CONCURRENT);
 }
 
 // Need to Update names for all of these to deepLinkRespone Lock
-+ (void) setWaitNeededForOpenResponseLock {
++ (void) setWaitNeededForDeepLinkResponseLock {
     @synchronized (self) {
-        if (!openRequestWaitQueueIsSuspended) {
-            [[BranchLogger shared] logVerbose:@"Suspended for openRequestWaitQueue." error:nil];
-            openRequestWaitQueueIsSuspended = YES;
-            dispatch_suspend(openRequestWaitQueue);
+        if (!deepLinkRequestWaitQueueIsSuspended) {
+            [[BranchLogger shared] logVerbose:@"Suspended for deepLinkRequestWaitQueue." error:nil];
+            deepLinkRequestWaitQueueIsSuspended = YES;
+            dispatch_suspend(deepLinkRequestWaitQueue);
         }
     }
 }
 
 // Need to Update names for all of these to deepLinkRespone Lock
-+ (void) waitForOpenResponseLock {
-    [[BranchLogger shared] logVerbose:@"Waiting for openRequestWaitQueue." error:nil];
-    dispatch_sync(openRequestWaitQueue, ^ {
-        [[BranchLogger shared] logVerbose:@"Finished waitForOpenResponseLock." error:nil];
++ (void) waitForDeepLinkResponseLock {
+    [[BranchLogger shared] logVerbose:@"Waiting for deepLinkRequestWaitQueue." error:nil];
+    dispatch_sync(deepLinkRequestWaitQueue, ^ {
+        [[BranchLogger shared] logVerbose:@"Finished waitForDeepLinkResponseLock." error:nil];
     });
 }
 
 // Need to Update names for all of these to deepLinkRespone Lock
-+ (void) releaseOpenResponseLock {
++ (void) releaseDeepLinkResponseLock {
     @synchronized (self) {
-        if (openRequestWaitQueueIsSuspended) {
-            [[BranchLogger shared] logVerbose:@"Resuming openRequestWaitQueue." error:nil];
-            openRequestWaitQueueIsSuspended = NO;
-            dispatch_resume(openRequestWaitQueue);
+        if (deepLinkRequestWaitQueueIsSuspended) {
+            [[BranchLogger shared] logVerbose:@"Resuming deepLinkRequestWaitQueue." error:nil];
+            deepLinkRequestWaitQueueIsSuspended = NO;
+            dispatch_resume(deepLinkRequestWaitQueue);
         }
+    }
+}
+
+- (void) attemptToSendOpen:(BNCPreferenceHelper *)preferenceHelper response:(BNCServerResponse *)response skipCallback:(BOOL)skipCallback {
+    if (preferenceHelper.referringURL != nil) {
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"~referring_link found in response: %@, sending sendOpen network request." ,preferenceHelper.referringURL] error:nil];
+        [[Branch getInstance] sendOpen:response.data skipCallback:skipCallback];
+    } else {
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"No referring URL on deeplink data. Not sending sendOpen network request."] error:nil];
     }
 }
 

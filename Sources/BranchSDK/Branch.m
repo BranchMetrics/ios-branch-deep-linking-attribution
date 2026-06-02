@@ -2489,7 +2489,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 + (void) clearAll {
     [[BNCServerRequestQueue getInstance] clearQueue];
     [BranchOpenRequest releaseOpenResponseLock];
-    [BranchRequestDeepLink releaseOpenResponseLock];
+    [BranchRequestDeepLink releaseDeepLinkResponseLock];
     [BranchRequestOpen releaseOpenResponseLock];
     [BNCPreferenceHelper clearAll];
 }
@@ -2620,8 +2620,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
 }
 
-- (void) sendOpen:(NSDictionary *)responseData {
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen called with responseData: %@", responseData] error:nil];
+- (void) sendOpen:(NSDictionary *)responseData skipCallback:(BOOL)skipCallback {
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen called with responseData: %@, skipCallback: %d", responseData, skipCallback] error:nil];
 
     if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
         [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented." error:nil];
@@ -2634,11 +2634,16 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         dispatch_async(dispatch_get_main_queue(), ^ {
             if (error) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen failed with error: %@", error] error:error];
-                [self handleInitFailure:error callCallback:YES sceneIdentifier:nil];
+                if (!skipCallback) {
+                    [self handleInitFailure:error callCallback:YES sceneIdentifier:nil];
+                }
             } else {
-                [self handleInitSuccessAndCallCallback:YES sceneIdentifier:nil];
-                NSDictionary *params = [self getLatestReferringParams];
-                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen completed with params: %@", params] error:nil];
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen completed successfully"] error:nil];
+                if (!skipCallback) {
+                    [self handleInitSuccessAndCallCallback:YES sceneIdentifier:nil];
+                    NSDictionary *params = [self getLatestReferringParams];
+                    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen completed with params: %@", params] error:nil];
+                }
             }
         });
     };
