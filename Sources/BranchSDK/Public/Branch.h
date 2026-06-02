@@ -439,6 +439,14 @@ extern NSString * __nonnull const BNCSpotlightFeature;
                   registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback;
 
 /**
+ Initialize a Branch session for a specific scene with scene identifier tracking.
+
+ @warning This is an internal helper method called by BranchScene. Apps should use BranchScene.initSessionWithSceneOptions:scene:registerDeepLinkHandler: instead.
+ **/
+- (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options sceneIdentifier:(nullable NSString *)sceneIdentifier isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
+                  registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback;
+
+/**
  Initialize the Branch session.
  
  @warning This function is an internal helper function for session initalization and should not be used by apps.
