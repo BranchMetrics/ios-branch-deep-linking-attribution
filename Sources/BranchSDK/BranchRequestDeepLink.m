@@ -267,7 +267,7 @@
 
     if (preferenceHelper.referringURL != nil) {
         [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"~referring_link found in response: %@, sending sendOpen network request." ,preferenceHelper.referringURL] error:nil];
-        [[Branch getInstance] sendOpen:response.data];
+        [[Branch getInstance] sendOpen:response.data callCallback:NO];
     } else {
         [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"No referring URL on deeplink data. Not sending sendOpen network request."] error:nil];
     }

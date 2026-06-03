@@ -447,7 +447,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  
  @warning This function is an internal helper function for session initalization and should not be used by apps.
  **/
-- (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString reset:(BOOL)reset;
+- (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString reset:(BOOL)reset __attribute__((deprecated("Use sendOpen instead.")));
 
 /**
  Allow Branch to handle a link opening the app, returning whether it was from a Branch link or not.
@@ -561,9 +561,9 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 /**
  Sends a Branch Open event with attribution to our new route.
  */
-- (void)sendOpen;
+- (void)sendOpen:(BOOL)callCallback;
 
-- (void)sendOpen:(NSDictionary *)responseData;
+- (void)sendOpen:(NSDictionary *)responseData callCallback:(BOOL)callCallback;
 
 #pragma mark - Pre-initialization support
 

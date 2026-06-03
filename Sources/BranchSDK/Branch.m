@@ -731,7 +731,9 @@ static NSString *bnc_branchKey = nil;
             if (resetSession) {
                 // Initialize a Branch session:
                 // TODO: Replace with sendOpen API
-                [[Branch getInstance] initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil reset:true];
+                // [[Branch getInstance] initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil reset:true];
+                
+                [[Branch getInstance] sendOpen:NO];
             }
         }
     }
@@ -909,7 +911,8 @@ static NSString *bnc_branchKey = nil;
         self.preferenceHelper.externalIntentURI = urlString;
         self.preferenceHelper.referringURL = urlString;
 
-        [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:nil reset:YES];
+        //[self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:nil reset:YES];
+        [self sendOpen:YES];
         return NO;
     }
 
@@ -957,7 +960,8 @@ static NSString *bnc_branchKey = nil;
             self.preferenceHelper.linkClickIdentifier = params[@"link_click_id"];
         }
     }
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:url.absoluteString reset:YES];
+    // [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:url.absoluteString reset:YES];
+    [self sendOpen:YES];
     return handled;
 }
 
@@ -991,7 +995,8 @@ static NSString *bnc_branchKey = nil;
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Set universalLinkUrl and referringURL to %@", urlString] error:nil];
     }
 
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:urlString reset:YES];
+    // [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:urlString reset:YES];
+    [self sendOpen:YES];
 
     return [Branch isBranchLink:urlString];
 }
@@ -1032,7 +1037,8 @@ static NSString *bnc_branchKey = nil;
     }
     #endif
 
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:userActivity.webpageURL.absoluteString reset:YES];
+    // [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:userActivity.webpageURL.absoluteString reset:YES];
+    [self sendOpen:YES];
 
     return spotlightIdentifier != nil;
 }
@@ -1991,7 +1997,8 @@ static NSString *bnc_branchKey = nil;
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive trackingDisabled %d initializationStatus %d installOrOpenInQueue %d", Branch.trackingDisabled, self.initializationStatus, installOrOpenInQueue] error:nil];
             
             // TODO: Replace with sendOpen
-            [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:nil reset:NO];
+            [self sendOpen:YES];
+            // [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:nil reset:NO];
         }
     });
 }
@@ -2591,7 +2598,12 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 #endif
 
-- (void) sendOpen {
+- (void) sendOpen:(BOOL)callCallback {
+    NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;
+    if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)]) {
+        [self.delegate branch:self willStartSessionWithURL:URL];
+    }
+    
     [[BranchLogger shared] logDebug:@"sendOpen called" error:nil];
 
     if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
@@ -2604,9 +2616,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         dispatch_async(dispatch_get_main_queue(), ^ {
             if (error) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen failed with error: %@", error] error:error];
-                [self handleInitFailure:error callCallback:YES sceneIdentifier:nil];
+                [self handleInitFailure:error callCallback:callCallback sceneIdentifier:nil];
             } else {
-                [self handleInitSuccessAndCallCallback:YES sceneIdentifier:nil];
+                [self handleInitSuccessAndCallCallback:callCallback sceneIdentifier:nil];
                 NSDictionary *params = [self getLatestReferringParams];
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen completed with params: %@", params] error:nil];
             }
@@ -2618,9 +2630,17 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     [[BranchLogger shared] logDebug: @"Branch sendOpen network request queued." error:nil];
     [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
+    
+    self.initializationStatus = BNCInitStatusInitializing;
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
 }
 
-- (void) sendOpen:(NSDictionary *)responseData {
+- (void) sendOpen:(NSDictionary *)responseData callCallback:(BOOL)callCallback {
+    NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;
+    if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)]) {
+        [self.delegate branch:self willStartSessionWithURL:URL];
+    }
+    
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen called with responseData: %@", responseData] error:nil];
 
     if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
@@ -2634,9 +2654,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         dispatch_async(dispatch_get_main_queue(), ^ {
             if (error) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen failed with error: %@", error] error:error];
-                [self handleInitFailure:error callCallback:YES sceneIdentifier:nil];
+                [self handleInitFailure:error callCallback:callCallback sceneIdentifier:nil];
             } else {
-                [self handleInitSuccessAndCallCallback:YES sceneIdentifier:nil];
+                [self handleInitSuccessAndCallCallback:callCallback sceneIdentifier:nil];
                 NSDictionary *params = [self getLatestReferringParams];
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen completed with params: %@", params] error:nil];
             }
@@ -2649,6 +2669,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     [[BranchLogger shared] logDebug: @"Branch sendOpen network request queued." error:nil];
     [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
+    
+    self.initializationStatus = BNCInitStatusInitializing;
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
 }
 
 @end
