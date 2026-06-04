@@ -19,7 +19,12 @@ final class NotificationHybridTest: BaseGptDriverTest {
             app.buttons[kTestBedBtnNotificationSend].exists,
             "Host-app button btn_notification_send is not wired"
         )
-        warmUpNotificationPermission()
+        // Skip cleanly when iOS notification permission is not granted —
+        // the banner the test body asserts on can never appear without it.
+        try XCTSkipUnless(
+            warmUpNotificationPermission(),
+            "iOS notification permission was not granted — skipping notification delivery test"
+        )
     }
 
     /// Acquire iOS notification permission upfront so the test body's
@@ -43,20 +48,32 @@ final class NotificationHybridTest: BaseGptDriverTest {
     /// real banner the test body produces. On warm sims (permission
     /// granted in a prior run) the dialog never appears and only the
     /// phantom banner from the dry tap needs to age out.
-    private func warmUpNotificationPermission() {
+    ///
+    /// Returns `true` when notification permission is confirmed granted —
+    /// either by tapping "Allow" on the freshly surfaced dialog (cold sim)
+    /// or by observing the phantom Branch banner that only fires after a
+    /// granted authorization callback (warm sim). Returns `false` when
+    /// neither appears, i.e. permission was previously denied, so the caller
+    /// can skip rather than fail on a banner that can never show.
+    @discardableResult
+    private func warmUpNotificationPermission() -> Bool {
         let button = app.buttons[kTestBedBtnNotificationSend]
         TestScrollHelpers.scrollUntilVisible(button, in: app)
         button.tap()
 
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        var permissionGranted = false
+
         let allowButton = springboard.buttons["Allow"]
         if allowButton.waitForExistence(timeout: 5) {
             allowButton.tap()
+            permissionGranted = true
         }
 
         // Phantom Branch banner from the dry tap appears ~5s after the
-        // authorization grant. Wait for it; if it shows, let SpringBoard
-        // auto-dismiss it (~6-8s) so it does not race the test body.
+        // authorization grant. Its presence also confirms permission on warm
+        // sims where the dialog never showed. Wait for it; if it shows, let
+        // SpringBoard auto-dismiss it (~6-8s) so it does not race the test body.
         let bannerPredicate = NSPredicate(
             format: "identifier == 'NotificationShortLookView' OR identifier == 'NotificationCell' " +
                 "OR label CONTAINS[c] 'Branch Test Notification'"
@@ -64,8 +81,11 @@ final class NotificationHybridTest: BaseGptDriverTest {
         let phantomBanner = springboard.descendants(matching: .any)
             .matching(bannerPredicate).firstMatch
         if phantomBanner.waitForExistence(timeout: 12) {
+            permissionGranted = true
             wait(timeout: 10)
         }
+
+        return permissionGranted
     }
 
     func testSendNotification_createsNotificationWithBranchLink() throws {
