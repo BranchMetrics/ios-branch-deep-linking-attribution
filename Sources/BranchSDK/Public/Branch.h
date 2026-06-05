@@ -447,7 +447,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  
  @warning This function is an internal helper function for session initalization and should not be used by apps.
  **/
-- (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString reset:(BOOL)reset __attribute__((deprecated("Use sendOpen instead.")));
+- (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString reset:(BOOL)reset __attribute__((deprecated("Use requestDeepLinkData or sendOpen instead.")));
 
 /**
  Allow Branch to handle a link opening the app, returning whether it was from a Branch link or not.
