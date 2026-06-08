@@ -1123,13 +1123,13 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)addFacebookPartnerParameterWithName:(NSString *)name value:(NSString *)value {
-    if (![Branch attributionLevelNone]) {
+    if (!Branch.attributionLevelNone) {
         [[BNCPartnerParameters shared] addFacebookParameterWithName:name value:value];
     }
 }
 
 - (void)addSnapPartnerParameterWithName:(NSString *)name value:(NSString *)value {
-    if (![Branch attributionLevelNone]) {
+    if (!Branch.attributionLevelNone) {
         [[BNCPartnerParameters shared] addSnapParameterWithName:name value:value];
     }
 }
@@ -1948,7 +1948,7 @@ static NSString *bnc_branchKey = nil;
         
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive installOrOpenInQueue %d", installOrOpenInQueue] error:nil];
 
-        if (![Branch attributionLevelNone] && self.initializationStatus == BNCInitStatusUninitialized && !installOrOpenInQueue) {
+        if (!Branch.attributionLevelNone && self.initializationStatus == BNCInitStatusUninitialized && !installOrOpenInQueue) {
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive attributionLevelNone %d initializationStatus %d installOrOpenInQueue %d", Branch.attributionLevelNone, self.initializationStatus, installOrOpenInQueue] error:nil];
             
             // TODO: Replace with sendOpen
@@ -1961,7 +1961,7 @@ static NSString *bnc_branchKey = nil;
     [[BranchLogger shared] logVerbose:@"applicationWillResignActive" error:nil];
 
     dispatch_async(self.isolationQueue, ^(){
-        if (![Branch attributionLevelNone]) {
+        if (!Branch.attributionLevelNone) {
             self.initializationStatus = BNCInitStatusUninitialized;
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationWillResignActive initializationStatus %ld", self.initializationStatus] error:nil];
             [BranchOpenRequest setWaitNeededForOpenResponseLock];
