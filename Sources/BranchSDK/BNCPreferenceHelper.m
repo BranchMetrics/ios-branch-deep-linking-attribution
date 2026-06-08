@@ -895,19 +895,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     [self writeObjectToDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL value:level];
 }
 
-- (BOOL)attributionLevelFull:(BranchAttributionLevel)level {
-    return [_attributionLevel isEqualToString:@"FULL"];
-}
-
-- (BOOL)attributionLevelReduced:(BranchAttributionLevel)level {
-    return [_attributionLevel isEqualToString:@"REDUCED"];
-}
-
-- (BOOL)attributionLevelMinimal:(BranchAttributionLevel)level {
-    return [_attributionLevel isEqualToString:@"MINIMAL"];
-}
-
-- (BOOL)attributionLevelNone:(BranchAttributionLevel)level {
+- (BOOL)attributionLevelNone {
     return [_attributionLevel isEqualToString:@"NONE"];
 }
 

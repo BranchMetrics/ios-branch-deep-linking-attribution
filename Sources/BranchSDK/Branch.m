@@ -564,24 +564,6 @@ static NSString *bnc_branchKey = nil;
     [self.preferenceHelper setRequestMetadataKey:key value:value];
 }
 
-+ (BOOL)attributionLevelFull {
-    @synchronized (self) {
-        return [[BNCPreferenceHelper sharedInstance].attributionLevel isEqualToString:BranchAttributionLevelFull];
-    }
-}
-
-+ (BOOL)attributionLevelReduced {
-    @synchronized (self) {
-        return [[BNCPreferenceHelper sharedInstance].attributionLevel isEqualToString:BranchAttributionLevelReduced];
-    }
-}
-
-+ (BOOL)attributionLevelMinimal {
-    @synchronized (self) {
-        return [[BNCPreferenceHelper sharedInstance].attributionLevel isEqualToString:BranchAttributionLevelMinimal];
-    }
-}
-
 + (BOOL)attributionLevelNone {
     @synchronized (self) {
         return [[BNCPreferenceHelper sharedInstance].attributionLevel isEqualToString:BranchAttributionLevelNone];
@@ -1966,7 +1948,7 @@ static NSString *bnc_branchKey = nil;
         
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive installOrOpenInQueue %d", installOrOpenInQueue] error:nil];
 
-        if (!Branch.attributionLevelNone && self.initializationStatus == BNCInitStatusUninitialized && !installOrOpenInQueue) {
+        if (![Branch attributionLevelNone] && self.initializationStatus == BNCInitStatusUninitialized && !installOrOpenInQueue) {
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive attributionLevelNone %d initializationStatus %d installOrOpenInQueue %d", Branch.attributionLevelNone, self.initializationStatus, installOrOpenInQueue] error:nil];
             
             // TODO: Replace with sendOpen
@@ -1979,7 +1961,7 @@ static NSString *bnc_branchKey = nil;
     [[BranchLogger shared] logVerbose:@"applicationWillResignActive" error:nil];
 
     dispatch_async(self.isolationQueue, ^(){
-        if (!Branch.attributionLevelNone) {
+        if (![Branch attributionLevelNone]) {
             self.initializationStatus = BNCInitStatusUninitialized;
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationWillResignActive initializationStatus %ld", self.initializationStatus] error:nil];
             [BranchOpenRequest setWaitNeededForOpenResponseLock];
