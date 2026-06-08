@@ -561,9 +561,9 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 /**
  Sends a Branch Open event with attribution to our new route.
  */
-- (void)sendOpen:(BOOL)callCallback;
+- (void)sendOpen;
 
-- (void)sendOpen:(NSDictionary *)responseData callCallback:(BOOL)callCallback;
+- (void)sendOpen:(NSDictionary *)responseData;
 
 #pragma mark - Pre-initialization support
 
