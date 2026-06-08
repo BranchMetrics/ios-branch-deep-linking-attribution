@@ -2608,9 +2608,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         dispatch_async(dispatch_get_main_queue(), ^ {
             if (error) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen failed with error: %@", error] error:error];
-                [self handleInitFailure:error callCallback:YES sceneIdentifier:nil];
+                [self handleInitFailure:error callCallback:NO sceneIdentifier:nil];
             } else {
-                [self handleInitSuccessAndCallCallback:YES sceneIdentifier:nil];
+                [self handleInitSuccessAndCallCallback:NO sceneIdentifier:nil];
                 NSDictionary *params = [self getLatestReferringParams];
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen completed with params: %@", params] error:nil];
             }
@@ -2643,9 +2643,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         dispatch_async(dispatch_get_main_queue(), ^ {
             if (error) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen failed with error: %@", error] error:error];
-                [self handleInitFailure:error callCallback:YES sceneIdentifier:nil];
+                [self handleInitFailure:error callCallback:NO sceneIdentifier:nil];
             } else {
-                [self handleInitSuccessAndCallCallback:YES sceneIdentifier:nil];
+                [self handleInitSuccessAndCallCallback:NO sceneIdentifier:nil];
                 NSDictionary *params = [self getLatestReferringParams];
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen completed with params: %@", params] error:nil];
             }
