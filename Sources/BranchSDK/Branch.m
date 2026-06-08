@@ -2624,11 +2624,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 - (void) sendOpen:(NSDictionary *)responseData {
-    NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;
-    if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)]) {
-        [self.delegate branch:self willStartSessionWithURL:URL];
-    }
-    
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen called with responseData: %@", responseData] error:nil];
 
     if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
