@@ -908,7 +908,6 @@ static NSString *bnc_branchKey = nil;
         self.preferenceHelper.referringURL = urlString;
 
         [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:nil reset:YES];
-        
         return NO;
     }
 
