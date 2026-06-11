@@ -690,12 +690,10 @@ static NSString *bnc_branchKey = nil;
         //Enable Tracking
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enabling attribution events due to Consumer Protection Attribution Level being %@.", level] error:nil];
 
-            if (resetSession) {
-                [[Branch getInstance] sendOpen];
-            }
+        if (resetSession) {
+            [[Branch getInstance] sendOpen];
         }
     }
-    
 }
 
 #pragma mark - InitSession Permutation methods
