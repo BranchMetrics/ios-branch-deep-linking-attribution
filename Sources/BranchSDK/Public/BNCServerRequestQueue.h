@@ -21,6 +21,7 @@
 - (void)enqueue:(BNCServerRequest *)request;
 - (void)enqueue:(BNCServerRequest *)request withPriority:(NSOperationQueuePriority)priority;
 - (void)clearQueue;
+- (void)cancelPendingDeepLinkRequests;
 - (BOOL)containsInstallOrOpen;
 - (BranchOpenRequest *)findExistingInstallOrOpen;
 

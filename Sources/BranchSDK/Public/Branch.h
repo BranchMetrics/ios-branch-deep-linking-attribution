@@ -447,7 +447,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  
  @warning This function is an internal helper function for session initalization and should not be used by apps.
  **/
-- (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString reset:(BOOL)reset;
+- (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString reset:(BOOL)reset __attribute__((deprecated("Use requestDeepLinkData or sendOpen instead.")));
 
 /**
  Allow Branch to handle a link opening the app, returning whether it was from a Branch link or not.
@@ -523,9 +523,41 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 
 /**
- Sends a Branch Deep Link info to our new route.
+ Resolves a Branch URL to deep link data, or returns deferred deep link data when `branchLink` is nil.
+
+ Call this from `application:openURL:` or `continueUserActivity:` with the URL, or from
+ `applicationDidFinishLaunching:` with nil to retrieve deferred deep link data.
+
+ When called with a non-nil URL, any pending (not yet executing) nil-URL deep link requests are
+ cancelled so that only one callback fires per app open.
  */
 - (void)requestDeepLinkData:(nullable NSString *)branchLink callback:(nullable callbackWithParams)callback;
+
+/**
+ Convenience overload for `application:didFinishLaunchingWithOptions:`.
+
+ Extracts the Branch URL from `launchOptions` and calls `requestDeepLinkData:callback:` with it.
+ For Universal Link and URL-scheme opens the method returns without calling the callback because
+ the URL-bearing call will arrive via `continueUserActivity:` or `application:openURL:`.
+ */
+- (void)requestDeepLinkDataWithLaunchOptions:(nullable NSDictionary *)options
+                                    callback:(nullable callbackWithParams)callback;
+
+#if !TARGET_OS_TV
+/**
+ Convenience overload for `scene:willConnectToSession:options:`.
+
+ Extracts the Branch URL from `connectionOptions` and calls `requestDeepLinkData:callback:` with it.
+ Pass nil for `connectionOptions` or an empty options object for cold starts with no incoming link.
+
+ Available on iOS 13.0+ and macCatalyst 13.1+.
+ */
+- (void)requestDeepLinkDataWithSceneOptions:(nullable UISceneConnectionOptions *)connectionOptions
+                                      scene:(UIScene *)scene
+                                   callback:(nullable callbackWithParams)callback
+    API_AVAILABLE(ios(13.0), macCatalyst(13.1));
+#endif
+
 /**
  Sends a Branch Open event with attribution to our new route.
  */

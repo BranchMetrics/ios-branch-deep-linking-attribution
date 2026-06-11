@@ -690,10 +690,9 @@ static NSString *bnc_branchKey = nil;
         //Enable Tracking
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enabling attribution events due to Consumer Protection Attribution Level being %@.", level] error:nil];
 
-        if (resetSession) {
-            // Initialize a Branch session:
-            // TODO: Replace with sendOpen API
-            [[Branch getInstance] initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil reset:true];
+            if (resetSession) {
+                [[Branch getInstance] sendOpen];
+            }
         }
     }
     
@@ -952,7 +951,8 @@ static NSString *bnc_branchKey = nil;
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Set universalLinkUrl and referringURL to %@", urlString] error:nil];
     }
 
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:urlString reset:YES];
+    // [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:urlString reset:YES];
+    [self sendOpen];
 
     return [Branch isBranchLink:urlString];
 }
@@ -1951,8 +1951,7 @@ static NSString *bnc_branchKey = nil;
         if (![Branch attributionLevelNone] && self.initializationStatus == BNCInitStatusUninitialized && !installOrOpenInQueue) {
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive attributionLevelNone %d initializationStatus %d installOrOpenInQueue %d", [Branch attributionLevelNone], self.initializationStatus, installOrOpenInQueue] error:nil];
             
-            // TODO: Replace with sendOpen
-            [self initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:nil reset:NO];
+            [self sendOpen];
         }
     });
 }
@@ -2458,6 +2457,10 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 - (void) requestDeepLinkData:(NSString *)branchLink callback:(nullable callbackWithParams)callback {
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData called with branchLink: %@", branchLink] error:nil];
 
+    if (branchLink.length > 0) {
+        [self.requestQueue cancelPendingDeepLinkRequests];
+    }
+
     // Prepare callback block that will be called when the deeplink request completes
     callbackWithStatus deepLinkCallback = ^(BOOL success, NSError *error) {
         // callback on main, this is generally what the client expects and maintains our previous behavior
@@ -2489,7 +2492,71 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [self.requestQueue enqueue:deepLinkReq withPriority:NSOperationQueuePriorityHigh];
 }
 
+- (void)requestDeepLinkDataWithLaunchOptions:(NSDictionary *)options
+                                    callback:(nullable callbackWithParams)callback {
+    [[BranchLogger shared] logDebug:@"requestDeepLinkDataWithLaunchOptions called" error:nil];
+
+    NSString *pushURL = nil;
+#if !TARGET_OS_TV
+    id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
+    if ([branchUrlFromPush isKindOfClass:[NSString class]]) {
+        pushURL = (NSString *)branchUrlFromPush;
+    }
+#endif
+
+    // When opening via URL scheme or Universal Link, the URL-bearing call arrives separately
+    // via application:openURL: or continueUserActivity: — skip here to avoid double enqueue.
+    BOOL hasURLScheme = [options.allKeys containsObject:UIApplicationLaunchOptionsURLKey];
+    BOOL hasUniversalLink = [options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey];
+    if (!pushURL && (hasURLScheme || hasUniversalLink)) {
+        return;
+    }
+
+    [self requestDeepLinkData:pushURL callback:callback];
+}
+
+#if !TARGET_OS_TV
+- (void)requestDeepLinkDataWithSceneOptions:(nullable UISceneConnectionOptions *)connectionOptions
+                                      scene:(UIScene *)scene
+                                   callback:(nullable callbackWithParams)callback
+    API_AVAILABLE(ios(13.0), macCatalyst(13.1)) {
+    [[BranchLogger shared] logDebug:@"requestDeepLinkDataWithSceneOptions called" error:nil];
+
+    // Mirror BranchScene.initSessionWithSceneOptions: build the same synthetic launchOptions
+    // so requestDeepLinkDataWithLaunchOptions applies the same early-return logic.
+    NSMutableDictionary *launchOptions = [[NSMutableDictionary alloc] init];
+    if (connectionOptions.userActivities.count) {
+        launchOptions[UIApplicationLaunchOptionsUserActivityDictionaryKey] = connectionOptions.userActivities.allObjects;
+    }
+    if (connectionOptions.URLContexts.count) {
+        launchOptions[UIApplicationLaunchOptionsURLKey] = connectionOptions.URLContexts.allObjects;
+    }
+
+    // Handles the no-link cold start (enqueues a nil-URL request).
+    // Returns early without enqueueing when a URL scheme or Universal Link is present.
+    [self requestDeepLinkDataWithLaunchOptions:launchOptions callback:callback];
+
+    // Mirror BranchScene: explicitly resolve the URL from connectionOptions,
+    // equivalent to the continueUserActivity: / openURLContexts: calls BranchScene makes
+    // after its initSceneSession call.
+    if (connectionOptions.userActivities.count) {
+        NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject;
+        if ([activity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
+            [self requestDeepLinkData:activity.webpageURL.absoluteString callback:callback];
+        }
+    } else if (connectionOptions.URLContexts.count) {
+        UIOpenURLContext *context = connectionOptions.URLContexts.allObjects.firstObject;
+        [self requestDeepLinkData:context.URL.absoluteString callback:callback];
+    }
+}
+#endif
+
 - (void) sendOpen {
+    NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;
+    if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)]) {
+        [self.delegate branch:self willStartSessionWithURL:URL];
+    }
+    
     [[BranchLogger shared] logDebug:@"sendOpen called" error:nil];
 
     if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
@@ -2502,9 +2569,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         dispatch_async(dispatch_get_main_queue(), ^ {
             if (error) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen failed with error: %@", error] error:error];
-                [self handleInitFailure:error callCallback:YES sceneIdentifier:nil];
+                [self handleInitFailure:error callCallback:NO sceneIdentifier:nil];
             } else {
-                [self handleInitSuccessAndCallCallback:YES sceneIdentifier:nil];
+                [self handleInitSuccessAndCallCallback:NO sceneIdentifier:nil];
                 NSDictionary *params = [self getLatestReferringParams];
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen completed with params: %@", params] error:nil];
             }
@@ -2532,9 +2599,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         dispatch_async(dispatch_get_main_queue(), ^ {
             if (error) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen failed with error: %@", error] error:error];
-                [self handleInitFailure:error callCallback:YES sceneIdentifier:nil];
+                [self handleInitFailure:error callCallback:NO sceneIdentifier:nil];
             } else {
-                [self handleInitSuccessAndCallCallback:YES sceneIdentifier:nil];
+                [self handleInitSuccessAndCallCallback:NO sceneIdentifier:nil];
                 NSDictionary *params = [self getLatestReferringParams];
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen completed with params: %@", params] error:nil];
             }

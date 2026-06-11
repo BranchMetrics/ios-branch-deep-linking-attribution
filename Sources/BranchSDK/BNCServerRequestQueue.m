@@ -11,6 +11,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BranchInstallRequest.h"
 #import "BranchOpenRequest.h"
+#import "BranchRequestDeepLink.h"
 #import "BranchEvent.h"
 #import "BranchLogger.h"
 #import "Private/BNCServerRequestOperation.h"
@@ -95,6 +96,18 @@
 - (void)clearQueue {
     [[BranchLogger shared] logDebug:@"Clearing all pending operations from the queue." error:nil];
     [self.operationQueue cancelAllOperations];
+}
+
+- (void)cancelPendingDeepLinkRequests {
+    for (NSOperation *op in self.operationQueue.operations) {
+        if ([op isKindOfClass:[BNCServerRequestOperation class]]) {
+            BNCServerRequestOperation *reqOp = (BNCServerRequestOperation *)op;
+            if ([reqOp.request isKindOfClass:[BranchRequestDeepLink class]] && !op.isExecuting) {
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Cancelling pending BranchRequestDeepLink operation: %@", reqOp.request.requestUUID] error:nil];
+                [op cancel];
+            }
+        }
+    }
 }
 
 // These methods now need to iterate through the operations in the NSOperationQueue.
