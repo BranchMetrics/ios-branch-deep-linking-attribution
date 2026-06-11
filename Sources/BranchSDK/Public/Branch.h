@@ -944,15 +944,6 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  */
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level resetSession:(BOOL)resetSession;
 
-/// Returns a boolean based on if the current Attribution Level is set to "FULL".
-+ (BOOL) attributionLevelFull;
-
-/// Returns a boolean based on if the current Attribution Level is set to "REDUCED".
-+ (BOOL) attributionLevelReduced;
-
-/// Returns a boolean based on if the current Attribution Level is set to "MINIMAL".
-+ (BOOL) attributionLevelMinimal;
-
 /// Returns a boolean based on if the current Attribution Level is set to "NONE".
 + (BOOL) attributionLevelNone;
 

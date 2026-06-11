@@ -110,7 +110,7 @@
 // When YES, only link creation and resolution calls are allowed.
 // NO by default.
 - (BOOL)isAttributionLevelNone {
-    return Branch.attributionLevelNone;
+    return [Branch attributionLevelNone];
 }
 
 - (NSDictionary *)dataForInstallWithURLString:(NSString *)urlString {
