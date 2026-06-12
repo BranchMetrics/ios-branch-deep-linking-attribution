@@ -23,7 +23,7 @@ jobs:
       BROWSERSTACK_USER: ${{ secrets.BROWSER_STACK_USER }}
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install the Apple certificate and provisioning profile
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
@@ -66,7 +66,7 @@ jobs:
            echo "::add-mask::$parsed"
            echo "BrowserStackIOSBuildKey=$parsed" >> "$GITHUB_ENV"
       - name: Cheout Automation Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: BranchMetrics/qentelli-saas-sdk-testing-automation
           token: ${{ secrets.BRANCHLET_ACCESS_TOKEN_PUBLIC }}
