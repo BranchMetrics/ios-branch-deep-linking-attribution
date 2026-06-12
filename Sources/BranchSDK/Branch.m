@@ -149,6 +149,12 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
 @property (assign, nonatomic) NSInteger networkCount;
 @property (assign, nonatomic) BNCInitStatus initializationStatus;
+// Blocks waiting for the in-flight session open to settle. See notifyWhenSessionReady:.
+@property (strong, nonatomic) NSMutableArray<void (^)(NSError * _Nullable)> *sessionReadyBlocks;
+
+- (void)notifyWhenSessionReady:(void (^)(NSError * _Nullable error))block;
+- (void)flushSessionReadyBlocksWithError:(nullable NSError *)error;
+- (void)discardSessionReadyBlocks;
 @property (assign, nonatomic) BOOL shouldAutomaticallyDeepLink;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
@@ -217,6 +223,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     _initializationStatus = BNCInitStatusUninitialized;
     _processing_sema = dispatch_semaphore_create(1);
     _networkCount = 0;
+    _sessionReadyBlocks = [NSMutableArray new];
     _deepLinkControllers = [[NSMutableDictionary alloc] init];
     _allowedSchemeList = [[NSMutableArray alloc] init];
     _serverAPI = [BNCServerAPI sharedInstance];
@@ -2114,6 +2121,28 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 }
             });
         }
+        // If an open is already in flight (status Initializing), its completion runs with
+        // callCallback:NO and would never invoke a handler registered here. Queue the
+        // callback on the session-ready list; the settle handlers flush it.
+        else if (callCallback && self.initializationStatus == BNCInitStatusInitializing) {
+            [[BranchLogger shared] logVerbose:@"Session open already in flight, queueing init callback until it settles." error:nil];
+            [self notifyWhenSessionReady:^(NSError * _Nullable error) {
+                if (!self.sceneSessionInitWithCallback) return;
+                BNCInitSessionResponse *response = [BNCInitSessionResponse new];
+                response.sceneIdentifier = sceneIdentifier;
+                if (error) {
+                    response.error = error;
+                    response.params = [NSDictionary new];
+                    response.universalObject = [BranchUniversalObject new];
+                    response.linkProperties = [BranchLinkProperties new];
+                } else {
+                    response.params = [self getLatestReferringParams];
+                    response.universalObject = [self getLatestReferringBranchUniversalObject];
+                    response.linkProperties = [self getLatestReferringBranchLinkProperties];
+                }
+                self.sceneSessionInitWithCallback(response, error);
+            }];
+        }
     });
 }
 
@@ -2220,6 +2249,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             response.sceneIdentifier = sceneIdentifier;
             self.sceneSessionInitWithCallback(response, nil);
         }
+        [self discardSessionReadyBlocks];
+    } else {
+        [self flushSessionReadyBlocksWithError:nil];
     }
     [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
 
@@ -2422,6 +2454,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             response.sceneIdentifier = sceneIdentifier;
             self.sceneSessionInitWithCallback(response, error);
         }
+        [self discardSessionReadyBlocks];
+    } else {
+        [self flushSessionReadyBlocksWithError:error];
     }
 
     [self sendOpenNotificationWithLinkParameters:@{} error:error];
@@ -2588,6 +2623,52 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 #endif
+
+#pragma mark - Session Ready Notification
+
+// Internal primitive for "the session has settled" notifications.
+// Blocks queued here are flushed (or discarded, see below) by
+// handleInitSuccessAndCallCallback: / handleInitFailure:, which every open
+// completion funnels through. The legacy initSession flow uses this as a
+// bridge while an auto open is in flight; the mechanism is independent of
+// initUserSessionAndCallCallback and survives its planned removal.
+- (void)notifyWhenSessionReady:(void (^)(NSError * _Nullable error))block {
+    if (!block) return;
+    BOOL callNow = NO;
+    @synchronized (self.sessionReadyBlocks) {
+        if (self.initializationStatus == BNCInitStatusInitialized) {
+            callNow = YES;
+        } else {
+            [self.sessionReadyBlocks addObject:[block copy]];
+        }
+    }
+    if (callNow) {
+        dispatch_async(dispatch_get_main_queue(), ^{ block(nil); });
+    }
+}
+
+- (void)flushSessionReadyBlocksWithError:(nullable NSError *)error {
+    NSArray *blocks;
+    @synchronized (self.sessionReadyBlocks) {
+        if (self.sessionReadyBlocks.count == 0) return;
+        blocks = [self.sessionReadyBlocks copy];
+        [self.sessionReadyBlocks removeAllObjects];
+    }
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Flushing %lu session-ready block(s).", (unsigned long)blocks.count] error:error];
+    for (void (^block)(NSError * _Nullable) in blocks) {
+        dispatch_async(dispatch_get_main_queue(), ^{ block(error); });
+    }
+}
+
+// Used on the callCallback:YES settle paths: the registered handler was just
+// invoked directly, and queued blocks all target that same single
+// sceneSessionInitWithCallback property, so flushing them too would call the
+// handler twice for one settle.
+- (void)discardSessionReadyBlocks {
+    @synchronized (self.sessionReadyBlocks) {
+        [self.sessionReadyBlocks removeAllObjects];
+    }
+}
 
 - (void) sendOpen {
     NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;
