@@ -173,6 +173,8 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (nonatomic, copy, nullable) void (^cachedInitBlock)(void);
 @property (nonatomic, copy, readwrite) NSString *cachedURLString;
 
+// Private methods
+- (void)sendOpen:(NSDictionary *)responseData skipCallback:(BOOL)skipCallback;
 - (void)clearLinkIdentifiers;
 
 @end
@@ -1718,6 +1720,19 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
+- (void)clearLinkIdentifiers {
+    // Clear link identifiers so they don't get reused on the next open
+    // This matches the cleanup done in BranchRequestOpen.processResponse (lines 181-184)
+    self.preferenceHelper.linkClickIdentifier = nil;
+    self.preferenceHelper.spotlightIdentifier = nil;
+    self.preferenceHelper.universalLinkUrl = nil;
+    self.preferenceHelper.externalIntentURI = nil;
+    self.preferenceHelper.referringURL = nil;
+    self.preferenceHelper.initialReferrer = nil;
+    self.preferenceHelper.dropURLOpen = NO;
+    self.preferenceHelper.uxType = nil;
+    self.preferenceHelper.urlLoadMs = nil;
+}
 
 #pragma mark - URL Generation methods
 
@@ -2498,6 +2513,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [BNCPreferenceHelper clearAll];
 }
 
+#pragma mark - Deep Linking API Request Methods
+
 - (void) requestDeepLinkData:(NSString *)branchLink callback:(nullable callbackWithParams)callback {
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData called with branchLink: %@", branchLink] error:nil];
 
@@ -2595,6 +2612,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 #endif
 
+#pragma mark - Attribution API Request Methods
+
 - (void) sendOpen {
     NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;
     if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)]) {
@@ -2661,20 +2680,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     [[BranchLogger shared] logDebug: @"Branch sendOpen network request queued." error:nil];
     [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
-}
-
-- (void)clearLinkIdentifiers {
-    // Clear link identifiers so they don't get reused on the next open
-    // This matches the cleanup done in BranchRequestOpen.processResponse (lines 181-184)
-    self.preferenceHelper.linkClickIdentifier = nil;
-    self.preferenceHelper.spotlightIdentifier = nil;
-    self.preferenceHelper.universalLinkUrl = nil;
-    self.preferenceHelper.externalIntentURI = nil;
-    self.preferenceHelper.referringURL = nil;
-    self.preferenceHelper.initialReferrer = nil;
-    self.preferenceHelper.dropURLOpen = NO;
-    self.preferenceHelper.uxType = nil;
-    self.preferenceHelper.urlLoadMs = nil;
 }
 
 @end
