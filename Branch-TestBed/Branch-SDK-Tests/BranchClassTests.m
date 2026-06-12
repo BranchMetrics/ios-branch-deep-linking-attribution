@@ -18,6 +18,12 @@
 - (void)writeObjectToDefaults:(NSString *)key value:(NSObject *)value;
 @end
 
+
+// Expose private session-state internals used to reproduce the in-flight open window.
+@interface Branch (SessionReadySettleTest)
+- (void)handleInitSuccessAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier;
+@end
+
 @interface BranchClassTests : XCTestCase
 @property (nonatomic, strong) Branch *branch;
 @property (nonatomic, strong, readwrite) BNCPreferenceHelper *prefHelper;
@@ -454,6 +460,36 @@
     NSString *finalAnonID = [BNCPreferenceHelper sharedInstance].anonID;
     XCTAssertTrue([finalAnonID isEqualToString:anonID1] || [finalAnonID isEqualToString:anonID2],
                   @"One of the anonID values should be set");
+}
+
+
+// Regression test for the in-flight auto open window: a handler registered via
+// initSession while an open is in flight (status Initializing == 1) must still
+// be invoked when the open settles silently (callCallback:NO), which is how the
+// automatic sendOpen completes its requests.
+- (void)testInitSessionCallbackRegisteredWhileOpenInFlightIsInvoked {
+    // Force the state an in-flight automatic open leaves us in.
+    [self.branch setValue:@(1) forKey:@"initializationStatus"];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"init callback invoked after silent settle"];
+    __block BOOL alreadyFulfilled = NO;
+    [self.branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+        if (!alreadyFulfilled) {
+            alreadyFulfilled = YES;
+            [expectation fulfill];
+        }
+    }];
+
+    // Let the isolation queue process the registration before the open settles.
+    [NSThread sleepForTimeInterval:0.5];
+
+    // Simulate the in-flight automatic open settling the session silently.
+    [self.branch handleInitSuccessAndCallCallback:NO sceneIdentifier:nil];
+
+    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+
+    // Reset session state so this test does not leak into others.
+    [self.branch setValue:@(0) forKey:@"initializationStatus"];
 }
 
 @end
