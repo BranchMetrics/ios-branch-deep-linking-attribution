@@ -25,5 +25,6 @@
 
 - (id)initWithCallback:(callbackWithStatus)callback;
 - (id)initWithCallback:(callbackWithStatus)callback isInstall:(BOOL)isInstall;
+- (void)clearLinkIdentifiers:(BNCPreferenceHelper *)preferenceHelper;
 
 @end

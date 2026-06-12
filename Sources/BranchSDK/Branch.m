@@ -173,6 +173,8 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (nonatomic, copy, nullable) void (^cachedInitBlock)(void);
 @property (nonatomic, copy, readwrite) NSString *cachedURLString;
 
+- (void)clearLinkIdentifiers;
+
 @end
 
 @implementation Branch
@@ -2602,7 +2604,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [[BranchLogger shared] logDebug:@"sendOpen called" error:nil];
 
     if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
-        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented." error:nil];
+        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented. Clearing link identifiers to prevent reuse." error:nil];
+        
+        [self clearLinkIdentifiers];
         return;
     }
     // Prepare callback block
@@ -2631,7 +2635,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen called with responseData: %@, skipCallback: %d", responseData, skipCallback] error:nil];
 
     if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
-        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented." error:nil];
+        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented. Clearing link identifiers to prevent reuse." error:nil];
+        [self clearLinkIdentifiers];
         return;
     }
 
@@ -2656,6 +2661,20 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     [[BranchLogger shared] logDebug: @"Branch sendOpen network request queued." error:nil];
     [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
+}
+
+- (void)clearLinkIdentifiers {
+    // Clear link identifiers so they don't get reused on the next open
+    // This matches the cleanup done in BranchRequestOpen.processResponse (lines 181-184)
+    self.preferenceHelper.linkClickIdentifier = nil;
+    self.preferenceHelper.spotlightIdentifier = nil;
+    self.preferenceHelper.universalLinkUrl = nil;
+    self.preferenceHelper.externalIntentURI = nil;
+    self.preferenceHelper.referringURL = nil;
+    self.preferenceHelper.initialReferrer = nil;
+    self.preferenceHelper.dropURLOpen = NO;
+    self.preferenceHelper.uxType = nil;
+    self.preferenceHelper.urlLoadMs = nil;
 }
 
 @end
