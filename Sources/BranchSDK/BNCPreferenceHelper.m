@@ -892,7 +892,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 }
 
 - (void)setAttributionLevel:(BranchAttributionLevel)level {
-    if (level == BranchAttributionLevelNone) {
+    if ([level isEqualToString:BranchAttributionLevelNone]) {
         [self clearTrackingInformation];
     }
     [self writeObjectToDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL value:level];
