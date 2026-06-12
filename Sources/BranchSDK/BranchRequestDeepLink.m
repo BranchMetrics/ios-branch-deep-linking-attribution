@@ -196,10 +196,9 @@ static BOOL deepLinkRequestWaitQueueIsSuspended = NO;
     if (self != [BranchRequestDeepLink self])
         return;
     deepLinkRequestWaitQueue =
-        dispatch_queue_create("io.branch.sdk.openqueue", DISPATCH_QUEUE_CONCURRENT);
+        dispatch_queue_create("io.branch.sdk.deeplinkqueue", DISPATCH_QUEUE_CONCURRENT);
 }
 
-// Need to Update names for all of these to deepLinkRespone Lock
 + (void) setWaitNeededForDeepLinkResponseLock {
     @synchronized (self) {
         if (!deepLinkRequestWaitQueueIsSuspended) {
@@ -210,7 +209,6 @@ static BOOL deepLinkRequestWaitQueueIsSuspended = NO;
     }
 }
 
-// Need to Update names for all of these to deepLinkRespone Lock
 + (void) waitForDeepLinkResponseLock {
     [[BranchLogger shared] logVerbose:@"Waiting for deepLinkRequestWaitQueue." error:nil];
     dispatch_sync(deepLinkRequestWaitQueue, ^ {
@@ -218,7 +216,6 @@ static BOOL deepLinkRequestWaitQueueIsSuspended = NO;
     });
 }
 
-// Need to Update names for all of these to deepLinkRespone Lock
 + (void) releaseDeepLinkResponseLock {
     @synchronized (self) {
         if (deepLinkRequestWaitQueueIsSuspended) {
