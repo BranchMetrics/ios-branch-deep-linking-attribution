@@ -173,8 +173,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (nonatomic, copy, nullable) void (^cachedInitBlock)(void);
 @property (nonatomic, copy, readwrite) NSString *cachedURLString;
 
-// Private methods
-- (void)sendOpen:(NSDictionary *)responseData skipCallback:(BOOL)skipCallback;
+// Private method used internally
 - (void)clearLinkIdentifiers;
 
 @end

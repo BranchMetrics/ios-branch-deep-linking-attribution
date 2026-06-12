@@ -16,6 +16,11 @@
 #import "BNCServerAPI.h"
 #import "BNCInAppBrowser.h"
 
+// Forward declaration of private Branch method
+@interface Branch (PrivateMethods)
+- (void)sendOpen:(NSDictionary *)responseData skipCallback:(BOOL)skipCallback;
+@end
+
 @implementation BranchRequestDeepLink
 
 - (id)initWithCallback:(callbackWithStatus)callback {
