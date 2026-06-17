@@ -721,36 +721,8 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="u4f-10-QLt">
-                                        <rect key="frame" x="16" y="1042" width="343" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="u4f-10-QLt" id="jmn-fV-qvx">
-                                            <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7Rz-jF-ETn">
-                                                    <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
-                                                    <accessibility key="accessibilityConfiguration" identifier="tracking"/>
-                                                    <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                    <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                    <state key="normal" title="Disable Tracking" image="eye" catalog="system">
-                                                        <color key="titleColor" systemColor="linkColor"/>
-                                                    </state>
-                                                    <connections>
-                                                        <action selector="disableTracking:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="aRv-6b-mHD"/>
-                                                    </connections>
-                                                </button>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstAttribute="bottom" secondItem="7Rz-jF-ETn" secondAttribute="bottom" id="89b-k6-oFc"/>
-                                                <constraint firstItem="7Rz-jF-ETn" firstAttribute="top" secondItem="jmn-fV-qvx" secondAttribute="top" id="LND-nh-JHa"/>
-                                                <constraint firstItem="7Rz-jF-ETn" firstAttribute="leading" secondItem="jmn-fV-qvx" secondAttribute="leading" id="goN-NY-qmK"/>
-                                                <constraint firstAttribute="trailing" secondItem="7Rz-jF-ETn" secondAttribute="trailing" id="pyH-P6-K8K"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="fvl-Cv-Dng">
-                                        <rect key="frame" x="16" y="1086" width="343" height="44"/>
+                                        <rect key="frame" x="16" y="1042" width="343" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="fvl-Cv-Dng" id="AqT-ae-eAc">
                                             <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
@@ -777,7 +749,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="lmc-TI-I7x">
-                                        <rect key="frame" x="16" y="1130" width="343" height="44"/>
+                                        <rect key="frame" x="16" y="1086" width="343" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="lmc-TI-I7x" id="1XD-bq-Yu8">
                                             <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
@@ -804,37 +776,8 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="4YV-Fs-BuA">
-                                        <rect key="frame" x="16" y="1174" width="343" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="4YV-Fs-BuA" id="93g-I9-9tZ">
-                                            <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oFC-oS-hU2">
-                                                    <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
-                                                    <accessibility key="accessibilityConfiguration" identifier="tracking"/>
-                                                    <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                    <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                    <state key="normal" title="Consumer Protection Preference" image="checkmark.shield" catalog="system">
-                                                        <color key="titleColor" systemColor="linkColor"/>
-                                                    </state>
-                                                    <connections>
-                                                        <action selector="changeConsumerProtectionAttributionLevel:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="eif-fe-3JM"/>
-                                                        <action selector="goToPasteControlPressed:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="oct-dQ-HLq"/>
-                                                    </connections>
-                                                </button>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="oFC-oS-hU2" secondAttribute="trailing" id="0NH-TC-sgu"/>
-                                                <constraint firstAttribute="bottom" secondItem="oFC-oS-hU2" secondAttribute="bottom" id="CKb-dX-4SM"/>
-                                                <constraint firstItem="oFC-oS-hU2" firstAttribute="top" secondItem="93g-I9-9tZ" secondAttribute="top" id="e2p-AN-GfI"/>
-                                                <constraint firstItem="oFC-oS-hU2" firstAttribute="leading" secondItem="93g-I9-9tZ" secondAttribute="leading" id="pTf-ET-lY1"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="Fnk-6f-nvv">
-                                        <rect key="frame" x="16" y="1218" width="343" height="44"/>
+                                        <rect key="frame" x="16" y="1130" width="343" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Fnk-6f-nvv" id="67K-H2-Gix">
                                             <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
@@ -863,7 +806,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="QxR-ER-AVt">
-                                        <rect key="frame" x="16" y="1262" width="343" height="44"/>
+                                        <rect key="frame" x="16" y="1174" width="343" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="QxR-ER-AVt" id="TeU-im-aLH">
                                             <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
@@ -900,7 +843,6 @@
                     <navigationItem key="navigationItem" title="Branch TestBed" largeTitleDisplayMode="always" id="eWU-bT-5CF" userLabel="Branch-TestBed"/>
                     <connections>
                         <outlet property="branchLinkTextField" destination="SOP-3u-nhT" id="H0r-W5-wGG"/>
-                        <outlet property="disableTrackingButton" destination="7Rz-jF-ETn" id="WNq-l3-xiU"/>
                         <outlet property="setParnerParamsButton" destination="4fu-zA-ceg" id="oWP-E3-0uu"/>
                         <segue destination="fQe-6g-cKp" kind="push" identifier="ShowLogOutput" id="0UI-6t-JlA"/>
                         <segue destination="nU2-HM-nNx" kind="push" identifier="GoToPasteControlView" id="a1o-Ia-5wh"/>
@@ -936,7 +878,6 @@
         <image name="checkmark.shield" catalog="system" width="121" height="128"/>
         <image name="doc.text" catalog="system" width="115" height="128"/>
         <image name="doc.viewfinder.fill" catalog="system" width="128" height="115"/>
-        <image name="eye" catalog="system" width="128" height="79"/>
         <image name="folder.badge.plus" catalog="system" width="128" height="93"/>
         <image name="light.beacon.max" catalog="system" width="128" height="102"/>
         <image name="link" catalog="system" width="128" height="124"/>
@@ -954,16 +895,16 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="linkColor">
-            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="secondarySystemBackgroundColor">
-            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray6Color">
-            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

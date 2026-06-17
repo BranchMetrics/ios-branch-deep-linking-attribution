@@ -65,10 +65,9 @@
 
     BNCPreferenceHelper *preferenceHelper = self.preferenceHelper ?: [BNCPreferenceHelper sharedInstance];
 
-    // TEMPORARILY WRAPPING TrackingDisabled in old class name
     if (![self.request isKindOfClass:[BranchRequestDeepLink class]]) {
-        if (preferenceHelper.trackingDisabled) {
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Tracking disabled. Skipping request: %@", self.request.requestUUID] error:nil];
+        if ([preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Attribution Level is 'NONE'. Skipping request: %@", self.request.requestUUID] error:nil];
             self.executing = NO;
             self.finished = YES;
             return;

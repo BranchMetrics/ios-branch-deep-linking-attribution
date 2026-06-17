@@ -106,11 +106,11 @@
     
 }
 
-// SDK level tracking control
-// When set to YES, only link creation and resolution calls are allowed.
+// SDK attribution level control
+// When YES, only link creation and resolution calls are allowed.
 // NO by default.
-- (BOOL)isTrackingDisabled {
-    return Branch.trackingDisabled;
+- (BOOL)isAttributionLevelNone {
+    return [Branch attributionLevelNone];
 }
 
 - (NSDictionary *)dataForInstallWithURLString:(NSString *)urlString {
@@ -311,7 +311,7 @@
 - (NSDictionary *)dataForEventWithEventDictionary:(NSMutableDictionary *)dictionary {
     
     // Event requests are not valid when tracking is disabled
-    if ([self isTrackingDisabled]) {
+    if ([self isAttributionLevelNone]) {
         return [NSMutableDictionary new];
     }
     
@@ -367,7 +367,7 @@
 - (NSDictionary *)dataForLATDWithDataDictionary:(NSMutableDictionary *)dictionary {
     
     // LATD requests are not valid when tracking is disabled
-    if ([self isTrackingDisabled]) {
+    if ([self isAttributionLevelNone]) {
         return [NSMutableDictionary new];
     }
     
@@ -393,7 +393,7 @@
 
 - (void)addOpenTokensToJSON:(NSMutableDictionary *)json {
     // Tokens are not valid when tracking is disabled
-    if ([self isTrackingDisabled]) {
+    if ([self isAttributionLevelNone]) {
         return;
     }
     
@@ -411,7 +411,7 @@
 
 - (void)addShortURLTokensToJSON:(NSMutableDictionary *)json isSpotlightRequest:(BOOL)isSpotlightRequest {
     // Tokens are not valid when tracking is disabled
-    if ([self isTrackingDisabled]) {
+    if ([self isAttributionLevelNone]) {
         return;
     }
     
@@ -465,7 +465,7 @@
 
 - (void)addPartnerParametersToJSON:(NSMutableDictionary *)json {
     // Partner parameters are not valid when tracking is disabled
-    if ([self isTrackingDisabled]) {
+    if ([self isAttributionLevelNone]) {
         return;
     }
     NSDictionary *partnerParameters = [[BNCPartnerParameters shared] parameterJson];
@@ -533,7 +533,7 @@
 
 - (void)addTimestampsToJSON:(NSMutableDictionary *)json {
     // timestamps are not valid when tracking is disabled
-    if ([self isTrackingDisabled]) {
+    if ([self isAttributionLevelNone]) {
         return;
     }
     
@@ -563,7 +563,7 @@
     json[BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP] = self.requestCreationTimeStamp;
     
     // omit field if value is NO
-    if ([self isTrackingDisabled]) {
+    if ([self isAttributionLevelNone]) {
         json[@"tracking_disabled"] = @(1);
     }
 }
@@ -744,7 +744,7 @@
     @synchronized (self.deviceInfo) {
         
         // These fields are not necessary for link resolution calls
-        if (![self isTrackingDisabled]) {
+        if (![self isAttributionLevelNone]) {
             [self.deviceInfo checkAdvertisingIdentifier];
             
             // Only include hardware ID fields for Full Attribution Level

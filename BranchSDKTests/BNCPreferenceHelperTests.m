@@ -344,21 +344,6 @@
     XCTAssertEqual(expectedValue, storedValue);
 }
 
-- (void)testSetTrackingDisabled_YES {
-    [self.prefHelper setTrackingDisabled:YES];
-
-    BOOL storedValue = [self.prefHelper trackingDisabled];
-    XCTAssertTrue(storedValue);
-    [self.prefHelper setTrackingDisabled:NO];
-}
-
-- (void)testSetTrackingDisabled_NO {
-    [self.prefHelper setTrackingDisabled:NO];
-    
-    BOOL storedValue = [self.prefHelper trackingDisabled];
-    XCTAssertFalse(storedValue);
-}
-
 // TODO: rethink this test as these values are not set in a freshly instantiated prefHelper
 - (void)testClearTrackingInformation {
     [self.prefHelper clearTrackingInformation];
@@ -412,6 +397,33 @@
     NSDictionary *retrievedManifest = [self.prefHelper getContentAnalyticsManifest];
     
     XCTAssertEqualObjects(retrievedManifest, dummyManifest);
+}
+
+- (void)testSetConsumerProtectionAttributionLevel_FULL {
+    [self.prefHelper setAttributionLevel:BranchAttributionLevelFull];
+    BOOL storedValue = [[self.prefHelper attributionLevel] isEqualToString:@"FULL"];
+    XCTAssertTrue(storedValue);
+}
+
+- (void)testSetConsumerProtectionAttributionLevel_REDUCED {
+    [self.prefHelper setAttributionLevel:BranchAttributionLevelReduced];
+    BOOL storedValue = [[self.prefHelper attributionLevel] isEqualToString:@"REDUCED"];
+    XCTAssertTrue(storedValue);
+    [self.prefHelper setAttributionLevel:BranchAttributionLevelFull];
+}
+
+- (void)testSetConsumerProtectionAttributionLevel_MINIMAL {
+    [self.prefHelper setAttributionLevel:BranchAttributionLevelMinimal];
+    BOOL storedValue = [[self.prefHelper attributionLevel] isEqualToString:@"MINIMAL"];
+    XCTAssertTrue(storedValue);
+    [self.prefHelper setAttributionLevel:BranchAttributionLevelFull];
+}
+
+- (void)testSetConsumerProtectionAttributionLevel_NONE {
+    [self.prefHelper setAttributionLevel:BranchAttributionLevelNone];
+    BOOL storedValue = [[self.prefHelper attributionLevel] isEqualToString:@"NONE"];
+    XCTAssertTrue(storedValue);
+    [self.prefHelper setAttributionLevel:BranchAttributionLevelFull];
 }
 
 @end

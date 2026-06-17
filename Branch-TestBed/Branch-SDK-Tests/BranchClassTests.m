@@ -67,16 +67,6 @@
     XCTAssertEqualObjects(metadata[@"key"], @"value");
 }
 
-- (void)testSetTrackingDisabled {
-    XCTAssertFalse([BNCPreferenceHelper sharedInstance].trackingDisabled);
-
-    [Branch setTrackingDisabled:YES];
-    XCTAssertTrue([BNCPreferenceHelper sharedInstance].trackingDisabled);
-
-    [Branch setTrackingDisabled:NO];
-    XCTAssertFalse([BNCPreferenceHelper sharedInstance].trackingDisabled);
-}
-
 - (void)testCheckPasteboardOnInstall {
     [self.branch checkPasteboardOnInstall];
     BOOL checkOnInstall = [BNCPasteboard sharedInstance].checkOnInstall;
