@@ -26,6 +26,8 @@
 
 @implementation BNCUserAgentCollector
 
+@synthesize userAgent = _userAgent;
+
 + (BNCUserAgentCollector *)instance {
     static BNCUserAgentCollector *collector = nil;
     static dispatch_once_t onceToken = 0;
@@ -43,16 +45,36 @@
     return self;
 }
 
+- (NSString *)userAgent {
+    if (_userAgent) {
+        return _userAgent;
+    }
+
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self loadUserAgentWithCompletion:^(NSString * _Nullable userAgent) {
+            dispatch_semaphore_signal(semaphore);
+        }];
+    });
+    dispatch_semaphore_wait(semaphore, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)));
+
+    return _userAgent ?: nil;
+}
+
+- (void)setUserAgent:(NSString *)userAgent {
+    _userAgent = [userAgent copy];
+}
+
 - (void)loadUserAgentWithCompletion:(void (^)(NSString *userAgent))completion {
     NSString *savedUserAgent = [self loadUserAgentForSystemBuildVersion:self.systemBuildVersion];
     if (savedUserAgent) {
-        self.userAgent = savedUserAgent;
+        _userAgent = [savedUserAgent copy];
         if (completion) {
             completion(savedUserAgent);
         }
     } else {
         [self collectUserAgentWithCompletion:^(NSString * _Nullable userAgent) {
-            self.userAgent = userAgent;
+            self->_userAgent = [userAgent copy];
             [self saveUserAgent:userAgent forSystemBuildVersion:self.systemBuildVersion];
             if (completion) {
                 completion(userAgent);

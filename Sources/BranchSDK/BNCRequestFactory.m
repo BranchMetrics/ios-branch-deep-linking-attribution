@@ -642,7 +642,6 @@
         [dictionary bnc_safeSetObject:self.deviceInfo.country forKey:@"country"];
         [dictionary bnc_safeSetObject:self.deviceInfo.language forKey:@"language"];
         [dictionary bnc_safeSetObject:[self.deviceInfo connectionType] forKey:@"connection_type"];
-        [dictionary bnc_safeSetObject:[self.deviceInfo userAgentString] forKey:@"user_agent"];
 
         [dictionary bnc_safeSetObject:[BNCPreferenceHelper sharedInstance].userIdentity forKey:@"developer_identity"];
         
@@ -724,7 +723,6 @@
         [self safeSetValue:self.deviceInfo.screenWidth forKey:BRANCH_REQUEST_KEY_SCREEN_WIDTH onDict:dict];
         
         [self safeSetValue:[self.deviceInfo connectionType] forKey:@"connection_type" onDict:dict];
-        [self safeSetValue:[self.deviceInfo userAgentString] forKey:@"user_agent" onDict:dict];
         
         [self safeSetValue:self.deviceInfo.applicationVersion forKey:@"app_version" onDict:dict];
         [self safeSetValue:self.deviceInfo.pluginName forKey:@"plugin_name" onDict:dict];

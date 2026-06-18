@@ -48,7 +48,6 @@
 #import "BranchConfigurationController.h"
 
 #if !TARGET_OS_TV
-#import "BNCUserAgentCollector.h"
 #import "BNCSpotlightService.h"
 #import "BNCContentDiscoveryManager.h"
 #import "BranchContentDiscoverer.h"
@@ -246,7 +245,6 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 
     // queue up async data loading
     [self loadApplicationData];
-    [self loadUserAgent];
     
     BranchJsonConfig *config = BranchJsonConfig.instance;
     self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
@@ -1059,18 +1057,6 @@ static NSString *bnc_branchKey = nil;
 }
 
 #pragma mark - async data collection
-
-- (void)loadUserAgent {
-    #if !TARGET_OS_TV
-    dispatch_async(self.isolationQueue, ^(){
-        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-        [[BNCUserAgentCollector instance] loadUserAgentWithCompletion:^(NSString * _Nullable userAgent) {
-            dispatch_semaphore_signal(semaphore);
-        }];
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-    });
-    #endif
-}
 
 - (void)loadApplicationData {
     dispatch_async(self.isolationQueue, ^(){
