@@ -108,5 +108,4 @@
     }];
 }
 
-// Test that accessing .userAgent from the main thread does not deadlock
 @end
