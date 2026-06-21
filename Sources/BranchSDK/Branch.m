@@ -48,6 +48,7 @@
 #import "BranchConfigurationController.h"
 
 #if !TARGET_OS_TV
+#import "BNCUserAgentCollector.h"
 #import "BNCSpotlightService.h"
 #import "BNCContentDiscoveryManager.h"
 #import "BranchContentDiscoverer.h"
@@ -245,7 +246,8 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 
     // queue up async data loading
     [self loadApplicationData];
-    
+    [self loadUserAgent];
+
     BranchJsonConfig *config = BranchJsonConfig.instance;
     self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
     [BranchConfigurationController sharedInstance].deferInitForPluginRuntime = self.deferInitForPluginRuntime;
@@ -1057,6 +1059,18 @@ static NSString *bnc_branchKey = nil;
 }
 
 #pragma mark - async data collection
+
+- (void)loadUserAgent {
+    #if !TARGET_OS_TV
+    // Fire-and-forget warmup so the user agent is cached for share link generation.
+    // No semaphore wait here: user_agent is not sent on the init path, so this must
+    // never block initSession. WKWebView collection runs async on the main queue and
+    // signals no one, keeping cold start unaffected.
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(){
+        [[BNCUserAgentCollector instance] loadUserAgentWithCompletion:nil];
+    });
+    #endif
+}
 
 - (void)loadApplicationData {
     dispatch_async(self.isolationQueue, ^(){

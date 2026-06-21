@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (BNCUserAgentCollector *)instance;
 
-@property (nonatomic, copy, readwrite) NSString *userAgent;
+@property (atomic, copy, readwrite) NSString *userAgent;
 
 - (void)loadUserAgentWithCompletion:(void (^)(NSString * _Nullable userAgent))completion;
 
