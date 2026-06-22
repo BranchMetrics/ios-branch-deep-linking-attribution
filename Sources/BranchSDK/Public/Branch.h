@@ -1023,11 +1023,6 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 - (nullable NSDictionary*) getLatestReferringParamsSynchronous;
 
 /**
- Tells Branch to act as though initSession hadn't been called. Will require another open call (this is done automatically, internally).
- */
-- (void)resetUserSession;
-
-/**
  Indicates whether or not this user has a custom identity specified for them. Note that this is *independent of installs*. If you call setIdentity, this device
  will have that identity associated with this user until `logout` is called. This includes persisting through uninstalls, as we track device id.
  

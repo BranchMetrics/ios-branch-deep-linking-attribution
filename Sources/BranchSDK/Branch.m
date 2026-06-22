@@ -148,7 +148,6 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
 @property (assign, nonatomic) NSInteger networkCount;
-@property (assign, nonatomic) BNCInitStatus initializationStatus;
 @property (assign, nonatomic) BOOL shouldAutomaticallyDeepLink;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
@@ -214,7 +213,6 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     _requestQueue = queue;
     _linkCache = cache;
     _preferenceHelper = preferenceHelper;
-    _initializationStatus = BNCInitStatusUninitialized;
     _processing_sema = dispatch_semaphore_create(1);
     _networkCount = 0;
     _deepLinkControllers = [[NSMutableDictionary alloc] init];
@@ -520,12 +518,6 @@ static NSString *bnc_branchKey = nil;
     [self validateSDKIntegrationCore];
 }
 
-- (void)resetUserSession {
-    dispatch_async(self.isolationQueue, ^(){
-        self.initializationStatus = BNCInitStatusUninitialized;
-    });
-}
-
 - (BOOL)isUserIdentified {
     return self.preferenceHelper.userIdentity != nil;
 }
@@ -682,7 +674,6 @@ static NSString *bnc_branchKey = nil;
         
         Branch *branch = Branch.getInstance;
         [branch clearNetworkQueue];
-        branch.initializationStatus = BNCInitStatusUninitialized;
         [branch.linkCache clear];
         // Release the lock in case it's locked:
         [BranchOpenRequest releaseOpenResponseLock];
@@ -845,11 +836,6 @@ static NSString *bnc_branchKey = nil;
 
 - (BOOL)handleDeepLink:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier {
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Handle deep link %@", url] error:nil];
-
-    // we've been resetting the session on all deeplinks for quite some time
-    // this allows foreground links to callback
-    self.initializationStatus = BNCInitStatusUninitialized;
-    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
 
     //Check the referring url/uri for query parameters and save them
     BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
@@ -1175,11 +1161,8 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)logoutWithCallback:(callbackWithStatus)callback {
-    if (self.initializationStatus == BNCInitStatusUninitialized) {
-        NSError *error =
-            ([Branch attributionLevelNone])
-            ? [NSError branchErrorWithCode:BNCAttributionLevelNoneError]
-            : [NSError branchErrorWithCode:BNCInitError];
+    if ([Branch attributionLevelNone]) {
+        NSError *error = [NSError branchErrorWithCode:BNCAttributionLevelNoneError];
         [[BranchLogger shared] logWarning:@"Branch is not initialized, cannot logout." error:error];
         if (callback) {callback(NO, error);}
         return;
@@ -1197,16 +1180,6 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)sendServerRequest:(BNCServerRequest*)request {
-    @synchronized (self) {
-        if (self.initializationStatus == BNCInitStatusUninitialized) {
-            NSError *error = [NSError branchErrorWithCode:BNCInitError];
-            [[BranchLogger shared] logWarning:@"Branch SDK is not initialized, cannot send this request. Please intialize session before calling this API." error:error];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [[BNCCallbackMap shared] callCompletionForRequest:request withSuccessStatus:NO error:error];
-            });
-            return;
-        }
-    }
     dispatch_async(self.isolationQueue, ^(){
         [self.requestQueue enqueue:request];
     });
@@ -1283,16 +1256,6 @@ static NSString *bnc_branchKey = nil;
 #pragma mark - Query methods
 
 - (void)lastAttributedTouchDataWithAttributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData * _Nullable latd, NSError * _Nullable error))completion {
-    @synchronized (self) {
-        if (self.initializationStatus == BNCInitStatusUninitialized) {
-            NSError *error = [NSError branchErrorWithCode:BNCInitError];
-            [[BranchLogger shared] logWarning:@"Branch SDK is not initialized, cannot request LATD. Please intialize session before calling this API." error:error];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (completion) { completion(nil, error); }
-            });
-            return;
-        }
-    }
     dispatch_async(self.isolationQueue, ^(){
         [BranchLastAttributedTouchData requestLastTouchAttributedData:self.serverInterface key:self.class.branchKey attributionWindow:window completion:completion];
     });
@@ -1413,16 +1376,6 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)getSpotlightUrlWithParams:(NSDictionary *)params callback:(callbackWithParams)callback {
-    @synchronized (self) {
-        if (self.initializationStatus == BNCInitStatusUninitialized) {
-            NSError *error = [NSError branchErrorWithCode:BNCInitError];
-            [[BranchLogger shared] logWarning:@"Branch SDK is not initialized, cannot create Spotlight URL. Please intialize session before calling this API." error:error];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (callback) { callback(nil, error); }
-            });
-            return;
-        }
-    }
     dispatch_async(self.isolationQueue, ^(){
         BranchSpotlightUrlRequest *req = [[BranchSpotlightUrlRequest alloc] initWithParams:params callback:callback];
         [self.requestQueue enqueue:req];
@@ -1644,7 +1597,6 @@ static NSString *bnc_branchKey = nil;
                 [[BranchLogger shared] logWarning:@"The Branch Key has changed, clearing relevant items." error:nil];
                 preferenceHelper.appVersion = nil;
                 preferenceHelper.randomizedDeviceToken = nil;
-                preferenceHelper.sessionID = nil;
                 preferenceHelper.randomizedBundleToken = nil;
                 preferenceHelper.userUrl = nil;
                 preferenceHelper.installParams = nil;
@@ -1685,18 +1637,6 @@ static NSString *bnc_branchKey = nil;
              andCampaign:campaign andParams:(NSDictionary *)params
              andCallback:(callbackWithUrl)callback {
 
-    @synchronized (self) {
-        if (self.initializationStatus == BNCInitStatusUninitialized) {
-            NSError *error = [NSError branchErrorWithCode:BNCInitError];
-            [[BranchLogger shared] logWarning:@"Branch SDK is not initialized, cannot generate short URL. Please intialize session before calling this API." error:error];
-            if (callback) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    callback(nil, error);
-                });
-            }
-            return;
-        }
-    }
     dispatch_async(self.isolationQueue, ^(){
         BNCLinkData *linkData = [self prepareLinkDataFor:tags
                                                 andAlias:alias
@@ -1903,18 +1843,6 @@ static NSString *bnc_branchKey = nil;
 #pragma mark - BranchUniversalObject methods
 
 - (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback {
-    @synchronized (self) {
-        if (self.initializationStatus == BNCInitStatusUninitialized) {
-            NSError *error = [NSError branchErrorWithCode:BNCInitError];
-            [[BranchLogger shared] logWarning:@"Branch SDK is not initialized, cannot register view. Please intialize session before calling this API." error:error];
-            if (callback) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    callback(nil, error);
-                });
-            }
-            return;
-        }
-    }
     dispatch_async(self.isolationQueue, ^(){
         BranchUniversalObject *buo = [[BranchUniversalObject alloc] init];
         buo.contentMetadata.customMetadata = (id) params;
@@ -1946,8 +1874,8 @@ static NSString *bnc_branchKey = nil;
         
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive installOrOpenInQueue %d", installOrOpenInQueue] error:nil];
 
-        if (![Branch attributionLevelNone] && self.initializationStatus == BNCInitStatusUninitialized && !installOrOpenInQueue) {
-            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive attributionLevelNone %d initializationStatus %d installOrOpenInQueue %d", [Branch attributionLevelNone], self.initializationStatus, installOrOpenInQueue] error:nil];
+        if (![Branch attributionLevelNone] && !installOrOpenInQueue) {
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive attributionLevelNone %d initializationStatus %d installOrOpenInQueue %d", [Branch attributionLevelNone], installOrOpenInQueue] error:nil];
             
             [self sendOpen];
         }
@@ -1959,8 +1887,7 @@ static NSString *bnc_branchKey = nil;
 
     dispatch_async(self.isolationQueue, ^(){
         if (![Branch attributionLevelNone]) {
-            self.initializationStatus = BNCInitStatusUninitialized;
-            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationWillResignActive initializationStatus %ld", self.initializationStatus] error:nil];
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationWillResignActive"] error:nil];
             [BranchOpenRequest setWaitNeededForOpenResponseLock];
         }
     });
@@ -2056,11 +1983,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         
         // If the session is not yet initialized  OR
         // If the session is already initialized or is initializing but we need to reset it.
-        if ( reset || self.initializationStatus == BNCInitStatusUninitialized) {
+        if ( reset ) {
             [self initializeSessionAndCallCallback:callCallback sceneIdentifier:sceneIdentifier urlString:urlString];
         }
         // If the session was initialized, but callCallback was specified, do so.
-        else if (callCallback && self.initializationStatus == BNCInitStatusInitialized) {
+        else if (callCallback) {
             // callback on main, this is generally what the client expects and maintains our previous behavior
             dispatch_async(dispatch_get_main_queue(), ^ {
                 if (self.sceneSessionInitWithCallback) {
@@ -2140,18 +2067,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                     [[BranchLogger shared] logDebug:message error:nil];
                 }
             }
-            
-            self.initializationStatus = BNCInitStatusInitializing;
-            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
         });
     }
 }
 
 - (void)handleInitSuccessAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
-
-    self.initializationStatus = BNCInitStatusInitialized;
-    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
-
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
 
     if ([latestReferringParams[@"_branch_validate"] isEqualToString:@"060514"]) {
@@ -2369,9 +2289,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 - (void)handleInitFailure:(NSError *)error callCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
-    self.initializationStatus = BNCInitStatusUninitialized;
-    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
-
     if (callCallback) {
         if (self.sceneSessionInitWithCallback) {
             BNCInitSessionResponse *response = [BNCInitSessionResponse new];
