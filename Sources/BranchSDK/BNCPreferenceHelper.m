@@ -45,7 +45,6 @@ static NSString * const BRANCH_PREFS_KEY_USER_URL = @"bnc_user_url";
 
 static NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usage_cnt_";
 static NSString * const BRANCH_PREFS_KEY_ANALYTICAL_DATA = @"bnc_branch_analytical_data";
-static NSString * const BRANCH_PREFS_KEY_ANALYTICS_KEY = @"bnc_branch_analytics_key";
 static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_manifest";
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID = @"bnc_referrer_gbraid";
 static NSString * const BRANCH_PREFS_KEY_REFERRER_GBRAID_WINDOW = @"bnc_referrer_gbraid_window";
@@ -955,10 +954,10 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     if (!_savedAnalyticsData) {
         _savedAnalyticsData = [self getBranchAnalyticsData];
     }
-    NSMutableArray *viewDataArray = [_savedAnalyticsData objectForKey:BRANCH_PREFS_KEY_ANALYTICS_KEY];
+    NSMutableArray *viewDataArray = [_savedAnalyticsData objectForKey:@"bnc_branch_analytics_key"];
     if (!viewDataArray) {
         viewDataArray = [[NSMutableArray alloc] init];
-        [_savedAnalyticsData setObject:viewDataArray forKey:BRANCH_PREFS_KEY_ANALYTICS_KEY];
+        [_savedAnalyticsData setObject:viewDataArray forKey:@"bnc_branch_analytics_key"];
     }
     [viewDataArray addObject:analyticsData];
     [self writeObjectToDefaults:BRANCH_PREFS_KEY_ANALYTICAL_DATA value:_savedAnalyticsData];

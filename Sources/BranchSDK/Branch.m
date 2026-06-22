@@ -131,12 +131,6 @@ void ForceCategoriesToLoad(void) {
 
 #pragma mark - Branch
 
-typedef NS_ENUM(NSInteger, BNCInitStatus) {
-    BNCInitStatusUninitialized = 0,
-    BNCInitStatusInitializing,
-    BNCInitStatusInitialized
-};
-
 @interface Branch() <BranchDeepLinkingControllerCompletionDelegate> {
     NSInteger _networkCount;
 }
