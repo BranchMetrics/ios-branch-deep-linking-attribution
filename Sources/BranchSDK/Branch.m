@@ -938,6 +938,11 @@ static NSString *bnc_branchKey = nil;
             handled = YES;
             self.preferenceHelper.linkClickIdentifier = params[@"link_click_id"];
         }
+
+        // Check for _branch_referrer added to third-party/redirected links
+        if (params[@"_branch_referrer"]) {
+            handled = YES;
+        }
     }
     [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:url.absoluteString reset:YES];
     return handled;
@@ -1042,6 +1047,15 @@ static NSString *bnc_branchKey = nil;
             return YES;
         }
     }
+
+    // check for the Branch referrer param appended to third-party/redirected links
+    NSURLComponents *components = [NSURLComponents componentsWithString:urlString];
+    for (NSURLQueryItem *item in components.queryItems) {
+        if ([item.name isEqualToString:@"_branch_referrer"]) {
+            return YES;
+        }
+    }
+
     return NO;
 }
 

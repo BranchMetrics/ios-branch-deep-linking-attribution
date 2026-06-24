@@ -456,4 +456,27 @@
                   @"One of the anonID values should be set");
 }
 
+- (void)testHandleDeepLink_UniversalLinkWithBranchReferrer_ReturnsYes {
+    // Universal link path: handleDeepLink -> handleUniversalDeepLink_private -> isBranchLink.
+    // The link is not on a Branch domain, but carries the _branch_referrer param that Branch
+    // appends to third-party/redirected links, so it should be recognized as a Branch link.
+    NSString *urlString = @"https://open.testdomain.com/track/1a2b3c4d5e6f7g8h9i0jkl?si=AbCdEfGhIjKlMnOpQrStUv&nd=1&utm_medium=organic&_branch_referrer=H4sIAAAAAAAAA1234567890abcdefTESTREFERRERVALUE%3D%3D&product=open&%24full_url=https%3A%2F%2Fopen.testdomain.com%2Ftrack%2F1a2b3c4d5e6f7g8h9i0jkl%3Fsi%3DAbCdEfGhIjKlMnOpQrStUv&feature=organic&_branch_match_id=1234567890123456789";
+    NSURL *url = [NSURL URLWithString:urlString];
+
+    BOOL result = [self.branch handleDeepLink:url];
+    XCTAssertTrue(result, @"handleDeepLink should return YES for a universal link containing the _branch_referrer param");
+}
+
+- (void)testHandleDeepLink_URISchemeWithBranchReferrer_ReturnsYes {
+    // URI scheme path: handleDeepLink -> handleSchemeDeepLink_private.
+    // The link is not on a Branch domain, but carries the _branch_referrer param that Branch
+    // appends to third-party/redirected links, so it should be recognized as a Branch link.
+    
+    NSString *urlString = @"testapp://open/track/1a2b3c4d5e6f7g8h9i0jkl?si=AbCdEfGhIjKlMnOpQrStUv&nd=1&utm_medium=organic&_branch_referrer=H4sIAAAAAAAAA1234567890abcdefTESTREFERRERVALUE%3D%3D&product=open&feature=organic&_branch_match_id=1234567890123456789";
+    NSURL *url = [NSURL URLWithString:urlString];
+
+    BOOL result = [self.branch handleDeepLink:url];
+    XCTAssertTrue(result, @"handleDeepLink should return YES for a URI scheme link containing the _branch_referrer param");
+}
+
 @end
