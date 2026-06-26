@@ -76,10 +76,6 @@ NS_ASSUME_NONNULL_BEGIN
     [topVC presentViewController:safariVC animated:YES completion:nil];
 }
 
-- (void)safariViewControllerDidFinish:(SFSafariViewController *)controller {
-    [[Branch getInstance] initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:nil reset:YES];
-}
-
 @end
 
 NS_ASSUME_NONNULL_END

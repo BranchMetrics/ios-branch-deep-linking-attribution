@@ -142,7 +142,6 @@ void ForceCategoriesToLoad(void) {
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
 @property (assign, nonatomic) NSInteger networkCount;
-@property (assign, nonatomic) BOOL shouldAutomaticallyDeepLink;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
 @property (strong, nonatomic) NSMutableDictionary *deepLinkControllers;
@@ -681,125 +680,8 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
-#pragma mark - InitSession Permutation methods
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options {
-    [self initSessionWithLaunchOptions:options
-                          isReferrable:YES
-         explicitlyRequestedReferrable:NO
-        automaticallyDisplayController:NO
-               registerDeepLinkHandler:nil];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options andRegisterDeepLinkHandler:(callbackWithParams)callback {
-    [self initSessionWithLaunchOptions:options isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandler:callback];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options andRegisterDeepLinkHandlerUsingBranchUniversalObject:(callbackWithBranchUniversalObject)callback {
-    [self initSessionWithLaunchOptions:options isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandlerUsingBranchUniversalObject:callback];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable {
-    [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:YES automaticallyDisplayController:NO registerDeepLinkHandler:nil];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController {
-    [self initSessionWithLaunchOptions:options isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:automaticallyDisplayController registerDeepLinkHandler:nil];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable andRegisterDeepLinkHandler:(callbackWithParams)callback {
-    [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:YES automaticallyDisplayController:NO registerDeepLinkHandler:callback];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController deepLinkHandler:(callbackWithParams)callback {
-    [self initSessionWithLaunchOptions:options isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:automaticallyDisplayController registerDeepLinkHandler:callback];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController {
-    [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:YES automaticallyDisplayController:automaticallyDisplayController registerDeepLinkHandler:nil];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController isReferrable:(BOOL)isReferrable deepLinkHandler:(callbackWithParams)callback {
-    [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:YES automaticallyDisplayController:automaticallyDisplayController registerDeepLinkHandler:callback];
-}
-
 + (void) setCallbackForTracingRequests: (callbackForTracingRequests) callback {
     bnc_tracingCallback = callback;
-}
-
-#pragma mark - Actual Init Session
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController registerDeepLinkHandlerUsingBranchUniversalObject:(callbackWithBranchUniversalObject)callback {
-    [self initSceneSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController
-                    registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
-        if (callback) {
-            if (initResponse) {
-                callback(initResponse.universalObject, initResponse.linkProperties, error);
-            } else {
-                callback([BranchUniversalObject new], [BranchLinkProperties new], error);
-            }
-        }
-    }];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController registerDeepLinkHandler:(callbackWithParams)callback {
-    [self initSceneSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController
-                    registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
-        if (callback) {
-            if (initResponse) {
-                callback(initResponse.params, error);
-            } else {
-                callback([NSDictionary new], error);
-            }
-        }
-    }];
-}
-
-- (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
-                  registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback {
-    [self initSceneSessionWithLaunchOptions:options sceneIdentifier:nil isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController
-                    registerDeepLinkHandler:callback];
-}
-
-- (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options sceneIdentifier:(NSString *)sceneIdentifier isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
-                  registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback {
-    NSMutableDictionary * optionsWithDeferredInit = [[NSMutableDictionary alloc ] initWithDictionary:options];
-    if (self.deferInitForPluginRuntime) {
-        [optionsWithDeferredInit setObject:@1 forKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"];
-    } else {
-        [optionsWithDeferredInit setObject:@0 forKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"];
-    }
-    [self deferInitBlock:^{
-        self.sceneSessionInitWithCallback = callback;
-        [self initSessionWithLaunchOptions:(NSDictionary *)optionsWithDeferredInit sceneIdentifier:sceneIdentifier isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
-    }];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options
-                     sceneIdentifier:(NSString *)sceneIdentifier
-                        isReferrable:(BOOL)isReferrable
-       explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable
-      automaticallyDisplayController:(BOOL)automaticallyDisplayController {
-
-    [self.class addBranchSDKVersionToCrashlyticsReport];
-    self.shouldAutomaticallyDeepLink = automaticallyDisplayController;
-
-    // Check for Branch link in a push payload
-    NSString *pushURL = nil;
-    #if !TARGET_OS_TV
-    if ([options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
-        id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
-        if ([branchUrlFromPush isKindOfClass:[NSString class]]) {
-            self.preferenceHelper.universalLinkUrl = branchUrlFromPush;
-            self.preferenceHelper.referringURL = branchUrlFromPush;
-            pushURL = (NSString *)branchUrlFromPush;
-        }
-    }
-    #endif
-
-    if(pushURL || [[options objectForKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"] isEqualToNumber:@1] || (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) ) {
-        [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:pushURL reset:NO];
-    }
 }
 
 - (void)setDeepLinkDebugMode:(NSDictionary *)debugParams {
@@ -846,8 +728,7 @@ static NSString *bnc_branchKey = nil;
         NSString *urlString = [url absoluteString];
         self.preferenceHelper.externalIntentURI = urlString;
         self.preferenceHelper.referringURL = urlString;
-
-        [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:nil reset:YES];
+        
         return NO;
     }
 
@@ -895,7 +776,7 @@ static NSString *bnc_branchKey = nil;
             self.preferenceHelper.linkClickIdentifier = params[@"link_click_id"];
         }
     }
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:url.absoluteString reset:YES];
+    
     return handled;
 }
 
@@ -928,9 +809,6 @@ static NSString *bnc_branchKey = nil;
         self.preferenceHelper.referringURL = urlString;
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Set universalLinkUrl and referringURL to %@", urlString] error:nil];
     }
-
-    // [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:urlString reset:YES];
-    [self sendOpen];
 
     return [Branch isBranchLink:urlString];
 }
@@ -971,7 +849,6 @@ static NSString *bnc_branchKey = nil;
     }
     #endif
 
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:userActivity.webpageURL.absoluteString reset:YES];
 
     return spotlightIdentifier != nil;
 }
@@ -1951,120 +1828,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     self.cachedInitBlock = nil;
 }
 
-
-- (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString reset:(BOOL)reset {
-    
-    @synchronized (self) {
-        if (self.deferInitForPluginRuntime) {
-            if (urlString) {
-                [[BranchLogger shared] logDebug:@"Branch init is deferred, caching link" error:nil];
-                self.cachedURLString = urlString;
-            } else {
-                [[BranchLogger shared] logDebug:@"Branch init is deferred, ignoring lifecycle call without a link" error:nil];
-            }
-            return;
-        } else {
-            if (!urlString && self.cachedURLString) {
-                urlString = self.cachedURLString;
-                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Using cached link: %@", urlString] error:nil];
-            }
-            self.cachedURLString = nil;
-        }
-    }
-    
-    dispatch_async(self.isolationQueue, ^(){
-
-        
-        // If the session is not yet initialized  OR
-        // If the session is already initialized or is initializing but we need to reset it.
-        if ( reset ) {
-            [self initializeSessionAndCallCallback:callCallback sceneIdentifier:sceneIdentifier urlString:urlString];
-        }
-        // If the session was initialized, but callCallback was specified, do so.
-        else if (callCallback) {
-            // callback on main, this is generally what the client expects and maintains our previous behavior
-            dispatch_async(dispatch_get_main_queue(), ^ {
-                if (self.sceneSessionInitWithCallback) {
-                    BNCInitSessionResponse *response = [BNCInitSessionResponse new];
-                    response.params = [self getLatestReferringParams];
-                    response.universalObject = [self getLatestReferringBranchUniversalObject];
-                    response.linkProperties = [self getLatestReferringBranchLinkProperties];
-                    response.sceneIdentifier = sceneIdentifier;
-
-                    self.sceneSessionInitWithCallback(response, nil);
-                }
-            });
-        }
-    });
-}
-
-// only called from initUserSessionAndCallCallback!
-- (void)initializeSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString {
-
-    // BranchDelegate willStartSessionWithURL notification
-    NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;
-    if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)]) {
-        [self.delegate branch:self willStartSessionWithURL:URL];
-    }
-
-    // BranchWilLStartSession NSNotification
-    NSMutableDictionary *userInfo = [NSMutableDictionary new];
-    userInfo[BranchURLKey] = URL;
-    [[NSNotificationCenter defaultCenter] postNotificationName:BranchWillStartSessionNotification object:self userInfo:userInfo];
-    
-    // Prepare callback block
-    callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
-        // callback on main, this is generally what the client expects and maintains our previous behavior
-        dispatch_async(dispatch_get_main_queue(), ^ {
-            if (error) {
-                [self handleInitFailure:error callCallback:callCallback sceneIdentifier:(NSString *)sceneIdentifier];
-            } else {
-                [self handleInitSuccessAndCallCallback:callCallback sceneIdentifier:(NSString *)sceneIdentifier];
-            }
-        });
-    };
-
-    @synchronized (self) {
-        dispatch_async(self.isolationQueue, ^(){
-            [BranchOpenRequest setWaitNeededForOpenResponseLock];
-            BranchOpenRequest *req = [self.requestQueue findExistingInstallOrOpen];
-            
-            // nothing on queue, we need an new install or open. This may have link data
-            if (!req) {
-                if (self.preferenceHelper.randomizedBundleToken) {
-                    req = [[BranchOpenRequest alloc] initWithCallback:initSessionCallback];
-                } else {
-                    req = [[BranchInstallRequest alloc] initWithCallback:initSessionCallback];
-                }
-                req.callback = initSessionCallback;
-                req.urlString = urlString;
-                req.traceCallback = bnc_tracingCallback;
-                
-                [self.requestQueue enqueue:req withPriority:NSOperationQueuePriorityHigh];
-                
-                NSString *message = [NSString stringWithFormat:@"Request %@ callback %@ link %@", req, req.callback, req.urlString];
-                [[BranchLogger shared] logDebug:message error:nil];
-
-            } else {
-                
-                // new link arrival but an install or open is already on queue? need a new open for link resolution.
-                if (urlString) {
-                    req = [[BranchOpenRequest alloc] initWithCallback:initSessionCallback];
-                    req.callback = initSessionCallback;
-                    req.urlString = urlString;
-                    
-                    // put it behind the one that's already on queue
-                    [self.requestQueue enqueue:req withPriority:NSOperationQueuePriorityHigh];
-
-                    [[BranchLogger shared] logDebug:@"Link resolution request" error:nil];
-                    NSString *message = [NSString stringWithFormat:@"Request %@ callback %@ link %@", req, req.callback, req.urlString];
-                    [[BranchLogger shared] logDebug:message error:nil];
-                }
-            }
-        });
-    }
-}
-
 - (void)handleInitSuccessAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
 
@@ -2098,118 +1861,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
 
     [self.urlFilter updatePatternListFromServerWithCompletion:nil];
-
-    if (self.shouldAutomaticallyDeepLink) {
-        dispatch_async(dispatch_get_main_queue(), ^ {
-            [self automaticallyDeeplinkWithReferringParams:latestReferringParams];
-        });
-    }
-}
-
-// TODO: can we deprecate and remove this, it doesn't work well.
-// UI code, must run on main
-- (void)automaticallyDeeplinkWithReferringParams:(NSDictionary *)latestReferringParams {
-    // Find any matched keys, then launch any controllers that match
-    // TODO which one to launch if more than one match?
-    NSMutableSet *keysInParams = [NSMutableSet setWithArray:[latestReferringParams allKeys]];
-    NSSet *desiredKeysSet = [NSSet setWithArray:[self.deepLinkControllers allKeys]];
-    [keysInParams intersectSet:desiredKeysSet];
-
-    // If we find a matching key, configure and show the controller
-    if ([keysInParams count]) {
-        NSString *key = [[keysInParams allObjects] firstObject];
-        UIViewController <BranchDeepLinkingController> *branchSharingController = self.deepLinkControllers[key];
-        if ([branchSharingController respondsToSelector:@selector(configureControlWithData:)]) {
-            [branchSharingController configureControlWithData:latestReferringParams];
-        }
-        else {
-            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"The automatic deeplink view controller '%@' for key '%@' does not implement 'configureControlWithData:'.", branchSharingController, key] error:nil];
-        }
-
-        self.deepLinkPresentingController = [UIViewController bnc_currentViewController];
-        if([self.deepLinkControllers[key] isKindOfClass:[BNCDeepLinkViewControllerInstance class]]) {
-            BNCDeepLinkViewControllerInstance* deepLinkInstance = self.deepLinkControllers[key];
-            UIViewController <BranchDeepLinkingController> *branchSharingController = deepLinkInstance.viewController;
-
-            if ([branchSharingController respondsToSelector:@selector(configureControlWithData:)]) {
-                [branchSharingController configureControlWithData:latestReferringParams];
-            }
-            else {
-                [[BranchLogger shared] logWarning:@"View controller does not implement configureControlWithData:" error:nil];
-            }
-            branchSharingController.deepLinkingCompletionDelegate = self;
-            switch (deepLinkInstance.option) {
-                case BNCViewControllerOptionPresent:
-                    [self presentSharingViewController:branchSharingController];
-                    break;
-
-                case BNCViewControllerOptionPush:
-
-                    if ([self.deepLinkPresentingController isKindOfClass:[UINavigationController class]]) {
-
-                        if ([[(UINavigationController*)self.deepLinkPresentingController viewControllers]
-                              containsObject:branchSharingController]) {
-                            [self removeViewControllerFromRootNavigationController:branchSharingController];
-                            [(UINavigationController*)self.deepLinkPresentingController
-                                 pushViewController:branchSharingController animated:false];
-                        }
-                        else {
-                            [(UINavigationController*)self.deepLinkPresentingController
-                                 pushViewController:branchSharingController animated:true];
-                        }
-                    }
-                    else {
-                        deepLinkInstance.option = BNCViewControllerOptionPresent;
-                        [self presentSharingViewController:branchSharingController];
-                    }
-
-                    break;
-
-                default:
-                    if ([self.deepLinkPresentingController isKindOfClass:[UINavigationController class]]) {
-                        if ([self.deepLinkPresentingController respondsToSelector:@selector(showViewController:sender:)]) {
-
-                            if ([[(UINavigationController*)self.deepLinkPresentingController viewControllers]
-                                   containsObject:branchSharingController]) {
-                                [self removeViewControllerFromRootNavigationController:branchSharingController];
-                            }
-
-                            [self.deepLinkPresentingController showViewController:branchSharingController sender:self];
-                        }
-                        else {
-                            deepLinkInstance.option = BNCViewControllerOptionPush;
-                            [(UINavigationController*)self.deepLinkPresentingController
-                                 pushViewController:branchSharingController animated:true];
-                        }
-                    }
-                    else {
-                        deepLinkInstance.option = BNCViewControllerOptionPresent;
-                        [self presentSharingViewController:branchSharingController];
-                    }
-                    break;
-            }
-        }
-        else {
-
-            //Support for old API
-            UIViewController <BranchDeepLinkingController> *branchSharingController = self.deepLinkControllers[key];
-            if ([branchSharingController respondsToSelector:@selector(configureControlWithData:)]) {
-                [branchSharingController configureControlWithData:latestReferringParams];
-            }
-            else {
-                [[BranchLogger shared] logWarning:@"View controller does not implement configureControlWithData:" error:nil];
-            }
-            branchSharingController.deepLinkingCompletionDelegate = self;
-            if ([self.deepLinkPresentingController presentedViewController]) {
-                [self.deepLinkPresentingController dismissViewControllerAnimated:NO completion:^{
-                    [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
-                }];
-            }
-            else {
-                [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
-            }
-        }
-    }
 }
 
 - (void)sendOpenNotificationWithLinkParameters:(NSDictionary*)linkParameters

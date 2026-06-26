@@ -353,102 +353,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 #pragma mark - Initialization methods
 
-///---------------------
-/// @name Initialization
-///---------------------
-
-/**
- Just initialize the Branch session with the app launch options.
-
- @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
- @warning This is not the recommended method of initializing Branch. While Branch is able to properly attribute deep linking info with the launch options, you lose the ability to do anything with a callback.
- */
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options;
-
-/**
- Just initialize the Branch session with the app launch options, specifying whether to allow it to be treated as a referral.
-
- @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
- @param isReferrable Boolean representing whether to allow the session to be marked as referred, overriding the default behavior.
- @warning This is not the recommended method of initializing Branch. While Branch is able to properly attribute deep linking info with the launch options, you lose the ability to do anything with a callback.
- */
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options isReferrable:(BOOL)isReferrable;
-
-/**
- Initialize the Branch session with the app launch options and handle the completion with a callback
-
- @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
- @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
- */
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options andRegisterDeepLinkHandler:(nullable callbackWithParams)callback;
-
-/**
- Initialize the Branch session with the app launch options and handle the completion with a callback
-
- @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
- @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
- */
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options andRegisterDeepLinkHandlerUsingBranchUniversalObject:(nullable callbackWithBranchUniversalObject)callback;
-
-/**
- Initialize the Branch session with the app launch options and handle the completion with a callback
-
- @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
- @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
- */
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController;
-
-/**
- Initialize the Branch session with the app launch options and handle the completion with a callback
-
- @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
- @param isReferrable Boolean representing whether to allow the session to be marked as referred, overriding the default behavior.
- @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
- */
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options isReferrable:(BOOL)isReferrable andRegisterDeepLinkHandler:(nullable callbackWithParams)callback;
-
-/**
- Initialize the Branch session with the app launch options and handle the completion with a callback
-
- @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
- @param isReferrable Boolean representing whether to allow the session to be marked as referred, overriding the default behavior.
- @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
- */
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options isReferrable:(BOOL)isReferrable automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController;
-
-/**
- Initialize the Branch session with the app launch options and handle the completion with a callback
-
- @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
- @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
- @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
- */
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController deepLinkHandler:(nullable callbackWithParams)callback;
-
-/**
- Initialize the Branch session with the app launch options and handle the completion with a callback
-
- @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
- @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
- @param isReferrable Boolean representing whether to allow the session to be marked as referred, overriding the default behavior.
- @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
- */
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController isReferrable:(BOOL)isReferrable deepLinkHandler:(nullable callbackWithParams)callback;
-
-- (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
-                  registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback;
-
-
-- (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options sceneIdentifier:(NSString *)sceneIdentifier isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
-                  registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback;
-
-/**
- Initialize the Branch session.
- 
- @warning This function is an internal helper function for session initalization and should not be used by apps.
- **/
-- (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString reset:(BOOL)reset __attribute__((deprecated("Use requestDeepLinkData or sendOpen instead.")));
-
 /**
  Allow Branch to handle a link opening the app, returning whether it was from a Branch link or not.
 
@@ -597,21 +501,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  NSDictionary userInfo = @{@"branch": @"https://bnc.lt/...", ... };
  */
 - (void)handlePushNotification:(nullable NSDictionary *)userInfo;
-
-#pragma mark - Deep Link Controller methods
-
-///---------------------------
-/// @name Deep Link Controller
-///---------------------------
-
-- (void)registerDeepLinkController:(nullable UIViewController <BranchDeepLinkingController> *)controller forKey:(nullable NSString *)key __attribute__((deprecated(("This API is deprecated. Please use registerDeepLinkController: forKey: withOption:"))));
-
-/**
- Allow Branch to handle a view controller with options to push, present or show.
- Note:
- * If push option is used and the rootviewcontroller of window is not of type UINavigationViewController, than the sharing View controller would be presented automatically
- */
-- (void)registerDeepLinkController:(nullable UIViewController <BranchDeepLinkingController> *)controller forKey:(nullable NSString *)key withPresentation:(BNCViewControllerPresentationOption)option;
 
 #pragma mark - Configuration methods
 
