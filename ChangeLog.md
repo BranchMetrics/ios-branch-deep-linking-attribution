@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.3.14.1
+— Added check for `_branch_referrer` query param in third-party/redirected links.
+
 v.3.14.0
 — Added APIs `disableNextForegroundForTimeInterval:`, `disableNextForeground` and `resumeSession` to disable and resume automatic tracking of `OPEN` events. These are experimental APIs. Please refer to warning message in API documentation/comments.
 
