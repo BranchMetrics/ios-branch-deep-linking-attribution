@@ -2044,7 +2044,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 // Called from application:openURL:options:
 // Supports URI Schemes
-- (void)requestDeepLinkDataWithOpenURL:(NSURL *)url {
+- (void)requestDeepLinkDataWithURL:(NSURL *)url {
     
     NSString *urlStr = url.absoluteString;
     
@@ -2063,7 +2063,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 // Called from application:continueUserActivity:restorationHandler:
 // Supports Universal Links
-- (void)requestDeepLinkDataWithContinueUserActivity:(NSUserActivity *)userActivity {
+- (void)requestDeepLinkDataWithUserActivity:(NSUserActivity *)userActivity {
     NSString *urlStr = userActivity.webpageURL.absoluteString;
     
     if (!urlStr) return;
@@ -2081,7 +2081,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 // Called from application:didReceiveRemoteNotification:fetchCompletionHandler:
 // Supports Push Notifications
-- (void)requestDeepLinkDataFromDidReceiveRemoteNotification:(NSDictionary *)userInfo {
+- (void)requestDeepLinkDataFromRemoteNotification:(NSDictionary *)userInfo {
     
     NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
 

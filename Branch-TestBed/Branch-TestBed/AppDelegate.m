@@ -109,7 +109,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
          annotation:(id)annotation {
 
     NSLog(@"application:openURL:sourceApplication:annotation: invoked with URL: %@", [url description]);
-    [[Branch getInstance] requestDeepLinkDataWithOpenURL:url];
+    [[Branch getInstance] requestDeepLinkDataWithURL:url];
 
     // Process non-Branch URIs here...
     return YES;
@@ -128,7 +128,7 @@ continueUserActivity:(NSUserActivity *)userActivity
     // Add `branch_universal_link_domains` to .plist (String or Array) for custom domain(s).
     
     
-    [[Branch getInstance] requestDeepLinkDataWithContinueUserActivity:userActivity];
+    [[Branch getInstance] requestDeepLinkDataWithUserActivity:userActivity];
     
     // Process non-Branch userActivities here...
     return YES;
@@ -173,7 +173,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    [[Branch getInstance] requestDeepLinkDataFromDidReceiveRemoteNotification:userInfo];
+    [[Branch getInstance] requestDeepLinkDataFromRemoteNotification:userInfo];
     // process your non-Branch notification payload items here...
 }
 

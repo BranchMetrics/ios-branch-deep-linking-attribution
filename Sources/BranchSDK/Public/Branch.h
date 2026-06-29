@@ -451,7 +451,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Extracts the URL and calls `requestDeepLinkData:callback:` with it.
  Logs the deep link parameters or error.
  */
-- (void)requestDeepLinkDataWithOpenURL:(nullable NSURL *)url;
+- (void)requestDeepLinkDataWithURL:(nullable NSURL *)url;
 
 /**
  Convenience method for `application:continueUserActivity:restorationHandler:` to handle Universal Links.
@@ -459,7 +459,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Extracts the webpage URL from the user activity and calls `requestDeepLinkData:callback:` with it.
  Logs the deep link parameters or error.
  */
-- (void)requestDeepLinkDataWithContinueUserActivity:(nullable NSUserActivity *)userActivity;
+- (void)requestDeepLinkDataWithUserActivity:(nullable NSUserActivity *)userActivity;
 
 /**
  Convenience method for `application:didReceiveRemoteNotification:fetchCompletionHandler:` to handle push notification deep links.
@@ -467,7 +467,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Extracts the Branch link from the notification payload and calls `requestDeepLinkData:callback:` with it.
  Logs the deep link parameters or error.
  */
-- (void)requestDeepLinkDataFromDidReceiveRemoteNotification:(nullable NSDictionary *)userInfo;
+- (void)requestDeepLinkDataFromRemoteNotification:(nullable NSDictionary *)userInfo;
 
 ///--------------------------------
 /// @name SceneDelegate Deep Linking
