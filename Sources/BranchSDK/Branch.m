@@ -877,19 +877,6 @@ static NSString *bnc_branchKey = nil;
     return NO;
 }
 
-#pragma mark - Push Notification support
-
-- (void)handlePushNotification:(NSDictionary *)userInfo {
-    NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
-    
-    if (urlStr.length) {
-        NSURL *url = [NSURL URLWithString:urlStr];
-        if (url)  {
-            [self handleDeepLink:url sceneIdentifier:nil];
-        }
-    }
-}
-
 #pragma mark - async data collection
 
 - (void)loadUserAgent {
@@ -1989,6 +1976,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [BNCPreferenceHelper clearAll];
 }
 
+#pragma mark - Branch Deep Linking Methods
+
 - (void) requestDeepLinkData:(NSString *)branchLink callback:(nullable callbackWithParams)callback {
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData called with branchLink: %@", branchLink] error:nil];
 
@@ -2085,6 +2074,79 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 #endif
+
+#pragma mark - Branch AppDelegate DeepLinking Convenience Methods
+
+// AppDelegate openURL deep linking
+// Used to support URI schemes
+
+- (void)requestDeepLinkDataWithOpenURL:(NSURL *)url {
+    [self requestDeepLinkData:[url absoluteString] callback:^(NSDictionary *params, NSError *error) {
+        if (error == nil) {
+            if (params != nil) {
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
+
+                // Access specific values
+                NSString *campaign = params[@"~campaign"];
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Campaign name: %@", campaign] error:nil];
+            }
+        } else {
+            NSLog(@"Deep Link Error: %@ (Code: %ld)", [error localizedDescription], (long)[error code]);
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData failed with error: %@", error] error:error];
+        }
+    }];
+}
+
+
+// AppDelegate continueUserActivity deep linking
+// Used to support Universal Links
+
+- (void)requestDeepLinkDataWithUserContinueActivity:(NSUserActivity *)userActivity {
+    [self requestDeepLinkData:userActivity.webpageURL.absoluteString callback:^(NSDictionary *params, NSError *error) {
+        if (error == nil) {
+            if (params != nil) {
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
+
+                // Access specific values
+                NSString *campaign = params[@"~campaign"];
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Campaign name: %@", campaign] error:nil];
+            }
+        } else {
+            NSLog(@"Deep Link Error: %@ (Code: %ld)", [error localizedDescription], (long)[error code]);
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData failed with error: %@", error] error:error];
+        }
+    }];
+}
+
+
+// AppDelegate Remote Notification deep linking
+// Used to support Push Notifications
+
+- (void)requestDeepLinkDataFromDidReceiveRemoteNotification:(NSDictionary *)userInfo {
+    NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
+    
+    if (urlStr.length) {
+        NSURL *url = [NSURL URLWithString:urlStr];
+        if (url)  {
+            [self requestDeepLinkData:url callback:^(NSDictionary *params, NSError *error) {
+                if (error == nil) {
+                    if (params != nil) {
+                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
+
+                        // Access specific values
+                        NSString *campaign = params[@"~campaign"];
+                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Campaign name: %@", campaign] error:nil];
+                    }
+                } else {
+                    NSLog(@"Deep Link Error: %@ (Code: %ld)", [error localizedDescription], (long)[error code]);
+                    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData failed with error: %@", error] error:error];
+                }
+            }];
+        }
+    }
+}
+
+#pragma mark - Branch Attribution Methods
 
 - (void) sendOpen {
     NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;

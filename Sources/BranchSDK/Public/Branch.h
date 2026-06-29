@@ -460,7 +460,34 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 #endif
 
 /**
- Sends a Branch Open event with attribution to our new route.
+   Convenience method for `application:openURL:options:` to handle custom URI schemes.
+   
+   Extracts the URL and calls `requestDeepLinkData:callback:` with it.
+   Logs the deep link parameters or error.
+   */
+
+- (void)requestDeepLinkDataWithOpenURL:(nullable NSURL *)url;
+
+/**
+   Convenience method for `application:continueUserActivity:restorationHandler:` to handle Universal Links.
+   
+   Extracts the webpage URL from the user activity and calls `requestDeepLinkData:callback:` with it.
+   Logs the deep link parameters or error.
+   */
+
+- (void)requestDeepLinkDataWithUserContinueActivity:(nullable NSUserActivity *)userActivity;
+
+/**
+   Convenience method for `application:didReceiveRemoteNotification:fetchCompletionHandler:` to handle push notification deep links.
+   
+   Extracts the Branch link from the notification payload and calls `requestDeepLinkData:callback:` with it.
+   Logs the deep link parameters or error.
+   */
+
+- (void)requestDeepLinkDataFromDidReceiveRemoteNotification:(nullable NSDictionary *)userInfo;
+
+/**
+ Sends a Branch Open event with attribution to our new API route.
  */
 - (void)sendOpen;
 
