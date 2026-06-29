@@ -128,7 +128,7 @@ continueUserActivity:(NSUserActivity *)userActivity
     // Add `branch_universal_link_domains` to .plist (String or Array) for custom domain(s).
     
     
-    [[Branch getInstance] requestDeepLinkDataWithUserContinueActivity:userActivity];
+    [[Branch getInstance] requestDeepLinkDataWithContinueUserActivity:userActivity];
     
     // Process non-Branch userActivities here...
     return YES;

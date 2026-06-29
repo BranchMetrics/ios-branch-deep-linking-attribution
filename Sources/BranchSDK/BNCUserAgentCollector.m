@@ -87,21 +87,31 @@
 
 // collect user agent from webkit.  this is expensive.
 - (void)collectUserAgentWithCompletion:(void (^)(NSString *userAgent))completion {
+    [self collectUserAgentWithCompletion:completion retryCount:0];
+}
+
+- (void)collectUserAgentWithCompletion:(void (^)(NSString *userAgent))completion retryCount:(NSInteger)retryCount {
     dispatch_async(dispatch_get_main_queue(), ^{
         if (!self.webview) {
             self.webview = [[WKWebView alloc] initWithFrame:CGRectZero];
         }
-        
-        [self.webview evaluateJavaScript:@"navigator.userAgent;" completionHandler:^(id _Nullable response, NSError * _Nullable error) {            
+
+        [self.webview evaluateJavaScript:@"navigator.userAgent;" completionHandler:^(id _Nullable response, NSError * _Nullable error) {
             if (completion) {
                 if (response) {
                     // release the webview
                     self.webview = nil;
-                    
+
                     completion(response);
                 } else {
                     // retry if we failed to obtain user agent.  This occasionally occurs on simulator.
-                    [self collectUserAgentWithCompletion:completion];
+                    if (retryCount < 3) {
+                        [self collectUserAgentWithCompletion:completion retryCount:retryCount + 1];
+                    } else {
+                        // max retries exceeded, clean up and return nil
+                        self.webview = nil;
+                        completion(nil);
+                    }
                 }
             }
         }];

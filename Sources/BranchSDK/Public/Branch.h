@@ -425,14 +425,15 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 /**
  Resolves a Branch URL to deep link data, or returns deferred deep link data when `branchLink` is nil.
-
- Call this from `application:openURL:` or `continueUserActivity:` with the URL, or from
- `applicationDidFinishLaunching:` with nil to retrieve deferred deep link data.
-
+ 
  When called with a non-nil URL, any pending (not yet executing) nil-URL deep link requests are
  cancelled so that only one callback fires per app open.
  */
 - (void)requestDeepLinkData:(nullable NSString *)branchLink callback:(nullable callbackWithParams)callback;
+
+///--------------------------------
+/// @name AppDelegate Deep Linking
+///--------------------------------
 
 /**
  Convenience overload for `application:didFinishLaunchingWithOptions:`.
@@ -443,6 +444,34 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  */
 - (void)requestDeepLinkDataWithLaunchOptions:(nullable NSDictionary *)options
                                     callback:(nullable callbackWithParams)callback;
+
+/**
+ Convenience method for `application:openURL:options:` to handle custom URI schemes.
+
+ Extracts the URL and calls `requestDeepLinkData:callback:` with it.
+ Logs the deep link parameters or error.
+ */
+- (void)requestDeepLinkDataWithOpenURL:(nullable NSURL *)url;
+
+/**
+ Convenience method for `application:continueUserActivity:restorationHandler:` to handle Universal Links.
+
+ Extracts the webpage URL from the user activity and calls `requestDeepLinkData:callback:` with it.
+ Logs the deep link parameters or error.
+ */
+- (void)requestDeepLinkDataWithContinueUserActivity:(nullable NSUserActivity *)userActivity;
+
+/**
+ Convenience method for `application:didReceiveRemoteNotification:fetchCompletionHandler:` to handle push notification deep links.
+
+ Extracts the Branch link from the notification payload and calls `requestDeepLinkData:callback:` with it.
+ Logs the deep link parameters or error.
+ */
+- (void)requestDeepLinkDataFromDidReceiveRemoteNotification:(nullable NSDictionary *)userInfo;
+
+///--------------------------------
+/// @name SceneDelegate Deep Linking
+///--------------------------------
 
 #if !TARGET_OS_TV
 /**
@@ -457,34 +486,33 @@ extern NSString * __nonnull const BNCSpotlightFeature;
                                       scene:(UIScene *)scene
                                    callback:(nullable callbackWithParams)callback
     API_AVAILABLE(ios(13.0), macCatalyst(13.1));
+
+/**
+ Convenience method for SceneDelegate's `scene:openURLContexts:` to handle custom URI schemes.
+
+ Extracts the first URL from URLContexts and calls `requestDeepLinkData:callback:` with it.
+ Logs the deep link parameters or error.
+
+ Available on iOS 13.0+.
+ */
+- (void)requestDeepLinkDataWithScene:(UIScene *)scene
+                      openURLContexts:(NSSet<UIOpenURLContext *> *)urlContexts
+    API_AVAILABLE(ios(13.0));
+
+/**
+ Convenience method for SceneDelegate's `scene:continueUserActivity:` to handle Universal Links.
+
+ Extracts the webpage URL from the user activity and calls `requestDeepLinkData:callback:` with it.
+ Logs the deep link parameters or error.
+
+ Available on iOS 13.0+.
+ */
+- (void)requestDeepLinkDataWithScene:(UIScene *)scene
+                continueUserActivity:(NSUserActivity *)userActivity
+    API_AVAILABLE(ios(13.0));
 #endif
 
-/**
-   Convenience method for `application:openURL:options:` to handle custom URI schemes.
-   
-   Extracts the URL and calls `requestDeepLinkData:callback:` with it.
-   Logs the deep link parameters or error.
-   */
-
-- (void)requestDeepLinkDataWithOpenURL:(nullable NSURL *)url;
-
-/**
-   Convenience method for `application:continueUserActivity:restorationHandler:` to handle Universal Links.
-   
-   Extracts the webpage URL from the user activity and calls `requestDeepLinkData:callback:` with it.
-   Logs the deep link parameters or error.
-   */
-
-- (void)requestDeepLinkDataWithUserContinueActivity:(nullable NSUserActivity *)userActivity;
-
-/**
-   Convenience method for `application:didReceiveRemoteNotification:fetchCompletionHandler:` to handle push notification deep links.
-   
-   Extracts the Branch link from the notification payload and calls `requestDeepLinkData:callback:` with it.
-   Logs the deep link parameters or error.
-   */
-
-- (void)requestDeepLinkDataFromDidReceiveRemoteNotification:(nullable NSDictionary *)userInfo;
+#pragma mark - Attribution Methods
 
 /**
  Sends a Branch Open event with attribution to our new API route.
