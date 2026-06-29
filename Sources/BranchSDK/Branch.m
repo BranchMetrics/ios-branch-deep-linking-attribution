@@ -157,8 +157,6 @@ void ForceCategoriesToLoad(void) {
 @property (strong, nonatomic) BNCContentDiscoveryManager *contentDiscoveryManager;
 #endif
 
-@property (nonatomic, copy, nullable) void (^sceneSessionInitWithCallback)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error);
-
 // Support for deferred SDK initialization. Used to support slow plugin runtime startup.
 // This is enabled by setting deferInitForPluginRuntime to true in branch.json
 @property (nonatomic, assign, readwrite) BOOL deferInitForPluginRuntime;
@@ -1828,7 +1826,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     self.cachedInitBlock = nil;
 }
 
-- (void)handleInitSuccessAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
+- (void)handleInitSuccess {
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
 
     if ([latestReferringParams[@"_branch_validate"] isEqualToString:@"060514"]) {
@@ -1847,17 +1845,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         [self validateSDKIntegration];
     }
 
-    if (callCallback) {
-
-        if (self.sceneSessionInitWithCallback) {
-            BNCInitSessionResponse *response = [BNCInitSessionResponse new];
-            response.params = [self getLatestReferringParams];
-            response.universalObject = [self getLatestReferringBranchUniversalObject];
-            response.linkProperties = [self getLatestReferringBranchLinkProperties];
-            response.sceneIdentifier = sceneIdentifier;
-            self.sceneSessionInitWithCallback(response, nil);
-        }
-    }
     [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
 
     [self.urlFilter updatePatternListFromServerWithCompletion:nil];
@@ -1933,19 +1920,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
-- (void)handleInitFailure:(NSError *)error callCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
-    if (callCallback) {
-        if (self.sceneSessionInitWithCallback) {
-            BNCInitSessionResponse *response = [BNCInitSessionResponse new];
-            response.error = error;
-            response.params = [NSDictionary new];
-            response.universalObject = [BranchUniversalObject new];
-            response.linkProperties = [BranchLinkProperties new];
-            response.sceneIdentifier = sceneIdentifier;
-            self.sceneSessionInitWithCallback(response, error);
-        }
-    }
-
+- (void)handleInitFailure:(NSError *)error {
     [self sendOpenNotificationWithLinkParameters:@{} error:error];
 }
 
@@ -2129,9 +2104,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         dispatch_async(dispatch_get_main_queue(), ^ {
             if (error) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen failed with error: %@", error] error:error];
-                [self handleInitFailure:error callCallback:NO sceneIdentifier:nil];
+                [self handleInitFailure:error];
             } else {
-                [self handleInitSuccessAndCallCallback:NO sceneIdentifier:nil];
+                [self handleInitSuccess];
                 NSDictionary *params = [self getLatestReferringParams];
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen completed with params: %@", params] error:nil];
             }
@@ -2159,9 +2134,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         dispatch_async(dispatch_get_main_queue(), ^ {
             if (error) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen failed with error: %@", error] error:error];
-                [self handleInitFailure:error callCallback:NO sceneIdentifier:nil];
+                [self handleInitFailure:error];
             } else {
-                [self handleInitSuccessAndCallCallback:NO sceneIdentifier:nil];
+                [self handleInitSuccess];
                 NSDictionary *params = [self getLatestReferringParams];
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen completed with params: %@", params] error:nil];
             }

@@ -27,9 +27,6 @@
 #import "BranchActivityItemProvider.h"
 #endif
 
-// Reconsider how this one is exposed. BNC classes should be used internal.
-#import "BNCInitSessionResponse.h"
-
 // Block typedefs. Consider deprecating this
 #import "BNCCallbacks.h"
 
