@@ -2075,11 +2075,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 #endif
 
-#pragma mark - Branch AppDelegate DeepLinking Convenience Methods
+#pragma mark - Branch DeepLinking Convenience Methods for AppDelegate
 
-// AppDelegate openURL deep linking
 // Used to support URI schemes
-
 - (void)requestDeepLinkDataWithOpenURL:(NSURL *)url {
     [self requestDeepLinkData:[url absoluteString] callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
@@ -2097,10 +2095,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }];
 }
 
-
-// AppDelegate continueUserActivity deep linking
 // Used to support Universal Links
-
 - (void)requestDeepLinkDataWithUserContinueActivity:(NSUserActivity *)userActivity {
     [self requestDeepLinkData:userActivity.webpageURL.absoluteString callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
@@ -2119,16 +2114,14 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 
-// AppDelegate Remote Notification deep linking
 // Used to support Push Notifications
-
 - (void)requestDeepLinkDataFromDidReceiveRemoteNotification:(NSDictionary *)userInfo {
     NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
     
     if (urlStr.length) {
         NSURL *url = [NSURL URLWithString:urlStr];
         if (url)  {
-            [self requestDeepLinkData:url callback:^(NSDictionary *params, NSError *error) {
+            [self requestDeepLinkData:url.absoluteString callback:^(NSDictionary *params, NSError *error) {
                 if (error == nil) {
                     if (params != nil) {
                         [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
@@ -2145,6 +2138,10 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         }
     }
 }
+
+#pragma mark - Branch Deep Linking Convenience Methods for SceneDelegate
+
+
 
 #pragma mark - Branch Attribution Methods
 
