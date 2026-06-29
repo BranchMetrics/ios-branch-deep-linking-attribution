@@ -38,7 +38,7 @@
    //     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
    // }];
 
-   // [self.branch initSessionWithLaunchOptions:nil andRegisterDeepLinkHandlerUsingBranchUniversalObject:
+   // [self.branch requestDeepLinkDataWithLaunchOptions:nil andRegisterDeepLinkHandlerUsingBranchUniversalObject:
    //     ^ (BranchUniversalObject * _Nullable universalObject,
    //        BranchLinkProperties * _Nullable linkProperties,
    //        NSError * _Nullable error) {
