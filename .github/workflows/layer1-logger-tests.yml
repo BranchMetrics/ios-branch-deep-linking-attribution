@@ -47,10 +47,10 @@ jobs:
 
       # setup-xcode is more robust than `sudo xcode-select -s` because the
       # exact Xcode_16.x.app path varies between runner image revisions.
-      - name: Select Xcode 16
+      - name: Select Xcode 16.4
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: "16"
+          xcode-version: "16.4"
 
       - name: Show toolchain
         run: |
