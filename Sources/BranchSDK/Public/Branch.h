@@ -563,8 +563,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  */
 - (void)sendOpen;
 
-- (void)sendOpen:(NSDictionary *)responseData;
-
 #pragma mark - Pre-initialization support
 
 /**
