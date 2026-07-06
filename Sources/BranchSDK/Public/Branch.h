@@ -450,6 +450,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
  Extracts the URL and calls `requestDeepLinkData:callback:` with it.
  Logs the deep link parameters or error.
+ @param url The URL from `application:openURL:options:`
  */
 - (void)requestDeepLinkDataWithURL:(nullable NSURL *)url;
 
@@ -458,6 +459,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
  Extracts the webpage URL from the user activity and calls `requestDeepLinkData:callback:` with it.
  Logs the deep link parameters or error.
+ @param userActivity The NSUserActivity from `application:continueUserActivity:restorationHandler:`.
  */
 - (void)requestDeepLinkDataWithUserActivity:(nullable NSUserActivity *)userActivity;
 
@@ -466,8 +468,9 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
  Extracts the Branch link from the notification payload and calls `requestDeepLinkData:callback:` with it.
  Logs the deep link parameters or error.
+ @param userInfo The notification payload from `application:didReceiveRemoteNotification:fetchCompletionHandler:`.
  */
-- (void)requestDeepLinkDataFromRemoteNotification:(nullable NSDictionary *)userInfo;
+- (void)requestDeepLinkDataWithUserInfo:(nullable NSDictionary *)userInfo;
 
 ///--------------------------------
 /// @name SceneDelegate Deep Linking
@@ -494,6 +497,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Logs the deep link parameters or error.
 
  Available on iOS 13.0+.
+ @param scene The UIScene from `scene:openURLContexts:`.
+ @param urlContexts The URL contexts from `scene:openURLContexts:`.
  */
 - (void)requestDeepLinkDataWithScene:(UIScene *)scene
                       openURLContexts:(NSSet<UIOpenURLContext *> *)urlContexts
@@ -506,6 +511,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Logs the deep link parameters or error.
 
  Available on iOS 13.0+.
+ @param scene The UIScene from `scene:continueUserActivity:`.
+ @param userActivity The NSUserActivity from `scene:continueUserActivity:`.
  */
 - (void)requestDeepLinkDataWithScene:(UIScene *)scene
                 continueUserActivity:(NSUserActivity *)userActivity

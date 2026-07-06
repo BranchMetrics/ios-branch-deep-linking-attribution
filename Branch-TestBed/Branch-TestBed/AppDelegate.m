@@ -173,7 +173,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    [[Branch getInstance] requestDeepLinkDataFromRemoteNotification:userInfo];
+    [[Branch getInstance] requestDeepLinkDataWithUserInfo:userInfo];
     // process your non-Branch notification payload items here...
 }
 

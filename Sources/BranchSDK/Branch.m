@@ -2081,7 +2081,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 // Called from application:didReceiveRemoteNotification:fetchCompletionHandler:
 // Supports Push Notifications
-- (void)requestDeepLinkDataFromRemoteNotification:(NSDictionary *)userInfo {
+- (void)requestDeepLinkDataWithUserInfo:(NSDictionary *)userInfo {
     
     NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
 
