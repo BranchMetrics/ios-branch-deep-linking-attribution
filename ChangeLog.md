@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.3.14.2
+— Fixed crash for malformed or nil strings coming from pasteboard or spotlight.
+
 v.3.14.1
 — Added check for `_branch_referrer` query param in third-party/redirected links.
 
