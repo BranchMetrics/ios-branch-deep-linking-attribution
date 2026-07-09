@@ -1026,6 +1026,13 @@ static NSString *bnc_branchKey = nil;
 
 // checks if URL string looks like a branch link
 + (BOOL)isBranchLink:(NSString *)urlString {
+    // Callers pass values that are not guaranteed to be strings, e.g. an empty pasteboard yields
+    // nil and userActivity.userInfo is untyped. containsString: raises on a non-string receiver
+    // and NSURLComponents raises on a nil string.
+    if (![urlString isKindOfClass:[NSString class]] || urlString.length == 0) {
+        return NO;
+    }
+
     id branchUniversalLinkDomains = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_universal_link_domains"];
     
     // check url list in bundle

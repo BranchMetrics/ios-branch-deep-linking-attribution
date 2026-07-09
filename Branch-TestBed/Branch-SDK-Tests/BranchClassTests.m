@@ -7,6 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <CoreSpotlight/CoreSpotlight.h>
 #import "Branch.h"
 #import "BranchConstants.h"
 #import "BNCPasteboard.h"
@@ -477,6 +478,53 @@
 
     BOOL result = [self.branch handleDeepLink:url];
     XCTAssertTrue(result, @"handleDeepLink should return YES for a URI scheme link containing the _branch_referrer param");
+}
+
+- (void)testIsBranchLink_NilURLString_ReturnsNo {
+    // BNCPasteboard passes UIPasteboard.URL.absoluteString, which is nil when hasURLs is YES but
+    // the item does not coerce to an NSURL. Parsing a nil string raises NSInvalidArgumentException.
+    NSString *urlString = nil;
+    XCTAssertNoThrow([Branch isBranchLink:urlString]);
+    XCTAssertFalse([Branch isBranchLink:urlString]);
+}
+
+- (void)testIsBranchLink_NonStringValue_ReturnsNo {
+    // userActivity.userInfo is untyped, so a non-string value can reach isBranchLink.
+    // containsString: would raise "unrecognized selector" on it.
+    id nonString = @42;
+    XCTAssertNoThrow([Branch isBranchLink:nonString]);
+    XCTAssertFalse([Branch isBranchLink:nonString]);
+}
+
+- (void)testIsBranchLink_EmptyURLString_ReturnsNo {
+    XCTAssertFalse([Branch isBranchLink:@""]);
+}
+
+- (void)testIsBranchLink_MalformedURLString_ReturnsNo {
+    // componentsWithString: returns nil here rather than raising, so this asserts the loop
+    // over a nil queryItems stays a no-op.
+    XCTAssertNoThrow([Branch isBranchLink:@"ht tp://%%%"]);
+    XCTAssertFalse([Branch isBranchLink:@"ht tp://%%%"]);
+}
+
+- (void)testIsBranchLink_NonBranchURLString_ReturnsNo {
+    XCTAssertFalse([Branch isBranchLink:@"https://example.com/products/42?utm_source=email"]);
+}
+
+- (void)testIsBranchLink_BranchReferrerParam_ReturnsYes {
+    // Not on a Branch domain, so this only passes if the query items are parsed.
+    XCTAssertTrue([Branch isBranchLink:@"https://example.com/products/42?utm_source=email&_branch_referrer=H4sIAAAA"]);
+}
+
+- (void)testIsBranchLink_BranchReferrerSubstringParam_ReturnsNo {
+    // "branch_referrer" is not "_branch_referrer".
+    XCTAssertFalse([Branch isBranchLink:@"https://example.com/products/42?branch_referrer=H4sIAAAA"]);
+}
+
+- (void)testContinueUserActivity_MissingSpotlightIdentifier_DoesNotThrow {
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:@"io.branch.testActivity"];
+    activity.userInfo = @{};
+    XCTAssertNoThrow([self.branch continueUserActivity:activity]);
 }
 
 @end
