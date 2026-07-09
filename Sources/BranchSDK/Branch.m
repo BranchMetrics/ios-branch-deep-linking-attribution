@@ -1029,7 +1029,7 @@ static NSString *bnc_branchKey = nil;
     // Callers pass values that are not guaranteed to be strings, e.g. an empty pasteboard yields
     // nil and userActivity.userInfo is untyped. containsString: raises on a non-string receiver
     // and NSURLComponents raises on a nil string.
-    if (![urlString isKindOfClass:[NSString class]] || urlString.length == 0) {
+    if ((urlString == nil) || ![urlString isKindOfClass:[NSString class]] || urlString.length == 0) {
         return NO;
     }
 
