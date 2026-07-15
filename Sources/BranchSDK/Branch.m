@@ -161,6 +161,13 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (assign, nonatomic) BOOL deepLinkOpenPending;
 // Bounded fallback timer that fires the deferred open (unattributed) if resolution never happens.
 @property (strong, nonatomic) dispatch_source_t deepLinkOpenFallbackTimer;
+// EMT-3892 ordering fix: the link URL an ATTRIBUTED open was last sent for. Lets
+// handleUniversalDeepLink_private: recognize "this link was already resolved and
+// attributed" when requestDeepLinkData wins a race and resolves it first — otherwise the
+// late-arriving handleUniversalDeepLink_private: call would re-arm the deferred-open
+// fallback and emit a second, unattributed open for the same link. Cleared alongside
+// referringURL once the attributed open's own session settles (sendOpenNotificationWithLinkParameters:).
+@property (copy, nonatomic) NSString *lastAttributedDeepLinkURL;
 @property (assign, nonatomic) BOOL shouldAutomaticallyDeepLink;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
@@ -1003,6 +1010,16 @@ static NSString *bnc_branchKey = nil;
     }
 
     // [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:urlString reset:YES];
+    // EMT-3892 ordering fix: requestDeepLinkData can win the race and resolve (and attribute)
+    // this exact link before this method runs (e.g. UIKit delivering continueUserActivity:
+    // after a scene-connection-options-driven resolution). If so, the single attributed open
+    // has already been sent — don't re-arm the deferred-open fallback, or it would fire a
+    // second, unattributed open for the same link.
+    if (urlString.length && [self.lastAttributedDeepLinkURL isEqualToString:urlString]) {
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"handleUniversalDeepLink_private: %@ was already attributed via an earlier resolution; not re-arming the deferred open.", urlString] error:nil];
+        return [Branch isBranchLink:urlString];
+    }
+
     // EMT-3892: defer the launch open until requestDeepLinkData resolves this link (see
     // deferLaunchOpenPendingDeepLinkResolution) instead of firing an immediate, unattributed
     // sendOpen here — which previously raced with the attributed sendOpen: fired after
@@ -2425,6 +2442,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         userInfo:userInfo];
 
     self.preferenceHelper.referringURL = nil;
+    // EMT-3892 ordering fix: the session this attribution belonged to has now settled;
+    // a later resolution of the same link URL should be treated as fresh again.
+    self.lastAttributedDeepLinkURL = nil;
 }
 
 - (void)removeViewControllerFromRootNavigationController:(UIViewController*)branchSharingController {
@@ -2799,6 +2819,12 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented." error:nil];
         return;
     }
+
+    // EMT-3892 ordering fix: remember which link this ATTRIBUTED open was for, so a
+    // handleUniversalDeepLink_private: call arriving afterward for the SAME link (already
+    // resolved here) does not re-arm the deferred-open fallback. See
+    // handleUniversalDeepLink_private: and lastAttributedDeepLinkURL.
+    self.lastAttributedDeepLinkURL = self.preferenceHelper.referringURL;
 
     // Prepare callback block
     callbackWithStatus openCallback = ^(BOOL success, NSError *error) {
