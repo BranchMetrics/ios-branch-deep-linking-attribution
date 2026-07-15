@@ -12,6 +12,7 @@
 #import "BNCPasteboard.h"
 #import "BNCAppGroupsData.h"
 #import "BNCPartnerParameters.h"
+#import "BNCServerRequestQueue.h"
 
 @interface BNCPreferenceHelper(Test)
 // Expose internal private method to clear EEA data
@@ -22,6 +23,19 @@
 // Expose private session-state internals used to reproduce the in-flight open window.
 @interface Branch (SessionReadySettleTest)
 - (void)handleInitSuccessAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier;
+@end
+
+// Expose the EMT-3892 deep-link open deferral internals for regression testing.
+@interface Branch (DeepLinkOpenDeferralTest)
+@property (nonatomic, assign) BOOL deepLinkOpenPending;
+- (BOOL)handleUniversalDeepLink_private:(NSString *)urlString sceneIdentifier:(NSString *)sceneIdentifier;
+- (void)cancelDeepLinkOpenFallback;
+@end
+
+// Expose the private queue-depth accessor to detect a synchronous enqueue without being
+// coupled to leftover install/open state from other tests sharing the Branch singleton.
+@interface BNCServerRequestQueue (QueueDepthTest)
+- (NSInteger)queueDepth;
 @end
 
 @interface BranchClassTests : XCTestCase
@@ -296,6 +310,26 @@
 
     // Reset session state so this test does not leak into others.
     [self.branch setValue:@(0) forKey:@"initializationStatus"];
+}
+
+// EMT-3892 regression: a Branch deep-link (universal link) open must defer the launch
+// open until requestDeepLinkData resolves it, not synchronously enqueue an unattributed
+// generic open. See Branch.m deferLaunchOpenPendingDeepLinkResolution.
+- (void)testUniversalDeepLinkDefersLaunchOpenPendingResolution {
+    BNCServerRequestQueue *requestQueue = [self.branch valueForKey:@"requestQueue"];
+    NSInteger queueDepthBeforeDeepLink = [requestQueue queueDepth];
+
+    BOOL isBranchLink = [self.branch handleUniversalDeepLink_private:@"https://example.app.link/abc123" sceneIdentifier:nil];
+    XCTAssertTrue(isBranchLink, @"example.app.link should be recognized as a Branch link.");
+
+    // Delta-based (not absolute) so this isn't coupled to install/open state left behind by
+    // other tests sharing the Branch singleton and its request queue.
+    XCTAssertEqual([requestQueue queueDepth], queueDepthBeforeDeepLink, @"The launch open must be deferred, not enqueued synchronously before deep-link resolution.");
+    XCTAssertTrue(self.branch.deepLinkOpenPending, @"Deep link resolution should be marked pending after a universal link open.");
+
+    // Cancel the bounded fallback so it doesn't fire a real network open later in the suite.
+    [self.branch cancelDeepLinkOpenFallback];
+    XCTAssertFalse(self.branch.deepLinkOpenPending, @"Cancelling the fallback should clear the pending flag.");
 }
 
 @end
