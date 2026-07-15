@@ -155,6 +155,12 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 - (void)notifyWhenSessionReady:(void (^)(NSError * _Nullable error))block;
 - (void)deliverSessionReadyBlocksWithError:(nullable NSError *)error;
 - (void)discardSessionReadyBlocks;
+
+// EMT-3892: true while a Branch deep-link open is deferred, waiting for requestDeepLinkData
+// to resolve it into a single ATTRIBUTED open. See deferLaunchOpenPendingDeepLinkResolution.
+@property (assign, nonatomic) BOOL deepLinkOpenPending;
+// Bounded fallback timer that fires the deferred open (unattributed) if resolution never happens.
+@property (strong, nonatomic) dispatch_source_t deepLinkOpenFallbackTimer;
 @property (assign, nonatomic) BOOL shouldAutomaticallyDeepLink;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
@@ -997,7 +1003,11 @@ static NSString *bnc_branchKey = nil;
     }
 
     // [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:urlString reset:YES];
-    [self sendOpen];
+    // EMT-3892: defer the launch open until requestDeepLinkData resolves this link (see
+    // deferLaunchOpenPendingDeepLinkResolution) instead of firing an immediate, unattributed
+    // sendOpen here — which previously raced with the attributed sendOpen: fired after
+    // resolution and produced two /v3/events/open calls for one deep-link open.
+    [self deferLaunchOpenPendingDeepLinkResolution];
 
     return [Branch isBranchLink:urlString];
 }
@@ -1993,9 +2003,11 @@ static NSString *bnc_branchKey = nil;
         
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive installOrOpenInQueue %d", installOrOpenInQueue] error:nil];
 
-        if (!Branch.trackingDisabled && self.initializationStatus == BNCInitStatusUninitialized && !installOrOpenInQueue) {
-            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive trackingDisabled %d initializationStatus %d installOrOpenInQueue %d", Branch.trackingDisabled, self.initializationStatus, installOrOpenInQueue] error:nil];
-            
+        // EMT-3892: don't fire the organic auto-open while a deep-link open is deferred and
+        // waiting on requestDeepLinkData — that would be a second, premature, unattributed open.
+        if (!Branch.trackingDisabled && self.initializationStatus == BNCInitStatusUninitialized && !installOrOpenInQueue && !self.deepLinkOpenPending) {
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive trackingDisabled %d initializationStatus %d installOrOpenInQueue %d deepLinkOpenPending %d", Branch.trackingDisabled, self.initializationStatus, installOrOpenInQueue, self.deepLinkOpenPending] error:nil];
+
             [self sendOpen];
         }
     });
@@ -2464,6 +2476,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self cancelDeepLinkOpenFallback];
 }
 
 - (void)registerPluginName:(NSString *)name version:(NSString *)version {
@@ -2529,6 +2542,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 - (void) requestDeepLinkData:(NSString *)branchLink callback:(nullable callbackWithParams)callback {
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData called with branchLink: %@", branchLink] error:nil];
+
+    // EMT-3892: resolution is now underway — cancel the deferred launch open's bounded
+    // fallback so it doesn't also fire once BranchRequestDeepLink.processResponse sends the
+    // real (attributed) open below.
+    [self cancelDeepLinkOpenFallback];
 
     if (branchLink.length > 0) {
         [self.requestQueue cancelPendingDeepLinkRequests];
@@ -2667,6 +2685,76 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 - (void)discardSessionReadyBlocks {
     @synchronized (self.sessionReadyBlocks) {
         [self.sessionReadyBlocks removeAllObjects];
+    }
+}
+
+#pragma mark - Deep Link Open Deferral (EMT-3892 / EMT-3893)
+
+// A Branch deep-link open defers the automatic launch open until requestDeepLinkData
+// resolves it, so BranchRequestDeepLink.processResponse can send the single ATTRIBUTED
+// open (sendOpen:). This replaces the previous behavior of firing an immediate,
+// unattributed sendOpen here *and* a second, attributed sendOpen: after resolution
+// (EMT-3892: duplicate /v3/events/open).
+//
+// Bounded fallback: if the host app never calls requestDeepLinkData, the deferred open
+// would otherwise never fire and the open would be lost. The fallback timer mirrors the
+// network timeout already used for open/deep-link requests (preferenceHelper.timeout,
+// default 5.5s — see BNCServerInterface), so it never fires sooner than a real deep-link
+// resolution attempt could complete.
+- (void)deferLaunchOpenPendingDeepLinkResolution {
+    self.deepLinkOpenPending = YES;
+
+    @synchronized (self) {
+        [self cancelDeepLinkOpenFallbackTimerLocked];
+
+        NSTimeInterval fallbackInterval = self.preferenceHelper.timeout;
+        dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, self.isolationQueue);
+        dispatch_source_set_timer(timer,
+                                  dispatch_time(DISPATCH_TIME_NOW, (int64_t)(fallbackInterval * NSEC_PER_SEC)),
+                                  DISPATCH_TIME_FOREVER,
+                                  (int64_t)(0.1 * NSEC_PER_SEC));
+
+        // __weak avoids a retain cycle (self -> timer -> event handler block -> self).
+        __weak Branch *weakSelf = self;
+        dispatch_source_set_event_handler(timer, ^{
+            Branch *strongSelf = weakSelf;
+            if (!strongSelf) return;
+
+            @synchronized (strongSelf) {
+                if (!strongSelf.deepLinkOpenPending) return;
+                strongSelf.deepLinkOpenPending = NO;
+                [strongSelf cancelDeepLinkOpenFallbackTimerLocked];
+            }
+
+            [[BranchLogger shared] logVerbose:@"Deep link resolution fallback fired: requestDeepLinkData was not called in time. Sending the deferred open unattributed so it is not lost." error:nil];
+
+            // EMT-3893: this open gave up waiting for resolution, so it must not report a
+            // link it never actually attributed. Note: the server MAY still echo a prior
+            // click's ~referring_link in the session response (residual server-side
+            // stickiness) — that is a backend concern tracked separately and not fixed here.
+            strongSelf.preferenceHelper.referringURL = nil;
+            [strongSelf sendOpen];
+        });
+
+        self.deepLinkOpenFallbackTimer = timer;
+        dispatch_resume(timer);
+    }
+}
+
+// Called once deep-link resolution is actually underway (requestDeepLinkData was invoked)
+// so the bounded fallback above does not also fire a redundant, unattributed open.
+- (void)cancelDeepLinkOpenFallback {
+    self.deepLinkOpenPending = NO;
+    @synchronized (self) {
+        [self cancelDeepLinkOpenFallbackTimerLocked];
+    }
+}
+
+// Must be called while holding @synchronized(self).
+- (void)cancelDeepLinkOpenFallbackTimerLocked {
+    if (self.deepLinkOpenFallbackTimer) {
+        dispatch_source_cancel(self.deepLinkOpenFallbackTimer);
+        self.deepLinkOpenFallbackTimer = nil;
     }
 }
 

@@ -148,7 +148,14 @@
         [sessionDataDict addEntriesFromDictionary:spotlightDic];
         sessionData = [BNCEncodingUtils encodeDictionaryToJsonString:sessionDataDict];
     }
-    
+
+    // EMT-3893: rewritten verbatim from every open's server response, by design (this is how
+    // getLatestReferringParams stays current for the session). The SDK clears its own link
+    // identifiers/referringURL after each open (see the "Clear link identifiers" block below
+    // and Branch.m sendOpenNotificationWithLinkParameters:), but the server MAY still echo a
+    // previous click's ~referring_link in session_data for an unrelated open (residual
+    // server-side stickiness). That is a backend behavior question tracked separately
+    // (EMT-3893) and intentionally not worked around here.
     preferenceHelper.sessionParams = sessionData;
 
     // Scenarios:
