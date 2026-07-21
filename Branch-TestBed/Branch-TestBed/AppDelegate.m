@@ -24,11 +24,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     appDelegate = self;
     
-    Branch *branch = [Branch getInstance];
-    
     [Branch enableLogging];
-    
-    [branch checkPasteboardOnInstall];
 
     // Example: full BranchConfiguration setup, with every settable field changed from its default.
     // This is the iOS counterpart of the Android `BranchConfiguration.Builder` chain. Objective-C has no
@@ -85,6 +81,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // ── Initialize ───────────────────────────────────────────────────────
     Branch *branch = [Branch initialize:config];
+    
+    [branch checkPasteboardOnInstall];
 
     [branch initSessionWithLaunchOptions:launchOptions
               andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
