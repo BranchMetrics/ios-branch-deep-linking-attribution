@@ -19,21 +19,73 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
 
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
+
     [self setBranchLogFile];
 
     appDelegate = self;
 
-    Branch *branch = [Branch getInstance];
+    // Example: full BranchConfiguration setup, with every settable field changed from its default.
+    // This is the iOS counterpart of the Android `BranchConfiguration.Builder` chain. Objective-C has no
+    // chained builder, so create the config with the key, set the properties you care about, then pass it
+    // to `+[Branch initialize:]`.
 
-    // Change the Branch base API URL
-    [Branch setAPIUrl:@"https://api2.branch.io"];
-    
-    [Branch enableLogging];
-    
-    [branch checkPasteboardOnInstall];
-    
-    //[[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
+    // ── Build the configuration ──────────────────────────────────────────
+    BranchConfiguration *config =
+        [[BranchConfiguration alloc] initWithKey:@"key_live_xxx"];
+
+    // Identity & environment  (defaults: testMode NO, apiUrl nil, cdnBaseUrl nil, euEndpoint NO)
+    config.testMode   = YES;                             // use the test key from Info.plist
+    config.apiUrl     = @"https://api2.branch.io";       // optional API base-URL override
+    config.cdnBaseUrl = @"https://cdn.example.com";      // optional CDN pattern-list override
+    config.euEndpoint = YES;                             // route to Branch's EU endpoints
+
+    // Logging  (defaults: logLevel Error, callbacks nil)
+    config.logLevel = BranchLogLevelDebug;
+    config.loggingCallback = ^(NSString *message, BranchLogLevel level, NSError *error) {
+        NSLog(@"[Branch] %@", message);                  // custom log sink
+    };
+    config.requestTracingCallback = ^(NSString *url,
+                                      NSDictionary *request,
+                                      NSDictionary *response,
+                                      NSError *error,
+                                      NSString *requestServiceURL) {
+        NSLog(@"[Branch trace] %@ -> %@", url, response); // per-request debug hook
+    };
+
+    // Network  (defaults: networkTimeout 5.5s, retryCount 3, retryInterval 0s)
+    // NOTE: iOS uses SECONDS (NSTimeInterval), unlike Android's milliseconds.
+    config.networkTimeout = 10.0;                        // 10s   (Android 10_000ms)
+    config.retryCount     = 5;
+    config.retryInterval  = 1.0;                         // 1s    (Android 1_000ms)
+    // config.remoteInterface = [MyCustomNetworkService class]; // must conform to BNCNetworkServiceProtocol
+
+    // Privacy & attribution  (defaults: attributionLevel nil, limitFacebookAttribution NO,
+    //                          adNetworkCalloutsDisabled NO, DMA params unset)
+    config.attributionLevel = BranchAttributionLevelFull;
+    [config setDMAParamsForEEA:YES
+      adPersonalizationConsent:NO
+        adUserDataUsageConsent:YES];
+    config.limitFacebookAttribution  = YES;
+    config.adNetworkCalloutsDisabled = YES;
+
+    // URL collection  (default: allowedSchemes empty == all schemes allowed)
+    [config addAllowedScheme:@"myapp"];                  // ← Android addWhitelistedScheme
+
+    // Request metadata  (default: empty) — no direct Android builder analog
+    [config addMetadataWithKey:@"store" value:@"app_store"];
+
+    // Open tracking  (default: automaticOpenEvents YES)
+    config.automaticOpenEvents = NO;   // you will call [[Branch getInstance] sendOpen] manually
+
+    // ── Initialize ───────────────────────────────────────────────────────
+    Branch *branch = [Branch initialize:config];
+
+    [branch initSessionWithLaunchOptions:launchOptions
+              andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+        if (!error) {
+            NSLog(@"Branch params: %@", params);
+        }
+    }];
 
     return YES;
 }

@@ -190,6 +190,7 @@ NSString * const BRANCH_KEY_SOURCE_CONFIG_JSON = @"config_json";
 NSString * const BRANCH_KEY_SOURCE_INFO_PLIST = @"info_plist";
 NSString * const BRANCH_KEY_SOURCE_GET_INSTANCE_API = @"getInstance_api";
 NSString * const BRANCH_KEY_SOURCE_SET_BRANCH_KEY_API= @"setBranchKey_api";
+NSString * const BRANCH_KEY_SOURCE_INIT_FUNCTION = @"init_function";
 
 NSString * const BRANCH_REQUEST_KEY_LINKED_FRAMEORKS = @"linked_frameworks";
 NSString * const FRAMEWORK_ATT_TRACKING_MANAGER = @"ATTrackingManager";

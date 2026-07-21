@@ -7,6 +7,7 @@
 //
 
 #import "Branch.h"
+#import "BranchConfiguration.h"
 #import "BNCConfig.h"
 #import "BNCCrashlyticsWrapper.h"
 #import "BNCDeepLinkViewControllerInstance.h"
@@ -198,6 +199,118 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     self.branchKey = branchKey;
     [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_GET_INSTANCE_API;
     return [Branch getInstanceInternal:self.branchKey];
+}
+
+// Tracks whether +initialize: has already created and configured the singleton, so a second call
+// warns and no-ops rather than re-applying setter side-effects to a running SDK.
+static BOOL bnc_didInitializeWithConfiguration = NO;
+
+// Test-only: clears the reinitialization guard so a subsequent +initialize: runs its side-effects
+// again. Not declared in the public header; exposed to tests via a category.
++ (void)resetInitializationGuardForTesting {
+    @synchronized ([Branch class]) {
+        bnc_didInitializeWithConfiguration = NO;
+    }
+}
+
++ (Branch *)initialize:(BranchConfiguration *)configuration {
+    if (!configuration) {
+        [NSException raise:NSInvalidArgumentException
+                    format:@"A BranchConfiguration is required to initialize Branch."];
+    }
+
+    // Raises NSInvalidArgumentException with an actionable message on any invalid field.
+    [configuration validate];
+
+    // Single canonical initialization entry point. Guard against reinitializing the singleton:
+    // once created, re-running the setter side-effects below would mutate a running SDK.
+    @synchronized ([Branch class]) {
+        if (bnc_didInitializeWithConfiguration) {
+            [[BranchLogger shared] logWarning:@"Warning, attempted to reinitialize Branch SDK singleton!" error:nil];
+            return [Branch getInstanceInternal:self.class.branchKey];
+        }
+        bnc_didInitializeWithConfiguration = YES;
+    }
+
+    // --- Settings that must be applied before the singleton is created ---
+
+    // Test key must be resolved before the branch key is read.
+    [Branch setUseTestBranchKey:configuration.testMode];
+
+    // Custom network service class is set-once and must precede singleton creation.
+    if (configuration.remoteInterface) {
+        [Branch setNetworkServiceClass:configuration.remoteInterface];
+    }
+
+    if (configuration.euEndpoint) {
+        [BNCServerAPI sharedInstance].useEUServers = YES;
+    }
+    if (configuration.cdnBaseUrl) {
+        [BranchPluginSupport setCDNBaseUrl:configuration.cdnBaseUrl];
+    }
+
+    // Set the branch key explicitly so it takes precedence over Info.plist / branch.json.
+    self.branchKey = configuration.branchKey;
+    [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_INIT_FUNCTION;
+
+    // --- Create (or fetch) the singleton ---
+    // Note: the constructor applies branch.json values (apiUrl, logging, cppLevel). Caller-supplied
+    // settings that overlap with branch.json are (re)applied AFTER this so the caller wins and
+    // branch.json serves only as a fallback.
+    Branch *branch = [Branch getInstanceInternal:self.branchKey];
+
+    // --- Settings applied to the instance / shared preference helper (caller wins) ---
+
+    // Logging: the caller's logLevel/callback own the logger state, overriding any branch.json toggle.
+    if (configuration.loggingCallback) {
+        [Branch enableLoggingAtLevel:configuration.logLevel withCallback:configuration.loggingCallback];
+    } else {
+        BranchLogger *logger = [BranchLogger shared];
+        logger.loggingEnabled = YES;
+        logger.logLevelThreshold = configuration.logLevel;
+    }
+    if (configuration.requestTracingCallback) {
+        [Branch setCallbackForTracingRequests:configuration.requestTracingCallback];
+    }
+
+    if (configuration.apiUrl) {
+        [Branch setAPIUrl:configuration.apiUrl];
+    }
+
+    [branch setNetworkTimeout:configuration.networkTimeout];
+    [branch setMaxRetries:configuration.retryCount];
+    [branch setRetryInterval:configuration.retryInterval];
+    [branch disableAdNetworkCallouts:configuration.adNetworkCalloutsDisabled];
+
+    [BNCPreferenceHelper sharedInstance].limitFacebookTracking = configuration.limitFacebookAttribution;
+
+    if (configuration.attributionLevel) {
+        [branch setConsumerProtectionAttributionLevel:configuration.attributionLevel];
+    }
+
+    if (configuration.dmaParametersSet) {
+        [Branch setDMAParamsForEEA:configuration.dmaEEARegion
+          AdPersonalizationConsent:configuration.dmaAdPersonalizationConsent
+            AdUserDataUsageConsent:configuration.dmaAdUserDataUsageConsent];
+    }
+
+    if (configuration.allowedSchemes.count > 0) {
+        [branch setAllowedSchemes:configuration.allowedSchemes];
+    }
+    if (configuration.urlPatternsToIgnore.count > 0) {
+        [branch setUrlPatternsToIgnore:configuration.urlPatternsToIgnore];
+    }
+
+    for (NSString *key in configuration.requestMetadata) {
+        [branch setRequestMetadataKey:key value:configuration.requestMetadata[key]];
+    }
+
+    // When automatic open tracking is disabled the developer is responsible for calling -sendOpen.
+    if (!configuration.automaticOpenEvents) {
+        [Branch disableNextForegroundForTimeInterval:0];
+    }
+
+    return branch;
 }
 
 - (id)initWithInterface:(BNCServerInterface *)interface
