@@ -40,7 +40,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // ── Build the configuration ──────────────────────────────────────────
     BranchConfiguration *config =
-        [[BranchConfiguration alloc] initWithKey:@"key_live_xxx"];
+        [[BranchConfiguration alloc] initWithKey:@"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB"];
 
     // Identity & environment  (defaults: testMode NO, apiUrl nil, safeTrackAPIUrl nil,
     //                          cdnBaseUrl nil, euEndpoint NO)
