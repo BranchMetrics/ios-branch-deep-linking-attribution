@@ -12,8 +12,14 @@ static const NSTimeInterval BranchConfigurationDefaultNetworkTimeout = 5.5;
 static const NSInteger      BranchConfigurationDefaultRetryCount     = 3;
 static const NSTimeInterval BranchConfigurationDefaultRetryInterval  = 0;
 
+// Mirrors BNCPreferenceHelper's DEFAULT_THIRD_PARTY_APIS_TIMEOUT (500ms).
+static const NSTimeInterval BranchConfigurationDefaultThirdPartyAPIsWaitTime = 0.5;
+
 // Network timeout ceiling, matching the Android builder's 60s cap.
 static const NSTimeInterval BranchConfigurationMaxNetworkTimeout = 60;
+
+// Ceiling for the third-party API wait time, matching +[Branch setSDKWaitTimeForThirdPartyAPIs:].
+static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
 
 @interface BranchConfiguration ()
 @property (nonatomic, copy, readwrite) NSString *branchKey;
@@ -37,6 +43,7 @@ static const NSTimeInterval BranchConfigurationMaxNetworkTimeout = 60;
     // Identity & environment
     _testMode = NO;
     _apiUrl = nil;
+    _safeTrackAPIUrl = nil;
     _cdnBaseUrl = nil;
     _euEndpoint = NO;
 
@@ -50,6 +57,7 @@ static const NSTimeInterval BranchConfigurationMaxNetworkTimeout = 60;
     _retryCount = BranchConfigurationDefaultRetryCount;
     _retryInterval = BranchConfigurationDefaultRetryInterval;
     _remoteInterface = nil;
+    _thirdPartyAPIsWaitTime = BranchConfigurationDefaultThirdPartyAPIsWaitTime;
 
     // Privacy & attribution
     _attributionLevel = nil;
@@ -64,6 +72,15 @@ static const NSTimeInterval BranchConfigurationMaxNetworkTimeout = 60;
 
     // Open tracking
     _automaticOpenEvents = YES;
+
+    // Pasteboard
+    _checkPasteboardOnInstall = NO;
+
+    // App Clip
+    _appClipAppGroup = nil;
+
+    // Debugging
+    _deepLinkDebugParams = nil;
 
     return self;
 }
@@ -150,6 +167,10 @@ static const NSTimeInterval BranchConfigurationMaxNetworkTimeout = 60;
     if (self.retryInterval < 0) {
         [NSException raise:NSInvalidArgumentException
                     format:@"Retry interval must be >= 0 seconds (got %.2f).", self.retryInterval];
+    }
+    if (self.thirdPartyAPIsWaitTime <= 0 || self.thirdPartyAPIsWaitTime > BranchConfigurationMaxThirdPartyAPIsWaitTime) {
+        [NSException raise:NSInvalidArgumentException
+                    format:@"Third-party APIs wait time must be > 0 and <= 10 seconds (got %.2f).", self.thirdPartyAPIsWaitTime];
     }
     if (self.remoteInterface && ![self.remoteInterface conformsToProtocol:@protocol(BNCNetworkServiceProtocol)]) {
         [NSException raise:NSInvalidArgumentException

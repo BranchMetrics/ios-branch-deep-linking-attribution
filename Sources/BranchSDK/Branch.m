@@ -242,13 +242,6 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
         [Branch setNetworkServiceClass:configuration.remoteInterface];
     }
 
-    if (configuration.euEndpoint) {
-        [BNCServerAPI sharedInstance].useEUServers = YES;
-    }
-    if (configuration.cdnBaseUrl) {
-        [BranchPluginSupport setCDNBaseUrl:configuration.cdnBaseUrl];
-    }
-
     // Set the branch key explicitly so it takes precedence over Info.plist / branch.json.
     self.branchKey = configuration.branchKey;
     [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_INIT_FUNCTION;
@@ -260,7 +253,16 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     Branch *branch = [Branch getInstanceInternal:self.branchKey];
 
     // --- Settings applied to the instance / shared preference helper (caller wins) ---
+    [Branch applyConfiguration:configuration toBranch:branch];
 
+    return branch;
+}
+
+// Applies every configuration value that depends on the singleton already existing. Settings that must
+// precede singleton creation (test key, network-service class, branch key) are handled inline in
+// +initialize: before the instance is created and are intentionally not repeated here.
+// This mirrors the Android SDK's `applyConfiguration(Branch, BranchConfiguration)`.
++ (void)applyConfiguration:(BranchConfiguration *)configuration toBranch:(Branch *)branch {
     // Logging: the caller's logLevel/callback own the logger state, overriding any branch.json toggle.
     if (configuration.loggingCallback) {
         [Branch enableLoggingAtLevel:configuration.logLevel withCallback:configuration.loggingCallback];
@@ -269,19 +271,34 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
         logger.loggingEnabled = YES;
         logger.logLevelThreshold = configuration.logLevel;
     }
+
     if (configuration.requestTracingCallback) {
         [Branch setCallbackForTracingRequests:configuration.requestTracingCallback];
     }
 
+    // Identity & environment. These mutate the BNCServerAPI / BNCPreferenceHelper singletons, whose
+    // values are read lazily at request time, so they don't need to precede singleton creation.
+    if (configuration.euEndpoint) {
+        [BNCServerAPI sharedInstance].useEUServers = YES;
+    }
+    if (configuration.cdnBaseUrl) {
+        [BranchPluginSupport setCDNBaseUrl:configuration.cdnBaseUrl];
+    }
     if (configuration.apiUrl) {
         [Branch setAPIUrl:configuration.apiUrl];
     }
+    if (configuration.safeTrackAPIUrl) {
+        [Branch setSafetrackAPIURL:configuration.safeTrackAPIUrl];
+    }
 
+    // Network
     [branch setNetworkTimeout:configuration.networkTimeout];
     [branch setMaxRetries:configuration.retryCount];
     [branch setRetryInterval:configuration.retryInterval];
-    [branch disableAdNetworkCallouts:configuration.adNetworkCalloutsDisabled];
+    [Branch setSDKWaitTimeForThirdPartyAPIs:configuration.thirdPartyAPIsWaitTime];
 
+    // Privacy & attribution
+    [branch disableAdNetworkCallouts:configuration.adNetworkCalloutsDisabled];
     [BNCPreferenceHelper sharedInstance].limitFacebookTracking = configuration.limitFacebookAttribution;
 
     if (configuration.attributionLevel) {
@@ -294,6 +311,7 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
             AdUserDataUsageConsent:configuration.dmaAdUserDataUsageConsent];
     }
 
+    // URL collection
     if (configuration.allowedSchemes.count > 0) {
         [branch setAllowedSchemes:configuration.allowedSchemes];
     }
@@ -301,16 +319,30 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
         [branch setUrlPatternsToIgnore:configuration.urlPatternsToIgnore];
     }
 
+    // Request metadata
     for (NSString *key in configuration.requestMetadata) {
         [branch setRequestMetadataKey:key value:configuration.requestMetadata[key]];
     }
 
-    // When automatic open tracking is disabled the developer is responsible for calling -sendOpen.
+    // App Clip
+    if (configuration.appClipAppGroup) {
+        [branch setAppClipAppGroup:configuration.appClipAppGroup];
+    }
+
+    // Debugging
+    if (configuration.deepLinkDebugParams) {
+        [branch setDeepLinkDebugMode:configuration.deepLinkDebugParams];
+    }
+
+    // Open tracking: when automatic open tracking is disabled the developer is responsible for -sendOpen.
     if (!configuration.automaticOpenEvents) {
         [Branch disableNextForegroundForTimeInterval:0];
     }
 
-    return branch;
+    // Pasteboard
+    if (configuration.checkPasteboardOnInstall) {
+        [branch checkPasteboardOnInstall];
+    }
 }
 
 - (id)initWithInterface:(BNCServerInterface *)interface

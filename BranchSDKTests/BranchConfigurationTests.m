@@ -31,6 +31,7 @@
     XCTAssertEqualObjects(config.branchKey, @"key_live_abc");
     XCTAssertFalse(config.testMode);
     XCTAssertNil(config.apiUrl);
+    XCTAssertNil(config.safeTrackAPIUrl);
     XCTAssertNil(config.cdnBaseUrl);
     XCTAssertFalse(config.euEndpoint);
     XCTAssertEqual(config.logLevel, BranchLogLevelError);
@@ -40,6 +41,7 @@
     XCTAssertEqual(config.retryCount, 3);
     XCTAssertEqualWithAccuracy(config.retryInterval, 0, 0.001);
     XCTAssertNil(config.remoteInterface);
+    XCTAssertEqualWithAccuracy(config.thirdPartyAPIsWaitTime, 0.5, 0.001);
     XCTAssertNil(config.attributionLevel);
     XCTAssertFalse(config.limitFacebookAttribution);
     XCTAssertFalse(config.adNetworkCalloutsDisabled);
@@ -48,6 +50,9 @@
     XCTAssertEqual(config.urlPatternsToIgnore.count, 0);
     XCTAssertEqual(config.requestMetadata.count, 0);
     XCTAssertTrue(config.automaticOpenEvents);
+    XCTAssertFalse(config.checkPasteboardOnInstall);
+    XCTAssertNil(config.appClipAppGroup);
+    XCTAssertNil(config.deepLinkDebugParams);
 }
 
 #pragma mark - Factory helpers
@@ -135,6 +140,24 @@
     XCTAssertThrowsSpecificNamed([config validate], NSException, NSInvalidArgumentException);
 }
 
+- (void)testValidateRejectsZeroThirdPartyAPIsWaitTime {
+    BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_abc"];
+    config.thirdPartyAPIsWaitTime = 0;
+    XCTAssertThrowsSpecificNamed([config validate], NSException, NSInvalidArgumentException);
+}
+
+- (void)testValidateRejectsExcessiveThirdPartyAPIsWaitTime {
+    BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_abc"];
+    config.thirdPartyAPIsWaitTime = 11;
+    XCTAssertThrowsSpecificNamed([config validate], NSException, NSInvalidArgumentException);
+}
+
+- (void)testValidateAcceptsBoundaryThirdPartyAPIsWaitTime {
+    BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_abc"];
+    config.thirdPartyAPIsWaitTime = 10;
+    XCTAssertNoThrow([config validate]);
+}
+
 #pragma mark - initialize: reinitialization guard
 
 // These tests mutate the process-wide singleton, so they reset the guard around each run.
@@ -169,6 +192,29 @@
     XCTAssertEqual(branch1, branch2, @"Reinitialization must return the existing singleton");
     XCTAssertEqualWithAccuracy([BNCPreferenceHelper sharedInstance].timeout, 10.0, 0.001,
                                @"Second initialize: must not re-apply configuration");
+}
+
+- (void)testInitializeAppliesCheckPasteboardOnInstall {
+    [Branch resetInitializationGuardForTesting];
+    [BranchConfigurationController sharedInstance].checkPasteboardOnInstall = NO;
+
+    BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_abc"];
+    config.checkPasteboardOnInstall = YES;
+    [Branch initialize:config];
+
+    XCTAssertTrue([BranchConfigurationController sharedInstance].checkPasteboardOnInstall,
+                  @"initialize: must enable pasteboard checking when configured");
+}
+
+- (void)testInitializeDoesNotEnablePasteboardByDefault {
+    [Branch resetInitializationGuardForTesting];
+    [BranchConfigurationController sharedInstance].checkPasteboardOnInstall = NO;
+
+    BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_abc"];
+    [Branch initialize:config];
+
+    XCTAssertFalse([BranchConfigurationController sharedInstance].checkPasteboardOnInstall,
+                   @"initialize: must not enable pasteboard checking when the flag is off");
 }
 
 - (void)testInitializeAppliesConfigAfterGuardReset {

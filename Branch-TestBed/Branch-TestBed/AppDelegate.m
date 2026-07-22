@@ -24,7 +24,14 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     appDelegate = self;
     
-    [Branch enableLogging];
+    // Debug Branch Init example
+    // BranchConfiguration *config = [BranchConfiguration debug:@"key_live_xxx"];
+    
+    // production Branch Init example
+    // BranchConfiguration *config = [BranchConfiguration production:@"key_live_xxx"];
+    
+    // Compliance Branch Init example
+    // BranchConfiguration *config = [BranchConfiguration compliance:@"key_live_xxx"];
 
     // Example: full BranchConfiguration setup, with every settable field changed from its default.
     // This is the iOS counterpart of the Android `BranchConfiguration.Builder` chain. Objective-C has no
@@ -35,11 +42,13 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     BranchConfiguration *config =
         [[BranchConfiguration alloc] initWithKey:@"key_live_xxx"];
 
-    // Identity & environment  (defaults: testMode NO, apiUrl nil, cdnBaseUrl nil, euEndpoint NO)
-    config.testMode   = YES;                             // use the test key from Info.plist
-    config.apiUrl     = @"https://api2.branch.io";       // optional API base-URL override
-    config.cdnBaseUrl = @"https://cdn.example.com";      // optional CDN pattern-list override
-    config.euEndpoint = YES;                             // route to Branch's EU endpoints
+    // Identity & environment  (defaults: testMode NO, apiUrl nil, safeTrackAPIUrl nil,
+    //                          cdnBaseUrl nil, euEndpoint NO)
+    config.testMode        = YES;                         // use the test key from Info.plist
+    config.apiUrl          = @"https://api2.branch.io";   // optional API base-URL override
+    config.safeTrackAPIUrl = @"https://api2.branch.io";   // optional safe-track base-URL override
+    config.cdnBaseUrl      = @"https://cdn.example.com";   // optional CDN pattern-list override
+    config.euEndpoint      = YES;                          // route to Branch's EU endpoints
 
     // Logging  (defaults: logLevel Error, callbacks nil)
     config.logLevel = BranchLogLevelDebug;
@@ -54,11 +63,12 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         NSLog(@"[Branch trace] %@ -> %@", url, response); // per-request debug hook
     };
 
-    // Network  (defaults: networkTimeout 5.5s, retryCount 3, retryInterval 0s)
+    // Network  (defaults: networkTimeout 5.5s, retryCount 3, retryInterval 0s, thirdPartyAPIsWaitTime 0.5s)
     // NOTE: iOS uses SECONDS (NSTimeInterval), unlike Android's milliseconds.
-    config.networkTimeout = 10.0;                        // 10s   (Android 10_000ms)
-    config.retryCount     = 5;
-    config.retryInterval  = 1.0;                         // 1s    (Android 1_000ms)
+    config.networkTimeout        = 10.0;                 // 10s   (Android 10_000ms)
+    config.retryCount            = 5;
+    config.retryInterval         = 1.0;                  // 1s    (Android 1_000ms)
+    config.thirdPartyAPIsWaitTime = 2.0;                 // wait up to 2s for ODM / Apple attribution token
     // config.remoteInterface = [MyCustomNetworkService class]; // must conform to BNCNetworkServiceProtocol
 
     // Privacy & attribution  (defaults: attributionLevel nil, limitFacebookAttribution NO,
@@ -79,17 +89,18 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Open tracking  (default: automaticOpenEvents YES)
     config.automaticOpenEvents = NO;   // you will call [[Branch getInstance] sendOpen] manually
 
+    // Pasteboard  (default: checkPasteboardOnInstall NO)
+    config.checkPasteboardOnInstall = YES;   // check the clipboard for a Branch Link on install
+
+    // App Clip  (default: appClipAppGroup nil) — share data between an App Clip and the full app
+    config.appClipAppGroup = @"group.com.example.myapp";
+
+    // Debugging  (default: deepLinkDebugParams nil) — constant params merged into every deep-link response.
+    // Not for production use.
+    config.deepLinkDebugParams = @{ @"debug_key": @"debug_value" };
+
     // ── Initialize ───────────────────────────────────────────────────────
     Branch *branch = [Branch initialize:config];
-    
-    [branch checkPasteboardOnInstall];
-
-    [branch initSessionWithLaunchOptions:launchOptions
-              andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
-        if (!error) {
-            NSLog(@"Branch params: %@", params);
-        }
-    }];
 
     return YES;
 }
