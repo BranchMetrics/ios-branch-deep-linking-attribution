@@ -189,9 +189,7 @@
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" placeholder="Your Branch Link" minimumFontSize="10" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="SOP-3u-nhT" userLabel="branchLinkTextField">
                                                     <rect key="frame" x="16" y="11" width="311" height="22"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="280" id="QJ6-EZ-1I1"/>
-                                                    </constraints>
+                                                    <constraints/>
                                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                                     <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done"/>
                                                 </textField>
@@ -325,10 +323,6 @@
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mUN-NU-xns">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
                                                     <accessibility key="accessibilityConfiguration" identifier="tracking"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="27" id="Ger-Li-JdZ"/>
-                                                        <constraint firstAttribute="width" constant="190" id="Kcd-Il-mHi"/>
-                                                    </constraints>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="Create QR Code" image="qrcode" catalog="system">
@@ -343,7 +337,6 @@
                                                 <constraint firstAttribute="trailing" secondItem="mUN-NU-xns" secondAttribute="trailing" id="3v6-Is-Hvo"/>
                                                 <constraint firstItem="mUN-NU-xns" firstAttribute="leading" secondItem="oIM-DP-jP8" secondAttribute="leading" id="RGy-Jr-ue3"/>
                                                 <constraint firstItem="mUN-NU-xns" firstAttribute="top" secondItem="oIM-DP-jP8" secondAttribute="top" id="TLW-y6-7kE"/>
-                                                <constraint firstItem="mUN-NU-xns" firstAttribute="top" secondItem="oIM-DP-jP8" secondAttribute="topMargin" constant="-11" id="smV-Qw-ktT"/>
                                                 <constraint firstAttribute="bottom" secondItem="mUN-NU-xns" secondAttribute="bottom" id="tRj-LH-gQQ"/>
                                             </constraints>
                                         </tableViewCellContentView>
@@ -361,9 +354,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bek-2J-IjD">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="190" id="Th6-ew-uaE"/>
-                                                    </constraints>
+                                                    <constraints/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="View First Referring Params" image="moonphase.first.quarter" catalog="system">
@@ -393,9 +384,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NJe-OT-1Eg">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="190" id="cAM-OI-xnD"/>
-                                                    </constraints>
+                                                    <constraints/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="View Latest Referring Params" image="moonphase.first.quarter.inverse" catalog="system">
