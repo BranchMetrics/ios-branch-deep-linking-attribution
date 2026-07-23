@@ -215,10 +215,14 @@
     XCTAssertEqualObjects(generatedURL, expectedURL, @"URL should match the expected format");
 }
 
-- (void)testSetDMAParamsForEEA {
+- (void)testDMAParamsWriteThroughToPreferences {
+    // DMA parameters are config-only (no runtime setter). This asserts the preference-write mechanism that
+    // +[Branch initialize:] uses when applying a BranchConfiguration.dmaParameters value.
     XCTAssertFalse([[BNCPreferenceHelper sharedInstance] eeaRegionInitialized]);
-    
-    [Branch setDMAParamsForEEA:FALSE AdPersonalizationConsent:TRUE AdUserDataUsageConsent:TRUE];
+
+    [BNCPreferenceHelper sharedInstance].eeaRegion = FALSE;
+    [BNCPreferenceHelper sharedInstance].adPersonalizationConsent = TRUE;
+    [BNCPreferenceHelper sharedInstance].adUserDataUsageConsent = TRUE;
     XCTAssertTrue([[BNCPreferenceHelper sharedInstance] eeaRegionInitialized]);
     XCTAssertFalse([BNCPreferenceHelper sharedInstance].eeaRegion);
     XCTAssertTrue([BNCPreferenceHelper sharedInstance].adPersonalizationConsent);

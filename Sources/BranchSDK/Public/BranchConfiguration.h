@@ -14,6 +14,7 @@
 #import "BranchLogger.h"
 #import "BNCCallbacks.h"
 #import "BNCNetworkServiceProtocol.h"
+#import "BranchDMAParameters.h"
 #import "Branch.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -100,17 +101,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// When YES, disables callouts to ad networks for all events. Default NO.
 @property (nonatomic, assign) BOOL adNetworkCalloutsDisabled;
 
-/// YES once `-setDMAParamsForEEA:adPersonalizationConsent:adUserDataUsageConsent:` has been called.
-@property (nonatomic, assign, readonly) BOOL dmaParametersSet;
-
-/// DMA: whether EEA regulations apply to this user. Only applied when `dmaParametersSet` is YES.
-@property (nonatomic, assign, readonly) BOOL dmaEEARegion;
-
-/// DMA: whether the user granted ads-personalization consent. Only applied when `dmaParametersSet` is YES.
-@property (nonatomic, assign, readonly) BOOL dmaAdPersonalizationConsent;
-
-/// DMA: whether the user granted consent for 3P transmission of user-level ad data. Only applied when set.
-@property (nonatomic, assign, readonly) BOOL dmaAdUserDataUsageConsent;
+/// Optional DMA (EEA) consent parameters. When nil, no DMA parameters are sent. These are immutable once
+/// `+[Branch initialize:]` is called; to change consent at runtime, reinitialize with a new configuration.
+@property (nonatomic, copy, nullable) BranchDMAParameters *dmaParameters;
 
 #pragma mark - URL collection
 
@@ -179,14 +172,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Add a single key/value pair to the per-request metadata.
 - (void)addMetadataWithKey:(NSString *)key value:(NSString *)value;
-
-/**
- Set the parameters required by Google Conversion APIs for DMA compliance in the EEA region.
- Calling this sets `dmaParametersSet` to YES.
- */
-- (void)setDMAParamsForEEA:(BOOL)eeaRegion
-    adPersonalizationConsent:(BOOL)adPersonalizationConsent
-     adUserDataUsageConsent:(BOOL)adUserDataUsageConsent;
 
 #pragma mark - Validation
 

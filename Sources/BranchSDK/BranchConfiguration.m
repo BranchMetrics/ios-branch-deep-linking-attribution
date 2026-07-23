@@ -23,10 +23,6 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
 
 @interface BranchConfiguration ()
 @property (nonatomic, copy, readwrite) NSString *branchKey;
-@property (nonatomic, assign, readwrite) BOOL dmaParametersSet;
-@property (nonatomic, assign, readwrite) BOOL dmaEEARegion;
-@property (nonatomic, assign, readwrite) BOOL dmaAdPersonalizationConsent;
-@property (nonatomic, assign, readwrite) BOOL dmaAdUserDataUsageConsent;
 @property (nonatomic, strong) NSMutableArray<NSString *> *mutableAllowedSchemes;
 @property (nonatomic, strong) NSMutableArray<NSString *> *mutableUrlPatternsToIgnore;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *mutableRequestMetadata;
@@ -63,7 +59,7 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
     _attributionLevel = nil;
     _limitFacebookAttribution = NO;
     _adNetworkCalloutsDisabled = NO;
-    _dmaParametersSet = NO;
+    _dmaParameters = nil;
 
     // Collections
     _mutableAllowedSchemes = [NSMutableArray array];
@@ -134,15 +130,6 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
 
 - (void)setUrlPatternsToIgnore:(NSArray<NSString *> *)urlPatternsToIgnore {
     self.mutableUrlPatternsToIgnore = [urlPatternsToIgnore mutableCopy] ?: [NSMutableArray array];
-}
-
-- (void)setDMAParamsForEEA:(BOOL)eeaRegion
-    adPersonalizationConsent:(BOOL)adPersonalizationConsent
-     adUserDataUsageConsent:(BOOL)adUserDataUsageConsent {
-    self.dmaEEARegion = eeaRegion;
-    self.dmaAdPersonalizationConsent = adPersonalizationConsent;
-    self.dmaAdUserDataUsageConsent = adUserDataUsageConsent;
-    self.dmaParametersSet = YES;
 }
 
 #pragma mark - Validation

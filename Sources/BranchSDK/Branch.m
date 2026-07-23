@@ -305,10 +305,12 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
         [branch setConsumerProtectionAttributionLevel:configuration.attributionLevel];
     }
 
-    if (configuration.dmaParametersSet) {
-        [Branch setDMAParamsForEEA:configuration.dmaEEARegion
-          AdPersonalizationConsent:configuration.dmaAdPersonalizationConsent
-            AdUserDataUsageConsent:configuration.dmaAdUserDataUsageConsent];
+    if (configuration.dmaParameters) {
+        // DMA parameters are config-only: written to preferences here so BNCRequestFactory picks them up.
+        BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
+        prefs.eeaRegion = configuration.dmaParameters.eeaRegion;
+        prefs.adPersonalizationConsent = configuration.dmaParameters.adPersonalizationConsent;
+        prefs.adUserDataUsageConsent = configuration.dmaParameters.adUserDataUsageConsent;
     }
 
     // URL collection
@@ -781,12 +783,6 @@ static NSString *bnc_branchKey = nil;
     @synchronized(self) {
         [BNCPreferenceHelper sharedInstance].referringURLQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID][BRANCH_URL_QUERY_PARAMETERS_VALIDITY_WINDOW_KEY] = @(validityWindow);
     }
-}
-
-+ (void) setDMAParamsForEEA:(BOOL)eeaRegion AdPersonalizationConsent:(BOOL)adPersonalizationConsent AdUserDataUsageConsent:(BOOL)adUserDataUsageConsent{
-    [BNCPreferenceHelper sharedInstance].eeaRegion = eeaRegion;
-    [BNCPreferenceHelper sharedInstance].adPersonalizationConsent = adPersonalizationConsent;
-    [BNCPreferenceHelper sharedInstance].adUserDataUsageConsent = adUserDataUsageConsent;
 }
 
 + (void)setODMInfo:(NSString *)odmInfo andFirstOpenTimestamp:(NSDate *) firstOpenTimestamp {

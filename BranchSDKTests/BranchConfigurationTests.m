@@ -45,7 +45,7 @@
     XCTAssertNil(config.attributionLevel);
     XCTAssertFalse(config.limitFacebookAttribution);
     XCTAssertFalse(config.adNetworkCalloutsDisabled);
-    XCTAssertFalse(config.dmaParametersSet);
+    XCTAssertNil(config.dmaParameters);
     XCTAssertEqual(config.allowedSchemes.count, 0);
     XCTAssertEqual(config.urlPatternsToIgnore.count, 0);
     XCTAssertEqual(config.requestMetadata.count, 0);
@@ -91,11 +91,26 @@
 
 - (void)testDMAParameters {
     BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_abc"];
-    [config setDMAParamsForEEA:YES adPersonalizationConsent:NO adUserDataUsageConsent:YES];
-    XCTAssertTrue(config.dmaParametersSet);
-    XCTAssertTrue(config.dmaEEARegion);
-    XCTAssertFalse(config.dmaAdPersonalizationConsent);
-    XCTAssertTrue(config.dmaAdUserDataUsageConsent);
+    config.dmaParameters = [BranchDMAParameters eeaRegion:YES
+                                adPersonalizationConsent:NO
+                                  adUserDataUsageConsent:YES];
+    XCTAssertNotNil(config.dmaParameters);
+    XCTAssertTrue(config.dmaParameters.eeaRegion);
+    XCTAssertFalse(config.dmaParameters.adPersonalizationConsent);
+    XCTAssertTrue(config.dmaParameters.adUserDataUsageConsent);
+}
+
+- (void)testDMAParametersImmutableValueSemantics {
+    // A DMAParameters object assigned to the config should preserve its named field values regardless of
+    // assignment order — the whole point of replacing the three positional booleans.
+    BranchDMAParameters *params = [BranchDMAParameters eeaRegion:NO
+                                       adPersonalizationConsent:YES
+                                         adUserDataUsageConsent:NO];
+    BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_abc"];
+    config.dmaParameters = params;
+    XCTAssertFalse(config.dmaParameters.eeaRegion);
+    XCTAssertTrue(config.dmaParameters.adPersonalizationConsent);
+    XCTAssertFalse(config.dmaParameters.adUserDataUsageConsent);
 }
 
 #pragma mark - Validation

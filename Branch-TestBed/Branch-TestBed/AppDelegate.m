@@ -74,9 +74,9 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Privacy & attribution  (defaults: attributionLevel nil, limitFacebookAttribution NO,
     //                          adNetworkCalloutsDisabled NO, DMA params unset)
     config.attributionLevel = BranchAttributionLevelFull;
-    [config setDMAParamsForEEA:YES
-      adPersonalizationConsent:NO
-        adUserDataUsageConsent:YES];
+    config.dmaParameters = [BranchDMAParameters eeaRegion:YES
+                                adPersonalizationConsent:NO
+                                  adUserDataUsageConsent:YES];
     config.limitFacebookAttribution  = YES;
     config.adNetworkCalloutsDisabled = YES;
 
