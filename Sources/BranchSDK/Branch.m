@@ -233,6 +233,10 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     }
 
     // --- Settings that must be applied before the singleton is created ---
+    // These setters are deprecated for external callers, but +initialize: is their canonical
+    // internal application point, so suppress the deprecation warning at these call sites.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
     // Test key must be resolved before the branch key is read.
     [Branch setUseTestBranchKey:configuration.testMode];
@@ -241,6 +245,8 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     if (configuration.remoteInterface) {
         [Branch setNetworkServiceClass:configuration.remoteInterface];
     }
+
+#pragma clang diagnostic pop
 
     // Set the branch key explicitly so it takes precedence over Info.plist / branch.json.
     self.branchKey = configuration.branchKey;
@@ -263,6 +269,11 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
 // +initialize: before the instance is created and are intentionally not repeated here.
 // This mirrors the Android SDK's `applyConfiguration(Branch, BranchConfiguration)`.
 + (void)applyConfiguration:(BranchConfiguration *)configuration toBranch:(Branch *)branch {
+    // Several setters invoked below are deprecated for external callers; applyConfiguration: is their
+    // canonical internal application point, so suppress the deprecation warning for this method body.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
     // Logging: the caller's logLevel/callback own the logger state, overriding any branch.json toggle.
     if (configuration.loggingCallback) {
         [Branch enableLoggingAtLevel:configuration.logLevel withCallback:configuration.loggingCallback];
@@ -345,6 +356,8 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     if (configuration.checkPasteboardOnInstall) {
         [branch checkPasteboardOnInstall];
     }
+
+#pragma clang diagnostic pop
 }
 
 - (id)initWithInterface:(BNCServerInterface *)interface
@@ -405,17 +418,22 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     [BranchConfigurationController sharedInstance].deferInitForPluginRuntime = self.deferInitForPluginRuntime;
 
 
+    // These setters are deprecated for external callers; the branch.json fallback path applies them
+    // internally, so suppress the deprecation warning at these call sites.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (config.apiUrl) {
         [Branch setAPIUrl:config.apiUrl];
     }
-    
+
     if (config.enableLogging) {
         [Branch enableLogging];
     }
-    
+
     if (config.checkPasteboardOnInstall) {
         [self checkPasteboardOnInstall];
     }
+#pragma clang diagnostic pop
     
     if (config.cppLevel) {
         if ([config.cppLevel caseInsensitiveCompare:@"FULL"] == NSOrderedSame) {
@@ -582,8 +600,13 @@ static NSString *bnc_branchKey = nil;
         BranchJsonConfig *config = BranchJsonConfig.instance;
         BOOL usingTestInstance = bnc_useTestBranchKey || config.useTestInstance;
         branchKey = config.branchKey ?: usingTestInstance ? config.testKey : config.liveKey;
+        // +setUseTestBranchKey: is deprecated for external callers; this internal resolution path
+        // still needs it, so suppress the deprecation warning at this call site.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [self setUseTestBranchKey:usingTestInstance];
-        
+#pragma clang diagnostic pop
+
         if (branchKey) {
             branchKeySource = BRANCH_KEY_SOURCE_CONFIG_JSON;
         } else {
@@ -593,7 +616,7 @@ static NSString *bnc_branchKey = nil;
             } else
             if ([branchDictionary isKindOfClass:[NSDictionary class]]) {
                 branchKey =
-                    (self.useTestBranchKey) ? branchDictionary[@"test"] : branchDictionary[@"live"];
+                    ([self useTestBranchKey]) ? branchDictionary[@"test"] : branchDictionary[@"live"];
             }
             if (branchKey)
                 branchKeySource = BRANCH_KEY_SOURCE_INFO_PLIST;

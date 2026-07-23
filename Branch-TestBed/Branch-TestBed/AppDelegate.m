@@ -47,7 +47,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     config.testMode        = YES;                         // use the test key from Info.plist
     config.apiUrl          = @"https://api2.branch.io";   // optional API base-URL override
     config.safeTrackAPIUrl = @"https://api2.branch.io";   // optional safe-track base-URL override
-    config.cdnBaseUrl      = @"https://cdn.example.com";   // optional CDN pattern-list override
+    // config.cdnBaseUrl   = @"https://cdn.branch.io";     // optional CDN pattern-list override (defaults to Branch's CDN)
     config.euEndpoint      = YES;                          // route to Branch's EU endpoints
 
     // Logging  (defaults: logLevel Error, callbacks nil)
@@ -87,7 +87,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [config addMetadataWithKey:@"store" value:@"app_store"];
 
     // Open tracking  (default: automaticOpenEvents YES)
-    config.automaticOpenEvents = NO;   // you will call [[Branch getInstance] sendOpen] manually
+    config.automaticOpenEvents = YES;   // you will call [[Branch getInstance] sendOpen] manually
 
     // Pasteboard  (default: checkPasteboardOnInstall NO)
     config.checkPasteboardOnInstall = YES;   // check the clipboard for a Branch Link on install
