@@ -785,6 +785,12 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
++ (void) setDMAParamsForEEA:(BOOL)eeaRegion AdPersonalizationConsent:(BOOL)adPersonalizationConsent AdUserDataUsageConsent:(BOOL)adUserDataUsageConsent{
+    [BNCPreferenceHelper sharedInstance].eeaRegion = eeaRegion;
+    [BNCPreferenceHelper sharedInstance].adPersonalizationConsent = adPersonalizationConsent;
+    [BNCPreferenceHelper sharedInstance].adUserDataUsageConsent = adUserDataUsageConsent;
+}
+
 + (void)setODMInfo:(NSString *)odmInfo andFirstOpenTimestamp:(NSDate *) firstOpenTimestamp {
 #if !TARGET_OS_TV
     @synchronized (self) {
