@@ -76,9 +76,9 @@
 		3BB41E3930129FE300DFB157 /* BranchDMAParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BB41E3830129FE300DFB157 /* BranchDMAParameters.m */; };
 		3BB41E3A30129FE300DFB157 /* BranchDMAParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BB41E3830129FE300DFB157 /* BranchDMAParameters.m */; };
 		3BB41E3B30129FE300DFB157 /* BranchDMAParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BB41E3830129FE300DFB157 /* BranchDMAParameters.m */; };
-		3BB41E3D3012A00B00DFB157 /* BranchDMAParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 3BB41E3C3012A00B00DFB157 /* BranchDMAParameters.h */; };
-		3BB41E3E3012A00B00DFB157 /* BranchDMAParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 3BB41E3C3012A00B00DFB157 /* BranchDMAParameters.h */; };
-		3BB41E3F3012A00B00DFB157 /* BranchDMAParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 3BB41E3C3012A00B00DFB157 /* BranchDMAParameters.h */; };
+		3BB41E3D3012A00B00DFB157 /* BranchDMAParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 3BB41E3C3012A00B00DFB157 /* BranchDMAParameters.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3BB41E3E3012A00B00DFB157 /* BranchDMAParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 3BB41E3C3012A00B00DFB157 /* BranchDMAParameters.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3BB41E3F3012A00B00DFB157 /* BranchDMAParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 3BB41E3C3012A00B00DFB157 /* BranchDMAParameters.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5D6393D6C62D39841A6E4B8C /* BranchConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DA52564B3AD44FEB75F4D8D /* BranchConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F5FDA162B7DE2FE00F14A43 /* BranchLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F5FDA152B7DE2FE00F14A43 /* BranchLogger.m */; };
 		5F5FDA172B7DE2FE00F14A43 /* BranchLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F5FDA152B7DE2FE00F14A43 /* BranchLogger.m */; };
