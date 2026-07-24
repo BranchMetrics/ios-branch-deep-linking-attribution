@@ -14,6 +14,11 @@
 #import "BNCODMInfoCollector.h"
 #import "NSError+Branch.h"
 
+@interface Branch (BNCODMTest)
+// Test-only reset for the +initialize: reinitialization guard (file-private in Branch.m).
++ (void)resetInitializationGuardForTesting;
+@end
+
 @interface BNCODMTests : XCTestCase
 @property (nonatomic, strong, readwrite) BNCPreferenceHelper *prefHelper;
 @end
@@ -22,6 +27,9 @@
 
 - (void)setUp {
     _prefHelper = [BNCPreferenceHelper sharedInstance];
+    // +sharedInstance requires the SDK to be initialized first.
+    [Branch resetInitializationGuardForTesting];
+    [Branch initialize:[[BranchConfiguration alloc] initWithKey:@"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB"]];
 }
 
 - (void)testSetODM {
@@ -41,7 +49,7 @@
     
     [Branch setODMInfo:odm andFirstOpenTimestamp:firstOpenTS];
     
-    [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
+    [[Branch sharedInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:requestUUID TimeStamp:requestCreationTimeStamp];
     NSDictionary *jsonInstall = [factory dataForInstallWithURLString:@"https://branch.io"];
     XCTAssertTrue([odm isEqualToString:[jsonInstall objectForKey:@"odm_info"]]);
@@ -53,7 +61,7 @@
     NSDictionary *jsonEvent = [factory dataForEventWithEventDictionary:[event mutableCopy]];
     XCTAssertTrue([jsonEvent objectForKey:@"odm_info"] == nil);
     
-    [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
+    [[Branch sharedInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
     jsonInstall = [factory dataForInstallWithURLString:@"https://branch.io"];
     XCTAssertTrue([jsonInstall objectForKey:@"odm_info"] == nil);
     
@@ -73,7 +81,7 @@
     
     [Branch setODMInfo:odm andFirstOpenTimestamp:firstOpenTS];
     
-    [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
+    [[Branch sharedInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:requestUUID TimeStamp:requestCreationTimeStamp];
     NSDictionary *jsonInstall = [factory dataForInstallWithURLString:@"https://branch.io"];
     XCTAssertTrue([odm isEqualToString:[jsonInstall objectForKey:@"odm_info"]]);

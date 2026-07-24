@@ -87,7 +87,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [config addMetadataWithKey:@"store" value:@"app_store"];
 
     // Open tracking  (default: automaticOpenEvents YES)
-    config.automaticOpenEvents = YES;   // you will call [[Branch getInstance] sendOpen] manually
+    config.automaticOpenEvents = YES;   // you will call [[Branch sharedInstance] sendOpen] manually
 
     // Pasteboard  (default: checkPasteboardOnInstall NO)
     config.checkPasteboardOnInstall = YES;   // check the clipboard for a Branch Link on install
@@ -138,7 +138,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         [navigationController pushViewController:logOutputViewController animated:YES];
         NSString *logOutput =
             [NSString stringWithFormat:@"Successfully Deeplinked:\n\n%@\nSession Details:\n\n%@",
-                deeplinkText, [[[Branch getInstance] getLatestReferringParams] description]];
+                deeplinkText, [[[Branch sharedInstance] getLatestReferringParams] description]];
         logOutputViewController.logOutput = logOutput;
 
     } else {
@@ -165,7 +165,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         [navigationController pushViewController:logOutputViewController animated:YES];
         NSString *logOutput =
             [NSString stringWithFormat:@"Successfully Deeplinked!\n\nCustom Metadata Deeplink Text: %@\n\nSession Details:\n\n%@",
-                deeplinkText, [[[Branch getInstance] getLatestReferringParams] description]];
+                deeplinkText, [[[Branch sharedInstance] getLatestReferringParams] description]];
         logOutputViewController.logOutput = logOutput;
     }
 }
@@ -176,7 +176,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
          annotation:(id)annotation {
 
     NSLog(@"application:openURL:sourceApplication:annotation: invoked with URL: %@", [url description]);
-    Branch *branch = [Branch getInstance];
+    Branch *branch = [Branch sharedInstance];
     [branch requestDeepLinkData:[url absoluteString] callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
             if (params != nil) {
@@ -208,7 +208,7 @@ continueUserActivity:(NSUserActivity *)userActivity
     // Add `branch_universal_link_domains` to .plist (String or Array) for custom domain(s).
     
     
-    Branch *branch = [Branch getInstance];
+    Branch *branch = [Branch sharedInstance];
     [branch requestDeepLinkData:userActivity.webpageURL.absoluteString callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
             if (params != nil) {
@@ -266,7 +266,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    [[Branch getInstance] handlePushNotification:userInfo];
+    [[Branch sharedInstance] handlePushNotification:userInfo];
     // process your non-Branch notification payload items here...
 }
 

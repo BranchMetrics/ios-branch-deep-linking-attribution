@@ -254,7 +254,7 @@ static BOOL deepLinkRequestWaitQueueIsSuspended = NO;
 
     if (referringURL != nil) {
         [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"~referring_link found in response: %@, sending sendOpen network request." ,referringURL] error:nil];
-        [[Branch getInstance] sendOpen:response.data skipCallback:skipCallback];
+        [[Branch sharedInstance] sendOpen:response.data skipCallback:skipCallback];
     } else {
         [[BranchLogger shared] logDebug:@"No ~referring_link on deeplink data. Not sending sendOpen network request. Clearing link identifiers to prevent reuse." error:nil];
         [self clearLinkIdentifiers:preferenceHelper];

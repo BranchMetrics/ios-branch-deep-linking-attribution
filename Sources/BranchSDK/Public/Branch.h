@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  `Branch` is the primary interface of the Branch iOS SDK. Currently, all interactions you will make are funneled through this class. It is not meant to be instantiated or subclassed, usage should be limited to the global instance.
 
-  Note, when `getInstance` is called, it assumes that you have already placed a Branch Key in your main `Info.plist` file for your project. For additional information on configuring the Branch SDK, check out the getting started guides in the Readme.
+  Configure the SDK once at launch by calling `+[Branch initialize:]` with a `BranchConfiguration` from your `application:didFinishLaunchingWithOptions:` method. Everywhere else, access the SDK through `+[Branch sharedInstance]`. For additional information on configuring the Branch SDK, check out the getting started guides in the Readme.
  */
 
 ///----------------
@@ -172,25 +172,18 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 ///--------------------------------
 
 /**
- Gets the global, test Branch instance.
+ Returns the global Branch instance.
 
- @warning This method is not meant to be used in production!
-*/
-+ (Branch *)getTestInstance __attribute__((deprecated(("Use `Branch.useTestBranchKey = YES;` instead."))));
+ This is the only accessor for the shared instance. The instance is configured once at launch via
+ `+[Branch initialize:]` (called from `application:didFinishLaunchingWithOptions:`); everywhere else
+ in your app, call `+sharedInstance` — it takes no key and no context.
 
-
-/**
- Gets the global, live Branch instance.
+ @warning `+sharedInstance` must not be called before `+[Branch initialize:]`. Doing so raises an
+          `NSInternalInconsistencyException` directing you to call `+[Branch initialize:]` in
+          `application:didFinishLaunchingWithOptions:`.
+ @return The global, configured Branch instance.
  */
-+ (Branch *)getInstance;
-
-/**
- Gets the global Branch instance, configures using the specified key
-
- @param branchKey The Branch key to be used by the Branch instance. This can be any live or test key.
- @warning This method is not the recommended way of using Branch. Try using your project's `Info.plist` if possible.
- */
-+ (Branch *)getInstance:(NSString *)branchKey;
++ (instancetype)sharedInstance;
 
 /**
  Set the network service class.
@@ -215,7 +208,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 /**
     Sets Branch to use the test `key_test_...` Branch key found in the Info.plist.
-    This can only be set before `[Branch getInstance...]` is called.
+    This can only be set before `[Branch initialize:]` is called.
 
  @param useTestKey If YES then Branch to use the Branch test found in your app's Info.plist.
 */
@@ -677,7 +670,7 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
   To check your integration, add the line:
 
   ```
-  [[Branch getInstance] validateSDKIntegration];
+  [[Branch sharedInstance] validateSDKIntegration];
   ```
 
   in your `application:didFinishLaunchingWithOptions:` method in your app delegate. Then run your

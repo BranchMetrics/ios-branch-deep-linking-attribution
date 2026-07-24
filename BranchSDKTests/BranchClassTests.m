@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "Branch.h"
+#import "BranchConfiguration.h"
 #import "BranchConstants.h"
 #import "BNCPasteboard.h"
 #import "BNCAppGroupsData.h"
@@ -18,6 +19,11 @@
 - (void)writeObjectToDefaults:(NSString *)key value:(NSObject *)value;
 @end
 
+@interface Branch (BranchClassTest)
+// Test-only reset for the +initialize: reinitialization guard (file-private in Branch.m).
++ (void)resetInitializationGuardForTesting;
+@end
+
 @interface BranchClassTests : XCTestCase
 @property (nonatomic, strong) Branch *branch;
 @end
@@ -26,7 +32,11 @@
 
 - (void)setUp {
     [super setUp];
-    self.branch = [Branch getInstance];
+    // +sharedInstance requires the SDK to be initialized first. Reset the guard so each test can
+    // (re)initialize the singleton, then configure it via the canonical entry point.
+    [Branch resetInitializationGuardForTesting];
+    BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB"];
+    self.branch = [Branch initialize:config];
 }
 
 - (void)tearDown {
@@ -237,7 +247,7 @@
 
 - (void)testSetConsumerProtectionAttributionLevel {
     // Set to Reduced and check
-    Branch *branch = [Branch getInstance];
+    Branch *branch = [Branch sharedInstance];
     [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
     XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelReduced);
     

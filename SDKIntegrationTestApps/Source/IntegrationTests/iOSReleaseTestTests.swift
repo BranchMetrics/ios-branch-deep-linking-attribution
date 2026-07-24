@@ -52,8 +52,10 @@ final class iOSReleaseTestTests: XCTestCase {
             }
         })
         let expectation = expectation(description: "InitSession should complete.")
-        Branch.getInstance().setConsumerProtectionAttributionLevel(BranchAttributionLevel.none)
-        Branch.getInstance().setConsumerProtectionAttributionLevel(BranchAttributionLevel.full, resetSession:false)
+        // +sharedInstance requires the SDK to be initialized first.
+        Branch.initialize(BranchConfiguration(key: "key_live_ok7NoVhyIh1llbtOW6sfHpbnxBlJjiDp"))
+        Branch.sharedInstance().setConsumerProtectionAttributionLevel(BranchAttributionLevel.none)
+        Branch.sharedInstance().setConsumerProtectionAttributionLevel(BranchAttributionLevel.full, resetSession:false)
         let sdk = BranchSDKTest() { params, error in
             print(params as? [String: AnyObject] ?? [:])
             print("InitSession callback called.")

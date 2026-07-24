@@ -183,27 +183,27 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 
 #pragma mark - Public methods
 
-#pragma mark - GetInstance methods
-
-// deprecated
-+ (Branch *)getTestInstance {
-    Branch.useTestBranchKey = YES;
-    return [Branch getInstance];
-}
-
-+ (Branch *)getInstance {
-    return [Branch getInstanceInternal:self.class.branchKey];
-}
-
-+ (Branch *)getInstance:(NSString *)branchKey {
-    self.branchKey = branchKey;
-    [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_GET_INSTANCE_API;
-    return [Branch getInstanceInternal:self.branchKey];
-}
+#pragma mark - Shared Instance Accessor
 
 // Tracks whether +initialize: has already created and configured the singleton, so a second call
 // warns and no-ops rather than re-applying setter side-effects to a running SDK.
 static BOOL bnc_didInitializeWithConfiguration = NO;
+
++ (instancetype)sharedInstance {
+    // The singleton must be configured exactly once at launch via +initialize:. Accessing it before
+    // then is a programming error: there is no key/configuration to build the instance from, and any
+    // deep link handling would silently drop attribution.
+    @synchronized ([Branch class]) {
+        if (!bnc_didInitializeWithConfiguration) {
+            [NSException raise:NSInternalInconsistencyException
+                        format:@"[Branch sharedInstance] was called before [Branch initialize:]. "
+                               @"Call +[Branch initialize:] with a BranchConfiguration in your "
+                               @"application:didFinishLaunchingWithOptions: before accessing the "
+                               @"shared instance."];
+        }
+    }
+    return [Branch getInstanceInternal:self.class.branchKey];
+}
 
 // Test-only: clears the reinitialization guard so a subsequent +initialize: runs its side-effects
 // again. Not declared in the public header; exposed to tests via a category.
@@ -436,14 +436,16 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
 #pragma clang diagnostic pop
     
     if (config.cppLevel) {
+        // Runs during singleton construction, so route through self rather than the shared accessor
+        // (which would re-enter this constructor's dispatch_once).
         if ([config.cppLevel caseInsensitiveCompare:@"FULL"] == NSOrderedSame) {
-            [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
+            [self setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
         } else if ([config.cppLevel caseInsensitiveCompare:@"REDUCED"] == NSOrderedSame) {
-            [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
+            [self setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
         } else if ([config.cppLevel caseInsensitiveCompare:@"MINIMAL"] == NSOrderedSame) {
-            [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelMinimal];
+            [self setConsumerProtectionAttributionLevel:BranchAttributionLevelMinimal];
         } else if ([config.cppLevel caseInsensitiveCompare:@"NONE"] == NSOrderedSame) {
-            [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelNone];
+            [self setConsumerProtectionAttributionLevel:BranchAttributionLevelNone];
         } else {
             NSLog(@"Invalid CPP Level set in branch.json: %@", config.cppLevel);
         }
@@ -853,10 +855,11 @@ static NSString *bnc_branchKey = nil;
         // Clear partner parameters
         [[BNCPartnerParameters shared] clearAllParameters];
         
-        Branch *branch = Branch.getInstance;
-        [branch clearNetworkQueue];
-        branch.initializationStatus = BNCInitStatusUninitialized;
-        [branch.linkCache clear];
+        // This is an instance method on the singleton, and it can run during singleton construction
+        // (via the branch.json cppLevel path), so operate on self rather than re-entering the accessor.
+        [self clearNetworkQueue];
+        self.initializationStatus = BNCInitStatusUninitialized;
+        [self.linkCache clear];
         // Release the lock in case it's locked:
         [BranchOpenRequest releaseOpenResponseLock];
     } else {
@@ -864,7 +867,7 @@ static NSString *bnc_branchKey = nil;
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enabling attribution events due to Consumer Protection Attribution Level being %@.", level] error:nil];
 
         if (resetSession) {
-            [[Branch getInstance] sendOpen];
+            [self sendOpen];
         }
     }
 }
@@ -1797,7 +1800,7 @@ static NSString *bnc_branchKey = nil;
                 else if ([Branch isBranchLink:url.absoluteString]) {
                     [self.preferenceHelper setLocalUrl:[url absoluteString]];
                     // 3. Send Open Event
-                    [[Branch getInstance] handleDeepLink:url];
+                    [self handleDeepLink:url];
                 }
             }];
         }

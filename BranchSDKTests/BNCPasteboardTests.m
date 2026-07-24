@@ -9,6 +9,12 @@
 #import <XCTest/XCTest.h>
 #import "BNCPasteboard.h"
 #import "Branch.h"
+#import "BranchConfiguration.h"
+
+@interface Branch (BNCPasteboardTest)
+// Test-only reset for the +initialize: reinitialization guard (file-private in Branch.m).
++ (void)resetInitializationGuardForTesting;
+@end
 
 @interface BNCPasteboardTests : XCTestCase
 
@@ -23,6 +29,9 @@
     // Put setup code here. This method is called before the invocation of each test method in the class.
     self.testString = @"Pasteboard String";
     self.testBranchURL = [NSURL URLWithString:@"https://123.app.link"];
+    // +sharedInstance requires the SDK to be initialized first.
+    [Branch resetInitializationGuardForTesting];
+    [Branch initialize:[[BranchConfiguration alloc] initWithKey:@"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB"]];
 }
 
 - (void)tearDown {
@@ -154,12 +163,12 @@
         NSArray<NSItemProvider *> *itemProviders = @[[[NSItemProvider alloc] initWithItem:testURL typeIdentifier:UTTypeURL.identifier]];
         XCTestExpectation *openExpectation = [self expectationWithDescription:@"Test open"];
 
-        [[Branch getInstance] initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+        [[Branch sharedInstance] requestDeepLinkDataWithLaunchOptions:@{} callback:^(NSDictionary *params, NSError *error) {
             [openExpectation fulfill];
             XCTAssertNil(error);
         }];
         
-        [[Branch getInstance] passPasteItemProviders:itemProviders];
+        [[Branch sharedInstance] passPasteItemProviders:itemProviders];
         [self waitForExpectationsWithTimeout:5.0 handler:NULL];
        
     }

@@ -24,7 +24,7 @@
 - (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback NS_EXTENSION_UNAVAILABLE("BranchScene does not support Extensions") {
     [[BranchLogger shared] logVerbose:@"BranchScene initSession" error:nil];
 
-    [[Branch getInstance] initSceneSessionWithLaunchOptions:options isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
+    [[Branch sharedInstance] initSceneSessionWithLaunchOptions:options isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
         if (callback) {
             if (initResponse) {
                 callback(initResponse.params, error, [self sceneForIdentifier:initResponse.sceneIdentifier]);
@@ -48,7 +48,7 @@
         launchOptions[UIApplicationLaunchOptionsURLKey] = connectionOptions.URLContexts.allObjects ;
     }
 
-    [[Branch getInstance] initSceneSessionWithLaunchOptions:launchOptions sceneIdentifier:scene.session.persistentIdentifier isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
+    [[Branch sharedInstance] initSceneSessionWithLaunchOptions:launchOptions sceneIdentifier:scene.session.persistentIdentifier isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
         if (callback) {
             if (initResponse) {
                 callback(initResponse.params, error, [self sceneForIdentifier:initResponse.sceneIdentifier]);
@@ -69,7 +69,7 @@
     [[BranchLogger shared] logVerbose:@"BranchScene continueUserActivity" error:nil];
 
     NSString *identifier = scene.session.persistentIdentifier;
-    [[Branch getInstance] continueUserActivity:userActivity sceneIdentifier:identifier];
+    [[Branch sharedInstance] continueUserActivity:userActivity sceneIdentifier:identifier];
 }
 
 - (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts NS_EXTENSION_UNAVAILABLE("BranchScene does not support Extensions") {
@@ -82,7 +82,7 @@
     UIOpenURLContext *context = [URLContexts allObjects].firstObject;
     if (context) {
         NSString *identifier = scene.session.persistentIdentifier;
-        [[Branch getInstance] sceneIdentifier:identifier openURL:context.URL sourceApplication:context.options.sourceApplication annotation:context.options.annotation];
+        [[Branch sharedInstance] sceneIdentifier:identifier openURL:context.URL sourceApplication:context.options.sourceApplication annotation:context.options.annotation];
     }
 }
 
