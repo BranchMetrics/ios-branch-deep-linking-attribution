@@ -106,9 +106,8 @@
     XCTAssertTrue([universalLinkURL isEqualToString:[json objectForKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL]]);
 }
 
-// EMT-3892 regression: the deferred, unattributed launch/organic open (no resolved link)
-// must not carry universal_link_url or link_data — those belong only to the single
-// attributed open sent once the deep link actually resolves.
+// EMT-3892 regression: the unattributed open must not carry universal_link_url or
+// link_data — those belong only to the attributed open sent once the link resolves.
 - (void)testDataForOpenWithoutResolvedLinkCarriesNoLinkData {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
     NSDictionary *json = [factory dataForOpenWithURLString:nil];
