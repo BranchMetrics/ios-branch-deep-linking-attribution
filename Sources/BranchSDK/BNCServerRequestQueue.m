@@ -83,9 +83,8 @@ static NSTimeInterval const BNCSessionWaitLockDefaultTimeout = 15.0;
         [self trackSessionEstablishingOperation:operation];
         [self.operationQueue addOperation:operation];
     } else if ([self holdOperationIfSessionNotReady:operation]) {
-        // Mirrors the Android SDK_INIT_WAIT_LOCK: a request that needs a session is held
-        // until the session is established, instead of racing ahead of the open with the
-        // device token persisted by a previous launch.
+        // A request that needs a session is held until the session is established, instead
+        // of racing ahead of the open with the device token persisted by a previous launch.
         return;
     } else {
         [self addInitDependencyIfNeeded:operation];
