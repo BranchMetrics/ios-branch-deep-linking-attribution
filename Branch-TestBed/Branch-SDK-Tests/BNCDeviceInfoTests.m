@@ -21,13 +21,22 @@
     self.deviceInfo = [BNCDeviceInfo new];
 }
 
-// user agent needs to be loaded
+// The user agent needs to be loaded before the assertions below run. When it is not
+// cached yet it is collected through a WKWebView, whose first boot on a cold simulator
+// can take well over five seconds.
+//
+// Waiting through the test case made a slow load fail whichever test happened to run
+// first, which is how a timeout here surfaced as a failure in testAdvertiserId. Only
+// testUserAgentString actually depends on the collected value, so a standalone XCTWaiter
+// is used instead: a slow load now fails that test, on its own assertion, and leaves the
+// rest of the class alone. That is what the empty handler on the previous
+// waitForExpectationsWithTimeout: call was trying (and failing) to express.
 - (void)workaroundUserAgentLazyLoad {
-    __block XCTestExpectation *expectation = [self expectationWithDescription:@"setup"];
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"user agent warm-up"];
     [[BNCUserAgentCollector instance] loadUserAgentWithCompletion:^(NSString * _Nullable userAgent) {
         [expectation fulfill];
     }];
-    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError * _Nullable error) { }];
+    [[XCTWaiter new] waitForExpectations:@[expectation] timeout:30.0];
 }
 
 - (void)tearDown {
