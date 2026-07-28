@@ -90,7 +90,7 @@
     // the service (via the v3/deeplink callback).
     if ([[self class] requestRequiresSession:self.request]) {
         if (!preferenceHelper.randomizedDeviceToken || !preferenceHelper.randomizedBundleToken) {
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Missing session items (device token or bundle token). Dropping request: %@. Initialize the Branch session before calling this API.", self.request.requestUUID] error:nil];
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Missing session items (device token or bundle token). Dropping request: %@. Initialize Branch before calling this API.", self.request.requestUUID] error:nil];
             BNCPerformBlockOnMainThreadSync(^{
                 [self.request processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
             });
