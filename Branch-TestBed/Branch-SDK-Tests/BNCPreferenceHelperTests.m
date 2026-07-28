@@ -361,7 +361,7 @@
     XCTAssertNil(self.prefHelper.previousAppBuildDate);
     XCTAssertEqual(self.prefHelper.requestMetadataDictionary.count, 0);
     XCTAssertNil(self.prefHelper.lastStrongMatchDate);
-    XCTAssertNil(self.prefHelper.userIdentity);
+    XCTAssertNil(self.prefHelper.userAlias);
     XCTAssertNil(self.prefHelper.referringURLQueryParameters);
     XCTAssertNil(self.prefHelper.anonID);
 }

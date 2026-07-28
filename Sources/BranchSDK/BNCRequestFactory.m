@@ -635,7 +635,7 @@
 
 // install and open
 - (void)addDeveloperUserIDToJSON:(NSMutableDictionary *)json {
-    [json bnc_safeSetObject:self.preferenceHelper.userIdentity forKey:@"identity"];
+    [json bnc_safeSetObject:self.preferenceHelper.userAlias forKey:@"identity"];
 }
 
 - (void)addConsumerProtectionAttributionLevel:(NSMutableDictionary *)json {
@@ -715,7 +715,7 @@
         [dictionary bnc_safeSetObject:[self.deviceInfo connectionType] forKey:@"connection_type"];
         [dictionary bnc_safeSetObject:[self.deviceInfo userAgentString] forKey:@"user_agent"];
 
-        [dictionary bnc_safeSetObject:[BNCPreferenceHelper sharedInstance].userIdentity forKey:@"developer_identity"];
+        [dictionary bnc_safeSetObject:[BNCPreferenceHelper sharedInstance].userAlias forKey:@"developer_identity"];
         
         [dictionary bnc_safeSetObject:[BNCPreferenceHelper sharedInstance].randomizedDeviceToken forKey:@"randomized_device_token"];
 

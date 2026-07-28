@@ -1036,7 +1036,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 - (void)resetUserSession;
 
 /**
- Indicates whether or not this user has a custom identity specified for them. Note that this is *independent of installs*. If you call setIdentity, this device
+ Indicates whether or not this user has a custom identity specified for them. Note that this is *independent of installs*. If you call setUserAlias:completion:, this device
  will have that identity associated with this user until `logout` is called. This includes persisting through uninstalls, as we track device id.
  
  This method should only be invoked after initSession completes, either within the callback or after a delay.
@@ -1046,25 +1046,15 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 - (BOOL)isUserIdentified;
 
 /**
- Set the user's identity to an ID used by your system, so that it is identifiable by you elsewhere.
+ Set the user's alias to an ID used by your system, so that it is identifiable by you elsewhere. Receive a completion callback, notifying you whether it succeeded or failed.
 
- @param userId The ID Branch should use to identify this user.
- @warning If you use the same ID between users on different sessions / devices, their actions will be merged.
- @warning This request is not removed from the queue upon failure -- it will be retried until it succeeds.
- @warning You should call `logout` before calling `setIdentity:` a second time.
- */
-- (void)setIdentity:(nullable NSString *)userId;
-
-/**
- Set the user's identity to an ID used by your system, so that it is identifiable by you elsewhere. Receive a completion callback, notifying you whether it succeeded or failed.
-
- @param userId The ID Branch should use to identify this user.
- @param callback The callback to be called once the request has completed (success or failure).
+ @param userAlias The ID Branch should use to identify this user.
+ @param completion The callback to be called once the request has completed (success or failure).
  @warning If you use the same ID between users on different sessions / devices, their actions will be merged.
  @warning This request is not removed from the queue upon failure -- it will be retried until it succeeds. The callback will only ever be called once, though.
- @warning You should call `logout` before calling `setIdentity:` a second time.
+ @warning You should call `logout` before calling `setUserAlias:completion:` a second time.
  */
-- (void)setIdentity:(nullable NSString *)userId withCallback:(nullable callbackWithParams)callback;
+- (void)setUserAlias:(nullable NSString *)userAlias completion:(nullable callbackWithParams)completion;
 
 /**
  Clear all of the current user's session items.

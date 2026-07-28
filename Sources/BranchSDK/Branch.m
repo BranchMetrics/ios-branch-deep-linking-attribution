@@ -702,7 +702,7 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (BOOL)isUserIdentified {
-    return self.preferenceHelper.userIdentity != nil;
+    return self.preferenceHelper.userAlias != nil;
 }
 
 - (void)disableAdNetworkCallouts:(BOOL)disableCallouts {
@@ -1333,16 +1333,12 @@ static NSString *bnc_branchKey = nil;
 
 #pragma mark - Identity methods
 
-- (void)setIdentity:(NSString *)userId {
-    [self setIdentity:userId withCallback: nil];
-}
-
-- (void)setIdentity:(NSString *)userId withCallback:(callbackWithParams)callback {
-    if (userId) {
-        self.preferenceHelper.userIdentity = userId;
+- (void)setUserAlias:(NSString *)userAlias completion:(callbackWithParams)completion {
+    if (userAlias) {
+        self.preferenceHelper.userAlias = userAlias;
     }
-    if (callback) {
-        callback([self getFirstReferringParams], nil);
+    if (completion) {
+        completion([self getFirstReferringParams], nil);
     }
 }
 
@@ -1365,7 +1361,7 @@ static NSString *bnc_branchKey = nil;
     self.linkCache = [[BNCLinkCache alloc] init];
     
     // Removed stored values
-    self.preferenceHelper.userIdentity = nil;
+    self.preferenceHelper.userAlias = nil;
     
     if (callback) {
         callback(YES, nil);

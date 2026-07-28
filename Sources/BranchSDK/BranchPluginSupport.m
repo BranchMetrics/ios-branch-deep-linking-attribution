@@ -36,7 +36,7 @@
         [dictionary bnc_safeSetObject:deviceInfo.vendorId forKey:@"idfv"];
         [dictionary bnc_safeSetObject:deviceInfo.advertiserId forKey:@"idfa"];
         [dictionary bnc_safeSetObject:deviceInfo.optedInStatus forKey:@"opted_in_status"];
-        [dictionary bnc_safeSetObject:[BNCPreferenceHelper sharedInstance].userIdentity forKey:@"developer_identity"];
+        [dictionary bnc_safeSetObject:[BNCPreferenceHelper sharedInstance].userAlias forKey:@"developer_identity"];
         [dictionary bnc_safeSetObject:deviceInfo.country forKey:@"country"];
         [dictionary bnc_safeSetObject:deviceInfo.language forKey:@"language"];
         [dictionary bnc_safeSetObject:deviceInfo.localIPAddress forKey:@"local_ip"];

@@ -206,7 +206,7 @@ bool hasSetPartnerParams = false;
 - (IBAction)setUserIDButtonTouchUpInside:(id)sender {
     Branch *branch = [Branch sharedInstance];
     [appDelegate setLogFile:@"SetUserID"];
-    [branch setIdentity: user_id2 withCallback:^(NSDictionary *params, NSError *error) {
+    [branch setUserAlias: user_id2 completion:^(NSDictionary *params, NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [appDelegate setLogFile:nil];
             if (!error) {

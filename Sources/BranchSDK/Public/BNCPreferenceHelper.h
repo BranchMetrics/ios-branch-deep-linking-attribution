@@ -36,7 +36,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (copy, nonatomic) NSString *initialReferrer;
 @property (copy, nonatomic) NSString *userUrl;
 @property (copy, nonatomic) NSString *localUrl;
-@property (copy, nonatomic) NSString *userIdentity;
+@property (copy, nonatomic) NSString *userAlias;
 @property (copy, nonatomic) NSString *sessionParams;
 @property (copy, nonatomic) NSString *installParams;
 @property (assign, nonatomic) BOOL isDebug;
