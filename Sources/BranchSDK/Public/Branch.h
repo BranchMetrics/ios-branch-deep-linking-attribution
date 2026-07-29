@@ -448,11 +448,26 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 /**
  Convenience method for `application:openURL:options:` to handle custom URI schemes.
 
- Extracts the URL and calls `requestDeepLinkData:callback:` with it.
+ Runs the same URL preprocessing as the legacy deep link handler (referring-URL query parameters,
+ the URL skiplist, allowed-scheme filtering and `link_click_id` extraction) and then calls
+ `requestDeepLinkData:callback:` with the URL.
  Logs the deep link parameters or error.
  @param url The URL from `application:openURL:options:`
  */
 - (void)requestDeepLinkDataWithURL:(nullable NSURL *)url;
+
+/**
+ Convenience method for the older `application:openURL:sourceApplication:annotation:` to handle custom URI schemes.
+
+ Forwards to `requestDeepLinkDataWithURL:`. The `sourceApplication` and `annotation` parameters are
+ accepted for call-site parity with the AppDelegate method and are not otherwise used.
+ @param url The URL from `application:openURL:sourceApplication:annotation:`.
+ @param sourceApplication The bundle ID of the app that requested the open, if any.
+ @param annotation A property-list object supplied by the source app, if any.
+ */
+- (void)requestDeepLinkDataWithURL:(nullable NSURL *)url
+                 sourceApplication:(nullable NSString *)sourceApplication
+                        annotation:(nullable id)annotation;
 
 /**
  Convenience method for `application:continueUserActivity:restorationHandler:` to handle Universal Links.
@@ -549,17 +564,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Note that while init is deferred, other calls to the Branch SDK may result in errors. For that reason, do not use this feature for general SDK init deferral.
  */
 - (void)notifyNativeToInit;
-
-#pragma mark - Push Notification support
-
-/**
- Allow Branch to handle a push notification with a Branch link.
-
- To make use of this, when creating a push notification, specify the Branch Link as an NSString, for key @"branch".
-
- NSDictionary userInfo = @{@"branch": @"https://bnc.lt/...", ... };
- */
-- (void)handlePushNotification:(nullable NSDictionary *)userInfo;
 
 #pragma mark - Configuration methods
 

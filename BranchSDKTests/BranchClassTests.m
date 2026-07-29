@@ -18,6 +18,13 @@
 - (void)writeObjectToDefaults:(NSString *)key value:(NSObject *)value;
 @end
 
+@interface Branch(Test)
+// Expose the private preprocessing helpers shared by the legacy handlers and the
+// requestDeepLinkData* convenience methods.
+- (BOOL)preprocessDeepLinkURL:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier;
+- (BOOL)preprocessUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier;
+@end
+
 @interface BranchClassTests : XCTestCase
 @property (nonatomic, strong) Branch *branch;
 @end
@@ -248,7 +255,84 @@
     // Set to Full and check
     [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
     XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelFull);
-    
+
+}
+
+#pragma mark - Deep Link Preprocessing
+
+// The requestDeepLinkData* convenience methods must run the same preprocessing as the legacy
+// handleDeepLink: / continueUserActivity: handlers. These tests assert that the shared helpers
+// populate the preferenceHelper the same way, so none of the previous checks are skipped.
+
+- (void)clearDeepLinkPreferences {
+    BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
+    prefs.externalIntentURI = nil;
+    prefs.universalLinkUrl = nil;
+    prefs.linkClickIdentifier = nil;
+    prefs.initialReferrer = nil;
+    prefs.spotlightIdentifier = nil;
+    prefs.referringURL = nil;
+    prefs.dropURLOpen = NO;
+}
+
+- (void)testPreprocessDeepLinkURL_customScheme_setsExternalIntentURIAndLinkClickId {
+    [self clearDeepLinkPreferences];
+    NSURL *url = [NSURL URLWithString:@"myapp://open?link_click_id=abc123"];
+
+    [self.branch preprocessDeepLinkURL:url sceneIdentifier:nil];
+
+    BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
+    XCTAssertEqualObjects(prefs.externalIntentURI, url.absoluteString);
+    XCTAssertEqualObjects(prefs.referringURL, url.absoluteString);
+    XCTAssertEqualObjects(prefs.linkClickIdentifier, @"abc123");
+}
+
+- (void)testPreprocessDeepLinkURL_universalLink_setsUniversalLinkUrl {
+    [self clearDeepLinkPreferences];
+    NSURL *url = [NSURL URLWithString:@"https://example.app.link/abc"];
+
+    [self.branch preprocessDeepLinkURL:url sceneIdentifier:nil];
+
+    BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
+    XCTAssertEqualObjects(prefs.universalLinkUrl, url.absoluteString);
+    XCTAssertEqualObjects(prefs.referringURL, url.absoluteString);
+}
+
+- (void)testRequestDeepLinkDataWithURL_runsPreprocessing {
+    [self clearDeepLinkPreferences];
+    NSURL *url = [NSURL URLWithString:@"myapp://open?link_click_id=fromConvenience"];
+
+    [self.branch requestDeepLinkDataWithURL:url];
+
+    BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
+    XCTAssertEqualObjects(prefs.externalIntentURI, url.absoluteString);
+    XCTAssertEqualObjects(prefs.linkClickIdentifier, @"fromConvenience");
+}
+
+- (void)testPreprocessUserActivity_browsingWeb_setsInitialReferrerAndUniversalLink {
+    [self clearDeepLinkPreferences];
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
+    activity.webpageURL = [NSURL URLWithString:@"https://example.app.link/xyz"];
+    activity.referrerURL = [NSURL URLWithString:@"https://referrer.example.com"];
+
+    [self.branch preprocessUserActivity:activity sceneIdentifier:nil];
+
+    BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
+    XCTAssertEqualObjects(prefs.initialReferrer, @"https://referrer.example.com");
+    XCTAssertEqualObjects(prefs.universalLinkUrl, activity.webpageURL.absoluteString);
+}
+
+- (void)testRequestDeepLinkDataWithUserActivity_runsPreprocessing {
+    [self clearDeepLinkPreferences];
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
+    activity.webpageURL = [NSURL URLWithString:@"https://example.app.link/xyz"];
+    activity.referrerURL = [NSURL URLWithString:@"https://referrer.example.com"];
+
+    [self.branch requestDeepLinkDataWithUserActivity:activity];
+
+    BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
+    XCTAssertEqualObjects(prefs.initialReferrer, @"https://referrer.example.com");
+    XCTAssertEqualObjects(prefs.universalLinkUrl, activity.webpageURL.absoluteString);
 }
 
 

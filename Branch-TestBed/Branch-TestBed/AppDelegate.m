@@ -109,7 +109,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
          annotation:(id)annotation {
 
     NSLog(@"application:openURL:sourceApplication:annotation: invoked with URL: %@", [url description]);
-    [[Branch getInstance] requestDeepLinkDataWithURL:url];
+    [[Branch getInstance] requestDeepLinkDataWithURL:url sourceApplication:sourceApplication annotation:annotation];
 
     // Process non-Branch URIs here...
     return YES;
