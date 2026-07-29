@@ -1,0 +1,13 @@
+// MobileBoost.xcconfig
+//
+// Committed file. Local developers override values here by creating
+// a sibling `MobileBoost.local.xcconfig` (gitignored) that this file
+// optionally includes. CI overrides via `xcodebuild MOBILEBOOST_API_KEY=...`
+// as a build-setting argument, which takes precedence over this file.
+
+// Default to empty first. The #include? below overrides this with the
+// real value from MobileBoost.local.xcconfig (if it exists). xcconfig
+// assigns later-wins, so the include MUST come after the default.
+MOBILEBOOST_API_KEY =
+
+#include? "MobileBoost.local.xcconfig"
