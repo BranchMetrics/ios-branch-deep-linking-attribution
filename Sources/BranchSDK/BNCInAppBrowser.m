@@ -76,6 +76,10 @@ NS_ASSUME_NONNULL_BEGIN
     [topVC presentViewController:safariVC animated:YES completion:nil];
 }
 
+- (void)safariViewControllerDidFinish:(SFSafariViewController *)controller {
+    [[Branch getInstance] requestDeepLinkData:nil callback:nil];
+}
+
 @end
 
 NS_ASSUME_NONNULL_END

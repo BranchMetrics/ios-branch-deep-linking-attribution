@@ -727,6 +727,8 @@ static NSString *bnc_branchKey = nil;
         self.preferenceHelper.externalIntentURI = urlString;
         self.preferenceHelper.referringURL = urlString;
         
+        [self requestDeepLinkData:nil callback:nil];
+        
         return NO;
     }
 
@@ -774,6 +776,8 @@ static NSString *bnc_branchKey = nil;
             self.preferenceHelper.linkClickIdentifier = params[@"link_click_id"];
         }
     }
+    
+    [self requestDeepLinkData:nil callback:nil];
     
     return handled;
 }
@@ -846,8 +850,9 @@ static NSString *bnc_branchKey = nil;
         }
     }
     #endif
-
-
+    
+    [self requestDeepLinkData:userActivity.webpageURL.absoluteString callback:nil];
+    
     return spotlightIdentifier != nil;
 }
 
@@ -1032,7 +1037,7 @@ static NSString *bnc_branchKey = nil;
 - (void)logoutWithCallback:(callbackWithStatus)callback {
     if ([Branch attributionLevelNone]) {
         NSError *error = [NSError branchErrorWithCode:BNCAttributionLevelNoneError];
-        [[BranchLogger shared] logWarning:@"Branch is not initialized, cannot logout." error:error];
+        [[BranchLogger shared] logWarning:@"Branch attribution level is set to NONE, cannot logout." error:error];
         if (callback) {callback(NO, error);}
         return;
     }
