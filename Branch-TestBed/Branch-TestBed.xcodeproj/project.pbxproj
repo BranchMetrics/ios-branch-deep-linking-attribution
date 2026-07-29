@@ -567,6 +567,7 @@
 			packageReferences = (
 				E7AC74792DB0700D002D8C40 /* XCLocalSwiftPackageReference "../../ios-branch-deep-linking-attribution" */,
 				E732827D2E5F7D92005CACC8 /* XCRemoteSwiftPackageReference "google-ads-on-device-conversion-ios-sdk" */,
+				D0973F95A101C4673FDC92A1 /* XCRemoteSwiftPackageReference "gptd-swift" */,
 			);
 			productRefGroup = 670016611940F51400A9E103 /* Products */;
 			projectDirPath = "";
@@ -1166,6 +1167,14 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		D0973F95A101C4673FDC92A1 /* XCRemoteSwiftPackageReference "gptd-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/MobileBoostHQ/gptd-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.9.1;
+			};
+		};
 		E732827D2E5F7D92005CACC8 /* XCRemoteSwiftPackageReference "google-ads-on-device-conversion-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/googleads/google-ads-on-device-conversion-ios-sdk";
