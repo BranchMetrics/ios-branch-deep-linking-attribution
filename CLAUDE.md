@@ -10,18 +10,23 @@ Carthage, and prebuilt XCFrameworks.
 > parts of the public API all differ. Everything below describes _this_ branch. When porting a
 > fix from `master`, assume the queue and init code do not translate directly — check first.
 >
-> Note: `BNC_SDK_VERSION` and the podspec still read `4.0.0-alpha.0` on this branch.
+> Note: nothing here has been renumbered for beta, and the version locations disagree.
+> `BNC_SDK_VERSION` and the podspec read `4.0.0-alpha.0`; `scripts/version.sh` reads `4.0.0`;
+> `MARKETING_VERSION` in the pbxproj reads `3.12.1`. See "Products and distribution" before
+> touching any of them.
 
 ## What changed from `master` (3.x)
 
 The four differences that break most assumptions carried over from 3.x:
 
 1. **The queue is an `NSOperationQueue`.** `BNCServerRequestQueue` no longer stores requests in
-   an array that `Branch.m` drains. There is no `processNextQueueItem` on this branch — the
-   symbol does not exist. Each request is wrapped in a `BNCServerRequestOperation` and the
-   operation queue executes it.
-2. **New `/v3` endpoints and a two-request open flow.** `openServiceURL` is now
+   an array that `Branch.m` drains. `processNextQueueItem` is gone from `Sources/` entirely — the
+   only remaining occurrences are a stale, unimplemented category declaration in
+   `BranchSDKTests/BranchEvent.Test.m` and its twin under `Branch-TestBed/`. Each request is
+   wrapped in a `BNCServerRequestOperation` and the operation queue executes it.
+2. **New `/v3` endpoints for the open flow, and a two-request open.** `openServiceURL` is now
    `/v3/events/open` (was `/v1/open`), and there is a new `deepLinkServiceURL` → `/v3/deeplink`.
+   Nothing else moved: installs are still `/v1/install`, events still `/v2/event/{standard,custom}`.
 3. **New public deep-link API.** `requestDeepLinkData:callback:` and friends replace driving
    everything through `initSession…`. `initUserSessionAndCallCallback:…` is now marked
    `__attribute__((deprecated))`.
@@ -34,8 +39,9 @@ The four differences that break most assumptions carried over from 3.x:
 
 One source tree, several delivery vehicles — all built from `Sources/BranchSDK/**/*.{h,m}`:
 
-- **SPM** — `Package.swift`, target `BranchSDK`, `publicHeadersPath: BranchSDK/Public/`,
-  private headers reachable only via the `BranchSDK/Private` header search path.
+- **SPM** — `Package.swift`, target `BranchSDK`, `path: "Sources/BranchSDK"` with
+  `publicHeadersPath: "Public"`; private headers reachable only via `.headerSearchPath("Private")`.
+  (Note these are relative to the target `path` here, unlike on `master`.)
 - **CocoaPods** — `BranchSDK.podspec`. tvOS **excludes** `BNCContentDiscoveryManager`,
   `BNCUserAgentCollector`, and `BNCSpotlightService`.
 - **XCFramework** — `BranchSDK.xcodeproj` schemes `xcframework`, `xcframework-noidfa`,
@@ -44,8 +50,17 @@ One source tree, several delivery vehicles — all built from `Sources/BranchSDK
   `GCC_PREPROCESSOR_DEFINITIONS=BRANCH_EXCLUDE_IDFA_CODE=1`. Any new AdSupport/IDFA touch must
   be guarded by that macro.
 
-Version lives in **two** places kept in sync by `scripts/version.sh`: `BNC_SDK_VERSION` in
-`Sources/BranchSDK/BNCConfig.m` and `s.version` in `BranchSDK.podspec`. Never hand-edit one.
+Version is **not** in two places and is **not** currently consistent. `scripts/version.sh` holds
+the source of truth as a hard-coded `version=` literal (line 33, currently `4.0.0`) and rewrites
+four targets: `BNC_SDK_VERSION` in `Sources/BranchSDK/BNCConfig.m`, `s.version` in
+`BranchSDK.podspec`, `MARKETING_VERSION` in `BranchSDK.xcodeproj/project.pbxproj`, and its own
+literal. Today those hold three different values: `4.0.0-alpha.0` (BNCConfig.m, podspec), `4.0.0`
+(version.sh), `3.12.1` (pbxproj).
+
+**Do not run `version.sh -i` or `-u` on this branch.** It would drop the `-alpha.0` suffix from
+both source files, and because `prev_version` is read from the script's own stale literal, the
+`MARKETING_VERSION` rewrite silently matches nothing — leaving the repo more divergent than it
+started. `bundle exec fastlane version_bump` is not an alternative here either; see CI below.
 
 ## Source layout
 
@@ -120,11 +135,16 @@ plans, but `verify.yml` on this branch does not use them. Adding a test to
 
 ### CI
 
-- **`verify.yml`** — the PR gate: `xcodebuild test -scheme BranchSDKTests -testPlan BranchSDKTests`.
+Ten workflows exist; several are inherited from `master` and **cannot run on this branch**.
+
+- **`verify.yml`** — the only working gate: `xcodebuild test -scheme BranchSDKTests -testPlan BranchSDKTests`.
 - **`pre-release-qa.yml` / `post-release-qa.yml`** — exercise every package manager (CocoaPods,
   Carthage, SPM, XCFramework) for iOS and tvOS against `SDKIntegrationTestApps/`.
-- **`release.yml`** — builds and signs XCFrameworks with checksums.
-- **`integration-tests.yml`** — manual only (`gh workflow run integration-tests.yml`).
+- **Broken here — fastlane was deleted on this line.** There is no `fastlane/` directory and no
+  `Gemfile` (both still exist on `master`), yet `version-bump.yml`, `integration-tests.yml` and
+  `release.yml` all shell out to `bundle exec fastlane` after a `bundle check || bundle install`.
+  Treat **release, version-bump and integration-tests as non-functional** on this branch until
+  fastlane is restored or they are ported.
 - **Not present on this branch:** `layer1-logger-tests.yml` (the L1 wire-validation gate) and
   `gptdriver-release.yml`. Both exist on `master`. There is no automated wire-field assertion
   here — wire-format changes are reviewed by hand.
@@ -173,9 +193,18 @@ serialized by the OS rather than by a hand-rolled semaphore loop. Its API is now
   everything else defaults to `Normal`.
 - **Operation dependencies** — `addInitDependencyIfNeeded:` records the most recent
   `BranchOpenRequest` operation as `currentInitOperation` and makes every **non-init** operation
-  `addDependency:` on it while it is unfinished. This is what holds ordinary requests behind
-  session establishment. It is a `weak` reference, so once the init operation finishes and
-  deallocates, later requests are no longer gated.
+  `addDependency:` on it while it is unfinished. It is a `weak` reference, so once the init
+  operation finishes and deallocates, later requests are no longer gated.
+
+  **A dependency outranks priority, and "init" here means only `BranchOpenRequest`.** Only
+  `BranchOpenRequest` and its subclass `BranchInstallRequest` satisfy that `isKindOfClass:` test.
+  `BranchRequestOpen` and `BranchRequestDeepLink` are plain `BNCServerRequest` subclasses, so
+  despite being enqueued at `High` they are treated as **non-init** and given a dependency on any
+  in-flight legacy init — they wait behind it. Conversely, on a pure `/v3` session nothing ever
+  becomes `currentInitOperation`, so the dependency gate never engages at all and ordering rests
+  on `maxConcurrentOperationCount = 1` plus priority alone. Note this is the opposite grouping
+  from the operation's own session-validation step, which treats all three classes as
+  session-establishing.
 
 **`BNCServerRequestOperation`** is a concurrent (`isAsynchronous == YES`) `NSOperation` with
 manual `isExecuting`/`isFinished` KVO. Its `start` does, in order:
@@ -212,12 +241,15 @@ This is the flow the branch exists for. `requestDeepLinkData:callback:`:
      back into `Branch` `sendOpen:skipCallback:YES` — attribution is still sent, but the app's
      init callback is **not** fired, because the user is leaving for a web link;
    - otherwise it fires the app callback and then calls `sendOpen:skipCallback:NO`.
-4. `sendOpen:skipCallback:` enqueues a `BranchRequestOpen` (High) → `POST /v3/events/open`,
-   carrying the resolved `link_data` from step 3.
+4. `sendOpen:skipCallback:` reaches the network **only if a referring link was resolved** — either
+   the caller passed a `branchLink`, or the response's session data carried `~referring_link`.
+   `attemptToSendOpen:` checks this; with no referring link it skips the open entirely and calls
+   `clearLinkIdentifiers:` instead. When it does send, it enqueues a `BranchRequestOpen` (High) →
+   `POST /v3/events/open`, carrying the resolved `link_data` from step 3.
 
-So **one user-visible "open" is two network requests**: resolve, then attribute. `sendOpen`
-(no arguments) is the public entry for the attribution half alone, used when there is no link
-to resolve.
+So an open **that resolved a link** is two network requests: resolve, then attribute. A deferred
+deep link that resolves nothing is one request and no attribution call. `sendOpen` (no arguments)
+is the public entry for the attribution half alone, used when there is no link to resolve.
 
 `handleUniversalDeepLink_private:` on this branch calls `sendOpen` directly — the old
 `initUserSessionAndCallCallback:` call there is commented out. Universal-link opens no longer
@@ -270,11 +302,14 @@ install-vs-reinstall attribution work; do not move them into the prefs file.
   request already in flight will still deliver its callback.
 - **`getLatestReferringParams` reads `sessionParams`; `getFirstReferringParams` reads
   `installParams`.** Install params are written once, on the first-ever install response.
-- **Categories must be force-loaded.** `ForceCategoriesToLoad()` in `Branch.m` calls a no-op
-  symbol per category (`NSError+Branch`, `NSString+Branch`, `NSMutableDictionary+Branch`,
-  `Branch+Validator`, `UIViewController+Branch`). Static linking strips ObjC categories
-  otherwise. **A new category needs a new `BNCForce…CategoryToLoad` hook**, or it works in SPM
-  and crashes at runtime in the static XCFramework.
+- **Categories must be force-loaded, but not by the function that looks like it does it.** Static
+  linking strips ObjC categories, so each category exposes a no-op `BNCForce…CategoryToLoad`
+  symbol. What registers them is `__attribute__((constructor))` on the private-header
+  declaration — present on `NSError+Branch`, `NSString+Branch`, `NSMutableDictionary+Branch` and
+  `UIViewController+Branch`, and **absent on `Branch+Validator`**. `ForceCategoriesToLoad()` in
+  `Branch.m` aggregates all five calls but has **zero call sites in the repo**, so adding a line
+  to it changes nothing. A new category needs the `__attribute__((constructor))` form; do not
+  model it on `Branch+Validator`.
 - **`BNCInitSessionResponse` is built at several separate sites** in `Branch.m`. Adding a field
   means updating all of them.
 - **IDFA code must be `BRANCH_EXCLUDE_IDFA_CODE`-guarded**; **tvOS excludes three files** in the
@@ -291,4 +326,6 @@ install-vs-reinstall attribution work; do not move them into the prefs file.
 - Public headers under `Public/` are an API contract. This branch is already carrying breaking
   changes (removed `setTrackingDisabled:`, deprecated `initUserSessionAndCallCallback:`) — new
   ones need to be deliberate and recorded, not incidental.
-- `ChangeLog.md` is maintained per release and synced to the README by `sync-readme-changelog.yml`.
+- `ChangeLog.md` is maintained by hand, per release. `sync-readme-changelog.yml` is unrelated to
+  it: on a published GitHub release it pushes the release body to the hosted ReadMe.io page
+  `ios-version-history` and announces in Slack. Nothing automates `ChangeLog.md`.
