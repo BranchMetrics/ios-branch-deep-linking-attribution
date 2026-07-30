@@ -8,7 +8,6 @@
 #import "BranchRequestOpen.h"
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
-#import "Branch.h"
 
 // used to save one timestamp...
 #import "BNCApplication.h"

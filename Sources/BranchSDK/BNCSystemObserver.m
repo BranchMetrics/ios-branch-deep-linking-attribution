@@ -8,7 +8,6 @@
 
 #import "BNCSystemObserver.h"
 #import "BranchLogger.h"
-#import "BNCPreferenceHelper.h"
 
 #if __has_feature(modules)
 @import UIKit;

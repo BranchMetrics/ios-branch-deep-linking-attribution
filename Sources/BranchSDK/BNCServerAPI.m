@@ -8,8 +8,6 @@
 #import "BNCServerAPI.h"
 #import "BNCSystemObserver.h"
 #import "BNCConfig.h"
-#import "BranchConstants.h"
-#import "BNCPreferenceHelper.h"
 
 @implementation BNCServerAPI
 

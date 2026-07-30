@@ -6,8 +6,6 @@
 //
 
 #import "BranchConfigurationController.h"
-#import "BNCPreferenceHelper.h"
-#import "BranchLogger.h"
 #import "BranchConstants.h"
 
 NS_ASSUME_NONNULL_BEGIN

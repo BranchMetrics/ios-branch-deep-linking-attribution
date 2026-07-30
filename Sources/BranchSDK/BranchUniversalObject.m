@@ -10,7 +10,6 @@
 #import "NSError+Branch.h"
 #import "BranchConstants.h"
 #import "BranchLogger.h"
-#import "BNCEncodingUtils.h"
 #import "Branch.h"
 #import "BranchEvent.h"
 #import "NSMutableDictionary+Branch.h"

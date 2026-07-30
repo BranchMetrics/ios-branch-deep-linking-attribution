@@ -7,7 +7,6 @@
 //
 
 #import "BNCEncodingUtils.h"
-#import "BNCPreferenceHelper.h"
 #import <CommonCrypto/CommonDigest.h>
 #import "BranchLogger.h"
 

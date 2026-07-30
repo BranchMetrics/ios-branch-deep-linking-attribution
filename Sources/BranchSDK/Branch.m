@@ -18,7 +18,6 @@
 #import "BNCServerRequest.h"
 #import "BNCServerRequestQueue.h"
 #import "BNCServerResponse.h"
-#import "BNCSystemObserver.h"
 #import "BranchConstants.h"
 #import "BranchInstallRequest.h"
 #import "BranchJsonConfig.h"
@@ -54,8 +53,6 @@
 #import "BNCUserAgentCollector.h"
 #import "BNCSpotlightService.h"
 #import "BNCContentDiscoveryManager.h"
-#import "BranchContentDiscoverer.h"
-#import "BNCODMInfoCollector.h"
 #endif
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";

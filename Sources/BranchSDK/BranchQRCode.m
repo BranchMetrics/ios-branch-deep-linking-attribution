@@ -9,7 +9,6 @@
 #import "BranchQRCode.h"
 #import "Branch.h"
 #import "BNCQRCodeCache.h"
-#import "BNCConfig.h"
 #import "BranchConstants.h"
 #import "NSError+Branch.h"
 #import "UIViewController+Branch.h"

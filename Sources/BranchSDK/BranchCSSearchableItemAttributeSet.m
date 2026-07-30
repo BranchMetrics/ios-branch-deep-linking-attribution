@@ -14,7 +14,6 @@
 #import "BranchLogger.h"
 
 #import "Branch.h"
-#import "BNCSystemObserver.h"
 
 #ifndef kUTTypeGeneric
 #define kUTTypeGeneric @"public.content"

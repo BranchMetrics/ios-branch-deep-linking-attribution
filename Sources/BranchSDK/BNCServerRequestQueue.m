@@ -9,10 +9,8 @@
 
 #import "BNCServerRequestQueue.h"
 #import "BNCPreferenceHelper.h"
-#import "BranchInstallRequest.h"
 #import "BranchOpenRequest.h"
 #import "BranchRequestDeepLink.h"
-#import "BranchEvent.h"
 #import "BranchLogger.h"
 #import "Private/BNCServerRequestOperation.h"
 #import "Branch.h"

@@ -8,7 +8,6 @@
 
 #import "Branch+Validator.h"
 #import "BNCSystemObserver.h"
-#import "BranchConstants.h"
 #import "BNCApplication.h"
 #import "BNCEncodingUtils.h"
 #import "BNCServerAPI.h"

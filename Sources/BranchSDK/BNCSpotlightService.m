@@ -10,7 +10,6 @@
 
 #import "BNCSpotlightService.h"
 #import "Branch.h"
-#import "BNCSystemObserver.h"
 #import "NSError+Branch.h"
 #import "UIViewController+Branch.h"
 

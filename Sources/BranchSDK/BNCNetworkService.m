@@ -7,7 +7,6 @@
 //
 
 #import "BNCNetworkService.h"
-#import "BNCEncodingUtils.h"
 #import "BranchLogger.h"
 #import "NSError+Branch.h"
 #import "BranchLogger.h"

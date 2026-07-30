@@ -11,7 +11,6 @@
 #import "BranchActivityItemProvider.h"
 #import "Branch.h"
 #import "BranchConstants.h"
-#import "BNCSystemObserver.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"

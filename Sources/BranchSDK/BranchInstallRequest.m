@@ -8,7 +8,6 @@
 
 #import "BranchInstallRequest.h"
 #import "BNCServerAPI.h"
-#import "BranchConstants.h"
 
 #import "BNCRequestFactory.h"
 
