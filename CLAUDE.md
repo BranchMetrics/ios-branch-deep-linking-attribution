@@ -7,9 +7,8 @@ Objective-C library, `BranchSDK`, shipped for **iOS 12+ and tvOS 12+** via SPM, 
 Carthage, and prebuilt XCFrameworks. There is no Swift in the shipped product on this branch —
 everything under `Sources/BranchSDK/` is `.h`/`.m`.
 
-> The `4.0.0-beta.*` line is a substantially different architecture (NSOperationQueue-based
-> request queue, `/v3` endpoints). It has its own CLAUDE.md. Do not apply this file's
-> architecture notes to that branch.
+> The `4.0.0-beta.0` line is a substantially different architecture (NSOperationQueue-based
+> request queue, `/v3` endpoints). Do not apply this file's architecture notes to that branch.
 
 ## Products and distribution
 
@@ -26,13 +25,21 @@ One source tree, several delivery vehicles — all built from `Sources/BranchSDK
   must be guarded by that macro or the no-IDFA build breaks at App Store review time,
   not at compile time.
 
-Version lives in **two** places kept in sync by `scripts/version.sh`: `BNC_SDK_VERSION` in
-`Sources/BranchSDK/BNCConfig.m` and `s.version` in `BranchSDK.podspec`. Never hand-edit one.
+Version lives in **four** places, all rewritten by `scripts/version.sh`: the `version=` literal in
+`scripts/version.sh` itself (the value the script reads back, so effectively the source of truth),
+`BNC_SDK_VERSION` in `Sources/BranchSDK/BNCConfig.m`, `s.version` in `BranchSDK.podspec`, and
+`MARKETING_VERSION` in `BranchSDK.xcodeproj/project.pbxproj` (6 build configurations). All four
+currently agree at `3.14.2`. Never hand-edit any of them.
 
 ```bash
 ./scripts/version.sh        # print current version
-./scripts/version.sh -i     # increment patch and update both files
+./scripts/version.sh -i     # increment patch and update all four
+./scripts/version.sh -u     # update the files to the current version, no increment
 ```
+
+Do **not** reach for `bundle exec fastlane version_bump` or the `version-bump.yml` workflow:
+`fastlane/lib/helper/version_helper.rb` still patches `carthage-files/`, `Branch-SDK/BNCConfig.m`,
+`Branch.podspec` and `Branch-TestBed/Framework-Info.plist` — none of which exist on this branch.
 
 ## Source layout
 
@@ -51,34 +58,40 @@ type or a server request. `BNCServerRequest` subclasses are all named `Branch<Th
 
 ## Where to make changes
 
-| Task                                                    | Start here                                                                                                                                                                                          |
-| ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Session/init flow, init status, deep-link callbacks     | `Branch.m` — `initUserSessionAndCallCallback:`, `initializeSessionAndCallCallback:`, `handleInitSuccessAndCallCallback:`, `handleInitFailure:`                                                      |
-| Universal link / scheme / push / user-activity entry    | `Branch.m` — `handleDeepLink:sceneIdentifier:`, `handleSchemeDeepLink_private:`, `handleUniversalDeepLink_private:`, `continueUserActivity:`, `handlePushNotification:`                             |
-| A new API request type                                  | subclass `BNCServerRequest` (see `BranchOpenRequest.m`, `BranchEventRequest` in `BranchEvent.m`); build its body in `BNCRequestFactory`; add the endpoint to `BNCServerAPI`                         |
-| Request body fields / wire format                       | `BNCRequestFactory.m` (`dataForInstallWithURLString:`, `dataForOpenWithURLString:`, `dataForEventWithEventDictionary:`, `dataForShortURLWithLinkDataDictionary:`, `dataForLATDWithDataDictionary:`) |
-| Wire key names / response keys / endpoints              | `BranchConstants.m` (`BRANCH_REQUEST_ENDPOINT_*`, `BRANCH_RESPONSE_KEY_*`), `BNCServerAPI.m` (base URL + paths), `BNCConfig.m` (host constants)                                                     |
-| Persisted state / a new preference key                  | `BNCPreferenceHelper.m` — add a `BRANCH_PREFS_KEY_*` constant plus a typed accessor                                                                                                                 |
-| Queue behavior, ordering, draining                      | `BNCServerRequestQueue.m` **plus** `Branch.m` `processNextQueueItem` / `processRequest:response:error:` — the queue is a dumb container; the driving loop lives in `Branch.m`                       |
-| HTTP transport, retries, timeouts                       | `BNCServerInterface.m` (`genericHTTPRequest:retryNumber:callback:retryHandler:`), `BNCNetworkService.m`                                                                                             |
-| Device/hardware signals on requests                     | `BNCDeviceInfo.m`, `BNCSystemObserver.m`, `BNCDeviceSystem.m`, `BNCNetworkInterface.m`                                                                                                              |
-| Link creation (short/long URLs)                         | `BranchShortUrlRequest.m`, `BranchShortUrlSyncRequest.m`, `BNCLinkData.m`, `BNCLinkCache.m`; content model in `BranchUniversalObject.m`, `BranchLinkProperties.m`                                   |
-| Sharing / share sheet                                   | `BranchShareLink.m`, `BranchActivityItemProvider.m`                                                                                                                                                 |
-| Custom & commerce events                                | `BranchEvent.m` (also defines `BranchEventRequest`), `BNCCurrency.m`, `BNCProductCategory.m`                                                                                                        |
-| Tracking-disabled / consent / attribution level         | `Branch.m` (`setConsumerProtectionAttributionLevel:`, `+setTrackingDisabled:`), `BNCPreferenceHelper.m`                                                                                             |
-| SKAdNetwork / ATT                                       | `BNCSKAdNetwork.m`, `Branch.m` `handleATTAuthorizationStatus:`                                                                                                                                      |
-| Referring-URL query params (gclid, gbraid, sccid, Meta) | `BNCReferringURLUtility.m`, `BNCUrlQueryParameter.m`                                                                                                                                                |
-| URL ignore/skip list                                    | `BNCURLFilter.m` (ships a default list, refreshes from the server post-init)                                                                                                                        |
-| `branch.json` / config flags / key source               | `BranchJsonConfig.m`, `BranchConfigurationController.m`, `Branch.m` `+branchKey`                                                                                                                    |
-| Spotlight / content indexing (iOS only)                 | `BNCSpotlightService.m`, `BNCContentDiscoveryManager.m`, `BranchContentDiscoverer.m`                                                                                                                |
-| QR codes                                                | `BranchQRCode.m`, `BNCQRCodeCache.m`                                                                                                                                                                |
-| Integration / deep-link diagnostics                     | `Branch+Validator.m`                                                                                                                                                                                |
-| Logging                                                 | `BranchLogger.m`, `BranchFileLogger.m`                                                                                                                                                              |
+| Task                                                    | Start here                                                                                                                                                                                                                                                                                                                                                              |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Session/init flow, init status, deep-link callbacks     | `Branch.m` — `initUserSessionAndCallCallback:`, `initializeSessionAndCallCallback:`, `handleInitSuccessAndCallCallback:`, `handleInitFailure:`                                                                                                                                                                                                                          |
+| Universal link / scheme / push / user-activity entry    | `Branch.m` — `handleDeepLink:sceneIdentifier:`, `handleSchemeDeepLink_private:`, `handleUniversalDeepLink_private:`, `continueUserActivity:`, `handlePushNotification:`                                                                                                                                                                                                 |
+| A new API request type                                  | subclass `BNCServerRequest` (see `BranchOpenRequest.m`, `BranchEventRequest` in `BranchEvent.m`); build its body in `BNCRequestFactory`; add the endpoint to `BNCServerAPI`                                                                                                                                                                                             |
+| Request body fields / wire format                       | `BNCRequestFactory.m` (`dataForInstallWithURLString:`, `dataForOpenWithURLString:`, `dataForEventWithEventDictionary:`, `dataForShortURLWithLinkDataDictionary:`, `dataForLATDWithDataDictionary:`)                                                                                                                                                                     |
+| Wire key names / response keys                          | `BranchConstants.m` (`BRANCH_REQUEST_KEY_*`, `BRANCH_RESPONSE_KEY_*`)                                                                                                                                                                                                                                                                                                   |
+| Endpoint paths / base URL / hosts                       | `BNCServerAPI.m` — paths are string literals on `installServiceURL`, `openServiceURL`, `standardEventServiceURL`, `customEventServiceURL`, `linkServiceURL`, `qrcodeServiceURL`, `latdServiceURL`, `validationServiceURL`; hosts in `BNCConfig.m`. The `BRANCH_REQUEST_ENDPOINT_*` constants in `BranchConstants.m` are dead — 7 definitions, 7 externs, zero consumers |
+| Persisted state / a new preference key                  | `BNCPreferenceHelper.m` — add a `BRANCH_PREFS_KEY_*` constant plus a typed accessor                                                                                                                                                                                                                                                                                     |
+| Queue behavior, ordering, draining                      | `BNCServerRequestQueue.m` **plus** `Branch.m` `processNextQueueItem` / `processRequest:response:error:` — the queue is a dumb container; the driving loop lives in `Branch.m`                                                                                                                                                                                           |
+| HTTP transport, retries, timeouts                       | `BNCServerInterface.m` (`genericHTTPRequest:retryNumber:callback:retryHandler:`), `BNCNetworkService.m`                                                                                                                                                                                                                                                                 |
+| Device/hardware signals on requests                     | `BNCDeviceInfo.m`, `BNCSystemObserver.m`, `BNCDeviceSystem.m`, `BNCNetworkInterface.m`                                                                                                                                                                                                                                                                                  |
+| Link creation (short/long URLs)                         | `BranchShortUrlRequest.m`, `BranchShortUrlSyncRequest.m`, `BNCLinkData.m`, `BNCLinkCache.m`; content model in `BranchUniversalObject.m`, `BranchLinkProperties.m`                                                                                                                                                                                                       |
+| Sharing / share sheet                                   | `BranchShareLink.m`, `BranchActivityItemProvider.m`                                                                                                                                                                                                                                                                                                                     |
+| Custom & commerce events                                | `BranchEvent.m` (also defines `BranchEventRequest`), `BNCCurrency.m`, `BNCProductCategory.m`                                                                                                                                                                                                                                                                            |
+| Tracking-disabled / consent / attribution level         | `Branch.m` (`setConsumerProtectionAttributionLevel:`, `+setTrackingDisabled:`), `BNCPreferenceHelper.m`                                                                                                                                                                                                                                                                 |
+| SKAdNetwork / ATT                                       | `BNCSKAdNetwork.m`, `Branch.m` `handleATTAuthorizationStatus:`                                                                                                                                                                                                                                                                                                          |
+| Referring-URL query params (gclid, gbraid, sccid, Meta) | `BNCReferringURLUtility.m`, `BNCUrlQueryParameter.m`                                                                                                                                                                                                                                                                                                                    |
+| URL ignore/skip list                                    | `BNCURLFilter.m` (ships a default list, refreshes from the server post-init)                                                                                                                                                                                                                                                                                            |
+| `branch.json` / config flags / key source               | `BranchJsonConfig.m`, `BranchConfigurationController.m`, `Branch.m` `+branchKey`                                                                                                                                                                                                                                                                                        |
+| Spotlight / content indexing (iOS only)                 | `BNCSpotlightService.m`, `BNCContentDiscoveryManager.m`, `BranchContentDiscoverer.m`                                                                                                                                                                                                                                                                                    |
+| QR codes                                                | `BranchQRCode.m`, `BNCQRCodeCache.m`                                                                                                                                                                                                                                                                                                                                    |
+| Integration / deep-link diagnostics                     | `Branch+Validator.m`                                                                                                                                                                                                                                                                                                                                                    |
+| Logging                                                 | `BranchLogger.m`, `BranchFileLogger.m`                                                                                                                                                                                                                                                                                                                                  |
 
 ## Build, test, lint
 
-Toolchain: **Xcode 16** (CI pins `macos-15` + `setup-xcode@16`), Ruby 2.7 + Bundler for the
-fastlane path. There is no lint step in CI.
+Toolchain: Ruby 2.7 + Bundler for the fastlane path. Xcode is pinned in exactly one workflow —
+`layer1-logger-tests.yml` uses `setup-xcode@v1` with `xcode-version: "16"` on `macos-15`.
+`verify.yml` (the PR gate) also runs on `macos-15` but takes the runner image's default Xcode;
+every other workflow is `macos-latest` and unpinned, and `gptdriver-release.yml` pins 15.4.
+There is no style linter (SwiftLint/OCLint) anywhere, but `release.yml` runs a `static-analysis`
+job (`xcodebuild analyze`) that gates the rest of the release, and `scripts/prep_release.sh` runs
+`pod lib lint` — code that merely compiles is not necessarily release-clean.
 
 ```bash
 # The everyday loop — the same thing CI runs (fastlane + Branch-TestBed-CI test plan)
@@ -264,16 +277,25 @@ SKAdNetwork window state, consent/attribution level, tracking state, and network
 - **Tracking disabled ≠ attribution level NONE, but setting NONE forces tracking off.**
   `setConsumerProtectionAttributionLevel:BranchAttributionLevelNone` flips
   `trackingDisabled = YES` as a side effect; the levels are `FULL`, `REDUCED`, `MINIMAL`, `NONE`.
-- **Categories must be force-loaded.** `ForceCategoriesToLoad()` in `Branch.m` calls a no-op
-  symbol in each category file (`NSError+Branch`, `NSString+Branch`,
-  `NSMutableDictionary+Branch`, `Branch+Validator`, `UIViewController+Branch`). Static linking
-  strips ObjC categories without it. **A new category needs a new `BNCForce…CategoryToLoad`
-  hook**, or it will work in the SPM build and crash at runtime in the static XCFramework.
+- **Categories must be force-loaded, but not by the function that looks like it does it.** Static
+  linking strips ObjC categories, so each category exposes a no-op `BNCForce…CategoryToLoad`
+  symbol. What actually registers them is `__attribute__((constructor))` on the declaration in the
+  private header — present on `NSError+Branch`, `NSString+Branch`, `NSMutableDictionary+Branch`
+  and `UIViewController+Branch`, and **absent on `Branch+Validator`**.
+  `ForceCategoriesToLoad()` in `Branch.m` aggregates all five calls but has **zero call sites in
+  the repo**, so adding a line to it changes nothing. A new category needs the
+  `__attribute__((constructor))` form; do not model it on `Branch+Validator`. (Nothing in CI or
+  the tests verifies category presence in the static XCFramework, so this is convention, not a
+  guarded invariant.)
 - **`BNCInitSessionResponse` is built fresh on every callback path** — there are three separate
   construction sites in `Branch.m`. Adding a field means updating all of them.
 - **IDFA code must be `BRANCH_EXCLUDE_IDFA_CODE`-guarded** (see Products above).
-- **tvOS excludes three files** in the podspec (Spotlight, content discovery, user-agent
-  collection). New iOS-only APIs need either a `TARGET_OS_TV` guard or a podspec exclusion.
+- **tvOS support is the `#if !TARGET_OS_TV` guard in the source; the podspec exclusion is
+  CocoaPods-only.** `Package.swift` and the XCFramework tvOS slice compile _every_ file under
+  `Sources/BranchSDK/`, with no exclusions. `BNCContentDiscoveryManager`, `BNCUserAgentCollector`
+  and `BNCSpotlightService` are listed in `s.tvos.exclude_files` **and** wrapped in
+  `#if !TARGET_OS_TV` — the guard is what makes tvOS build. A new iOS-only API needs the guard;
+  the podspec exclusion alone is not enough and will break SPM and XCFramework tvOS builds.
 - **`BNCURLFilter` self-updates from the server after a successful init**
   (`updatePatternListFromServerWithCompletion:`), so the skip list at runtime may differ from
   the compiled-in default list. Tests that assert on filtering must pin the pattern list.
@@ -286,4 +308,6 @@ SKAdNetwork window state, consent/attribution level, tracking state, and network
   one into one file.
 - Public headers under `Public/` are an API contract. Adding, renaming, or changing a signature
   there is a breaking-change review, not a refactor.
-- `ChangeLog.md` is maintained per release and synced to the README by `sync-readme-changelog.yml`.
+- `ChangeLog.md` is maintained by hand, per release. `sync-readme-changelog.yml` does **not** read
+  it: on a published GitHub release it pushes the release body to the hosted ReadMe.io page
+  `ios-version-history` and announces in Slack. Nothing writes into this repo's `README.md`.
