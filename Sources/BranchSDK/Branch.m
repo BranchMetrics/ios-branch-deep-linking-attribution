@@ -266,7 +266,7 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     // Logging: the caller's logLevel/callback own the logger state, overriding any branch.json toggle.
     if (configuration.loggingCallback) {
         [Branch enableLoggingAtLevel:configuration.logLevel withCallback:configuration.loggingCallback];
-    } else {
+    } else if (configuration.logLevel) {
         BranchLogger *logger = [BranchLogger shared];
         logger.loggingEnabled = YES;
         logger.logLevelThreshold = configuration.logLevel;
@@ -302,7 +302,7 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     [BNCPreferenceHelper sharedInstance].limitFacebookTracking = configuration.limitFacebookAttribution;
 
     if (configuration.attributionLevel) {
-        [branch setConsumerProtectionAttributionLevel:configuration.attributionLevel];
+        [branch setConsumerProtectionAttributionLevel:configuration.attributionLevel resetSession:NO];
     }
 
     if (configuration.dmaParameters) {
