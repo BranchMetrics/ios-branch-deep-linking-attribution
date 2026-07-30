@@ -10,6 +10,7 @@
 #import "BranchInstallRequest.h"
 #import "BranchEvent.h"
 #import "BranchLogger.h"
+#import "BranchAttributionLevel.h"
 #import "NSError+Branch.h"
 #import "BNCCallbackMap.h"
 #import "BranchRequestOpen.h"

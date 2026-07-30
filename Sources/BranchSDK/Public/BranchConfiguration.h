@@ -15,7 +15,7 @@
 #import "BNCCallbacks.h"
 #import "BNCNetworkServiceProtocol.h"
 #import "BranchDMAParameters.h"
-#import "Branch.h"
+#import "BranchAttributionLevel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

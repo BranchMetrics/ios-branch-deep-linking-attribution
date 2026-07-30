@@ -919,51 +919,9 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
  */
 + (void)setAnonID:(NSString *)anonID;
 
-/**
- * Enumeration representing different levels of consumer protection attribution levels
- */
-typedef NSString * BranchAttributionLevel NS_STRING_ENUM;
-
-/**
- * Full:
- * - Advertising Ids
- * - Device Ids
- * - Local IP
- * - Persisted Non-Aggregate Ids
- * - Persisted Aggregate Ids
- * - Ads Postbacks / Webhooks
- * - Data Integrations Webhooks
- * - SAN Callouts
- * - Privacy Frameworks
- * - Deep Linking
- */
-extern BranchAttributionLevel const BranchAttributionLevelFull;
-
-/**
- * Reduced:
- * - Device Ids
- * - Local IP
- * - Data Integrations Webhooks
- * - Privacy Frameworks
- * - Deep Linking
- */
-extern BranchAttributionLevel const BranchAttributionLevelReduced;
-
-/**
- * Minimal:
- * - Device Ids
- * - Local IP
- * - Data Integrations Webhooks
- * - Deep Linking
- */
-extern BranchAttributionLevel const BranchAttributionLevelMinimal;
-
-/**
- * None:
- * - Only Deterministic Deep Linking
- * - Disables all other Branch requests
- */
-extern BranchAttributionLevel const BranchAttributionLevelNone;
+// BranchAttributionLevel and its constants (Full/Reduced/Minimal/None) now live in
+// their own header to avoid forcing files to import the whole Branch.h just for the enum.
+#import "BranchAttributionLevel.h"
 
 
 /**

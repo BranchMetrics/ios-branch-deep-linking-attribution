@@ -11,7 +11,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
 #import "BranchLogger.h"
-#import "Branch.h"
+#import "BranchAttributionLevel.h"
 
 @interface BNCSKAdNetwork()
 

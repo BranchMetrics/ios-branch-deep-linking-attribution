@@ -14,6 +14,7 @@ FOUNDATION_EXPORT double BranchSDKVersionNumber;
 FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <BranchSDK/PublicHeader.h>
+#import "BranchAttributionLevel.h"
 #import "Branch.h"
 #import "BranchConfiguration.h"
 #import "BranchDMAParameters.h"

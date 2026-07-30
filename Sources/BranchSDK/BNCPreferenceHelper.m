@@ -9,7 +9,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCEncodingUtils.h"
 #import "BNCConfig.h"
-#import "Branch.h"
+#import "BranchAttributionLevel.h"
 #import "BranchLogger.h"
 #import "BranchConstants.h"
 #import "NSString+Branch.h"
