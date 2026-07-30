@@ -32,10 +32,20 @@
 #import "BNCAppGroupsData.h"
 #import "BNCSKAdNetwork.h"
 
-#import "BranchConfigurationController.h"
 #import "BNCReferringURLUtility.h"
 #import "BNCPasteboard.h"
 #import "BNCODMInfoCollector.h"
+
+// BranchConfigurationController now lives in the Swift target (BranchSwiftSDK). Import the
+// generated Swift interface. Under SwiftPM the Swift target is a separate module; in the
+// Xcode framework / CocoaPods (use_frameworks!) builds it comes in via the -Swift.h umbrella.
+#if SWIFT_PACKAGE
+@import BranchSwiftSDK;
+#elif __has_include(<BranchSDK/BranchSDK-Swift.h>)
+#import <BranchSDK/BranchSDK-Swift.h>
+#else
+#import "BranchSDK-Swift.h"
+#endif
 
 @interface BNCRequestFactory()
 

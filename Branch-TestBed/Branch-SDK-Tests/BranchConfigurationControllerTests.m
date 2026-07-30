@@ -7,7 +7,14 @@
 
 
 #import <XCTest/XCTest.h>
-#import "BranchConfigurationController.h"
+// BranchConfigurationController is now implemented in Swift (BranchSwiftSDK).
+#if SWIFT_PACKAGE
+@import BranchSwiftSDK;
+#elif __has_include(<BranchSDK/BranchSDK-Swift.h>)
+#import <BranchSDK/BranchSDK-Swift.h>
+#else
+#import "BranchSDK-Swift.h"
+#endif
 #import "BranchConstants.h"
 #import "BNCRequestFactory.h"
 #import "BNCEncodingUtils.h"

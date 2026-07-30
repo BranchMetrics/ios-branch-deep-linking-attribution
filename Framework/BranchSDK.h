@@ -15,7 +15,8 @@ FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <BranchSDK/PublicHeader.h>
 #import <BranchSDK/Branch.h>
-#import <BranchSDK/BranchConfiguration.h>
+// BranchConfiguration is now a Swift class (BranchSwiftSDK); it reaches Objective-C consumers via
+// the generated BranchSDK-Swift.h umbrella rather than a hand-written header.
 #import <BranchSDK/BranchDMAParameters.h>
 #import <BranchSDK/BranchPluginSupport.h>
 

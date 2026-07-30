@@ -7,7 +7,6 @@
 //
 
 #import "Branch.h"
-#import "BranchConfiguration.h"
 #import "BNCConfig.h"
 #import "BNCCrashlyticsWrapper.h"
 #import "BNCDeepLinkViewControllerInstance.h"
@@ -45,9 +44,17 @@
 #import "BNCServerAPI.h"
 #import "BranchPluginSupport.h"
 #import "BranchLogger.h"
-#import "Private/BranchConfigurationController.h"
 #import "BranchRequestOpen.h"
 #import "BranchRequestDeepLink.h"
+
+// BranchConfigurationController now lives in the Swift target (BranchSwiftSDK).
+#if SWIFT_PACKAGE
+@import BranchSwiftSDK;
+#elif __has_include(<BranchSDK/BranchSDK-Swift.h>)
+#import <BranchSDK/BranchSDK-Swift.h>
+#else
+#import "BranchSDK-Swift.h"
+#endif
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"

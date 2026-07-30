@@ -40,6 +40,10 @@
 #import "BNCServerRequestQueue.h"
 
 #import "BranchLogger.h"
+
+// BranchAttributionLevel and its constants (Full/Reduced/Minimal/None) live in their own
+// header so that files needing only the enum don't have to import all of Branch.h.
+#import "BranchAttributionLevel.h"
 // Not used by Branch singleton public API
 //#import "BranchEvent.h"
 //#import "BranchScene.h"
@@ -918,10 +922,6 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
  @param anonID The custom Meta Anon ID to be used by Branch.
  */
 + (void)setAnonID:(NSString *)anonID;
-
-// BranchAttributionLevel and its constants (Full/Reduced/Minimal/None) now live in
-// their own header to avoid forcing files to import the whole Branch.h just for the enum.
-#import "BranchAttributionLevel.h"
 
 
 /**
