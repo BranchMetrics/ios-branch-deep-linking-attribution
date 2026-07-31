@@ -9,16 +9,16 @@ let package = Package(
         .tvOS(.v12),
     ],
     products: [
-        // Main product that clients will import
+        // Clients import a single module, "BranchSDK".
         .library(
             name: "BranchSDK",
-            targets: ["BranchSDK", "BranchSwiftSDK", "BranchObjCSDK"]
+            targets: ["BranchSDK"]
         ),
     ],
-    // SwiftPM does not support mixed-language targets, so the SDK is split into three
-    // targets that layer bottom-up: BranchObjCSDK (leaf Obj-C) <- BranchSwiftSDK (Swift)
-    // <- BranchSDK (the main Obj-C SDK). CocoaPods and the Xcode project still compile
-    // everything as one mixed-language module.
+    // SwiftPM does not support mixed-language targets, so the SDK is physically split into layered
+    // targets: BranchObjCSDK (leaf Obj-C) <- BranchSwiftSDK (Swift) <- BranchCore (the main Obj-C SDK).
+    // "BranchSDK" is a thin Swift umbrella that @_exported-imports all three, so consumers only need
+    // `import BranchSDK`. CocoaPods and the Xcode project still compile everything as one module.
     targets: [
         .target(
             name: "BranchObjCSDK",
@@ -31,7 +31,7 @@ let package = Package(
             path: "Sources/BranchSDK_Swift"
         ),
         .target(
-            name: "BranchSDK",
+            name: "BranchCore",
             dependencies: ["BranchSwiftSDK"],
             path: "Sources/BranchSDK",
             publicHeadersPath: "Public",
@@ -45,6 +45,11 @@ let package = Package(
                 .linkedFramework("CoreSpotlight", .when(platforms: [.iOS])),
                 .linkedFramework("AdServices", .when(platforms: [.iOS])),
             ]
+        ),
+        .target(
+            name: "BranchSDK",
+            dependencies: ["BranchCore", "BranchSwiftSDK", "BranchObjCSDK"],
+            path: "Sources/BranchUmbrella"
         ),
     ]
 )

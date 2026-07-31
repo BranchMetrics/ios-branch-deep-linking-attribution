@@ -7,20 +7,11 @@
 
 import XCTest
 @testable import iOSReleaseTest
-// Plain (non-@testable) import: the tests use only public SDK API, and @testable requires the module
-// to be built with testability enabled — which the prebuilt Release xcframework (Carthage / manual)
-// is not, so @testable import BranchSDK fails to resolve there once the framework contains Swift.
+// A single `import BranchSDK` is enough for every integration method: the single-module builds
+// (CocoaPods / Carthage / xcframework) put everything in BranchSDK, and under SwiftPM the BranchSDK
+// umbrella target re-exports the split sibling modules. Plain (non-@testable) import because the
+// tests use only public API and @testable can't resolve against a prebuilt Release module.
 import BranchSDK
-// Under SwiftPM the SDK is split into sibling modules, so Swift consumers must import the ones that
-// hold BranchConfiguration (BranchSwiftSDK) and BranchAttributionLevel (BranchObjCSDK) explicitly.
-// CocoaPods / Carthage / manual xcframework ship a single BranchSDK module where these do not exist,
-// so guard the imports with canImport to stay portable across every integration method.
-#if canImport(BranchSwiftSDK)
-import BranchSwiftSDK
-#endif
-#if canImport(BranchObjCSDK)
-import BranchObjCSDK
-#endif
 
 final class iOSReleaseTestTests: XCTestCase {
     

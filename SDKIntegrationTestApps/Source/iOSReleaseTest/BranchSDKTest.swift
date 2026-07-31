@@ -6,12 +6,9 @@
 //
 
 import Foundation
+// A single `import BranchSDK` suffices everywhere: the SwiftPM umbrella re-exports the split modules,
+// and the other integration methods ship one BranchSDK module.
 import BranchSDK
-// Under SwiftPM, BranchAttributionLevel lives in the sibling BranchObjCSDK module; other integration
-// methods ship a single BranchSDK module, so import it only when it exists.
-#if canImport(BranchObjCSDK)
-import BranchObjCSDK
-#endif
 
 class BranchSDKTest {
     
