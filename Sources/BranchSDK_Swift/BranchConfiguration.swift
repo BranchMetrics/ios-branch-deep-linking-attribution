@@ -140,6 +140,12 @@ public class BranchConfiguration: NSObject {
     /// Optional constant parameters merged into every deep-link response, for debugging.
     @objc public var deepLinkDebugParams: [AnyHashable: Any]?
 
+    /// The process-wide preference store. `BranchConfiguration` can seed itself from persisted values
+    /// (`load(from:)`) and push its values into it (`apply(to:)`). Both are explicit — nothing is read
+    /// or written implicitly at init/validate time, so a freshly created configuration keeps its
+    /// documented defaults.
+    private var preferenceHelper: BNCPreferenceHelper { BNCPreferenceHelper.sharedInstance() }
+
     // MARK: - Initialization
 
     /// Designated initializer.
@@ -218,5 +224,64 @@ public class BranchConfiguration: NSObject {
         NSException(name: .invalidArgumentException, reason: reason, userInfo: nil).raise()
         // NSException.raise() does not return; this is unreachable but satisfies the `Never` contract.
         fatalError(reason)
+    }
+
+    // MARK: - Preference-helper sync
+
+    /// Writes the pre-init values that live in the shared preference store into it. Only the settings
+    /// that `BNCPreferenceHelper` actually persists are pushed; URL/network endpoint and callback
+    /// settings are applied elsewhere by `+[Branch initialize:]`. Call this explicitly — it is not
+    /// invoked implicitly, so constructing a configuration never mutates process-wide state.
+    @objc public func apply(to preferences: BNCPreferenceHelper) {
+        preferences.timeout = networkTimeout
+        preferences.retryCount = retryCount
+        preferences.retryInterval = retryInterval
+        preferences.thirdPartyAPIsWaitTime = thirdPartyAPIsWaitTime
+        preferences.limitFacebookTracking = limitFacebookAttribution
+        preferences.disableAdNetworkCallouts = adNetworkCalloutsDisabled
+
+        if let attributionLevel = attributionLevel {
+            // preferences.attributionLevel is declared as NSString; bridge explicitly.
+            preferences.attributionLevel = attributionLevel as NSString
+        }
+        if let dmaParameters = dmaParameters {
+            preferences.eeaRegion = dmaParameters.eeaRegion
+            preferences.adPersonalizationConsent = dmaParameters.adPersonalizationConsent
+            preferences.adUserDataUsageConsent = dmaParameters.adUserDataUsageConsent
+        }
+    }
+
+    /// Convenience overload that targets the shared preference store.
+    @objc public func applyToSharedPreferences() {
+        apply(to: preferenceHelper)
+    }
+
+    /// Seeds this configuration from values already persisted in the preference store, so a caller can
+    /// start from the SDK's current state and override selectively. Only fields the store round-trips
+    /// are read; the rest keep their defaults.
+    @objc public func load(from preferences: BNCPreferenceHelper) {
+        networkTimeout = preferences.timeout
+        retryCount = preferences.retryCount
+        retryInterval = preferences.retryInterval
+        thirdPartyAPIsWaitTime = preferences.thirdPartyAPIsWaitTime
+        limitFacebookAttribution = preferences.limitFacebookTracking
+        adNetworkCalloutsDisabled = preferences.disableAdNetworkCallouts
+
+        // preferences.attributionLevel is an NSString; BranchAttributionLevel is an NS_STRING_ENUM
+        // (a distinct Swift type), so bridge NSString -> String -> BranchAttributionLevel.
+        let persistedLevel = preferences.attributionLevel as String?
+        if let level = persistedLevel, !level.isEmpty {
+            attributionLevel = BranchAttributionLevel(rawValue: level)
+        }
+        if preferences.eeaRegionInitialized() {
+            dmaParameters = BranchDMAParameters.eeaRegion(preferences.eeaRegion,
+                                                          adPersonalizationConsent: preferences.adPersonalizationConsent,
+                                                          adUserDataUsageConsent: preferences.adUserDataUsageConsent)
+        }
+    }
+
+    /// Convenience overload that reads from the shared preference store.
+    @objc public func loadFromSharedPreferences() {
+        load(from: preferenceHelper)
     }
 }

@@ -11,6 +11,12 @@
 #import "NavigationController.h"
 #import "ViewController.h"
 @import BranchSDK;
+// Branch-TestBed consumes the SDK as a local SwiftPM package, where the SDK is split into sibling
+// modules: BranchConfiguration lives in BranchSwiftSDK, and BranchAttributionLevel /
+// BranchDMAParameters / BranchLogLevel / BNCNetworkServiceProtocol in BranchObjCSDK. @import BranchSDK
+// alone only exposes the core module, so the siblings must be imported explicitly.
+@import BranchSwiftSDK;
+@import BranchObjCSDK;
 
 AppDelegate* appDelegate = nil;
 void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSString*_Nullable message);
