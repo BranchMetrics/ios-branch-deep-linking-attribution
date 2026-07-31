@@ -10,7 +10,7 @@ import Foundation
 import StoreKit
 
 #if SWIFT_PACKAGE
-import BranchCore
+import BranchSDK
 import BranchObjCSDK
 #endif
 

@@ -12,6 +12,9 @@ import XCTest
 import StoreKit
 import StoreKitTest
 import BranchSDK
+// The StoreKit 2 API is Swift-only, so it lives in its own module and needs its own import —
+// extensions are only visible when their defining module is imported.
+import BranchSwiftAPI
 
 @available(iOS 15.0, *)
 final class BranchEventStoreKit2Tests: XCTestCase {
@@ -158,22 +161,24 @@ final class BranchEventStoreKit2Tests: XCTestCase {
         XCTAssertEqual(event.contentItems.first?.canonicalIdentifier, product.id)
     }
 
-    func testPopulateAsyncThrowsWhenProductIsMissing() async throws {
+    /// The whole point of the awaitable variant: a product-lookup failure has to reach the caller
+    /// instead of being swallowed the way the fire-and-forget `logEvent(with:)` swallows it.
+    func testPopulateAsyncPropagatesLoadProductsFailure() async throws {
+        guard #available(iOS 17.0, *) else {
+            throw XCTSkip("setSimulatedError(_:forAPI:) requires iOS 17")
+        }
         let (transaction, _) = try await purchase(Self.consumableID)
 
-        // Remove the product from the storefront so the lookup comes back empty.
-        session.clearTransactions()
-        try session.deleteProduct(identifier: Self.consumableID)
+        try await session.setSimulatedError(.generic(.networkError(URLError(.notConnectedToInternet))),
+                                            forAPI: .loadProducts)
 
         let event = BranchEvent(name: BranchStandardEvent.purchase.rawValue)
         do {
             try await event.populate(with: transaction)
-            XCTFail("Expected populate(with:) to throw when the product cannot be resolved")
-        } catch let error as BranchEvent.StoreKit2Error {
-            guard case .productNotFound(let productID) = error else {
-                return XCTFail("Unexpected StoreKit2Error: \(error)")
-            }
-            XCTAssertEqual(productID, Self.consumableID)
+            XCTFail("Expected populate(with:) to throw when the product lookup fails")
+        } catch {
+            // Any error is acceptable here; what matters is that it is not silently dropped.
+            XCTAssertNil(event.contentItems.first, "Event must not be half-populated on failure")
         }
     }
 }

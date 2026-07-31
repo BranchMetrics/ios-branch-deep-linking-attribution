@@ -9,17 +9,24 @@ let package = Package(
         .tvOS(.v12),
     ],
     products: [
-        // Clients import a single module, "BranchSDK".
+        // Obj-C clients get everything from `@import BranchSDK;`. Swift clients get the same from
+        // `import BranchSDK`, plus `import BranchSwiftAPI` for the Swift-only APIs.
         .library(
             name: "BranchSDK",
-            targets: ["BranchSDK"]
+            targets: ["BranchSDK", "BranchSwiftAPI"]
         ),
     ],
-    // SwiftPM does not support mixed-language targets, so the SDK is physically split into layered
-    // targets: BranchObjCSDK (leaf Obj-C) <- BranchSwiftSDK (Swift) <- BranchCore (the main Obj-C SDK)
-    // <- BranchSwiftAPI (Swift written on top of Core, e.g. the StoreKit 2 API).
-    // "BranchSDK" is a thin Swift umbrella that @_exported-imports all four, so consumers only need
-    // `import BranchSDK`. CocoaPods and the Xcode project still compile everything as one module.
+    // SwiftPM cannot vend a single mixed-language module, so the SDK is physically split into layered
+    // targets: BranchObjCSDK (leaf Obj-C) <- BranchSwiftSDK (Swift) <- BranchSDK (the main Obj-C SDK)
+    // <- BranchSwiftAPI (Swift written on top of the main SDK, e.g. the StoreKit 2 API).
+    //
+    // The main Obj-C target keeps the "BranchSDK" module name so that `@import BranchSDK;` keeps
+    // working for Obj-C consumers — a Swift umbrella cannot stand in for it, because `@_exported
+    // import` only re-exports for Swift name lookup and leaves Clang's `@import` seeing an empty
+    // module. Swift-only API therefore lives in BranchSwiftAPI and needs its own import; extensions
+    // are only visible when their defining module is imported.
+    //
+    // CocoaPods and the Xcode project still compile everything as one module.
     targets: [
         .target(
             name: "BranchObjCSDK",
@@ -32,7 +39,7 @@ let package = Package(
             path: "Sources/BranchSDK_Swift"
         ),
         .target(
-            name: "BranchCore",
+            name: "BranchSDK",
             dependencies: ["BranchSwiftSDK"],
             path: "Sources/BranchSDK",
             publicHeadersPath: "Public",
@@ -49,16 +56,11 @@ let package = Package(
         ),
         .target(
             name: "BranchSwiftAPI",
-            dependencies: ["BranchCore"], // Swift API layered on top of the main Obj-C SDK
+            dependencies: ["BranchSDK"], // Swift API layered on top of the main Obj-C SDK
             path: "Sources/BranchSDK_SwiftAPI",
             linkerSettings: [
                 .linkedFramework("StoreKit"),
             ]
-        ),
-        .target(
-            name: "BranchSDK",
-            dependencies: ["BranchSwiftAPI", "BranchCore", "BranchSwiftSDK", "BranchObjCSDK"],
-            path: "Sources/BranchUmbrella"
         ),
     ]
 )

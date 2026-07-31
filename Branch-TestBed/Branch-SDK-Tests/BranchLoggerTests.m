@@ -9,6 +9,9 @@
 #import <XCTest/XCTest.h>
 #import "BranchLogger.h"
 @import BranchSDK;
+// BranchConfiguration is implemented in Swift (BranchSwiftSDK). @import BranchSDK alone
+// only exposes the core module, so the sibling must be imported explicitly.
+@import BranchSwiftSDK;
 
 @interface Branch (BranchLoggerTest)
 // Test-only reset for the +initialize: reinitialization guard (file-private in Branch.m).
