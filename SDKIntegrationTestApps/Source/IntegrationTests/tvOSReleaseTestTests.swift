@@ -8,10 +8,16 @@
 import XCTest
 @testable import tvOSReleaseTest
 @testable import BranchSDK
-// BranchConfiguration and BranchAttributionLevel live in sibling SPM modules of the BranchSDK
-// product; Swift consumers must import them explicitly (Obj-C consumers get them via -Swift.h).
+// Under SwiftPM the SDK is split into sibling modules, so Swift consumers must import the ones that
+// hold BranchConfiguration (BranchSwiftSDK) and BranchAttributionLevel (BranchObjCSDK) explicitly.
+// CocoaPods / Carthage / manual xcframework ship a single BranchSDK module where these do not exist,
+// so guard the imports with canImport to stay portable across every integration method.
+#if canImport(BranchSwiftSDK)
 import BranchSwiftSDK
+#endif
+#if canImport(BranchObjCSDK)
 import BranchObjCSDK
+#endif
 
 final class tvOSReleaseTestTests: XCTestCase {
     

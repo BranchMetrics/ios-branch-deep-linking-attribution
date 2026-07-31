@@ -7,8 +7,11 @@
 
 import Foundation
 import BranchSDK
-// BranchAttributionLevel lives in the BranchObjCSDK sibling module of the BranchSDK product.
+// Under SwiftPM, BranchAttributionLevel lives in the sibling BranchObjCSDK module; other integration
+// methods ship a single BranchSDK module, so import it only when it exists.
+#if canImport(BranchObjCSDK)
 import BranchObjCSDK
+#endif
 
 class BranchSDKTest {
     
