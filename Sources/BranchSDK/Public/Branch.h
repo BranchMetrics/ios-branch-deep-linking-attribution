@@ -155,7 +155,11 @@ extern NSString * __nonnull const BNCShareCompletedEvent;
 // Spotlight Constant
 extern NSString * __nonnull const BNCSpotlightFeature;
 
-@class BranchConfiguration;
+// BranchConfiguration is a Swift class in the BranchSwiftSDK module. A public Objective-C header
+// cannot import the generated -Swift.h, and forward-declaring `@class BranchConfiguration;` here
+// would create a second, empty type in the BranchSDK module that shadows the real Swift class for
+// Swift consumers importing both modules. `+initialize:` therefore takes `id`; Branch.m casts to the
+// concrete type, which it can see via the generated Swift interface.
 
 #pragma mark - BranchLink
 
@@ -366,10 +370,11 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  The configuration is validated first: an `NSInvalidArgumentException` is raised if it is invalid
  (empty key, non-positive or > 60s timeout, negative retry count/interval).
 
- @param configuration The pre-init configuration. Must not be nil.
+ @param configuration The pre-init `BranchConfiguration`. Must not be nil. Typed as `id` because the
+        concrete type is a Swift class the public header cannot name; see the note near `BranchLink`.
  @return The global Branch instance, configured per `configuration`.
  */
-+ (Branch *)initialize:(BranchConfiguration *)configuration;
++ (Branch *)initialize:(id)configuration;
 
 /**
  Just initialize the Branch session with the app launch options.

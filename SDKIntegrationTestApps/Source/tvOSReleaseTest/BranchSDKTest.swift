@@ -7,6 +7,8 @@
 
 import Foundation
 import BranchSDK
+// BranchAttributionLevel lives in the BranchObjCSDK sibling module of the BranchSDK product.
+import BranchObjCSDK
 
 class BranchSDKTest {
     

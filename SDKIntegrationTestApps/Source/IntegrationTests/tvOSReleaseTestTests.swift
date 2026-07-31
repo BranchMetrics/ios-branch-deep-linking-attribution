@@ -8,6 +8,10 @@
 import XCTest
 @testable import tvOSReleaseTest
 @testable import BranchSDK
+// BranchConfiguration and BranchAttributionLevel live in sibling SPM modules of the BranchSDK
+// product; Swift consumers must import them explicitly (Obj-C consumers get them via -Swift.h).
+import BranchSwiftSDK
+import BranchObjCSDK
 
 final class tvOSReleaseTestTests: XCTestCase {
     

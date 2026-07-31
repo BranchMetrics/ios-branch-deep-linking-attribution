@@ -217,7 +217,10 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     }
 }
 
-+ (Branch *)initialize:(BranchConfiguration *)configuration {
++ (Branch *)initialize:(id)configurationObject {
+    // The public header types this as `id` to avoid a phantom @class shadowing the Swift class for
+    // Swift consumers. Branch.m sees the concrete Swift type via the generated -Swift.h.
+    BranchConfiguration *configuration = (BranchConfiguration *)configurationObject;
     if (!configuration) {
         [NSException raise:NSInvalidArgumentException
                     format:@"A BranchConfiguration is required to initialize Branch."];
