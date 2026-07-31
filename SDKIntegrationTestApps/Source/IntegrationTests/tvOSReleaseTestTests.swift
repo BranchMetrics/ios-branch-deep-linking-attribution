@@ -7,7 +7,10 @@
 
 import XCTest
 @testable import tvOSReleaseTest
-@testable import BranchSDK
+// Plain (non-@testable) import: the tests use only public SDK API, and @testable requires the module
+// to be built with testability enabled — which the prebuilt Release xcframework (Carthage / manual)
+// is not, so @testable import BranchSDK fails to resolve there once the framework contains Swift.
+import BranchSDK
 // Under SwiftPM the SDK is split into sibling modules, so Swift consumers must import the ones that
 // hold BranchConfiguration (BranchSwiftSDK) and BranchAttributionLevel (BranchObjCSDK) explicitly.
 // CocoaPods / Carthage / manual xcframework ship a single BranchSDK module where these do not exist,
