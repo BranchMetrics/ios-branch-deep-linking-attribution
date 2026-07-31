@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-@import BranchSDK;
+@import BranchCore;
 #import "BNCConfig.h"  // For BNC_SDK_VERSION
 #import "ViewController.h"
 #import "LogOutputViewController.h"

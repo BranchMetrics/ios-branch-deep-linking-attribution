@@ -8,7 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "BNCPasteboard.h"
-@import BranchSDK;
+@import BranchCore;
 // BranchConfiguration is implemented in Swift (BranchSwiftSDK). @import BranchSDK alone
 // only exposes the core module, so the sibling must be imported explicitly.
 @import BranchSwiftSDK;

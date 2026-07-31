@@ -11,10 +11,9 @@
 import XCTest
 import StoreKit
 import StoreKitTest
+// The umbrella re-exports BranchSwiftAPI, so the StoreKit 2 API arrives with this single import —
+// the same thing a real Swift integrator writes.
 import BranchSDK
-// The StoreKit 2 API is Swift-only, so it lives in its own module and needs its own import —
-// extensions are only visible when their defining module is imported.
-import BranchSwiftAPI
 
 @available(iOS 15.0, *)
 final class BranchEventStoreKit2Tests: XCTestCase {

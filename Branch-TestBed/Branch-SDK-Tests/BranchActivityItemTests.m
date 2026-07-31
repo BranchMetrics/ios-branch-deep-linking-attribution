@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-@import BranchSDK;
+@import BranchCore;
 
 @interface BranchActivityItemTests: XCTestCase
 @end

@@ -9,7 +9,7 @@
 #import <XCTest/XCTest.h>
 #import "BranchShareLink.h"
 #import "BranchLinkProperties.h"
-@import BranchSDK;
+@import BranchCore;
 
 @interface BranchShareLinkTests : XCTestCase
 

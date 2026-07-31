@@ -10,7 +10,7 @@
 #import "LogOutputViewController.h"
 #import "NavigationController.h"
 #import "ViewController.h"
-@import BranchSDK;
+@import BranchCore;
 // Branch-TestBed consumes the SDK as a local SwiftPM package, where the SDK is split into sibling
 // modules: BranchConfiguration lives in BranchSwiftSDK, and BranchAttributionLevel /
 // BranchDMAParameters / BranchLogLevel / BNCNetworkServiceProtocol in BranchObjCSDK. @import BranchSDK

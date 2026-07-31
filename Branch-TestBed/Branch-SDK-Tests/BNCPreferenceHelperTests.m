@@ -9,7 +9,7 @@
 #import <XCTest/XCTest.h>
 #import "BNCPreferenceHelper.h"
 #import "BNCEncodingUtils.h"
-@import BranchSDK;
+@import BranchCore;
 #import "BNCConfig.h"
 
 @interface BNCPreferenceHelper()

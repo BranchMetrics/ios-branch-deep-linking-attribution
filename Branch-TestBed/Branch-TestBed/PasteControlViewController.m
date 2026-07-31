@@ -7,7 +7,7 @@
 //
 
 #import "PasteControlViewController.h"
-@import BranchSDK;
+@import BranchCore;
 #import "LogOutputViewController.h"
 #import "AppDelegate.h"
 
