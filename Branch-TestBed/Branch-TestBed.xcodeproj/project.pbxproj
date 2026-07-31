@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E7C0FFF32EB48AB90051AE51 /* BranchEvent.StoreKit2.Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C0FFF22EB48AB90051AE51 /* BranchEvent.StoreKit2.Test.swift */; };
+		E7C0FFF42EB48AB90051AE51 /* TestStoreKitConfig.storekit in Resources */ = {isa = PBXBuildFile; fileRef = C10A6DE029A97E440061A851 /* TestStoreKitConfig.storekit */; };
 		4683F0761B20A73F00A432E7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016731940F51400A9E103 /* AppDelegate.m */; };
 		46DC406E1B2A328900D2D203 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67BBCF271A69E49A009C7DAE /* AdSupport.framework */; };
 		4AB16368239E3A2700D42931 /* DispatchToIsolationQueueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB16367239E3A2700D42931 /* DispatchToIsolationQueueTests.m */; };
@@ -122,6 +124,7 @@
 		4D16838E2098C901008819E3 /* BNCEncodingUtilsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtilsTests.m; sourceTree = "<group>"; };
 		4D16838F2098C901008819E3 /* BNCSystemObserverTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSystemObserverTests.m; sourceTree = "<group>"; };
 		4D1683952098C901008819E3 /* BranchEvent.Test.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BranchEvent.Test.swift; sourceTree = "<group>"; };
+		E7C0FFF22EB48AB90051AE51 /* BranchEvent.StoreKit2.Test.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BranchEvent.StoreKit2.Test.swift; sourceTree = "<group>"; };
 		4D1683962098C901008819E3 /* BranchUniversalObjectTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchUniversalObjectTests.m; sourceTree = "<group>"; };
 		4D1683972098C901008819E3 /* BNCApplicationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCApplicationTests.m; sourceTree = "<group>"; };
 		4D16839C2098C901008819E3 /* BranchEvent.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchEvent.Test.m; sourceTree = "<group>"; };
@@ -305,6 +308,7 @@
 				AA12345600010000000000A1 /* BranchDisableNextForegroundTests.m */,
 				4D16839C2098C901008819E3 /* BranchEvent.Test.m */,
 				4D1683952098C901008819E3 /* BranchEvent.Test.swift */,
+				E7C0FFF22EB48AB90051AE51 /* BranchEvent.StoreKit2.Test.swift */,
 				5F909B712332BEF600A774D2 /* BranchLastAttributedTouchDataTests.m */,
 				5F5FDA132B7DE27D00F14A43 /* BranchLoggerTests.m */,
 				C10F393927A0872800BF5D36 /* BranchPluginSupportTests.m */,
@@ -604,6 +608,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7C0FFF42EB48AB90051AE51 /* TestStoreKitConfig.storekit in Resources */,
 				5FC4CF9124860C440001E701 /* latd_empty_data.json in Resources */,
 				5FC4CF8C24860C440001E701 /* latd.json in Resources */,
 				5FC4CF9024860C440001E701 /* example.json in Resources */,
@@ -670,6 +675,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7C0FFF32EB48AB90051AE51 /* BranchEvent.StoreKit2.Test.swift in Sources */,
 				4D1683B82098C902008819E3 /* BNCEncodingUtilsTests.m in Sources */,
 				5F909B5E23314CE900A774D2 /* BNCJSONUtilityTests.m in Sources */,
 				5F909B722332BEF600A774D2 /* BranchLastAttributedTouchDataTests.m in Sources */,

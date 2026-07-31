@@ -496,6 +496,9 @@
 		B70D0E252E8DC1F8002BD4FE /* BranchConfigurationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70D0E242E8DC1F8002BD4FE /* BranchConfigurationController.swift */; };
 		B70D0E262E8DC1F8002BD4FE /* BranchConfigurationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70D0E242E8DC1F8002BD4FE /* BranchConfigurationController.swift */; };
 		B70D0E272E8DC1F8002BD4FE /* BranchConfigurationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70D0E242E8DC1F8002BD4FE /* BranchConfigurationController.swift */; };
+		E7C0FFEF2EB48AB90051AE51 /* BranchEvent+StoreKit2.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C0FFEE2EB48AB90051AE51 /* BranchEvent+StoreKit2.swift */; };
+		E7C0FFF02EB48AB90051AE51 /* BranchEvent+StoreKit2.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C0FFEE2EB48AB90051AE51 /* BranchEvent+StoreKit2.swift */; };
+		E7C0FFF12EB48AB90051AE51 /* BranchEvent+StoreKit2.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C0FFEE2EB48AB90051AE51 /* BranchEvent+StoreKit2.swift */; };
 		B70D0E2C2E8DCEC6002BD4FE /* BNCServerRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = E74E438D2E2F56AC000DC427 /* BNCServerRequestOperation.m */; };
 		B70D0E2D2E8DCEC6002BD4FE /* BNCServerRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = E74E438D2E2F56AC000DC427 /* BNCServerRequestOperation.m */; };
 		B70D0E2E2E8DCEC6002BD4FE /* BNCServerRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = E74E438D2E2F56AC000DC427 /* BNCServerRequestOperation.m */; };
@@ -732,6 +735,7 @@
 		5FF2AFDF28E7C22100393216 /* BranchSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchSDK.h; sourceTree = "<group>"; };
 		B70D0E152E8DB20A002BD4FE /* jira_task.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = jira_task.xml; sourceTree = "<group>"; };
 		B70D0E242E8DC1F8002BD4FE /* BranchConfigurationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BranchConfigurationController.swift; path = ../BranchSDK_Swift/BranchConfigurationController.swift; sourceTree = "<group>"; };
+		E7C0FFEE2EB48AB90051AE51 /* BranchEvent+StoreKit2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "BranchEvent+StoreKit2.swift"; path = "../BranchSDK_SwiftAPI/BranchEvent+StoreKit2.swift"; sourceTree = "<group>"; };
 		E52E5B052CC79E4E00F553EE /* BranchFileLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BranchFileLogger.h; path = Sources/BranchSDK_ObjC/Public/BranchFileLogger.h; sourceTree = SOURCE_ROOT; };
 		E52E5B092CC79E5C00F553EE /* BranchFileLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BranchFileLogger.m; path = Sources/BranchSDK_ObjC/BranchFileLogger.m; sourceTree = SOURCE_ROOT; };
 		E71E396D2DD3A92900110F59 /* BNCInAppBrowser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCInAppBrowser.h; sourceTree = "<group>"; };
@@ -873,6 +877,7 @@
 				3B2268762FABEE310069F62C /* BranchRequestDeepLink.m */,
 				3B2268622FABED730069F62C /* BranchRequestOpen.m */,
 				B70D0E242E8DC1F8002BD4FE /* BranchConfigurationController.swift */,
+				E7C0FFEE2EB48AB90051AE51 /* BranchEvent+StoreKit2.swift */,
 				E74E438D2E2F56AC000DC427 /* BNCServerRequestOperation.m */,
 				E71E396E2DD3A92900110F59 /* BNCInAppBrowser.m */,
 				E52E5B092CC79E5C00F553EE /* BranchFileLogger.m */,
@@ -1652,6 +1657,7 @@
 				5FCDD4742B7AC6A100EAF29F /* BNCPartnerParameters.m in Sources */,
 				5FCDD4712B7AC6A100EAF29F /* BranchLATDRequest.m in Sources */,
 				B70D0E272E8DC1F8002BD4FE /* BranchConfigurationController.swift in Sources */,
+				E7C0FFF12EB48AB90051AE51 /* BranchEvent+StoreKit2.swift in Sources */,
 				5FCDD57C2B7AC6A400EAF29F /* BNCPasteboard.m in Sources */,
 				5FCDD47A2B7AC6A100EAF29F /* BranchActivityItemProvider.m in Sources */,
 				E7F311AE2DACB4D400F824A7 /* BNCODMInfoCollector.m in Sources */,
@@ -1724,6 +1730,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B70D0E252E8DC1F8002BD4FE /* BranchConfigurationController.swift in Sources */,
+				E7C0FFEF2EB48AB90051AE51 /* BranchEvent+StoreKit2.swift in Sources */,
 				B70D0E2E2E8DCEC6002BD4FE /* BNCServerRequestOperation.m in Sources */,
 				5FCDD5AD2B7AC6A400EAF29F /* BNCCallbackMap.m in Sources */,
 				5FCDD40F2B7AC6A100EAF29F /* BNCApplication.m in Sources */,
@@ -1822,6 +1829,7 @@
 				5F5FDA182B7DE2FE00F14A43 /* BranchLogger.m in Sources */,
 				5FCDD4612B7AC6A100EAF29F /* BNCRequestFactory.m in Sources */,
 				B70D0E262E8DC1F8002BD4FE /* BranchConfigurationController.swift in Sources */,
+				E7C0FFF02EB48AB90051AE51 /* BranchEvent+StoreKit2.swift in Sources */,
 				5FCDD41F2B7AC6A100EAF29F /* BNCDeepLinkViewControllerInstance.m in Sources */,
 				5FCDD58A2B7AC6A400EAF29F /* BNCLinkCache.m in Sources */,
 				5FCDD56F2B7AC6A400EAF29F /* BNCJSONUtility.m in Sources */,
