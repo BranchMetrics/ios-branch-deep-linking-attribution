@@ -541,7 +541,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  When called with a non-nil URL, any pending (not yet executing) nil-URL deep link requests are
  cancelled so that only one callback fires per app open.
  */
-- (void)requestDeepLinkData:(nullable NSString *)branchLink callback:(nullable callbackWithParams)callback;
+- (void)requestDeepLinkData:(nullable NSString *)branchLink callback:(nullable callbackWithParams)callback
+    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(_:));
 
 /**
  Convenience overload for `application:didFinishLaunchingWithOptions:`.
@@ -551,7 +552,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  the URL-bearing call will arrive via `continueUserActivity:` or `application:openURL:`.
  */
 - (void)requestDeepLinkDataWithLaunchOptions:(nullable NSDictionary *)options
-                                    callback:(nullable callbackWithParams)callback;
+                                    callback:(nullable callbackWithParams)callback
+    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(withLaunchOptions:));
 
 #if !TARGET_OS_TV
 /**
@@ -565,6 +567,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 - (void)requestDeepLinkDataWithSceneOptions:(nullable UISceneConnectionOptions *)connectionOptions
                                       scene:(UIScene *)scene
                                    callback:(nullable callbackWithParams)callback
+    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(withSceneOptions:scene:))
     API_AVAILABLE(ios(13.0), macCatalyst(13.1));
 #endif
 
@@ -1054,7 +1057,8 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  @warning This request is not removed from the queue upon failure -- it will be retried until it succeeds. The callback will only ever be called once, though.
  @warning You should call `logout` before calling `setUserAlias:completion:` a second time.
  */
-- (void)setUserAlias:(nullable NSString *)userAlias completion:(nullable callbackWithParams)completion;
+- (void)setUserAlias:(nullable NSString *)userAlias completion:(nullable callbackWithParams)completion
+    NS_SWIFT_ASYNC_NAME(setUserAlias(_:));
 
 /**
  Clear all of the current user's session items.
@@ -1063,7 +1067,8 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  */
 - (void)logout;
 
-- (void)logoutWithCallback:(nullable callbackWithStatus)callback;
+- (void)logoutWithCallback:(nullable callbackWithStatus)callback
+    NS_SWIFT_ASYNC_NAME(logout());
 
 #pragma mark - Query methods
 
@@ -1078,7 +1083,8 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  @param window attribution window in days.  If the window is 0, the server will use the server side default.  If the window is outside the server supported range, it will default to 30 days.
  @param completion callback with attribution data
  */
-- (void)lastAttributedTouchDataWithAttributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData * _Nullable latd, NSError * _Nullable error))completion;
+- (void)lastAttributedTouchDataWithAttributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData * _Nullable latd, NSError * _Nullable error))completion
+    NS_SWIFT_ASYNC_NAME(lastAttributedTouchData(attributionWindow:));
 
 #pragma mark - Short Url Sync methods
 
@@ -1378,7 +1384,8 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  @param params Dictionary of parameters to include in the link.
  @param callback Callback called with the url.
  */
-- (void)getShortURLWithParams:(nullable NSDictionary *)params andCallback:(nullable callbackWithUrl)callback;
+- (void)getShortURLWithParams:(nullable NSDictionary *)params andCallback:(nullable callbackWithUrl)callback
+    NS_SWIFT_ASYNC_NAME(getShortURL(with:));
 
 /**
  Get a short url with the specified params, channel, and feature. The usage type will default to unlimited.
