@@ -121,6 +121,18 @@ bool hasSetPartnerParams = false;
         [appDelegate setLogFile:nil];
     };
     
+    if ([Branch attributionLevelNone]) {
+        [self.disableTrackingButton setTitle:@"Enable Tracking" forState:UIControlStateNormal];
+        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
+            [self.disableTrackingButton setImage:[UIImage systemImageNamed:@"eye.fill"] forState:UIControlStateNormal];
+        }
+    } else {
+        [self.disableTrackingButton setTitle:@"Disable Tracking" forState:UIControlStateNormal];
+        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
+            [self.disableTrackingButton setImage:[UIImage systemImageNamed:@"eye.slash.fill"] forState:UIControlStateNormal];
+        }
+    }
+
     if (hasSetPartnerParams) {
         [self.setParnerParamsButton setTitle:@"Clear Partner Params" forState:UIControlStateNormal];
         if (@available(iOS 13.0, macCatalyst 13.1, *)) {
@@ -172,6 +184,29 @@ bool hasSetPartnerParams = false;
     [actionSheet addAction:cancelAction];
     
     [self presentViewController:actionSheet animated:YES completion:nil];
+}
+
+// Beta equivalent of master's `setTrackingDisabled:` toggle (EMT-3998). That API no longer exists
+// in 4.0; tracking is disabled here by moving the consumer protection attribution level to
+// BranchAttributionLevelNone and restored by moving it back to BranchAttributionLevelFull.
+- (IBAction)disableTracking:(id)sender {
+
+    NSString *title = [self.disableTrackingButton titleForState:UIControlStateNormal];
+
+    if ([title isEqualToString:@"Disable Tracking"]) {
+        [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelNone];
+        [self.disableTrackingButton setTitle:@"Enable Tracking" forState:UIControlStateNormal];
+        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
+            [self.disableTrackingButton setImage:[UIImage systemImageNamed:@"eye.fill"] forState:UIControlStateNormal];
+        }
+    } else {
+        [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
+        [self.disableTrackingButton setTitle:@"Disable Tracking" forState:UIControlStateNormal];
+        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
+            [self.disableTrackingButton setImage:[UIImage systemImageNamed:@"eye.slash.fill"] forState:UIControlStateNormal];
+        }
+    }
+
 }
 
 -(IBAction)showVersionAlert:(id)sender {
