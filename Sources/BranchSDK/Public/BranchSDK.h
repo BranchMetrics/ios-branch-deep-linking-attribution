@@ -15,6 +15,7 @@ FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <BranchSDK/PublicHeader.h>
 #import "Branch.h"
+#import "BranchInterface.h"
 #import "BranchConfiguration.h"
 #import "BranchDMAParameters.h"
 #import "BranchPluginSupport.h"

@@ -14,6 +14,7 @@
 #endif
 
 // Public classes that should be in the umbrella header
+#import "BranchInterface.h"
 #import "BranchLinkProperties.h"
 #import "BranchUniversalObject.h"
 #import "BranchLastAttributedTouchData.h"
@@ -186,7 +187,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 #pragma mark - Branch
 
-@interface Branch : NSObject
+@interface Branch : NSObject <BranchInterface>
 
 #pragma mark Global Instance Accessors
 
