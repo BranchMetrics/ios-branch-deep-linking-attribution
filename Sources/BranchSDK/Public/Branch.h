@@ -62,6 +62,29 @@ NS_ASSUME_NONNULL_BEGIN
 /// @name Constants
 ///----------------
 
+#pragma mark Error Handling
+
+/**
+ Key in an `NSError`'s `userInfo` dictionary whose value is an `NSNumber` wrapping a `BOOL`.
+
+ A value of `YES` means the failure is transient and retrying may succeed (network timeouts,
+ connection resets, HTTP 5xx). The SDK retries transient network failures automatically before
+ surfacing the error, so a retryable error indicates the automatic retries were already exhausted.
+
+ A value of `NO` means the failure is a configuration or authorization problem (HTTP 400, invalid
+ key, attribution level none) and retrying will not help.
+
+ ```
+ [branch getShortURLWithParams:params andCallback:^(NSString *url, NSError *error) {
+     if (error) {
+         BOOL isRetryable = [error.userInfo[BNCErrorIsRetryableKey] boolValue];
+         // ...
+     }
+ }];
+ ```
+*/
+FOUNDATION_EXPORT NSString * const BNCErrorIsRetryableKey;
+
 #pragma mark Branch Link Features
 
 /**
