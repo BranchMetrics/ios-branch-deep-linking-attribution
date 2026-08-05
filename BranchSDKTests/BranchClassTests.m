@@ -21,8 +21,8 @@
 @interface Branch(Test)
 // Expose the private preprocessing helpers shared by the legacy handlers and the
 // requestDeepLinkData* convenience methods.
-- (BOOL)preprocessDeepLinkURL:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier;
-- (BOOL)preprocessUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier;
+- (BOOL)processDeepLinkURL:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier;
+- (BOOL)processUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier;
 @end
 
 @interface BranchClassTests : XCTestCase
@@ -275,11 +275,11 @@
     prefs.dropURLOpen = NO;
 }
 
-- (void)testPreprocessDeepLinkURL_customScheme_setsExternalIntentURIAndLinkClickId {
+- (void)testProcessDeepLinkURL_customScheme_setsExternalIntentURIAndLinkClickId {
     [self clearDeepLinkPreferences];
     NSURL *url = [NSURL URLWithString:@"myapp://open?link_click_id=abc123"];
 
-    [self.branch preprocessDeepLinkURL:url sceneIdentifier:nil];
+    [self.branch processDeepLinkURL:url sceneIdentifier:nil];
 
     BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
     XCTAssertEqualObjects(prefs.externalIntentURI, url.absoluteString);
@@ -287,11 +287,11 @@
     XCTAssertEqualObjects(prefs.linkClickIdentifier, @"abc123");
 }
 
-- (void)testPreprocessDeepLinkURL_universalLink_setsUniversalLinkUrl {
+- (void)testProcessDeepLinkURL_universalLink_setsUniversalLinkUrl {
     [self clearDeepLinkPreferences];
     NSURL *url = [NSURL URLWithString:@"https://example.app.link/abc"];
 
-    [self.branch preprocessDeepLinkURL:url sceneIdentifier:nil];
+    [self.branch processDeepLinkURL:url sceneIdentifier:nil];
 
     BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
     XCTAssertEqualObjects(prefs.universalLinkUrl, url.absoluteString);
@@ -309,13 +309,13 @@
     XCTAssertEqualObjects(prefs.linkClickIdentifier, @"fromConvenience");
 }
 
-- (void)testPreprocessUserActivity_browsingWeb_setsInitialReferrerAndUniversalLink {
+- (void)testProcessUserActivity_browsingWeb_setsInitialReferrerAndUniversalLink {
     [self clearDeepLinkPreferences];
     NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
     activity.webpageURL = [NSURL URLWithString:@"https://example.app.link/xyz"];
     activity.referrerURL = [NSURL URLWithString:@"https://referrer.example.com"];
 
-    [self.branch preprocessUserActivity:activity sceneIdentifier:nil];
+    [self.branch processUserActivity:activity sceneIdentifier:nil];
 
     BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
     XCTAssertEqualObjects(prefs.initialReferrer, @"https://referrer.example.com");
