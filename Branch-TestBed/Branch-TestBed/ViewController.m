@@ -123,17 +123,7 @@ bool hasSetPartnerParams = false;
         [appDelegate setLogFile:nil];
     };
     
-    if ([Branch attributionLevelNone]) {
-        [self.disableTrackingButton setTitle:@"Enable Tracking" forState:UIControlStateNormal];
-        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
-            [self.disableTrackingButton setImage:[UIImage systemImageNamed:@"eye.fill"] forState:UIControlStateNormal];
-        }
-    } else {
-        [self.disableTrackingButton setTitle:@"Disable Tracking" forState:UIControlStateNormal];
-        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
-            [self.disableTrackingButton setImage:[UIImage systemImageNamed:@"eye.slash.fill"] forState:UIControlStateNormal];
-        }
-    }
+    [self syncDisableTrackingButton];
 
     if (hasSetPartnerParams) {
         [self.setParnerParamsButton setTitle:@"Clear Partner Params" forState:UIControlStateNormal];
@@ -211,22 +201,25 @@ bool hasSetPartnerParams = false;
 // BranchAttributionLevelNone and restored by moving it back to BranchAttributionLevelFull.
 - (IBAction)disableTracking:(id)sender {
 
-    NSString *title = [self.disableTrackingButton titleForState:UIControlStateNormal];
+    // Derive the next level from the SDK, not from the button's title: the attribution level
+    // persists across launches while the storyboard resets the title to "Disable Tracking",
+    // so a title-driven toggle can leave the SDK stuck at None — which suppresses the
+    // automatic open and fails every later request with BNCInitError.
+    BranchAttributionLevel nextLevel =
+        [Branch attributionLevelNone] ? BranchAttributionLevelFull : BranchAttributionLevelNone;
+    [[Branch getInstance] setConsumerProtectionAttributionLevel:nextLevel];
+    [self syncDisableTrackingButton];
+}
 
-    if ([title isEqualToString:@"Disable Tracking"]) {
-        [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelNone];
-        [self.disableTrackingButton setTitle:@"Enable Tracking" forState:UIControlStateNormal];
-        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
-            [self.disableTrackingButton setImage:[UIImage systemImageNamed:@"eye.fill"] forState:UIControlStateNormal];
-        }
-    } else {
-        [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
-        [self.disableTrackingButton setTitle:@"Disable Tracking" forState:UIControlStateNormal];
-        if (@available(iOS 13.0, macCatalyst 13.1, *)) {
-            [self.disableTrackingButton setImage:[UIImage systemImageNamed:@"eye.slash.fill"] forState:UIControlStateNormal];
-        }
+- (void)syncDisableTrackingButton {
+    BOOL trackingDisabled = [Branch attributionLevelNone];
+    [self.disableTrackingButton setTitle:(trackingDisabled ? @"Enable Tracking" : @"Disable Tracking")
+                                forState:UIControlStateNormal];
+    if (@available(iOS 13.0, macCatalyst 13.1, *)) {
+        NSString *imageName = trackingDisabled ? @"eye.fill" : @"eye.slash.fill";
+        [self.disableTrackingButton setImage:[UIImage systemImageNamed:imageName]
+                                    forState:UIControlStateNormal];
     }
-
 }
 
 -(IBAction)showVersionAlert:(id)sender {
