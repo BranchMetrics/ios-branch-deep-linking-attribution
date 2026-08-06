@@ -18,6 +18,13 @@ Source of truth for the parser: the Branch-TestBed AppDelegate registers a
 into ~/Documents/branchlogs.txt. The L1 instrumentation pulls that file out
 of the simulator's app sandbox after the test run.
 
+Endpoint contract: this file targets the 4.0.0-beta line, which does NOT
+emit `/v1/install` or `/v1/open`. Install and open both land on
+`/v3/events/open`, deep-link resolution on `/v3/deeplink`, and events on
+`/v2/event/standard`. Only link creation still uses a v1 path (`/v1/url`).
+The required-field lists below are derived from captured payloads on that
+line, not from the v1 protocol master still speaks.
+
 Platform parity note: this validator's required field set differs from the
 Android sibling by design — iOS does not emit `wifi` or `ui_mode` on the
 wire. The Android validator requires them, the iOS validator does not.
@@ -36,9 +43,10 @@ REQUEST_LINE_RE = re.compile(
     r"\[BranchLog\]\s+Got\s+(?P<url>https?://[^\s]+)\s+Request:\s*(?P<body>\{.*\})\s*$"
 )
 
-# Required on every captured /v1/* request. `wifi` and `ui_mode` are
-# intentionally absent — iOS does not emit them. See the v4 Conversion API
-# parity tracker for the future-alignment plan.
+# The device/SDK context block every endpoint that carries it at the top
+# level must have. `wifi` and `ui_mode` are intentionally absent — iOS does
+# not emit them. See the v4 Conversion API parity tracker for the
+# future-alignment plan.
 REQUIRED_COMMON = [
     "branch_key",
     "sdk",
@@ -58,12 +66,62 @@ REQUIRED_COMMON = [
     "hardware_id",
 ]
 
-# Endpoint-specific additions on top of REQUIRED_COMMON.
+# `/v3/events/open` absorbed what master sent as `/v1/install`, so it also
+# carries the install-identity pair that used to be install-only, plus the
+# `anon_id` this line keys attribution on. Deliberately NOT required:
+# `randomized_bundle_token` / `randomized_device_token`, which the backend
+# only issues once a device is known — a first-ever install open has
+# neither, so requiring them would fail a healthy fresh-install capture.
+REQUIRED_OPEN_EXTRAS = ["anon_id", "first_install_time", "is_hardware_id_real"]
+
+# `/v2/event/standard` does not extend REQUIRED_COMMON: it uses a different
+# schema, so it gets its own complete list. Request identity stays at the
+# top level; the device block moves under `user_data`, where `hardware_id`
+# is spelled `idfv` and `sdk` splits into `sdk` + `sdk_version`. Everything
+# else is REQUIRED_COMMON restated in that schema (lookup_field resolves
+# both levels, so the nesting itself needs no special handling).
+REQUIRED_V2_EVENT = [
+    "branch_key",
+    "name",
+    "branch_sdk_request_timestamp",
+    "branch_sdk_request_unique_id",
+    "sdk",
+    "sdk_version",
+    "anon_id",
+    "randomized_device_token",
+    "idfv",
+    "brand",
+    "model",
+    "os",
+    "os_version",
+    "country",
+    "language",
+    "local_ip",
+    "screen_dpi",
+    "screen_height",
+    "screen_width",
+    "connection_type",
+]
+
+# The full required list per endpoint. An endpoint absent from this table
+# has no L1 contract yet; its payload is printed but nothing is asserted.
+#
+# `/v3/deeplink` shares the open contract because it IS the open payload:
+# BNCRequestFactory.dataForDeepLinkWithURLString: copies
+# dataForRequestOpenWithURLString: and adds `ios_app_link_url`. That extra
+# key is NOT required — it is only set when the resolution was driven by a
+# URL, and captured cold-resolution payloads do not carry it.
 REQUIRED_PER_ENDPOINT = {
-    "/v1/install": ["is_hardware_id_real", "first_install_time"],
-    "/v1/open": ["randomized_device_token"],
-    "/v1/url": [],
+    "/v3/events/open": REQUIRED_COMMON + REQUIRED_OPEN_EXTRAS,
+    "/v3/deeplink": REQUIRED_COMMON + REQUIRED_OPEN_EXTRAS,
+    "/v2/event/standard": REQUIRED_V2_EVENT,
+    "/v1/url": REQUIRED_COMMON,
 }
+
+# A session on this line always posts an open, so a capture without one is
+# a broken capture, not a quiet pass. This replaces master's mandatory
+# `/v1/install`, which this line never sends.
+MANDATORY_ENDPOINT = "/v3/events/open"
 
 
 def parse_branch_logs(file_path):
@@ -124,11 +182,11 @@ def validate_request(entry, idx, total):
     """Print the full payload + per-field table for one request. Return a
     list of error strings (empty when everything required is present).
 
-    Required-field checks are scoped to `/v1/*` endpoints — that's the L1
-    contract. Non-v1 endpoints (e.g. `/v2/event/*`) use a different schema
-    (device fields under `user_data`, different identity fields) and are
-    out of L1's enforcement scope; the validator still dumps their payload
-    for visibility but does not fail the run."""
+    Required-field checks are keyed on the endpoint path, not on a `/v1/*`
+    prefix: on this line the endpoints that carry attribution are v2 and v3,
+    and prefix-scoping left all three of them unchecked. An endpoint with no
+    entry in REQUIRED_PER_ENDPOINT still gets its payload dumped, and says
+    so, so an uncontracted endpoint is visible rather than silent."""
     errors = []
     uri = entry["uri"]
     url = entry["url"]
@@ -147,11 +205,11 @@ def validate_request(entry, idx, total):
     print(json.dumps(request, indent=2, sort_keys=True))
     print()
 
-    if not uri.startswith("/v1/"):
-        print(f"(Non-v1 endpoint; required-field checks skipped per L1 scope)")
+    fields = REQUIRED_PER_ENDPOINT.get(uri)
+    if fields is None:
+        print("(No L1 field contract defined for this endpoint; payload printed only)")
         return errors
 
-    fields = REQUIRED_COMMON + REQUIRED_PER_ENDPOINT.get(uri, [])
     print(f"Required fields ({len(fields)}):")
     for field in fields:
         value = lookup_field(request, field)
@@ -168,7 +226,7 @@ def validate_request(entry, idx, total):
 
 def validate_entries(entries):
     """Run validate_request on every entry plus the top-level
-    /v1/install-must-be-present check. Returns aggregated errors."""
+    open-must-be-present check. Returns aggregated errors."""
     errors = []
 
     if not entries:
@@ -178,13 +236,16 @@ def validate_entries(entries):
     print(f"Captured {len(entries)} Branch wire requests. Validating...")
 
     found_paths = [e["uri"] for e in entries]
-    if "/v1/install" not in found_paths:
-        errors.append("Mandatory endpoint '/v1/install' was not captured.")
+    if MANDATORY_ENDPOINT not in found_paths:
+        errors.append(
+            f"Mandatory endpoint '{MANDATORY_ENDPOINT}' was not captured."
+        )
 
-    if "/v1/open" not in found_paths:
+    if "/v3/deeplink" not in found_paths:
         print(
-            "Note: '/v1/open' not present in capture. Expected after a second "
-            "app launch, but not enforced here."
+            "Note: '/v3/deeplink' not present in capture. Only emitted when a "
+            "Branch link is resolved, which the L1 runner does not do; not "
+            "enforced here."
         )
 
     for i, entry in enumerate(entries, start=1):

@@ -6,6 +6,8 @@ Run from the repo root:
 
 Fixtures live in scripts/fixtures/ — each file is a snippet of a real
 branchlogs.txt capture, hand-tailored to exercise one validator behaviour.
+They encode the 4.0.0-beta wire protocol (`/v3/events/open`, `/v3/deeplink`,
+`/v2/event/standard`, `/v1/url`), not master's v1 protocol.
 """
 
 import io
@@ -44,8 +46,8 @@ class ParseBranchLogsTests(unittest.TestCase):
     def test_parses_branchlog_request_lines(self):
         entries = v.parse_branch_logs(_fixture("happy_path.txt"))
         self.assertEqual(len(entries), 2)
-        self.assertEqual(entries[0]["uri"], "/v1/install")
-        self.assertEqual(entries[1]["uri"], "/v1/open")
+        self.assertEqual(entries[0]["uri"], "/v3/events/open")
+        self.assertEqual(entries[1]["uri"], "/v1/url")
         self.assertIsInstance(entries[0]["request"], dict)
 
 
@@ -105,31 +107,107 @@ class V2NestingTests(unittest.TestCase):
         self.assertEqual(v.lookup_field(request, "connection_type"), "wifi")
         self.assertEqual(v.lookup_field(request, "sdk"), "ios")
 
+    def test_v2_event_contract_is_satisfied_by_nested_shape(self):
+        entries = v.parse_branch_logs(_fixture("v2_nested.txt"))
+        request = entries[0]["request"]
+        missing = [
+            f for f in v.REQUIRED_V2_EVENT
+            if not v.is_present(v.lookup_field(request, f))
+        ]
+        self.assertEqual(missing, [], f"Unresolved v2 fields: {missing}")
 
-class InstallRequiredTests(unittest.TestCase):
-    """/v1/install is the canonical entry-point and must be in the capture."""
 
-    def test_capture_without_install_fails(self):
-        errors, _ = _run_validation("no_install.txt")
+class OpenRequiredTests(unittest.TestCase):
+    """On this line install and open both post to /v3/events/open, so every
+    session produces one and a capture without it is a broken capture.
+    /v1/install is never sent and is no longer asserted."""
+
+    def test_capture_without_open_fails(self):
+        errors, _ = _run_validation("no_open.txt")
         self.assertTrue(
-            any("'/v1/install' was not captured" in e for e in errors),
-            f"Expected install-missing error, got: {errors}",
+            any("'/v3/events/open' was not captured" in e for e in errors),
+            f"Expected open-missing error, got: {errors}",
+        )
+
+    def test_v1_install_is_not_demanded(self):
+        # no_open.txt has no /v1/install either; the only complaint must be
+        # about the open.
+        errors, _ = _run_validation("no_open.txt")
+        self.assertFalse(
+            any("/v1/install" in e for e in errors),
+            f"Retired endpoint still asserted: {errors}",
+        )
+
+    def test_retired_v1_endpoints_have_no_contract(self):
+        self.assertNotIn("/v1/install", v.REQUIRED_PER_ENDPOINT)
+        self.assertNotIn("/v1/open", v.REQUIRED_PER_ENDPOINT)
+
+
+class BetaEndpointCoverageTests(unittest.TestCase):
+    """The three endpoints this line uses for attribution traffic are
+    checked, not skipped. Prefix-scoping to /v1/* was what let them pass
+    unexamined."""
+
+    def test_open_event_and_deeplink_all_have_contracts(self):
+        for uri in ("/v3/events/open", "/v3/deeplink", "/v2/event/standard"):
+            self.assertIn(uri, v.REQUIRED_PER_ENDPOINT)
+            self.assertTrue(v.REQUIRED_PER_ENDPOINT[uri])
+
+    def test_open_carries_the_install_identity_pair(self):
+        # These were /v1/install-only on master; the open absorbed them.
+        fields = v.REQUIRED_PER_ENDPOINT["/v3/events/open"]
+        self.assertIn("first_install_time", fields)
+        self.assertIn("is_hardware_id_real", fields)
+
+    def test_open_does_not_require_conditional_tokens(self):
+        # A first-ever install open has no device/bundle token yet.
+        fields = v.REQUIRED_PER_ENDPOINT["/v3/events/open"]
+        self.assertNotIn("randomized_device_token", fields)
+        self.assertNotIn("randomized_bundle_token", fields)
+
+    def test_v2_event_requires_idfv_not_hardware_id(self):
+        # /v2/event/* spells the vendor id `idfv` under user_data.
+        self.assertIn("idfv", v.REQUIRED_V2_EVENT)
+        self.assertNotIn("hardware_id", v.REQUIRED_V2_EVENT)
+
+    def test_v2_event_missing_device_field_fails(self):
+        errors, output = _run_validation("v2_event_missing_idfv.txt")
+        self.assertTrue(
+            any("missing required field 'idfv'" in e for e in errors),
+            f"Expected idfv-missing error, got: {errors}",
+        )
+        self.assertIn("/v2/event/standard", output)
+
+    def test_deeplink_is_checked_and_passes(self):
+        errors, output = _run_validation("deeplink.txt")
+        self.assertEqual(errors, [], f"Unexpected errors: {errors}")
+        self.assertIn("/v3/deeplink", output)
+
+    def test_absent_deeplink_is_a_note_not_a_failure(self):
+        # The L1 runner performs a single launch and never resolves a link,
+        # so a capture without /v3/deeplink is healthy.
+        errors, output = _run_validation("happy_path.txt")
+        self.assertEqual(errors, [], f"Unexpected errors: {errors}")
+        self.assertIn("'/v3/deeplink' not present in capture", output)
+
+    def test_deeplink_does_not_require_ios_app_link_url(self):
+        # Cold resolution carries no URL; only the URL-driven one does.
+        self.assertNotIn(
+            "ios_app_link_url", v.REQUIRED_PER_ENDPOINT["/v3/deeplink"]
         )
 
 
-class NonV1EndpointScopeTests(unittest.TestCase):
-    """L1's contract covers /v1/* only. /v2/event/* uses a different schema
-    (device fields under user_data, no top-level hardware_id) and must not
-    fail the run when captured alongside a valid /v1/install."""
+class UncontractedEndpointTests(unittest.TestCase):
+    """An endpoint with no entry in REQUIRED_PER_ENDPOINT is printed and
+    labelled, not silently skipped and not failed."""
 
-    def test_v2_event_does_not_trigger_field_failures(self):
-        errors, output = _run_validation("v2_event_out_of_scope.txt")
+    def test_uncontracted_endpoint_does_not_fail_the_run(self):
+        errors, output = _run_validation("uncontracted_endpoint.txt")
         self.assertEqual(
             errors, [],
-            f"Mixed v1+v2 capture should not produce errors; got: {errors}",
+            f"Uncontracted endpoint should not produce errors; got: {errors}",
         )
-        self.assertIn("Non-v1 endpoint", output)
-        self.assertIn("required-field checks skipped per L1 scope", output)
+        self.assertIn("No L1 field contract defined for this endpoint", output)
 
 
 class LookupFieldTests(unittest.TestCase):
