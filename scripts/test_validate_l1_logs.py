@@ -151,24 +151,25 @@ class BetaEndpointCoverageTests(unittest.TestCase):
     def test_open_event_and_deeplink_all_have_contracts(self):
         for uri in ("/v3/events/open", "/v3/deeplink", "/v2/event/standard"):
             self.assertIn(uri, v.REQUIRED_PER_ENDPOINT)
-            self.assertTrue(v.REQUIRED_PER_ENDPOINT[uri])
+            self.assertTrue(v.required_fields_for(uri, {}))
 
     def test_open_carries_the_install_identity_pair(self):
         # These were /v1/install-only on master; the open absorbed them.
-        fields = v.REQUIRED_PER_ENDPOINT["/v3/events/open"]
+        fields = v.required_fields_for("/v3/events/open", {})
         self.assertIn("first_install_time", fields)
         self.assertIn("is_hardware_id_real", fields)
 
     def test_open_does_not_require_conditional_tokens(self):
         # A first-ever install open has no device/bundle token yet.
-        fields = v.REQUIRED_PER_ENDPOINT["/v3/events/open"]
+        fields = v.required_fields_for("/v3/events/open", {})
         self.assertNotIn("randomized_device_token", fields)
         self.assertNotIn("randomized_bundle_token", fields)
 
     def test_v2_event_requires_idfv_not_hardware_id(self):
         # /v2/event/* spells the vendor id `idfv` under user_data.
-        self.assertIn("idfv", v.REQUIRED_V2_EVENT)
-        self.assertNotIn("hardware_id", v.REQUIRED_V2_EVENT)
+        fields = v.required_fields_for("/v2/event/standard", {})
+        self.assertIn("idfv", fields)
+        self.assertNotIn("hardware_id", fields)
 
     def test_v2_event_missing_device_field_fails(self):
         errors, output = _run_validation("v2_event_missing_idfv.txt")
@@ -193,7 +194,77 @@ class BetaEndpointCoverageTests(unittest.TestCase):
     def test_deeplink_does_not_require_ios_app_link_url(self):
         # Cold resolution carries no URL; only the URL-driven one does.
         self.assertNotIn(
-            "ios_app_link_url", v.REQUIRED_PER_ENDPOINT["/v3/deeplink"]
+            "ios_app_link_url", v.required_fields_for("/v3/deeplink", {})
+        )
+
+
+class AttributionLevelTierTests(unittest.TestCase):
+    """Parts of the device block are gated on the consumer-protection
+    attribution level (BNCRequestFactory.m:747 and :751-752), so the
+    required-field list has to be resolved per request from that request's
+    own `cpp_level` rather than applied flat."""
+
+    def test_none_level_deeplink_passes(self):
+        # /v3/deeplink is exempt from the attribution-None request skip
+        # (BNCServerRequestOperation.m:68-75), so a capture at level None
+        # still posts one — with the device block correctly stripped.
+        errors, output = _run_validation("attribution_none_deeplink.txt")
+        self.assertEqual(errors, [], f"Unexpected errors: {errors}")
+        self.assertIn("/v3/deeplink", output)
+
+    def test_full_level_still_requires_the_hardware_block(self):
+        errors, _ = _run_validation("attribution_full_missing_hardware.txt")
+        self.assertTrue(
+            any("missing required field 'hardware_id'" in e for e in errors),
+            f"Expected hardware_id-missing error, got: {errors}",
+        )
+        self.assertTrue(
+            any("missing required field 'is_hardware_id_real'" in e for e in errors),
+            f"Expected is_hardware_id_real-missing error, got: {errors}",
+        )
+
+    def test_absent_cpp_level_reads_as_uninitialized_and_requires_hardware(self):
+        # cpp_level is only emitted once the level has been set
+        # (BNCRequestFactory.m:641-646). Absent means uninitialized, which
+        # takes the same branch as Full at :751-752.
+        fields = v.required_fields_for("/v3/deeplink", {})
+        self.assertIn("hardware_id", fields)
+        self.assertIn("is_hardware_id_real", fields)
+
+    def test_none_level_drops_the_attribution_gated_fields(self):
+        fields = v.required_fields_for("/v3/deeplink", {"cpp_level": "NONE"})
+        for field in ("hardware_id", "is_hardware_id_real", "anon_id",
+                      "local_ip", "first_install_time"):
+            self.assertNotIn(field, fields)
+
+    def test_reduced_level_keeps_not_none_fields_but_drops_hardware(self):
+        fields = v.required_fields_for("/v3/deeplink", {"cpp_level": "REDUCED"})
+        self.assertIn("local_ip", fields)
+        self.assertIn("anon_id", fields)
+        self.assertNotIn("hardware_id", fields)
+        self.assertNotIn("is_hardware_id_real", fields)
+
+    def test_unconditional_fields_survive_every_level(self):
+        for level in (None, "FULL", "REDUCED", "MINIMAL", "NONE"):
+            request = {} if level is None else {"cpp_level": level}
+            fields = v.required_fields_for("/v3/events/open", request)
+            for field in ("branch_key", "sdk", "brand", "os", "connection_type"):
+                self.assertIn(field, fields, f"{field} dropped at level {level}")
+
+    def test_level_resolves_from_user_data_on_v2_shape(self):
+        # /v2/event/* nests cpp_level under user_data alongside the device
+        # block (BNCRequestFactory.m:733).
+        request = {"user_data": {"cpp_level": "REDUCED"}}
+        self.assertEqual(v.attribution_level(request), "REDUCED")
+
+    def test_v2_event_idfv_is_not_none_gated(self):
+        # v2dictionary gates idfv on not-None-or-uninitialized (:688-690).
+        self.assertNotIn(
+            "idfv", v.required_fields_for("/v2/event/standard",
+                                          {"user_data": {"cpp_level": "NONE"}})
+        )
+        self.assertIn(
+            "idfv", v.required_fields_for("/v2/event/standard", {})
         )
 
 

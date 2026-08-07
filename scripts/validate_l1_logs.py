@@ -25,6 +25,12 @@ emit `/v1/install` or `/v1/open`. Install and open both land on
 The required-field lists below are derived from captured payloads on that
 line, not from the v1 protocol master still speaks.
 
+Attribution levels: a large part of the device block is conditional on the
+consumer-protection attribution level, so the contract is tiered and
+resolved per request from that request's own `cpp_level`. Presence in every
+captured sample is not sufficient evidence that a field is unconditional —
+every sample we have shares one configuration.
+
 Platform parity note: this validator's required field set differs from the
 Android sibling by design — iOS does not emit `wifi` or `ui_mode` on the
 wire. The Android validator requires them, the iOS validator does not.
@@ -44,9 +50,14 @@ REQUEST_LINE_RE = re.compile(
 )
 
 # The device/SDK context block every endpoint that carries it at the top
-# level must have. `wifi` and `ui_mode` are intentionally absent — iOS does
-# not emit them. See the v4 Conversion API parity tracker for the
-# future-alignment plan.
+# level must have, unconditionally. `wifi` and `ui_mode` are intentionally
+# absent — iOS does not emit them. See the v4 Conversion API parity tracker
+# for the future-alignment plan.
+#
+# Everything here is written outside every attribution gate in
+# BNCRequestFactory: `branch_key` and the request-identity pair in
+# addDefaultRequestDataToJSON:, `sdk` in addSDKVersionToJSON:, the rest
+# after the attribution block closes in updateDeviceInfoToMutableDictionary:.
 REQUIRED_COMMON = [
     "branch_key",
     "sdk",
@@ -58,21 +69,33 @@ REQUIRED_COMMON = [
     "os_version",
     "country",
     "language",
-    "local_ip",
     "screen_dpi",
     "screen_height",
     "screen_width",
     "connection_type",
-    "hardware_id",
 ]
+
+# Written inside `if (![self isAttributionLevelNone])`
+# (BNCRequestFactory.m:747) — absent by design at attribution level None.
+REQUIRED_COMMON_NOT_NONE = ["local_ip"]
+
+# Written inside the nested Full-or-uninitialized branch
+# (BNCRequestFactory.m:751-752) — absent at every level below Full.
+REQUIRED_COMMON_FULL = ["hardware_id"]
 
 # `/v3/events/open` absorbed what master sent as `/v1/install`, so it also
 # carries the install-identity pair that used to be install-only, plus the
-# `anon_id` this line keys attribution on. Deliberately NOT required:
-# `randomized_bundle_token` / `randomized_device_token`, which the backend
-# only issues once a device is known — a first-ever install open has
-# neither, so requiring them would fail a healthy fresh-install capture.
-REQUIRED_OPEN_EXTRAS = ["anon_id", "first_install_time", "is_hardware_id_real"]
+# `anon_id` this line keys attribution on. Both extras are attribution-gated
+# too: `anon_id` sits in the :747 block, `first_install_time` in
+# addTimestampsToJSON: which returns early at None, and
+# `is_hardware_id_real` is set beside `hardware_id` in the Full branch.
+#
+# Deliberately NOT required: `randomized_bundle_token` /
+# `randomized_device_token`, which the backend only issues once a device is
+# known — a first-ever install open has neither, so requiring them would
+# fail a healthy fresh-install capture.
+REQUIRED_OPEN_EXTRAS_NOT_NONE = ["anon_id", "first_install_time"]
+REQUIRED_OPEN_EXTRAS_FULL = ["is_hardware_id_real"]
 
 # `/v2/event/standard` does not extend REQUIRED_COMMON: it uses a different
 # schema, so it gets its own complete list. Request identity stays at the
@@ -80,6 +103,10 @@ REQUIRED_OPEN_EXTRAS = ["anon_id", "first_install_time", "is_hardware_id_real"]
 # is spelled `idfv` and `sdk` splits into `sdk` + `sdk_version`. Everything
 # else is REQUIRED_COMMON restated in that schema (lookup_field resolves
 # both levels, so the nesting itself needs no special handling).
+#
+# v2dictionary writes `anon_id` and `local_ip` unconditionally, so unlike
+# the v1 shape they are not attribution-gated here. Only `idfv` is
+# (BNCRequestFactory.m:688-690).
 REQUIRED_V2_EVENT = [
     "branch_key",
     "name",
@@ -89,7 +116,6 @@ REQUIRED_V2_EVENT = [
     "sdk_version",
     "anon_id",
     "randomized_device_token",
-    "idfv",
     "brand",
     "model",
     "os",
@@ -102,9 +128,23 @@ REQUIRED_V2_EVENT = [
     "screen_width",
     "connection_type",
 ]
+REQUIRED_V2_EVENT_NOT_NONE = ["idfv"]
 
-# The full required list per endpoint. An endpoint absent from this table
-# has no L1 contract yet; its payload is printed but nothing is asserted.
+# The required fields per endpoint, split into three tiers because a large
+# part of the device block is conditional on the consumer-protection
+# attribution level, not unconditional:
+#
+#   always    — emitted at every attribution level
+#   not_none  — emitted at every level except None
+#   full      — emitted only at Full, or before a level was ever set
+#
+# The tier is resolved per request from that request's own `cpp_level`, so
+# a privacy-scenario capture is validated against what the SDK is actually
+# supposed to send at that level. Applying the flat list instead failed a
+# level-None `/v3/deeplink` on five fields the SDK is correct to omit.
+#
+# An endpoint absent from this table has no L1 contract yet; its payload is
+# printed but nothing is asserted.
 #
 # `/v3/deeplink` shares the open contract because it IS the open payload:
 # BNCRequestFactory.dataForDeepLinkWithURLString: copies
@@ -112,11 +152,31 @@ REQUIRED_V2_EVENT = [
 # key is NOT required — it is only set when the resolution was driven by a
 # URL, and captured cold-resolution payloads do not carry it.
 REQUIRED_PER_ENDPOINT = {
-    "/v3/events/open": REQUIRED_COMMON + REQUIRED_OPEN_EXTRAS,
-    "/v3/deeplink": REQUIRED_COMMON + REQUIRED_OPEN_EXTRAS,
-    "/v2/event/standard": REQUIRED_V2_EVENT,
-    "/v1/url": REQUIRED_COMMON,
+    "/v3/events/open": {
+        "always": REQUIRED_COMMON,
+        "not_none": REQUIRED_COMMON_NOT_NONE + REQUIRED_OPEN_EXTRAS_NOT_NONE,
+        "full": REQUIRED_COMMON_FULL + REQUIRED_OPEN_EXTRAS_FULL,
+    },
+    "/v3/deeplink": {
+        "always": REQUIRED_COMMON,
+        "not_none": REQUIRED_COMMON_NOT_NONE + REQUIRED_OPEN_EXTRAS_NOT_NONE,
+        "full": REQUIRED_COMMON_FULL + REQUIRED_OPEN_EXTRAS_FULL,
+    },
+    "/v2/event/standard": {
+        "always": REQUIRED_V2_EVENT,
+        "not_none": REQUIRED_V2_EVENT_NOT_NONE,
+        "full": [],
+    },
+    "/v1/url": {
+        "always": REQUIRED_COMMON,
+        "not_none": REQUIRED_COMMON_NOT_NONE,
+        "full": REQUIRED_COMMON_FULL,
+    },
 }
+
+# Wire spelling of the levels — Branch.m:92-95.
+ATTRIBUTION_LEVEL_FULL = "FULL"
+ATTRIBUTION_LEVEL_NONE = "NONE"
 
 # A session on this line always posts an open, so a capture without one is
 # a broken capture, not a quiet pass. This replaces master's mandatory
@@ -169,6 +229,57 @@ def lookup_field(request, field):
     return None
 
 
+def attribution_level(request):
+    """Return this request's consumer-protection attribution level as it
+    appears on the wire, or None when the payload does not carry one.
+
+    `cpp_level` is only written once a level has been set
+    (BNCRequestFactory.addConsumerProtectionAttributionLevel: guards on
+    attributionLevelInitialized), so its absence is meaningful rather than
+    missing data: it means the level was never initialized. It sits at the
+    top level on the v1 shape and under `user_data` on the v2 shape, both
+    of which lookup_field resolves.
+    """
+    value = lookup_field(request, "cpp_level")
+    if not isinstance(value, str) or value == "":
+        return None
+    return value.upper()
+
+
+def required_fields_for(uri, request):
+    """Resolve the required-field list for one request, tiering the
+    contract by that request's own attribution level. Returns None when the
+    endpoint has no contract.
+
+    An uninitialized level (no `cpp_level` on the wire) takes the same
+    branch as Full in BNCRequestFactory.m:751-752, so it requires the
+    hardware block exactly as Full does.
+    """
+    contract = REQUIRED_PER_ENDPOINT.get(uri)
+    if contract is None:
+        return None
+
+    level = attribution_level(request)
+    fields = list(contract["always"])
+    if level != ATTRIBUTION_LEVEL_NONE:
+        fields.extend(contract["not_none"])
+    if level is None or level == ATTRIBUTION_LEVEL_FULL:
+        fields.extend(contract["full"])
+    return fields
+
+
+def describe_attribution_level(level):
+    """Human label for the check-table header, so a reviewer can see which
+    tier was applied without cross-referencing the payload."""
+    if level is None:
+        return "uninitialized (no cpp_level) — hardware block required"
+    if level == ATTRIBUTION_LEVEL_FULL:
+        return "FULL — hardware block required"
+    if level == ATTRIBUTION_LEVEL_NONE:
+        return "NONE — device block not required"
+    return f"{level} — hardware block not required"
+
+
 def is_present(value):
     """A field is considered present when it has a non-null, non-empty value."""
     if value is None:
@@ -205,12 +316,13 @@ def validate_request(entry, idx, total):
     print(json.dumps(request, indent=2, sort_keys=True))
     print()
 
-    fields = REQUIRED_PER_ENDPOINT.get(uri)
+    fields = required_fields_for(uri, request)
     if fields is None:
         print("(No L1 field contract defined for this endpoint; payload printed only)")
         return errors
 
-    print(f"Required fields ({len(fields)}):")
+    level = describe_attribution_level(attribution_level(request))
+    print(f"Required fields ({len(fields)}) [attribution: {level}]:")
     for field in fields:
         value = lookup_field(request, field)
         present = is_present(value)
