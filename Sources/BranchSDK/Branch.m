@@ -2168,6 +2168,12 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 - (void)handleInitSuccessAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
+    [self handleInitSuccessAndCallCallback:callCallback sceneIdentifier:sceneIdentifier suppressAutomaticDeepLinking:NO];
+}
+
+- (void)handleInitSuccessAndCallCallback:(BOOL)callCallback
+                         sceneIdentifier:(NSString *)sceneIdentifier
+            suppressAutomaticDeepLinking:(BOOL)suppressAutomaticDeepLinking {
 
     self.initializationStatus = BNCInitStatusInitialized;
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
@@ -2205,7 +2211,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     [self.urlFilter updatePatternListFromServerWithCompletion:nil];
 
-    if (self.shouldAutomaticallyDeepLink) {
+    // A web redirect is already taking the screen. Presenting a deep link view controller
+    // underneath the browser is not something the app asked for.
+    if (self.shouldAutomaticallyDeepLink && !suppressAutomaticDeepLinking) {
         dispatch_async(dispatch_get_main_queue(), ^ {
             [self automaticallyDeeplinkWithReferringParams:latestReferringParams];
         });
@@ -2626,7 +2634,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen failed with error: %@", error] error:error];
                 [self handleInitFailure:error callCallback:NO sceneIdentifier:nil];
             } else {
-                [self handleInitSuccessAndCallCallback:NO sceneIdentifier:nil];
+                [self handleInitSuccessAndCallCallback:NO sceneIdentifier:nil suppressAutomaticDeepLinking:skipCallback];
                 NSDictionary *params = [self getLatestReferringParams];
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen completed with params: %@", params] error:nil];
             }

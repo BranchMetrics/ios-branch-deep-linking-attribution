@@ -71,6 +71,11 @@
     
     [BranchRequestDeepLink releaseDeepLinkResponseLock];
     
+    // The resolved link payload arrives here and nowhere else: the open that follows carries no
+    // session data of its own. Persist it before the web-redirect early return below, so
+    // getLatestReferringParams reports the resolved link on both paths.
+    [self persistSessionParams:data preferenceHelper:preferenceHelper error:error];
+
     NSDictionary *invokeFeatures = data[BRANCH_RESPONSE_KEY_INVOKE_FEATURES];
     if (invokeFeatures) {
         if ([self invokeFeatures:invokeFeatures]) {
@@ -86,6 +91,41 @@
 
     // Normal flow - send attribution and allow initialization callback
     [self attemptToSendOpen:preferenceHelper response:response skipCallback:NO];
+}
+
+// Normalisation mirrors BranchRequestOpen -processResponse:. The server sends "data" as a JSON
+// string, but the dropURLOpen path above fabricates a dictionary, and assigning that to the
+// NSString-typed sessionParams property makes the setter's -isEqualToString: an unrecognized
+// selector.
+- (void)persistSessionParams:(NSDictionary *)data
+            preferenceHelper:(BNCPreferenceHelper *)preferenceHelper
+                       error:(NSError *)error {
+    NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
+    if (sessionData == nil || [sessionData isKindOfClass:[NSString class]]) {
+    } else
+    if ([sessionData isKindOfClass:[NSDictionary class]]) {
+        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Received session data of type '%@' data is '%@'.", NSStringFromClass(sessionData.class), sessionData] error:nil];
+        sessionData = [BNCEncodingUtils encodeDictionaryToJsonString:(NSDictionary*)sessionData];
+    } else
+    if ([sessionData isKindOfClass:[NSArray class]]) {
+        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Received session data of type '%@' data is '%@'.", NSStringFromClass(sessionData.class), sessionData] error:nil];
+        sessionData = [BNCEncodingUtils encodeArrayToJsonString:(NSArray*)sessionData];
+    } else {
+        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Received session data of type '%@' data is '%@'.", NSStringFromClass(sessionData.class), sessionData] error:error];
+        sessionData = nil;
+    }
+
+    // The open that follows this resolution no longer writes the slot, so the spotlight merge has
+    // to happen here or spotlight_identifier drops out of the resolved params entirely.
+    if (preferenceHelper.spotlightIdentifier) {
+        NSMutableDictionary *sessionDataDict =
+        [NSMutableDictionary dictionaryWithDictionary: [BNCEncodingUtils decodeJsonStringToDictionary:sessionData]];
+        NSDictionary *spotlightDic = @{BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER:preferenceHelper.spotlightIdentifier};
+        [sessionDataDict addEntriesFromDictionary:spotlightDic];
+        sessionData = [BNCEncodingUtils encodeDictionaryToJsonString:sessionDataDict];
+    }
+
+    preferenceHelper.sessionParams = sessionData;
 }
 
 - (BOOL) invokeFeatures:(NSDictionary *)invokeFeatures {

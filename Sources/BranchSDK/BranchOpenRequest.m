@@ -106,7 +106,12 @@
 
     NSString *sessionData = [self sessionDataFromResponseData:data error:error];
 
-    preferenceHelper.sessionParams = sessionData;
+    // Same rule as BranchRequestOpen: this request posts to /v3/events/open on the 4.0 line, whose
+    // response carries no session data, so an unconditional write erases what a deep link
+    // resolution persisted. Write only when there is session data to write.
+    if (sessionData != nil) {
+        preferenceHelper.sessionParams = sessionData;
+    }
 
     // Scenarios:
     // If no data, data isn't from a link click, or isReferrable is false, don't set, period.

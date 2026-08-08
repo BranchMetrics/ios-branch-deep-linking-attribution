@@ -148,7 +148,14 @@
         sessionData = [BNCEncodingUtils encodeDictionaryToJsonString:sessionDataDict];
     }
     
-    preferenceHelper.sessionParams = sessionData;
+    // Write the slot only when this response actually carries session data. The 4.0 open posts to
+    // /v3/events/open, whose response has no "data" key at all — link-driven or organic — so
+    // writing whatever the response says always wrote nil and erased what a deep link resolution
+    // had just persisted. A data-less response leaves the slot as it stands; if the endpoint
+    // starts returning session data, the write resumes on its own.
+    if (sessionData != nil) {
+        preferenceHelper.sessionParams = sessionData;
+    }
 
     // Scenarios:
     // If no data, data isn't from a link click, or isReferrable is false, don't set, period.
