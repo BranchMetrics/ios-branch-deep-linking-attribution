@@ -2652,7 +2652,12 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             }
         });
     };
-    BranchRequestOpen *openReq = [[BranchRequestOpen alloc] initWithCallback:openCallback];
+    // A launch with no randomized bundle token has never completed an open, so it is a first
+    // launch. This is the same criterion -initializeSessionAndCallCallback: uses to choose
+    // between BranchOpenRequest and BranchInstallRequest; without it no request on this path
+    // is ever an install, and every install-gated behaviour in BranchRequestOpen is unreachable.
+    BOOL isInstall = !self.preferenceHelper.randomizedBundleToken;
+    BranchRequestOpen *openReq = [[BranchRequestOpen alloc] initWithCallback:openCallback isInstall:isInstall];
     openReq.urlString = nil;
     openReq.traceCallback = bnc_tracingCallback;
 
@@ -2683,7 +2688,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             }
         });
     };
-    BranchRequestOpen *openReq = [[BranchRequestOpen alloc] initWithCallback:openCallback];
+    // Same first-launch criterion as -sendOpen. An install reaches this path too: a first
+    // launch attributed to a clicked link resolves the deep link first and spawns its open here,
+    // and that is exactly the open whose payload has to be kept as the install attribution.
+    BOOL isInstall = !self.preferenceHelper.randomizedBundleToken;
+    BranchRequestOpen *openReq = [[BranchRequestOpen alloc] initWithCallback:openCallback isInstall:isInstall];
     openReq.urlString = nil;
     openReq.traceCallback = bnc_tracingCallback;
     openReq.linkData = responseData;
