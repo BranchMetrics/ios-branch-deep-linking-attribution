@@ -4,12 +4,16 @@
 //
 //  Copyright © 2026 Branch, Inc. All rights reserved.
 //
-//  EMT-4028: while a deep link resolution is in flight, a lifecycle foreground must not enqueue
-//  an organic open at all. Measured against a real BNCServerRequestQueue with a stubbed
-//  transport — real operations, real serial ordering, real dependencies, no network.
+//  Two guarantees about the opens that run around a deep link resolution, both measured against
+//  a real BNCServerRequestQueue with a stubbed transport — real operations, real serial
+//  ordering, real dependencies, no network.
 //
-//  A test that asserts inside the requestDeepLinkData: callback cannot see this, because the
-//  callback fires while the queue is still draining. This test therefore asserts after the
+//  EMT-4028: while a resolution is in flight, a lifecycle foreground must not enqueue an organic
+//  open at all. EMT-4023: the open the resolution sends itself must not overwrite the params
+//  that resolution just persisted.
+//
+//  A test that asserts inside the requestDeepLinkData: callback cannot see either, because the
+//  callback fires while the queue is still draining. These tests therefore assert after the
 //  isolation queue has run the lifecycle call, and after the request queue has fully drained.
 //
 
@@ -269,6 +273,33 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
     XCTAssertEqual([self postedOpenCount], 1u,
                    @"Exactly one open must reach the wire: the resolution's own. Posted in order: %@.",
                    [self postedURLs]);
+}
+
+// The same assertion without the lifecycle interleaving: the resolution's own open still runs
+// after the params are persisted, and must not overwrite them either. This isolates the
+// overwrite from the queue-ordering question, so a failure here points at the open's handling
+// of a response with no "data" rather than at scheduling.
+- (void)testResolvedParamsSurviveTheResolutionsOwnOpenAfterTheQueueDrains {
+    [self.branch requestDeepLinkData:kResolvedLinkURL callback:nil];
+    [self waitForCondition:^BOOL{ return [self enqueuedOperationCount] >= 1; }
+               description:@"the deep link resolution to be enqueued"
+                   timeout:5.0];
+
+    self.drainingQueue.operationQueue.suspended = NO;
+    [self waitForCondition:^BOOL{ return [self enqueuedOperationCount] == 0; }
+               description:@"the request queue to drain"
+                   timeout:15.0];
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+
+    XCTAssertGreaterThanOrEqual([self postedOpenCount], 1u,
+                                @"Precondition: the resolution must have triggered its attributed open. Posted: %@.",
+                                [self postedURLs]);
+
+    NSDictionary *params = [self.branch getLatestReferringParams];
+    XCTAssertEqualObjects(params[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK], kResolvedLinkURL,
+                          @"The attributed open must not overwrite the params the resolution just persisted. Posted in order: %@.",
+                          [self postedURLs]);
+    XCTAssertEqualObjects(params[@"~campaign"], @"beta launch");
 }
 
 @end
