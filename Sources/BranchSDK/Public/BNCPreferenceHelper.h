@@ -61,8 +61,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) NSInteger savedURLPatternListVersion;
 @property (assign, nonatomic) BOOL dropURLOpen;
 
-@property (assign, nonatomic) BOOL trackingDisabled;
-
 @property (copy, nonatomic) NSString *referrerGBRAID;
 @property (assign, nonatomic) NSTimeInterval referrerGBRAIDValidityWindow;
 @property (strong, nonatomic) NSDate *referrerGBRAIDInitDate;
@@ -82,6 +80,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) BOOL adUserDataUsageConsent;
 
 @property (nonatomic, assign) NSString *attributionLevel;
+@property (nonatomic, assign) BOOL attributionLevelNone;
 
 @property (copy, nonatomic) NSString *uxType;
 @property (strong, nonatomic) NSDate *urlLoadMs;

@@ -39,7 +39,7 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
         [messages setObject:@"Spotlight indexing requires a title." forKey:@(BNCSpotlightTitleError)];
         [messages setObject:@"The Spotlight identifier is required to remove indexing from spotlight." forKey:@(BNCSpotlightIdentifierError)];
         [messages setObject:@"Spotlight cannot remove publicly indexed content." forKey:@(BNCSpotlightPublicIndexError)];
-        [messages setObject:@"User tracking is disabled and the request is not allowed" forKey:@(BNCTrackingDisabledError)];
+        [messages setObject:@"Cannot process request. Attribution Level is set to \"NONE\". To process this request call [Branch setConsumerProtectionAttributionLevel:BranchAttributionLevelFull resetSession:YES]." forKey:@(BNCAttributionLevelNoneError)];
         [messages setObject:@"Possible DNS Ad Blocker. Giving up on request." forKey:@(BNCDNSAdBlockerError)];
         [messages setObject:@"Possible VPN Ad Blocker. Giving up on request." forKey:@(BNCVPNAdBlockerError)];
         [messages setObject:@"Class not found (for Dynamic Method invocation)." forKey:@(BNCClassNotFoundError)];

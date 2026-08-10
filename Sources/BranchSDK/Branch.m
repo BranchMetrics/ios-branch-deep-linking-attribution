@@ -186,6 +186,9 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (nonatomic, copy, nullable) void (^cachedInitBlock)(void);
 @property (nonatomic, copy, readwrite) NSString *cachedURLString;
 
+// Private method used internally
+- (void)clearLinkIdentifiers;
+
 @end
 
 @implementation Branch
@@ -578,39 +581,9 @@ static NSString *bnc_branchKey = nil;
     [self.preferenceHelper setRequestMetadataKey:key value:value];
 }
 
-
-+ (BOOL)trackingDisabled {
-    @synchronized(self) {
-        return [BNCPreferenceHelper sharedInstance].trackingDisabled;
-    }
-}
-
-+ (void)setTrackingDisabled:(BOOL)disabled {
-    @synchronized(self) {
-        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"setTrackingDisabled to %d", disabled] error:nil];
-
-        BOOL currentSetting = self.trackingDisabled;
-        if (!!currentSetting == !!disabled)
-            return;
-        if (disabled) {
-            [[BNCPartnerParameters shared] clearAllParameters];
-            
-            // Set the flag (which also clears the settings):
-            [BNCPreferenceHelper sharedInstance].trackingDisabled = YES;
-            Branch *branch = Branch.getInstance;
-            [branch clearNetworkQueue];
-            branch.initializationStatus = BNCInitStatusUninitialized;
-            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", branch.initializationStatus] error:nil];
-
-            [branch.linkCache clear];
-            // Release the lock in case it's locked:
-            [BranchOpenRequest releaseOpenResponseLock];
-        } else {
-            // Set the flag:
-            [BNCPreferenceHelper sharedInstance].trackingDisabled = NO;
-            // Initialize a Branch session:
-            [Branch.getInstance initUserSessionAndCallCallback:NO sceneIdentifier:nil urlString:nil reset:NO];
-        }
++ (BOOL)attributionLevelNone {
+    @synchronized (self) {
+        return [[BNCPreferenceHelper sharedInstance].attributionLevel isEqualToString:BranchAttributionLevelNone];
     }
 }
 
@@ -718,36 +691,26 @@ static NSString *bnc_branchKey = nil;
     
     //Set tracking to disabled if consumer protection attribution level is changed to BranchAttributionLevelNone. Otherwise, keep tracking enabled.
     if (level == BranchAttributionLevelNone) {
-        if ([Branch trackingDisabled] == false) {
-            //Disable Tracking
-            [[BranchLogger shared] logVerbose:@"Disabling attribution events due to Consumer Protection Attribution Level being BranchAttributionLevelNone." error:nil];
-            
-            // Clear partner parameters
-            [[BNCPartnerParameters shared] clearAllParameters];
-            
-            // Set the flag (which also clears the settings):
-            [BNCPreferenceHelper sharedInstance].trackingDisabled = YES;
-            Branch *branch = Branch.getInstance;
-            [branch clearNetworkQueue];
-            branch.initializationStatus = BNCInitStatusUninitialized;
-            [branch.linkCache clear];
-            // Release the lock in case it's locked:
-            [BranchOpenRequest releaseOpenResponseLock];
-        }
+        //Disable Tracking
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Disabling attribution events due to Consumer Protection Attribution Level being %@.", level] error:nil];
+        
+        // Clear partner parameters
+        [[BNCPartnerParameters shared] clearAllParameters];
+        
+        Branch *branch = Branch.getInstance;
+        [branch clearNetworkQueue];
+        branch.initializationStatus = BNCInitStatusUninitialized;
+        [branch.linkCache clear];
+        // Release the lock in case it's locked:
+        [BranchOpenRequest releaseOpenResponseLock];
     } else {
-        if ([Branch trackingDisabled]) {
-            //Enable Tracking
-            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enabling attribution events due to Consumer Protection Attribution Level being %@.", level] error:nil];
-            
-            // Set the flag:
-            [BNCPreferenceHelper sharedInstance].trackingDisabled = NO;
+        //Enable Tracking
+        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enabling attribution events due to Consumer Protection Attribution Level being %@.", level] error:nil];
 
-            if (resetSession) {
-                [[Branch getInstance] sendOpen];
-            }
+        if (resetSession) {
+            [[Branch getInstance] sendOpen];
         }
     }
-    
 }
 
 #pragma mark - InitSession Permutation methods
@@ -1184,13 +1147,13 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)addFacebookPartnerParameterWithName:(NSString *)name value:(NSString *)value {
-    if (![Branch trackingDisabled]) {
+    if (![Branch attributionLevelNone]) {
         [[BNCPartnerParameters shared] addFacebookParameterWithName:name value:value];
     }
 }
 
 - (void)addSnapPartnerParameterWithName:(NSString *)name value:(NSString *)value {
-    if (![Branch trackingDisabled]) {
+    if (![Branch attributionLevelNone]) {
         [[BNCPartnerParameters shared] addSnapParameterWithName:name value:value];
     }
 }
@@ -1240,8 +1203,8 @@ static NSString *bnc_branchKey = nil;
 - (void)logoutWithCallback:(callbackWithStatus)callback {
     if (self.initializationStatus == BNCInitStatusUninitialized) {
         NSError *error =
-            (Branch.trackingDisabled)
-            ? [NSError branchErrorWithCode:BNCTrackingDisabledError]
+            ([Branch attributionLevelNone])
+            ? [NSError branchErrorWithCode:BNCAttributionLevelNoneError]
             : [NSError branchErrorWithCode:BNCInitError];
         [[BranchLogger shared] logWarning:@"Branch is not initialized, cannot logout." error:error];
         if (callback) {callback(NO, error);}
@@ -1322,8 +1285,12 @@ static NSString *bnc_branchKey = nil;
 
 - (NSDictionary *)getLatestReferringParamsSynchronous {
     [BranchOpenRequest waitForOpenResponseLock];
+    [BranchRequestDeepLink waitForDeepLinkResponseLock];
+    [BranchRequestOpen waitForOpenResponseLock];
     NSDictionary *result = [self getLatestReferringParams];
     [BranchOpenRequest releaseOpenResponseLock];
+    [BranchRequestDeepLink releaseDeepLinkResponseLock];
+    [BranchRequestOpen releaseOpenResponseLock];
     return result;
 }
 
@@ -1735,6 +1702,19 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
+- (void)clearLinkIdentifiers {
+    // Clear link identifiers so they don't get reused on the next open
+    // This matches the cleanup done in BranchRequestOpen.processResponse (lines 181-184)
+    self.preferenceHelper.linkClickIdentifier = nil;
+    self.preferenceHelper.spotlightIdentifier = nil;
+    self.preferenceHelper.universalLinkUrl = nil;
+    self.preferenceHelper.externalIntentURI = nil;
+    self.preferenceHelper.referringURL = nil;
+    self.preferenceHelper.initialReferrer = nil;
+    self.preferenceHelper.dropURLOpen = NO;
+    self.preferenceHelper.uxType = nil;
+    self.preferenceHelper.urlLoadMs = nil;
+}
 
 #pragma mark - URL Generation methods
 
@@ -2011,8 +1991,8 @@ static NSString *bnc_branchKey = nil;
 
         // EMT-3892: a deferred deep-link open is still pending; firing here would be a
         // second, unattributed open.
-        if (!Branch.trackingDisabled && self.initializationStatus == BNCInitStatusUninitialized && !installOrOpenInQueue && !self.deepLinkOpenPending) {
-            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive trackingDisabled %d initializationStatus %d installOrOpenInQueue %d deepLinkOpenPending %d", Branch.trackingDisabled, self.initializationStatus, installOrOpenInQueue, self.deepLinkOpenPending] error:nil];
+        if (![Branch attributionLevelNone] && self.initializationStatus == BNCInitStatusUninitialized && !installOrOpenInQueue && !self.deepLinkOpenPending) {
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive attributionLevelNone %d initializationStatus %d installOrOpenInQueue %d deepLinkOpenPending %d", [Branch attributionLevelNone], self.initializationStatus, installOrOpenInQueue, self.deepLinkOpenPending] error:nil];
 
             [self sendOpen];
         }
@@ -2023,7 +2003,7 @@ static NSString *bnc_branchKey = nil;
     [[BranchLogger shared] logVerbose:@"applicationWillResignActive" error:nil];
 
     dispatch_async(self.isolationQueue, ^(){
-        if (!Branch.trackingDisabled) {
+        if (![Branch attributionLevelNone]) {
             self.initializationStatus = BNCInitStatusUninitialized;
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationWillResignActive initializationStatus %ld", self.initializationStatus] error:nil];
             [BranchOpenRequest setWaitNeededForOpenResponseLock];
@@ -2543,10 +2523,12 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 + (void) clearAll {
     [[BNCServerRequestQueue getInstance] clearQueue];
     [BranchOpenRequest releaseOpenResponseLock];
-    [BranchRequestDeepLink releaseOpenResponseLock];
+    [BranchRequestDeepLink releaseDeepLinkResponseLock];
     [BranchRequestOpen releaseOpenResponseLock];
     [BNCPreferenceHelper clearAll];
 }
+
+#pragma mark - Deep Linking API Request Methods
 
 - (void) requestDeepLinkData:(NSString *)branchLink callback:(nullable callbackWithParams)callback {
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData called with branchLink: %@", branchLink] error:nil];
@@ -2752,6 +2734,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         self.deepLinkOpenFallbackTimer = nil;
     }
 }
+#pragma mark - Attribution API Request Methods
 
 - (void) sendOpen {
     NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;
@@ -2762,7 +2745,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [[BranchLogger shared] logDebug:@"sendOpen called" error:nil];
 
     if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
-        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented." error:nil];
+        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented. Clearing link identifiers to prevent reuse." error:nil];
+        
+        [self clearLinkIdentifiers];
         return;
     }
     // Prepare callback block
@@ -2787,11 +2772,12 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
 }
 
-- (void) sendOpen:(NSDictionary *)responseData {
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen called with responseData: %@", responseData] error:nil];
+- (void) sendOpen:(NSDictionary *)responseData skipCallback:(BOOL)skipCallback {
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen called with responseData: %@, skipCallback: %d", responseData, skipCallback] error:nil];
 
     if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
-        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented." error:nil];
+        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented. Clearing link identifiers to prevent reuse." error:nil];
+        [self clearLinkIdentifiers];
         return;
     }
 

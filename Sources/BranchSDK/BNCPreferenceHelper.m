@@ -514,7 +514,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 
 - (NSMutableString*) sanitizedMutableBaseURL:(NSString*)baseUrl_ {
     NSMutableString *baseUrl = [baseUrl_ mutableCopy];
-    if (self.trackingDisabled) {
+    if (self.attributionLevelNone) {
         NSString *id_string = [NSString stringWithFormat:@"%%24randomized_bundle_token=%@", self.randomizedBundleToken];
         NSRange range = [baseUrl rangeOfString:id_string];
         if (range.location != NSNotFound) [baseUrl replaceCharactersInRange:range withString:@""];
@@ -643,22 +643,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (void) setDropURLOpen:(BOOL)value {
     @synchronized(self) {
         [self writeBoolToDefaults:@"dropURLOpen" value:value];
-    }
-}
-
-- (BOOL) trackingDisabled {
-    @synchronized(self) {
-        NSNumber *b = (id) [self readObjectFromDefaults:@"trackingDisabled"];
-        if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
-        return false;
-    }
-}
-
-- (void) setTrackingDisabled:(BOOL)disabled {
-    @synchronized(self) {
-        NSNumber *b = [NSNumber numberWithBool:disabled];
-        [self writeObjectToDefaults:@"trackingDisabled" value:b];
-        if (disabled) [self clearTrackingInformation];
     }
 }
 
@@ -908,7 +892,14 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 }
 
 - (void)setAttributionLevel:(BranchAttributionLevel)level {
+    if ([level isEqualToString:BranchAttributionLevelNone]) {
+        [self clearTrackingInformation];
+    }
     [self writeObjectToDefaults:BRANCH_PREFS_KEY_ATTRIBUTION_LEVEL value:level];
+}
+
+- (BOOL)attributionLevelNone {
+    return [[self attributionLevel] isEqualToString:BranchAttributionLevelNone];
 }
 
 - (NSString *) uxType {
