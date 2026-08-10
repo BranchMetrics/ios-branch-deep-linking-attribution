@@ -175,6 +175,8 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 
 // Private method used internally
 - (void)clearLinkIdentifiers;
+- (NSString *)patternMatchingIgnoredURL:(NSURL *)url;
+- (void)recordIgnoredURLString:(NSString *)urlString;
 
 @end
 
@@ -837,6 +839,26 @@ static NSString *bnc_branchKey = nil;
     [self.userURLFilter useCustomPatternList:urlsToIgnore];
 }
 
+// The single place either filter is consulted, so both entry points ask the same question:
+// the server-supplied skiplist first, then whatever the host app passed to
+// setUrlPatternsToIgnore:. Returns the matched pattern, or nil when the URL may be resolved.
+- (NSString *)patternMatchingIgnoredURL:(NSURL *)url {
+    NSString *pattern = [self.urlFilter patternMatchingURL:url];
+    if (!pattern) {
+        pattern = [self.userURLFilter patternMatchingURL:url];
+    }
+    return pattern;
+}
+
+// A filtered URL is recorded but never resolved. dropURLOpen tells the open that follows to
+// read a server error as an unattributed result rather than a session failure, so the session
+// still terminates instead of hanging.
+- (void)recordIgnoredURLString:(NSString *)urlString {
+    self.preferenceHelper.dropURLOpen = YES;
+    self.preferenceHelper.externalIntentURI = urlString;
+    self.preferenceHelper.referringURL = urlString;
+}
+
 // This is currently the same as handleDeeplink
 - (BOOL)handleDeepLinkWithNewSession:(NSURL *)url {
     return [self handleDeepLink:url sceneIdentifier:nil];
@@ -858,17 +880,9 @@ static NSString *bnc_branchKey = nil;
     BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
     [utility parseReferringURL:url];
     
-    NSString *pattern = nil;
-    pattern = [self.urlFilter patternMatchingURL:url];
-    if (!pattern) {
-        pattern = [self.userURLFilter patternMatchingURL:url];
-    }
+    NSString *pattern = [self patternMatchingIgnoredURL:url];
     if (pattern) {
-        self.preferenceHelper.dropURLOpen = YES;
-        
-        NSString *urlString = [url absoluteString];
-        self.preferenceHelper.externalIntentURI = urlString;
-        self.preferenceHelper.referringURL = urlString;
+        [self recordIgnoredURLString:[url absoluteString]];
 
         [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:nil reset:YES];
         return NO;
@@ -2484,6 +2498,35 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 - (void) requestDeepLinkData:(NSString *)branchLink callback:(nullable callbackWithParams)callback {
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData called with branchLink: %@", branchLink] error:nil];
+
+    // Same question handleDeepLink: asks, asked before anything is cancelled or enqueued: a URL
+    // the skiplist or the host app told us to ignore must not reach /v3/deeplink. It is also
+    // asked before -cancelPendingDeepLinkRequests, so an ignored URL cannot discard a resolution
+    // already in flight for a link we are allowed to resolve.
+    NSString *ignoredPattern = nil;
+    if (branchLink.length > 0) {
+        ignoredPattern = [self patternMatchingIgnoredURL:[NSURL URLWithString:branchLink]];
+    }
+    if (ignoredPattern) {
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData will not resolve a URL matching ignored pattern %@", ignoredPattern] error:nil];
+
+        // handleDeepLink: records the URL and completes the session unattributed rather than
+        // dropping it silently. -sendOpen is how this line completes a session, so the SDK lands
+        // in the same state whichever entry point the filtered URL arrived through.
+        [self recordIgnoredURLString:branchLink];
+        [self sendOpen];
+
+        // The caller asked whether this URL carries link data and is owed an answer. It carries
+        // none, and nothing failed, so the answer is the SDK's own not-a-link payload rather than
+        // an error or -getLatestReferringParams, which still reports the last link that did
+        // resolve.
+        if (callback) {
+            dispatch_async(dispatch_get_main_queue(), ^ {
+                callback(@{ BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK : @0 }, nil);
+            });
+        }
+        return;
+    }
 
     if (branchLink.length > 0) {
         [self.requestQueue cancelPendingDeepLinkRequests];
