@@ -10,6 +10,11 @@ on:
       - master
       - main
       - wpinho-branch/mobileboost-ios-tests
+      # The 4.0 beta line is where the active SDK work lands, so wire changes
+      # merging there need the same gate. Note this entry alone is not enough:
+      # the workflow file has to exist in the PR's merge tree, which means it
+      # also has to land on 4.0.0-beta.0 itself.
+      - "4.0.0-beta.*"
     # Only run when something that can change the wire actually changed.
     paths:
       - "Sources/BranchSDK/**"
