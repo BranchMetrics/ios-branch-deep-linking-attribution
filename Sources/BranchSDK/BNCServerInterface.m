@@ -66,13 +66,13 @@
     // TODO: confirm it's ok to send full URL instead of with the domain trimmed off
     self.requestEndpoint = url;
     
-    if (Branch.trackingDisabled && ![url containsString:@"/v3/deeplink"]) {
+    if ([Branch attributionLevelNone] && ![url containsString:@"/v3/deeplink"]) {
     
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Tracking is disabled, checking if %@ is linking request.", url] error:nil];
 
         if (![self isLinkingRelatedRequest:url postParams:post]) {
             [[BNCPreferenceHelper sharedInstance] clearTrackingInformation];
-            NSError *error = [NSError branchErrorWithCode:BNCTrackingDisabledError];
+            NSError *error = [NSError branchErrorWithCode:BNCAttributionLevelNoneError];
             [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Dropping non-linking request"] error:error];
             if (callback) {
                 callback(nil, error);

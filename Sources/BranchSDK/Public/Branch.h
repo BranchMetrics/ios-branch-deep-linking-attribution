@@ -563,8 +563,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  */
 - (void)sendOpen;
 
-- (void)sendOpen:(NSDictionary *)responseData;
-
 #pragma mark - Pre-initialization support
 
 /**
@@ -843,28 +841,6 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 - (void)setRequestMetadataKey:(NSString *)key value:(nullable NSString *)value;
 
 /**
- Disables the Branch SDK from tracking the user. This is useful for GDPR privacy compliance.
-
- When tracking is disabled, the Branch SDK will clear the Branch defaults of user identifying
- information and prevent Branch from making any Branch network calls that will track the user.
-
- Note that:
-
- * Opening Branch deep links with an explicit URL will work.
- * Deferred deep linking will not work.
- * Generating short links will not work and will return long links instead.
- * Sending user tracking events such as `BranchEvents` will fail.
- * Setting a user identity and logging a user identity out will not work.
-
- @param disabled    If set to `true` then tracking will be disabled.
- @warning This will prevent most of the Branch SDK functionality.
-*/
-+ (void)setTrackingDisabled:(BOOL)disabled __attribute__((deprecated("This method has been deprecated. Use `setConsumerProtectionAttributionLevel:` with `BranchAttributionLevelNone` instead.")));
-
-///Returns the current tracking state.
-+ (BOOL) trackingDisabled;
-
-/**
  Disables automatic session open tracking for the next foreground event with a default timeout of 30 seconds.
  This is useful for scenarios like Bio Auth Dialogs, Apple Pay Dialogs or other cases where the app may briefly go to
  background and return without needing a new session open.
@@ -998,6 +974,8 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  */
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level resetSession:(BOOL)resetSession;
 
+/// Returns a boolean based on if the current Attribution Level is set to "NONE".
++ (BOOL) attributionLevelNone;
 
 #pragma mark - Session Item methods
 
