@@ -281,7 +281,9 @@ SKAdNetwork window state, consent/attribution level, tracking state, and network
   linking strips ObjC categories, so each category exposes a no-op `BNCForce…CategoryToLoad`
   symbol. What actually registers them is `__attribute__((constructor))` on the declaration in the
   private header — present on `NSError+Branch`, `NSString+Branch`, `NSMutableDictionary+Branch`
-  and `UIViewController+Branch`, and **absent on `Branch+Validator`**.
+  and `UIViewController+Branch`, and **not `__attribute__((constructor))`-decorated on
+  `Branch+Validator`** (it does define `BNCForceBranchValidatorCategoryToLoad`, but only
+  `ForceCategoriesToLoad()` calls it manually — grepping for the symbol will find it and mislead).
   `ForceCategoriesToLoad()` in `Branch.m` aggregates all five calls but has **zero call sites in
   the repo**, so adding a line to it changes nothing. A new category needs the
   `__attribute__((constructor))` form; do not model it on `Branch+Validator`. (Nothing in CI or
