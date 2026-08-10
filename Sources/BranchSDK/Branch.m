@@ -2679,6 +2679,13 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 #pragma mark - Deep Link Open Deferral (EMT-3892 / EMT-3893)
 
+// Records the link an attributed open is for. Called by BranchRequestDeepLink once it has
+// resolved one, so a later handleUniversalDeepLink_private: for that same link skips
+// re-arming the fallback instead of producing a second open.
+- (void)markDeepLinkAttributed:(NSString *)urlString {
+    self.lastAttributedDeepLinkURL = urlString;
+}
+
 // Defers the launch open so BranchRequestDeepLink.processResponse sends the single
 // attributed open. Bounded fallback (preferenceHelper.timeout, default 5.5s) fires an
 // unattributed open if the host app never calls requestDeepLinkData. EMT-3892.
@@ -2783,7 +2790,12 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     // EMT-3892: remember the link this attributed open was for, so a later
     // handleUniversalDeepLink_private: for the same link skips the fallback.
-    self.lastAttributedDeepLinkURL = self.preferenceHelper.referringURL;
+    // Only when we actually have one: in the resolution-first ordering
+    // BranchRequestDeepLink has already called markDeepLinkAttributed: with the resolved
+    // link, and referringURL is still nil here — overwriting would drop that mark.
+    if (self.preferenceHelper.referringURL.length) {
+        self.lastAttributedDeepLinkURL = self.preferenceHelper.referringURL;
+    }
 
     // Prepare callback block
     callbackWithStatus openCallback = ^(BOOL success, NSError *error) {

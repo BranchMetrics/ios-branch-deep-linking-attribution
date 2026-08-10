@@ -16,9 +16,10 @@
 #import "BNCServerAPI.h"
 #import "BNCInAppBrowser.h"
 
-// Forward declaration of private Branch method
+// Forward declaration of private Branch methods
 @interface Branch (PrivateMethods)
 - (void)sendOpen:(NSDictionary *)responseData skipCallback:(BOOL)skipCallback;
+- (void)markDeepLinkAttributed:(NSString *)urlString;
 @end
 
 @implementation BranchRequestDeepLink
@@ -254,6 +255,12 @@ static BOOL deepLinkRequestWaitQueueIsSuspended = NO;
 
     if (referringURL != nil) {
         [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"~referring_link found in response: %@, sending sendOpen network request." ,referringURL] error:nil];
+        // EMT-3892: tell Branch which link this open attributes, so a later
+        // handleUniversalDeepLink_private: for the same link does not re-arm the
+        // deferred-open fallback and emit a second open. It has to be passed
+        // explicitly: this class no longer writes preferenceHelper.referringURL,
+        // so Branch cannot read the value back out in this ordering.
+        [[Branch getInstance] markDeepLinkAttributed:referringURL];
         [[Branch getInstance] sendOpen:response.data skipCallback:skipCallback];
     } else {
         [[BranchLogger shared] logDebug:@"No ~referring_link on deeplink data. Not sending sendOpen network request. Clearing link identifiers to prevent reuse." error:nil];
