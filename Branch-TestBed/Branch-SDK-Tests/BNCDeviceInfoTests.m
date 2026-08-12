@@ -29,8 +29,7 @@
 // first, which is how a timeout here surfaced as a failure in testAdvertiserId. Only
 // testUserAgentString actually depends on the collected value, so a standalone XCTWaiter
 // is used instead: a slow load now fails that test, on its own assertion, and leaves the
-// rest of the class alone. That is what the empty handler on the previous
-// waitForExpectationsWithTimeout: call was trying (and failing) to express.
+// rest of the class alone.
 - (void)workaroundUserAgentLazyLoad {
     XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"user agent warm-up"];
     [[BNCUserAgentCollector instance] loadUserAgentWithCompletion:^(NSString * _Nullable userAgent) {
