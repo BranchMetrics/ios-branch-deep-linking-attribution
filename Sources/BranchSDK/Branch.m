@@ -163,6 +163,9 @@ void ForceCategoriesToLoad(void) {
 @property (nonatomic, copy, nullable) void (^cachedInitBlock)(void);
 @property (nonatomic, copy, readwrite) NSString *cachedURLString;
 
+// Private method used internally
+- (void)clearLinkIdentifiers;
+
 @end
 
 @implementation Branch
@@ -238,7 +241,7 @@ void ForceCategoriesToLoad(void) {
     // queue up async data loading
     [self loadApplicationData];
     [self loadUserAgent];
-    
+
     BranchJsonConfig *config = BranchJsonConfig.instance;
     self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
     [BranchConfigurationController sharedInstance].deferInitForPluginRuntime = self.deferInitForPluginRuntime;
@@ -247,15 +250,15 @@ void ForceCategoriesToLoad(void) {
     if (config.apiUrl) {
         [Branch setAPIUrl:config.apiUrl];
     }
-    
+
     if (config.enableLogging) {
         [Branch enableLogging];
     }
-    
+
     if (config.checkPasteboardOnInstall) {
         [self checkPasteboardOnInstall];
     }
-    
+
     if (config.cppLevel) {
         if ([config.cppLevel caseInsensitiveCompare:@"FULL"] == NSOrderedSame) {
             [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
@@ -414,15 +417,15 @@ static NSString *bnc_branchKey = nil;
 + (NSString *)branchKey {
     @synchronized (self) {
         if (bnc_branchKey) return bnc_branchKey;
-        
+
         NSString *branchKey = nil;
         NSString *branchKeySource = @"Unknown";
-        
+
         BranchJsonConfig *config = BranchJsonConfig.instance;
         BOOL usingTestInstance = bnc_useTestBranchKey || config.useTestInstance;
         branchKey = config.branchKey ?: usingTestInstance ? config.testKey : config.liveKey;
         [self setUseTestBranchKey:usingTestInstance];
-        
+
         if (branchKey) {
             branchKeySource = BRANCH_KEY_SOURCE_CONFIG_JSON;
         } else {
@@ -633,7 +636,7 @@ static NSString *bnc_branchKey = nil;
 #else
     [[BranchLogger shared] logWarning:@"setODMInfo not supported on tvOS." error:nil];
 #endif
-    
+
 }
 
 + (void)setAnonID:(NSString *)anonID {
@@ -652,17 +655,17 @@ static NSString *bnc_branchKey = nil;
 
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level resetSession:(BOOL)resetSession {
     self.preferenceHelper.attributionLevel = level;
-    
+
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Setting Consumer Protection Attribution Level to %@", level] error:nil];
-    
+
     //Set tracking to disabled if consumer protection attribution level is changed to BranchAttributionLevelNone. Otherwise, keep tracking enabled.
     if (level == BranchAttributionLevelNone) {
         //Disable Tracking
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Disabling attribution events due to Consumer Protection Attribution Level being %@.", level] error:nil];
-        
+
         // Clear partner parameters
         [[BNCPartnerParameters shared] clearAllParameters];
-        
+
         Branch *branch = Branch.getInstance;
         [branch clearNetworkQueue];
         [branch.linkCache clear];
@@ -784,7 +787,9 @@ static NSString *bnc_branchKey = nil;
             self.preferenceHelper.linkClickIdentifier = params[@"link_click_id"];
         }
     }
-    
+
+    [self requestDeepLinkData:nil callback:nil];
+
     return handled;
 }
 
@@ -867,6 +872,7 @@ static NSString *bnc_branchKey = nil;
     }
     #endif
 
+    [self requestDeepLinkData:userActivity.webpageURL.absoluteString callback:nil];
 
     return spotlightIdentifier != nil;
 }
@@ -874,7 +880,7 @@ static NSString *bnc_branchKey = nil;
 // checks if URL string looks like a branch link
 + (BOOL)isBranchLink:(NSString *)urlString {
     id branchUniversalLinkDomains = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_universal_link_domains"];
-    
+
     // check url list in bundle
     if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] && [urlString containsString:branchUniversalLinkDomains]) {
         return YES;
@@ -949,7 +955,7 @@ static NSString *bnc_branchKey = nil;
     } else {
         [BNCPreferenceHelper sharedInstance].hasCalledHandleATTAuthorizationStatus = YES;
     }
-    
+
     BranchEvent *event;
     switch (status) {
         case 2:
@@ -1039,17 +1045,17 @@ static NSString *bnc_branchKey = nil;
 - (void)logoutWithCallback:(callbackWithStatus)callback {
     if ([Branch attributionLevelNone]) {
         NSError *error = [NSError branchErrorWithCode:BNCAttributionLevelNoneError];
-        [[BranchLogger shared] logWarning:@"Branch is not initialized, cannot logout." error:error];
+        [[BranchLogger shared] logWarning:@"Branch attribution level is set to NONE, cannot logout." error:error];
         if (callback) {callback(NO, error);}
         return;
     }
 
     // Clear cached links
     self.linkCache = [[BNCLinkCache alloc] init];
-    
+
     // Removed stored values
     self.preferenceHelper.userIdentity = nil;
-    
+
     if (callback) {
         callback(YES, nil);
     }
@@ -1108,8 +1114,12 @@ static NSString *bnc_branchKey = nil;
 
 - (NSDictionary *)getLatestReferringParamsSynchronous {
     [BranchOpenRequest waitForOpenResponseLock];
+    [BranchRequestDeepLink waitForDeepLinkResponseLock];
+    [BranchRequestOpen waitForOpenResponseLock];
     NSDictionary *result = [self getLatestReferringParams];
     [BranchOpenRequest releaseOpenResponseLock];
+    [BranchRequestDeepLink releaseDeepLinkResponseLock];
+    [BranchRequestOpen releaseOpenResponseLock];
     return result;
 }
 
@@ -1437,7 +1447,7 @@ static NSString *bnc_branchKey = nil;
 #pragma mark - UIPasteControl Support methods
 
 - (void)passPasteItemProviders:(NSArray<NSItemProvider *> *)itemProviders {
-    
+
    // 1. Extract URL from NSItemProvider arrary
     for (NSItemProvider* item in itemProviders){
         if ( [item hasItemConformingToTypeIdentifier: UTTypeURL.identifier] ) {
@@ -1484,7 +1494,7 @@ static NSString *bnc_branchKey = nil;
             if(!preferenceHelper.firstAppLaunchTime){
                 preferenceHelper.firstAppLaunchTime = [NSDate date];
             }
-            
+
             preferenceHelper.lastRunBranchKey = key;
             branch =
                 [[Branch alloc] initWithInterface:[[BNCServerInterface alloc] init]
@@ -1492,7 +1502,7 @@ static NSString *bnc_branchKey = nil;
                     cache:[[BNCLinkCache alloc] init]
                     preferenceHelper:preferenceHelper
                     key:key];
-            
+
             // Workaround for testbed not linking BranchPluginSupport, which prevents unit tests from finding it
             [BranchPluginSupport instance];
         });
@@ -1500,6 +1510,19 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
+- (void)clearLinkIdentifiers {
+    // Clear link identifiers so they don't get reused on the next open
+    // This matches the cleanup done in BranchRequestOpen.processResponse (lines 181-184)
+    self.preferenceHelper.linkClickIdentifier = nil;
+    self.preferenceHelper.spotlightIdentifier = nil;
+    self.preferenceHelper.universalLinkUrl = nil;
+    self.preferenceHelper.externalIntentURI = nil;
+    self.preferenceHelper.referringURL = nil;
+    self.preferenceHelper.initialReferrer = nil;
+    self.preferenceHelper.dropURLOpen = NO;
+    self.preferenceHelper.uxType = nil;
+    self.preferenceHelper.urlLoadMs = nil;
+}
 
 #pragma mark - URL Generation methods
 
@@ -1562,9 +1585,9 @@ static NSString *bnc_branchKey = nil;
                      andParams:(NSDictionary *)params
                 ignoreUAString:(NSString *)ignoreUAString
              forceLinkCreation:(BOOL)forceLinkCreation {
-    
+
     NSString *shortURL = nil;
-    
+
     BNCLinkData *linkData =
     [self prepareLinkDataFor:tags
                     andAlias:alias
@@ -1576,7 +1599,7 @@ static NSString *bnc_branchKey = nil;
                  andCampaign:campaign
                    andParams:params
               ignoreUAString:ignoreUAString];
-    
+
     // If an ignore UA string is present, we always get a new url.
     // Otherwise, if we've already seen this request, use the cached version.
     if (!ignoreUAString && [self.linkCache objectForKey:linkData]) {
@@ -1597,17 +1620,17 @@ static NSString *bnc_branchKey = nil;
          params:params
          linkData:linkData
          linkCache:self.linkCache];
-        
+
         [[BranchLogger shared] logVerbose:@"Requesting Branch Link synchronously" error:nil];
         BNCServerResponse *serverResponse = [req makeRequest:self.serverInterface key:self.class.branchKey];
         shortURL = [req processResponse:serverResponse];
-        
+
         // cache the link
         if (shortURL) {
             [self.linkCache setObject:shortURL forKey:linkData];
         }
     }
-    
+
     return shortURL;
 }
 
@@ -1630,17 +1653,17 @@ static NSString *bnc_branchKey = nil;
                                     andFeature:(NSString *)feature
                                       andStage:(NSString *)stage
                                       andAlias:(NSString *)alias {
-    
+
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSString *baseUrl;
-    
+
     if (preferenceHelper.userUrl) {
         NSString *fullUserUrl = [preferenceHelper sanitizedMutableBaseURL:preferenceHelper.userUrl];
         baseUrl = [fullUserUrl componentsSeparatedByString:@"?"].firstObject;
     } else {
         baseUrl = [[NSMutableString alloc] initWithFormat:@"%@/a/%@?", BNC_LINK_URL, self.class.branchKey];
     }
-    
+
     return [self longUrlWithBaseUrl:baseUrl params:params tags:tags feature:feature
         channel:nil stage:stage alias:alias duration:0 type:BranchLinkTypeUnlimitedUse];
 }
@@ -1747,12 +1770,12 @@ static NSString *bnc_branchKey = nil;
     dispatch_async(self.isolationQueue, ^(){
         //  if necessary, creates a new organic open
         BOOL installOrOpenInQueue = [self.requestQueue containsInstallOrOpen];
-        
+
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive installOrOpenInQueue %d", installOrOpenInQueue] error:nil];
 
         if (![Branch attributionLevelNone] && !installOrOpenInQueue) {
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive attributionLevelNone %d installOrOpenInQueue %d", [Branch attributionLevelNone], installOrOpenInQueue] error:nil];
-            
+
             [self sendOpen];
         }
     });
@@ -1812,7 +1835,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             deferred = YES;
         }
     }
-    
+
     // handle default non-deferred state
     if (!deferred && block) {
         block();
@@ -1826,7 +1849,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         [[BranchLogger shared] logDebug:@"Unlocking Deferred SDK init" error:nil];
         self.deferInitForPluginRuntime = NO;
     }
-    
+
     if (self.cachedInitBlock) {
         self.cachedInitBlock();
     }
@@ -1843,7 +1866,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         NSString* referringLink = [self.class returnNonUniversalLink:latestReferringParams[@"~referring_link"] ];
         NSURLComponents *comp = [NSURLComponents componentsWithURL:[NSURL URLWithString:referringLink]
                                            resolvingAgainstBaseURL:NO];
-        
+
         Class applicationClass = NSClassFromString(@"UIApplication");
         id<NSObject> sharedApplication = [applicationClass performSelector:@selector(sharedApplication)];
         if ([sharedApplication respondsToSelector:@selector(openURL:)])
@@ -1991,7 +2014,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 + (void) clearAll {
     [[BNCServerRequestQueue getInstance] clearQueue];
     [BranchOpenRequest releaseOpenResponseLock];
-    [BranchRequestDeepLink releaseOpenResponseLock];
+    [BranchRequestDeepLink releaseDeepLinkResponseLock];
     [BranchRequestOpen releaseOpenResponseLock];
     [BNCPreferenceHelper clearAll];
 }
@@ -2239,11 +2262,13 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)]) {
         [self.delegate branch:self willStartSessionWithURL:URL];
     }
-    
+
     [[BranchLogger shared] logDebug:@"sendOpen called" error:nil];
 
     if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
-        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented." error:nil];
+        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented. Clearing link identifiers to prevent reuse." error:nil];
+
+        [self clearLinkIdentifiers];
         return;
     }
     // Prepare callback block
@@ -2268,11 +2293,12 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
 }
 
-- (void) sendOpen:(NSDictionary *)responseData {
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen called with responseData: %@", responseData] error:nil];
+- (void) sendOpen:(NSDictionary *)responseData skipCallback:(BOOL)skipCallback {
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen called with responseData: %@, skipCallback: %d", responseData, skipCallback] error:nil];
 
     if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
-        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented." error:nil];
+        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented. Clearing link identifiers to prevent reuse." error:nil];
+        [self clearLinkIdentifiers];
         return;
     }
 
