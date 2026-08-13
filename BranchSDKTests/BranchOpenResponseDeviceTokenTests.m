@@ -12,7 +12,7 @@
 #import "BranchOpenRequest.h"
 #import "BranchRequestOpen.h"
 
-static NSString * const kDeprecatedDeviceTokenKey = @"device_fingerprint_id";
+static NSString * const deprecatedDeviceTokenKey = @"device_fingerprint_id";
 
 @interface BranchOpenResponseDeviceTokenTests : XCTestCase
 @property (nonatomic, copy) NSString *savedDeviceToken;
@@ -51,7 +51,7 @@ static NSString * const kDeprecatedDeviceTokenKey = @"device_fingerprint_id";
 // The regression: a response carrying only the deprecated key stored no device token,
 // because the fallback was nested inside a guard requiring the modern key.
 - (void)testRequestOpenStoresDeviceTokenFromDeprecatedKeyOnly {
-    [self processOpenResponseData:@{ kDeprecatedDeviceTokenKey: @"legacy_device_token" }];
+    [self processOpenResponseData:@{ deprecatedDeviceTokenKey: @"legacy_device_token" }];
 
     XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].randomizedDeviceToken, @"legacy_device_token");
 }
@@ -65,7 +65,7 @@ static NSString * const kDeprecatedDeviceTokenKey = @"device_fingerprint_id";
 - (void)testRequestOpenPrefersModernKeyOverDeprecatedKey {
     [self processOpenResponseData:@{
         BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN: @"modern_device_token",
-        kDeprecatedDeviceTokenKey: @"legacy_device_token"
+        deprecatedDeviceTokenKey: @"legacy_device_token"
     }];
 
     XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].randomizedDeviceToken, @"modern_device_token");
@@ -82,7 +82,7 @@ static NSString * const kDeprecatedDeviceTokenKey = @"device_fingerprint_id";
 
 // The wire may deliver these identifiers as numbers, but the property is an NSString.
 - (void)testRequestOpenNormalizesNumericDeviceToken {
-    [self processOpenResponseData:@{ kDeprecatedDeviceTokenKey: @1234567890 }];
+    [self processOpenResponseData:@{ deprecatedDeviceTokenKey: @1234567890 }];
 
     NSString *token = [BNCPreferenceHelper sharedInstance].randomizedDeviceToken;
     XCTAssertTrue([token isKindOfClass:[NSString class]]);
@@ -92,7 +92,7 @@ static NSString * const kDeprecatedDeviceTokenKey = @"device_fingerprint_id";
 #pragma mark - BranchOpenRequest
 
 - (void)testOpenRequestStoresDeviceTokenFromDeprecatedKeyOnly {
-    [self processLegacyOpenResponseData:@{ kDeprecatedDeviceTokenKey: @"legacy_device_token" }];
+    [self processLegacyOpenResponseData:@{ deprecatedDeviceTokenKey: @"legacy_device_token" }];
 
     XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].randomizedDeviceToken, @"legacy_device_token");
 }
@@ -112,7 +112,7 @@ static NSString * const kDeprecatedDeviceTokenKey = @"device_fingerprint_id";
 }
 
 - (void)testOpenRequestNormalizesNumericDeviceToken {
-    [self processLegacyOpenResponseData:@{ kDeprecatedDeviceTokenKey: @1234567890 }];
+    [self processLegacyOpenResponseData:@{ deprecatedDeviceTokenKey: @1234567890 }];
 
     NSString *token = [BNCPreferenceHelper sharedInstance].randomizedDeviceToken;
     XCTAssertTrue([token isKindOfClass:[NSString class]]);
