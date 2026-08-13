@@ -57,6 +57,7 @@ static NSString * const kResolvedLinkPayloadJSON =
 // a non-init request when the session credentials are missing, so leaving one behind lets
 // later tests reach the network they would otherwise have skipped.
 @property (nonatomic, copy) NSString *savedSessionID;
+@property (nonatomic, copy) NSString *savedSpotlightIdentifier;
 @end
 
 @implementation BranchRequestDeepLinkTests
@@ -69,6 +70,7 @@ static NSString * const kResolvedLinkPayloadJSON =
     self.savedSessionParams = preferenceHelper.sessionParams;
     self.savedAttributionLevel = preferenceHelper.attributionLevel;
     self.savedSessionID = preferenceHelper.sessionID;
+    self.savedSpotlightIdentifier = preferenceHelper.spotlightIdentifier;
 
     preferenceHelper.sessionParams = nil;
     preferenceHelper.referringURL = nil;
@@ -98,6 +100,7 @@ static NSString * const kResolvedLinkPayloadJSON =
     preferenceHelper.referringURL = nil;
     preferenceHelper.attributionLevel = self.savedAttributionLevel;
     preferenceHelper.sessionID = self.savedSessionID;
+    preferenceHelper.spotlightIdentifier = self.savedSpotlightIdentifier;
 
     // Drain any already-scheduled async block against this clean baseline.
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
@@ -179,6 +182,44 @@ static NSString * const kResolvedLinkPayloadJSON =
     XCTAssertEqualObjects(receivedParams[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK], kResolvedLinkURL);
     XCTAssertEqualObjects(receivedParams[@"$og_title"], @"Resolved Content");
     XCTAssertEqualObjects(receivedParams[@"~campaign"], @"beta launch");
+}
+
+// A /v3/deeplink response with no session data of its own must not erase what was already
+// persisted -- the same non-destruction contract the open guard enforces, but exercised
+// against -persistSessionParams:preferenceHelper:error: directly.
+- (void)testDeepLinkResolutionWithoutSessionDataDoesNotEraseExistingParams {
+    // Seeded by the test rather than by a preceding resolution, so the assertions below can
+    // only be satisfied by the seed surviving -- this is a non-destruction contract.
+    [BNCPreferenceHelper sharedInstance].sessionParams = kResolvedLinkPayloadJSON;
+
+    BranchRequestDeepLink *request = [[BranchRequestDeepLink alloc] initWithCallback:nil];
+    request.urlString = kResolvedLinkURL;
+    request.uri = kResolvedLinkURL;
+
+    [request processResponse:[self responseWithData:@{}] error:nil];
+
+    NSDictionary *params = [self.branch getLatestReferringParams];
+    XCTAssertTrue([params[BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK] boolValue],
+                  @"A resolution response with no session data must leave the already-persisted params intact.");
+    XCTAssertEqualObjects(params[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK], kResolvedLinkURL);
+}
+
+// Same contract, but with a spotlight identifier set: the spotlight merge block must not turn
+// a data-less response into a write that replaces the existing payload with just the identifier.
+- (void)testDeepLinkResolutionWithoutSessionDataAndSpotlightIdentifierDoesNotEraseExistingParams {
+    [BNCPreferenceHelper sharedInstance].sessionParams = kResolvedLinkPayloadJSON;
+    [BNCPreferenceHelper sharedInstance].spotlightIdentifier = @"spotlight-id";
+
+    BranchRequestDeepLink *request = [[BranchRequestDeepLink alloc] initWithCallback:nil];
+    request.urlString = kResolvedLinkURL;
+    request.uri = kResolvedLinkURL;
+
+    [request processResponse:[self responseWithData:@{}] error:nil];
+
+    NSDictionary *params = [self.branch getLatestReferringParams];
+    XCTAssertTrue([params[BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK] boolValue],
+                  @"A data-less response with a spotlight identifier set must not replace the existing payload with just the identifier.");
+    XCTAssertEqualObjects(params[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK], kResolvedLinkURL);
 }
 
 // The open that follows resolution carries no "data" key of its own. It must not wipe what
