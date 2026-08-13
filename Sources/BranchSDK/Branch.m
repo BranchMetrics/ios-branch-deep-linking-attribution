@@ -1499,7 +1499,7 @@ static NSString *bnc_branchKey = nil;
                 else if ([Branch isBranchLink:url.absoluteString]) {
                     [self.preferenceHelper setLocalUrl:[url absoluteString]];
                     // 3. Send Open Event
-                    [[Branch getInstance] handleDeepLink:url];
+                    [[Branch getInstance] requestDeepLinkDataWithURL:url];
                 }
             }];
         }
