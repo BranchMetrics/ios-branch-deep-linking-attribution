@@ -712,16 +712,37 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (BOOL)handleDeepLink:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier {
-    return [self processDeepLinkURL:url sceneIdentifier:sceneIdentifier];
+    BOOL filtered = NO;
+    BOOL handled = [self processDeepLinkURL:url sceneIdentifier:sceneIdentifier filtered:&filtered];
+
+    // processDeepLinkURL: only populates the preferenceHelper; the entry point owns the enqueue so
+    // that the legacy handlers and the requestDeepLinkData* convenience methods each enqueue exactly
+    // one request. A skiplisted URL is never sent to Branch.
+    if (!filtered) {
+        [self requestDeepLinkData:url.absoluteString callback:nil];
+    }
+
+    return handled;
+}
+
+- (BOOL)processDeepLinkURL:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier {
+    return [self processDeepLinkURL:url sceneIdentifier:sceneIdentifier filtered:NULL];
 }
 
 // Populates the preferenceHelper with everything a deep link request needs from an incoming URL:
 // referring-URL query parameters, URL skiplist / dropURLOpen handling, custom-scheme intent URIs and
 // link_click_id extraction, and universal link URLs. This is the single source of truth shared by the
 // legacy handleDeepLink: entry points and the requestDeepLinkData* convenience methods so that none of
-// these checks are skipped regardless of which API the integrator adopts.
-// Returns YES if the URL was recognized as a Branch link.
-- (BOOL)processDeepLinkURL:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier {
+// these checks are skipped regardless of which API the integrator adopts. It never enqueues a request
+// itself — that is the caller's job.
+// Returns YES if the URL was recognized as a Branch link. On return `filtered` is YES only when the
+// URL matched the skiplist, which is the one case where the caller must not send the URL to Branch. A
+// NO return on its own just means "not a Branch link", which still warrants a deferred data lookup.
+- (BOOL)processDeepLinkURL:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier filtered:(BOOL *)filtered {
+    if (filtered) {
+        *filtered = NO;
+    }
+
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Handle deep link %@", url] error:nil];
 
     //Check the referring url/uri for query parameters and save them
@@ -734,6 +755,10 @@ static NSString *bnc_branchKey = nil;
         pattern = [self.userURLFilter patternMatchingURL:url];
     }
     if (pattern) {
+        if (filtered) {
+            *filtered = YES;
+        }
+
         self.preferenceHelper.dropURLOpen = YES;
 
         NSString *urlString = [url absoluteString];
@@ -788,8 +813,6 @@ static NSString *bnc_branchKey = nil;
         }
     }
 
-    [self requestDeepLinkData:nil callback:nil];
-
     return handled;
 }
 
@@ -831,16 +854,35 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier {
-    return [self processUserActivity:userActivity sceneIdentifier:sceneIdentifier];
+    BOOL filtered = NO;
+    BOOL handled = [self processUserActivity:userActivity sceneIdentifier:sceneIdentifier filtered:&filtered];
+
+    // As in handleDeepLink:sceneIdentifier:, the entry point owns the enqueue. webpageURL is nil for a
+    // Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
+    if (!filtered) {
+        [self requestDeepLinkData:userActivity.webpageURL.absoluteString callback:nil];
+    }
+
+    return handled;
+}
+
+- (BOOL)processUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier {
+    return [self processUserActivity:userActivity sceneIdentifier:sceneIdentifier filtered:NULL];
 }
 
 // Populates the preferenceHelper from an incoming NSUserActivity: the initial referrer, browsing-web
 // universal links, and Spotlight identifiers (both Branch and non-Branch). URL-bearing activities are
 // funneled through processDeepLinkURL: so the referring-URL, skiplist and link_click_id checks run
 // on every path. This is the single source of truth shared by the legacy continueUserActivity: entry
-// points and the requestDeepLinkData* convenience methods.
-// Returns YES if a Branch link or Spotlight identifier was recognized.
-- (BOOL)processUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier {
+// points and the requestDeepLinkData* convenience methods. It never enqueues a request itself — that
+// is the caller's job.
+// Returns YES if a Branch link or Spotlight identifier was recognized. `filtered` follows the same
+// contract as processDeepLinkURL:sceneIdentifier:filtered:.
+- (BOOL)processUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier filtered:(BOOL *)filtered {
+    if (filtered) {
+        *filtered = NO;
+    }
+
     if (userActivity.referrerURL) {
         self.preferenceHelper.initialReferrer = userActivity.referrerURL.absoluteString;
     }
@@ -848,7 +890,7 @@ static NSString *bnc_branchKey = nil;
     [[BranchLogger shared] logVerbose:userActivity.debugDescription error:nil];
     // Check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-        return [self processDeepLinkURL:userActivity.webpageURL sceneIdentifier:sceneIdentifier];
+        return [self processDeepLinkURL:userActivity.webpageURL sceneIdentifier:sceneIdentifier filtered:filtered];
     }
 
     NSString *spotlightIdentifier = nil;
@@ -859,9 +901,9 @@ static NSString *bnc_branchKey = nil;
     NSURL *webURL = userActivity.webpageURL;
 
     if ([Branch isBranchLink:userActivity.userInfo[CSSearchableItemActivityIdentifier]]) {
-        return [self processDeepLinkURL:[NSURL URLWithString:userActivity.userInfo[CSSearchableItemActivityIdentifier]] sceneIdentifier:sceneIdentifier];
+        return [self processDeepLinkURL:[NSURL URLWithString:userActivity.userInfo[CSSearchableItemActivityIdentifier]] sceneIdentifier:sceneIdentifier filtered:filtered];
     } else if (webURL != nil && [Branch isBranchLink:[webURL absoluteString]]) {
-        return [self processDeepLinkURL:webURL sceneIdentifier:sceneIdentifier];
+        return [self processDeepLinkURL:webURL sceneIdentifier:sceneIdentifier filtered:filtered];
     } else if (spotlightIdentifier) {
         self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
     } else {
@@ -871,8 +913,6 @@ static NSString *bnc_branchKey = nil;
         }
     }
     #endif
-
-    [self requestDeepLinkData:userActivity.webpageURL.absoluteString callback:nil];
 
     return spotlightIdentifier != nil;
 }
@@ -2096,7 +2136,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // Run the same preprocessing as the legacy handleDeepLink: path so referring-URL query params,
     // the URL skiplist / dropURLOpen check, allowed-scheme filtering and link_click_id extraction are
     // applied before the request is enqueued.
-    [self processDeepLinkURL:url sceneIdentifier:nil];
+    BOOL filtered = NO;
+    [self processDeepLinkURL:url sceneIdentifier:nil filtered:&filtered];
+
+    // The URL matched the skiplist. Preferences are recorded, but the URL itself is never sent.
+    if (filtered) return;
 
     [[Branch getInstance] requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
@@ -2122,14 +2166,18 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 // Called from application:continueUserActivity:restorationHandler:
 // Supports Universal Links
 - (void)requestDeepLinkDataWithUserActivity:(NSUserActivity *)userActivity {
-    NSString *urlStr = userActivity.webpageURL.absoluteString;
-
-    if (!urlStr) return;
 
     // Run the same preprocessing as the legacy continueUserActivity: path so the initial referrer,
     // universal link URL, referring-URL query params, skiplist and link_click_id checks are applied
-    // before the request is enqueued.
-    [self processUserActivity:userActivity sceneIdentifier:nil];
+    // before the request is enqueued. This runs before webpageURL is read because a Spotlight activity
+    // carries its Branch link in userInfo, not in webpageURL.
+    BOOL filtered = NO;
+    [self processUserActivity:userActivity sceneIdentifier:nil filtered:&filtered];
+
+    if (filtered) return;
+
+    // nil for a Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
+    NSString *urlStr = userActivity.webpageURL.absoluteString;
 
     [[Branch getInstance] requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
@@ -2155,7 +2203,10 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // before the request is enqueued.
     NSURL *url = [NSURL URLWithString:urlStr];
     if (url) {
-        [self processDeepLinkURL:url sceneIdentifier:nil];
+        BOOL filtered = NO;
+        [self processDeepLinkURL:url sceneIdentifier:nil filtered:&filtered];
+
+        if (filtered) return;
     }
 
     [[Branch getInstance] requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
@@ -2200,14 +2251,20 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject;
         if ([activity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
             // Run the same preprocessing as the legacy continueUserActivity: path before enqueueing.
-            [self processUserActivity:activity sceneIdentifier:scene.session.persistentIdentifier];
-            [self requestDeepLinkData:activity.webpageURL.absoluteString callback:callback];
+            BOOL filtered = NO;
+            [self processUserActivity:activity sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
+            if (!filtered) {
+                [self requestDeepLinkData:activity.webpageURL.absoluteString callback:callback];
+            }
         }
     } else if (connectionOptions.URLContexts.count) {
         UIOpenURLContext *context = connectionOptions.URLContexts.allObjects.firstObject;
         // Run the same preprocessing as the legacy handleDeepLink: path before enqueueing.
-        [self processDeepLinkURL:context.URL sceneIdentifier:scene.session.persistentIdentifier];
-        [self requestDeepLinkData:context.URL.absoluteString callback:callback];
+        BOOL filtered = NO;
+        [self processDeepLinkURL:context.URL sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
+        if (!filtered) {
+            [self requestDeepLinkData:context.URL.absoluteString callback:callback];
+        }
     }
 }
 
@@ -2219,7 +2276,10 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     if (!context) return;
 
     // Run the same preprocessing as the legacy handleDeepLink: path before enqueueing.
-    [self processDeepLinkURL:context.URL sceneIdentifier:scene.session.persistentIdentifier];
+    BOOL filtered = NO;
+    [self processDeepLinkURL:context.URL sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
+
+    if (filtered) return;
 
     [[Branch getInstance] requestDeepLinkData:context.URL.absoluteString callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
@@ -2235,14 +2295,17 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 // Called from scene:continueUserActivity:
 - (void)requestDeepLinkDataWithScene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity {
 
+    // Run the same preprocessing as the legacy continueUserActivity: path before enqueueing. This runs
+    // before webpageURL is read because a Spotlight activity carries its Branch link in userInfo.
+    BOOL filtered = NO;
+    [self processUserActivity:userActivity sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
+
+    if (filtered) return;
+
+    // nil for a Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
     NSString *urlStr = userActivity.webpageURL.absoluteString;
 
-    if (!urlStr.length) return;
-
-    // Run the same preprocessing as the legacy continueUserActivity: path before enqueueing.
-    [self processUserActivity:userActivity sceneIdentifier:scene.session.persistentIdentifier];
-
-    [[Branch getInstance] requestDeepLinkData:userActivity.webpageURL.absoluteString callback:^(NSDictionary *params, NSError *error) {
+    [[Branch getInstance] requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
             if (params != nil) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
