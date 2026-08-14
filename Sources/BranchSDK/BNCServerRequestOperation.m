@@ -105,7 +105,7 @@
     }
     
     if ([self.request isKindOfClass:[BranchRequestDeepLink class]]) {
-        [BranchRequestDeepLink setWaitNeededForOpenResponseLock];
+        [BranchRequestDeepLink setWaitNeededForDeepLinkResponseLock];
     }
     
     if ([self.request isKindOfClass:[BranchRequestOpen class]]) {
