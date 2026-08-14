@@ -21,4 +21,8 @@
 - (instancetype)initWithRequest:(BNCServerRequest *)request NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
+// Returns NO for the requests that establish a session (install, open, deep link).
+// Every other request requires an initialized session to carry valid tokens.
++ (BOOL)requestRequiresSession:(BNCServerRequest *)request;
+
 @end

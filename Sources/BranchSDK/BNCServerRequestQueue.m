@@ -17,12 +17,22 @@
 #import "Private/BNCServerRequestOperation.h"
 #import "Branch.h"
 
+// Safety net only. The wait lock is normally released as soon as the session establishing
+// request finishes, whether it succeeded or failed. This timeout covers the case where the
+// host app never initializes the session at all, so held requests cannot leak forever.
+static NSTimeInterval const BNCSessionWaitLockDefaultTimeout = 15.0;
+
 @interface BNCServerRequestQueue ()
 @property (strong, nonatomic) NSOperationQueue *operationQueue;
 @property (strong, nonatomic) BNCServerInterface *serverInterface;
 @property (copy, nonatomic) NSString *branchKey;
 @property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
 @property (weak, nonatomic) BNCServerRequestOperation *currentInitOperation;
+
+// Requests that need a session but were enqueued before one was established.
+@property (strong, nonatomic) NSMutableArray<BNCServerRequestOperation *> *sessionWaitingOperations;
+@property (assign, nonatomic) BOOL sessionWaitLockReleased;
+@property (assign, nonatomic) NSTimeInterval sessionWaitLockTimeout;
 
 @end
 
@@ -35,6 +45,9 @@
         // Set maxConcurrentOperationCount to 1 for serial execution
         self.operationQueue.maxConcurrentOperationCount = 1;
         self.operationQueue.name = @"com.branch.sdk.serverRequestQueue";
+        self.sessionWaitingOperations = [NSMutableArray array];
+        self.sessionWaitLockReleased = NO;
+        self.sessionWaitLockTimeout = BNCSessionWaitLockDefaultTimeout;
     }
     return self;
 }
@@ -64,10 +77,109 @@
     operation.preferenceHelper = self.preferenceHelper;
     operation.queuePriority = priority;
 
-    [self addInitDependencyIfNeeded:operation];
-    [self.operationQueue addOperation:operation];
+    if (![BNCServerRequestOperation requestRequiresSession:request]) {
+        // Session establishing request. Track it so requests held behind it are released
+        // as soon as it finishes, whether it succeeds or fails.
+        [self trackSessionEstablishingOperation:operation];
+        [self.operationQueue addOperation:operation];
+    } else if ([self holdOperationIfSessionNotReady:operation]) {
+        // A request that needs a session is held until the session is established, instead
+        // of racing ahead of the open with the device token persisted by a previous launch.
+        return;
+    } else {
+        [self addInitDependencyIfNeeded:operation];
+        [self.operationQueue addOperation:operation];
+    }
 
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enqueued request: %@. Current queue depth: %lu", request.requestUUID, (unsigned long)self.operationQueue.operationCount] error:nil];
+}
+
+- (BOOL)isSessionWaitLockReleased {
+    @synchronized (self) {
+        return self.sessionWaitLockReleased;
+    }
+}
+
+- (NSUInteger)sessionWaitingRequestCount {
+    @synchronized (self) {
+        return self.sessionWaitingOperations.count;
+    }
+}
+
+- (void)trackSessionEstablishingOperation:(BNCServerRequestOperation *)operation {
+    if ([operation.request isKindOfClass:[BranchOpenRequest class]]) {
+        @synchronized (self) {
+            self.currentInitOperation = operation;
+        }
+    }
+
+    __weak __typeof(self) weakSelf = self;
+    NSString *requestUUID = operation.request.requestUUID;
+    operation.completionBlock = ^{
+        [weakSelf releaseSessionWaitLockWithReason:
+            [NSString stringWithFormat:@"session request %@ finished", requestUUID]];
+    };
+}
+
+// Holds the operation if the session is not ready yet. Deciding and holding under one lock
+// keeps a concurrent release from stranding an operation that was just added to the list.
+- (BOOL)holdOperationIfSessionNotReady:(BNCServerRequestOperation *)operation {
+    BOOL isFirstHeldOperation = NO;
+    @synchronized (self) {
+        if (self.sessionWaitLockReleased) {
+            return NO;
+        }
+        [self.sessionWaitingOperations addObject:operation];
+        isFirstHeldOperation = (self.sessionWaitingOperations.count == 1);
+    }
+
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Request %@ needs a session. Holding it until session initialization completes.", operation.request.requestUUID] error:nil];
+
+    if (isFirstHeldOperation) {
+        [self scheduleSessionWaitLockTimeout];
+    }
+    return YES;
+}
+
+- (void)scheduleSessionWaitLockTimeout {
+    NSTimeInterval timeout = self.sessionWaitLockTimeout;
+    if (timeout <= 0) {
+        return;
+    }
+
+    __weak __typeof(self) weakSelf = self;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeout * NSEC_PER_SEC)),
+                   dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
+        [weakSelf releaseSessionWaitLockWithReason:@"timed out waiting for session initialization"];
+    });
+}
+
+// Releases every held request into the operation queue. Once released, the lock stays open
+// for the lifetime of the queue: later requests take the regular init dependency path.
+- (void)releaseSessionWaitLockWithReason:(NSString *)reason {
+    NSArray<BNCServerRequestOperation *> *heldOperations = nil;
+    @synchronized (self) {
+        if (self.sessionWaitLockReleased && self.sessionWaitingOperations.count == 0) {
+            return;
+        }
+        self.sessionWaitLockReleased = YES;
+        heldOperations = [self.sessionWaitingOperations copy];
+        [self.sessionWaitingOperations removeAllObjects];
+    }
+
+    if (heldOperations.count == 0) {
+        return;
+    }
+
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Releasing %lu held request(s): %@.", (unsigned long)heldOperations.count, reason] error:nil];
+
+    for (BNCServerRequestOperation *operation in heldOperations) {
+        if (operation.isCancelled || operation.isFinished) {
+            continue;
+        }
+        [self addInitDependencyIfNeeded:operation];
+        [self.operationQueue addOperation:operation];
+    }
 }
 
 - (NSInteger)queueDepth {
@@ -77,24 +189,33 @@
             count++;
         }
     }
-    return count;
+    // Requests held for session initialization have not reached the operation queue yet.
+    return count + (NSInteger)[self sessionWaitingRequestCount];
 }
 
 - (void)addInitDependencyIfNeeded:(BNCServerRequestOperation *)operation {
-    if ([operation.request isKindOfClass:[BranchOpenRequest class]]) {
-        // This is an init/open request — track it as the current init operation
-        self.currentInitOperation = operation;
-    } else {
-        // Non-init requests depend on the current init operation (if one is active)
-        BNCServerRequestOperation *initOp = self.currentInitOperation;
-        if (initOp && !initOp.isFinished && !initOp.isCancelled) {
-            [operation addDependency:initOp];
-        }
+    // Non-init requests depend on the current init operation (if one is active)
+    BNCServerRequestOperation *initOp = nil;
+    @synchronized (self) {
+        initOp = self.currentInitOperation;
+    }
+    if (initOp && initOp != operation && !initOp.isFinished && !initOp.isCancelled) {
+        [operation addDependency:initOp];
     }
 }
 
 - (void)clearQueue {
     [[BranchLogger shared] logDebug:@"Clearing all pending operations from the queue." error:nil];
+
+    NSArray<BNCServerRequestOperation *> *heldOperations = nil;
+    @synchronized (self) {
+        heldOperations = [self.sessionWaitingOperations copy];
+        [self.sessionWaitingOperations removeAllObjects];
+    }
+    for (BNCServerRequestOperation *operation in heldOperations) {
+        [operation cancel];
+    }
+
     [self.operationQueue cancelAllOperations];
 }
 
@@ -148,6 +269,14 @@
             }
         }
     }
+    NSArray<BNCServerRequestOperation *> *heldOperations = nil;
+    @synchronized (self) {
+        heldOperations = [self.sessionWaitingOperations copy];
+    }
+    for (BNCServerRequestOperation *operation in heldOperations) {
+        [requestUUIDs addObject:[NSString stringWithFormat:@"(Awaiting session: %@)", operation.request.requestUUID]];
+    }
+
     return [NSString stringWithFormat:@"<BNCServerRequestQueue: %p> Operations (%ld): %@", self, (long)self.queueDepth, [requestUUIDs description]];
 }
 
