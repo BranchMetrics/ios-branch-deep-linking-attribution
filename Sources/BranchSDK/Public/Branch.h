@@ -429,7 +429,9 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  When called with a non-nil URL, any pending (not yet executing) nil-URL deep link requests are
  cancelled so that only one callback fires per app open.
  */
-- (void)requestDeepLinkData:(nullable NSString *)branchLink callback:(nullable callbackWithParams)callback;
+- (void)requestDeepLinkData:(nullable NSString *)branchLink callback:(nullable callbackWithParams)callback
+    NS_SWIFT_NAME(requestDeepLinkData(branchLink:callback:))
+    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(branchLink:));
 
 ///--------------------------------
 /// @name AppDelegate Deep Linking
@@ -443,7 +445,9 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  the URL-bearing call will arrive via `continueUserActivity:` or `application:openURL:`.
  */
 - (void)requestDeepLinkDataWithLaunchOptions:(nullable NSDictionary *)options
-                                    callback:(nullable callbackWithParams)callback;
+                                    callback:(nullable callbackWithParams)callback
+    NS_SWIFT_NAME(requestDeepLinkData(launchOptions:callback:))
+    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(launchOptions:));
 
 /**
  Convenience method for `application:openURL:options:` to handle custom URI schemes.
@@ -454,7 +458,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Logs the deep link parameters or error.
  @param url The URL from `application:openURL:options:`
  */
-- (void)requestDeepLinkDataWithURL:(nullable NSURL *)url;
+- (void)requestDeepLinkDataWithURL:(nullable NSURL *)url
+    NS_SWIFT_NAME(requestDeepLinkData(openURL:));
 
 /**
  Convenience method for the older `application:openURL:sourceApplication:annotation:` to handle custom URI schemes.
@@ -467,7 +472,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  */
 - (void)requestDeepLinkDataWithURL:(nullable NSURL *)url
                  sourceApplication:(nullable NSString *)sourceApplication
-                        annotation:(nullable id)annotation;
+                        annotation:(nullable id)annotation
+    NS_SWIFT_NAME(requestDeepLinkData(openURL:sourceApplication:annotation:));
 
 /**
  Convenience method for `application:continueUserActivity:restorationHandler:` to handle Universal Links.
@@ -476,7 +482,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Logs the deep link parameters or error.
  @param userActivity The NSUserActivity from `application:continueUserActivity:restorationHandler:`.
  */
-- (void)requestDeepLinkDataWithUserActivity:(nullable NSUserActivity *)userActivity;
+- (void)requestDeepLinkDataWithUserActivity:(nullable NSUserActivity *)userActivity
+    NS_SWIFT_NAME(requestDeepLinkData(userActivity:));
 
 /**
  Convenience method for `application:didReceiveRemoteNotification:fetchCompletionHandler:` to handle push notification deep links.
@@ -485,7 +492,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Logs the deep link parameters or error.
  @param userInfo The notification payload from `application:didReceiveRemoteNotification:fetchCompletionHandler:`.
  */
-- (void)requestDeepLinkDataWithUserInfo:(nullable NSDictionary *)userInfo;
+- (void)requestDeepLinkDataWithUserInfo:(nullable NSDictionary *)userInfo
+    NS_SWIFT_NAME(requestDeepLinkData(userInfo:));
 
 ///--------------------------------
 /// @name SceneDelegate Deep Linking
@@ -503,7 +511,9 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 - (void)requestDeepLinkDataWithSceneOptions:(nullable UISceneConnectionOptions *)connectionOptions
                                       scene:(UIScene *)scene
                                    callback:(nullable callbackWithParams)callback
-    API_AVAILABLE(ios(13.0), macCatalyst(13.1));
+    API_AVAILABLE(ios(13.0), macCatalyst(13.1))
+    NS_SWIFT_NAME(requestDeepLinkData(sceneOptions:scene:callback:))
+    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(sceneOptions:scene:));
 
 /**
  Convenience method for SceneDelegate's `scene:openURLContexts:` to handle custom URI schemes.
@@ -517,7 +527,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  */
 - (void)requestDeepLinkDataWithScene:(UIScene *)scene
                       openURLContexts:(NSSet<UIOpenURLContext *> *)urlContexts
-    API_AVAILABLE(ios(13.0));
+    API_AVAILABLE(ios(13.0))
+    NS_SWIFT_NAME(requestDeepLinkData(scene:openURLContexts:));
 
 /**
  Convenience method for SceneDelegate's `scene:continueUserActivity:` to handle Universal Links.
@@ -531,7 +542,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  */
 - (void)requestDeepLinkDataWithScene:(UIScene *)scene
                 continueUserActivity:(NSUserActivity *)userActivity
-    API_AVAILABLE(ios(13.0));
+    API_AVAILABLE(ios(13.0))
+    NS_SWIFT_NAME(requestDeepLinkData(scene:userActivity:));
 #endif
 
 #pragma mark - Attribution Methods
