@@ -10,6 +10,7 @@
 #import "LogOutputViewController.h"
 #import "NavigationController.h"
 #import "ViewController.h"
+#import "TestBedDeepLinkTestHook.h"
 @import BranchSDK;
 #import <UserNotifications/UserNotifications.h>
 
@@ -39,6 +40,10 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [branch checkPasteboardOnInstall];
     
     //[[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
+
+#if DEBUG
+    [TestBedDeepLinkTestHook installIfRequested:application];
+#endif
 
     return YES;
 }
