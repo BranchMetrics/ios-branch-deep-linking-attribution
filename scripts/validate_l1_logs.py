@@ -38,6 +38,7 @@ Cross-platform alignment of those device-context fields is tracked under
 the v4 Conversion API workstream, not this gate.
 """
 
+import argparse
 import json
 import os
 import re
@@ -182,6 +183,14 @@ ATTRIBUTION_LEVEL_NONE = "NONE"
 # a broken capture, not a quiet pass. This replaces master's mandatory
 # `/v1/install`, which this line never sends.
 MANDATORY_ENDPOINT = "/v3/events/open"
+
+# Endpoints a scenario guarantees its run drove, and which are therefore
+# enforced rather than noted when absent. Without --scenario nothing extra
+# is enforced, which is what the install-only L1 run relies on.
+SCENARIO_REQUIRED_ENDPOINTS = {
+    "install": (),
+    "deeplink": ("/v3/deeplink",),
+}
 
 
 def parse_branch_logs(file_path):
@@ -336,9 +345,12 @@ def validate_request(entry, idx, total):
     return errors
 
 
-def validate_entries(entries):
+def validate_entries(entries, scenario=None):
     """Run validate_request on every entry plus the top-level
-    open-must-be-present check. Returns aggregated errors."""
+    open-must-be-present check. Returns aggregated errors.
+
+    `scenario` names what the run drove; its endpoints are then required
+    instead of noted. Absent, only MANDATORY_ENDPOINT is enforced."""
     errors = []
 
     if not entries:
@@ -353,7 +365,15 @@ def validate_entries(entries):
             f"Mandatory endpoint '{MANDATORY_ENDPOINT}' was not captured."
         )
 
-    if "/v3/deeplink" not in found_paths:
+    required_endpoints = SCENARIO_REQUIRED_ENDPOINTS.get(scenario, ())
+    for endpoint in required_endpoints:
+        if endpoint not in found_paths:
+            errors.append(
+                f"Scenario '{scenario}' drives '{endpoint}', which was not "
+                "captured."
+            )
+
+    if "/v3/deeplink" not in found_paths and "/v3/deeplink" not in required_endpoints:
         print(
             "Note: '/v3/deeplink' not present in capture. Only emitted when a "
             "Branch link is resolved, which the L1 runner does not do; not "
@@ -367,7 +387,24 @@ def validate_entries(entries):
 
 
 def main():
-    log_file_path = sys.argv[1] if len(sys.argv) > 1 else "branchlogs.txt"
+    parser = argparse.ArgumentParser(description=__doc__.strip().splitlines()[0])
+    parser.add_argument(
+        "log_file",
+        nargs="?",
+        default="branchlogs.txt",
+        help="capture to validate (default: branchlogs.txt)",
+    )
+    parser.add_argument(
+        "--scenario",
+        choices=sorted(SCENARIO_REQUIRED_ENDPOINTS),
+        default=None,
+        help=(
+            "what the run drove; its endpoints become required instead of "
+            "noted. Omit to enforce only the mandatory open."
+        ),
+    )
+    args = parser.parse_args()
+    log_file_path = args.log_file
 
     entries = parse_branch_logs(log_file_path)
 
@@ -384,7 +421,7 @@ def main():
     except OSError:
         pass
 
-    errors = validate_entries(entries)
+    errors = validate_entries(entries, scenario=args.scenario)
 
     if errors:
         print("\n--- VALIDATION FAILED ---")

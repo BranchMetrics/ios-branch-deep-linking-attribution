@@ -14,7 +14,7 @@ import io
 import os
 import sys
 import unittest
-from contextlib import redirect_stdout
+from contextlib import redirect_stderr, redirect_stdout
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, THIS_DIR)
@@ -28,13 +28,13 @@ def _fixture(name):
     return os.path.join(FIXTURE_DIR, name)
 
 
-def _run_validation(fixture_name):
+def _run_validation(fixture_name, scenario=None):
     """Run validate_entries on a fixture and capture stdout. Returns
     (errors, captured_output)."""
     entries = v.parse_branch_logs(_fixture(fixture_name))
     buf = io.StringIO()
     with redirect_stdout(buf):
-        errors = v.validate_entries(entries)
+        errors = v.validate_entries(entries, scenario=scenario)
     return errors, buf.getvalue()
 
 
@@ -196,6 +196,45 @@ class BetaEndpointCoverageTests(unittest.TestCase):
         self.assertNotIn(
             "ios_app_link_url", v.required_fields_for("/v3/deeplink", {})
         )
+
+
+class ScenarioEnforcementTests(unittest.TestCase):
+    """--scenario promotes an endpoint the run is known to drive from a
+    note to a failure, without changing the no-scenario default."""
+
+    def test_deeplink_scenario_fails_when_deeplink_absent(self):
+        errors, _ = _run_validation("happy_path.txt", scenario="deeplink")
+        self.assertTrue(
+            any("/v3/deeplink" in e for e in errors),
+            f"Expected a missing-deeplink error, got: {errors}",
+        )
+
+    def test_deeplink_scenario_passes_when_deeplink_present(self):
+        errors, _ = _run_validation("deeplink.txt", scenario="deeplink")
+        self.assertEqual(errors, [], f"Unexpected errors: {errors}")
+
+    def test_install_scenario_keeps_absent_deeplink_a_note(self):
+        errors, output = _run_validation("happy_path.txt", scenario="install")
+        self.assertEqual(errors, [], f"Unexpected errors: {errors}")
+        self.assertIn("'/v3/deeplink' not present in capture", output)
+
+    def test_unrecognised_scenario_exits_rather_than_downgrading(self):
+        # A typo in a CI matrix must fail loudly, not fall back to the
+        # weaker default and report a pass.
+        saved_argv = sys.argv
+        sys.argv = [
+            "validate_l1_logs.py",
+            _fixture("happy_path.txt"),
+            "--scenario",
+            "deeplinks",
+        ]
+        try:
+            with redirect_stderr(io.StringIO()), redirect_stdout(io.StringIO()):
+                with self.assertRaises(SystemExit) as ctx:
+                    v.main()
+            self.assertNotEqual(ctx.exception.code, 0)
+        finally:
+            sys.argv = saved_argv
 
 
 class AttributionLevelTierTests(unittest.TestCase):
