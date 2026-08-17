@@ -1,0 +1,35 @@
+{
+  "configurations" : [
+    {
+      "id" : "0567288E-8382-469B-BD18-6D37C3B9CC6E",
+      "name" : "Smoke",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Branch-TestBed.xcodeproj",
+      "identifier" : "AAC5A9A76F3DBB04E6638F31",
+      "name" : "TestBed-GPTDriverTests"
+    }
+  },
+  "testTargets" : [
+    {
+      "selectedTests" : [
+        "LinkCreationDeterministicTest",
+        "LinkCreationHybridTest\/testCreateBranchLink_fullValidation()",
+        "SessionAndLogsHybridTest\/testSessionAlive_generatesLinkAfterLaunch()",
+        "TrackingControlHybridTest\/testToggleTracking_twoTapsLeaveSDKFunctional()"
+      ],
+      "target" : {
+        "containerPath" : "container:Branch-TestBed.xcodeproj",
+        "identifier" : "AAC5A9A76F3DBB04E6638F31",
+        "name" : "TestBed-GPTDriverTests"
+      }
+    }
+  ],
+  "version" : 1
+}

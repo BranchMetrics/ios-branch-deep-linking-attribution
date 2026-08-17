@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0CD19A4FAAC3DC790D05398E /* gptd-swift in Frameworks */ = {isa = PBXBuildFile; productRef = 84BBC5418F3C729A5F490A07 /* gptd-swift */; };
+		143A1100894AF12F8F5E4CFB /* TestBedIdentifiers.m in Sources */ = {isa = PBXBuildFile; fileRef = CC1798D4BBC4E0E40ADA9310 /* TestBedIdentifiers.m */; };
+		15843A0C5EBB44E872DFDF8A /* TrackingControlHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29BF08D3B7BD908C97F47144 /* TrackingControlHybridTest.swift */; };
+		1CBDF03ECD47630F858956A7 /* UserIdentityHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CB024C029C70375502663D2 /* UserIdentityHybridTest.swift */; };
+		257BD6BD304B0B87C0BDF67C /* BaseGptDriverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8D33407DECC9492C3C644C /* BaseGptDriverTest.swift */; };
+		2FE60ACC53E3DDB95CB49E7C /* LinkCreationHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40837FC18222BFAADDC90C48 /* LinkCreationHybridTest.swift */; };
 		4683F0761B20A73F00A432E7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016731940F51400A9E103 /* AppDelegate.m */; };
 		46DC406E1B2A328900D2D203 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67BBCF271A69E49A009C7DAE /* AdSupport.framework */; };
 		4AB16368239E3A2700D42931 /* DispatchToIsolationQueueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB16367239E3A2700D42931 /* DispatchToIsolationQueueTests.m */; };
@@ -22,6 +28,9 @@
 		4D1683CA2098C902008819E3 /* BNCPreferenceHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1683A02098C901008819E3 /* BNCPreferenceHelperTests.m */; };
 		4DBEFFF61FB114F900F7C41B /* ArrayPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DBEFFF51FB114F900F7C41B /* ArrayPickerView.m */; };
 		4DE235641FB12C2700D4E5A9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4DBEFFFB1FB12A1000F7C41B /* Main.storyboard */; };
+		505878246DFBFD4C0CA6A6FA /* ShareLinkHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13A03B363788986D842EB8F /* ShareLinkHybridTest.swift */; };
+		5974B34F3B3E5074F9DDFEB6 /* BrowserExperienceHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB8091834A415F87D777F78 /* BrowserExperienceHybridTest.swift */; };
+		59823CA134DEC90557EF7C7B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 670016631940F51400A9E103 /* Foundation.framework */; };
 		5F205D062318659500C776D1 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F205D04231864E800C776D1 /* WebKit.framework */; };
 		5F205D0823186AF700C776D1 /* BNCUserAgentCollectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F205D022318641700C776D1 /* BNCUserAgentCollectorTests.m */; };
 		5F3D671B233062FD00454FF1 /* BNCJsonLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3D671A233062FD00454FF1 /* BNCJsonLoader.m */; };
@@ -63,7 +72,13 @@
 		670016701940F51400A9E103 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6700166F1940F51400A9E103 /* main.m */; };
 		6700167A1940F51400A9E103 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016791940F51400A9E103 /* ViewController.m */; };
 		67F270891BA9FCFF002546A7 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		805069B9222DE6DBB702BA55 /* ConsumerProtectionHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DF86E2AC9715ADCA6FC0D57 /* ConsumerProtectionHybridTest.swift */; };
+		884BEA1B0B010B65568A9135 /* PluginNotifyHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E744D97C008B4DBA0445A4F /* PluginNotifyHybridTest.swift */; };
+		8909A6D6A78237ACCB8496D6 /* EventLoggingHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D5B75E103FE48CC35B2C2D /* EventLoggingHybridTest.swift */; };
+		959C9C6A9AF35A32CE92F363 /* QRCodeHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F998EAD60325FB9FBF63FF /* QRCodeHybridTest.swift */; };
+		9BEC6ECEF0E0BF1E734B843D /* NotificationHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D4DC04AFC52EEBC6E0120A /* NotificationHybridTest.swift */; };
 		AA12345600010000000000B1 /* BranchDisableNextForegroundTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AA12345600010000000000A1 /* BranchDisableNextForegroundTests.m */; };
+		B9F5DA27F77E0A392BD2E69A /* TestBedIdentifiers.m in Sources */ = {isa = PBXBuildFile; fileRef = CC1798D4BBC4E0E40ADA9310 /* TestBedIdentifiers.m */; };
 		C10A6DE629A995590061A851 /* StoreKitTestCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = C10A6DE529A995590061A851 /* StoreKitTestCertificate.cer */; };
 		C10C61AA282481FB00761D7E /* BranchShareLinkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10C61A9282481FB00761D7E /* BranchShareLinkTests.m */; };
 		C12320B52808DB90007771C0 /* BranchQRCodeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C12320B42808DB90007771C0 /* BranchQRCodeTests.m */; };
@@ -72,6 +87,11 @@
 		C1614D56285BC8A00098946B /* LinkPresentation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1614D55285BC8A00098946B /* LinkPresentation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		C17DAF7B2AC20C2000B16B1A /* BranchClassTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C17DAF7A2AC20C2000B16B1A /* BranchClassTests.m */; };
 		C1CC888229BAAFC000BDD2B5 /* BNCReferringURLUtilityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C1CC888129BAAFC000BDD2B5 /* BNCReferringURLUtilityTests.m */; };
+		D90E8A6639F523DC3B08FBCE /* LinkCreationDeterministicTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA914FAFCA750AE7C6CDCFCC /* LinkCreationDeterministicTest.swift */; };
+		DAEFBE7C9FFBD455BFBF4EC7 /* DeepLinkWarmOpenHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6F886CF5254858874E0154 /* DeepLinkWarmOpenHybridTest.swift */; };
+		DB18DA9C84F60B550B04B3FC /* DeepLinkColdOpenHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991B868E49743EF400DE3CA1 /* DeepLinkColdOpenHybridTest.swift */; };
+		E1A0001A0000000000000AA1 /* L1WireValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A0002A0000000000000AA2 /* L1WireValidationTest.swift */; };
+		E369CEFCE0B1105282B6E900 /* ReferringParamsHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656C68E10670CEE96DC0A93D /* ReferringParamsHybridTest.swift */; };
 		E72489D228E40D0200DCD8FD /* PasteControlViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E72489D128E40D0200DCD8FD /* PasteControlViewController.m */; };
 		E732827F2E5F7D92005CACC8 /* GoogleAdsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = E732827E2E5F7D92005CACC8 /* GoogleAdsOnDeviceConversion */; };
 		E73C5CE22FAD14DE00DF2812 /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E73C5CE12FAD14DE00DF2812 /* BranchSDK */; };
@@ -82,6 +102,9 @@
 		E7AC747B2DB0700D002D8C40 /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E7AC747A2DB0700D002D8C40 /* BranchSDK */; };
 		E7AC747E2DB0714B002D8C40 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E7AC747D2DB07145002D8C40 /* libc++.tbd */; };
 		E7AE4A092DFB2C4400696805 /* BranchConfigurationControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AE4A082DFB2C4400696805 /* BranchConfigurationControllerTests.m */; };
+		EBB12FFFEE5BB34E5505BBB9 /* LinkCreationAITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68C67D93BFFFC0217931CBB1 /* LinkCreationAITest.swift */; };
+		F75975E5DF4BEE735A974B7D /* SessionAndLogsHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 506B6E3C699AD53EFF4F5D9B /* SessionAndLogsHybridTest.swift */; };
+		FA0EDB9AC11B2D654496E492 /* TestScrollHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 704F26B57C08A695724807D8 /* TestScrollHelpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,6 +116,13 @@
 			remoteInfo = "Branch-TestBed";
 		};
 		E73282812E5F81C9005CACC8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 670016581940F51400A9E103 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6700165F1940F51400A9E103;
+			remoteInfo = "Branch-TestBed";
+		};
+		E7ABE7BF4A8A258818FBA303 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 670016581940F51400A9E103 /* Project object */;
 			proxyType = 1;
@@ -115,6 +145,16 @@
 
 /* Begin PBXFileReference section */
 		033FC71025AC1E5800D8319E /* Branch-TestBed.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = "Branch-TestBed.xctestplan"; path = "Branch-TestBed.xcodeproj/Branch-TestBed.xctestplan"; sourceTree = "<group>"; };
+		07F998EAD60325FB9FBF63FF /* QRCodeHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = QRCodeHybridTest.swift; sourceTree = "<group>"; };
+		0BDDF97F86FBDB68CC1DB17B /* MobileBoost.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = MobileBoost.xcconfig; sourceTree = "<group>"; };
+		18C938B7F4FDE21EE308CE9E /* Release.xctestplan */ = {isa = PBXFileReference; includeInIndex = 1; path = Release.xctestplan; sourceTree = "<group>"; };
+		1DF86E2AC9715ADCA6FC0D57 /* ConsumerProtectionHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConsumerProtectionHybridTest.swift; sourceTree = "<group>"; };
+		23D5B75E103FE48CC35B2C2D /* EventLoggingHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EventLoggingHybridTest.swift; sourceTree = "<group>"; };
+		25411D6F29809D769F33D4BE /* MobileBoost.local.xcconfig.example */ = {isa = PBXFileReference; includeInIndex = 1; path = MobileBoost.local.xcconfig.example; sourceTree = "<group>"; };
+		29BF08D3B7BD908C97F47144 /* TrackingControlHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TrackingControlHybridTest.swift; sourceTree = "<group>"; };
+		2C6F886CF5254858874E0154 /* DeepLinkWarmOpenHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DeepLinkWarmOpenHybridTest.swift; sourceTree = "<group>"; };
+		40837FC18222BFAADDC90C48 /* LinkCreationHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LinkCreationHybridTest.swift; sourceTree = "<group>"; };
+		49114296F0B11A2DEB7FFECD /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4AB16367239E3A2700D42931 /* DispatchToIsolationQueueTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DispatchToIsolationQueueTests.m; sourceTree = "<group>"; };
 		4D1683812098C901008819E3 /* Branch-SDK-Tests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Branch-SDK-Tests-Bridging-Header.h"; sourceTree = "<group>"; };
 		4D1683842098C901008819E3 /* BNCLinkDataTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLinkDataTests.m; sourceTree = "<group>"; };
@@ -137,6 +177,9 @@
 		4DD056112177A65C009BD3DD /* libOCMock.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libOCMock.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DD056132177A65C009BD3DD /* libOHHTTPStubs.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libOHHTTPStubs.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DDC52611DCC08E700CFB737 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
+		4DF18A2F7FEBD06E1EBB8FD5 /* TestBedIdentifiers.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = TestBedIdentifiers.h; sourceTree = "<group>"; };
+		506B6E3C699AD53EFF4F5D9B /* SessionAndLogsHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SessionAndLogsHybridTest.swift; sourceTree = "<group>"; };
+		5D8D33407DECC9492C3C644C /* BaseGptDriverTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BaseGptDriverTest.swift; sourceTree = "<group>"; };
 		5F2035CB240DDE90004FDC3E /* BNCDisableAdNetworkCalloutsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCDisableAdNetworkCalloutsTests.m; sourceTree = "<group>"; };
 		5F205D022318641700C776D1 /* BNCUserAgentCollectorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCUserAgentCollectorTests.m; sourceTree = "<group>"; };
 		5F205D04231864E800C776D1 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
@@ -179,6 +222,7 @@
 		63E4C48A1D25E17B00A45FD8 /* NavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavigationController.m; sourceTree = "<group>"; };
 		63E4C48F1D25E1BC00A45FD8 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		63E4C4911D25E1CA00A45FD8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		656C68E10670CEE96DC0A93D /* ReferringParamsHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ReferringParamsHybridTest.swift; sourceTree = "<group>"; };
 		6589EBA52674270100F2E28B /* Branch-TestBed-CI.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Branch-TestBed-CI.xctestplan"; sourceTree = "<group>"; };
 		670016601940F51400A9E103 /* Branch-TestBed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Branch-TestBed.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		670016631940F51400A9E103 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -196,8 +240,16 @@
 		677F4CB41C1FB0FA0029F2B3 /* Branch-TestBed.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Branch-TestBed.entitlements"; sourceTree = "<group>"; };
 		67BBCF271A69E49A009C7DAE /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = System/Library/Frameworks/CoreSpotlight.framework; sourceTree = SDKROOT; };
+		68C67D93BFFFC0217931CBB1 /* LinkCreationAITest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LinkCreationAITest.swift; sourceTree = "<group>"; };
+		6E744D97C008B4DBA0445A4F /* PluginNotifyHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PluginNotifyHybridTest.swift; sourceTree = "<group>"; };
+		704F26B57C08A695724807D8 /* TestScrollHelpers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TestScrollHelpers.swift; sourceTree = "<group>"; };
 		7E6B3B511AA42D0E005F45BF /* Branch-SDK-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-SDK-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		991B868E49743EF400DE3CA1 /* DeepLinkColdOpenHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DeepLinkColdOpenHybridTest.swift; sourceTree = "<group>"; };
+		9CB024C029C70375502663D2 /* UserIdentityHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UserIdentityHybridTest.swift; sourceTree = "<group>"; };
+		A13A03B363788986D842EB8F /* ShareLinkHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShareLinkHybridTest.swift; sourceTree = "<group>"; };
 		AA12345600010000000000A1 /* BranchDisableNextForegroundTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchDisableNextForegroundTests.m; sourceTree = "<group>"; };
+		ACF0972B844F3483686EF054 /* TestBed-GPTDriverTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TestBed-GPTDriverTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BEB8091834A415F87D777F78 /* BrowserExperienceHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BrowserExperienceHybridTest.swift; sourceTree = "<group>"; };
 		C10A6DE029A97E440061A851 /* TestStoreKitConfig.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestStoreKitConfig.storekit; sourceTree = "<group>"; };
 		C10A6DE529A995590061A851 /* StoreKitTestCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = StoreKitTestCertificate.cer; sourceTree = "<group>"; };
 		C10C61A9282481FB00761D7E /* BranchShareLinkTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchShareLinkTests.m; sourceTree = "<group>"; };
@@ -208,6 +260,11 @@
 		C1614D55285BC8A00098946B /* LinkPresentation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LinkPresentation.framework; path = System/Library/Frameworks/LinkPresentation.framework; sourceTree = SDKROOT; };
 		C17DAF7A2AC20C2000B16B1A /* BranchClassTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchClassTests.m; sourceTree = "<group>"; };
 		C1CC888129BAAFC000BDD2B5 /* BNCReferringURLUtilityTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCReferringURLUtilityTests.m; sourceTree = "<group>"; };
+		CC1798D4BBC4E0E40ADA9310 /* TestBedIdentifiers.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = TestBedIdentifiers.m; sourceTree = "<group>"; };
+		DA914FAFCA750AE7C6CDCFCC /* LinkCreationDeterministicTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LinkCreationDeterministicTest.swift; sourceTree = "<group>"; };
+		E1A0002A0000000000000AA2 /* L1WireValidationTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = L1WireValidationTest.swift; sourceTree = "<group>"; };
+		E4D4DC04AFC52EEBC6E0120A /* NotificationHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NotificationHybridTest.swift; sourceTree = "<group>"; };
+		E50AA43771267258B0293FD1 /* TestBed-GPTDriverTests-Bridging-Header.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "TestBed-GPTDriverTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		E72489D028E40D0200DCD8FD /* PasteControlViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasteControlViewController.h; sourceTree = "<group>"; };
 		E72489D128E40D0200DCD8FD /* PasteControlViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PasteControlViewController.m; sourceTree = "<group>"; };
 		E7A728BC2AA9A112009343B7 /* BNCAPIServerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCAPIServerTest.m; sourceTree = "<group>"; };
@@ -216,6 +273,7 @@
 		E7AC74762DB06B42002D8C40 /* Reflection_ODM_Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Reflection_ODM_Tests.xctestplan; sourceTree = "<group>"; };
 		E7AC747D2DB07145002D8C40 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		E7AE4A082DFB2C4400696805 /* BranchConfigurationControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchConfigurationControllerTests.m; sourceTree = "<group>"; };
+		FC260E701BE220B2E128811D /* Smoke.xctestplan */ = {isa = PBXFileReference; includeInIndex = 1; path = Smoke.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -223,6 +281,15 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		1C5D3599943B2AF1082E434F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59823CA134DEC90557EF7C7B /* Foundation.framework in Frameworks */,
+				0CD19A4FAAC3DC790D05398E /* gptd-swift in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5F8B7B3821B5F5CD009CE0A6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -268,6 +335,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		102DBF53CD061619BAF31076 /* Hybrid */ = {
+			isa = PBXGroup;
+			children = (
+				40837FC18222BFAADDC90C48 /* LinkCreationHybridTest.swift */,
+				07F998EAD60325FB9FBF63FF /* QRCodeHybridTest.swift */,
+				A13A03B363788986D842EB8F /* ShareLinkHybridTest.swift */,
+				506B6E3C699AD53EFF4F5D9B /* SessionAndLogsHybridTest.swift */,
+				9CB024C029C70375502663D2 /* UserIdentityHybridTest.swift */,
+				23D5B75E103FE48CC35B2C2D /* EventLoggingHybridTest.swift */,
+				991B868E49743EF400DE3CA1 /* DeepLinkColdOpenHybridTest.swift */,
+				2C6F886CF5254858874E0154 /* DeepLinkWarmOpenHybridTest.swift */,
+				BEB8091834A415F87D777F78 /* BrowserExperienceHybridTest.swift */,
+				E4D4DC04AFC52EEBC6E0120A /* NotificationHybridTest.swift */,
+				29BF08D3B7BD908C97F47144 /* TrackingControlHybridTest.swift */,
+				1DF86E2AC9715ADCA6FC0D57 /* ConsumerProtectionHybridTest.swift */,
+				656C68E10670CEE96DC0A93D /* ReferringParamsHybridTest.swift */,
+				6E744D97C008B4DBA0445A4F /* PluginNotifyHybridTest.swift */,
+			);
+			name = Hybrid;
+			path = Hybrid;
+			sourceTree = "<group>";
+		};
 		4D16837A2098C901008819E3 /* Branch-SDK-Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -343,6 +432,23 @@
 			path = cannedData;
 			sourceTree = "<group>";
 		};
+		6582C60A6E8FB0C91C7EBE0C /* TestBed-GPTDriverTests */ = {
+			isa = PBXGroup;
+			children = (
+				FE42883A925072362E7A094D /* Config */,
+				5D8D33407DECC9492C3C644C /* BaseGptDriverTest.swift */,
+				E50AA43771267258B0293FD1 /* TestBed-GPTDriverTests-Bridging-Header.h */,
+				49114296F0B11A2DEB7FFECD /* Info.plist */,
+				BE4A694F8CCA8A9DE816FD35 /* Deterministic */,
+				102DBF53CD061619BAF31076 /* Hybrid */,
+				C0F749B294D5D406792F9E71 /* AI */,
+				704F26B57C08A695724807D8 /* TestScrollHelpers.swift */,
+				6BFEC102B288139D98CB7918 /* TestPlans */,
+			);
+			name = "TestBed-GPTDriverTests";
+			path = "TestBed-GPTDriverTests";
+			sourceTree = "<group>";
+		};
 		670016571940F51400A9E103 = {
 			isa = PBXGroup;
 			children = (
@@ -357,6 +463,7 @@
 				E7AC74612DB064BC002D8C40 /* Reflection_ODM_Tests */,
 				670016621940F51400A9E103 /* Frameworks */,
 				670016611940F51400A9E103 /* Products */,
+				6582C60A6E8FB0C91C7EBE0C /* TestBed-GPTDriverTests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -367,6 +474,7 @@
 				7E6B3B511AA42D0E005F45BF /* Branch-SDK-Tests.xctest */,
 				5F8B7B3B21B5F5CD009CE0A6 /* Branch-SDK-Unhosted-Tests.xctest */,
 				E7AC74602DB064BC002D8C40 /* Reflection_ODM_Tests.xctest */,
+				ACF0972B844F3483686EF054 /* TestBed-GPTDriverTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -418,6 +526,8 @@
 				C10A6DE029A97E440061A851 /* TestStoreKitConfig.storekit */,
 				670016781940F51400A9E103 /* ViewController.h */,
 				670016791940F51400A9E103 /* ViewController.m */,
+				4DF18A2F7FEBD06E1EBB8FD5 /* TestBedIdentifiers.h */,
+				CC1798D4BBC4E0E40ADA9310 /* TestBedIdentifiers.m */,
 			);
 			path = "Branch-TestBed";
 			sourceTree = "<group>";
@@ -431,6 +541,45 @@
 				670016711940F51400A9E103 /* Branch-TestBed-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		6BFEC102B288139D98CB7918 /* TestPlans */ = {
+			isa = PBXGroup;
+			children = (
+				FC260E701BE220B2E128811D /* Smoke.xctestplan */,
+				18C938B7F4FDE21EE308CE9E /* Release.xctestplan */,
+			);
+			name = TestPlans;
+			path = TestPlans;
+			sourceTree = "<group>";
+		};
+		BE4A694F8CCA8A9DE816FD35 /* Deterministic */ = {
+			isa = PBXGroup;
+			children = (
+				DA914FAFCA750AE7C6CDCFCC /* LinkCreationDeterministicTest.swift */,
+				E1A0002A0000000000000AA2 /* L1WireValidationTest.swift */,
+			);
+			name = Deterministic;
+			path = Deterministic;
+			sourceTree = "<group>";
+		};
+		C0F749B294D5D406792F9E71 /* AI */ = {
+			isa = PBXGroup;
+			children = (
+				68C67D93BFFFC0217931CBB1 /* LinkCreationAITest.swift */,
+			);
+			name = AI;
+			path = AI;
+			sourceTree = "<group>";
+		};
+		FE42883A925072362E7A094D /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				0BDDF97F86FBDB68CC1DB17B /* MobileBoost.xcconfig */,
+				25411D6F29809D769F33D4BE /* MobileBoost.local.xcconfig.example */,
+			);
+			name = Config;
+			path = Config;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -489,6 +638,27 @@
 			productName = "Branch-SDK Functionality Tests";
 			productReference = 7E6B3B511AA42D0E005F45BF /* Branch-SDK-Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		AAC5A9A76F3DBB04E6638F31 /* TestBed-GPTDriverTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7C4C785331DF108512EC93F2 /* Build configuration list for PBXNativeTarget "TestBed-GPTDriverTests" */;
+			buildPhases = (
+				830B3D68A4D135BCDED3AF12 /* Sources */,
+				1C5D3599943B2AF1082E434F /* Frameworks */,
+				A1B69B214CA8E570289FE6E2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				98FBE51F1B1C9827C2CF0EA6 /* PBXTargetDependency */,
+			);
+			name = "TestBed-GPTDriverTests";
+			packageProductDependencies = (
+				84BBC5418F3C729A5F490A07 /* gptd-swift */,
+			);
+			productName = "TestBed-GPTDriverTests";
+			productReference = ACF0972B844F3483686EF054 /* TestBed-GPTDriverTests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 		E7AC745F2DB064BC002D8C40 /* Reflection_ODM_Tests */ = {
 			isa = PBXNativeTarget;
@@ -549,6 +719,11 @@
 						LastSwiftMigration = 1030;
 						TestTargetID = 6700165F1940F51400A9E103;
 					};
+					AAC5A9A76F3DBB04E6638F31 = {
+						CreatedOnToolsVersion = 16.2;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 6700165F1940F51400A9E103;
+					};
 					E7AC745F2DB064BC002D8C40 = {
 						CreatedOnToolsVersion = 16.2;
 						TestTargetID = 6700165F1940F51400A9E103;
@@ -567,6 +742,7 @@
 			packageReferences = (
 				E7AC74792DB0700D002D8C40 /* XCLocalSwiftPackageReference "../../ios-branch-deep-linking-attribution" */,
 				E732827D2E5F7D92005CACC8 /* XCRemoteSwiftPackageReference "google-ads-on-device-conversion-ios-sdk" */,
+				D0973F95A101C4673FDC92A1 /* XCRemoteSwiftPackageReference "gptd-swift" */,
 			);
 			productRefGroup = 670016611940F51400A9E103 /* Products */;
 			projectDirPath = "";
@@ -576,6 +752,7 @@
 				7E6B3B501AA42D0E005F45BF /* Branch-SDK-Tests */,
 				5F8B7B3A21B5F5CD009CE0A6 /* Branch-SDK-Unhosted-Tests */,
 				E7AC745F2DB064BC002D8C40 /* Reflection_ODM_Tests */,
+				AAC5A9A76F3DBB04E6638F31 /* TestBed-GPTDriverTests */,
 			);
 		};
 /* End PBXProject section */
@@ -609,6 +786,13 @@
 				5FC4CF9024860C440001E701 /* example.json in Resources */,
 				5FC4CF9224860C440001E701 /* latd_missing_data.json in Resources */,
 				5FC4CF8D24860C440001E701 /* latd_missing_window.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1B69B214CA8E570289FE6E2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -663,6 +847,7 @@
 				4683F0761B20A73F00A432E7 /* AppDelegate.m in Sources */,
 				670016701940F51400A9E103 /* main.m in Sources */,
 				63E4C48B1D25E17B00A45FD8 /* NavigationController.m in Sources */,
+				B9F5DA27F77E0A392BD2E69A /* TestBedIdentifiers.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -714,6 +899,33 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		830B3D68A4D135BCDED3AF12 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				257BD6BD304B0B87C0BDF67C /* BaseGptDriverTest.swift in Sources */,
+				D90E8A6639F523DC3B08FBCE /* LinkCreationDeterministicTest.swift in Sources */,
+				E1A0001A0000000000000AA1 /* L1WireValidationTest.swift in Sources */,
+				2FE60ACC53E3DDB95CB49E7C /* LinkCreationHybridTest.swift in Sources */,
+				EBB12FFFEE5BB34E5505BBB9 /* LinkCreationAITest.swift in Sources */,
+				143A1100894AF12F8F5E4CFB /* TestBedIdentifiers.m in Sources */,
+				FA0EDB9AC11B2D654496E492 /* TestScrollHelpers.swift in Sources */,
+				959C9C6A9AF35A32CE92F363 /* QRCodeHybridTest.swift in Sources */,
+				505878246DFBFD4C0CA6A6FA /* ShareLinkHybridTest.swift in Sources */,
+				F75975E5DF4BEE735A974B7D /* SessionAndLogsHybridTest.swift in Sources */,
+				1CBDF03ECD47630F858956A7 /* UserIdentityHybridTest.swift in Sources */,
+				8909A6D6A78237ACCB8496D6 /* EventLoggingHybridTest.swift in Sources */,
+				DB18DA9C84F60B550B04B3FC /* DeepLinkColdOpenHybridTest.swift in Sources */,
+				DAEFBE7C9FFBD455BFBF4EC7 /* DeepLinkWarmOpenHybridTest.swift in Sources */,
+				5974B34F3B3E5074F9DDFEB6 /* BrowserExperienceHybridTest.swift in Sources */,
+				9BEC6ECEF0E0BF1E734B843D /* NotificationHybridTest.swift in Sources */,
+				15843A0C5EBB44E872DFDF8A /* TrackingControlHybridTest.swift in Sources */,
+				805069B9222DE6DBB702BA55 /* ConsumerProtectionHybridTest.swift in Sources */,
+				E369CEFCE0B1105282B6E900 /* ReferringParamsHybridTest.swift in Sources */,
+				884BEA1B0B010B65568A9135 /* PluginNotifyHybridTest.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E7AC745C2DB064BC002D8C40 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -728,6 +940,12 @@
 			isa = PBXTargetDependency;
 			target = 6700165F1940F51400A9E103 /* Branch-TestBed */;
 			targetProxy = 4D337DDC201019B8009A5774 /* PBXContainerItemProxy */;
+		};
+		98FBE51F1B1C9827C2CF0EA6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Branch-TestBed";
+			target = 6700165F1940F51400A9E103 /* Branch-TestBed */;
+			targetProxy = E7ABE7BF4A8A258818FBA303 /* PBXContainerItemProxy */;
 		};
 		E73282822E5F81C9005CACC8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -748,6 +966,41 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		3486B3718FE8B6C8A863A09C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0BDDF97F86FBDB68CC1DB17B /* MobileBoost.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Branch-TestBed",
+				);
+				INFOPLIST_FILE = "TestBed-GPTDriverTests/Info.plist";
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = "$(inherited)";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.TestBed-GPTDriverTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "TestBed-GPTDriverTests/TestBed-GPTDriverTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Branch-TestBed";
+			};
+			name = Debug;
+		};
 		5F8B7B4321B5F5CD009CE0A6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1039,6 +1292,42 @@
 			};
 			name = Release;
 		};
+		AA4A3EF83BDE3C4D3218FF4D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0BDDF97F86FBDB68CC1DB17B /* MobileBoost.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Branch-TestBed",
+				);
+				INFOPLIST_FILE = "TestBed-GPTDriverTests/Info.plist";
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = "$(inherited)";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.TestBed-GPTDriverTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "TestBed-GPTDriverTests/TestBed-GPTDriverTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Branch-TestBed";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		E7AC74682DB064BC002D8C40 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1138,6 +1427,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		7C4C785331DF108512EC93F2 /* Build configuration list for PBXNativeTarget "TestBed-GPTDriverTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA4A3EF83BDE3C4D3218FF4D /* Release */,
+				3486B3718FE8B6C8A863A09C /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		7E6B3B571AA42D0E005F45BF /* Build configuration list for PBXNativeTarget "Branch-SDK-Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1166,6 +1464,14 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		D0973F95A101C4673FDC92A1 /* XCRemoteSwiftPackageReference "gptd-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/MobileBoostHQ/gptd-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.9.1;
+			};
+		};
 		E732827D2E5F7D92005CACC8 /* XCRemoteSwiftPackageReference "google-ads-on-device-conversion-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/googleads/google-ads-on-device-conversion-ios-sdk";
@@ -1177,6 +1483,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		84BBC5418F3C729A5F490A07 /* gptd-swift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D0973F95A101C4673FDC92A1 /* XCRemoteSwiftPackageReference "gptd-swift" */;
+			productName = "gptd-swift";
+		};
 		E732827E2E5F7D92005CACC8 /* GoogleAdsOnDeviceConversion */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E732827D2E5F7D92005CACC8 /* XCRemoteSwiftPackageReference "google-ads-on-device-conversion-ios-sdk" */;
