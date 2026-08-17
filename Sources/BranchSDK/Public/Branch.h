@@ -542,7 +542,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  cancelled so that only one callback fires per app open.
  */
 - (void)requestDeepLinkData:(nullable NSString *)branchLink callback:(nullable callbackWithParams)callback
-    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(_:));
+    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(branchLink:));
 
 /**
  Convenience overload for `application:didFinishLaunchingWithOptions:`.
@@ -1067,8 +1067,16 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  */
 - (void)logout;
 
+/**
+ Clear all of the current user's session items. Receive a completion callback, notifying you whether it succeeded or failed.
+
+ @warning If the request to logout fails, the items will not be cleared.
+
+ The async variant is named `logoutAsync()` rather than `logout()` so that it does not shadow the
+ fire-and-forget `logout` above, which would force existing async-context callers to add `try await`.
+ */
 - (void)logoutWithCallback:(nullable callbackWithStatus)callback
-    NS_SWIFT_ASYNC_NAME(logout());
+    NS_SWIFT_ASYNC_NAME(logoutAsync());
 
 #pragma mark - Query methods
 
@@ -1385,7 +1393,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  @param callback Callback called with the url.
  */
 - (void)getShortURLWithParams:(nullable NSDictionary *)params andCallback:(nullable callbackWithUrl)callback
-    NS_SWIFT_ASYNC_NAME(getShortURL(with:));
+    NS_SWIFT_ASYNC_NAME(getShortURL(params:));
 
 /**
  Get a short url with the specified params, channel, and feature. The usage type will default to unlimited.
