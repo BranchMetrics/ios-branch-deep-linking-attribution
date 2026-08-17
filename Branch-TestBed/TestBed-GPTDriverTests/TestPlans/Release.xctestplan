@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "23F687DE-A2EF-4FC1-8244-4E061C07018A",
+      "name" : "Release",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Branch-TestBed.xcodeproj",
+      "identifier" : "AAC5A9A76F3DBB04E6638F31",
+      "name" : "TestBed-GPTDriverTests"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Branch-TestBed.xcodeproj",
+        "identifier" : "AAC5A9A76F3DBB04E6638F31",
+        "name" : "TestBed-GPTDriverTests"
+      }
+    }
+  ],
+  "version" : 1
+}
