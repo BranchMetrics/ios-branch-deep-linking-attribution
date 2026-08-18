@@ -224,35 +224,35 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
 
     // Single canonical initialization entry point. Guard against reinitializing the singleton:
     // once created, re-running the setter side-effects below would mutate a running SDK.
+    
+    Branch *branch = nil;
     @synchronized ([Branch class]) {
         if (bnc_didInitializeWithConfiguration) {
             [[BranchLogger shared] logWarning:@"Warning, attempted to reinitialize Branch SDK singleton!" error:nil];
             return [Branch getInstanceInternal:self.class.branchKey];
         }
         bnc_didInitializeWithConfiguration = YES;
+
+        // --- Settings that must be applied before the singleton is created ---
+
+        // Test key must be resolved before the branch key is read.
+        [Branch setUseTestBranchKey:configuration.testMode];
+
+        // Custom network service class is set-once and must precede singleton creation.
+        if (configuration.remoteInterface) {
+            [Branch setNetworkServiceClass:configuration.remoteInterface];
+        }
+
+        self.branchKey = configuration.branchKey;
+        [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_INIT_FUNCTION;
+
+        // --- Create (or fetch) the singleton ---
+        branch = [Branch getInstanceInternal:self.branchKey];
     }
-
-    // --- Settings that must be applied before the singleton is created ---
-
-    // Test key must be resolved before the branch key is read.
-    [Branch setUseTestBranchKey:configuration.testMode];
-
-    // Custom network service class is set-once and must precede singleton creation.
-    if (configuration.remoteInterface) {
-        [Branch setNetworkServiceClass:configuration.remoteInterface];
-    }
-
-    // Set the branch key explicitly so it takes precedence over Info.plist / branch.json.
-    self.branchKey = configuration.branchKey;
-    [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_INIT_FUNCTION;
-
-    // --- Create (or fetch) the singleton ---
-    // Note: the constructor applies branch.json values (apiUrl, logging, cppLevel). Caller-supplied
-    // settings that overlap with branch.json are (re)applied AFTER this so the caller wins and
-    // branch.json serves only as a fallback.
-    Branch *branch = [Branch getInstanceInternal:self.branchKey];
 
     // --- Settings applied to the instance / shared preference helper (caller wins) ---
+    // Applied outside the lock: these mutate BNCServerAPI / BNCPreferenceHelper / BranchLogger,
+    // which take their own locks, and none of them are needed to pin the branch key.
     [Branch applyConfiguration:configuration toBranch:branch];
 
     return branch;

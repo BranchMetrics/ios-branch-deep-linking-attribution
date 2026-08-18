@@ -111,7 +111,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSArray<NSString *> *allowedSchemes;
 
 /// Regex patterns matching URLs that Branch should never transmit (e.g. URLs with sensitive tokens).
-@property (nonatomic, copy, readonly) NSArray<NSString *> *urlPatternsToIgnore;
+@property (nonatomic, copy) NSArray<NSString *> *urlPatternsToIgnore;
 
 #pragma mark - Request metadata
 
