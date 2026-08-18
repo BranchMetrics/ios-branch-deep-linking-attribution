@@ -10,6 +10,11 @@ on:
       - master
       - main
       - wpinho-branch/mobileboost-ios-tests
+      # The 4.0 beta line is where the active SDK work lands, so wire changes
+      # merging there need the same gate. Note this entry alone is not enough:
+      # the workflow file has to exist in the PR's merge tree, which means it
+      # also has to land on 4.0.0-beta.0 itself.
+      - "4.0.0-beta.*"
     # Only run when something that can change the wire actually changed.
     paths:
       - "Sources/BranchSDK/**"
@@ -47,10 +52,14 @@ jobs:
 
       # setup-xcode is more robust than `sudo xcode-select -s` because the
       # exact Xcode_16.x.app path varies between runner image revisions.
-      - name: Select Xcode 16
+      # `^16.4` rather than an exact pin: an exact pin hard-fails the moment the
+      # runner image stops shipping that specific build, and rather than
+      # `latest`/`latest-stable`, which would silently walk onto Xcode 17 and
+      # change the toolchain under a wire-validation gate.
+      - name: Select Xcode (16.4 or later 16.x)
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: "16"
+          xcode-version: "^16.4"
 
       - name: Show toolchain
         run: |
