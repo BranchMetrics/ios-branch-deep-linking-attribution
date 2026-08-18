@@ -178,9 +178,9 @@
 
     
     id<BNCNetworkOperationProtocol> operation = [self.networkService networkOperationWithURLRequest:request.copy completion:completionHandler];
-
+    [operation start];
+    
     // In the past we allowed clients to provide their own networking classes.
-    // Validate before starting, so a rejected operation cannot deliver a second callback.
     NSError *error = [self verifyNetworkOperation:operation];
     if (error) {
         [[BranchLogger shared] logError:@"NetworkService returned an operation that failed validation" error:error];
@@ -189,8 +189,6 @@
         }
         return;
     }
-
-    [operation start];
 }
 
 - (BOOL)isLinkingRelatedRequest:(NSString *)endpoint postParams:(NSDictionary *)post {
