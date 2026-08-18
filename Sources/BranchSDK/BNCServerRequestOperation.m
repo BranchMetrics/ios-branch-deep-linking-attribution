@@ -28,7 +28,7 @@
     _Atomic(BOOL) _finished;
 
     // Guards the claim flags below, which elect the single owner of a one-shot transition.
-    NSRecursiveLock *_stateLock;
+    NSLock *_stateLock;
     BOOL _completionClaimed;
     BOOL _callbackClaimed;
 }
@@ -39,7 +39,7 @@
         _request = request;
         _executing = NO;
         _finished = NO;
-        _stateLock = [[NSRecursiveLock alloc] init];
+        _stateLock = [[NSLock alloc] init];
     }
     return self;
 }
