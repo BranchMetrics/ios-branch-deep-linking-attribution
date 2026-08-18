@@ -14,18 +14,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface TestBedDeepLinkTestHook : NSObject
 
 /// Delivers a synthetic Universal Link if the app was launched with
-/// `-testDeepLinkURL <url>`, and does nothing otherwise.
+/// `-testDeepLinkURL <url>`, and does nothing otherwise. The URL is wrapped in
+/// an `NSUserActivity` and passed to the delegate's
+/// `application:continueUserActivity:restorationHandler:`.
 ///
-/// The URL is wrapped in an `NSUserActivity` of type
-/// `NSUserActivityTypeBrowsingWeb` and handed to the application delegate's
-/// `application:continueUserActivity:restorationHandler:` — the same callback
-/// iOS uses for a real Universal Link.
-///
-/// This exercises the SDK's handling of a link, NOT the OS delivering one.
-/// Measured 2026-08-17: `xcrun simctl openurl` delivers nothing to this app on
-/// an unsigned simulator build — https reaches Safari instead, and the
-/// `branchtest` scheme launches nothing — so there is no OS-delivery route to
-/// use here on either iOS 18.4 or 26.3.1.
+/// Exercises the SDK's handling of a link, not the OS delivering one: an
+/// unsigned simulator build has no route for real Universal Link handoff.
 + (void)installIfRequested:(UIApplication *)application;
 
 @end
