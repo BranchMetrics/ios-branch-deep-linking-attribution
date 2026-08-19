@@ -238,6 +238,51 @@ def contract_for(scenario):
         )
 
 
+def occurs_after(uris, earlier, later):
+    """True when some `later` request appears after some `earlier` one.
+
+    Relative, not adjacency: unrelated traffic between the two does not
+    violate it. Deliberately not "the first `later` follows the first
+    `earlier`" — a launch open legitimately precedes a link resolution, so
+    that reading would fail a correct capture.
+
+    Fail-closed: if either endpoint is missing the order is not satisfied."""
+    for index, uri in enumerate(uris):
+        if uri == earlier and later in uris[index + 1:]:
+            return True
+    return False
+
+
+def assert_contract(entries, contract):
+    """Check a normalized capture against a scenario contract.
+
+    Returns a list of error strings, empty when the capture satisfies it.
+    Holds no endpoint name of its own: every value compared comes from the
+    contract, so the same checks serve either platform's capture."""
+    errors = []
+    uris = [entry["uri"] for entry in entries]
+
+    for endpoint, expected in sorted(contract["counts"].items()):
+        actual = uris.count(endpoint)
+        if actual == expected:
+            continue
+        if expected == 0:
+            errors.append(
+                f"'{endpoint}' must not be captured for this scenario, "
+                f"but appeared {actual} time(s)."
+            )
+        else:
+            errors.append(
+                f"Expected {expected} '{endpoint}' request(s), captured {actual}."
+            )
+
+    for earlier, later in contract["order"]:
+        if not occurs_after(uris, earlier, later):
+            errors.append(f"Expected a '{later}' request after a '{earlier}' one.")
+
+    return errors
+
+
 def parse_branch_logs(file_path):
     """Walk branchlogs.txt and pull each `[BranchLog] Got <URL> Request: <body>`
     line. Returns list of {uri, url, request}, or None if the file is missing.

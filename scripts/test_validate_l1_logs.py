@@ -10,6 +10,7 @@ They encode the 4.0.0-beta wire protocol (`/v3/events/open`, `/v3/deeplink`,
 `/v2/event/standard`, `/v1/url`), not master's v1 protocol.
 """
 
+import inspect
 import io
 import os
 import sys
@@ -107,6 +108,89 @@ class ScenarioContractModelTests(unittest.TestCase):
         errors, output = _run_validation("happy_path.txt")
         self.assertEqual(errors, [])
         self.assertIn("'/v3/deeplink' not present in capture", output)
+
+
+def _capture(*uris):
+    """Normalized entries with fabricated endpoint names. The engine must not
+    care that these are not real Branch endpoints."""
+    return [{"uri": u, "url": "https://example.test" + u, "request": {}} for u in uris]
+
+
+class AssertionEngineTests(unittest.TestCase):
+    """Driven entirely from fabricated endpoints, which is what proves the
+    engine holds no endpoint name and no log format of its own."""
+
+    def test_exact_count_satisfied(self):
+        contract = {"counts": {"/alpha": 2}, "order": ()}
+        self.assertEqual(v.assert_contract(_capture("/alpha", "/alpha"), contract), [])
+
+    def test_too_many_fails(self):
+        contract = {"counts": {"/alpha": 1}, "order": ()}
+        errors = v.assert_contract(_capture("/alpha", "/alpha"), contract)
+        self.assertEqual(len(errors), 1)
+        self.assertIn("Expected 1", errors[0])
+
+    def test_too_few_fails(self):
+        contract = {"counts": {"/alpha": 2}, "order": ()}
+        errors = v.assert_contract(_capture("/alpha"), contract)
+        self.assertEqual(len(errors), 1)
+        self.assertIn("captured 1", errors[0])
+
+    def test_count_zero_forbids_the_endpoint(self):
+        contract = {"counts": {"/beta": 0}, "order": ()}
+        self.assertEqual(v.assert_contract(_capture("/alpha"), contract), [])
+        errors = v.assert_contract(_capture("/alpha", "/beta"), contract)
+        self.assertEqual(len(errors), 1)
+        self.assertIn("must not be captured", errors[0])
+
+    def test_unlisted_endpoints_are_unconstrained(self):
+        contract = {"counts": {"/alpha": 1}, "order": ()}
+        self.assertEqual(v.assert_contract(_capture("/alpha", "/gamma"), contract), [])
+
+    def test_order_holds_when_other_traffic_interleaves(self):
+        # The real shape: a launch open precedes the link resolution, and the
+        # attributed open follows it. "first after first" would fail this.
+        contract = {"counts": {}, "order": (("/beta", "/alpha"),)}
+        self.assertEqual(
+            v.assert_contract(_capture("/alpha", "/beta", "/alpha"), contract), []
+        )
+
+    def test_order_violated_when_later_never_follows(self):
+        contract = {"counts": {}, "order": (("/beta", "/alpha"),)}
+        errors = v.assert_contract(_capture("/alpha", "/beta"), contract)
+        self.assertEqual(len(errors), 1)
+        self.assertIn("after", errors[0])
+
+    def test_order_is_fail_closed_when_an_endpoint_is_absent(self):
+        # An order check that passes vacuously repeats the defect this engine
+        # exists to remove.
+        contract = {"counts": {}, "order": (("/beta", "/alpha"),)}
+        self.assertEqual(len(v.assert_contract(_capture("/alpha"), contract)), 1)
+        self.assertEqual(len(v.assert_contract([], contract)), 1)
+
+    def test_every_violation_is_reported_not_just_the_first(self):
+        contract = {"counts": {"/alpha": 5, "/beta": 0}, "order": (("/beta", "/alpha"),)}
+        self.assertEqual(len(v.assert_contract(_capture("/alpha", "/beta"), contract)), 3)
+
+    def test_the_seeded_deeplink_contract_accepts_the_real_capture_shape(self):
+        # Measured on device: open, deeplink, open.
+        errors = v.assert_contract(
+            _capture("/v3/events/open", "/v3/deeplink", "/v3/events/open"),
+            v.contract_for("deeplink"),
+        )
+        self.assertEqual(errors, [], f"Unexpected errors: {errors}")
+
+
+class EnginePortabilityTests(unittest.TestCase):
+    def test_engine_source_holds_no_endpoint_or_log_format_literal(self):
+        """The engine must be liftable into the Android repo unchanged. A
+        literal endpoint or capture-format string here would break that, and
+        would not be caught by the behavioural tests above."""
+        source = "".join(
+            inspect.getsource(fn) for fn in (v.assert_contract, v.occurs_after)
+        )
+        for forbidden in ("/v1", "/v2", "/v3", "BranchLog", "posting to", "Post value"):
+            self.assertNotIn(forbidden, source, f"engine leaked '{forbidden}'")
 
 
 class HappyPathTests(unittest.TestCase):
