@@ -50,6 +50,12 @@ REQUEST_LINE_RE = re.compile(
     r"\[BranchLog\]\s+Got\s+(?P<url>https?://[^\s]+)\s+Request:\s*(?P<body>\{.*\})\s*$"
 )
 
+# The normalized capture entry. `parse_branch_logs` is the only
+# platform-specific layer; everything downstream sees this shape, so the
+# Android validator can feed the same checks from its own log format.
+# `uri` is the URL path, `url` the full URL, `request` the decoded body.
+CAPTURE_ENTRY_KEYS = ("uri", "url", "request")
+
 # The device/SDK context block every endpoint that carries it at the top
 # level must have, unconditionally. `wifi` and `ui_mode` are intentionally
 # absent — iOS does not emit them. See the v4 Conversion API parity tracker

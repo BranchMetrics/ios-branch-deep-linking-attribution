@@ -15,6 +15,7 @@ import os
 import sys
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
+from urllib.parse import urlparse
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, THIS_DIR)
@@ -49,6 +50,25 @@ class ParseBranchLogsTests(unittest.TestCase):
         self.assertEqual(entries[0]["uri"], "/v3/events/open")
         self.assertEqual(entries[1]["uri"], "/v1/url")
         self.assertIsInstance(entries[0]["request"], dict)
+
+
+class NormalizedCaptureFormatTests(unittest.TestCase):
+    """The entry shape is the seam between the platform-specific parser and
+    every check downstream. Android's parser emits the same three keys, so a
+    drift here silently breaks the shared checks rather than this parser."""
+
+    def test_parser_emits_exactly_the_declared_keys(self):
+        entries = v.parse_branch_logs(_fixture("happy_path.txt"))
+        self.assertTrue(entries)
+        for entry in entries:
+            self.assertEqual(
+                tuple(sorted(entry)), tuple(sorted(v.CAPTURE_ENTRY_KEYS))
+            )
+
+    def test_uri_is_the_url_path(self):
+        entries = v.parse_branch_logs(_fixture("happy_path.txt"))
+        for entry in entries:
+            self.assertEqual(entry["uri"], urlparse(entry["url"]).path)
 
 
 class HappyPathTests(unittest.TestCase):
