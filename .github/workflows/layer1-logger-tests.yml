@@ -91,8 +91,11 @@ jobs:
       - name: Run L1 validator unit tests
         run: python3 -m unittest scripts.test_validate_l1_logs -v
 
+      # The scenario is required: a capture is judged against the contract for
+      # the run that produced it. This job drives the default harness run,
+      # which is N1 organic_open — one open, no deep link.
       - name: Validate wire logs
-        run: python3 scripts/validate_l1_logs.py branchlogs.txt
+        run: python3 scripts/validate_l1_logs.py branchlogs.txt --scenario N1
 
       - name: Upload wire logs on failure
         if: failure() && github.event.pull_request.head.repo.full_name == github.repository
