@@ -261,6 +261,38 @@ class N1ContractTests(unittest.TestCase):
         self.assertEqual(v.contract_for("N1")["counts"].get("/v3/deeplink"), 0)
 
 
+class N3ContractTests(unittest.TestCase):
+    """N3 attribution_none: at consumer-protection level NONE,
+    BNCServerRequestOperation drops every request except BranchRequestDeepLink,
+    so the resolution goes out and the attributed open does not."""
+
+    def test_the_none_level_capture_passes(self):
+        errors, _ = _run_validation("n3_attribution_none.txt", v.contract_for("N3"))
+        self.assertEqual(errors, [], f"Unexpected errors: {errors}")
+
+    def test_an_open_at_none_level_fails(self):
+        # The regression N3 exists to catch: an open must not be sent at NONE.
+        errors, _ = _run_validation("attribution_none_deeplink.txt", v.contract_for("N3"))
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("must not be captured", errors[0])
+        self.assertIn("/v3/events/open", errors[0])
+
+    def test_the_old_global_rule_would_have_failed_this_correct_capture(self):
+        # The retired MANDATORY_ENDPOINT required an open in every capture. N1
+        # still does, and N3's capture is correct without one — which is why a
+        # single global rule could not serve both scenarios.
+        errors, _ = _run_validation("n3_attribution_none.txt", v.contract_for("N1"))
+        self.assertTrue(
+            any("/v3/events/open" in e for e in errors),
+            f"Expected the open requirement to fire: {errors}",
+        )
+
+    def test_n3_does_not_assert_that_identifiers_were_cleared(self):
+        # Recorded, not hidden: that is a field-level assertion, and this layer
+        # is bounded at counts and required-field presence.
+        self.assertEqual(set(v.contract_for("N3")["counts"]), {"/v3/deeplink", "/v3/events/open"})
+
+
 class HappyPathTests(unittest.TestCase):
     """Every required field is present — validator must return no errors."""
 
