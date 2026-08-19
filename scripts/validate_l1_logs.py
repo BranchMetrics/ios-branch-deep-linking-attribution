@@ -238,6 +238,32 @@ def contract_for(scenario):
         )
 
 
+# Body field carrying the attempt number, added by
+# `BNCServerInterface addRetryCount:toJSON:`. First attempt is 0.
+RETRY_COUNT_FIELD = "retryNumber"
+
+
+def collapse_retries(entries):
+    """Drop retry attempts so a capture holds one entry per logical request.
+
+    The SDK logs a line per attempt: `genericHTTPRequest` calls its retry
+    handler, which re-runs `preparePostRequest`, and that is what writes the
+    capture line. Counting attempts would fail an exact-count contract
+    whenever the network is flaky, which is the opposite of what the counts
+    are for. Entries without the field are kept — a capture from a platform
+    that does not carry it is not silently emptied."""
+    return [entry for entry in entries if not is_retry_attempt(entry)]
+
+
+def is_retry_attempt(entry):
+    """True for a request that is a repeat of an earlier attempt."""
+    request = entry.get("request")
+    if not isinstance(request, dict):
+        return False
+    attempt = request.get(RETRY_COUNT_FIELD)
+    return isinstance(attempt, int) and not isinstance(attempt, bool) and attempt > 0
+
+
 def occurs_after(uris, earlier, later):
     """True when some `later` request appears after some `earlier` one.
 
@@ -315,7 +341,7 @@ def parse_branch_logs(file_path):
 
             entries.append({"uri": path, "url": url, "request": request})
 
-    return entries
+    return collapse_retries(entries)
 
 
 def lookup_field(request, field):

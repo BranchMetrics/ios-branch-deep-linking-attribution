@@ -193,6 +193,38 @@ class EnginePortabilityTests(unittest.TestCase):
             self.assertNotIn(forbidden, source, f"engine leaked '{forbidden}'")
 
 
+class RetryCollapseTests(unittest.TestCase):
+    """One logical request is logged once per attempt, because the SDK's retry
+    handler re-runs the request builder and that is what writes the line.
+    Counting attempts would fail an exact-count contract on a flaky network."""
+
+    def test_retried_request_counts_once(self):
+        entries = v.parse_branch_logs(_fixture("retried_open.txt"))
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(entries[0]["request"][v.RETRY_COUNT_FIELD], 0)
+
+    def test_retried_capture_satisfies_an_exact_count_contract(self):
+        entries = v.parse_branch_logs(_fixture("retried_open.txt"))
+        self.assertEqual(v.assert_contract(entries, v.contract_for("install")), [])
+
+    def test_first_attempt_is_kept(self):
+        kept = v.collapse_retries([{"uri": "/a", "url": "u", "request": {"retryNumber": 0}}])
+        self.assertEqual(len(kept), 1)
+
+    def test_entries_without_the_field_are_kept(self):
+        # Android bodies may not carry it; dropping them would empty a capture.
+        kept = v.collapse_retries([{"uri": "/a", "url": "u", "request": {}}])
+        self.assertEqual(len(kept), 1)
+
+    def test_a_boolean_is_not_read_as_an_attempt_number(self):
+        kept = v.collapse_retries([{"uri": "/a", "url": "u", "request": {"retryNumber": True}}])
+        self.assertEqual(len(kept), 1)
+
+    def test_non_dict_body_is_kept(self):
+        kept = v.collapse_retries([{"uri": "/a", "url": "u", "request": []}])
+        self.assertEqual(len(kept), 1)
+
+
 class HappyPathTests(unittest.TestCase):
     """Every required field is present — validator must return no errors."""
 
