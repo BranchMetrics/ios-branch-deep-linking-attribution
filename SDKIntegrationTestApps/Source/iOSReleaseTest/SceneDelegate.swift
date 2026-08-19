@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import BranchSDK
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -17,6 +18,43 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
+
+        // Callback variant — NS_SWIFT_NAME:
+        // Branch.sharedInstance().requestDeepLinkData(sceneOptions: connectionOptions, scene: scene) { params, error in
+        //     print("Deep Link Params: \(params ?? [:]), error: \(String(describing: error))")
+        // }
+
+        // Async/await variant — NS_SWIFT_ASYNC_NAME:
+        // Task {
+        //     let params = try? await Branch.sharedInstance().requestDeepLinkData(sceneOptions: connectionOptions, scene: scene)
+        //     print("Deep Link Params: \(params ?? [:])")
+        // }
+    }
+
+    func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+        // Callback variant — NS_SWIFT_NAME:
+        // Branch.sharedInstance().requestDeepLinkData(branchLink: userActivity.webpageURL?.absoluteString) { params, error in
+        //     print("Deep Link Params: \(params ?? [:]), error: \(String(describing: error))")
+        // }
+
+        // Async/await variant — NS_SWIFT_ASYNC_NAME:
+        // Task {
+        //     let params = try? await Branch.sharedInstance().requestDeepLinkData(branchLink: userActivity.webpageURL?.absoluteString)
+        //     print("Deep Link Params: \(params ?? [:])")
+        // }
+    }
+
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        // Callback variant — NS_SWIFT_NAME:
+        // Branch.sharedInstance().requestDeepLinkData(branchLink: URLContexts.first?.url.absoluteString) { params, error in
+        //     print("Deep Link Params: \(params ?? [:]), error: \(String(describing: error))")
+        // }
+
+        // Async/await variant — NS_SWIFT_ASYNC_NAME:
+        // Task {
+        //     let params = try? await Branch.sharedInstance().requestDeepLinkData(branchLink: URLContexts.first?.url.absoluteString)
+        //     print("Deep Link Params: \(params ?? [:])")
+        // }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

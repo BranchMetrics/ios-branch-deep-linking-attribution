@@ -542,6 +542,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  cancelled so that only one callback fires per app open.
  */
 - (void)requestDeepLinkData:(nullable NSString *)branchLink callback:(nullable callbackWithParams)callback
+    NS_SWIFT_NAME(requestDeepLinkData(branchLink:callback:))
     NS_SWIFT_ASYNC_NAME(requestDeepLinkData(branchLink:));
 
 /**
@@ -553,7 +554,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  */
 - (void)requestDeepLinkDataWithLaunchOptions:(nullable NSDictionary *)options
                                     callback:(nullable callbackWithParams)callback
-    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(withLaunchOptions:));
+    NS_SWIFT_NAME(requestDeepLinkData(launchOptions:callback:))
+    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(launchOptions:));
 
 #if !TARGET_OS_TV
 /**
@@ -567,8 +569,9 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 - (void)requestDeepLinkDataWithSceneOptions:(nullable UISceneConnectionOptions *)connectionOptions
                                       scene:(UIScene *)scene
                                    callback:(nullable callbackWithParams)callback
-    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(withSceneOptions:scene:))
-    API_AVAILABLE(ios(13.0), macCatalyst(13.1));
+    API_AVAILABLE(ios(13.0), macCatalyst(13.1))
+    NS_SWIFT_NAME(requestDeepLinkData(sceneOptions:scene:callback:))
+    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(sceneOptions:scene:));
 #endif
 
 /**
