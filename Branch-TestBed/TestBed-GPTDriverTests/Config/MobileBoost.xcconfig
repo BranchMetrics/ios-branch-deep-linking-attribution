@@ -2,8 +2,15 @@
 //
 // Committed file. Local developers override values here by creating
 // a sibling `MobileBoost.local.xcconfig` (gitignored) that this file
-// optionally includes. CI overrides via `xcodebuild MOBILEBOOST_API_KEY=...`
-// as a build-setting argument, which takes precedence over this file.
+// optionally includes. CI takes the same route: the "Configure MobileBoost
+// credential" step in .github/workflows/gptdriver-e2e.yml writes that same
+// gitignored local file from the repository secret via heredoc.
+//
+// Deliberately NOT passed as an `xcodebuild MOBILEBOOST_API_KEY=...`
+// build-setting argument: an argv value sits in the process table for the
+// whole build and is readable by anything that can run `ps` on the runner.
+// The only build setting xcodebuild receives on the command line is
+// CODE_SIGNING_ALLOWED=NO.
 
 // Default to empty first. The #include? below overrides this with the
 // real value from MobileBoost.local.xcconfig (if it exists). xcconfig

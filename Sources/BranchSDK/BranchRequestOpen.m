@@ -107,12 +107,14 @@
         userIdentity = [userIdentity stringValue];
     }
     
-    if ([data objectForKey:BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN]) {
-        preferenceHelper.randomizedDeviceToken = data[BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN];
-        if (!preferenceHelper.randomizedDeviceToken) {
-            // fallback to deprecated name. Fingerprinting was removed long ago, hence the name change.
-            preferenceHelper.randomizedDeviceToken = data[@"device_fingerprint_id"];
-        }
+    NSString *deviceToken = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN]);
+    if (!deviceToken) {
+        // fallback to deprecated name. Fingerprinting was removed long ago, hence the name change.
+        deviceToken = BNCStringFromWireFormat(data[@"device_fingerprint_id"]);
+    }
+
+    if (deviceToken) {
+        preferenceHelper.randomizedDeviceToken = deviceToken;
     }
    
     if (data[BRANCH_RESPONSE_KEY_USER_URL]) {
