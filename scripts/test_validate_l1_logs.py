@@ -204,7 +204,7 @@ class RetryCollapseTests(unittest.TestCase):
 
     def test_retried_capture_satisfies_an_exact_count_contract(self):
         entries = v.parse_branch_logs(_fixture("retried_open.txt"))
-        self.assertEqual(v.assert_contract(entries, v.contract_for("install")), [])
+        self.assertEqual(v.assert_contract(entries, v.contract_for("N1")), [])
 
     def test_first_attempt_is_kept(self):
         kept = v.collapse_retries([{"uri": "/a", "url": "u", "request": {"retryNumber": 0}}])
@@ -222,6 +222,43 @@ class RetryCollapseTests(unittest.TestCase):
     def test_non_dict_body_is_kept(self):
         kept = v.collapse_retries([{"uri": "/a", "url": "u", "request": []}])
         self.assertEqual(len(kept), 1)
+
+
+class N1ContractTests(unittest.TestCase):
+    """N1 organic_open, the worked example: one open, no deep link. Each test
+    below proves an assertion type FAILS on a violating capture — a contract
+    only demonstrated passing is a contract that cannot fail."""
+
+    def test_a_clean_organic_open_passes(self):
+        errors, _ = _run_validation("happy_path.txt", v.contract_for("N1"))
+        self.assertEqual(errors, [], f"Unexpected errors: {errors}")
+
+    def test_wrong_count_fails(self):
+        # Two opens is the duplicate-open shape #1612 produced. Before this
+        # engine the capture could not fail, which is why it went unnoticed.
+        errors, _ = _run_validation("n1_duplicate_open.txt", v.contract_for("N1"))
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("Expected 1", errors[0])
+        self.assertIn("captured 2", errors[0])
+
+    def test_forbidden_endpoint_present_fails(self):
+        errors, _ = _run_validation("deeplink.txt", v.contract_for("N1"))
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("must not be captured", errors[0])
+        self.assertIn("/v3/deeplink", errors[0])
+
+    def test_wrong_order_fails(self):
+        # deeplink.txt is open then deeplink, with no open after it, so the
+        # deeplink contract's ordering rule is violated.
+        errors, _ = _run_validation("deeplink.txt", v.contract_for("deeplink"))
+        self.assertTrue(
+            any("after" in e for e in errors), f"Expected an order error: {errors}"
+        )
+
+    def test_n1_does_not_assert_the_absence_of_link_data_in_the_open(self):
+        # Recorded, not hidden: the plan also wants the open to carry no link
+        # data. That is a field-level assertion this layer does not make.
+        self.assertEqual(v.contract_for("N1")["counts"].get("/v3/deeplink"), 0)
 
 
 class HappyPathTests(unittest.TestCase):
@@ -296,7 +333,7 @@ class OpenRequiredTests(unittest.TestCase):
     /v1/install is never sent and is no longer asserted."""
 
     def test_capture_without_open_fails_when_the_contract_requires_one(self):
-        errors, _ = _run_validation("no_open.txt", v.contract_for("install"))
+        errors, _ = _run_validation("no_open.txt", v.contract_for("N1"))
         self.assertTrue(
             any("'/v3/events/open'" in e for e in errors),
             f"Expected open-missing error, got: {errors}",
@@ -391,7 +428,7 @@ class ScenarioEnforcementTests(unittest.TestCase):
     def test_the_same_capture_passes_install_and_fails_deeplink(self):
         # The point of per-scenario contracts: one global rule cannot express
         # this, and before this change the install capture could not fail.
-        passing, _ = _run_validation("happy_path.txt", v.contract_for("install"))
+        passing, _ = _run_validation("happy_path.txt", v.contract_for("N1"))
         failing, _ = _run_validation("happy_path.txt", v.contract_for("deeplink"))
         self.assertEqual(passing, [])
         self.assertTrue(failing)

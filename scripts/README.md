@@ -13,7 +13,7 @@ After capturing a `branchlogs.txt` (from a CI artifact, or by running
 validator at it:
 
 ```bash
-python3 scripts/validate_l1_logs.py path/to/branchlogs.txt --scenario install
+python3 scripts/validate_l1_logs.py path/to/branchlogs.txt --scenario N1
 ```
 
 `--scenario` is required: a capture is judged against the contract for the run
@@ -42,9 +42,9 @@ which endpoints must not appear, and the order between them. There is no global
 rule any more — a scenario that requires an open says so in its contract.
 
 ```bash
-# install: a launch, no link resolved
+# N1 organic_open: a launch, no link resolved
 ./scripts/run_l1_instrumented.sh
-python3 scripts/validate_l1_logs.py branchlogs.txt --scenario install
+python3 scripts/validate_l1_logs.py branchlogs.txt --scenario N1
 
 # deeplink: taps "Request DeepLink", which posts /v3/deeplink
 ONLY_TESTING=TestBed-GPTDriverTests/DeepLinkWireValidationTest \

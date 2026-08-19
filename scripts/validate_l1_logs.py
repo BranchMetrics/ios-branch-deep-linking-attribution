@@ -197,8 +197,12 @@ ATTRIBUTION_LEVEL_NONE = "NONE"
 # `install` and `deeplink` are not test-plan scenarios — they are the runs
 # the harness drives today. Plan scenarios use their plan ID (C1, W1, N4).
 SCENARIO_CONTRACTS = {
-    "install": {
-        "counts": {"/v3/events/open": 1},
+    # N1 organic_open: a launch with no link. The test plan also asks that the
+    # open carry no link data; that is a field-level assertion, and this layer
+    # is bounded at counts and required-field presence, so N1 is not fully
+    # covered here. The endpoint half is.
+    "N1": {
+        "counts": {"/v3/events/open": 1, "/v3/deeplink": 0},
         "order": (),
     },
     "deeplink": {
