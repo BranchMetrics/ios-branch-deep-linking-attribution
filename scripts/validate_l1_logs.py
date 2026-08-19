@@ -185,19 +185,6 @@ REQUIRED_PER_ENDPOINT = {
 ATTRIBUTION_LEVEL_FULL = "FULL"
 ATTRIBUTION_LEVEL_NONE = "NONE"
 
-# A session on this line always posts an open, so a capture without one is
-# a broken capture, not a quiet pass. This replaces master's mandatory
-# `/v1/install`, which this line never sends.
-MANDATORY_ENDPOINT = "/v3/events/open"
-
-# Endpoints a scenario guarantees its run drove, and which are therefore
-# enforced rather than noted when absent. Without --scenario nothing extra
-# is enforced, which is what the install-only L1 run relies on.
-SCENARIO_REQUIRED_ENDPOINTS = {
-    "install": (),
-    "deeplink": ("/v3/deeplink",),
-}
-
 # What the wire must look like after a scenario ran. All endpoint names live
 # here rather than in the checks, so the same checks serve Android's `/v1/*`
 # capture and this line's `/v3/*` one.
@@ -461,12 +448,13 @@ def validate_request(entry, idx, total):
     return errors
 
 
-def validate_entries(entries, scenario=None):
-    """Run validate_request on every entry plus the top-level
-    open-must-be-present check. Returns aggregated errors.
+def validate_entries(entries, contract):
+    """Check a capture against `contract` and validate every request's
+    required fields. Returns aggregated errors.
 
-    `scenario` names what the run drove; its endpoints are then required
-    instead of noted. Absent, only MANDATORY_ENDPOINT is enforced."""
+    The contract carries what the scenario must have put on the wire —
+    counts, forbidden endpoints and ordering. There is no global
+    mandatory-endpoint rule: a scenario that requires an open says so."""
     errors = []
 
     if not entries:
@@ -475,26 +463,7 @@ def validate_entries(entries, scenario=None):
 
     print(f"Captured {len(entries)} Branch wire requests. Validating...")
 
-    found_paths = [e["uri"] for e in entries]
-    if MANDATORY_ENDPOINT not in found_paths:
-        errors.append(
-            f"Mandatory endpoint '{MANDATORY_ENDPOINT}' was not captured."
-        )
-
-    required_endpoints = SCENARIO_REQUIRED_ENDPOINTS.get(scenario, ())
-    for endpoint in required_endpoints:
-        if endpoint not in found_paths:
-            errors.append(
-                f"Scenario '{scenario}' drives '{endpoint}', which was not "
-                "captured."
-            )
-
-    if "/v3/deeplink" not in found_paths and "/v3/deeplink" not in required_endpoints:
-        print(
-            "Note: '/v3/deeplink' not present in capture. Only emitted when a "
-            "Branch link is resolved, which the L1 runner does not do; not "
-            "enforced here."
-        )
+    errors.extend(assert_contract(entries, contract))
 
     for i, entry in enumerate(entries, start=1):
         errors.extend(validate_request(entry, i, len(entries)))
@@ -512,12 +481,9 @@ def main():
     )
     parser.add_argument(
         "--scenario",
-        choices=sorted(SCENARIO_REQUIRED_ENDPOINTS),
-        default=None,
-        help=(
-            "what the run drove; its endpoints become required instead of "
-            "noted. Omit to enforce only the mandatory open."
-        ),
+        choices=sorted(SCENARIO_CONTRACTS),
+        required=True,
+        help="which scenario produced this capture; selects its contract",
     )
     args = parser.parse_args()
     log_file_path = args.log_file
@@ -537,7 +503,7 @@ def main():
     except OSError:
         pass
 
-    errors = validate_entries(entries, scenario=args.scenario)
+    errors = validate_entries(entries, contract_for(args.scenario))
 
     if errors:
         print("\n--- VALIDATION FAILED ---")

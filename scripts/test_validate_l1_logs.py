@@ -30,13 +30,18 @@ def _fixture(name):
     return os.path.join(FIXTURE_DIR, name)
 
 
-def _run_validation(fixture_name, scenario=None):
+# Asserts nothing about the wire shape, so a field-validation test is not
+# also asserting counts. Scenario tests pass a real contract instead.
+ANY_CAPTURE = {"counts": {}, "order": ()}
+
+
+def _run_validation(fixture_name, contract=ANY_CAPTURE):
     """Run validate_entries on a fixture and capture stdout. Returns
     (errors, captured_output)."""
     entries = v.parse_branch_logs(_fixture(fixture_name))
     buf = io.StringIO()
     with redirect_stdout(buf):
-        errors = v.validate_entries(entries, scenario=scenario)
+        errors = v.validate_entries(entries, contract)
     return errors, buf.getvalue()
 
 
@@ -102,12 +107,6 @@ class ScenarioContractModelTests(unittest.TestCase):
         with self.assertRaises(v.UnknownScenario) as ctx:
             v.contract_for("deeplnk")
         self.assertIn("deeplnk", str(ctx.exception))
-
-    def test_model_is_not_yet_wired_into_validation(self):
-        # Step 2 adds the model only; validate_entries must be unchanged.
-        errors, output = _run_validation("happy_path.txt")
-        self.assertEqual(errors, [])
-        self.assertIn("'/v3/deeplink' not present in capture", output)
 
 
 def _capture(*uris):
@@ -296,10 +295,10 @@ class OpenRequiredTests(unittest.TestCase):
     session produces one and a capture without it is a broken capture.
     /v1/install is never sent and is no longer asserted."""
 
-    def test_capture_without_open_fails(self):
-        errors, _ = _run_validation("no_open.txt")
+    def test_capture_without_open_fails_when_the_contract_requires_one(self):
+        errors, _ = _run_validation("no_open.txt", v.contract_for("install"))
         self.assertTrue(
-            any("'/v3/events/open' was not captured" in e for e in errors),
+            any("'/v3/events/open'" in e for e in errors),
             f"Expected open-missing error, got: {errors}",
         )
 
@@ -358,12 +357,11 @@ class BetaEndpointCoverageTests(unittest.TestCase):
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
         self.assertIn("/v3/deeplink", output)
 
-    def test_absent_deeplink_is_a_note_not_a_failure(self):
-        # The L1 runner performs a single launch and never resolves a link,
-        # so a capture without /v3/deeplink is healthy.
-        errors, output = _run_validation("happy_path.txt")
+    def test_absent_deeplink_is_fine_when_no_contract_mentions_it(self):
+        # Replaces the old unconditional note: silence is now the contract's
+        # job, not a hardcoded exception for one endpoint.
+        errors, _ = _run_validation("happy_path.txt")
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
-        self.assertIn("'/v3/deeplink' not present in capture", output)
 
     def test_deeplink_does_not_require_ios_app_link_url(self):
         # Cold resolution carries no URL; only the URL-driven one does.
@@ -373,24 +371,30 @@ class BetaEndpointCoverageTests(unittest.TestCase):
 
 
 class ScenarioEnforcementTests(unittest.TestCase):
-    """--scenario promotes an endpoint the run is known to drive from a
-    note to a failure, without changing the no-scenario default."""
+    """A capture is judged against its scenario's contract, so the same file
+    passes one scenario and fails another."""
 
     def test_deeplink_scenario_fails_when_deeplink_absent(self):
-        errors, _ = _run_validation("happy_path.txt", scenario="deeplink")
+        errors, _ = _run_validation("happy_path.txt", v.contract_for("deeplink"))
         self.assertTrue(
             any("/v3/deeplink" in e for e in errors),
             f"Expected a missing-deeplink error, got: {errors}",
         )
 
-    def test_deeplink_scenario_passes_when_deeplink_present(self):
-        errors, _ = _run_validation("deeplink.txt", scenario="deeplink")
+    def test_deeplink_scenario_passes_on_the_measured_capture_shape(self):
+        # open, deeplink, open — measured on device. The launch open precedes
+        # the resolution, so an order rule of "first after first" would fail
+        # this correct capture.
+        errors, _ = _run_validation("deeplink_scenario.txt", v.contract_for("deeplink"))
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 
-    def test_install_scenario_keeps_absent_deeplink_a_note(self):
-        errors, output = _run_validation("happy_path.txt", scenario="install")
-        self.assertEqual(errors, [], f"Unexpected errors: {errors}")
-        self.assertIn("'/v3/deeplink' not present in capture", output)
+    def test_the_same_capture_passes_install_and_fails_deeplink(self):
+        # The point of per-scenario contracts: one global rule cannot express
+        # this, and before this change the install capture could not fail.
+        passing, _ = _run_validation("happy_path.txt", v.contract_for("install"))
+        failing, _ = _run_validation("happy_path.txt", v.contract_for("deeplink"))
+        self.assertEqual(passing, [])
+        self.assertTrue(failing)
 
     def test_unrecognised_scenario_exits_rather_than_downgrading(self):
         # A typo in a CI matrix must fail loudly, not fall back to the

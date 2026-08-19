@@ -13,8 +13,11 @@ After capturing a `branchlogs.txt` (from a CI artifact, or by running
 validator at it:
 
 ```bash
-python3 scripts/validate_l1_logs.py path/to/branchlogs.txt
+python3 scripts/validate_l1_logs.py path/to/branchlogs.txt --scenario install
 ```
+
+`--scenario` is required: a capture is judged against the contract for the run
+that produced it, so the validator has to be told which run that was.
 
 To run the validator's own test suite:
 
@@ -34,14 +37,14 @@ Each scenario is one harness invocation with its own capture.
 `-[AppDelegate setBranchLogFile]` deletes `branchlogs.txt` on every launch,
 so two scenarios sharing one run would leave only the last one's capture.
 
-`--scenario` names what the run drove, which promotes that scenario's
-endpoints from a note to a failure. Omit it and only the mandatory open is
-enforced — that is the install gate's behaviour and it is unchanged.
+Each scenario declares a contract: the exact number of requests per endpoint,
+which endpoints must not appear, and the order between them. There is no global
+rule any more — a scenario that requires an open says so in its contract.
 
 ```bash
 # install: a launch, no link resolved
 ./scripts/run_l1_instrumented.sh
-python3 scripts/validate_l1_logs.py branchlogs.txt
+python3 scripts/validate_l1_logs.py branchlogs.txt --scenario install
 
 # deeplink: taps "Request DeepLink", which posts /v3/deeplink
 ONLY_TESTING=TestBed-GPTDriverTests/DeepLinkWireValidationTest \
@@ -50,8 +53,8 @@ OUTPUT_LOG=branchlogs-deeplink.txt \
 python3 scripts/validate_l1_logs.py branchlogs-deeplink.txt --scenario deeplink
 ```
 
-An unrecognised `--scenario` exits 2 rather than falling back to the
-weaker default, so a typo in a CI matrix cannot silently downgrade the gate.
+An unrecognised or missing `--scenario` exits 2, so a typo in a CI matrix
+cannot silently validate a capture against nothing.
 
 ## Endpoints on this line
 
