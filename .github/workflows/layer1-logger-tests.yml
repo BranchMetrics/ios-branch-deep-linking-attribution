@@ -6,10 +6,27 @@ name: Layer 1 - SDK Wire Validation (iOS PR Gate)
 # nothing.
 
 on:
+  # The ticket's acceptance is that a push to the beta triggers this, and the
+  # badges in EMT-4080 read a branch status, which only a push event produces.
+  # A PR-only trigger leaves both unmet.
+  push:
+    branches:
+      - "4.0.0-beta.*"
+    paths:
+      - "Sources/BranchSDK/**"
+      - "Sources/BranchSwiftSDK/**"
+      - "Branch-TestBed/**"
+      - ".github/workflows/layer1-logger-tests.yml"
+      - "scripts/validate_l1_logs.py"
+      - "scripts/test_validate_l1_logs.py"
+      - "scripts/fixtures/**"
+      - "scripts/run_l1_instrumented.sh"
   pull_request:
     branches:
       - "4.0.0-beta.*"
-    # Only run when something that can change the wire actually changed.
+    # Duplicated rather than shared via a YAML anchor: GitHub Actions does not
+    # guarantee anchor support, and a silently dead trigger is the worst
+    # failure mode for a gate.
     paths:
       - "Sources/BranchSDK/**"
       - "Sources/BranchSwiftSDK/**"
