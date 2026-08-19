@@ -198,6 +198,45 @@ SCENARIO_REQUIRED_ENDPOINTS = {
     "deeplink": ("/v3/deeplink",),
 }
 
+# What the wire must look like after a scenario ran. All endpoint names live
+# here rather than in the checks, so the same checks serve Android's `/v1/*`
+# capture and this line's `/v3/*` one.
+#
+#   counts  endpoint -> exact number of requests. 0 forbids the endpoint.
+#           An endpoint absent from counts is unconstrained.
+#   order   (earlier, later) pairs. Relative, not adjacency: a request
+#           between the two does not violate it.
+#
+# `install` and `deeplink` are not test-plan scenarios — they are the runs
+# the harness drives today. Plan scenarios use their plan ID (C1, W1, N4).
+SCENARIO_CONTRACTS = {
+    "install": {
+        "counts": {"/v3/events/open": 1},
+        "order": (),
+    },
+    "deeplink": {
+        "counts": {"/v3/deeplink": 1},
+        "order": (("/v3/deeplink", "/v3/events/open"),),
+    },
+}
+
+
+class UnknownScenario(Exception):
+    """Raised for a scenario name with no contract."""
+
+
+def contract_for(scenario):
+    """Return the contract for `scenario`, or raise UnknownScenario.
+
+    A typo must fail loudly rather than validate against nothing."""
+    try:
+        return SCENARIO_CONTRACTS[scenario]
+    except KeyError:
+        known = ", ".join(sorted(SCENARIO_CONTRACTS))
+        raise UnknownScenario(
+            f"No contract for scenario '{scenario}'. Known scenarios: {known}"
+        )
+
 
 def parse_branch_logs(file_path):
     """Walk branchlogs.txt and pull each `[BranchLog] Got <URL> Request: <body>`

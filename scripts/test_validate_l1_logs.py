@@ -71,6 +71,44 @@ class NormalizedCaptureFormatTests(unittest.TestCase):
             self.assertEqual(entry["uri"], urlparse(entry["url"]).path)
 
 
+class ScenarioContractModelTests(unittest.TestCase):
+    """The contract carries every endpoint name, so the checks can stay
+    platform- and API-version-agnostic. Not yet wired into validation."""
+
+    def test_every_contract_declares_counts_and_order(self):
+        for name, contract in v.SCENARIO_CONTRACTS.items():
+            self.assertEqual(
+                set(contract), {"counts", "order"}, f"contract '{name}'"
+            )
+
+    def test_counts_are_non_negative_integers(self):
+        for name, contract in v.SCENARIO_CONTRACTS.items():
+            for endpoint, count in contract["counts"].items():
+                self.assertIsInstance(count, int, f"{name}:{endpoint}")
+                self.assertGreaterEqual(count, 0, f"{name}:{endpoint}")
+
+    def test_order_entries_are_endpoint_pairs(self):
+        for name, contract in v.SCENARIO_CONTRACTS.items():
+            for pair in contract["order"]:
+                self.assertEqual(len(pair), 2, f"contract '{name}'")
+                self.assertNotEqual(pair[0], pair[1], f"contract '{name}'")
+
+    def test_contract_for_returns_the_named_contract(self):
+        self.assertIs(v.contract_for("deeplink"), v.SCENARIO_CONTRACTS["deeplink"])
+
+    def test_contract_for_raises_on_an_unknown_name(self):
+        # A typo must fail loudly instead of validating against nothing.
+        with self.assertRaises(v.UnknownScenario) as ctx:
+            v.contract_for("deeplnk")
+        self.assertIn("deeplnk", str(ctx.exception))
+
+    def test_model_is_not_yet_wired_into_validation(self):
+        # Step 2 adds the model only; validate_entries must be unchanged.
+        errors, output = _run_validation("happy_path.txt")
+        self.assertEqual(errors, [])
+        self.assertIn("'/v3/deeplink' not present in capture", output)
+
+
 class HappyPathTests(unittest.TestCase):
     """Every required field is present — validator must return no errors."""
 
