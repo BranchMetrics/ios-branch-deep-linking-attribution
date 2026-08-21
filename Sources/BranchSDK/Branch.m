@@ -2197,10 +2197,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
 
     if (!urlStr.length) return;
-
-    // Run the same preprocessing as the legacy handlePushNotification: path (which routed through
-    // handleDeepLink:) so referring-URL query params, the skiplist and link_click_id checks are applied
-    // before the request is enqueued.
+    
     NSURL *url = [NSURL URLWithString:urlStr];
     if (url) {
         BOOL filtered = NO;

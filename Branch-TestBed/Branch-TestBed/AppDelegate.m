@@ -249,7 +249,7 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler {
-    [[Branch getInstance] handlePushNotification:response.notification.request.content.userInfo];
+    [[Branch getInstance] requestDeepLinkDataWithUserInfo:response.notification.request.content.userInfo];
     completionHandler();
 }
 
