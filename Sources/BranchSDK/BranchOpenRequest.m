@@ -164,13 +164,10 @@
 }
 
 - (NSString *)randomizedDeviceTokenFromResponseData:(NSDictionary *)data {
-    if (![data objectForKey:BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN]) {
-        return nil;
-    }
-    NSString *token = data[BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN];
+    NSString *token = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN]);
     if (!token) {
         // fallback to deprecated name. Fingerprinting was removed long ago, hence the name change.
-        token = data[@"device_fingerprint_id"];
+        token = BNCStringFromWireFormat(data[@"device_fingerprint_id"]);
     }
     return token;
 }

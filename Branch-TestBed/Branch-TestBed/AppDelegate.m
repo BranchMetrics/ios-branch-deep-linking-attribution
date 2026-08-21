@@ -11,6 +11,10 @@
 #import "NavigationController.h"
 #import "ViewController.h"
 @import BranchSDK;
+#import <UserNotifications/UserNotifications.h>
+
+@interface AppDelegate() <UNUserNotificationCenterDelegate>
+@end
 
 AppDelegate* appDelegate = nil;
 void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSString*_Nullable message);
@@ -23,6 +27,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [self setBranchLogFile];
 
     appDelegate = self;
+    [UNUserNotificationCenter currentNotificationCenter].delegate = self;
 
     Branch *branch = [Branch getInstance];
 
@@ -231,6 +236,21 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
         self.PrevCommandLogFileName = self.logFileName;
         self.logFileName = pathForLog;
     }
+}
+
+#pragma mark - UNUserNotificationCenterDelegate
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+       willPresentNotification:(UNNotification *)notification
+         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
+    completionHandler(UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound);
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+didReceiveNotificationResponse:(UNNotificationResponse *)response
+         withCompletionHandler:(void (^)(void))completionHandler {
+    [[Branch getInstance] handlePushNotification:response.notification.request.content.userInfo];
+    completionHandler();
 }
 
 @end
