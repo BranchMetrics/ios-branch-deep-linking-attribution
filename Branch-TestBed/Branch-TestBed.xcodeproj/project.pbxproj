@@ -231,7 +231,7 @@
 		670016701940F51400A9E103 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6700166F1940F51400A9E103 /* main.m */; };
 		6700167A1940F51400A9E103 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016791940F51400A9E103 /* ViewController.m */; };
 		67F270891BA9FCFF002546A7 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		7B9CCA006CB28F77B067A36C /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		7B9CCA006CB28F77B067A36C /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		805069B9222DE6DBB702BA55 /* ConsumerProtectionHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DF86E2AC9715ADCA6FC0D57 /* ConsumerProtectionHybridTest.swift */; };
 		884BEA1B0B010B65568A9135 /* PluginNotifyHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E744D97C008B4DBA0445A4F /* PluginNotifyHybridTest.swift */; };
 		8909A6D6A78237ACCB8496D6 /* EventLoggingHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D5B75E103FE48CC35B2C2D /* EventLoggingHybridTest.swift */; };
@@ -247,10 +247,13 @@
 		C1614D56285BC8A00098946B /* LinkPresentation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1614D55285BC8A00098946B /* LinkPresentation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		C17DAF7B2AC20C2000B16B1A /* BranchClassTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C17DAF7A2AC20C2000B16B1A /* BranchClassTests.m */; };
 		C1CC888229BAAFC000BDD2B5 /* BNCReferringURLUtilityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C1CC888129BAAFC000BDD2B5 /* BNCReferringURLUtilityTests.m */; };
+		CEB36B912FF3717B00297181 /* BranchEventPactUnhostedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB36B902FF3717B00297181 /* BranchEventPactUnhostedTests.swift */; };
+		CEB36B942FF3754D00297181 /* PactSwift in Frameworks */ = {isa = PBXBuildFile; productRef = CEB36B932FF3754D00297181 /* PactSwift */; };
+		CEB36B962FF381DF00297181 /* PactSwift in Frameworks */ = {isa = PBXBuildFile; productRef = CEB36B952FF381DF00297181 /* PactSwift */; };
 		D90E8A6639F523DC3B08FBCE /* LinkCreationDeterministicTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA914FAFCA750AE7C6CDCFCC /* LinkCreationDeterministicTest.swift */; };
-		E1A0001A0000000000000AA1 /* L1WireValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A0002A0000000000000AA2 /* L1WireValidationTest.swift */; };
 		DAEFBE7C9FFBD455BFBF4EC7 /* DeepLinkWarmOpenHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6F886CF5254858874E0154 /* DeepLinkWarmOpenHybridTest.swift */; };
 		DB18DA9C84F60B550B04B3FC /* DeepLinkColdOpenHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991B868E49743EF400DE3CA1 /* DeepLinkColdOpenHybridTest.swift */; };
+		E1A0001A0000000000000AA1 /* L1WireValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A0002A0000000000000AA2 /* L1WireValidationTest.swift */; };
 		E369CEFCE0B1105282B6E900 /* ReferringParamsHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656C68E10670CEE96DC0A93D /* ReferringParamsHybridTest.swift */; };
 		E51F642A2CF46899000858D2 /* BranchFileLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = E51F64292CF46899000858D2 /* BranchFileLogger.h */; };
 		E56394312CC7AC9F00E18E65 /* BranchFileLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = E563942F2CC7AC9500E18E65 /* BranchFileLogger.m */; };
@@ -357,11 +360,11 @@
 		03B49EEA25F9F315000BF105 /* UITestCase0OpenNInstall.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UITestCase0OpenNInstall.m; sourceTree = "<group>"; };
 		07F998EAD60325FB9FBF63FF /* QRCodeHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = QRCodeHybridTest.swift; sourceTree = "<group>"; };
 		0BDDF97F86FBDB68CC1DB17B /* MobileBoost.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = MobileBoost.xcconfig; sourceTree = "<group>"; };
-		18C938B7F4FDE21EE308CE9E /* Release.xctestplan */ = {isa = PBXFileReference; includeInIndex = 1; path = Release.xctestplan; sourceTree = "<group>"; };
+		18C938B7F4FDE21EE308CE9E /* Release.xctestplan */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = Release.xctestplan; sourceTree = "<group>"; };
 		1DF86E2AC9715ADCA6FC0D57 /* ConsumerProtectionHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConsumerProtectionHybridTest.swift; sourceTree = "<group>"; };
 		21A3434EE9C1066B203D549A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		23D5B75E103FE48CC35B2C2D /* EventLoggingHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EventLoggingHybridTest.swift; sourceTree = "<group>"; };
-		25411D6F29809D769F33D4BE /* MobileBoost.local.xcconfig.example */ = {isa = PBXFileReference; includeInIndex = 1; path = MobileBoost.local.xcconfig.example; sourceTree = "<group>"; };
+		25411D6F29809D769F33D4BE /* MobileBoost.local.xcconfig.example */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = MobileBoost.local.xcconfig.example; sourceTree = "<group>"; };
 		29BF08D3B7BD908C97F47144 /* TrackingControlHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TrackingControlHybridTest.swift; sourceTree = "<group>"; };
 		2C6F886CF5254858874E0154 /* DeepLinkWarmOpenHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DeepLinkWarmOpenHybridTest.swift; sourceTree = "<group>"; };
 		40837FC18222BFAADDC90C48 /* LinkCreationHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LinkCreationHybridTest.swift; sourceTree = "<group>"; };
@@ -615,6 +618,8 @@
 		C17DAF7A2AC20C2000B16B1A /* BranchClassTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchClassTests.m; sourceTree = "<group>"; };
 		C1CC888129BAAFC000BDD2B5 /* BNCReferringURLUtilityTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCReferringURLUtilityTests.m; sourceTree = "<group>"; };
 		CC1798D4BBC4E0E40ADA9310 /* TestBedIdentifiers.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = TestBedIdentifiers.m; sourceTree = "<group>"; };
+		CEB36B8F2FF3717A00297181 /* Branch-SDK-Unhosted-Tests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Branch-SDK-Unhosted-Tests-Bridging-Header.h"; sourceTree = "<group>"; };
+		CEB36B902FF3717B00297181 /* BranchEventPactUnhostedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchEventPactUnhostedTests.swift; sourceTree = "<group>"; };
 		DA914FAFCA750AE7C6CDCFCC /* LinkCreationDeterministicTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LinkCreationDeterministicTest.swift; sourceTree = "<group>"; };
 		E1A0002A0000000000000AA2 /* L1WireValidationTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = L1WireValidationTest.swift; sourceTree = "<group>"; };
 		E4D4DC04AFC52EEBC6E0120A /* NotificationHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NotificationHybridTest.swift; sourceTree = "<group>"; };
@@ -638,21 +643,11 @@
 		E7E28EC82DD2424C00F75D0D /* BNCInAppBrowser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCInAppBrowser.m; sourceTree = "<group>"; };
 		E7FC47722DFC7B020072B3ED /* BranchConfigurationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = BranchConfigurationController.m; path = ../Sources/BranchSDK/BranchConfigurationController.m; sourceTree = "<group>"; };
 		F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-TestBed-UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		FC260E701BE220B2E128811D /* Smoke.xctestplan */ = {isa = PBXFileReference; includeInIndex = 1; path = Smoke.xctestplan; sourceTree = "<group>"; };
+		FC260E701BE220B2E128811D /* Smoke.xctestplan */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = Smoke.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		E7AC74612DB064BC002D8C40 /* Reflection_ODM_Tests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = Reflection_ODM_Tests;
-			sourceTree = "<group>";
-		};
+		E7AC74612DB064BC002D8C40 /* Reflection_ODM_Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Reflection_ODM_Tests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -661,7 +656,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B22D2799F50232AE6C93C4A /* Foundation.framework in Frameworks */,
-				7B9CCA006CB28F77B067A36C /* BuildFile in Frameworks */,
+				7B9CCA006CB28F77B067A36C /* (null) in Frameworks */,
 				0CD19A4FAAC3DC790D05398E /* gptd-swift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -686,6 +681,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEB36B942FF3754D00297181 /* PactSwift in Frameworks */,
 				5F8B7B4021B5F5CD009CE0A6 /* libBranch.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -710,6 +706,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEB36B962FF381DF00297181 /* PactSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -752,7 +749,6 @@
 				656C68E10670CEE96DC0A93D /* ReferringParamsHybridTest.swift */,
 				6E744D97C008B4DBA0445A4F /* PluginNotifyHybridTest.swift */,
 			);
-			name = Hybrid;
 			path = Hybrid;
 			sourceTree = "<group>";
 		};
@@ -1013,6 +1009,8 @@
 				5F67F48D228F535500067429 /* BNCEncodingUtilsTests.m */,
 				5F8B7B4621B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m */,
 				5F8B7B3F21B5F5CD009CE0A6 /* Info.plist */,
+				CEB36B902FF3717B00297181 /* BranchEventPactUnhostedTests.swift */,
+				CEB36B8F2FF3717A00297181 /* Branch-SDK-Unhosted-Tests-Bridging-Header.h */,
 			);
 			path = "Branch-SDK-Unhosted-Tests";
 			sourceTree = "<group>";
@@ -1042,7 +1040,6 @@
 				704F26B57C08A695724807D8 /* TestScrollHelpers.swift */,
 				6BFEC102B288139D98CB7918 /* TestPlans */,
 			);
-			name = "TestBed-GPTDriverTests";
 			path = "TestBed-GPTDriverTests";
 			sourceTree = "<group>";
 		};
@@ -1152,7 +1149,6 @@
 				FC260E701BE220B2E128811D /* Smoke.xctestplan */,
 				18C938B7F4FDE21EE308CE9E /* Release.xctestplan */,
 			);
-			name = TestPlans;
 			path = TestPlans;
 			sourceTree = "<group>";
 		};
@@ -1162,7 +1158,6 @@
 				DA914FAFCA750AE7C6CDCFCC /* LinkCreationDeterministicTest.swift */,
 				E1A0002A0000000000000AA2 /* L1WireValidationTest.swift */,
 			);
-			name = Deterministic;
 			path = Deterministic;
 			sourceTree = "<group>";
 		};
@@ -1171,7 +1166,6 @@
 			children = (
 				68C67D93BFFFC0217931CBB1 /* LinkCreationAITest.swift */,
 			);
-			name = AI;
 			path = AI;
 			sourceTree = "<group>";
 		};
@@ -1181,7 +1175,6 @@
 				0BDDF97F86FBDB68CC1DB17B /* MobileBoost.xcconfig */,
 				25411D6F29809D769F33D4BE /* MobileBoost.local.xcconfig.example */,
 			);
-			name = Config;
 			path = Config;
 			sourceTree = "<group>";
 		};
@@ -1439,6 +1432,7 @@
 					5F8B7B3A21B5F5CD009CE0A6 = {
 						CreatedOnToolsVersion = 10.1;
 						DevelopmentTeam = R63EM248DP;
+						LastSwiftMigration = 2650;
 						ProvisioningStyle = Automatic;
 					};
 					6700165F1940F51400A9E103 = {
@@ -1486,9 +1480,10 @@
 			);
 			mainGroup = 670016571940F51400A9E103;
 			packageReferences = (
-				E7AC74792DB0700D002D8C40 /* XCLocalSwiftPackageReference "ios-branch-deep-linking-attribution" */,
+				E7AC74792DB0700D002D8C40 /* XCLocalSwiftPackageReference "../../ios-branch-deep-linking-attribution" */,
 				E732827D2E5F7D92005CACC8 /* XCRemoteSwiftPackageReference "google-ads-on-device-conversion-ios-sdk" */,
 				D0973F95A101C4673FDC92A1 /* XCRemoteSwiftPackageReference "gptd-swift" */,
+				CEB36B922FF3754D00297181 /* XCRemoteSwiftPackageReference "PactSwift" */,
 			);
 			productRefGroup = 670016611940F51400A9E103 /* Products */;
 			projectDirPath = "";
@@ -1664,6 +1659,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEB36B912FF3717B00297181 /* BranchEventPactUnhostedTests.swift in Sources */,
 				5F67F48E228F535500067429 /* BNCEncodingUtilsTests.m in Sources */,
 				5F8B7B4721B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m in Sources */,
 				5F3D671C233062FD00454FF1 /* BNCJsonLoader.m in Sources */,
@@ -1921,6 +1917,7 @@
 			buildSettings = {
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -1938,6 +1935,9 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.Branch-SDK-Unhosted-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Branch-SDK-Unhosted-Tests/Branch-SDK-Unhosted-Tests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1947,6 +1947,7 @@
 			buildSettings = {
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -1965,6 +1966,8 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.Branch-SDK-Unhosted-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Branch-SDK-Unhosted-Tests/Branch-SDK-Unhosted-Tests-Bridging-Header.h";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -2405,13 +2408,21 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		E7AC74792DB0700D002D8C40 /* XCLocalSwiftPackageReference "ios-branch-deep-linking-attribution" */ = {
+		E7AC74792DB0700D002D8C40 /* XCLocalSwiftPackageReference "../../ios-branch-deep-linking-attribution" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../../ios-branch-deep-linking-attribution";
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		CEB36B922FF3754D00297181 /* XCRemoteSwiftPackageReference "PactSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/surpher/PactSwift";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		D0973F95A101C4673FDC92A1 /* XCRemoteSwiftPackageReference "gptd-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/MobileBoostHQ/gptd-swift";
@@ -2435,6 +2446,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D0973F95A101C4673FDC92A1 /* XCRemoteSwiftPackageReference "gptd-swift" */;
 			productName = "gptd-swift";
+		};
+		CEB36B932FF3754D00297181 /* PactSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CEB36B922FF3754D00297181 /* XCRemoteSwiftPackageReference "PactSwift" */;
+			productName = PactSwift;
+		};
+		CEB36B952FF381DF00297181 /* PactSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CEB36B922FF3754D00297181 /* XCRemoteSwiftPackageReference "PactSwift" */;
+			productName = PactSwift;
 		};
 		E732827E2E5F7D92005CACC8 /* GoogleAdsOnDeviceConversion */ = {
 			isa = XCSwiftPackageProductDependency;
