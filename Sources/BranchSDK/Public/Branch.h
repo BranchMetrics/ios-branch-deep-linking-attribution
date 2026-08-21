@@ -425,14 +425,17 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 /**
  Resolves a Branch URL to deep link data, or returns deferred deep link data when `branchLink` is nil.
-
- Call this from `application:openURL:` or `continueUserActivity:` with the URL, or from
- `applicationDidFinishLaunching:` with nil to retrieve deferred deep link data.
-
+ 
  When called with a non-nil URL, any pending (not yet executing) nil-URL deep link requests are
  cancelled so that only one callback fires per app open.
  */
-- (void)requestDeepLinkData:(nullable NSString *)branchLink callback:(nullable callbackWithParams)callback;
+- (void)requestDeepLinkData:(nullable NSString *)branchLink callback:(nullable callbackWithParams)callback
+    NS_SWIFT_NAME(requestDeepLinkData(branchLink:callback:))
+    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(branchLink:));
+
+///--------------------------------
+/// @name AppDelegate Deep Linking
+///--------------------------------
 
 /**
  Convenience overload for `application:didFinishLaunchingWithOptions:`.
@@ -442,7 +445,59 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  the URL-bearing call will arrive via `continueUserActivity:` or `application:openURL:`.
  */
 - (void)requestDeepLinkDataWithLaunchOptions:(nullable NSDictionary *)options
-                                    callback:(nullable callbackWithParams)callback;
+                                    callback:(nullable callbackWithParams)callback
+    NS_SWIFT_NAME(requestDeepLinkData(launchOptions:callback:))
+    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(launchOptions:));
+
+/**
+ Convenience method for `application:openURL:options:` to handle custom URI schemes.
+
+ Runs the same URL preprocessing as the legacy deep link handler (referring-URL query parameters,
+ the URL skiplist, allowed-scheme filtering and `link_click_id` extraction) and then calls
+ `requestDeepLinkData:callback:` with the URL.
+ Logs the deep link parameters or error.
+ @param url The URL from `application:openURL:options:`
+ */
+- (void)requestDeepLinkDataWithURL:(nullable NSURL *)url
+    NS_SWIFT_NAME(requestDeepLinkData(openURL:));
+
+/**
+ Convenience method for the older `application:openURL:sourceApplication:annotation:` to handle custom URI schemes.
+
+ Forwards to `requestDeepLinkDataWithURL:`. The `sourceApplication` and `annotation` parameters are
+ accepted for call-site parity with the AppDelegate method and are not otherwise used.
+ @param url The URL from `application:openURL:sourceApplication:annotation:`.
+ @param sourceApplication The bundle ID of the app that requested the open, if any.
+ @param annotation A property-list object supplied by the source app, if any.
+ */
+- (void)requestDeepLinkDataWithURL:(nullable NSURL *)url
+                 sourceApplication:(nullable NSString *)sourceApplication
+                        annotation:(nullable id)annotation
+    NS_SWIFT_NAME(requestDeepLinkData(openURL:sourceApplication:annotation:));
+
+/**
+ Convenience method for `application:continueUserActivity:restorationHandler:` to handle Universal Links.
+
+ Extracts the webpage URL from the user activity and calls `requestDeepLinkData:callback:` with it.
+ Logs the deep link parameters or error.
+ @param userActivity The NSUserActivity from `application:continueUserActivity:restorationHandler:`.
+ */
+- (void)requestDeepLinkDataWithUserActivity:(nullable NSUserActivity *)userActivity
+    NS_SWIFT_NAME(requestDeepLinkData(userActivity:));
+
+/**
+ Convenience method for `application:didReceiveRemoteNotification:fetchCompletionHandler:` to handle push notification deep links.
+
+ Extracts the Branch link from the notification payload and calls `requestDeepLinkData:callback:` with it.
+ Logs the deep link parameters or error.
+ @param userInfo The notification payload from `application:didReceiveRemoteNotification:fetchCompletionHandler:`.
+ */
+- (void)requestDeepLinkDataWithUserInfo:(nullable NSDictionary *)userInfo
+    NS_SWIFT_NAME(requestDeepLinkData(userInfo:));
+
+///--------------------------------
+/// @name SceneDelegate Deep Linking
+///--------------------------------
 
 #if !TARGET_OS_TV
 /**
@@ -456,11 +511,45 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 - (void)requestDeepLinkDataWithSceneOptions:(nullable UISceneConnectionOptions *)connectionOptions
                                       scene:(UIScene *)scene
                                    callback:(nullable callbackWithParams)callback
-    API_AVAILABLE(ios(13.0), macCatalyst(13.1));
-#endif
+    API_AVAILABLE(ios(13.0), macCatalyst(13.1))
+    NS_SWIFT_NAME(requestDeepLinkData(sceneOptions:scene:callback:))
+    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(sceneOptions:scene:));
 
 /**
- Sends a Branch Open event with attribution to our new route.
+ Convenience method for SceneDelegate's `scene:openURLContexts:` to handle custom URI schemes.
+
+ Extracts the first URL from URLContexts and calls `requestDeepLinkData:callback:` with it.
+ Logs the deep link parameters or error.
+
+ Available on iOS 13.0+.
+ @param scene The UIScene from `scene:openURLContexts:`.
+ @param urlContexts The URL contexts from `scene:openURLContexts:`.
+ */
+- (void)requestDeepLinkDataWithScene:(UIScene *)scene
+                      openURLContexts:(NSSet<UIOpenURLContext *> *)urlContexts
+    API_AVAILABLE(ios(13.0))
+    NS_SWIFT_NAME(requestDeepLinkData(scene:openURLContexts:));
+
+/**
+ Convenience method for SceneDelegate's `scene:continueUserActivity:` to handle Universal Links.
+
+ Extracts the webpage URL from the user activity and calls `requestDeepLinkData:callback:` with it.
+ Logs the deep link parameters or error.
+
+ Available on iOS 13.0+.
+ @param scene The UIScene from `scene:continueUserActivity:`.
+ @param userActivity The NSUserActivity from `scene:continueUserActivity:`.
+ */
+- (void)requestDeepLinkDataWithScene:(UIScene *)scene
+                continueUserActivity:(NSUserActivity *)userActivity
+    API_AVAILABLE(ios(13.0))
+    NS_SWIFT_NAME(requestDeepLinkData(scene:userActivity:));
+#endif
+
+#pragma mark - Attribution Methods
+
+/**
+ Sends a Branch Open event with attribution to our new API route.
  */
 - (void)sendOpen;
 
@@ -485,17 +574,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Note that while init is deferred, other calls to the Branch SDK may result in errors. For that reason, do not use this feature for general SDK init deferral.
  */
 - (void)notifyNativeToInit;
-
-#pragma mark - Push Notification support
-
-/**
- Allow Branch to handle a push notification with a Branch link.
-
- To make use of this, when creating a push notification, specify the Branch Link as an NSString, for key @"branch".
-
- NSDictionary userInfo = @{@"branch": @"https://bnc.lt/...", ... };
- */
-- (void)handlePushNotification:(nullable NSDictionary *)userInfo;
 
 #pragma mark - Configuration methods
 
