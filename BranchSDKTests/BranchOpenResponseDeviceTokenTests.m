@@ -14,6 +14,10 @@
 
 static NSString * const deprecatedDeviceTokenKey = @"device_fingerprint_id";
 
+// Filler for the "response carries neither device token key" cases. Deliberately a key no
+// response handler reads, so the assertion is about the device token and nothing else.
+static NSString * const unrelatedResponseKey = @"unrelated_response_key";
+
 @interface BranchOpenResponseDeviceTokenTests : XCTestCase
 @property (nonatomic, copy) NSString *savedDeviceToken;
 @end
@@ -75,7 +79,7 @@ static NSString * const deprecatedDeviceTokenKey = @"device_fingerprint_id";
 - (void)testRequestOpenKeepsExistingDeviceTokenWhenResponseHasNeitherKey {
     [BNCPreferenceHelper sharedInstance].randomizedDeviceToken = @"previously_stored_token";
 
-    [self processOpenResponseData:@{ BRANCH_RESPONSE_KEY_SESSION_ID: @"session_id" }];
+    [self processOpenResponseData:@{ unrelatedResponseKey: @"value" }];
 
     XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].randomizedDeviceToken, @"previously_stored_token");
 }
@@ -106,7 +110,7 @@ static NSString * const deprecatedDeviceTokenKey = @"device_fingerprint_id";
 - (void)testOpenRequestKeepsExistingDeviceTokenWhenResponseHasNeitherKey {
     [BNCPreferenceHelper sharedInstance].randomizedDeviceToken = @"previously_stored_token";
 
-    [self processLegacyOpenResponseData:@{ BRANCH_RESPONSE_KEY_SESSION_ID: @"session_id" }];
+    [self processLegacyOpenResponseData:@{ unrelatedResponseKey: @"value" }];
 
     XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].randomizedDeviceToken, @"previously_stored_token");
 }

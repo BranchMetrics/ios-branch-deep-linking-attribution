@@ -121,8 +121,7 @@
         preferenceHelper.userUrl = data[BRANCH_RESPONSE_KEY_USER_URL];
     }
     preferenceHelper.userIdentity = userIdentity;
-    if ([data objectForKey:BRANCH_RESPONSE_KEY_SESSION_ID])
-        preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
+    
     preferenceHelper.previousAppBuildDate = [BNCApplication currentApplication].currentBuildDate;
 
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];

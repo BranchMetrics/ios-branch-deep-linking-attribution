@@ -41,6 +41,17 @@
     return YES;
 }
 
++ (BOOL)requestRequiresSession:(BNCServerRequest *)request {
+    // BranchInstallRequest is a subclass of BranchOpenRequest, listed for clarity.
+    if ([request isKindOfClass:[BranchInstallRequest class]] ||
+        [request isKindOfClass:[BranchOpenRequest class]] ||
+        [request isKindOfClass:[BranchRequestOpen class]] ||
+        [request isKindOfClass:[BranchRequestDeepLink class]]) {
+        return NO;
+    }
+    return YES;
+}
+
 - (void)setExecuting:(BOOL)executing {
     [self willChangeValueForKey:@"isExecuting"];
     _executing = executing;
@@ -74,14 +85,12 @@
         }
     }
 
-    if ([self.request isKindOfClass:[BranchInstallRequest class]]) {
-        // Install requests: no session validation needed
-    } else if ([self.request isKindOfClass:[BranchOpenRequest class]] || [self.request isKindOfClass:[BranchRequestOpen class]] || [self.request isKindOfClass:[BranchRequestDeepLink class]]) {
-       // If we do not have a randomized bundle token, we should receive one from the service
-        // We will receive from callback in v3/deeplink
-    } else {
-        if (!preferenceHelper.randomizedDeviceToken || !preferenceHelper.sessionID || !preferenceHelper.randomizedBundleToken) {
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Missing session items (device token or session ID or bundle token). Dropping request: %@", self.request.requestUUID] error:nil];
+    // Install, open and deep link requests establish the session, so they carry no session
+    // tokens of their own. If we do not have a randomized bundle token, we receive one from
+    // the service (via the v3/deeplink callback).
+    if ([[self class] requestRequiresSession:self.request]) {
+        if (!preferenceHelper.randomizedDeviceToken || !preferenceHelper.randomizedBundleToken) {
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Missing session items (device token or bundle token). Dropping request: %@. Initialize Branch before calling this API.", self.request.requestUUID] error:nil];
             BNCPerformBlockOnMainThreadSync(^{
                 [self.request processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
             });
