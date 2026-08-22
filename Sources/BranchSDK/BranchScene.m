@@ -25,12 +25,13 @@
     [[BranchLogger shared] logVerbose:@"BranchScene continueUserActivity" error:nil];
 
 #if !TARGET_OS_TV
-    [[Branch getInstance] requestDeepLinkDataWithScene:scene continueUserActivity:userActivity];
+    [[Branch sharedInstance] requestDeepLinkDataWithScene:scene continueUserActivity:userActivity];
 #else
     // requestDeepLinkDataWithScene:continueUserActivity: is declared inside #if !TARGET_OS_TV, so tvOS
     // still goes through the legacy entry point. Both run the same preprocessing and enqueue one request.
     NSString *identifier = scene.session.persistentIdentifier;
     [[Branch sharedInstance] continueUserActivity:userActivity sceneIdentifier:identifier];
+#endif
 }
 
 - (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts NS_EXTENSION_UNAVAILABLE("BranchScene does not support Extensions") {
@@ -42,7 +43,7 @@
 
 #if !TARGET_OS_TV
     // Takes the first context and returns early when there is none, as the code below did.
-    [[Branch getInstance] requestDeepLinkDataWithScene:scene openURLContexts:URLContexts];
+    [[Branch sharedInstance] requestDeepLinkDataWithScene:scene openURLContexts:URLContexts];
 #else
     // requestDeepLinkDataWithScene:openURLContexts: is declared inside #if !TARGET_OS_TV, so tvOS still
     // goes through the legacy entry point. Both run the same preprocessing and enqueue one request.

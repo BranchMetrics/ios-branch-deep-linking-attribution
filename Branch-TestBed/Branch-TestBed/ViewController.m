@@ -207,7 +207,7 @@ bool hasSetPartnerParams = false;
     // automatic open and fails every later request with BNCInitError.
     BranchAttributionLevel nextLevel =
         [Branch attributionLevelNone] ? BranchAttributionLevelFull : BranchAttributionLevelNone;
-    [[Branch getInstance] setConsumerProtectionAttributionLevel:nextLevel];
+    [[Branch sharedInstance] setConsumerProtectionAttributionLevel:nextLevel];
     [self syncDisableTrackingButton];
 }
 
@@ -967,7 +967,7 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
 }
 
 - (IBAction)pluginNotifyInit:(id)sender {
-    [[Branch getInstance] notifyNativeToInit];
+    [[Branch sharedInstance] notifyNativeToInit];
     [self showAlert:@"notifyNativeToInit called" withDescription:@"The SDK should now complete initialization."];
 }
 

@@ -224,6 +224,10 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
         bnc_didInitializeWithConfiguration = YES;
 
         // --- Settings that must be applied before the singleton is created ---
+        // These setters are deprecated for external callers, but +initialize: is their canonical
+        // internal application point, so suppress the deprecation warning at these call sites.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
         // Test key must be resolved before the branch key is read.
         [Branch setUseTestBranchKey:configuration.testMode];
@@ -233,38 +237,18 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
             [Branch setNetworkServiceClass:configuration.remoteInterface];
         }
 
+#pragma clang diagnostic pop
+
+        // Set the branch key explicitly so it takes precedence over Info.plist / branch.json.
         self.branchKey = configuration.branchKey;
         [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_INIT_FUNCTION;
 
         // --- Create (or fetch) the singleton ---
+        // Note: the constructor applies branch.json values (apiUrl, logging, cppLevel). Caller-supplied
+        // settings that overlap with branch.json are (re)applied AFTER this so the caller wins and
+        // branch.json serves only as a fallback.
         branch = [Branch getInstanceInternal:self.branchKey];
     }
-
-    // --- Settings that must be applied before the singleton is created ---
-    // These setters are deprecated for external callers, but +initialize: is their canonical
-    // internal application point, so suppress the deprecation warning at these call sites.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-
-    // Test key must be resolved before the branch key is read.
-    [Branch setUseTestBranchKey:configuration.testMode];
-
-    // Custom network service class is set-once and must precede singleton creation.
-    if (configuration.remoteInterface) {
-        [Branch setNetworkServiceClass:configuration.remoteInterface];
-    }
-
-#pragma clang diagnostic pop
-
-    // Set the branch key explicitly so it takes precedence over Info.plist / branch.json.
-    self.branchKey = configuration.branchKey;
-    [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_INIT_FUNCTION;
-
-    // --- Create (or fetch) the singleton ---
-    // Note: the constructor applies branch.json values (apiUrl, logging, cppLevel). Caller-supplied
-    // settings that overlap with branch.json are (re)applied AFTER this so the caller wins and
-    // branch.json serves only as a fallback.
-    Branch *branch = [Branch getInstanceInternal:self.branchKey];
 
     // --- Settings applied to the instance / shared preference helper (caller wins) ---
     [Branch applyConfiguration:configuration toBranch:branch];
@@ -853,9 +837,10 @@ static NSString *bnc_branchKey = nil;
         // Clear partner parameters
         [[BNCPartnerParameters shared] clearAllParameters];
 
-        Branch *branch = Branch.getInstance;
-        [branch clearNetworkQueue];
-        [branch.linkCache clear];
+        // This is an instance method on the singleton, and it can run during singleton construction
+        // (via the branch.json cppLevel path), so operate on self rather than re-entering the accessor.
+        [self clearNetworkQueue];
+        [self.linkCache clear];
         // Release the lock in case it's locked:
         [BranchOpenRequest releaseOpenResponseLock];
     } else {
@@ -2329,7 +2314,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // The URL matched the skiplist. Preferences are recorded, but the URL itself is never sent.
     if (filtered) return;
 
-    [[Branch getInstance] requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
+    [self requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
             if (params != nil) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
@@ -2366,7 +2351,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // nil for a Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
     NSString *urlStr = userActivity.webpageURL.absoluteString;
 
-    [[Branch getInstance] requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
+    [self requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
             if (params != nil) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
@@ -2393,7 +2378,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         if (filtered) return;
     }
 
-    [[Branch getInstance] requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
+    [self requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
             if (params != nil) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
@@ -2465,7 +2450,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     if (filtered) return;
 
-    [[Branch getInstance] requestDeepLinkData:context.URL.absoluteString callback:^(NSDictionary *params, NSError *error) {
+    [self requestDeepLinkData:context.URL.absoluteString callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
             if (params != nil) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
@@ -2489,7 +2474,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // nil for a Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
     NSString *urlStr = userActivity.webpageURL.absoluteString;
 
-    [[Branch getInstance] requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
+    [self requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
             if (params != nil) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
