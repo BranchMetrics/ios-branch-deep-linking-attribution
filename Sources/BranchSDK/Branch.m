@@ -241,17 +241,12 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     }
 
     // --- Settings applied to the instance / shared preference helper (caller wins) ---
-    // Applied outside the lock: these mutate BNCServerAPI / BNCPreferenceHelper / BranchLogger,
-    // which take their own locks, and none of them are needed to pin the branch key.
     [Branch applyConfiguration:configuration toBranch:branch];
 
     return branch;
 }
 
-// Applies every configuration value that depends on the singleton already existing. Settings that must
-// precede singleton creation (test key, network-service class, branch key) are handled inline in
-// +initialize: before the instance is created and are intentionally not repeated here.
-// This mirrors the Android SDK's `applyConfiguration(Branch, BranchConfiguration)`.
+// Applies every configuration value that depends on the singleton already existing.
 + (void)applyConfiguration:(BranchConfiguration *)configuration toBranch:(Branch *)branch {
     // Logging: the caller's logLevel/callback own the logger state, overriding any branch.json toggle.
     if (configuration.loggingCallback) {

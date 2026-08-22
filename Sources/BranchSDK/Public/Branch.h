@@ -363,9 +363,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  decisions you need on it, then pass it here. All configuration is applied before the returned
  instance is used to open a session.
 
- The configuration is validated first: an `NSInvalidArgumentException` is raised if it is invalid
- (empty key, non-positive or > 60s timeout, negative retry count/interval).
-
  @param configuration The pre-init configuration. Must not be nil.
  @return The global Branch instance, configured per `configuration`.
  */

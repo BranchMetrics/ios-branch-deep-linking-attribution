@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  `BranchDMAParameters` carries the parameters required by Google Conversion APIs for DMA compliance in the
- EEA region. It is the iOS counterpart of the Android `DMAParameters` data class.
+ EEA region.
 
  It is immutable: construct it with all three named consent signals and hand it to
  `BranchConfiguration.dmaParameters` before calling `+[Branch initialize:]`. Naming each field at the call
@@ -36,8 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, readonly) BOOL adUserDataUsageConsent;
 
 /**
- Creates a DMA parameters object. Named after the leading field to mirror Android's `DMAParameters(...)`
- data-class construction.
+ Creates a DMA parameters object. Named after the leading field.
  @param eeaRegion Whether European regulations, including the DMA, apply to this user and conversion.
  @param adPersonalizationConsent Whether the end user granted/denied ads-personalization consent.
  @param adUserDataUsageConsent Whether the user granted/denied consent for 3P transmission of ad data.
