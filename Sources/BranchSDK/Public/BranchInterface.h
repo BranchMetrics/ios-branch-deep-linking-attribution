@@ -38,19 +38,25 @@ typedef NSString * BranchAttributionLevel NS_STRING_ENUM;
 
 #pragma mark - Deep link resolution
 
+// The Swift-name annotations below must stay identical to the ones on the same selectors in
+// Branch.h. `Branch` adopts this protocol, so a divergent NS_SWIFT_NAME / NS_SWIFT_ASYNC_NAME
+// here renames the method for every Swift caller of `Branch`, not just for `id<BranchInterface>`.
 - (void)requestDeepLinkData:(nullable NSString *)branchLink callback:(nullable callbackWithParams)callback
-    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(_:));
+    NS_SWIFT_NAME(requestDeepLinkData(branchLink:callback:))
+    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(branchLink:));
 
 - (void)requestDeepLinkDataWithLaunchOptions:(nullable NSDictionary *)options
                                     callback:(nullable callbackWithParams)callback
-    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(withLaunchOptions:));
+    NS_SWIFT_NAME(requestDeepLinkData(launchOptions:callback:))
+    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(launchOptions:));
 
 #if !TARGET_OS_TV
 - (void)requestDeepLinkDataWithSceneOptions:(nullable UISceneConnectionOptions *)connectionOptions
                                       scene:(UIScene *)scene
                                    callback:(nullable callbackWithParams)callback
-    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(withSceneOptions:scene:))
-    API_AVAILABLE(ios(13.0), macCatalyst(13.1));
+    API_AVAILABLE(ios(13.0), macCatalyst(13.1))
+    NS_SWIFT_NAME(requestDeepLinkData(sceneOptions:scene:callback:))
+    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(sceneOptions:scene:));
 #endif
 
 #pragma mark - Attribution open
@@ -67,7 +73,8 @@ typedef NSString * BranchAttributionLevel NS_STRING_ENUM;
 - (void)setUserAlias:(nullable NSString *)userAlias completion:(nullable callbackWithParams)completion
     NS_SWIFT_ASYNC_NAME(setUserAlias(_:));
 - (void)logout;
-- (void)logoutWithCallback:(nullable callbackWithStatus)callback;
+- (void)logoutWithCallback:(nullable callbackWithStatus)callback
+    NS_SWIFT_ASYNC_NAME(logoutAsync());
 
 #pragma mark - Consumer protection
 
