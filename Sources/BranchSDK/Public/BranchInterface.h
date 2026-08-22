@@ -1,8 +1,8 @@
 //
 //  BranchInterface.h
-//  Branch-SDK
+//  BranchSDK
 //
-//  Copyright (c) 2026 Branch Metrics. All rights reserved.
+//  Created by Brandon Boothe on 8/4/26.
 //
 
 #if __has_feature(modules)

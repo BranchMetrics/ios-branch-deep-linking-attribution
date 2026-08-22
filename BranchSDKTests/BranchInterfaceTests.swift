@@ -2,15 +2,7 @@
 //  BranchInterfaceTests.swift
 //  BranchSDKTests
 //
-//  EMT-4013: verifies the additive `BranchInterface` protocol. Two things are proven here:
-//
-//    1. Injectability — a hand-written `FakeBranch` conforming to `BranchInterface` can be
-//       injected into a consumer in place of the real singleton and its stubbed values are
-//       returned. This is the feature's whole point: unit-testing code that depends on Branch
-//       without the singleton or the network.
-//    2. Conformance — `Branch` itself is usable as an `id<BranchInterface>`. The compile-time
-//       assignment forces the compiler to prove `Branch` still conforms; if a protocol method
-//       were dropped from `Branch`, the target would fail to build.
+//  Created by Brandon Boothe on 8/4/26.
 //
 
 import XCTest
