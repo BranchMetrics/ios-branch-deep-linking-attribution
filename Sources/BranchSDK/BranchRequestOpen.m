@@ -77,11 +77,11 @@
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
-    
+
     if (self.traceCallback) {
         self.traceCallback(self.urlString, self.requestParams, response.data, error, self.requestServiceURL);
     }
-    
+
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     if (error && preferenceHelper.dropURLOpen) {
         // Ignore this response from the server. Dummy up a response:
@@ -100,27 +100,27 @@
         return;
     }
     NSDictionary *data = response.data;
-    
+
     // Handle possibly mis-parsed identity.
     id userIdentity = data[BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY];
     if ([userIdentity isKindOfClass:[NSNumber class]]) {
         userIdentity = [userIdentity stringValue];
     }
-    
-    if ([data objectForKey:BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN]) {
-        preferenceHelper.randomizedDeviceToken = data[BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN];
-        if (!preferenceHelper.randomizedDeviceToken) {
-            // fallback to deprecated name. Fingerprinting was removed long ago, hence the name change.
-            preferenceHelper.randomizedDeviceToken = data[@"device_fingerprint_id"];
-        }
+
+    NSString *deviceToken = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN]);
+    if (!deviceToken) {
+        // fallback to deprecated name. Fingerprinting was removed long ago, hence the name change.
+        deviceToken = BNCStringFromWireFormat(data[@"device_fingerprint_id"]);
     }
-   
+
+    if (deviceToken) {
+        preferenceHelper.randomizedDeviceToken = deviceToken;
+    }
+
     if (data[BRANCH_RESPONSE_KEY_USER_URL]) {
         preferenceHelper.userUrl = data[BRANCH_RESPONSE_KEY_USER_URL];
     }
     preferenceHelper.userAlias = userIdentity;
-    if ([data objectForKey:BRANCH_RESPONSE_KEY_SESSION_ID])
-        preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
     preferenceHelper.previousAppBuildDate = [BNCApplication currentApplication].currentBuildDate;
 
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
@@ -147,7 +147,7 @@
         [sessionDataDict addEntriesFromDictionary:spotlightDic];
         sessionData = [BNCEncodingUtils encodeDictionaryToJsonString:sessionDataDict];
     }
-    
+
     preferenceHelper.sessionParams = sessionData;
 
     // Scenarios:
@@ -187,23 +187,23 @@
     preferenceHelper.dropURLOpen = NO;
     preferenceHelper.uxType = nil;
     preferenceHelper.urlLoadMs = nil;
-    
+
     NSString *string = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN]);
     if (!string) {
         // fallback to deprecated name. The old name was easily confused with the setIdentity, hence the name change.
         string = BNCStringFromWireFormat(data[@"identity_id"]);
     }
-    
+
     if (string) {
         preferenceHelper.randomizedBundleToken = string;
     }
-    
+
     [BranchRequestOpen releaseOpenResponseLock];
-    
+
     if (self.isInstall) {
         [[BNCAppGroupsData shared] saveAppClipData];
     }
-    
+
 #if !TARGET_OS_TV
     if ([data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP] isKindOfClass:NSNumber.class]) {
         NSNumber *invokeRegister = (NSNumber *)data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP];
@@ -235,8 +235,8 @@
     } else {
         preferenceHelper.invokeRegisterApp = NO;
     }
-    
- 
+
+
     if (data && [data[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE] isKindOfClass:NSNumber.class] && !self.isInstall) {
         NSNumber *conversionValue = (NSNumber *)data[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
         // Regardless of SKAN opted-in in dashboard, we always get conversionValue, so adding check to find out if install/open response had "invoke_register_app" true
@@ -245,9 +245,9 @@
                 NSString* coarseConversionValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:data] ;
                 BOOL lockWin = [[BNCSKAdNetwork sharedInstance] getLockedStatusFromDataResponse:data];
                 BOOL shouldCallUpdatePostback = [[BNCSKAdNetwork sharedInstance] shouldCallPostbackForDataResponse:data];
-                
+
                 [[BranchLogger shared] logDebug: [NSString stringWithFormat:@"SKAN 4.0 params - conversionValue:%@ coarseValue:%@, locked:%d, shouldCallPostback:%d, currentWindow:%d, firstAppLaunchTime: %@", conversionValue, coarseConversionValue, lockWin, shouldCallUpdatePostback, (int)preferenceHelper.skanCurrentWindow, preferenceHelper.firstAppLaunchTime] error:nil];
-                
+
                 if(shouldCallUpdatePostback){
                     [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue: conversionValue.longValue coarseValue:coarseConversionValue lockWindow:lockWin completionHandler:^(NSError * _Nullable error) {
                         if (error) {
