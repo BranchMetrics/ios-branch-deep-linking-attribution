@@ -556,7 +556,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
                 continueUserActivity:(NSUserActivity *)userActivity
     API_AVAILABLE(ios(13.0))
     NS_SWIFT_NAME(requestDeepLinkData(scene:userActivity:));
-#endif
 
 #pragma mark - Attribution Methods
 
