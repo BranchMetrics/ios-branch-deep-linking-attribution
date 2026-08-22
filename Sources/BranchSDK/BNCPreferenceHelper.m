@@ -33,7 +33,6 @@ static NSString * const BRANCH_PREFS_KEY_PATTERN_LIST_URL = @"bnc_pattern_list_u
 static NSString * const BRANCH_PREFS_KEY_RANDOMIZED_DEVICE_TOKEN = @"bnc_randomized_device_token";
 static NSString * const BRANCH_PREFS_KEY_RANDOMIZED_BUNDLE_TOKEN = @"bnc_randomized_bundle_token";
 
-static NSString * const BRANCH_PREFS_KEY_SESSION_ID = @"bnc_session_id";
 static NSString * const BRANCH_PREFS_KEY_IDENTITY = @"bnc_identity";
 static NSString * const BRANCH_PREFS_KEY_LINK_CLICK_IDENTIFIER = @"bnc_link_click_identifier";
 static NSString * const BRANCH_PREFS_KEY_SPOTLIGHT_IDENTIFIER = @"bnc_spotlight_identifier";
@@ -100,7 +99,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     lastRunBranchKey = _lastRunBranchKey,
     appVersion = _appVersion,
     randomizedDeviceToken = _randomizedDeviceToken,
-    sessionID = _sessionID,
     spotlightIdentifier = _spotlightIdentifier,
     randomizedBundleToken = _randomizedBundleToken,
     linkClickIdentifier = _linkClickIdentifier,
@@ -283,21 +281,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     if (![_anonID isEqualToString:anonID]) {
         _anonID = anonID;
         [self writeObjectToDefaults:@"bnc_anon_id" value:anonID];
-    }
-}
-
-- (NSString *)sessionID {
-    if (!_sessionID) {
-        _sessionID = [self readStringFromDefaults:BRANCH_PREFS_KEY_SESSION_ID];
-    }
-    
-    return _sessionID;
-}
-
-- (void)setSessionID:(NSString *)sessionID {
-    if (sessionID == nil || ![_sessionID isEqualToString:sessionID]) {
-        _sessionID = sessionID;
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_SESSION_ID value:sessionID];
     }
 }
 
@@ -946,7 +929,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
          self.randomizedDeviceToken = nil;
          self.randomizedBundleToken = nil;
          */
-        self.sessionID = nil;
         self.linkClickIdentifier = nil;
         self.spotlightIdentifier = nil;
         self.referringURL = nil;
@@ -969,18 +951,16 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 #pragma mark - Count Storage
 
 - (void)saveBranchAnalyticsData:(NSDictionary *)analyticsData {
-    if (_sessionID) {
-        if (!_savedAnalyticsData) {
-            _savedAnalyticsData = [self getBranchAnalyticsData];
-        }
-        NSMutableArray *viewDataArray = [_savedAnalyticsData objectForKey:_sessionID];
-        if (!viewDataArray) {
-            viewDataArray = [[NSMutableArray alloc] init];
-            [_savedAnalyticsData setObject:viewDataArray forKey:_sessionID];
-        }
-        [viewDataArray addObject:analyticsData];
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_ANALYTICAL_DATA value:_savedAnalyticsData];
+    if (!_savedAnalyticsData) {
+        _savedAnalyticsData = [self getBranchAnalyticsData];
     }
+    NSMutableArray *viewDataArray = [_savedAnalyticsData objectForKey:@"bnc_branch_analytics_key"];
+    if (!viewDataArray) {
+        viewDataArray = [[NSMutableArray alloc] init];
+        [_savedAnalyticsData setObject:viewDataArray forKey:@"bnc_branch_analytics_key"];
+    }
+    [viewDataArray addObject:analyticsData];
+    [self writeObjectToDefaults:BRANCH_PREFS_KEY_ANALYTICAL_DATA value:_savedAnalyticsData];
 }
 
 - (void)clearBranchAnalyticsData {

@@ -10,7 +10,7 @@ import XCTest
 @testable import BranchSDK
 
 final class tvOSReleaseTestTests: XCTestCase {
-    
+
     private static var testObserver: TestObserver?
 
     override class func setUp() {
@@ -19,7 +19,7 @@ final class tvOSReleaseTestTests: XCTestCase {
         XCTestObservationCenter.shared.addTestObserver(testObserver!)
         print("[TestSetup] Test observer registered for enhanced GitHub Actions logging")
     }
-    
+
     override class func tearDown() {
         if let observer = testObserver {
             XCTestObservationCenter.shared.removeTestObserver(observer)
@@ -35,15 +35,15 @@ final class tvOSReleaseTestTests: XCTestCase {
     override func tearDownWithError() throws {
         print("[Teardown] Cleaning up test: \(self.name)")
     }
-    
+
     func testDummy() throws {
         print("[Test] Running dummy test")
         XCTAssertTrue(true, "Dummy test should always pass")
         print("[Test] Dummy test completed")
     }
 
-    func testInitSessionAndSetCPPLevel() throws {
-        print("[Test] Starting testInitSessionAndSetCPPLevel")
+    func testRequestDeepLinkDataAndSetCPPLevel() throws {
+        print("[Test] Starting testRequestDeepLinkDataAndSetCPPLevel")
 
         Branch.enableLogging(at: .verbose, withCallback: { message, logLevel, error in
             print(message)
@@ -58,20 +58,20 @@ final class tvOSReleaseTestTests: XCTestCase {
         Branch.sharedInstance().setConsumerProtectionAttributionLevel(BranchAttributionLevel.full, resetSession:false)
         let sdk = BranchSDKTest() { params, error in
             print(params as? [String: AnyObject] ?? [:])
-            print("InitSession callback called.")
+            print("RequestDeepLinkData called.")
             expectation.fulfill()
         }
-        
+
         waitForExpectations(timeout: 90, handler: nil)
-        
+
         print("Setting CPP Level to none.")
         sdk.setCPPLevel(status: BranchAttributionLevel.none)
-        
+
         let cppLevel = BNCPreferenceHelper.sharedInstance().attributionLevel
         XCTAssertNotNil(cppLevel, "CPP level should not be nil")
         XCTAssertEqual(cppLevel as? String, BranchAttributionLevel.none.rawValue, "CPP level should be none")
-        
-        print("[Test] testInitSessionAndSetCPPLevel completed")
+
+        print("[Test] testRequestDeepLinkDataAndSetCPPLevel completed")
     }
 
 }
