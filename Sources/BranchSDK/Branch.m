@@ -224,6 +224,10 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
         bnc_didInitializeWithConfiguration = YES;
 
         // --- Settings that must be applied before the singleton is created ---
+        // These setters are deprecated for external callers, but +initialize: is their canonical
+        // internal application point, so suppress the deprecation warning at these call sites.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
         // Test key must be resolved before the branch key is read.
         [Branch setUseTestBranchKey:configuration.testMode];
@@ -233,38 +237,18 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
             [Branch setNetworkServiceClass:configuration.remoteInterface];
         }
 
+#pragma clang diagnostic pop
+
+        // Set the branch key explicitly so it takes precedence over Info.plist / branch.json.
         self.branchKey = configuration.branchKey;
         [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_INIT_FUNCTION;
 
         // --- Create (or fetch) the singleton ---
+        // Note: the constructor applies branch.json values (apiUrl, logging, cppLevel). Caller-supplied
+        // settings that overlap with branch.json are (re)applied AFTER this so the caller wins and
+        // branch.json serves only as a fallback.
         branch = [Branch getInstanceInternal:self.branchKey];
     }
-
-    // --- Settings that must be applied before the singleton is created ---
-    // These setters are deprecated for external callers, but +initialize: is their canonical
-    // internal application point, so suppress the deprecation warning at these call sites.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-
-    // Test key must be resolved before the branch key is read.
-    [Branch setUseTestBranchKey:configuration.testMode];
-
-    // Custom network service class is set-once and must precede singleton creation.
-    if (configuration.remoteInterface) {
-        [Branch setNetworkServiceClass:configuration.remoteInterface];
-    }
-
-#pragma clang diagnostic pop
-
-    // Set the branch key explicitly so it takes precedence over Info.plist / branch.json.
-    self.branchKey = configuration.branchKey;
-    [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_INIT_FUNCTION;
-
-    // --- Create (or fetch) the singleton ---
-    // Note: the constructor applies branch.json values (apiUrl, logging, cppLevel). Caller-supplied
-    // settings that overlap with branch.json are (re)applied AFTER this so the caller wins and
-    // branch.json serves only as a fallback.
-    Branch *branch = [Branch getInstanceInternal:self.branchKey];
 
     // --- Settings applied to the instance / shared preference helper (caller wins) ---
     [Branch applyConfiguration:configuration toBranch:branch];
