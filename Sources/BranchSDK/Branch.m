@@ -132,12 +132,6 @@ void ForceCategoriesToLoad(void) {
 
 #pragma mark - Branch
 
-typedef NS_ENUM(NSInteger, BNCInitStatus) {
-    BNCInitStatusUninitialized = 0,
-    BNCInitStatusInitializing,
-    BNCInitStatusInitialized
-};
-
 @interface Branch() <BranchDeepLinkingControllerCompletionDelegate> {
     NSInteger _networkCount;
 }
@@ -149,8 +143,6 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
 @property (assign, nonatomic) NSInteger networkCount;
-@property (assign, nonatomic) BNCInitStatus initializationStatus;
-@property (assign, nonatomic) BOOL shouldAutomaticallyDeepLink;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
 @property (strong, nonatomic) NSMutableDictionary *deepLinkControllers;
@@ -165,8 +157,6 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 #if !TARGET_OS_TV
 @property (strong, nonatomic) BNCContentDiscoveryManager *contentDiscoveryManager;
 #endif
-
-@property (nonatomic, copy, nullable) void (^sceneSessionInitWithCallback)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error);
 
 // Support for deferred SDK initialization. Used to support slow plugin runtime startup.
 // This is enabled by setting deferInitForPluginRuntime to true in branch.json
@@ -364,7 +354,6 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     _requestQueue = queue;
     _linkCache = cache;
     _preferenceHelper = preferenceHelper;
-    _initializationStatus = BNCInitStatusUninitialized;
     _processing_sema = dispatch_semaphore_create(1);
     _networkCount = 0;
     _deepLinkControllers = [[NSMutableDictionary alloc] init];
@@ -399,7 +388,7 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     // queue up async data loading
     [self loadApplicationData];
     [self loadUserAgent];
-    
+
     BranchJsonConfig *config = BranchJsonConfig.instance;
     self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
     [BranchConfigurationController sharedInstance].deferInitForPluginRuntime = self.deferInitForPluginRuntime;
@@ -408,15 +397,15 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     if (config.apiUrl) {
         [Branch setAPIUrl:config.apiUrl];
     }
-    
+
     if (config.enableLogging) {
         [Branch enableLogging];
     }
-    
+
     if (config.checkPasteboardOnInstall) {
         [self checkPasteboardOnInstall];
     }
-    
+
     if (config.cppLevel) {
         if ([config.cppLevel caseInsensitiveCompare:@"FULL"] == NSOrderedSame) {
             [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
@@ -575,15 +564,15 @@ static NSString *bnc_branchKey = nil;
 + (NSString *)branchKey {
     @synchronized (self) {
         if (bnc_branchKey) return bnc_branchKey;
-        
+
         NSString *branchKey = nil;
         NSString *branchKeySource = @"Unknown";
-        
+
         BranchJsonConfig *config = BranchJsonConfig.instance;
         BOOL usingTestInstance = bnc_useTestBranchKey || config.useTestInstance;
         branchKey = config.branchKey ?: usingTestInstance ? config.testKey : config.liveKey;
         [self setUseTestBranchKey:usingTestInstance];
-        
+
         if (branchKey) {
             branchKeySource = BRANCH_KEY_SOURCE_CONFIG_JSON;
         } else {
@@ -668,12 +657,6 @@ static NSString *bnc_branchKey = nil;
 
 - (void)validateSDKIntegration {
     [self validateSDKIntegrationCore];
-}
-
-- (void)resetUserSession {
-    dispatch_async(self.isolationQueue, ^(){
-        self.initializationStatus = BNCInitStatusUninitialized;
-    });
 }
 
 - (BOOL)isUserIdentified {
@@ -800,7 +783,7 @@ static NSString *bnc_branchKey = nil;
 #else
     [[BranchLogger shared] logWarning:@"setODMInfo not supported on tvOS." error:nil];
 #endif
-    
+
 }
 
 + (void)setAnonID:(NSString *)anonID {
@@ -819,20 +802,19 @@ static NSString *bnc_branchKey = nil;
 
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level resetSession:(BOOL)resetSession {
     self.preferenceHelper.attributionLevel = level;
-    
+
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Setting Consumer Protection Attribution Level to %@", level] error:nil];
-    
+
     //Set tracking to disabled if consumer protection attribution level is changed to BranchAttributionLevelNone. Otherwise, keep tracking enabled.
     if (level == BranchAttributionLevelNone) {
         //Disable Tracking
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Disabling attribution events due to Consumer Protection Attribution Level being %@.", level] error:nil];
-        
+
         // Clear partner parameters
         [[BNCPartnerParameters shared] clearAllParameters];
-        
+
         Branch *branch = Branch.getInstance;
         [branch clearNetworkQueue];
-        branch.initializationStatus = BNCInitStatusUninitialized;
         [branch.linkCache clear];
         // Release the lock in case it's locked:
         [BranchOpenRequest releaseOpenResponseLock];
@@ -846,125 +828,8 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
-#pragma mark - InitSession Permutation methods
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options {
-    [self initSessionWithLaunchOptions:options
-                          isReferrable:YES
-         explicitlyRequestedReferrable:NO
-        automaticallyDisplayController:NO
-               registerDeepLinkHandler:nil];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options andRegisterDeepLinkHandler:(callbackWithParams)callback {
-    [self initSessionWithLaunchOptions:options isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandler:callback];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options andRegisterDeepLinkHandlerUsingBranchUniversalObject:(callbackWithBranchUniversalObject)callback {
-    [self initSessionWithLaunchOptions:options isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandlerUsingBranchUniversalObject:callback];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable {
-    [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:YES automaticallyDisplayController:NO registerDeepLinkHandler:nil];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController {
-    [self initSessionWithLaunchOptions:options isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:automaticallyDisplayController registerDeepLinkHandler:nil];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable andRegisterDeepLinkHandler:(callbackWithParams)callback {
-    [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:YES automaticallyDisplayController:NO registerDeepLinkHandler:callback];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController deepLinkHandler:(callbackWithParams)callback {
-    [self initSessionWithLaunchOptions:options isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:automaticallyDisplayController registerDeepLinkHandler:callback];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController {
-    [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:YES automaticallyDisplayController:automaticallyDisplayController registerDeepLinkHandler:nil];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController isReferrable:(BOOL)isReferrable deepLinkHandler:(callbackWithParams)callback {
-    [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:YES automaticallyDisplayController:automaticallyDisplayController registerDeepLinkHandler:callback];
-}
-
 + (void) setCallbackForTracingRequests: (callbackForTracingRequests) callback {
     bnc_tracingCallback = callback;
-}
-
-#pragma mark - Actual Init Session
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController registerDeepLinkHandlerUsingBranchUniversalObject:(callbackWithBranchUniversalObject)callback {
-    [self initSceneSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController
-                    registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
-        if (callback) {
-            if (initResponse) {
-                callback(initResponse.universalObject, initResponse.linkProperties, error);
-            } else {
-                callback([BranchUniversalObject new], [BranchLinkProperties new], error);
-            }
-        }
-    }];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController registerDeepLinkHandler:(callbackWithParams)callback {
-    [self initSceneSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController
-                    registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
-        if (callback) {
-            if (initResponse) {
-                callback(initResponse.params, error);
-            } else {
-                callback([NSDictionary new], error);
-            }
-        }
-    }];
-}
-
-- (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
-                  registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback {
-    [self initSceneSessionWithLaunchOptions:options sceneIdentifier:nil isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController
-                    registerDeepLinkHandler:callback];
-}
-
-- (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options sceneIdentifier:(NSString *)sceneIdentifier isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
-                  registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback {
-    NSMutableDictionary * optionsWithDeferredInit = [[NSMutableDictionary alloc ] initWithDictionary:options];
-    if (self.deferInitForPluginRuntime) {
-        [optionsWithDeferredInit setObject:@1 forKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"];
-    } else {
-        [optionsWithDeferredInit setObject:@0 forKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"];
-    }
-    [self deferInitBlock:^{
-        self.sceneSessionInitWithCallback = callback;
-        [self initSessionWithLaunchOptions:(NSDictionary *)optionsWithDeferredInit sceneIdentifier:sceneIdentifier isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
-    }];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options
-                     sceneIdentifier:(NSString *)sceneIdentifier
-                        isReferrable:(BOOL)isReferrable
-       explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable
-      automaticallyDisplayController:(BOOL)automaticallyDisplayController {
-
-    [self.class addBranchSDKVersionToCrashlyticsReport];
-    self.shouldAutomaticallyDeepLink = automaticallyDisplayController;
-
-    // Check for Branch link in a push payload
-    NSString *pushURL = nil;
-    #if !TARGET_OS_TV
-    if ([options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
-        id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
-        if ([branchUrlFromPush isKindOfClass:[NSString class]]) {
-            self.preferenceHelper.universalLinkUrl = branchUrlFromPush;
-            self.preferenceHelper.referringURL = branchUrlFromPush;
-            pushURL = (NSString *)branchUrlFromPush;
-        }
-    }
-    #endif
-
-    if(pushURL || [[options objectForKey:@"BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY"] isEqualToNumber:@1] || (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) ) {
-        [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:pushURL reset:NO];
-    }
 }
 
 - (void)setDeepLinkDebugMode:(NSDictionary *)debugParams {
@@ -994,30 +859,59 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (BOOL)handleDeepLink:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier {
-    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Handle deep link %@", url] error:nil];
+    BOOL filtered = NO;
+    BOOL handled = [self processDeepLinkURL:url sceneIdentifier:sceneIdentifier filtered:&filtered];
 
-    // we've been resetting the session on all deeplinks for quite some time
-    // this allows foreground links to callback
-    self.initializationStatus = BNCInitStatusUninitialized;
-    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
+    // processDeepLinkURL: only populates the preferenceHelper; the entry point owns the enqueue so
+    // that the legacy handlers and the requestDeepLinkData* convenience methods each enqueue exactly
+    // one request. A skiplisted URL is never sent to Branch.
+    if (!filtered) {
+        [self requestDeepLinkData:url.absoluteString callback:nil];
+    }
+
+    return handled;
+}
+
+- (BOOL)processDeepLinkURL:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier {
+    return [self processDeepLinkURL:url sceneIdentifier:sceneIdentifier filtered:NULL];
+}
+
+// Populates the preferenceHelper with everything a deep link request needs from an incoming URL:
+// referring-URL query parameters, URL skiplist / dropURLOpen handling, custom-scheme intent URIs and
+// link_click_id extraction, and universal link URLs. This is the single source of truth shared by the
+// legacy handleDeepLink: entry points and the requestDeepLinkData* convenience methods so that none of
+// these checks are skipped regardless of which API the integrator adopts. It never enqueues a request
+// itself — that is the caller's job.
+// Returns YES if the URL was recognized as a Branch link. On return `filtered` is YES only when the
+// URL matched the skiplist, which is the one case where the caller must not send the URL to Branch. A
+// NO return on its own just means "not a Branch link", which still warrants a deferred data lookup.
+- (BOOL)processDeepLinkURL:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier filtered:(BOOL *)filtered {
+    if (filtered) {
+        *filtered = NO;
+    }
+
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Handle deep link %@", url] error:nil];
 
     //Check the referring url/uri for query parameters and save them
     BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
     [utility parseReferringURL:url];
-    
+
     NSString *pattern = nil;
     pattern = [self.urlFilter patternMatchingURL:url];
     if (!pattern) {
         pattern = [self.userURLFilter patternMatchingURL:url];
     }
     if (pattern) {
+        if (filtered) {
+            *filtered = YES;
+        }
+
         self.preferenceHelper.dropURLOpen = YES;
-        
+
         NSString *urlString = [url absoluteString];
         self.preferenceHelper.externalIntentURI = urlString;
         self.preferenceHelper.referringURL = urlString;
 
-        [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:nil reset:YES];
         return NO;
     }
 
@@ -1065,7 +959,7 @@ static NSString *bnc_branchKey = nil;
             self.preferenceHelper.linkClickIdentifier = params[@"link_click_id"];
         }
     }
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:url.absoluteString reset:YES];
+
     return handled;
 }
 
@@ -1099,9 +993,6 @@ static NSString *bnc_branchKey = nil;
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Set universalLinkUrl and referringURL to %@", urlString] error:nil];
     }
 
-    // [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:urlString reset:YES];
-    [self sendOpen];
-
     return [Branch isBranchLink:urlString];
 }
 
@@ -1110,14 +1001,43 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier {
+    BOOL filtered = NO;
+    BOOL handled = [self processUserActivity:userActivity sceneIdentifier:sceneIdentifier filtered:&filtered];
+
+    // As in handleDeepLink:sceneIdentifier:, the entry point owns the enqueue. webpageURL is nil for a
+    // Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
+    if (!filtered) {
+        [self requestDeepLinkData:userActivity.webpageURL.absoluteString callback:nil];
+    }
+
+    return handled;
+}
+
+- (BOOL)processUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier {
+    return [self processUserActivity:userActivity sceneIdentifier:sceneIdentifier filtered:NULL];
+}
+
+// Populates the preferenceHelper from an incoming NSUserActivity: the initial referrer, browsing-web
+// universal links, and Spotlight identifiers (both Branch and non-Branch). URL-bearing activities are
+// funneled through processDeepLinkURL: so the referring-URL, skiplist and link_click_id checks run
+// on every path. This is the single source of truth shared by the legacy continueUserActivity: entry
+// points and the requestDeepLinkData* convenience methods. It never enqueues a request itself — that
+// is the caller's job.
+// Returns YES if a Branch link or Spotlight identifier was recognized. `filtered` follows the same
+// contract as processDeepLinkURL:sceneIdentifier:filtered:.
+- (BOOL)processUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier filtered:(BOOL *)filtered {
+    if (filtered) {
+        *filtered = NO;
+    }
+
     if (userActivity.referrerURL) {
         self.preferenceHelper.initialReferrer = userActivity.referrerURL.absoluteString;
     }
-    
+
     [[BranchLogger shared] logVerbose:userActivity.debugDescription error:nil];
     // Check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-        return [self handleDeepLink:userActivity.webpageURL sceneIdentifier:sceneIdentifier];
+        return [self processDeepLinkURL:userActivity.webpageURL sceneIdentifier:sceneIdentifier filtered:filtered];
     }
 
     NSString *spotlightIdentifier = nil;
@@ -1128,9 +1048,9 @@ static NSString *bnc_branchKey = nil;
     NSURL *webURL = userActivity.webpageURL;
 
     if ([Branch isBranchLink:userActivity.userInfo[CSSearchableItemActivityIdentifier]]) {
-        return [self handleDeepLink:[NSURL URLWithString:userActivity.userInfo[CSSearchableItemActivityIdentifier]] sceneIdentifier:sceneIdentifier];
+        return [self processDeepLinkURL:[NSURL URLWithString:userActivity.userInfo[CSSearchableItemActivityIdentifier]] sceneIdentifier:sceneIdentifier filtered:filtered];
     } else if (webURL != nil && [Branch isBranchLink:[webURL absoluteString]]) {
-        return [self handleDeepLink:webURL sceneIdentifier:sceneIdentifier];
+        return [self processDeepLinkURL:webURL sceneIdentifier:sceneIdentifier filtered:filtered];
     } else if (spotlightIdentifier) {
         self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
     } else {
@@ -1141,15 +1061,13 @@ static NSString *bnc_branchKey = nil;
     }
     #endif
 
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier urlString:userActivity.webpageURL.absoluteString reset:YES];
-
     return spotlightIdentifier != nil;
 }
 
 // checks if URL string looks like a branch link
 + (BOOL)isBranchLink:(NSString *)urlString {
     id branchUniversalLinkDomains = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_universal_link_domains"];
-    
+
     // check url list in bundle
     if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] && [urlString containsString:branchUniversalLinkDomains]) {
         return YES;
@@ -1170,19 +1088,6 @@ static NSString *bnc_branchKey = nil;
         }
     }
     return NO;
-}
-
-#pragma mark - Push Notification support
-
-- (void)handlePushNotification:(NSDictionary *)userInfo {
-    NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
-    
-    if (urlStr.length) {
-        NSURL *url = [NSURL URLWithString:urlStr];
-        if (url)  {
-            [self handleDeepLink:url sceneIdentifier:nil];
-        }
-    }
 }
 
 #pragma mark - async data collection
@@ -1237,7 +1142,7 @@ static NSString *bnc_branchKey = nil;
     } else {
         [BNCPreferenceHelper sharedInstance].hasCalledHandleATTAuthorizationStatus = YES;
     }
-    
+
     BranchEvent *event;
     switch (status) {
         case 2:
@@ -1325,38 +1230,25 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)logoutWithCallback:(callbackWithStatus)callback {
-    if (self.initializationStatus == BNCInitStatusUninitialized) {
-        NSError *error =
-            ([Branch attributionLevelNone])
-            ? [NSError branchErrorWithCode:BNCAttributionLevelNoneError]
-            : [NSError branchErrorWithCode:BNCInitError];
-        [[BranchLogger shared] logWarning:@"Branch is not initialized, cannot logout." error:error];
+    if ([Branch attributionLevelNone]) {
+        NSError *error = [NSError branchErrorWithCode:BNCAttributionLevelNoneError];
+        [[BranchLogger shared] logWarning:@"Branch attribution level is set to NONE, cannot logout." error:error];
         if (callback) {callback(NO, error);}
         return;
     }
 
     // Clear cached links
     self.linkCache = [[BNCLinkCache alloc] init];
-    
+
     // Removed stored values
     self.preferenceHelper.userIdentity = nil;
-    
+
     if (callback) {
         callback(YES, nil);
     }
 }
 
 - (void)sendServerRequest:(BNCServerRequest*)request {
-    @synchronized (self) {
-        if (self.initializationStatus == BNCInitStatusUninitialized) {
-            NSError *error = [NSError branchErrorWithCode:BNCInitError];
-            [[BranchLogger shared] logWarning:@"Branch SDK is not initialized, cannot send this request. Please intialize session before calling this API." error:error];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [[BNCCallbackMap shared] callCompletionForRequest:request withSuccessStatus:NO error:error];
-            });
-            return;
-        }
-    }
     dispatch_async(self.isolationQueue, ^(){
         [self.requestQueue enqueue:request];
     });
@@ -1437,16 +1329,6 @@ static NSString *bnc_branchKey = nil;
 #pragma mark - Query methods
 
 - (void)lastAttributedTouchDataWithAttributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData * _Nullable latd, NSError * _Nullable error))completion {
-    @synchronized (self) {
-        if (self.initializationStatus == BNCInitStatusUninitialized) {
-            NSError *error = [NSError branchErrorWithCode:BNCInitError];
-            [[BranchLogger shared] logWarning:@"Branch SDK is not initialized, cannot request LATD. Please intialize session before calling this API." error:error];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (completion) { completion(nil, error); }
-            });
-            return;
-        }
-    }
     dispatch_async(self.isolationQueue, ^(){
         [BranchLastAttributedTouchData requestLastTouchAttributedData:self.serverInterface key:self.class.branchKey attributionWindow:window completion:completion];
     });
@@ -1567,16 +1449,6 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (void)getSpotlightUrlWithParams:(NSDictionary *)params callback:(callbackWithParams)callback {
-    @synchronized (self) {
-        if (self.initializationStatus == BNCInitStatusUninitialized) {
-            NSError *error = [NSError branchErrorWithCode:BNCInitError];
-            [[BranchLogger shared] logWarning:@"Branch SDK is not initialized, cannot create Spotlight URL. Please intialize session before calling this API." error:error];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (callback) { callback(nil, error); }
-            });
-            return;
-        }
-    }
     dispatch_async(self.isolationQueue, ^(){
         BranchSpotlightUrlRequest *req = [[BranchSpotlightUrlRequest alloc] initWithParams:params callback:callback];
         [self.requestQueue enqueue:req];
@@ -1762,7 +1634,7 @@ static NSString *bnc_branchKey = nil;
 #pragma mark - UIPasteControl Support methods
 
 - (void)passPasteItemProviders:(NSArray<NSItemProvider *> *)itemProviders {
-    
+
    // 1. Extract URL from NSItemProvider arrary
     for (NSItemProvider* item in itemProviders){
         if ( [item hasItemConformingToTypeIdentifier: UTTypeURL.identifier] ) {
@@ -1774,7 +1646,7 @@ static NSString *bnc_branchKey = nil;
                 else if ([Branch isBranchLink:url.absoluteString]) {
                     [self.preferenceHelper setLocalUrl:[url absoluteString]];
                     // 3. Send Open Event
-                    [[Branch getInstance] handleDeepLink:url];
+                    [[Branch getInstance] requestDeepLinkDataWithURL:url];
                 }
             }];
         }
@@ -1798,7 +1670,6 @@ static NSString *bnc_branchKey = nil;
                 [[BranchLogger shared] logWarning:@"The Branch Key has changed, clearing relevant items." error:nil];
                 preferenceHelper.appVersion = nil;
                 preferenceHelper.randomizedDeviceToken = nil;
-                preferenceHelper.sessionID = nil;
                 preferenceHelper.randomizedBundleToken = nil;
                 preferenceHelper.userUrl = nil;
                 preferenceHelper.installParams = nil;
@@ -1810,7 +1681,7 @@ static NSString *bnc_branchKey = nil;
             if(!preferenceHelper.firstAppLaunchTime){
                 preferenceHelper.firstAppLaunchTime = [NSDate date];
             }
-            
+
             preferenceHelper.lastRunBranchKey = key;
             branch =
                 [[Branch alloc] initWithInterface:[[BNCServerInterface alloc] init]
@@ -1818,7 +1689,7 @@ static NSString *bnc_branchKey = nil;
                     cache:[[BNCLinkCache alloc] init]
                     preferenceHelper:preferenceHelper
                     key:key];
-            
+
             // Workaround for testbed not linking BranchPluginSupport, which prevents unit tests from finding it
             [BranchPluginSupport instance];
         });
@@ -1852,18 +1723,6 @@ static NSString *bnc_branchKey = nil;
              andCampaign:campaign andParams:(NSDictionary *)params
              andCallback:(callbackWithUrl)callback {
 
-    @synchronized (self) {
-        if (self.initializationStatus == BNCInitStatusUninitialized) {
-            NSError *error = [NSError branchErrorWithCode:BNCInitError];
-            [[BranchLogger shared] logWarning:@"Branch SDK is not initialized, cannot generate short URL. Please intialize session before calling this API." error:error];
-            if (callback) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    callback(nil, error);
-                });
-            }
-            return;
-        }
-    }
     dispatch_async(self.isolationQueue, ^(){
         BNCLinkData *linkData = [self prepareLinkDataFor:tags
                                                 andAlias:alias
@@ -1913,9 +1772,9 @@ static NSString *bnc_branchKey = nil;
                      andParams:(NSDictionary *)params
                 ignoreUAString:(NSString *)ignoreUAString
              forceLinkCreation:(BOOL)forceLinkCreation {
-    
+
     NSString *shortURL = nil;
-    
+
     BNCLinkData *linkData =
     [self prepareLinkDataFor:tags
                     andAlias:alias
@@ -1927,7 +1786,7 @@ static NSString *bnc_branchKey = nil;
                  andCampaign:campaign
                    andParams:params
               ignoreUAString:ignoreUAString];
-    
+
     // If an ignore UA string is present, we always get a new url.
     // Otherwise, if we've already seen this request, use the cached version.
     if (!ignoreUAString && [self.linkCache objectForKey:linkData]) {
@@ -1948,17 +1807,17 @@ static NSString *bnc_branchKey = nil;
          params:params
          linkData:linkData
          linkCache:self.linkCache];
-        
+
         [[BranchLogger shared] logVerbose:@"Requesting Branch Link synchronously" error:nil];
         BNCServerResponse *serverResponse = [req makeRequest:self.serverInterface key:self.class.branchKey];
         shortURL = [req processResponse:serverResponse];
-        
+
         // cache the link
         if (shortURL) {
             [self.linkCache setObject:shortURL forKey:linkData];
         }
     }
-    
+
     return shortURL;
 }
 
@@ -1981,17 +1840,17 @@ static NSString *bnc_branchKey = nil;
                                     andFeature:(NSString *)feature
                                       andStage:(NSString *)stage
                                       andAlias:(NSString *)alias {
-    
+
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSString *baseUrl;
-    
+
     if (preferenceHelper.userUrl) {
         NSString *fullUserUrl = [preferenceHelper sanitizedMutableBaseURL:preferenceHelper.userUrl];
         baseUrl = [fullUserUrl componentsSeparatedByString:@"?"].firstObject;
     } else {
         baseUrl = [[NSMutableString alloc] initWithFormat:@"%@/a/%@?", BNC_LINK_URL, self.class.branchKey];
     }
-    
+
     return [self longUrlWithBaseUrl:baseUrl params:params tags:tags feature:feature
         channel:nil stage:stage alias:alias duration:0 type:BranchLinkTypeUnlimitedUse];
 }
@@ -2070,18 +1929,6 @@ static NSString *bnc_branchKey = nil;
 #pragma mark - BranchUniversalObject methods
 
 - (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback {
-    @synchronized (self) {
-        if (self.initializationStatus == BNCInitStatusUninitialized) {
-            NSError *error = [NSError branchErrorWithCode:BNCInitError];
-            [[BranchLogger shared] logWarning:@"Branch SDK is not initialized, cannot register view. Please intialize session before calling this API." error:error];
-            if (callback) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    callback(nil, error);
-                });
-            }
-            return;
-        }
-    }
     dispatch_async(self.isolationQueue, ^(){
         BranchUniversalObject *buo = [[BranchUniversalObject alloc] init];
         buo.contentMetadata.customMetadata = (id) params;
@@ -2110,12 +1957,12 @@ static NSString *bnc_branchKey = nil;
     dispatch_async(self.isolationQueue, ^(){
         //  if necessary, creates a new organic open
         BOOL installOrOpenInQueue = [self.requestQueue containsInstallOrOpen];
-        
+
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive installOrOpenInQueue %d", installOrOpenInQueue] error:nil];
 
-        if (![Branch attributionLevelNone] && self.initializationStatus == BNCInitStatusUninitialized && !installOrOpenInQueue) {
-            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive attributionLevelNone %d initializationStatus %d installOrOpenInQueue %d", [Branch attributionLevelNone], self.initializationStatus, installOrOpenInQueue] error:nil];
-            
+        if (![Branch attributionLevelNone] && !installOrOpenInQueue) {
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive attributionLevelNone %d installOrOpenInQueue %d", [Branch attributionLevelNone], installOrOpenInQueue] error:nil];
+
             [self sendOpen];
         }
     });
@@ -2126,8 +1973,7 @@ static NSString *bnc_branchKey = nil;
 
     dispatch_async(self.isolationQueue, ^(){
         if (![Branch attributionLevelNone]) {
-            self.initializationStatus = BNCInitStatusUninitialized;
-            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationWillResignActive initializationStatus %ld", self.initializationStatus] error:nil];
+            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationWillResignActive"] error:nil];
             [BranchOpenRequest setWaitNeededForOpenResponseLock];
         }
     });
@@ -2176,7 +2022,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             deferred = YES;
         }
     }
-    
+
     // handle default non-deferred state
     if (!deferred && block) {
         block();
@@ -2190,135 +2036,14 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         [[BranchLogger shared] logDebug:@"Unlocking Deferred SDK init" error:nil];
         self.deferInitForPluginRuntime = NO;
     }
-    
+
     if (self.cachedInitBlock) {
         self.cachedInitBlock();
     }
     self.cachedInitBlock = nil;
 }
 
-
-- (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString reset:(BOOL)reset {
-    
-    @synchronized (self) {
-        if (self.deferInitForPluginRuntime) {
-            if (urlString) {
-                [[BranchLogger shared] logDebug:@"Branch init is deferred, caching link" error:nil];
-                self.cachedURLString = urlString;
-            } else {
-                [[BranchLogger shared] logDebug:@"Branch init is deferred, ignoring lifecycle call without a link" error:nil];
-            }
-            return;
-        } else {
-            if (!urlString && self.cachedURLString) {
-                urlString = self.cachedURLString;
-                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Using cached link: %@", urlString] error:nil];
-            }
-            self.cachedURLString = nil;
-        }
-    }
-    
-    dispatch_async(self.isolationQueue, ^(){
-
-        
-        // If the session is not yet initialized  OR
-        // If the session is already initialized or is initializing but we need to reset it.
-        if ( reset || self.initializationStatus == BNCInitStatusUninitialized) {
-            [self initializeSessionAndCallCallback:callCallback sceneIdentifier:sceneIdentifier urlString:urlString];
-        }
-        // If the session was initialized, but callCallback was specified, do so.
-        else if (callCallback && self.initializationStatus == BNCInitStatusInitialized) {
-            // callback on main, this is generally what the client expects and maintains our previous behavior
-            dispatch_async(dispatch_get_main_queue(), ^ {
-                if (self.sceneSessionInitWithCallback) {
-                    BNCInitSessionResponse *response = [BNCInitSessionResponse new];
-                    response.params = [self getLatestReferringParams];
-                    response.universalObject = [self getLatestReferringBranchUniversalObject];
-                    response.linkProperties = [self getLatestReferringBranchLinkProperties];
-                    response.sceneIdentifier = sceneIdentifier;
-
-                    self.sceneSessionInitWithCallback(response, nil);
-                }
-            });
-        }
-    });
-}
-
-// only called from initUserSessionAndCallCallback!
-- (void)initializeSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString {
-
-    // BranchDelegate willStartSessionWithURL notification
-    NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;
-    if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)]) {
-        [self.delegate branch:self willStartSessionWithURL:URL];
-    }
-
-    // BranchWilLStartSession NSNotification
-    NSMutableDictionary *userInfo = [NSMutableDictionary new];
-    userInfo[BranchURLKey] = URL;
-    [[NSNotificationCenter defaultCenter] postNotificationName:BranchWillStartSessionNotification object:self userInfo:userInfo];
-    
-    // Prepare callback block
-    callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
-        // callback on main, this is generally what the client expects and maintains our previous behavior
-        dispatch_async(dispatch_get_main_queue(), ^ {
-            if (error) {
-                [self handleInitFailure:error callCallback:callCallback sceneIdentifier:(NSString *)sceneIdentifier];
-            } else {
-                [self handleInitSuccessAndCallCallback:callCallback sceneIdentifier:(NSString *)sceneIdentifier];
-            }
-        });
-    };
-
-    @synchronized (self) {
-        dispatch_async(self.isolationQueue, ^(){
-            [BranchOpenRequest setWaitNeededForOpenResponseLock];
-            BranchOpenRequest *req = [self.requestQueue findExistingInstallOrOpen];
-            
-            // nothing on queue, we need an new install or open. This may have link data
-            if (!req) {
-                if (self.preferenceHelper.randomizedBundleToken) {
-                    req = [[BranchOpenRequest alloc] initWithCallback:initSessionCallback];
-                } else {
-                    req = [[BranchInstallRequest alloc] initWithCallback:initSessionCallback];
-                }
-                req.callback = initSessionCallback;
-                req.urlString = urlString;
-                req.traceCallback = bnc_tracingCallback;
-                
-                [self.requestQueue enqueue:req withPriority:NSOperationQueuePriorityHigh];
-                
-                NSString *message = [NSString stringWithFormat:@"Request %@ callback %@ link %@", req, req.callback, req.urlString];
-                [[BranchLogger shared] logDebug:message error:nil];
-
-            } else {
-                
-                // new link arrival but an install or open is already on queue? need a new open for link resolution.
-                if (urlString) {
-                    req = [[BranchOpenRequest alloc] initWithCallback:initSessionCallback];
-                    req.callback = initSessionCallback;
-                    req.urlString = urlString;
-                    
-                    // put it behind the one that's already on queue
-                    [self.requestQueue enqueue:req withPriority:NSOperationQueuePriorityHigh];
-
-                    [[BranchLogger shared] logDebug:@"Link resolution request" error:nil];
-                    NSString *message = [NSString stringWithFormat:@"Request %@ callback %@ link %@", req, req.callback, req.urlString];
-                    [[BranchLogger shared] logDebug:message error:nil];
-                }
-            }
-            
-            self.initializationStatus = BNCInitStatusInitializing;
-            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
-        });
-    }
-}
-
-- (void)handleInitSuccessAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
-
-    self.initializationStatus = BNCInitStatusInitialized;
-    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
-
+- (void)handleInitSuccess {
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
 
     if ([latestReferringParams[@"_branch_validate"] isEqualToString:@"060514"]) {
@@ -2328,7 +2053,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         NSString* referringLink = [self.class returnNonUniversalLink:latestReferringParams[@"~referring_link"] ];
         NSURLComponents *comp = [NSURLComponents componentsWithURL:[NSURL URLWithString:referringLink]
                                            resolvingAgainstBaseURL:NO];
-        
+
         Class applicationClass = NSClassFromString(@"UIApplication");
         id<NSObject> sharedApplication = [applicationClass performSelector:@selector(sharedApplication)];
         if ([sharedApplication respondsToSelector:@selector(openURL:)])
@@ -2337,132 +2062,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         [self validateSDKIntegration];
     }
 
-    if (callCallback) {
-
-        if (self.sceneSessionInitWithCallback) {
-            BNCInitSessionResponse *response = [BNCInitSessionResponse new];
-            response.params = [self getLatestReferringParams];
-            response.universalObject = [self getLatestReferringBranchUniversalObject];
-            response.linkProperties = [self getLatestReferringBranchLinkProperties];
-            response.sceneIdentifier = sceneIdentifier;
-            self.sceneSessionInitWithCallback(response, nil);
-        }
-    }
     [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
 
     [self.urlFilter updatePatternListFromServerWithCompletion:nil];
-
-    if (self.shouldAutomaticallyDeepLink) {
-        dispatch_async(dispatch_get_main_queue(), ^ {
-            [self automaticallyDeeplinkWithReferringParams:latestReferringParams];
-        });
-    }
-}
-
-// TODO: can we deprecate and remove this, it doesn't work well.
-// UI code, must run on main
-- (void)automaticallyDeeplinkWithReferringParams:(NSDictionary *)latestReferringParams {
-    // Find any matched keys, then launch any controllers that match
-    // TODO which one to launch if more than one match?
-    NSMutableSet *keysInParams = [NSMutableSet setWithArray:[latestReferringParams allKeys]];
-    NSSet *desiredKeysSet = [NSSet setWithArray:[self.deepLinkControllers allKeys]];
-    [keysInParams intersectSet:desiredKeysSet];
-
-    // If we find a matching key, configure and show the controller
-    if ([keysInParams count]) {
-        NSString *key = [[keysInParams allObjects] firstObject];
-        UIViewController <BranchDeepLinkingController> *branchSharingController = self.deepLinkControllers[key];
-        if ([branchSharingController respondsToSelector:@selector(configureControlWithData:)]) {
-            [branchSharingController configureControlWithData:latestReferringParams];
-        }
-        else {
-            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"The automatic deeplink view controller '%@' for key '%@' does not implement 'configureControlWithData:'.", branchSharingController, key] error:nil];
-        }
-
-        self.deepLinkPresentingController = [UIViewController bnc_currentViewController];
-        if([self.deepLinkControllers[key] isKindOfClass:[BNCDeepLinkViewControllerInstance class]]) {
-            BNCDeepLinkViewControllerInstance* deepLinkInstance = self.deepLinkControllers[key];
-            UIViewController <BranchDeepLinkingController> *branchSharingController = deepLinkInstance.viewController;
-
-            if ([branchSharingController respondsToSelector:@selector(configureControlWithData:)]) {
-                [branchSharingController configureControlWithData:latestReferringParams];
-            }
-            else {
-                [[BranchLogger shared] logWarning:@"View controller does not implement configureControlWithData:" error:nil];
-            }
-            branchSharingController.deepLinkingCompletionDelegate = self;
-            switch (deepLinkInstance.option) {
-                case BNCViewControllerOptionPresent:
-                    [self presentSharingViewController:branchSharingController];
-                    break;
-
-                case BNCViewControllerOptionPush:
-
-                    if ([self.deepLinkPresentingController isKindOfClass:[UINavigationController class]]) {
-
-                        if ([[(UINavigationController*)self.deepLinkPresentingController viewControllers]
-                              containsObject:branchSharingController]) {
-                            [self removeViewControllerFromRootNavigationController:branchSharingController];
-                            [(UINavigationController*)self.deepLinkPresentingController
-                                 pushViewController:branchSharingController animated:false];
-                        }
-                        else {
-                            [(UINavigationController*)self.deepLinkPresentingController
-                                 pushViewController:branchSharingController animated:true];
-                        }
-                    }
-                    else {
-                        deepLinkInstance.option = BNCViewControllerOptionPresent;
-                        [self presentSharingViewController:branchSharingController];
-                    }
-
-                    break;
-
-                default:
-                    if ([self.deepLinkPresentingController isKindOfClass:[UINavigationController class]]) {
-                        if ([self.deepLinkPresentingController respondsToSelector:@selector(showViewController:sender:)]) {
-
-                            if ([[(UINavigationController*)self.deepLinkPresentingController viewControllers]
-                                   containsObject:branchSharingController]) {
-                                [self removeViewControllerFromRootNavigationController:branchSharingController];
-                            }
-
-                            [self.deepLinkPresentingController showViewController:branchSharingController sender:self];
-                        }
-                        else {
-                            deepLinkInstance.option = BNCViewControllerOptionPush;
-                            [(UINavigationController*)self.deepLinkPresentingController
-                                 pushViewController:branchSharingController animated:true];
-                        }
-                    }
-                    else {
-                        deepLinkInstance.option = BNCViewControllerOptionPresent;
-                        [self presentSharingViewController:branchSharingController];
-                    }
-                    break;
-            }
-        }
-        else {
-
-            //Support for old API
-            UIViewController <BranchDeepLinkingController> *branchSharingController = self.deepLinkControllers[key];
-            if ([branchSharingController respondsToSelector:@selector(configureControlWithData:)]) {
-                [branchSharingController configureControlWithData:latestReferringParams];
-            }
-            else {
-                [[BranchLogger shared] logWarning:@"View controller does not implement configureControlWithData:" error:nil];
-            }
-            branchSharingController.deepLinkingCompletionDelegate = self;
-            if ([self.deepLinkPresentingController presentedViewController]) {
-                [self.deepLinkPresentingController dismissViewControllerAnimated:NO completion:^{
-                    [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
-                }];
-            }
-            else {
-                [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
-            }
-        }
-    }
 }
 
 - (void)sendOpenNotificationWithLinkParameters:(NSDictionary*)linkParameters
@@ -2535,22 +2137,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
-- (void)handleInitFailure:(NSError *)error callCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
-    self.initializationStatus = BNCInitStatusUninitialized;
-    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"initializationStatus %ld", self.initializationStatus] error:nil];
-
-    if (callCallback) {
-        if (self.sceneSessionInitWithCallback) {
-            BNCInitSessionResponse *response = [BNCInitSessionResponse new];
-            response.error = error;
-            response.params = [NSDictionary new];
-            response.universalObject = [BranchUniversalObject new];
-            response.linkProperties = [BranchLinkProperties new];
-            response.sceneIdentifier = sceneIdentifier;
-            self.sceneSessionInitWithCallback(response, error);
-        }
-    }
-
+- (void)handleInitFailure:(NSError *)error {
     [self sendOpenNotificationWithLinkParameters:@{} error:error];
 }
 
@@ -2619,7 +2206,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [BNCPreferenceHelper clearAll];
 }
 
-#pragma mark - Deep Linking API Request Methods
+#pragma mark - Branch Core Deep Linking Method
 
 - (void) requestDeepLinkData:(NSString *)branchLink callback:(nullable callbackWithParams)callback {
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData called with branchLink: %@", branchLink] error:nil];
@@ -2659,6 +2246,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [self.requestQueue enqueue:deepLinkReq withPriority:NSOperationQueuePriorityHigh];
 }
 
+#pragma mark - Branch AppDelegate Deep Linking Convenience Methods
+
+// Called from application:didFinishLaunchingWithOptions:
 - (void)requestDeepLinkDataWithLaunchOptions:(NSDictionary *)options
                                     callback:(nullable callbackWithParams)callback {
     [[BranchLogger shared] logDebug:@"requestDeepLinkDataWithLaunchOptions called" error:nil];
@@ -2682,7 +2272,102 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [self requestDeepLinkData:pushURL callback:callback];
 }
 
+// Called from application:openURL:options:
+// Supports URI Schemes
+- (void)requestDeepLinkDataWithURL:(NSURL *)url {
+
+    NSString *urlStr = url.absoluteString;
+
+    if (!urlStr.length) return;
+
+    // Run the same preprocessing as the legacy handleDeepLink: path so referring-URL query params,
+    // the URL skiplist / dropURLOpen check, allowed-scheme filtering and link_click_id extraction are
+    // applied before the request is enqueued.
+    BOOL filtered = NO;
+    [self processDeepLinkURL:url sceneIdentifier:nil filtered:&filtered];
+
+    // The URL matched the skiplist. Preferences are recorded, but the URL itself is never sent.
+    if (filtered) return;
+
+    [[Branch getInstance] requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
+        if (error == nil) {
+            if (params != nil) {
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
+            }
+        } else {
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData failed with error: %@", error] error:error];
+        }
+    }];
+}
+
+// Called from the older application:openURL:sourceApplication:annotation:
+// Supports URI Schemes
+- (void)requestDeepLinkDataWithURL:(NSURL *)url
+                 sourceApplication:(NSString *)sourceApplication
+                        annotation:(id)annotation {
+    // sourceApplication and annotation are accepted for call-site parity with the AppDelegate method.
+    // The legacy application:openURL:sourceApplication:annotation: did not use them either.
+    [self requestDeepLinkDataWithURL:url];
+}
+
+// Called from application:continueUserActivity:restorationHandler:
+// Supports Universal Links
+- (void)requestDeepLinkDataWithUserActivity:(NSUserActivity *)userActivity {
+
+    // Run the same preprocessing as the legacy continueUserActivity: path so the initial referrer,
+    // universal link URL, referring-URL query params, skiplist and link_click_id checks are applied
+    // before the request is enqueued. This runs before webpageURL is read because a Spotlight activity
+    // carries its Branch link in userInfo, not in webpageURL.
+    BOOL filtered = NO;
+    [self processUserActivity:userActivity sceneIdentifier:nil filtered:&filtered];
+
+    if (filtered) return;
+
+    // nil for a Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
+    NSString *urlStr = userActivity.webpageURL.absoluteString;
+
+    [[Branch getInstance] requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
+        if (error == nil) {
+            if (params != nil) {
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
+            }
+        } else {
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData failed with error: %@", error] error:error];
+        }
+    }];
+}
+
+// Called from application:didReceiveRemoteNotification:fetchCompletionHandler:
+// Supports Push Notifications
+- (void)requestDeepLinkDataWithUserInfo:(NSDictionary *)userInfo {
+
+    NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
+
+    if (!urlStr.length) return;
+    
+    NSURL *url = [NSURL URLWithString:urlStr];
+    if (url) {
+        BOOL filtered = NO;
+        [self processDeepLinkURL:url sceneIdentifier:nil filtered:&filtered];
+
+        if (filtered) return;
+    }
+
+    [[Branch getInstance] requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
+        if (error == nil) {
+            if (params != nil) {
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
+            }
+        } else {
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData failed with error: %@", error] error:error];
+        }
+    }];
+}
+
+#pragma mark - Branch SceneDelegate Deep Linking Convenience Methods
+
 #if !TARGET_OS_TV
+// Called from scene:willConnectToSession:options:
 - (void)requestDeepLinkDataWithSceneOptions:(nullable UISceneConnectionOptions *)connectionOptions
                                       scene:(UIScene *)scene
                                    callback:(nullable callbackWithParams)callback
@@ -2709,28 +2394,87 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     if (connectionOptions.userActivities.count) {
         NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject;
         if ([activity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-            [self requestDeepLinkData:activity.webpageURL.absoluteString callback:callback];
+            // Run the same preprocessing as the legacy continueUserActivity: path before enqueueing.
+            BOOL filtered = NO;
+            [self processUserActivity:activity sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
+            if (!filtered) {
+                [self requestDeepLinkData:activity.webpageURL.absoluteString callback:callback];
+            }
         }
     } else if (connectionOptions.URLContexts.count) {
         UIOpenURLContext *context = connectionOptions.URLContexts.allObjects.firstObject;
-        [self requestDeepLinkData:context.URL.absoluteString callback:callback];
+        // Run the same preprocessing as the legacy handleDeepLink: path before enqueueing.
+        BOOL filtered = NO;
+        [self processDeepLinkURL:context.URL sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
+        if (!filtered) {
+            [self requestDeepLinkData:context.URL.absoluteString callback:callback];
+        }
     }
+}
+
+// Called from scene:openURLContexts:
+- (void)requestDeepLinkDataWithScene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)urlContexts {
+
+    UIOpenURLContext *context = urlContexts.allObjects.firstObject;
+
+    if (!context) return;
+
+    // Run the same preprocessing as the legacy handleDeepLink: path before enqueueing.
+    BOOL filtered = NO;
+    [self processDeepLinkURL:context.URL sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
+
+    if (filtered) return;
+
+    [[Branch getInstance] requestDeepLinkData:context.URL.absoluteString callback:^(NSDictionary *params, NSError *error) {
+        if (error == nil) {
+            if (params != nil) {
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
+            }
+        } else {
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData failed with error: %@", error] error:error];
+        }
+    }];
+}
+
+// Called from scene:continueUserActivity:
+- (void)requestDeepLinkDataWithScene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity {
+
+    // Run the same preprocessing as the legacy continueUserActivity: path before enqueueing. This runs
+    // before webpageURL is read because a Spotlight activity carries its Branch link in userInfo.
+    BOOL filtered = NO;
+    [self processUserActivity:userActivity sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
+
+    if (filtered) return;
+
+    // nil for a Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
+    NSString *urlStr = userActivity.webpageURL.absoluteString;
+
+    [[Branch getInstance] requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
+        if (error == nil) {
+            if (params != nil) {
+                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
+            }
+        } else {
+            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData failed with error: %@", error] error:error];
+        }
+    }];
 }
 #endif
 
-#pragma mark - Attribution API Request Methods
+
+#pragma mark - Branch Attribution Methods
 
 - (void) sendOpen {
     NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;
     if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)]) {
         [self.delegate branch:self willStartSessionWithURL:URL];
     }
-    
+
     [[BranchLogger shared] logDebug:@"sendOpen called" error:nil];
 
     if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
         [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented. Clearing link identifiers to prevent reuse." error:nil];
-        
+
         [self clearLinkIdentifiers];
         return;
     }
@@ -2740,9 +2484,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         dispatch_async(dispatch_get_main_queue(), ^ {
             if (error) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen failed with error: %@", error] error:error];
-                [self handleInitFailure:error callCallback:NO sceneIdentifier:nil];
+                [self handleInitFailure:error];
             } else {
-                [self handleInitSuccessAndCallCallback:NO sceneIdentifier:nil];
+                [self handleInitSuccess];
                 NSDictionary *params = [self getLatestReferringParams];
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen completed with params: %@", params] error:nil];
             }
@@ -2771,9 +2515,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         dispatch_async(dispatch_get_main_queue(), ^ {
             if (error) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen failed with error: %@", error] error:error];
-                [self handleInitFailure:error callCallback:NO sceneIdentifier:nil];
+                [self handleInitFailure:error];
             } else {
-                [self handleInitSuccessAndCallCallback:NO sceneIdentifier:nil];
+                [self handleInitSuccess];
                 NSDictionary *params = [self getLatestReferringParams];
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen completed with params: %@", params] error:nil];
             }

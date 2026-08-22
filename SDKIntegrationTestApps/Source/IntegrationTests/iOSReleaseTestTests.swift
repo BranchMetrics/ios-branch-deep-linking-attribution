@@ -42,8 +42,8 @@ final class iOSReleaseTestTests: XCTestCase {
         print("[Test] Dummy test completed")
     }
 
-    func testInitSessionAndSetCPPLevel() throws {
-        print("[Test] Starting testInitSessionAndSetCPPLevel")
+    func testRequestDeepLinkDataAndSetCPPLevel() throws {
+        print("[Test] Starting testRequestDeepLinkDataAndSetCPPLevel")
 
         Branch.enableLogging(at: .verbose, withCallback: { message, logLevel, error in
             print(message)
@@ -51,12 +51,12 @@ final class iOSReleaseTestTests: XCTestCase {
                 print(error)
             }
         })
-        let expectation = expectation(description: "InitSession should complete.")
+        let expectation = expectation(description: "RequestDeepLinkData should complete.")
         Branch.getInstance().setConsumerProtectionAttributionLevel(BranchAttributionLevel.none)
         Branch.getInstance().setConsumerProtectionAttributionLevel(BranchAttributionLevel.full, resetSession:false)
         let sdk = BranchSDKTest() { params, error in
             print(params as? [String: AnyObject] ?? [:])
-            print("InitSession callback called.")
+            print("RequestDeepLinkData callback called.")
             expectation.fulfill()
         }
         
@@ -68,7 +68,7 @@ final class iOSReleaseTestTests: XCTestCase {
         let cppLevel = BNCPreferenceHelper.sharedInstance().attributionLevel
         XCTAssertNotNil(cppLevel, "CPP level should not be nil")
         XCTAssertEqual(cppLevel as? String, BranchAttributionLevel.none.rawValue, "CPP level should be none")
-        print("[Test] testInitSessionAndSetCPPLevel completed")
+        print("[Test] testRequestDeepLinkDataAndSetCPPLevel completed")
     }
 
 }

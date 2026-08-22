@@ -180,20 +180,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
          annotation:(id)annotation {
 
     NSLog(@"application:openURL:sourceApplication:annotation: invoked with URL: %@", [url description]);
-    Branch *branch = [Branch getInstance];
-    [branch requestDeepLinkData:[url absoluteString] callback:^(NSDictionary *params, NSError *error) {
-        if (error == nil) {
-            if (params != nil) {
-                NSLog(@"Deep Link Params: %@", params);
-
-                // Access specific values
-                NSString *campaign = params[@"~campaign"];
-                NSLog(@"Campaign name: %@", campaign);
-            }
-        } else {
-            NSLog(@"Deep Link Error: %@ (Code: %ld)", [error localizedDescription], (long)[error code]);
-        }
-    }];
+    [[Branch getInstance] requestDeepLinkDataWithURL:url sourceApplication:sourceApplication annotation:annotation];
 
     // Process non-Branch URIs here...
     return YES;
@@ -212,20 +199,7 @@ continueUserActivity:(NSUserActivity *)userActivity
     // Add `branch_universal_link_domains` to .plist (String or Array) for custom domain(s).
     
     
-    Branch *branch = [Branch getInstance];
-    [branch requestDeepLinkData:userActivity.webpageURL.absoluteString callback:^(NSDictionary *params, NSError *error) {
-        if (error == nil) {
-            if (params != nil) {
-                NSLog(@"Deep Link Params: %@", params);
-
-                // Access specific values
-                NSString *campaign = params[@"~campaign"];
-                NSLog(@"Campaign name: %@", campaign);
-            }
-        } else {
-            NSLog(@"Deep Link Error: %@ (Code: %ld)", [error localizedDescription], (long)[error code]);
-        }
-    }];
+    [[Branch getInstance] requestDeepLinkDataWithUserActivity:userActivity];
     
     // Process non-Branch userActivities here...
     return YES;
@@ -270,7 +244,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    [[Branch getInstance] handlePushNotification:userInfo];
+    [[Branch getInstance] requestDeepLinkDataWithUserInfo:userInfo];
     // process your non-Branch notification payload items here...
 }
 
@@ -341,7 +315,7 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler {
-    [[Branch getInstance] handlePushNotification:response.notification.request.content.userInfo];
+    [[Branch getInstance] requestDeepLinkDataWithUserInfo:response.notification.request.content.userInfo];
     completionHandler();
 }
 
