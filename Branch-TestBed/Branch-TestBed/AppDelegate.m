@@ -11,6 +11,10 @@
 #import "NavigationController.h"
 #import "ViewController.h"
 @import BranchSDK;
+#import <UserNotifications/UserNotifications.h>
+
+@interface AppDelegate() <UNUserNotificationCenterDelegate>
+@end
 
 AppDelegate* appDelegate = nil;
 void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSString*_Nullable message);
@@ -23,13 +27,14 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [self setBranchLogFile];
 
     appDelegate = self;
-    
+    [UNUserNotificationCenter currentNotificationCenter].delegate = self;
+
     // Debug Branch Init example
     // BranchConfiguration *config = [BranchConfiguration debug:@"key_live_xxx"];
-    
+
     // production Branch Init example
     // BranchConfiguration *config = [BranchConfiguration production:@"key_live_xxx"];
-    
+
     // Compliance Branch Init example
     // BranchConfiguration *config = [BranchConfiguration compliance:@"key_live_xxx"];
 
@@ -100,7 +105,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     config.deepLinkDebugParams = @{ @"debug_key": @"debug_value" };
 
     // ── Initialize ───────────────────────────────────────────────────────
-    Branch *branch = [Branch initialize:config];
+    [Branch initialize:config];
 
     return YES;
 }
@@ -176,20 +181,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
          annotation:(id)annotation {
 
     NSLog(@"application:openURL:sourceApplication:annotation: invoked with URL: %@", [url description]);
-    Branch *branch = [Branch sharedInstance];
-    [branch requestDeepLinkData:[url absoluteString] callback:^(NSDictionary *params, NSError *error) {
-        if (error == nil) {
-            if (params != nil) {
-                NSLog(@"Deep Link Params: %@", params);
-
-                // Access specific values
-                NSString *campaign = params[@"~campaign"];
-                NSLog(@"Campaign name: %@", campaign);
-            }
-        } else {
-            NSLog(@"Deep Link Error: %@ (Code: %ld)", [error localizedDescription], (long)[error code]);
-        }
-    }];
+    [[Branch sharedInstance] requestDeepLinkDataWithURL:url sourceApplication:sourceApplication annotation:annotation];
 
     // Process non-Branch URIs here...
     return YES;
@@ -198,31 +190,18 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 - (BOOL)application:(UIApplication *)application
 continueUserActivity:(NSUserActivity *)userActivity
  restorationHandler:(void(^)(NSArray<id<UIUserActivityRestoring>>*restorableObjects))restorationHandler {
- 
+
     NSLog(@"application:continueUserActivity:restorationHandler: invoked.\n"
            "ActivityType: %@ userActivity.webpageURL: %@",
            userActivity.activityType,
            userActivity.webpageURL.absoluteString);
-    
+
     // Required. Returns YES if Branch Universal Link, else returns NO.
     // Add `branch_universal_link_domains` to .plist (String or Array) for custom domain(s).
-    
-    
-    Branch *branch = [Branch sharedInstance];
-    [branch requestDeepLinkData:userActivity.webpageURL.absoluteString callback:^(NSDictionary *params, NSError *error) {
-        if (error == nil) {
-            if (params != nil) {
-                NSLog(@"Deep Link Params: %@", params);
 
-                // Access specific values
-                NSString *campaign = params[@"~campaign"];
-                NSLog(@"Campaign name: %@", campaign);
-            }
-        } else {
-            NSLog(@"Deep Link Error: %@ (Code: %ld)", [error localizedDescription], (long)[error code]);
-        }
-    }];
-    
+
+    [[Branch sharedInstance] requestDeepLinkDataWithUserActivity:userActivity];
+
     // Process non-Branch userActivities here...
     return YES;
 }
@@ -230,12 +209,12 @@ continueUserActivity:(NSUserActivity *)userActivity
 - (void)setBranchLogFile {
     NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
     NSString *logFilePath = [documentsDirectory stringByAppendingPathComponent:@"branchlogs.txt"];
-    
+
     // If the log file already exists, remove it to start fresh
     if ([[NSFileManager defaultManager] fileExistsAtPath:logFilePath]) {
         [[NSFileManager defaultManager] removeItemAtPath:logFilePath error:nil];
     }
-    
+
     self.logFileName = logFilePath;
 }
 
@@ -266,7 +245,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    [[Branch sharedInstance] handlePushNotification:userInfo];
+    [[Branch sharedInstance] requestDeepLinkDataWithUserInfo:userInfo];
     // process your non-Branch notification payload items here...
 }
 
@@ -284,7 +263,7 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
 
 // Writes message to Log File.
 - (void) processLogMessage:(NSString *)message {
-    
+
     if (!self.logFileName)
         return;
 
@@ -306,15 +285,15 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
 // Set log File. If another file with the same name exits, delete it,
 // Different log files can be set for each command. This will make parsing of log files(for Test Automation) easier
 - (void) setLogFile:(NSString*)fileName {
-    
+
     if (!fileName) {
         self.logFileName = nil;
         return;
     }
-    
+
     NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString *pathForLog =  [[NSString alloc] initWithFormat:@"%@/%@.txt" , documentsDirectory, fileName];
-    
+
     if ( [[NSFileManager defaultManager] fileExistsAtPath:pathForLog]) {
         [[NSFileManager defaultManager] removeItemAtPath:pathForLog error:nil];
     }
@@ -324,6 +303,21 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
         self.PrevCommandLogFileName = self.logFileName;
         self.logFileName = pathForLog;
     }
+}
+
+#pragma mark - UNUserNotificationCenterDelegate
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+       willPresentNotification:(UNNotification *)notification
+         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
+    completionHandler(UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound);
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+didReceiveNotificationResponse:(UNNotificationResponse *)response
+         withCompletionHandler:(void (^)(void))completionHandler {
+    [[Branch getInstance] requestDeepLinkDataWithUserInfo:response.notification.request.content.userInfo];
+    completionHandler();
 }
 
 @end

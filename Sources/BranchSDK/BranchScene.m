@@ -21,69 +21,37 @@
     return bscene;
 }
 
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback NS_EXTENSION_UNAVAILABLE("BranchScene does not support Extensions") {
-    [[BranchLogger shared] logVerbose:@"BranchScene initSession" error:nil];
-
-    [[Branch sharedInstance] initSceneSessionWithLaunchOptions:options isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
-        if (callback) {
-            if (initResponse) {
-                callback(initResponse.params, error, [self sceneForIdentifier:initResponse.sceneIdentifier]);
-            } else {
-                callback([NSDictionary new], error, [self sceneForIdentifier:initResponse.sceneIdentifier]);
-            }
-        }
-    }];
-}
-
-- (void)initSessionWithSceneOptions:(nullable UISceneConnectionOptions *)connectionOptions scene:(UIScene *)scene
-             registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback {
-    
-    NSMutableDictionary *launchOptions = [[NSMutableDictionary alloc] init];
-    
-    if (connectionOptions.userActivities.count ) {
-        launchOptions[UIApplicationLaunchOptionsUserActivityDictionaryKey] = connectionOptions.userActivities.allObjects ;
-    }
-    
-    if (connectionOptions.URLContexts.count ) {
-        launchOptions[UIApplicationLaunchOptionsURLKey] = connectionOptions.URLContexts.allObjects ;
-    }
-
-    [[Branch sharedInstance] initSceneSessionWithLaunchOptions:launchOptions sceneIdentifier:scene.session.persistentIdentifier isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
-        if (callback) {
-            if (initResponse) {
-                callback(initResponse.params, error, [self sceneForIdentifier:initResponse.sceneIdentifier]);
-            } else {
-                callback([NSDictionary new], error, [self sceneForIdentifier:initResponse.sceneIdentifier]);
-            }
-        }
-    }];
-    
-    if (connectionOptions.userActivities.count) {
-        [self scene:scene continueUserActivity:connectionOptions.userActivities.allObjects.firstObject];
-    } else if (connectionOptions.URLContexts.count) {
-        [self scene:scene openURLContexts:connectionOptions.URLContexts];
-    }
-}
-
 - (void)scene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity NS_EXTENSION_UNAVAILABLE("BranchScene does not support Extensions") {
     [[BranchLogger shared] logVerbose:@"BranchScene continueUserActivity" error:nil];
 
+#if !TARGET_OS_TV
+    [[Branch getInstance] requestDeepLinkDataWithScene:scene continueUserActivity:userActivity];
+#else
+    // requestDeepLinkDataWithScene:continueUserActivity: is declared inside #if !TARGET_OS_TV, so tvOS
+    // still goes through the legacy entry point. Both run the same preprocessing and enqueue one request.
     NSString *identifier = scene.session.persistentIdentifier;
     [[Branch sharedInstance] continueUserActivity:userActivity sceneIdentifier:identifier];
 }
 
 - (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts NS_EXTENSION_UNAVAILABLE("BranchScene does not support Extensions") {
     [[BranchLogger shared] logVerbose:@"BranchScene openURLContexts" error:nil];
-    
+
     if (URLContexts.count != 1) {
         [[BranchLogger shared] logWarning:@"Branch only supports a single URLContext" error:nil];
     }
-    
+
+#if !TARGET_OS_TV
+    // Takes the first context and returns early when there is none, as the code below did.
+    [[Branch getInstance] requestDeepLinkDataWithScene:scene openURLContexts:URLContexts];
+#else
+    // requestDeepLinkDataWithScene:openURLContexts: is declared inside #if !TARGET_OS_TV, so tvOS still
+    // goes through the legacy entry point. Both run the same preprocessing and enqueue one request.
     UIOpenURLContext *context = [URLContexts allObjects].firstObject;
     if (context) {
         NSString *identifier = scene.session.persistentIdentifier;
         [[Branch sharedInstance] sceneIdentifier:identifier openURL:context.URL sourceApplication:context.options.sourceApplication annotation:context.options.annotation];
     }
+#endif
 }
 
 - (nullable UIScene *)sceneForIdentifier:(NSString *)identifier NS_EXTENSION_UNAVAILABLE("BranchScene does not support Extensions") {

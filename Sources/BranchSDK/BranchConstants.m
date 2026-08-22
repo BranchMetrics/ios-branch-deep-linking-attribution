@@ -90,7 +90,6 @@ NSString * const BRANCH_REQUEST_ENDPOINT_REGISTER_VIEW = @"register-view";
 NSString * const BRANCH_REQUEST_ENDPOINT_LATD = @"cpid/latd";
 
 NSString * const BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN = @"randomized_bundle_token";
-NSString * const BRANCH_RESPONSE_KEY_SESSION_ID = @"session_id";
 NSString * const BRANCH_RESPONSE_KEY_USER_URL = @"link";
 NSString * const BRANCH_RESPONSE_KEY_INSTALL_PARAMS = @"referring_data";
 NSString * const BRANCH_RESPONSE_KEY_REFERRER = @"referrer";
