@@ -11,6 +11,10 @@
 #import "NavigationController.h"
 #import "ViewController.h"
 @import BranchSDK;
+#import <UserNotifications/UserNotifications.h>
+
+@interface AppDelegate() <UNUserNotificationCenterDelegate>
+@end
 
 AppDelegate* appDelegate = nil;
 void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSString*_Nullable message);
@@ -23,7 +27,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [self setBranchLogFile];
 
     appDelegate = self;
-    
+    [UNUserNotificationCenter currentNotificationCenter].delegate = self;
+
     // Debug Branch Init example
     // BranchConfiguration *config = [BranchConfiguration debug:@"key_live_xxx"];
     
@@ -100,7 +105,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     config.deepLinkDebugParams = @{ @"debug_key": @"debug_value" };
 
     // ── Initialize ───────────────────────────────────────────────────────
-    Branch *branch = [Branch initialize:config];
+    [Branch initialize:config];
 
     return YES;
 }
@@ -176,20 +181,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
          annotation:(id)annotation {
 
     NSLog(@"application:openURL:sourceApplication:annotation: invoked with URL: %@", [url description]);
-    Branch *branch = [Branch getInstance];
-    [branch requestDeepLinkData:[url absoluteString] callback:^(NSDictionary *params, NSError *error) {
-        if (error == nil) {
-            if (params != nil) {
-                NSLog(@"Deep Link Params: %@", params);
-
-                // Access specific values
-                NSString *campaign = params[@"~campaign"];
-                NSLog(@"Campaign name: %@", campaign);
-            }
-        } else {
-            NSLog(@"Deep Link Error: %@ (Code: %ld)", [error localizedDescription], (long)[error code]);
-        }
-    }];
+    [[Branch getInstance] requestDeepLinkDataWithURL:url sourceApplication:sourceApplication annotation:annotation];
 
     // Process non-Branch URIs here...
     return YES;
@@ -208,20 +200,7 @@ continueUserActivity:(NSUserActivity *)userActivity
     // Add `branch_universal_link_domains` to .plist (String or Array) for custom domain(s).
     
     
-    Branch *branch = [Branch getInstance];
-    [branch requestDeepLinkData:userActivity.webpageURL.absoluteString callback:^(NSDictionary *params, NSError *error) {
-        if (error == nil) {
-            if (params != nil) {
-                NSLog(@"Deep Link Params: %@", params);
-
-                // Access specific values
-                NSString *campaign = params[@"~campaign"];
-                NSLog(@"Campaign name: %@", campaign);
-            }
-        } else {
-            NSLog(@"Deep Link Error: %@ (Code: %ld)", [error localizedDescription], (long)[error code]);
-        }
-    }];
+    [[Branch getInstance] requestDeepLinkDataWithUserActivity:userActivity];
     
     // Process non-Branch userActivities here...
     return YES;
@@ -266,7 +245,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    [[Branch getInstance] handlePushNotification:userInfo];
+    [[Branch getInstance] requestDeepLinkDataWithUserInfo:userInfo];
     // process your non-Branch notification payload items here...
 }
 
@@ -324,6 +303,21 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
         self.PrevCommandLogFileName = self.logFileName;
         self.logFileName = pathForLog;
     }
+}
+
+#pragma mark - UNUserNotificationCenterDelegate
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+       willPresentNotification:(UNNotification *)notification
+         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
+    completionHandler(UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound);
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+didReceiveNotificationResponse:(UNNotificationResponse *)response
+         withCompletionHandler:(void (^)(void))completionHandler {
+    [[Branch getInstance] requestDeepLinkDataWithUserInfo:response.notification.request.content.userInfo];
+    completionHandler();
 }
 
 @end

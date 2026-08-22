@@ -1,0 +1,9 @@
+// MobileBoost.local.xcconfig.example
+//
+// TEMPLATE — copy this file to `MobileBoost.local.xcconfig` (no `.example`
+// suffix) and replace `your_key_here` with your real MobileBoost API key.
+//
+// The real `MobileBoost.local.xcconfig` is gitignored (`.gitignore` rule
+// `*.local.xcconfig`) so your key never leaves your machine.
+
+MOBILEBOOST_API_KEY = your_key_here

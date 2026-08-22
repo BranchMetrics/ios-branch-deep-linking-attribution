@@ -1,0 +1,32 @@
+{
+  "configurations" : [
+    {
+      "id" : "B4F1A7D1-3E7E-4F92-9E55-9C5D6E5F22A1",
+      "name" : "L1Validation",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Branch-TestBed.xcodeproj",
+      "identifier" : "AAC5A9A76F3DBB04E6638F31",
+      "name" : "TestBed-GPTDriverTests"
+    }
+  },
+  "testTargets" : [
+    {
+      "selectedTests" : [
+        "L1WireValidationTest\/testInstallRequestEmitsWirePayload()"
+      ],
+      "target" : {
+        "containerPath" : "container:Branch-TestBed.xcodeproj",
+        "identifier" : "AAC5A9A76F3DBB04E6638F31",
+        "name" : "TestBed-GPTDriverTests"
+      }
+    }
+  ],
+  "version" : 1
+}

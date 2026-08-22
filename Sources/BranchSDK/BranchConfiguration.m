@@ -164,6 +164,14 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
                     format:@"remoteInterface class '%@' must conform to BNCNetworkServiceProtocol.",
                            NSStringFromClass(self.remoteInterface)];
     }
+    if (self.apiUrl && !([self.apiUrl hasPrefix:@"http://"] || [self.apiUrl hasPrefix:@"https://"])) {
+        [NSException raise:NSInvalidArgumentException
+                    format:@"A custom apiUrl must either have a prefix of http:// or https:// (got '%@').", self.apiUrl];
+    }
+    if (self.safeTrackAPIUrl && !([self.safeTrackAPIUrl hasPrefix:@"http://"] || [self.safeTrackAPIUrl hasPrefix:@"https://"])) {
+        [NSException raise:NSInvalidArgumentException
+                    format:@"A custom safeTrackAPIUrl must either have a prefix of http:// or https:// (got '%@').", self.safeTrackAPIUrl];
+    }
 }
 
 @end
