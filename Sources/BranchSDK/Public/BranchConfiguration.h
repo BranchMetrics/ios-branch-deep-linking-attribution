@@ -21,23 +21,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  `BranchConfiguration` collects every pre-init decision for the Branch SDK into a single object that
- is handed to `+[Branch initialize:]`. It is the iOS counterpart of the Android `BranchConfiguration.Builder`.
+ is handed to `+[Branch initialize:]`.
 
- Unlike Kotlin, Objective-C has no idiomatic inner-`Builder` / immutable-`val` pattern, so this class is a
- plain mutable configuration object: create it with a Branch key, set the properties you care about, then pass
+ This class is a plain mutable configuration object: create it with a Branch key, set the properties you care about, then pass
  it to `+[Branch initialize:]`. Once you have called `initialize:`, mutating the configuration has no effect —
  `initialize:` reads a snapshot of the values.
 
  Only settings that are legitimately *pre-init* decisions live here. Settings that legitimately change at
  runtime — user identity, per-session partner parameters, per-request metadata, attribution level in response
  to a privacy choice — remain as instance methods on `Branch`.
-
- Note on parity with Android: several Android builder settings have no iOS SDK equivalent and are intentionally
- omitted here rather than added as no-ops:
-   - `networkConnectTimeout` / `noConnectionRetryMax` — iOS has a single `networkTimeout` and `retryCount`.
-   - `facebookAppId`, `preinstallCampaign`, `preinstallPartner`, `referringLinkAttributionForPreinstalledApps`
-     — these are Android-only install-attribution features.
  */
+
 @interface BranchConfiguration : NSObject
 
 #pragma mark - Identity & environment
@@ -111,7 +105,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSArray<NSString *> *allowedSchemes;
 
 /// Regex patterns matching URLs that Branch should never transmit (e.g. URLs with sensitive tokens).
-@property (nonatomic, copy, readonly) NSArray<NSString *> *urlPatternsToIgnore;
+@property (nonatomic, copy) NSArray<NSString *> *urlPatternsToIgnore;
 
 #pragma mark - Request metadata
 

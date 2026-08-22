@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import BranchSDK
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,8 +15,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        
-        
+
+        // Callback variant — NS_SWIFT_NAME:
+        // Branch.sharedInstance().requestDeepLinkData(launchOptions: launchOptions) { params, error in
+        //     print("Deep Link Params: \(params ?? [:]), error: \(String(describing: error))")
+        // }
+
+        // Async/await variant — NS_SWIFT_ASYNC_NAME:
+        // Task {
+        //     let params = try? await Branch.sharedInstance().requestDeepLinkData(launchOptions: launchOptions)
+        //     print("Deep Link Params: \(params ?? [:])")
+        // }
+
         return true
     }
 
