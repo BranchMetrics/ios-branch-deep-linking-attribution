@@ -27,7 +27,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [self setBranchLogFile];
 
     appDelegate = self;
-    
+    [UNUserNotificationCenter currentNotificationCenter].delegate = self;
+
     // Debug Branch Init example
     // BranchConfiguration *config = [BranchConfiguration debug:@"key_live_xxx"];
     
@@ -104,7 +105,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     config.deepLinkDebugParams = @{ @"debug_key": @"debug_value" };
 
     // ── Initialize ───────────────────────────────────────────────────────
-    Branch *branch = [Branch initialize:config];
+    [Branch initialize:config];
 
     return YES;
 }

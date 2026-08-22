@@ -489,7 +489,6 @@
 		5FCDD5B42B7AC89200EAF29F /* BranchSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FF2AFDF28E7C22100393216 /* BranchSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		725CFA5CC111CD11F7EAD816 /* BranchConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DA52564B3AD44FEB75F4D8D /* BranchConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		82B3131A1BE689D8761EC686 /* BranchConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 1833CEAD8ADC066A93EA0455 /* BranchConfiguration.m */; };
-		B70D0E162E8DB20C002BD4FE /* jira_task.xml in Sources */ = {isa = PBXBuildFile; fileRef = B70D0E152E8DB20A002BD4FE /* jira_task.xml */; };
 		B70D0E252E8DC1F8002BD4FE /* BranchConfigurationController.m in Sources */ = {isa = PBXBuildFile; fileRef = B70D0E242E8DC1F8002BD4FE /* BranchConfigurationController.m */; };
 		B70D0E262E8DC1F8002BD4FE /* BranchConfigurationController.m in Sources */ = {isa = PBXBuildFile; fileRef = B70D0E242E8DC1F8002BD4FE /* BranchConfigurationController.m */; };
 		B70D0E272E8DC1F8002BD4FE /* BranchConfigurationController.m in Sources */ = {isa = PBXBuildFile; fileRef = B70D0E242E8DC1F8002BD4FE /* BranchConfigurationController.m */; };
