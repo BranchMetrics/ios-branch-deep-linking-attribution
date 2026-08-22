@@ -29,7 +29,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (copy, nonatomic) NSString *randomizedBundleToken;
 @property (copy, nonatomic) NSString *anonID;
 
-@property (copy, nonatomic) NSString *sessionID;
 @property (copy, nonatomic) NSString *linkClickIdentifier;
 @property (copy, nonatomic) NSString *spotlightIdentifier;
 @property (copy, nonatomic) NSString *universalLinkUrl;

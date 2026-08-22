@@ -90,7 +90,6 @@ NSString * const BRANCH_REQUEST_ENDPOINT_REGISTER_VIEW = @"register-view";
 NSString * const BRANCH_REQUEST_ENDPOINT_LATD = @"cpid/latd";
 
 NSString * const BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN = @"randomized_bundle_token";
-NSString * const BRANCH_RESPONSE_KEY_SESSION_ID = @"session_id";
 NSString * const BRANCH_RESPONSE_KEY_USER_URL = @"link";
 NSString * const BRANCH_RESPONSE_KEY_INSTALL_PARAMS = @"referring_data";
 NSString * const BRANCH_RESPONSE_KEY_REFERRER = @"referrer";
@@ -188,7 +187,6 @@ NSString * const BRANCH_REQUEST_KEY_BRANCH_KEY_SOURCE = @"branch_key_source";
 NSString * const BRANCH_KEY_SOURCE_UNKNOWN = @"Unknown";
 NSString * const BRANCH_KEY_SOURCE_CONFIG_JSON = @"config_json";
 NSString * const BRANCH_KEY_SOURCE_INFO_PLIST = @"info_plist";
-NSString * const BRANCH_KEY_SOURCE_GET_INSTANCE_API = @"getInstance_api";
 NSString * const BRANCH_KEY_SOURCE_SET_BRANCH_KEY_API= @"setBranchKey_api";
 NSString * const BRANCH_KEY_SOURCE_INIT_FUNCTION = @"init_function";
 

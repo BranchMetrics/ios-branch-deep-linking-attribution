@@ -1,0 +1,131 @@
+name: GPTDriver E2E (iOS)
+
+# The GPTDriver suite has two halves with very different costs, so this
+# workflow has two jobs.
+#
+#   deterministic — no credential, no network beyond SPM resolution. Runs on
+#                   every push to the beta line and every PR targeting it.
+#   full-suite    — drives the MobileBoost device farm and needs the
+#                   MOBILEBOOST_API_KEY secret. Manual dispatch, or a push to
+#                   a Release-* branch once a release candidate is cut. This
+#                   follows the trigger precedent set by Android #1382 and is
+#                   deliberately kept off ordinary pushes.
+
+on:
+  push:
+    branches:
+      - "4.0.0-beta.*"
+      - "Release-*"
+  pull_request:
+    branches:
+      - "4.0.0-beta.0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deterministic:
+    name: Deterministic gate (no credential)
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+
+      - name: Select simulator
+        run: |
+          # A hardcoded `name=iPhone 16` destination does not resolve on this
+          # repo's runners; scripts/getSimulator picks whatever iPhone image
+          # the image actually ships and writes the name to ./iphoneSim.
+          # Same pattern as verify.yml.
+          ./scripts/getSimulator
+          echo "IPHONE_SIM=$(cat ./iphoneSim)" >> "$GITHUB_ENV"
+
+      - name: Run L1WireValidationTest
+        run: |
+          # L1WireValidationTest deliberately does not inherit from
+          # BaseGptDriverTest, so it needs no MOBILEBOOST_API_KEY. What it
+          # proves: the TestBed builds against the beta SDK, the GPTDriver
+          # test target compiles, gptd-swift resolves, and the host app
+          # reaches runningForeground and stays there while the SDK fires
+          # /v1/install. It does NOT parse the wire payload — that is the
+          # log-scraping L1 pipeline, which does not exist on this branch
+          # and belongs to its own ticket.
+          #
+          # -only-testing rather than -testPlan: the scheme references only
+          # Release.xctestplan (default) and Smoke.xctestplan.
+          # L1Validation.xctestplan is not wired into the scheme, so
+          # `-testPlan L1Validation` would not resolve.
+          xcodebuild test \
+            -project Branch-TestBed/Branch-TestBed.xcodeproj \
+            -scheme TestBed-GPTDriverTests \
+            -destination "platform=iOS Simulator,name=$IPHONE_SIM,OS=latest" \
+            -only-testing:TestBed-GPTDriverTests/L1WireValidationTest \
+            CODE_SIGNING_ALLOWED=NO | xcpretty && exit ${PIPESTATUS[0]}
+
+  full-suite:
+    name: Full suite (MobileBoost device farm)
+    needs: deterministic
+    # Never on an ordinary push. Only a manual dispatch or a Release-* branch,
+    # both of which imply someone intends to spend device-farm time.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      startsWith(github.ref, 'refs/heads/Release-')
+    runs-on: macos-15
+    # The suite has never been run end to end on this branch, so this bound is
+    # an estimate, not a measured ceiling. Adjust once there is a real number.
+    timeout-minutes: 90
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+
+      - name: Select simulator
+        run: |
+          ./scripts/getSimulator
+          echo "IPHONE_SIM=$(cat ./iphoneSim)" >> "$GITHUB_ENV"
+
+      - name: Configure MobileBoost credential
+        env:
+          MOBILEBOOST_API_KEY: ${{ secrets.MOBILEBOOST_API_KEY }}
+        run: |
+          # BaseGptDriverTest.resolveApiKey() reads the key from the test
+          # bundle's Info.plist, which carries $(MOBILEBOOST_API_KEY) and is
+          # substituted at build time from Config/MobileBoost.xcconfig, which
+          # `#include?`s this gitignored local file.
+          #
+          # Written via heredoc rather than passed as an xcodebuild build
+          # setting: an argv value lives in the process table for the whole
+          # build and is readable by anything that can run `ps` on the runner.
+          # A heredoc never puts the value in argv, and *.local.xcconfig is
+          # gitignored, so it cannot be committed by accident.
+          if [ -z "$MOBILEBOOST_API_KEY" ]; then
+            echo "::error::MOBILEBOOST_API_KEY is not available to this run."
+            exit 1
+          fi
+          cat > Branch-TestBed/TestBed-GPTDriverTests/Config/MobileBoost.local.xcconfig <<EOF
+          MOBILEBOOST_API_KEY = ${MOBILEBOOST_API_KEY}
+          EOF
+
+      - name: Run Release test plan
+        run: |
+          # Release.xctestplan selects the whole TestBed-GPTDriverTests target
+          # with no selectedTests filter, so it is the full suite. Smoke is a
+          # 4-test subset and L1Validation is the keyless single test the
+          # deterministic job above already covers.
+          xcodebuild test \
+            -project Branch-TestBed/Branch-TestBed.xcodeproj \
+            -scheme TestBed-GPTDriverTests \
+            -destination "platform=iOS Simulator,name=$IPHONE_SIM,OS=latest" \
+            -testPlan Release \
+            CODE_SIGNING_ALLOWED=NO | xcpretty && exit ${PIPESTATUS[0]}
+
+      - name: Remove MobileBoost credential
+        if: always()
+        run: rm -f Branch-TestBed/TestBed-GPTDriverTests/Config/MobileBoost.local.xcconfig
+
+# No result-bundle artifact is uploaded from full-suite: MOBILEBOOST_API_KEY is
+# a build setting, so it can surface in an .xcresult build log. GitHub masks
+# secrets in logs but not inside artifacts.

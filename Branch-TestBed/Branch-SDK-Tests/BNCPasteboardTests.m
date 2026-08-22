@@ -79,12 +79,12 @@
 }
 
 - (void)testStringUtilityMethods {
-    
+
     // set and retrieve a string
     [self addStringToPasteboard];
     NSString *tmp = [self getStringFromClipboard];
     XCTAssert([self.testString isEqualToString:tmp]);
-    
+
     // overwrite the pasteboard
     [self clearPasteboard];
     tmp = [self getStringFromClipboard];
@@ -92,12 +92,12 @@
 }
 
 - (void)testURLUtilityMethods {
-    
+
     // set and retrieve a url
     [self addBranchURLToPasteboard];
     NSURL *tmp = [self getURLFromPasteboard];
     XCTAssert([self.testBranchURL.absoluteString isEqualToString:tmp.absoluteString]);
-    
+
     // overwrite the pasteboard
     [self clearPasteboard];
     tmp = [self getURLFromPasteboard];
@@ -125,7 +125,7 @@
 
     NSURL *tmp = [[BNCPasteboard sharedInstance] checkForBranchLink];
     XCTAssert([self.testBranchURL.absoluteString isEqualToString:tmp.absoluteString]);
-    
+
     [self clearPasteboard];
 }
 
@@ -135,7 +135,7 @@
 
     NSURL *tmp = [[BNCPasteboard sharedInstance] checkForBranchLink];
     XCTAssertNil(tmp);
-    
+
     [self clearPasteboard];
 }
 
@@ -145,7 +145,7 @@
 
     NSURL *tmp = [[BNCPasteboard sharedInstance] checkForBranchLink];
     XCTAssertNil(tmp);
-    
+
     [self clearPasteboard];
 }
 
@@ -154,11 +154,11 @@
 - (void) testPassPasteControl {
 #if !TARGET_OS_TV
     if (@available(iOS 16.0, macCatalyst 16.0, *)) {
-        
+
         long long timeStamp = ([[NSDate date] timeIntervalSince1970] - 5*60)*1000; // 5 minute earlier timestamp
         NSString *urlString = [NSString stringWithFormat:@"https://bnctestbed-alternate.app.link/9R7MbTmnRtb?__branch_flow_type=viewapp&__branch_flow_id=1105940563590163783&__branch_mobile_deepview_type=1&nl_opt_in=1&_cpts=%lld", timeStamp];
         NSURL *testURL = [[NSURL alloc] initWithString:urlString];
-            
+
         NSArray<NSItemProvider *> *itemProviders = @[[[NSItemProvider alloc] initWithItem:testURL typeIdentifier:UTTypeURL.identifier]];
         XCTestExpectation *openExpectation = [self expectationWithDescription:@"Test open"];
 
@@ -166,10 +166,10 @@
             [openExpectation fulfill];
             XCTAssertNil(error);
         }];
-        
+
         [[Branch sharedInstance] passPasteItemProviders:itemProviders];
         [self waitForExpectationsWithTimeout:5.0 handler:NULL];
-       
+
     }
 #endif
 }

@@ -38,24 +38,12 @@
    //     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
    // }];
 
-   // [self.branch initSessionWithLaunchOptions:nil andRegisterDeepLinkHandlerUsingBranchUniversalObject:
+   // [self.branch requestDeepLinkDataWithLaunchOptions:nil andRegisterDeepLinkHandlerUsingBranchUniversalObject:
    //     ^ (BranchUniversalObject * _Nullable universalObject,
    //        BranchLinkProperties * _Nullable linkProperties,
    //        NSError * _Nullable error) {
    //     [expectation fulfill];
    // }];
-
-   // // test that session initialization blocking works
-   // dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-   //     id initializationStatus = [self.branch valueForKey:@"initializationStatus"];
-   //     XCTAssertTrue([self enumIntValueFromId:initializationStatus] == 0);// uninitialized
-   //     XCTAssertNil([[self.prefHelper requestMetadataDictionary] objectForKey:@"$marketing_cloud_visitor_id"]);
-   // });
-
-   // // test that initialization does happen afterwards and that pre init block was executed
-   // dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-   //     id initializationStatus = [self.branch valueForKey:@"initializationStatus"];
-   //     XCTAssertTrue([self enumIntValueFromId:initializationStatus] == 2);// initialized
 
    //     XCTAssertTrue([[[self.prefHelper requestMetadataDictionary] objectForKey:@"$marketing_cloud_visitor_id"] isEqualToString:@"adobeID123"]);
    // });

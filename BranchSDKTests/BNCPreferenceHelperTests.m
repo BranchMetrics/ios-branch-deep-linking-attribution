@@ -348,7 +348,6 @@
 - (void)testClearTrackingInformation {
     [self.prefHelper clearTrackingInformation];
     
-    XCTAssertNil(self.prefHelper.sessionID);
     XCTAssertNil(self.prefHelper.linkClickIdentifier);
     XCTAssertNil(self.prefHelper.spotlightIdentifier);
     XCTAssertNil(self.prefHelper.referringURL);
@@ -367,16 +366,13 @@
 }
 
 - (void)testSaveBranchAnalyticsData {
-    NSString *dummySessionID = @"testSession123";
     NSDictionary *dummyAnalyticsData = @{ @"key1": @"value1", @"key2": @"value2" };
-    
-    self.prefHelper.sessionID = dummySessionID;
     
     [self.prefHelper saveBranchAnalyticsData:dummyAnalyticsData];
     
     NSMutableDictionary *retrievedData = [self.prefHelper getBranchAnalyticsData];
     
-    NSArray *viewDataArray = [retrievedData objectForKey:dummySessionID];
+    NSArray *viewDataArray = [retrievedData objectForKey:@"bnc_branch_analytics_key"];
     XCTAssertNotNil(viewDataArray);
     XCTAssertEqual(viewDataArray.count, 1);
     XCTAssertEqualObjects(viewDataArray.firstObject, dummyAnalyticsData);

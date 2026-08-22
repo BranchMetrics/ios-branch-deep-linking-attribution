@@ -27,9 +27,6 @@
 #import "BranchActivityItemProvider.h"
 #endif
 
-// Reconsider how this one is exposed. BNC classes should be used internal.
-#import "BNCInitSessionResponse.h"
-
 // Block typedefs. Consider deprecating this
 #import "BNCCallbacks.h"
 
@@ -237,9 +234,9 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  with this method. See the documentation at
  https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/#configure-xcode-project
  for information about configuring your app with Branch keys.
- 
+
  You can only set the Branch key once per app run.  Any errors are logged.
- 
+
  @param branchKey The Branch key to use.
  */
 + (void)setBranchKey:(NSString *)branchKey;
@@ -359,105 +356,10 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  decisions you need on it, then pass it here. All configuration is applied before the returned
  instance is used to open a session.
 
- The configuration is validated first: an `NSInvalidArgumentException` is raised if it is invalid
- (empty key, non-positive or > 60s timeout, negative retry count/interval).
-
  @param configuration The pre-init configuration. Must not be nil.
  @return The global Branch instance, configured per `configuration`.
  */
 + (Branch *)initialize:(BranchConfiguration *)configuration;
-
-/**
- Just initialize the Branch session with the app launch options.
-
- @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
- @warning This is not the recommended method of initializing Branch. While Branch is able to properly attribute deep linking info with the launch options, you lose the ability to do anything with a callback.
- */
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options;
-
-/**
- Just initialize the Branch session with the app launch options, specifying whether to allow it to be treated as a referral.
-
- @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
- @param isReferrable Boolean representing whether to allow the session to be marked as referred, overriding the default behavior.
- @warning This is not the recommended method of initializing Branch. While Branch is able to properly attribute deep linking info with the launch options, you lose the ability to do anything with a callback.
- */
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options isReferrable:(BOOL)isReferrable;
-
-/**
- Initialize the Branch session with the app launch options and handle the completion with a callback
-
- @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
- @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
- */
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options andRegisterDeepLinkHandler:(nullable callbackWithParams)callback;
-
-/**
- Initialize the Branch session with the app launch options and handle the completion with a callback
-
- @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
- @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
- */
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options andRegisterDeepLinkHandlerUsingBranchUniversalObject:(nullable callbackWithBranchUniversalObject)callback;
-
-/**
- Initialize the Branch session with the app launch options and handle the completion with a callback
-
- @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
- @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
- */
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController;
-
-/**
- Initialize the Branch session with the app launch options and handle the completion with a callback
-
- @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
- @param isReferrable Boolean representing whether to allow the session to be marked as referred, overriding the default behavior.
- @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
- */
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options isReferrable:(BOOL)isReferrable andRegisterDeepLinkHandler:(nullable callbackWithParams)callback;
-
-/**
- Initialize the Branch session with the app launch options and handle the completion with a callback
-
- @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
- @param isReferrable Boolean representing whether to allow the session to be marked as referred, overriding the default behavior.
- @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
- */
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options isReferrable:(BOOL)isReferrable automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController;
-
-/**
- Initialize the Branch session with the app launch options and handle the completion with a callback
-
- @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
- @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
- @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
- */
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController deepLinkHandler:(nullable callbackWithParams)callback;
-
-/**
- Initialize the Branch session with the app launch options and handle the completion with a callback
-
- @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
- @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
- @param isReferrable Boolean representing whether to allow the session to be marked as referred, overriding the default behavior.
- @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
- */
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController isReferrable:(BOOL)isReferrable deepLinkHandler:(nullable callbackWithParams)callback;
-
-- (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
-                  registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback;
-
-
-- (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options sceneIdentifier:(NSString *)sceneIdentifier isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
-                  registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback;
-
-/**
- Initialize the Branch session.
- 
- @warning This function is an internal helper function for session initalization and should not be used by apps.
- **/
-- (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier urlString:(NSString *)urlString reset:(BOOL)reset __attribute__((deprecated("Use requestDeepLinkData or sendOpen instead.")));
 
 /**
  Allow Branch to handle a link opening the app, returning whether it was from a Branch link or not.
@@ -535,13 +437,16 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 /**
  Resolves a Branch URL to deep link data, or returns deferred deep link data when `branchLink` is nil.
 
- Call this from `application:openURL:` or `continueUserActivity:` with the URL, or from
- `applicationDidFinishLaunching:` with nil to retrieve deferred deep link data.
-
  When called with a non-nil URL, any pending (not yet executing) nil-URL deep link requests are
  cancelled so that only one callback fires per app open.
  */
-- (void)requestDeepLinkData:(nullable NSString *)branchLink callback:(nullable callbackWithParams)callback;
+- (void)requestDeepLinkData:(nullable NSString *)branchLink callback:(nullable callbackWithParams)callback
+    NS_SWIFT_NAME(requestDeepLinkData(branchLink:callback:))
+    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(branchLink:));
+
+///--------------------------------
+/// @name AppDelegate Deep Linking
+///--------------------------------
 
 /**
  Convenience overload for `application:didFinishLaunchingWithOptions:`.
@@ -551,7 +456,59 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  the URL-bearing call will arrive via `continueUserActivity:` or `application:openURL:`.
  */
 - (void)requestDeepLinkDataWithLaunchOptions:(nullable NSDictionary *)options
-                                    callback:(nullable callbackWithParams)callback;
+                                    callback:(nullable callbackWithParams)callback
+    NS_SWIFT_NAME(requestDeepLinkData(launchOptions:callback:))
+    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(launchOptions:));
+
+/**
+ Convenience method for `application:openURL:options:` to handle custom URI schemes.
+
+ Runs the same URL preprocessing as the legacy deep link handler (referring-URL query parameters,
+ the URL skiplist, allowed-scheme filtering and `link_click_id` extraction) and then calls
+ `requestDeepLinkData:callback:` with the URL.
+ Logs the deep link parameters or error.
+ @param url The URL from `application:openURL:options:`
+ */
+- (void)requestDeepLinkDataWithURL:(nullable NSURL *)url
+    NS_SWIFT_NAME(requestDeepLinkData(openURL:));
+
+/**
+ Convenience method for the older `application:openURL:sourceApplication:annotation:` to handle custom URI schemes.
+
+ Forwards to `requestDeepLinkDataWithURL:`. The `sourceApplication` and `annotation` parameters are
+ accepted for call-site parity with the AppDelegate method and are not otherwise used.
+ @param url The URL from `application:openURL:sourceApplication:annotation:`.
+ @param sourceApplication The bundle ID of the app that requested the open, if any.
+ @param annotation A property-list object supplied by the source app, if any.
+ */
+- (void)requestDeepLinkDataWithURL:(nullable NSURL *)url
+                 sourceApplication:(nullable NSString *)sourceApplication
+                        annotation:(nullable id)annotation
+    NS_SWIFT_NAME(requestDeepLinkData(openURL:sourceApplication:annotation:));
+
+/**
+ Convenience method for `application:continueUserActivity:restorationHandler:` to handle Universal Links.
+
+ Extracts the webpage URL from the user activity and calls `requestDeepLinkData:callback:` with it.
+ Logs the deep link parameters or error.
+ @param userActivity The NSUserActivity from `application:continueUserActivity:restorationHandler:`.
+ */
+- (void)requestDeepLinkDataWithUserActivity:(nullable NSUserActivity *)userActivity
+    NS_SWIFT_NAME(requestDeepLinkData(userActivity:));
+
+/**
+ Convenience method for `application:didReceiveRemoteNotification:fetchCompletionHandler:` to handle push notification deep links.
+
+ Extracts the Branch link from the notification payload and calls `requestDeepLinkData:callback:` with it.
+ Logs the deep link parameters or error.
+ @param userInfo The notification payload from `application:didReceiveRemoteNotification:fetchCompletionHandler:`.
+ */
+- (void)requestDeepLinkDataWithUserInfo:(nullable NSDictionary *)userInfo
+    NS_SWIFT_NAME(requestDeepLinkData(userInfo:));
+
+///--------------------------------
+/// @name SceneDelegate Deep Linking
+///--------------------------------
 
 #if !TARGET_OS_TV
 /**
@@ -565,11 +522,45 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 - (void)requestDeepLinkDataWithSceneOptions:(nullable UISceneConnectionOptions *)connectionOptions
                                       scene:(UIScene *)scene
                                    callback:(nullable callbackWithParams)callback
-    API_AVAILABLE(ios(13.0), macCatalyst(13.1));
-#endif
+    API_AVAILABLE(ios(13.0), macCatalyst(13.1))
+    NS_SWIFT_NAME(requestDeepLinkData(sceneOptions:scene:callback:))
+    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(sceneOptions:scene:));
 
 /**
- Sends a Branch Open event with attribution to our new route.
+ Convenience method for SceneDelegate's `scene:openURLContexts:` to handle custom URI schemes.
+
+ Extracts the first URL from URLContexts and calls `requestDeepLinkData:callback:` with it.
+ Logs the deep link parameters or error.
+
+ Available on iOS 13.0+.
+ @param scene The UIScene from `scene:openURLContexts:`.
+ @param urlContexts The URL contexts from `scene:openURLContexts:`.
+ */
+- (void)requestDeepLinkDataWithScene:(UIScene *)scene
+                      openURLContexts:(NSSet<UIOpenURLContext *> *)urlContexts
+    API_AVAILABLE(ios(13.0))
+    NS_SWIFT_NAME(requestDeepLinkData(scene:openURLContexts:));
+
+/**
+ Convenience method for SceneDelegate's `scene:continueUserActivity:` to handle Universal Links.
+
+ Extracts the webpage URL from the user activity and calls `requestDeepLinkData:callback:` with it.
+ Logs the deep link parameters or error.
+
+ Available on iOS 13.0+.
+ @param scene The UIScene from `scene:continueUserActivity:`.
+ @param userActivity The NSUserActivity from `scene:continueUserActivity:`.
+ */
+- (void)requestDeepLinkDataWithScene:(UIScene *)scene
+                continueUserActivity:(NSUserActivity *)userActivity
+    API_AVAILABLE(ios(13.0))
+    NS_SWIFT_NAME(requestDeepLinkData(scene:userActivity:));
+#endif
+
+#pragma mark - Attribution Methods
+
+/**
+ Sends a Branch Open event with attribution to our new API route.
  */
 - (void)sendOpen;
 
@@ -577,49 +568,23 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 /**
  DO NOT USE unless you are familiar with the SDK's threading model.
- 
+
  When certain actions are required to complete prior to session initialization, this method can be used to pass in a blocking dispatch_block_t.
  The passed in dispatch_block_t will block Branch initialization thread, not the main thread.
- 
+
  @param initBlock         dispatch_block_t object to be executed prior to session initialization
  */
 - (void)dispatchToIsolationQueue:(dispatch_block_t)initBlock;
 
 /**
  DO NOT USE unless you are implementing deferred initialization for plugins.
- 
+
  Platforms such as React Native and Unity, have slow runtime startups. This results in early lifecycle events before client code can run.
  When `deferInitForPlugin` is true in `branch.json` initSession with cache itself until this method is called.
- 
+
  Note that while init is deferred, other calls to the Branch SDK may result in errors. For that reason, do not use this feature for general SDK init deferral.
  */
 - (void)notifyNativeToInit;
-
-#pragma mark - Push Notification support
-
-/**
- Allow Branch to handle a push notification with a Branch link.
-
- To make use of this, when creating a push notification, specify the Branch Link as an NSString, for key @"branch".
-
- NSDictionary userInfo = @{@"branch": @"https://bnc.lt/...", ... };
- */
-- (void)handlePushNotification:(nullable NSDictionary *)userInfo;
-
-#pragma mark - Deep Link Controller methods
-
-///---------------------------
-/// @name Deep Link Controller
-///---------------------------
-
-- (void)registerDeepLinkController:(nullable UIViewController <BranchDeepLinkingController> *)controller forKey:(nullable NSString *)key __attribute__((deprecated(("This API is deprecated. Please use registerDeepLinkController: forKey: withOption:"))));
-
-/**
- Allow Branch to handle a view controller with options to push, present or show.
- Note:
- * If push option is used and the rootviewcontroller of window is not of type UINavigationViewController, than the sharing View controller would be presented automatically
- */
-- (void)registerDeepLinkController:(nullable UIViewController <BranchDeepLinkingController> *)controller forKey:(nullable NSString *)key withPresentation:(BNCViewControllerPresentationOption)option;
 
 #pragma mark - Configuration methods
 
@@ -640,7 +605,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 /**
  Send requests to EU endpoints.
- 
+
  This feature must also be enabled on the server side, otherwise the server will drop requests. Contact your account manager for details.
  */
 - (void)useEUEndpoints __attribute__((deprecated("This API is deprecated. Please set config.euEndpoint = YES on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
@@ -725,18 +690,18 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 /**
  Checks the pasteboard (clipboard) for a Branch Link on App Install.
  If found, the Branch Link is used to provide deferred deeplink data.
- 
+
  This should be called before initSession
- 
+
  Note, this may display a toast message to the end user.
  */
 - (void)checkPasteboardOnInstall __attribute__((deprecated("This API is deprecated. Please set config.checkPasteboardOnInstall = YES on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
 
 /**
  Let's client know if the Branch SDK will trigger a pasteboard toast to the end user.
- 
+
  All of the following conditions must be true.
- 
+
  1. Developer called checkPastboardOnInstall before initSession
  2. A URL is on the pasteboard
  3. First time app is run with Branch SDK
@@ -745,7 +710,7 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 
 /**
  Set the AppGroup used to share data between the App Clip and the Full App.
- 
+
  This must be set before initSession is called.
  */
 - (void)setAppClipAppGroup:(NSString *)appGroup __attribute__((deprecated("This API is deprecated. Please set config.appClipAppGroup on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
@@ -753,7 +718,7 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 /**
  Pass the AppTrackingTransparency authorization status to Branch to measure ATT prompt performance.
  This method should be called from the callback of ATTrackingManager.requestTrackingAuthorization.
- 
+
  Note:
  Before prompting the user, check that ATTrackingManager.trackingAuthorizationStatus is notDetermined.
  Otherwise the prompt will not display and the completion will be called with current status.
@@ -763,7 +728,7 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 
 /**
  Set time window for SKAdNetwork callouts.  By default, Branch limits calls to SKAdNetwork to within 24 hours after first install.
- 
+
  Note: Branch does not automatically call SKAdNetwork unless configured on the dashboard.
  */
 - (void)setSKAdNetworkCalloutMaxTimeSinceInstall:(NSTimeInterval)maxTimeInterval __attribute__((deprecated(("This is no longer supported for iOS 16.1+ - SKAN4.0"))));
@@ -771,7 +736,7 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 /*
  Add a Partner Parameter for Facebook.
  Once set, this parameter is attached to install, opens and events until cleared or the app restarts.
- 
+
  See Facebook's documentation for details on valid parameters
  */
 - (void)addFacebookPartnerParameterWithName:(NSString *)name value:(NSString *)value;
@@ -779,7 +744,7 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 /*
  Add a Partner Parameter for Snap.
  Once set, this parameter is attached to install, opens and events until cleared or the app restarts.
- 
+
  See Snap's documentation for details on valid parameters
  */
 - (void)addSnapPartnerParameterWithName:(NSString *)name value:(NSString *)value;
@@ -813,21 +778,21 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 /**
  Set the SDK wait time for third party APIs (for fetching ODM info and Apple Attribution Token) to finish
  This timeout should be > 0 and <= 10 seconds.
- 
+
  @param waitTime Number of seconds before third party API calls are considered timed out. Default is 0.5 seconds (500ms).
  */
 + (void)setSDKWaitTimeForThirdPartyAPIs:(NSTimeInterval)waitTime __attribute__((deprecated("This API is deprecated. Please set config.thirdPartyAPIsWaitTime on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
 
 /**
  Disable callouts to ad networks for all events for a user; by default Branch sends callouts to ad networks.
- 
+
  By calling this method with YES, Branch will not send any events to the ad networks specified in your Branch account.  If ad networks are not specified in your Branch account, this method will be ignored and events will still be sent.
  */
 - (void)disableAdNetworkCallouts:(BOOL)disableCallouts;
 
 /**
  For use by other Branch SDKs
- 
+
  @param name Plugin name.  For example, Unity or React Native
  @param version Plugin version
  */
@@ -835,9 +800,9 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 
 /**
  Checks if a url string is a probable Branch link.
- 
+
  Checks against the Info.plist and the standard Branch list.
- 
+
  @param urlString URL as an NSString
  */
 + (BOOL)isBranchLink:(NSString *)urlString;
@@ -884,13 +849,13 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 + (void)resumeSession;
 
 /*
- 
+
  Sets the time window for which referrer_graid is valid starting from now.
  After validity window is over, its cleared from settings and will not be sent
  with requests anymore.
- 
+
  Default time interval is 30 days (2,592,000 seconds).
- 
+
  @param validityWindow -(NSTimeInterval) number of seconds for which referrer_gbraid will be valid starting from now.
  */
 + (void) setReferrerGbraidValidityWindow:(NSTimeInterval) validityWindow;
@@ -1031,14 +996,9 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 - (nullable NSDictionary*) getLatestReferringParamsSynchronous;
 
 /**
- Tells Branch to act as though initSession hadn't been called. Will require another open call (this is done automatically, internally).
- */
-- (void)resetUserSession;
-
-/**
- Indicates whether or not this user has a custom identity specified for them. Note that this is *independent of installs*. If you call setUserAlias:completion:, this device
+ Indicates whether or not this user has a custom identity specified for them. Note that this is *independent of installs*. If you call setIdentity, this device
  will have that identity associated with this user until `logout` is called. This includes persisting through uninstalls, as we track device id.
- 
+
  This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
@@ -1070,11 +1030,11 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 /**
  Branch includes SDK methods to allow retrieval of our last attributed touch data (LATD) from the client. This results in an asynchronous call being made to Branch's servers with LATD data returned when possible.
  Last attributed touch data contains the information associated with that user's last viewed impression or clicked link.
- 
+
  This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
- 
+
  @param window attribution window in days.  If the window is 0, the server will use the server side default.  If the window is outside the server supported range, it will default to 30 days.
  @param completion callback with attribution data
  */
@@ -1359,7 +1319,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url without any items specified. The usage type will default to unlimited.
- 
+
  This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
@@ -1370,7 +1330,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url with the specified params. The usage type will default to unlimited.
- 
+
  This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
@@ -1382,7 +1342,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url with the specified params, channel, and feature. The usage type will default to unlimited.
- 
+
  This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
@@ -1396,7 +1356,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url with the specified params, channel, feature, and stage. The usage type will default to unlimited.
- 
+
  This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
@@ -1411,7 +1371,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url with the specified params, channel, feature, stage, and alias. The usage type will default to unlimited.
- 
+
  This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
@@ -1428,7 +1388,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url with the specified params, channel, feature, stage, and link type.
- 
+
  This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
@@ -1444,7 +1404,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url with the specified params, channel, feature, stage, and match duration. The usage type will default to unlimited.
- 
+
  This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
@@ -1460,7 +1420,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url with the specified params, tags, channel, feature, and stage. The usage type will default to unlimited.
- 
+
  This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
@@ -1476,7 +1436,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url with the specified params, tags, channel, feature, stage, and alias. The usage type will default to unlimited.
- 
+
  This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
@@ -1494,7 +1454,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url with the specified params, tags, channel, feature, stage, and link type.
- 
+
  This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
@@ -1515,7 +1475,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
- 
+
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param tags An array of tags to associate with this link, useful for tracking.
@@ -1532,7 +1492,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
- 
+
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param tags An array of tags to associate with this link, useful for tracking.
@@ -1551,7 +1511,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
- 
+
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param tags An array of tags to associate with this link, useful for tracking.
@@ -1566,7 +1526,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 - (void)getShortUrlWithParams:(nullable NSDictionary *)params andTags:(nullable NSArray *)tags andAlias:(nullable NSString *)alias andMatchDuration:(NSUInteger)duration andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andCampaign:(nullable NSString *)campaign andCallback:(nullable callbackWithUrl)callback;
 
 /**
- 
+
  This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
@@ -1740,7 +1700,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Take the current screen and make it discoverable, adding it to Apple's Core Spotlight index. Will be public if specified. You can override the type as desired, using one of the types provided in MobileCoreServices.
- 
+
  @param title Title for the spotlight preview item.
  @param description Description for the spotlight preview item.
  @param thumbnailUrl Url to an image to be used for the thumnbail in spotlight.
@@ -1755,7 +1715,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Take the current screen and make it discoverable, adding it to Apple's Core Spotlight index. Will be public if specified. You can override the type as desired, using one of the types provided in MobileCoreServices.
- 
+
  @param title Title for the spotlight preview item.
  @param description Description for the spotlight preview item.
  @param thumbnailUrl Url to an image to be used for the thumnbail in spotlight.
@@ -1821,7 +1781,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Method used by BranchUniversalObject to register a view on content
- 
+
  This method should only be invoked after initSession completes, either within the callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
  As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.

@@ -1,0 +1,12 @@
+# SwiftFormat local config for TestBed-GPTDriverTests.
+#
+# Disables the trailingCommas rule so multi-line array/dict literals
+# don't get a trailing comma appended — that would conflict with the
+# project's SwiftLint default `trailing_comma` rule, which rejects
+# trailing commas in collections.
+#
+# Scope: this directory and subfolders only. The root project keeps
+# its default SwiftFormat behavior.
+
+--disable trailingCommas
+--swiftversion 5.0
