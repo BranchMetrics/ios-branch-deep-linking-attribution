@@ -115,6 +115,11 @@
         sessionData = nil;
     }
 
+    // No session data in this response: leave the previously persisted payload untouched.
+    if (sessionData == nil) {
+        return;
+    }
+
     // The open that follows this resolution no longer writes the slot, so the spotlight merge has
     // to happen here or spotlight_identifier drops out of the resolved params entirely.
     if (preferenceHelper.spotlightIdentifier) {
