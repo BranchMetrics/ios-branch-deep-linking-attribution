@@ -12,6 +12,11 @@
 #import "BNCPasteboard.h"
 #import "BNCAppGroupsData.h"
 #import "BNCPartnerParameters.h"
+#import "BNCServerRequestQueue.h"
+#import "BNCServerRequestOperation.h"
+#import "BNCServerResponse.h"
+#import "BranchRequestOpen.h"
+#import "BranchRequestDeepLink.h"
 
 @interface BNCPreferenceHelper(Test)
 // Expose internal private method to clear EEA data
@@ -24,8 +29,30 @@
 - (void)handleInitSuccessAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier;
 @end
 
+// Expose the EMT-3892 deep-link open deferral internals for regression testing.
+@interface Branch (DeepLinkOpenDeferralTest)
+@property (nonatomic, assign) BOOL deepLinkOpenPending;
+- (BOOL)handleUniversalDeepLink_private:(NSString *)urlString sceneIdentifier:(NSString *)sceneIdentifier;
+- (void)cancelDeepLinkOpenFallback;
+@end
+
+// Detects a synchronous enqueue via a delta, not an absolute count, so leftover state from
+// other tests sharing the Branch singleton doesn't matter.
+@interface BNCServerRequestQueue (QueueDepthTest)
+- (NSInteger)queueDepth;
+@end
+
+// Lets a test suspend the queue and inspect what was enqueued before it can hit the network.
+@interface BNCServerRequestQueue (OperationsIntrospectionTest)
+@property (strong, nonatomic) NSOperationQueue *operationQueue;
+@end
+
 @interface BranchClassTests : XCTestCase
 @property (nonatomic, strong) Branch *branch;
+// Shared-singleton baseline captured in -setUp and restored in -tearDown. Without it, the
+// behavioral tests below leaked attribution level and armed timers into later tests.
+@property (nonatomic, assign) NSTimeInterval savedTimeout;
+@property (nonatomic, copy) BranchAttributionLevel savedAttributionLevel;
 @end
 
 @implementation BranchClassTests
@@ -33,9 +60,27 @@
 - (void)setUp {
     [super setUp];
     self.branch = [Branch getInstance];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    self.savedTimeout = preferenceHelper.timeout;
+    self.savedAttributionLevel = preferenceHelper.attributionLevel;
 }
 
 - (void)tearDown {
+    // Hermetic reset, so a failed or early-returning test can't leak state into the next one.
+    [self.branch cancelDeepLinkOpenFallback];           // stop any pending async open timer
+    self.branch.deepLinkOpenPending = NO;
+    [self.branch setValue:nil forKey:@"lastAttributedDeepLinkURL"];
+    [self restoreRealRequestQueue];
+
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    preferenceHelper.referringURL = nil;
+    preferenceHelper.sessionParams = nil;
+    preferenceHelper.timeout = self.savedTimeout;
+    preferenceHelper.attributionLevel = self.savedAttributionLevel;
+
+    // Drain any already-scheduled async block against this clean baseline.
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
+
     self.branch = nil;
     [super tearDown];
 }
@@ -286,6 +331,249 @@
 
     // Reset session state so this test does not leak into others.
     [self.branch setValue:@(0) forKey:@"initializationStatus"];
+}
+
+// EMT-3892: a universal link must defer the launch open until resolution, not enqueue an
+// unattributed open synchronously.
+- (void)testUniversalDeepLinkDefersLaunchOpenPendingResolution {
+    BNCServerRequestQueue *requestQueue = [self.branch valueForKey:@"requestQueue"];
+    NSInteger queueDepthBeforeDeepLink = [requestQueue queueDepth];
+
+    BOOL isBranchLink = [self.branch handleUniversalDeepLink_private:@"https://example.app.link/abc123" sceneIdentifier:nil];
+    XCTAssertTrue(isBranchLink, @"example.app.link should be recognized as a Branch link.");
+
+    XCTAssertEqual([requestQueue queueDepth], queueDepthBeforeDeepLink, @"The launch open must be deferred, not enqueued synchronously before deep-link resolution.");
+    XCTAssertTrue(self.branch.deepLinkOpenPending, @"Deep link resolution should be marked pending after a universal link open.");
+
+    // Cancel the bounded fallback so it doesn't fire a real network open later in the suite.
+    [self.branch cancelDeepLinkOpenFallback];
+    XCTAssertFalse(self.branch.deepLinkOpenPending, @"Cancelling the fallback should clear the pending flag.");
+}
+
+#pragma mark - EMT-3892/3893 behavioral evidence helpers
+
+// A disposable, permanently-suspended queue: enqueued requests can be inspected without
+// touching the network or the shared singleton queue. Pair with -restoreRealRequestQueue.
+// Never cancel/resume it — cancelling a suspended, never-started BNCServerRequestOperation
+// trips an NSOperationQueue consistency check and crashes the test host. Discarding the
+// whole queue avoids that pre-existing, out-of-scope edge case.
+- (BNCServerRequestQueue *)installFakeRequestQueue {
+    BNCServerRequestQueue *fakeQueue = [BNCServerRequestQueue new];
+    fakeQueue.operationQueue.suspended = YES;
+    [self.branch setValue:fakeQueue forKey:@"requestQueue"];
+    return fakeQueue;
+}
+
+- (void)restoreRealRequestQueue {
+    [self.branch setValue:[BNCServerRequestQueue getInstance] forKey:@"requestQueue"];
+}
+
+// The requests currently in `queue`, matched and read by name (NSStringFromClass / KVC)
+// rather than isKindOfClass:. This project loads BNCServerRequestOperation from two images
+// at once, so Class-pointer identity is unreliable here; name-based dispatch is not.
+- (NSArray<NSOperation *> *)requestOperationsIn:(BNCServerRequestQueue *)queue {
+    NSMutableArray<NSOperation *> *ops = [NSMutableArray array];
+    for (NSOperation *op in queue.operationQueue.operations) {
+        if ([NSStringFromClass([op class]) isEqualToString:@"BNCServerRequestOperation"]) {
+            [ops addObject:op];
+        }
+    }
+    return ops;
+}
+
+// Waits for the bounded fallback to actually enqueue an open, polling instead of sleeping a
+// fixed duration — as fast as the real event, with a generous ceiling for loaded CI.
+- (void)waitForFallbackOpenIn:(BNCServerRequestQueue *)queue timeout:(NSTimeInterval)timeout {
+    NSPredicate *fallbackEnqueued = [NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        return [self requestOperationsIn:queue].count > 0;
+    }];
+    XCTNSPredicateExpectation *expectation = [[XCTNSPredicateExpectation alloc] initWithPredicate:fallbackEnqueued object:self];
+    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation] timeout:timeout];
+    XCTAssertEqual(result, XCTWaiterResultCompleted, @"The bounded fallback did not enqueue an open within %.1fs.", timeout);
+}
+
+// A stub deep-link resolution response carrying a resolved, clicked Branch link — what
+// BranchRequestDeepLink.processResponse: would receive from a real /v3/deeplink round trip.
+- (BNCServerResponse *)stubDeepLinkResponseForLink:(NSString *)linkURL {
+    BNCServerResponse *response = [BNCServerResponse new];
+    response.statusCode = @200;
+    response.data = @{
+        BRANCH_RESPONSE_KEY_SESSION_DATA: @{
+            BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK: @1,
+            BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK: linkURL
+        }
+    };
+    return response;
+}
+
+// A stub plain-open response carrying no link click — what a generic /v3/events/open would
+// receive when there is nothing to attribute.
+- (BNCServerResponse *)stubGenericOpenResponse {
+    BNCServerResponse *response = [BNCServerResponse new];
+    response.statusCode = @200;
+    response.data = @{
+        BRANCH_RESPONSE_KEY_SESSION_DATA: @{
+            BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK: @0
+        }
+    };
+    return response;
+}
+
+#pragma mark - EMT-3892/3893 behavioral evidence
+
+// Behavior 1: a resolved deep link emits exactly one open, carrying the link. The server
+// round trip is simulated on a BranchRequestDeepLink — no HTTP stub library in this suite.
+- (void)testDeepLinkResolutionEmitsExactlyOneAttributedOpenCarryingTheLink {
+    NSString *linkURL = @"https://example.app.link/behavioral-resolved";
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    preferenceHelper.attributionLevel = BranchAttributionLevelFull; // deterministic regardless of ambient state
+
+    BNCServerRequestQueue *fakeQueue = [self installFakeRequestQueue];
+
+    // 1) App receives the deep link: SDK defers the launch open (EMT-3892).
+    [self.branch handleUniversalDeepLink_private:linkURL sceneIdentifier:nil];
+    XCTAssertEqual([self requestOperationsIn:fakeQueue].count, 0u,
+                    @"Nothing should be enqueued yet — the open is deferred pending resolution.");
+
+    // 2) App calls requestDeepLinkData: it cancels the fallback, then resolves the link.
+    [self.branch cancelDeepLinkOpenFallback];
+
+    BranchRequestDeepLink *deepLinkRequest = [[BranchRequestDeepLink alloc] initWithCallback:nil];
+    deepLinkRequest.urlString = linkURL;
+    deepLinkRequest.uri = linkURL;
+    [deepLinkRequest processResponse:[self stubDeepLinkResponseForLink:linkURL] error:nil];
+
+    NSArray<NSOperation *> *ops = [self requestOperationsIn:fakeQueue];
+    XCTAssertEqual(ops.count, 1u, @"Exactly one open request must be emitted for a resolved deep link — no duplicate.");
+
+    if (ops.count == 1) {
+        id request = [ops.firstObject valueForKey:@"request"];
+        XCTAssertEqualObjects(NSStringFromClass([request class]), @"BranchRequestOpen");
+        // The attributed open carries the link via linkData (-> link_data on the wire), not
+        // urlString — unlike the factory-level universal_link_url path.
+        NSDictionary *linkData = [request valueForKey:@"linkData"];
+        XCTAssertNotNil(linkData, @"The attributed open must carry the resolved link's data.");
+        NSDictionary *carriedSessionData = linkData[BRANCH_RESPONSE_KEY_SESSION_DATA];
+        XCTAssertEqualObjects(carriedSessionData[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK], linkURL,
+                               @"The carried link data must be the resolved link, not stale/empty.");
+    }
+
+    [self restoreRealRequestQueue];
+}
+
+// Behavior 2: requestDeepLinkData never called → the fallback emits exactly one
+// unattributed open, so the open isn't lost. timeout is lowered to keep the test fast.
+- (void)testDeepLinkFallbackFiresExactlyOneUnattributedOpenWhenNeverResolved {
+    NSString *linkURL = @"https://example.app.link/behavioral-never-resolved";
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    preferenceHelper.attributionLevel = BranchAttributionLevelFull;
+    NSTimeInterval originalTimeout = preferenceHelper.timeout;
+    preferenceHelper.timeout = 0.2; // deterministic, fast fallback window for this test only
+
+    BNCServerRequestQueue *fakeQueue = [self installFakeRequestQueue];
+
+    [self.branch handleUniversalDeepLink_private:linkURL sceneIdentifier:nil];
+    XCTAssertTrue(self.branch.deepLinkOpenPending);
+
+    // Do NOT call requestDeepLinkData. Poll for the fallback rather than sleeping a fixed
+    // duration, which was observed flaky under load.
+    [self waitForFallbackOpenIn:fakeQueue timeout:5.0];
+
+    XCTAssertFalse(self.branch.deepLinkOpenPending, @"The fallback should have fired and cleared the pending flag.");
+
+    NSArray<NSOperation *> *ops = [self requestOperationsIn:fakeQueue];
+    XCTAssertEqual(ops.count, 1u, @"Exactly one open must be emitted by the fallback — the deep link open must not be lost.");
+
+    if (ops.count == 1) {
+        id request = [ops.firstObject valueForKey:@"request"];
+        XCTAssertEqualObjects(NSStringFromClass([request class]), @"BranchRequestOpen");
+        XCTAssertNil([request valueForKey:@"urlString"], @"The fallback open must be unattributed: no urlString.");
+        XCTAssertNil([request valueForKey:@"linkData"], @"The fallback open must be unattributed: no linkData.");
+    }
+
+    [self restoreRealRequestQueue];
+    preferenceHelper.timeout = originalTimeout;
+}
+
+// Behavior 3 (EMT-3893, SDK layer only): referringURL clears once the attributed open
+// settles, so a later open doesn't carry the link forward. Server-side stickiness is out
+// of scope here.
+- (void)testResolvedLinkDoesNotStickToSubsequentOpen {
+    NSString *linkURL = @"https://example.app.link/behavioral-sticky-check";
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    preferenceHelper.attributionLevel = BranchAttributionLevelFull;
+
+    [self.branch handleUniversalDeepLink_private:linkURL sceneIdentifier:nil];
+    [self.branch cancelDeepLinkOpenFallback];
+    XCTAssertEqualObjects(preferenceHelper.referringURL, linkURL);
+
+    // The attributed open's response settling is what clears referringURL. An isolated
+    // instance (nil callback) avoids the production path's async side effects on the singleton.
+    BranchRequestOpen *attributedOpenRequest = [[BranchRequestOpen alloc] initWithCallback:nil];
+    attributedOpenRequest.urlString = nil;
+    attributedOpenRequest.linkData = [self stubDeepLinkResponseForLink:linkURL].data;
+    [attributedOpenRequest processResponse:[self stubGenericOpenResponse] error:nil];
+    XCTAssertNil(preferenceHelper.referringURL,
+                 @"EMT-3893 (SDK layer): referringURL must be cleared once the attributed open settles, not held sticky.");
+
+    // A subsequent open with no new link (e.g. organic foreground) must not carry the
+    // previous link forward.
+    BNCServerRequestQueue *fakeQueue = [self installFakeRequestQueue];
+
+    [self.branch sendOpen];
+
+    NSArray<NSOperation *> *ops = [self requestOperationsIn:fakeQueue];
+    XCTAssertEqual(ops.count, 1u);
+    if (ops.count == 1) {
+        id request = [ops.firstObject valueForKey:@"request"];
+        XCTAssertNil([request valueForKey:@"urlString"], @"A subsequent organic open must not carry the previous link's URL.");
+        XCTAssertNil([request valueForKey:@"linkData"], @"A subsequent organic open must not carry the previous link's data.");
+    }
+
+    [self restoreRealRequestQueue];
+}
+
+// Behavior 4: resolution arriving BEFORE handleUniversalDeepLink_private for the same link
+// (e.g. the host app resolves from scene-connection options first). Previously this
+// double-emitted; lastAttributedDeepLinkURL now keeps it at one open.
+- (void)testRequestDeepLinkDataBeforeUniversalDeepLinkEmitsExactlyOneOpen {
+    NSString *linkURL = @"https://example.app.link/behavioral-ordering-edge";
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    preferenceHelper.attributionLevel = BranchAttributionLevelFull;
+    NSTimeInterval originalTimeout = preferenceHelper.timeout;
+    preferenceHelper.timeout = 0.2;
+
+    BNCServerRequestQueue *fakeQueue = [self installFakeRequestQueue];
+
+    // 1) requestDeepLinkData resolves FIRST — the attributed open fires on its own.
+    [self.branch cancelDeepLinkOpenFallback];
+    BranchRequestDeepLink *deepLinkRequest = [[BranchRequestDeepLink alloc] initWithCallback:nil];
+    deepLinkRequest.urlString = linkURL;
+    [deepLinkRequest processResponse:[self stubDeepLinkResponseForLink:linkURL] error:nil];
+
+    NSArray<NSOperation *> *afterResolution = [self requestOperationsIn:fakeQueue];
+    XCTAssertEqual(afterResolution.count, 1u, @"The early resolution alone must still emit exactly one attributed open.");
+
+    // 2) handleUniversalDeepLink_private fires after, for the same already-attributed link;
+    // it must skip arming the fallback.
+    [self.branch handleUniversalDeepLink_private:linkURL sceneIdentifier:nil];
+    XCTAssertFalse(self.branch.deepLinkOpenPending,
+                    @"A link already attributed via an earlier resolution must not re-arm the deferred-open fallback.");
+
+    // Inverted expectation: fails only if a second open actually appears in the window.
+    NSPredicate *secondOpenEnqueued = [NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        return [self requestOperationsIn:fakeQueue].count > 1;
+    }];
+    XCTNSPredicateExpectation *noSecondOpen = [[XCTNSPredicateExpectation alloc] initWithPredicate:secondOpenEnqueued object:self];
+    noSecondOpen.inverted = YES;
+    [self waitForExpectations:@[noSecondOpen] timeout:0.5];
+
+    NSArray<NSOperation *> *afterSecondCall = [self requestOperationsIn:fakeQueue];
+    XCTAssertEqual(afterSecondCall.count, 1u,
+                    @"EMT-3892 ordering fix: resolving before handleUniversalDeepLink_private must still emit exactly ONE open total, not a duplicate.");
+
+    [self restoreRealRequestQueue];
+    preferenceHelper.timeout = originalTimeout;
 }
 
 @end

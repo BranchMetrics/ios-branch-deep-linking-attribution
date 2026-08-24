@@ -149,7 +149,9 @@
         [sessionDataDict addEntriesFromDictionary:spotlightDic];
         sessionData = [BNCEncodingUtils encodeDictionaryToJsonString:sessionDataDict];
     }
-    
+
+    // EMT-3893: the server may still echo a previous click's ~referring_link here. The SDK
+    // clears its own link identifiers below; the server-side stickiness is a backend issue.
     preferenceHelper.sessionParams = sessionData;
 
     // Scenarios:

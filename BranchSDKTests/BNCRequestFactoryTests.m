@@ -95,6 +95,28 @@
     XCTAssertTrue([self.requestUUID isEqualToString:[json objectForKey:BRANCH_REQUEST_KEY_REQUEST_UUID]]);
 }
 
+// EMT-3892 regression: an open request built for a resolved universal link must carry
+// universal_link_url so the server can attribute it.
+- (void)testDataForOpenWithUniversalLinkCarriesUniversalLinkURL {
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
+    NSString *universalLinkURL = @"https://example.app.link/abc123";
+    NSDictionary *json = [factory dataForOpenWithURLString:universalLinkURL];
+    XCTAssertNotNil(json);
+
+    XCTAssertTrue([universalLinkURL isEqualToString:[json objectForKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL]]);
+}
+
+// EMT-3892 regression: the unattributed open must not carry universal_link_url or
+// link_data — those belong only to the attributed open sent once the link resolves.
+- (void)testDataForOpenWithoutResolvedLinkCarriesNoLinkData {
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
+    NSDictionary *json = [factory dataForOpenWithURLString:nil];
+    XCTAssertNotNil(json);
+
+    XCTAssertNil([json objectForKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL]);
+    XCTAssertNil([json objectForKey:@"link_data"]);
+}
+
 - (void)testDataForEvent {
     NSDictionary *event = @{@"name": @"ADD_TO_CART"};
     
