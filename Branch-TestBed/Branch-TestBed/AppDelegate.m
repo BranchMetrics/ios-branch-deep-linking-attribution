@@ -143,6 +143,7 @@ continueUserActivity:(NSUserActivity *)userActivity
     
     Branch *branch = [Branch getInstance];
     [branch requestDeepLinkData:userActivity.webpageURL.absoluteString callback:^(NSDictionary *params, NSError *error) {
+        [self handleDeepLinkParams:params error:error];
         if (error == nil) {
             if (params != nil) {
                 NSLog(@"Deep Link Params: %@", params);
