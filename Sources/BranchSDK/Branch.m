@@ -291,19 +291,13 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
         [Branch setSafetrackAPIURL:configuration.safeTrackAPIUrl];
     }
 
-    // Network. Only write when the value actually changes. BNCPreferenceHelper backs timeout,
-    // retryCount and retryInterval with plain ivars, and BNCServerInterface reads them on a network
-    // thread while retrying, so an unconditional write here races with an in-flight request.
-    BNCPreferenceHelper *preferenceHelper = branch.preferenceHelper;
-    if (preferenceHelper.timeout != configuration.networkTimeout) {
-        [branch setNetworkTimeout:configuration.networkTimeout];
-    }
-    if (preferenceHelper.retryCount != configuration.retryCount) {
-        [branch setMaxRetries:configuration.retryCount];
-    }
-    if (preferenceHelper.retryInterval != configuration.retryInterval) {
-        [branch setRetryInterval:configuration.retryInterval];
-    }
+    // Network
+    [branch setNetworkTimeout:configuration.networkTimeout];
+    
+    [branch setMaxRetries:configuration.retryCount];
+    
+    [branch setRetryInterval:configuration.retryInterval];
+    
     [Branch setSDKWaitTimeForThirdPartyAPIs:configuration.thirdPartyAPIsWaitTime];
 
     // Privacy & attribution
