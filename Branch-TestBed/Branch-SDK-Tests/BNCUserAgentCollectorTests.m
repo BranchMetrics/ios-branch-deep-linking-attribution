@@ -70,7 +70,9 @@
         [expectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:4.0 handler:^(NSError * _Nullable error) {
+    // Collection always goes through a WKWebView, whose first boot on a cold CI
+    // simulator can take well over the four seconds this used to allow.
+    [self waitForExpectationsWithTimeout:30.0 handler:^(NSError * _Nullable error) {
         
     }];
 }
@@ -85,7 +87,9 @@
         [expectation fulfill];
     }];
 
-    [self waitForExpectationsWithTimeout:2.0 handler:^(NSError * _Nullable error) {
+    // An empty store falls through to collection, so this waits on the same cold
+    // WKWebView boot as testCollectUserAgent.
+    [self waitForExpectationsWithTimeout:30.0 handler:^(NSError * _Nullable error) {
         
     }];
 }

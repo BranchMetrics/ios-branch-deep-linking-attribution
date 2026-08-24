@@ -125,8 +125,8 @@
        // If we do not have a randomized bundle token, we should receive one from the service
         // We will receive from callback in v3/deeplink
     } else {
-        if (!preferenceHelper.randomizedDeviceToken || !preferenceHelper.sessionID || !preferenceHelper.randomizedBundleToken) {
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Missing session items (device token or session ID or bundle token). Dropping request: %@", self.request.requestUUID] error:nil];
+        if (!preferenceHelper.randomizedDeviceToken || !preferenceHelper.randomizedBundleToken) {
+            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Missing session items (device token or bundle token). Dropping request: %@", self.request.requestUUID] error:nil];
             BNCPerformBlockOnMainThreadSync(^{
                 [self.request processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
             });
