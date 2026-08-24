@@ -11,7 +11,7 @@ import BranchSDK
 class BranchSDKTest {
     
     init(callback: @escaping ([AnyHashable: Any]?, Error?) -> Void) {
-        Branch.getInstance().initSession(launchOptions:nil, andRegisterDeepLinkHandler: callback)
+        Branch.getInstance().requestDeepLinkData(branchLink: nil, callback: callback)
     }
     
     func setCPPLevel( status: BranchAttributionLevel)  {

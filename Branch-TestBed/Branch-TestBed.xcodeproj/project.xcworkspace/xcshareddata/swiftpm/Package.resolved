@@ -1,5 +1,5 @@
 {
-  "originHash" : "1104f595f08c757bac880de81a1ba4e9a1f9034ff07d428795a9176ef168355b",
+  "originHash" : "d12d1088db63acad3bbd596a3e8ed0d20b7dd4e42c841fc92bec6045fb2ceb49",
   "pins" : [
     {
       "identity" : "google-ads-on-device-conversion-ios-sdk",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/MobileBoostHQ/gptd-swift",
       "state" : {
-        "revision" : "276ca367fbdfb3773b89ba0d623104f2cb20a903",
-        "version" : "1.9.1"
+        "revision" : "75dd19b5c8f1662b57d21b37d036fe8003ea0e05",
+        "version" : "1.10.0"
       }
     },
     {

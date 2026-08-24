@@ -154,7 +154,7 @@
         NSArray<NSItemProvider *> *itemProviders = @[[[NSItemProvider alloc] initWithItem:testURL typeIdentifier:UTTypeURL.identifier]];
         XCTestExpectation *openExpectation = [self expectationWithDescription:@"Test open"];
 
-        [[Branch getInstance] initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+        [[Branch getInstance] requestDeepLinkDataWithLaunchOptions:@{} callback:^(NSDictionary *params, NSError *error) {
             [openExpectation fulfill];
             XCTAssertNil(error);
         }];
