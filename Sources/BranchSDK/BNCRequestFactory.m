@@ -419,7 +419,6 @@
     if (!isSpotlightRequest) {
         json[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = self.preferenceHelper.randomizedBundleToken;
     }
-    json[BRANCH_REQUEST_KEY_SESSION_ID] = self.preferenceHelper.sessionID;
 }
 
 - (void)addPreferenceHelperDataToJSON:(NSMutableDictionary *)json {

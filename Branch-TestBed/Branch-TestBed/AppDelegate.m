@@ -35,8 +35,36 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Change the Branch base API URL
     [Branch setAPIUrl:@"https://api2.branch.io"];
     
-    [Branch enableLogging];
-    
+    [Branch enableLoggingAtLevel:BranchLogLevelVerbose withAdvancedCallback:^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error, NSMutableURLRequest * _Nullable request, BNCServerResponse * _Nullable response) {
+        // Handle the log message and error here. For example, printing to the console:
+        if (error) {
+            NSLog(@"[BranchLog] Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription);
+        } else {
+            NSLog(@"[BranchLog] Level: %lu, Message: %@", (unsigned long)logLevel, message);
+        }
+
+        if (request) {
+            NSString *jsonString = [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding];
+            NSString *requestLine = [NSString stringWithFormat:@"[BranchLog] Got %@ Request: %@", request.URL, jsonString];
+            NSLog(@"%@", requestLine);
+            // L1 wire validation: mirror the request line to branchlogs.txt so
+            // CI can parse it. The newline terminator keeps each request on its
+            // own line for the regex parser, even when several requests fire
+            // back-to-back.
+            [appDelegate processLogMessage:[requestLine stringByAppendingString:@"\n"]];
+        }
+
+        if (response) {
+            NSString *responseLine = [NSString stringWithFormat:@"[BranchLog] Got Response for request (%@): %@", response.requestId, response.data];
+            NSLog(@"%@", responseLine);
+            [appDelegate processLogMessage:[responseLine stringByAppendingString:@"\n"]];
+        }
+
+        NSString *logEntry = error ? [NSString stringWithFormat:@"Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription]
+                                   : [NSString stringWithFormat:@"Level: %lu, Message: %@", (unsigned long)logLevel, message];
+        APPLogHookFunction([NSDate date], logLevel, logEntry);
+    }];
+
     [branch checkPasteboardOnInstall];
     
     //[[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
@@ -119,20 +147,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
          annotation:(id)annotation {
 
     NSLog(@"application:openURL:sourceApplication:annotation: invoked with URL: %@", [url description]);
-    Branch *branch = [Branch getInstance];
-    [branch requestDeepLinkData:[url absoluteString] callback:^(NSDictionary *params, NSError *error) {
-        if (error == nil) {
-            if (params != nil) {
-                NSLog(@"Deep Link Params: %@", params);
-
-                // Access specific values
-                NSString *campaign = params[@"~campaign"];
-                NSLog(@"Campaign name: %@", campaign);
-            }
-        } else {
-            NSLog(@"Deep Link Error: %@ (Code: %ld)", [error localizedDescription], (long)[error code]);
-        }
-    }];
+    [[Branch getInstance] requestDeepLinkDataWithURL:url sourceApplication:sourceApplication annotation:annotation];
 
     // Process non-Branch URIs here...
     return YES;
@@ -151,20 +166,7 @@ continueUserActivity:(NSUserActivity *)userActivity
     // Add `branch_universal_link_domains` to .plist (String or Array) for custom domain(s).
     
     
-    Branch *branch = [Branch getInstance];
-    [branch requestDeepLinkData:userActivity.webpageURL.absoluteString callback:^(NSDictionary *params, NSError *error) {
-        if (error == nil) {
-            if (params != nil) {
-                NSLog(@"Deep Link Params: %@", params);
-
-                // Access specific values
-                NSString *campaign = params[@"~campaign"];
-                NSLog(@"Campaign name: %@", campaign);
-            }
-        } else {
-            NSLog(@"Deep Link Error: %@ (Code: %ld)", [error localizedDescription], (long)[error code]);
-        }
-    }];
+    [[Branch getInstance] requestDeepLinkDataWithUserActivity:userActivity];
     
     // Process non-Branch userActivities here...
     return YES;
@@ -209,7 +211,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    [[Branch getInstance] handlePushNotification:userInfo];
+    [[Branch getInstance] requestDeepLinkDataWithUserInfo:userInfo];
     // process your non-Branch notification payload items here...
 }
 
@@ -280,7 +282,7 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler {
-    [[Branch getInstance] handlePushNotification:response.notification.request.content.userInfo];
+    [[Branch getInstance] requestDeepLinkDataWithUserInfo:response.notification.request.content.userInfo];
     completionHandler();
 }
 
