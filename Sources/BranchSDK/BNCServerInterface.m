@@ -33,6 +33,12 @@
     return self;
 }
 
+- (void)updateNetworkServiceTimeout:(NSTimeInterval)timeout {
+    if ([self.networkService respondsToSelector:@selector(setDefaultTimeoutInterval:)]) {
+        [self.networkService setDefaultTimeoutInterval:timeout];
+    }
+}
+
 - (void) dealloc {
     [self.networkService cancelAllOperations];
     self.networkService = nil;

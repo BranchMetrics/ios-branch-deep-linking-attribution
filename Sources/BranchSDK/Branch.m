@@ -532,6 +532,8 @@ static NSString *bnc_branchKey = nil;
 
 - (void)setNetworkTimeout:(NSTimeInterval)timeout {
     self.preferenceHelper.timeout = timeout;
+    // Also update the NSURLSession configuration timeout
+    [self.serverInterface updateNetworkServiceTimeout:timeout];
 }
 
 - (void)setMaxRetries:(NSInteger)maxRetries {

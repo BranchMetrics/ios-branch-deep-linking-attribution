@@ -115,4 +115,9 @@
 @optional
 - (NSError*) pinSessionToPublicSecKeyRefs:(NSArray/**<SecKeyRef>*/*)publicKeys __deprecated;
 
+/// Sets the default timeout interval for network operations.
+/// When changed, this should invalidate any cached session so it gets recreated with the new timeout.
+@optional
+- (void) setDefaultTimeoutInterval:(NSTimeInterval)defaultTimeoutInterval;
+
 @end
