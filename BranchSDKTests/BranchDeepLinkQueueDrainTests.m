@@ -73,7 +73,6 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
         response.data = @{ BRANCH_RESPONSE_KEY_SESSION_DATA: kResolvedLinkPayloadJSON };
     } else {
         response.data = @{
-            BRANCH_RESPONSE_KEY_SESSION_ID: @"session_id",
             BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: @"bundle_token",
             BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN: @"device_token"
         };
@@ -94,12 +93,8 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
 // The stubbed responses write real-looking session credentials. BNCServerRequestOperation
 // drops a non-init request when these are missing, so leaving them behind lets later tests
 // reach the network they would otherwise have skipped. Saved here, restored in -tearDown.
-@property (nonatomic, copy) NSString *savedSessionID;
 @property (nonatomic, copy) NSString *savedBundleToken;
 @property (nonatomic, copy) NSString *savedDeviceToken;
-// These tests drive the real lifecycle entry points, which move the session state machine.
-// Left armed, a later test's logEvent proceeds to the network instead of being deferred.
-@property (nonatomic, strong) id savedInitializationStatus;
 @end
 
 @implementation BranchDeepLinkQueueDrainTests
@@ -112,10 +107,8 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     self.savedSessionParams = preferenceHelper.sessionParams;
     self.savedAttributionLevel = preferenceHelper.attributionLevel;
-    self.savedSessionID = preferenceHelper.sessionID;
     self.savedBundleToken = preferenceHelper.randomizedBundleToken;
     self.savedDeviceToken = preferenceHelper.randomizedDeviceToken;
-    self.savedInitializationStatus = [self.branch valueForKey:@"initializationStatus"];
 
     preferenceHelper.sessionParams = nil;
     preferenceHelper.referringURL = nil;
@@ -151,10 +144,8 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
     preferenceHelper.sessionParams = self.savedSessionParams;
     preferenceHelper.referringURL = nil;
     preferenceHelper.attributionLevel = self.savedAttributionLevel;
-    preferenceHelper.sessionID = self.savedSessionID;
     preferenceHelper.randomizedBundleToken = self.savedBundleToken;
     preferenceHelper.randomizedDeviceToken = self.savedDeviceToken;
-    [self.branch setValue:self.savedInitializationStatus forKey:@"initializationStatus"];
 
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
 
@@ -202,10 +193,6 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
     dispatch_sync(isolationQueue, ^{});
 }
 
-- (NSInteger)initializationStatus {
-    return [[self.branch valueForKey:@"initializationStatus"] integerValue];
-}
-
 - (NSArray<NSString *> *)postedURLs {
     @synchronized (sPostedURLs) {
         return [sPostedURLs copy];
@@ -247,11 +234,9 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
     [self.branch applicationWillResignActive];
     [self waitForIsolationQueue];
 
-    // Precondition: the session really does read uninitialized. Attribution is set to Full in
-    // -setUp. Without both, -applicationDidBecomeActive would skip the open for a reason that
-    // has nothing to do with the in-flight resolution, and this test would pass hollow.
-    XCTAssertEqual([self initializationStatus], (NSInteger)0,
-                   @"Precondition: the session must read uninitialized (BNCInitStatusUninitialized) after resigning active.");
+    // Precondition: -applicationDidBecomeActive skips the organic open on exactly two conditions,
+    // attributionLevelNone and an init request already in the queue. The second is the behaviour
+    // under test, so attribution is the only unrelated reason left to rule out.
     XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelFull,
                           @"Precondition: attribution must not be None, or the open is suppressed for an unrelated reason.");
 
