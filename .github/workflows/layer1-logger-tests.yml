@@ -139,6 +139,17 @@ jobs:
               echo "No wire requests were captured."
             fi
             echo
+            echo "Scenario coverage:"
+            echo
+            echo "No scenario is authored yet, so the endpoint table above is the only assertion this gate makes."
+            echo
+            echo "| scenario group | status |"
+            echo "| --- | --- |"
+            echo "| Cold (C1–C3) | not implemented |"
+            echo "| Warm (W1–W2) | not implemented |"
+            echo "| Hot (H1–H2) | not implemented |"
+            echo "| Negative / guards (N1–N4) | not implemented |"
+            echo
             if [ "${{ steps.validate.outcome }}" = "success" ]; then
               echo "Result: **PASS**"
             else
@@ -147,6 +158,14 @@ jobs:
               echo '```'
               grep '^FAILED:' /tmp/l1-output.txt || echo "(no FAILED lines; see the job log)"
               echo '```'
+              echo
+              echo "<details><summary>Captured wire log</summary>"
+              echo
+              echo '```'
+              if [ -s branchlogs.txt ]; then head -c 40000 branchlogs.txt; echo; else echo "(branchlogs.txt is empty or missing)"; fi
+              echo '```'
+              echo
+              echo "</details>"
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 
