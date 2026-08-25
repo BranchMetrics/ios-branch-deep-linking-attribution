@@ -50,6 +50,12 @@ REQUEST_LINE_RE = re.compile(
     r"\[BranchLog\]\s+Got\s+(?P<url>https?://[^\s]+)\s+Request:\s*(?P<body>\{.*\})\s*$"
 )
 
+# The normalized capture entry. `parse_branch_logs` is the only
+# platform-specific layer; everything downstream sees this shape, so the
+# Android validator can feed the same checks from its own log format.
+# `uri` is the URL path, `url` the full URL, `request` the decoded body.
+CAPTURE_ENTRY_KEYS = ("uri", "url", "request")
+
 # The device/SDK context block every endpoint that carries it at the top
 # level must have, unconditionally. `wifi` and `ui_mode` are intentionally
 # absent — iOS does not emit them. See the v4 Conversion API parity tracker
@@ -179,18 +185,128 @@ REQUIRED_PER_ENDPOINT = {
 ATTRIBUTION_LEVEL_FULL = "FULL"
 ATTRIBUTION_LEVEL_NONE = "NONE"
 
-# A session on this line always posts an open, so a capture without one is
-# a broken capture, not a quiet pass. This replaces master's mandatory
-# `/v1/install`, which this line never sends.
-MANDATORY_ENDPOINT = "/v3/events/open"
-
-# Endpoints a scenario guarantees its run drove, and which are therefore
-# enforced rather than noted when absent. Without --scenario nothing extra
-# is enforced, which is what the install-only L1 run relies on.
-SCENARIO_REQUIRED_ENDPOINTS = {
-    "install": (),
-    "deeplink": ("/v3/deeplink",),
+# What the wire must look like after a scenario ran. All endpoint names live
+# here rather than in the checks, so the same checks serve Android's `/v1/*`
+# capture and this line's `/v3/*` one.
+#
+#   counts  endpoint -> exact number of requests. 0 forbids the endpoint.
+#           An endpoint absent from counts is unconstrained.
+#   order   (earlier, later) pairs. Relative, not adjacency: a request
+#           between the two does not violate it.
+#
+# `install` and `deeplink` are not test-plan scenarios — they are the runs
+# the harness drives today. Plan scenarios use their plan ID (C1, W1, N4).
+SCENARIO_CONTRACTS = {
+    # N1 organic_open: a launch with no link. The test plan also asks that the
+    # open carry no link data; that is a field-level assertion, and this layer
+    # is bounded at counts and required-field presence, so N1 is not fully
+    # covered here. The endpoint half is.
+    "N1": {
+        "counts": {"/v3/events/open": 1, "/v3/deeplink": 0},
+        "order": (),
+    },
+    # N3 attribution_none: a link resolved while the consumer-protection level
+    # is NONE. BNCServerRequestOperation drops every request at that level
+    # except BranchRequestDeepLink, so the resolution goes out and the
+    # attributed open does not. The test plan also asks that identifiers be
+    # cleared, which is a field-level assertion this layer does not make.
+    "N3": {
+        "counts": {"/v3/deeplink": 1, "/v3/events/open": 0},
+        "order": (),
+    },
+    "deeplink": {
+        "counts": {"/v3/deeplink": 1},
+        "order": (("/v3/deeplink", "/v3/events/open"),),
+    },
 }
+
+
+class UnknownScenario(Exception):
+    """Raised for a scenario name with no contract."""
+
+
+def contract_for(scenario):
+    """Return the contract for `scenario`, or raise UnknownScenario.
+
+    A typo must fail loudly rather than validate against nothing."""
+    try:
+        return SCENARIO_CONTRACTS[scenario]
+    except KeyError:
+        known = ", ".join(sorted(SCENARIO_CONTRACTS))
+        raise UnknownScenario(
+            f"No contract for scenario '{scenario}'. Known scenarios: {known}"
+        )
+
+
+# Body field carrying the attempt number, added by
+# `BNCServerInterface addRetryCount:toJSON:`. First attempt is 0.
+RETRY_COUNT_FIELD = "retryNumber"
+
+
+def collapse_retries(entries):
+    """Drop retry attempts so a capture holds one entry per logical request.
+
+    The SDK logs a line per attempt: `genericHTTPRequest` calls its retry
+    handler, which re-runs `preparePostRequest`, and that is what writes the
+    capture line. Counting attempts would fail an exact-count contract
+    whenever the network is flaky, which is the opposite of what the counts
+    are for. Entries without the field are kept — a capture from a platform
+    that does not carry it is not silently emptied."""
+    return [entry for entry in entries if not is_retry_attempt(entry)]
+
+
+def is_retry_attempt(entry):
+    """True for a request that is a repeat of an earlier attempt."""
+    request = entry.get("request")
+    if not isinstance(request, dict):
+        return False
+    attempt = request.get(RETRY_COUNT_FIELD)
+    return isinstance(attempt, int) and not isinstance(attempt, bool) and attempt > 0
+
+
+def occurs_after(uris, earlier, later):
+    """True when some `later` request appears after some `earlier` one.
+
+    Relative, not adjacency: unrelated traffic between the two does not
+    violate it. Deliberately not "the first `later` follows the first
+    `earlier`" — a launch open legitimately precedes a link resolution, so
+    that reading would fail a correct capture.
+
+    Fail-closed: if either endpoint is missing the order is not satisfied."""
+    for index, uri in enumerate(uris):
+        if uri == earlier and later in uris[index + 1:]:
+            return True
+    return False
+
+
+def assert_contract(entries, contract):
+    """Check a normalized capture against a scenario contract.
+
+    Returns a list of error strings, empty when the capture satisfies it.
+    Holds no endpoint name of its own: every value compared comes from the
+    contract, so the same checks serve either platform's capture."""
+    errors = []
+    uris = [entry["uri"] for entry in entries]
+
+    for endpoint, expected in sorted(contract["counts"].items()):
+        actual = uris.count(endpoint)
+        if actual == expected:
+            continue
+        if expected == 0:
+            errors.append(
+                f"'{endpoint}' must not be captured for this scenario, "
+                f"but appeared {actual} time(s)."
+            )
+        else:
+            errors.append(
+                f"Expected {expected} '{endpoint}' request(s), captured {actual}."
+            )
+
+    for earlier, later in contract["order"]:
+        if not occurs_after(uris, earlier, later):
+            errors.append(f"Expected a '{later}' request after a '{earlier}' one.")
+
+    return errors
 
 
 def parse_branch_logs(file_path):
@@ -225,7 +341,7 @@ def parse_branch_logs(file_path):
 
             entries.append({"uri": path, "url": url, "request": request})
 
-    return entries
+    return collapse_retries(entries)
 
 
 def lookup_field(request, field):
@@ -345,12 +461,13 @@ def validate_request(entry, idx, total):
     return errors
 
 
-def validate_entries(entries, scenario=None):
-    """Run validate_request on every entry plus the top-level
-    open-must-be-present check. Returns aggregated errors.
+def validate_entries(entries, contract):
+    """Check a capture against `contract` and validate every request's
+    required fields. Returns aggregated errors.
 
-    `scenario` names what the run drove; its endpoints are then required
-    instead of noted. Absent, only MANDATORY_ENDPOINT is enforced."""
+    The contract carries what the scenario must have put on the wire —
+    counts, forbidden endpoints and ordering. There is no global
+    mandatory-endpoint rule: a scenario that requires an open says so."""
     errors = []
 
     if not entries:
@@ -359,26 +476,7 @@ def validate_entries(entries, scenario=None):
 
     print(f"Captured {len(entries)} Branch wire requests. Validating...")
 
-    found_paths = [e["uri"] for e in entries]
-    if MANDATORY_ENDPOINT not in found_paths:
-        errors.append(
-            f"Mandatory endpoint '{MANDATORY_ENDPOINT}' was not captured."
-        )
-
-    required_endpoints = SCENARIO_REQUIRED_ENDPOINTS.get(scenario, ())
-    for endpoint in required_endpoints:
-        if endpoint not in found_paths:
-            errors.append(
-                f"Scenario '{scenario}' drives '{endpoint}', which was not "
-                "captured."
-            )
-
-    if "/v3/deeplink" not in found_paths and "/v3/deeplink" not in required_endpoints:
-        print(
-            "Note: '/v3/deeplink' not present in capture. Only emitted when a "
-            "Branch link is resolved, which the L1 runner does not do; not "
-            "enforced here."
-        )
+    errors.extend(assert_contract(entries, contract))
 
     for i, entry in enumerate(entries, start=1):
         errors.extend(validate_request(entry, i, len(entries)))
@@ -396,12 +494,9 @@ def main():
     )
     parser.add_argument(
         "--scenario",
-        choices=sorted(SCENARIO_REQUIRED_ENDPOINTS),
-        default=None,
-        help=(
-            "what the run drove; its endpoints become required instead of "
-            "noted. Omit to enforce only the mandatory open."
-        ),
+        choices=sorted(SCENARIO_CONTRACTS),
+        required=True,
+        help="which scenario produced this capture; selects its contract",
     )
     args = parser.parse_args()
     log_file_path = args.log_file
@@ -421,7 +516,7 @@ def main():
     except OSError:
         pass
 
-    errors = validate_entries(entries, scenario=args.scenario)
+    errors = validate_entries(entries, contract_for(args.scenario))
 
     if errors:
         print("\n--- VALIDATION FAILED ---")
