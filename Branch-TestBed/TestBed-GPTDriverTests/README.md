@@ -60,7 +60,11 @@ TestBed-GPTDriverTests/
 │   ├── MobileBoost.local.xcconfig  — GITIGNORED, your real key
 │   └── MobileBoost.local.xcconfig.example
 ├── Deterministic/                  — 100% XCUITest, no AI
-│   └── LinkCreationDeterministicTest.swift
+│   ├── LinkCreationDeterministicTest.swift
+│   ├── L1WireValidationTest.swift          ← install capture for the L1 validator
+│   ├── DeepLinkWireValidationTest.swift    ← deeplink capture; own harness run, see
+│   │                                         scripts/README.md "Scenarios"
+│   └── EventAndLinkWireCaptureTest.swift   ← ad-hoc event/link wire survey
 ├── Hybrid/                         — XCUITest actions + AI validation
 │   ├── LinkCreationHybridTest.swift
 │   ├── QRCodeHybridTest.swift
