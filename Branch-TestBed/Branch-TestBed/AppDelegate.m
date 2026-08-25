@@ -106,7 +106,17 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // ── Initialize ───────────────────────────────────────────────────────
     [Branch initialize:config];
-
+    
+    // Set user Alias Example
+    
+//    [[Branch sharedInstance] setUserAlias:@"your_user_alias" completion:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
+//        if (error) {
+//            NSLog(@"Error setting user alias: %@", error);
+//        } else {
+//            NSLog(@"Successfully set alias. Response: %@", params);
+//        }
+//    }];
+    
     return YES;
 }
 
