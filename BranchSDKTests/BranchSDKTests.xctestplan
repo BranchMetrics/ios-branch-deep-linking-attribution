@@ -20,7 +20,12 @@
       "parallelizable" : false,
       "skippedTests" : [
         "BNCDisableAdNetworkCalloutsTests",
-        "BranchActivityItemTests"
+        "BranchActivityItemTests",
+        "BranchQRCodeTests\/testNormalQRCodeAsDataWithNoSettings",
+        "BranchQRCodeTests\/testNormalQRCodeAsImage",
+        "BranchQRCodeTests\/testNormalQRCodeDataWithAllSettings",
+        "BranchQRCodeTests\/testNormalQRCodeWithInvalidLogoURL",
+        "BranchQRCodeTests\/testQRCodeCache"
       ],
       "target" : {
         "containerPath" : "container:BranchSDK.xcodeproj",

@@ -56,7 +56,6 @@ static NSString * const kResolvedLinkPayloadJSON =
 // The stubbed open response writes a real-looking session id. BNCServerRequestOperation drops
 // a non-init request when the session credentials are missing, so leaving one behind lets
 // later tests reach the network they would otherwise have skipped.
-@property (nonatomic, copy) NSString *savedSessionID;
 @property (nonatomic, copy) NSString *savedSpotlightIdentifier;
 @end
 
@@ -69,7 +68,6 @@ static NSString * const kResolvedLinkPayloadJSON =
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     self.savedSessionParams = preferenceHelper.sessionParams;
     self.savedAttributionLevel = preferenceHelper.attributionLevel;
-    self.savedSessionID = preferenceHelper.sessionID;
     self.savedSpotlightIdentifier = preferenceHelper.spotlightIdentifier;
 
     preferenceHelper.sessionParams = nil;
@@ -99,7 +97,6 @@ static NSString * const kResolvedLinkPayloadJSON =
     preferenceHelper.sessionParams = self.savedSessionParams;
     preferenceHelper.referringURL = nil;
     preferenceHelper.attributionLevel = self.savedAttributionLevel;
-    preferenceHelper.sessionID = self.savedSessionID;
     preferenceHelper.spotlightIdentifier = self.savedSpotlightIdentifier;
 
     // Drain any already-scheduled async block against this clean baseline.
@@ -230,7 +227,7 @@ static NSString * const kResolvedLinkPayloadJSON =
     [BNCPreferenceHelper sharedInstance].sessionParams = kResolvedLinkPayloadJSON;
 
     BranchRequestOpen *openRequest = [[BranchRequestOpen alloc] initWithCallback:nil];
-    [openRequest processResponse:[self responseWithData:@{ BRANCH_RESPONSE_KEY_SESSION_ID: @"session_id" }]
+    [openRequest processResponse:[self responseWithData:@{ BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN: @"device_token" }]
                            error:nil];
 
     NSDictionary *params = [self.branch getLatestReferringParams];

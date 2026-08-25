@@ -53,6 +53,7 @@
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g5q-Nq-dCK">
                                 <rect key="frame" x="16" y="334" width="343" height="50"/>
+                                <accessibility key="accessibilityConfiguration" identifier="btn_show_logs"/>
                                 <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="THd-Hg-6zt"/>
@@ -189,6 +190,7 @@
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" placeholder="Your Branch Link" minimumFontSize="10" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="SOP-3u-nhT" userLabel="branchLinkTextField">
                                                     <rect key="frame" x="16" y="11" width="311" height="22"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="txt_branch_link"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="280" id="QJ6-EZ-1I1"/>
                                                     </constraints>
@@ -215,6 +217,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3jJ-y4-FGc" userLabel="createBranchLinkButton">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_create_branch_link"/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="Create Branch Link" image="link" catalog="system">
@@ -242,6 +245,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eLX-a4-zOU">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_share_link"/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="Share Link" image="square.and.arrow.up" catalog="system">
@@ -269,7 +273,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jIx-yz-UFS">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
-                                                    <accessibility key="accessibilityConfiguration" identifier="tracking"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_share_link_with_metadata"/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="Share Link with LPLinkMetadata" image="square.and.arrow.up.on.square" catalog="system">
@@ -297,6 +301,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iq4-GJ-TsK">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_open_branch_link"/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="Open Branch Link" image="arrow.up.right.square" catalog="system">
@@ -324,7 +329,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mUN-NU-xns">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
-                                                    <accessibility key="accessibilityConfiguration" identifier="tracking"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_create_qr_code"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="27" id="Ger-Li-JdZ"/>
                                                         <constraint firstAttribute="width" constant="190" id="Kcd-Il-mHi"/>
@@ -361,6 +366,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bek-2J-IjD">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_view_first_referring_params"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="190" id="Th6-ew-uaE"/>
                                                     </constraints>
@@ -393,6 +399,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NJe-OT-1Eg">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_view_latest_referring_params"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="190" id="cAM-OI-xnD"/>
                                                     </constraints>
@@ -425,6 +432,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4fu-zA-ceg" userLabel="Set Partner Params">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_toggle_partner_params"/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="Set Partner Params" image="folder.badge.plus" catalog="system">
@@ -452,6 +460,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gZa-hA-OtK">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_simulate_content_access"/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="Simulate Content Access" image="doc.viewfinder.fill" catalog="system">
@@ -479,6 +488,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2PF-pu-99P">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_set_user_id"/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="Set User ID" image="person" catalog="system">
@@ -510,6 +520,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nVo-m7-w7f">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_send_commerce_event"/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="Send Commerce Event" image="bag" catalog="system">
@@ -537,6 +548,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="L2t-YG-cpE">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_send_content_event"/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="Send Content Event" image="photo.artframe" catalog="system">
@@ -564,6 +576,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JRt-Kp-qAQ">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_send_lifecycle_event"/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="Send Lifecycle Event" image="trophy" catalog="system">
@@ -591,6 +604,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="467-af-xm1">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_in_app_purchase_event"/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="In-App Purchase Event" image="trophy" catalog="system">
@@ -618,6 +632,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PnJ-Tp-Oq2">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_in_app_subscription_event"/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="In-App Subscription Event" image="trophy" catalog="system">
@@ -649,6 +664,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JXr-9x-vX0">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_register_with_spotlight"/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="Register with Spotlight" image="light.beacon.max" catalog="system">
@@ -676,6 +692,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jWK-QY-Hr2">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_simulate_content_access_alt"/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="Simulate Content Access" image="doc.viewfinder.fill" catalog="system">
@@ -703,6 +720,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t8S-Z0-hG9">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_load_logs"/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="Load Branch Logs" image="doc.text" catalog="system">
@@ -730,6 +748,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cLu-WM-Ib5">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_logout"/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="Simulate Logout" image="rectangle.portrait.and.arrow.right" catalog="system">
@@ -757,7 +776,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UTG-yQ-PWO">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
-                                                    <accessibility key="accessibilityConfiguration" identifier="tracking"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_go_to_paste_control"/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="Go To Paste Control View" image="rectangle.and.paperclip" catalog="system">
@@ -785,7 +804,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B08-Xj-VD3">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
-                                                    <accessibility key="accessibilityConfiguration" identifier="tracking"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_consumer_protection_level"/>
                                                     <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                     <state key="normal" title="Consumer Protection Preference" image="checkmark.shield" catalog="system">
@@ -793,7 +812,6 @@
                                                     </state>
                                                     <connections>
                                                         <action selector="changeConsumerProtectionAttributionLevel:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="1O2-0G-ODA"/>
-                                                        <action selector="goToPasteControlPressed:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="cBJ-Fu-bvO"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
@@ -805,8 +823,36 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="QxR-ER-AVt">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="u4f-10-QLt">
                                         <rect key="frame" x="16" y="1174" width="343" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="u4f-10-QLt" id="jmn-fV-qvx">
+                                            <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7Rz-jF-ETn">
+                                                    <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="btn_disable_tracking"/>
+                                                    <inset key="titleEdgeInsets" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                    <inset key="imageEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                    <state key="normal" title="Disable Tracking" image="eye" catalog="system">
+                                                        <color key="titleColor" systemColor="linkColor"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="disableTracking:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="aRv-6b-mHD"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="bottom" secondItem="7Rz-jF-ETn" secondAttribute="bottom" id="89b-k6-oFc"/>
+                                                <constraint firstItem="7Rz-jF-ETn" firstAttribute="leading" secondItem="jmn-fV-qvx" secondAttribute="leading" id="goN-NY-qmK"/>
+                                                <constraint firstItem="7Rz-jF-ETn" firstAttribute="top" secondItem="jmn-fV-qvx" secondAttribute="top" id="LND-nh-JHa"/>
+                                                <constraint firstAttribute="trailing" secondItem="7Rz-jF-ETn" secondAttribute="trailing" id="pyH-P6-K8K"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="QxR-ER-AVt">
+                                        <rect key="frame" x="16" y="1218" width="343" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="QxR-ER-AVt" id="TeU-im-aLH">
                                             <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
@@ -843,6 +889,7 @@
                     <navigationItem key="navigationItem" title="Branch TestBed" largeTitleDisplayMode="always" id="eWU-bT-5CF" userLabel="Branch-TestBed"/>
                     <connections>
                         <outlet property="branchLinkTextField" destination="SOP-3u-nhT" id="H0r-W5-wGG"/>
+                        <outlet property="disableTrackingButton" destination="7Rz-jF-ETn" id="WNq-l3-xiU"/>
                         <outlet property="setParnerParamsButton" destination="4fu-zA-ceg" id="oWP-E3-0uu"/>
                         <segue destination="fQe-6g-cKp" kind="push" identifier="ShowLogOutput" id="0UI-6t-JlA"/>
                         <segue destination="nU2-HM-nNx" kind="push" identifier="GoToPasteControlView" id="a1o-Ia-5wh"/>
