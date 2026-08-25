@@ -28,6 +28,31 @@ nests device fields under `user_data` on `/v2/event/*`), the
 open-must-be-captured guard, the deep-link contract, the
 attribution-level tiers, and the uncontracted-endpoint case.
 
+## Scenarios
+
+Each scenario is one harness invocation with its own capture.
+`-[AppDelegate setBranchLogFile]` deletes `branchlogs.txt` on every launch,
+so two scenarios sharing one run would leave only the last one's capture.
+
+`--scenario` names what the run drove, which promotes that scenario's
+endpoints from a note to a failure. Omit it and only the mandatory open is
+enforced — that is the install gate's behaviour and it is unchanged.
+
+```bash
+# install: a launch, no link resolved
+./scripts/run_l1_instrumented.sh
+python3 scripts/validate_l1_logs.py branchlogs.txt
+
+# deeplink: taps "Request DeepLink", which posts /v3/deeplink
+ONLY_TESTING=TestBed-GPTDriverTests/DeepLinkWireValidationTest \
+OUTPUT_LOG=branchlogs-deeplink.txt \
+  ./scripts/run_l1_instrumented.sh
+python3 scripts/validate_l1_logs.py branchlogs-deeplink.txt --scenario deeplink
+```
+
+An unrecognised `--scenario` exits 2 rather than falling back to the
+weaker default, so a typo in a CI matrix cannot silently downgrade the gate.
+
 ## Endpoints on this line
 
 The `4.0.0-beta` line does **not** emit `/v1/install` or `/v1/open`.
