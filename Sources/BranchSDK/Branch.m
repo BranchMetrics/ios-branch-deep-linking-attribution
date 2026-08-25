@@ -2369,7 +2369,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     API_AVAILABLE(ios(13.0), macCatalyst(13.1)) {
     [[BranchLogger shared] logDebug:@"requestDeepLinkDataWithSceneOptions called" error:nil];
 
-    // Mirror BranchScene.initSessionWithSceneOptions: build the same synthetic launchOptions
+    // Build the synthetic launchOptions the removed BranchScene scene-init API used to build,
     // so requestDeepLinkDataWithLaunchOptions applies the same early-return logic.
     NSMutableDictionary *launchOptions = [[NSMutableDictionary alloc] init];
     if (connectionOptions.userActivities.count) {
@@ -2385,7 +2385,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     // Mirror BranchScene: explicitly resolve the URL from connectionOptions,
     // equivalent to the continueUserActivity: / openURLContexts: calls BranchScene makes
-    // after its initSceneSession call.
+    // once the session is up — the work `+[Branch initialize:]` now covers.
     if (connectionOptions.userActivities.count) {
         NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject;
         if ([activity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {

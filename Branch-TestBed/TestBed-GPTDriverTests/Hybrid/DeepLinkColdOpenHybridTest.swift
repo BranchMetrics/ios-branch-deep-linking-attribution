@@ -41,8 +41,8 @@ final class DeepLinkColdOpenHybridTest: BaseGptDriverTest {
         // instance keeps the GptDriver's nativeApp reference valid.
         // The AppDelegate `#if DEBUG` hook picks the arg up and
         // delivers a synthetic continueUserActivity after ~1.5s —
-        // enough for Branch.initSessionWithLaunchOptions to register
-        // its deep link handler.
+        // enough for Branch.initialize(_:) to register its deep link
+        // handler.
         app.terminate()
         app.launchArguments += ["-testDeepLinkURL", generatedUrl]
         app.launch()

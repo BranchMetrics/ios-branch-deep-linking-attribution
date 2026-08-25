@@ -69,7 +69,6 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
         response.data = @{ BRANCH_RESPONSE_KEY_SESSION_DATA: kResolvedLinkPayloadJSON };
     } else {
         response.data = @{
-            BRANCH_RESPONSE_KEY_SESSION_ID: @"session_id",
             BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: @"bundle_token",
             BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN: @"device_token"
         };
@@ -90,12 +89,8 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
 // The stubbed responses write real-looking session credentials. BNCServerRequestOperation
 // drops a non-init request when these are missing, so leaving them behind lets later tests
 // reach the network they would otherwise have skipped. Saved here, restored in -tearDown.
-@property (nonatomic, copy) NSString *savedSessionID;
 @property (nonatomic, copy) NSString *savedBundleToken;
 @property (nonatomic, copy) NSString *savedDeviceToken;
-// These tests drive the real lifecycle entry points, which move the session state machine.
-// Left armed, a later test's logEvent proceeds to the network instead of being deferred.
-@property (nonatomic, strong) id savedInitializationStatus;
 @end
 
 @implementation BranchDeepLinkQueueDrainTests
@@ -108,10 +103,8 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     self.savedSessionParams = preferenceHelper.sessionParams;
     self.savedAttributionLevel = preferenceHelper.attributionLevel;
-    self.savedSessionID = preferenceHelper.sessionID;
     self.savedBundleToken = preferenceHelper.randomizedBundleToken;
     self.savedDeviceToken = preferenceHelper.randomizedDeviceToken;
-    self.savedInitializationStatus = [self.branch valueForKey:@"initializationStatus"];
 
     preferenceHelper.sessionParams = nil;
     preferenceHelper.referringURL = nil;
@@ -147,10 +140,8 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
     preferenceHelper.sessionParams = self.savedSessionParams;
     preferenceHelper.referringURL = nil;
     preferenceHelper.attributionLevel = self.savedAttributionLevel;
-    preferenceHelper.sessionID = self.savedSessionID;
     preferenceHelper.randomizedBundleToken = self.savedBundleToken;
     preferenceHelper.randomizedDeviceToken = self.savedDeviceToken;
-    [self.branch setValue:self.savedInitializationStatus forKey:@"initializationStatus"];
 
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
 
@@ -198,10 +189,6 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
     dispatch_sync(isolationQueue, ^{});
 }
 
-- (NSInteger)initializationStatus {
-    return [[self.branch valueForKey:@"initializationStatus"] integerValue];
-}
-
 - (NSArray<NSString *> *)postedURLs {
     @synchronized (sPostedURLs) {
         return [sPostedURLs copy];
@@ -223,10 +210,10 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
 // at all: -containsInstallOrOpen counts an in-flight BranchRequestDeepLink as init traffic, so
 // the foreground short-circuits rather than racing the resolution it would have overwritten.
 //
-// -applicationDidBecomeActive sends that open only when three things hold at once: attribution
-// is not None, the session reads uninitialized, and no install or open is already queued. The
-// first two are established and asserted below, so a missing open can only be the third — this
-// fails if the queue stops recognising the 4.0 request classes.
+// -applicationDidBecomeActive sends that open only when two things hold at once: attribution is
+// not None, and no install or open is already queued. The first is established and asserted
+// below, so a missing open can only be the second — this fails if the queue stops recognising
+// the 4.0 request classes.
 - (void)testLiveResolutionSuppressesTheLifecycleOrganicOpen {
     [self.branch requestDeepLinkData:kResolvedLinkURL callback:nil];
     [self waitForCondition:^BOOL{ return [self enqueuedOperationCount] >= 1; }
@@ -238,16 +225,14 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
     XCTAssertEqualObjects([self enqueuedRequestClassNames], @[@"BranchRequestDeepLink"],
                           @"Precondition: the queued operation must be the deep link resolution, alone.");
 
-    // Production path: resign marks the session uninitialized, which is what arms the organic
-    // open on the next foreground.
+    // Production path: background before foregrounding, so the foreground under test arrives the
+    // way it does in the app. Resign itself only arms the open response lock.
     [self.branch applicationWillResignActive];
     [self waitForIsolationQueue];
 
-    // Precondition: the session really does read uninitialized. Attribution is set to Full in
-    // -setUp. Without both, -applicationDidBecomeActive would skip the open for a reason that
-    // has nothing to do with the in-flight resolution, and this test would pass hollow.
-    XCTAssertEqual([self initializationStatus], (NSInteger)0,
-                   @"Precondition: the session must read uninitialized (BNCInitStatusUninitialized) after resigning active.");
+    // Precondition: attribution is Full, set in -setUp. Without it, -applicationDidBecomeActive
+    // would skip the open for a reason that has nothing to do with the in-flight resolution, and
+    // this test would pass hollow.
     XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelFull,
                           @"Precondition: attribution must not be None, or the open is suppressed for an unrelated reason.");
 
