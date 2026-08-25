@@ -36,7 +36,6 @@ FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 #import "BranchPasteControl.h"
 
 // Used by Branch.h for debug and testing APIs. Need to move these.
-#import "BNCInitSessionResponse.h"
 #import "BNCCallbacks.h"
 #import "BNCLinkCache.h"
 #import "BNCPreferenceHelper.h"

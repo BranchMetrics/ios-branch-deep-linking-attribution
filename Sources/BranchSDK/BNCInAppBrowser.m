@@ -77,7 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)safariViewControllerDidFinish:(SFSafariViewController *)controller {
-    [[Branch getInstance] initUserSessionAndCallCallback:YES sceneIdentifier:nil urlString:nil reset:YES];
+    [[Branch getInstance] requestDeepLinkData:nil callback:nil];
 }
 
 @end
