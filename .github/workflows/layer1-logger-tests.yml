@@ -158,7 +158,7 @@ jobs:
               echo "<details><summary>Captured wire log</summary>"
               echo
               echo '```'
-              if [ -s branchlogs.txt ]; then head -c 40000 branchlogs.txt; else echo "(branchlogs.txt is empty or missing)"; fi
+              if [ -s branchlogs.txt ]; then head -c 40000 branchlogs.txt; echo; else echo "(branchlogs.txt is empty or missing)"; fi
               echo '```'
               echo
               echo "</details>"
