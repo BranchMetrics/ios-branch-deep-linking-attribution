@@ -10,11 +10,13 @@ They encode the 4.0.0-beta wire protocol (`/v3/events/open`, `/v3/deeplink`,
 `/v2/event/standard`, `/v1/url`), not master's v1 protocol.
 """
 
+import inspect
 import io
 import os
 import sys
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
+from urllib.parse import urlparse
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, THIS_DIR)
@@ -28,13 +30,18 @@ def _fixture(name):
     return os.path.join(FIXTURE_DIR, name)
 
 
-def _run_validation(fixture_name, scenario=None):
+# Asserts nothing about the wire shape, so a field-validation test is not
+# also asserting counts. Scenario tests pass a real contract instead.
+ANY_CAPTURE = {"counts": {}, "order": ()}
+
+
+def _run_validation(fixture_name, contract=ANY_CAPTURE):
     """Run validate_entries on a fixture and capture stdout. Returns
     (errors, captured_output)."""
     entries = v.parse_branch_logs(_fixture(fixture_name))
     buf = io.StringIO()
     with redirect_stdout(buf):
-        errors = v.validate_entries(entries, scenario=scenario)
+        errors = v.validate_entries(entries, contract)
     return errors, buf.getvalue()
 
 
@@ -49,6 +56,241 @@ class ParseBranchLogsTests(unittest.TestCase):
         self.assertEqual(entries[0]["uri"], "/v3/events/open")
         self.assertEqual(entries[1]["uri"], "/v1/url")
         self.assertIsInstance(entries[0]["request"], dict)
+
+
+class NormalizedCaptureFormatTests(unittest.TestCase):
+    """The entry shape is the seam between the platform-specific parser and
+    every check downstream. Android's parser emits the same three keys, so a
+    drift here silently breaks the shared checks rather than this parser."""
+
+    def test_parser_emits_exactly_the_declared_keys(self):
+        entries = v.parse_branch_logs(_fixture("happy_path.txt"))
+        self.assertTrue(entries)
+        for entry in entries:
+            self.assertEqual(
+                tuple(sorted(entry)), tuple(sorted(v.CAPTURE_ENTRY_KEYS))
+            )
+
+    def test_uri_is_the_url_path(self):
+        entries = v.parse_branch_logs(_fixture("happy_path.txt"))
+        for entry in entries:
+            self.assertEqual(entry["uri"], urlparse(entry["url"]).path)
+
+
+class ScenarioContractModelTests(unittest.TestCase):
+    """The contract carries every endpoint name, so the checks can stay
+    platform- and API-version-agnostic. Not yet wired into validation."""
+
+    def test_every_contract_declares_counts_and_order(self):
+        for name, contract in v.SCENARIO_CONTRACTS.items():
+            self.assertEqual(
+                set(contract), {"counts", "order"}, f"contract '{name}'"
+            )
+
+    def test_counts_are_non_negative_integers(self):
+        for name, contract in v.SCENARIO_CONTRACTS.items():
+            for endpoint, count in contract["counts"].items():
+                self.assertIsInstance(count, int, f"{name}:{endpoint}")
+                self.assertGreaterEqual(count, 0, f"{name}:{endpoint}")
+
+    def test_order_entries_are_endpoint_pairs(self):
+        for name, contract in v.SCENARIO_CONTRACTS.items():
+            for pair in contract["order"]:
+                self.assertEqual(len(pair), 2, f"contract '{name}'")
+                self.assertNotEqual(pair[0], pair[1], f"contract '{name}'")
+
+    def test_contract_for_returns_the_named_contract(self):
+        self.assertIs(v.contract_for("deeplink"), v.SCENARIO_CONTRACTS["deeplink"])
+
+    def test_contract_for_raises_on_an_unknown_name(self):
+        # A typo must fail loudly instead of validating against nothing.
+        with self.assertRaises(v.UnknownScenario) as ctx:
+            v.contract_for("deeplnk")
+        self.assertIn("deeplnk", str(ctx.exception))
+
+
+def _capture(*uris):
+    """Normalized entries with fabricated endpoint names. The engine must not
+    care that these are not real Branch endpoints."""
+    return [{"uri": u, "url": "https://example.test" + u, "request": {}} for u in uris]
+
+
+class AssertionEngineTests(unittest.TestCase):
+    """Driven entirely from fabricated endpoints, which is what proves the
+    engine holds no endpoint name and no log format of its own."""
+
+    def test_exact_count_satisfied(self):
+        contract = {"counts": {"/alpha": 2}, "order": ()}
+        self.assertEqual(v.assert_contract(_capture("/alpha", "/alpha"), contract), [])
+
+    def test_too_many_fails(self):
+        contract = {"counts": {"/alpha": 1}, "order": ()}
+        errors = v.assert_contract(_capture("/alpha", "/alpha"), contract)
+        self.assertEqual(len(errors), 1)
+        self.assertIn("Expected 1", errors[0])
+
+    def test_too_few_fails(self):
+        contract = {"counts": {"/alpha": 2}, "order": ()}
+        errors = v.assert_contract(_capture("/alpha"), contract)
+        self.assertEqual(len(errors), 1)
+        self.assertIn("captured 1", errors[0])
+
+    def test_count_zero_forbids_the_endpoint(self):
+        contract = {"counts": {"/beta": 0}, "order": ()}
+        self.assertEqual(v.assert_contract(_capture("/alpha"), contract), [])
+        errors = v.assert_contract(_capture("/alpha", "/beta"), contract)
+        self.assertEqual(len(errors), 1)
+        self.assertIn("must not be captured", errors[0])
+
+    def test_unlisted_endpoints_are_unconstrained(self):
+        contract = {"counts": {"/alpha": 1}, "order": ()}
+        self.assertEqual(v.assert_contract(_capture("/alpha", "/gamma"), contract), [])
+
+    def test_order_holds_when_other_traffic_interleaves(self):
+        # The real shape: a launch open precedes the link resolution, and the
+        # attributed open follows it. "first after first" would fail this.
+        contract = {"counts": {}, "order": (("/beta", "/alpha"),)}
+        self.assertEqual(
+            v.assert_contract(_capture("/alpha", "/beta", "/alpha"), contract), []
+        )
+
+    def test_order_violated_when_later_never_follows(self):
+        contract = {"counts": {}, "order": (("/beta", "/alpha"),)}
+        errors = v.assert_contract(_capture("/alpha", "/beta"), contract)
+        self.assertEqual(len(errors), 1)
+        self.assertIn("after", errors[0])
+
+    def test_order_is_fail_closed_when_an_endpoint_is_absent(self):
+        # An order check that passes vacuously repeats the defect this engine
+        # exists to remove.
+        contract = {"counts": {}, "order": (("/beta", "/alpha"),)}
+        self.assertEqual(len(v.assert_contract(_capture("/alpha"), contract)), 1)
+        self.assertEqual(len(v.assert_contract([], contract)), 1)
+
+    def test_every_violation_is_reported_not_just_the_first(self):
+        contract = {"counts": {"/alpha": 5, "/beta": 0}, "order": (("/beta", "/alpha"),)}
+        self.assertEqual(len(v.assert_contract(_capture("/alpha", "/beta"), contract)), 3)
+
+    def test_the_seeded_deeplink_contract_accepts_the_real_capture_shape(self):
+        # Measured on device: open, deeplink, open.
+        errors = v.assert_contract(
+            _capture("/v3/events/open", "/v3/deeplink", "/v3/events/open"),
+            v.contract_for("deeplink"),
+        )
+        self.assertEqual(errors, [], f"Unexpected errors: {errors}")
+
+
+class EnginePortabilityTests(unittest.TestCase):
+    def test_engine_source_holds_no_endpoint_or_log_format_literal(self):
+        """The engine must be liftable into the Android repo unchanged. A
+        literal endpoint or capture-format string here would break that, and
+        would not be caught by the behavioural tests above."""
+        source = "".join(
+            inspect.getsource(fn) for fn in (v.assert_contract, v.occurs_after)
+        )
+        for forbidden in ("/v1", "/v2", "/v3", "BranchLog", "posting to", "Post value"):
+            self.assertNotIn(forbidden, source, f"engine leaked '{forbidden}'")
+
+
+class RetryCollapseTests(unittest.TestCase):
+    """One logical request is logged once per attempt, because the SDK's retry
+    handler re-runs the request builder and that is what writes the line.
+    Counting attempts would fail an exact-count contract on a flaky network."""
+
+    def test_retried_request_counts_once(self):
+        entries = v.parse_branch_logs(_fixture("retried_open.txt"))
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(entries[0]["request"][v.RETRY_COUNT_FIELD], 0)
+
+    def test_retried_capture_satisfies_an_exact_count_contract(self):
+        entries = v.parse_branch_logs(_fixture("retried_open.txt"))
+        self.assertEqual(v.assert_contract(entries, v.contract_for("N1")), [])
+
+    def test_first_attempt_is_kept(self):
+        kept = v.collapse_retries([{"uri": "/a", "url": "u", "request": {"retryNumber": 0}}])
+        self.assertEqual(len(kept), 1)
+
+    def test_entries_without_the_field_are_kept(self):
+        # Android bodies may not carry it; dropping them would empty a capture.
+        kept = v.collapse_retries([{"uri": "/a", "url": "u", "request": {}}])
+        self.assertEqual(len(kept), 1)
+
+    def test_a_boolean_is_not_read_as_an_attempt_number(self):
+        kept = v.collapse_retries([{"uri": "/a", "url": "u", "request": {"retryNumber": True}}])
+        self.assertEqual(len(kept), 1)
+
+    def test_non_dict_body_is_kept(self):
+        kept = v.collapse_retries([{"uri": "/a", "url": "u", "request": []}])
+        self.assertEqual(len(kept), 1)
+
+
+class N1ContractTests(unittest.TestCase):
+    """N1 organic_open, the worked example: one open, no deep link. Each test
+    below proves an assertion type FAILS on a violating capture — a contract
+    only demonstrated passing is a contract that cannot fail."""
+
+    def test_a_clean_organic_open_passes(self):
+        errors, _ = _run_validation("happy_path.txt", v.contract_for("N1"))
+        self.assertEqual(errors, [], f"Unexpected errors: {errors}")
+
+    def test_wrong_count_fails(self):
+        # Two opens is the duplicate-open shape #1612 produced. Before this
+        # engine the capture could not fail, which is why it went unnoticed.
+        errors, _ = _run_validation("n1_duplicate_open.txt", v.contract_for("N1"))
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("Expected 1", errors[0])
+        self.assertIn("captured 2", errors[0])
+
+    def test_forbidden_endpoint_present_fails(self):
+        errors, _ = _run_validation("deeplink.txt", v.contract_for("N1"))
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("must not be captured", errors[0])
+        self.assertIn("/v3/deeplink", errors[0])
+
+    def test_wrong_order_fails(self):
+        # deeplink.txt is open then deeplink, with no open after it, so the
+        # deeplink contract's ordering rule is violated.
+        errors, _ = _run_validation("deeplink.txt", v.contract_for("deeplink"))
+        self.assertTrue(
+            any("after" in e for e in errors), f"Expected an order error: {errors}"
+        )
+
+    def test_n1_does_not_assert_the_absence_of_link_data_in_the_open(self):
+        # Recorded, not hidden: the plan also wants the open to carry no link
+        # data. That is a field-level assertion this layer does not make.
+        self.assertEqual(v.contract_for("N1")["counts"].get("/v3/deeplink"), 0)
+
+
+class N3ContractTests(unittest.TestCase):
+    """N3 attribution_none: at consumer-protection level NONE,
+    BNCServerRequestOperation drops every request except BranchRequestDeepLink,
+    so the resolution goes out and the attributed open does not."""
+
+    def test_the_none_level_capture_passes(self):
+        errors, _ = _run_validation("n3_attribution_none.txt", v.contract_for("N3"))
+        self.assertEqual(errors, [], f"Unexpected errors: {errors}")
+
+    def test_an_open_at_none_level_fails(self):
+        # The regression N3 exists to catch: an open must not be sent at NONE.
+        errors, _ = _run_validation("attribution_none_deeplink.txt", v.contract_for("N3"))
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("must not be captured", errors[0])
+        self.assertIn("/v3/events/open", errors[0])
+
+    def test_the_old_global_rule_would_have_failed_this_correct_capture(self):
+        # The retired MANDATORY_ENDPOINT required an open in every capture. N1
+        # still does, and N3's capture is correct without one — which is why a
+        # single global rule could not serve both scenarios.
+        errors, _ = _run_validation("n3_attribution_none.txt", v.contract_for("N1"))
+        self.assertTrue(
+            any("/v3/events/open" in e for e in errors),
+            f"Expected the open requirement to fire: {errors}",
+        )
+
+    def test_n3_does_not_assert_that_identifiers_were_cleared(self):
+        # Recorded, not hidden: that is a field-level assertion, and this layer
+        # is bounded at counts and required-field presence.
+        self.assertEqual(set(v.contract_for("N3")["counts"]), {"/v3/deeplink", "/v3/events/open"})
 
 
 class HappyPathTests(unittest.TestCase):
@@ -122,10 +364,10 @@ class OpenRequiredTests(unittest.TestCase):
     session produces one and a capture without it is a broken capture.
     /v1/install is never sent and is no longer asserted."""
 
-    def test_capture_without_open_fails(self):
-        errors, _ = _run_validation("no_open.txt")
+    def test_capture_without_open_fails_when_the_contract_requires_one(self):
+        errors, _ = _run_validation("no_open.txt", v.contract_for("N1"))
         self.assertTrue(
-            any("'/v3/events/open' was not captured" in e for e in errors),
+            any("'/v3/events/open'" in e for e in errors),
             f"Expected open-missing error, got: {errors}",
         )
 
@@ -184,12 +426,11 @@ class BetaEndpointCoverageTests(unittest.TestCase):
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
         self.assertIn("/v3/deeplink", output)
 
-    def test_absent_deeplink_is_a_note_not_a_failure(self):
-        # The L1 runner performs a single launch and never resolves a link,
-        # so a capture without /v3/deeplink is healthy.
-        errors, output = _run_validation("happy_path.txt")
+    def test_absent_deeplink_is_fine_when_no_contract_mentions_it(self):
+        # Replaces the old unconditional note: silence is now the contract's
+        # job, not a hardcoded exception for one endpoint.
+        errors, _ = _run_validation("happy_path.txt")
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
-        self.assertIn("'/v3/deeplink' not present in capture", output)
 
     def test_deeplink_does_not_require_ios_app_link_url(self):
         # Cold resolution carries no URL; only the URL-driven one does.
@@ -199,24 +440,30 @@ class BetaEndpointCoverageTests(unittest.TestCase):
 
 
 class ScenarioEnforcementTests(unittest.TestCase):
-    """--scenario promotes an endpoint the run is known to drive from a
-    note to a failure, without changing the no-scenario default."""
+    """A capture is judged against its scenario's contract, so the same file
+    passes one scenario and fails another."""
 
     def test_deeplink_scenario_fails_when_deeplink_absent(self):
-        errors, _ = _run_validation("happy_path.txt", scenario="deeplink")
+        errors, _ = _run_validation("happy_path.txt", v.contract_for("deeplink"))
         self.assertTrue(
             any("/v3/deeplink" in e for e in errors),
             f"Expected a missing-deeplink error, got: {errors}",
         )
 
-    def test_deeplink_scenario_passes_when_deeplink_present(self):
-        errors, _ = _run_validation("deeplink.txt", scenario="deeplink")
+    def test_deeplink_scenario_passes_on_the_measured_capture_shape(self):
+        # open, deeplink, open — measured on device. The launch open precedes
+        # the resolution, so an order rule of "first after first" would fail
+        # this correct capture.
+        errors, _ = _run_validation("deeplink_scenario.txt", v.contract_for("deeplink"))
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 
-    def test_install_scenario_keeps_absent_deeplink_a_note(self):
-        errors, output = _run_validation("happy_path.txt", scenario="install")
-        self.assertEqual(errors, [], f"Unexpected errors: {errors}")
-        self.assertIn("'/v3/deeplink' not present in capture", output)
+    def test_the_same_capture_passes_install_and_fails_deeplink(self):
+        # The point of per-scenario contracts: one global rule cannot express
+        # this, and before this change the install capture could not fail.
+        passing, _ = _run_validation("happy_path.txt", v.contract_for("N1"))
+        failing, _ = _run_validation("happy_path.txt", v.contract_for("deeplink"))
+        self.assertEqual(passing, [])
+        self.assertTrue(failing)
 
     def test_unrecognised_scenario_exits_rather_than_downgrading(self):
         # A typo in a CI matrix must fail loudly, not fall back to the

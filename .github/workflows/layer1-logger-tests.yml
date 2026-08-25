@@ -110,12 +110,16 @@ jobs:
 
       # continue-on-error so the summary below still runs on a failure — the
       # job is failed explicitly at the end.
+      #
+      # The scenario is required on this line: a capture is judged against the
+      # contract for the run that produced it. This job drives the default
+      # harness run, which is N1 organic_open — one open, no deep link.
       - name: Validate wire logs
         id: validate
         continue-on-error: true
         run: |
           set -o pipefail
-          python3 scripts/validate_l1_logs.py branchlogs.txt 2>&1 | tee /tmp/l1-output.txt
+          python3 scripts/validate_l1_logs.py branchlogs.txt --scenario N1 2>&1 | tee /tmp/l1-output.txt
 
       # What the gate actually asserted, on the PR page rather than buried in
       # the job log.
