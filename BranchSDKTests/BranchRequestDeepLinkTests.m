@@ -6,6 +6,7 @@
 //
 //  Characterization tests for BranchRequestDeepLink and -requestDeepLinkData:callback:.
 //  EMT-4023: the resolved link payload must survive deep link resolution.
+//  EMT-4029: a URL matching a skiplist pattern must not be resolved at all.
 //
 
 #import <XCTest/XCTest.h>
@@ -53,6 +54,7 @@ static NSString * const kResolvedLinkPayloadJSON =
 @property (nonatomic, strong) BNCServerRequestQueue *fakeQueue;
 @property (nonatomic, copy) NSString *savedSessionParams;
 @property (nonatomic, copy) NSString *savedAttributionLevel;
+@property (nonatomic, strong) id savedUserURLFilter;
 // The stubbed open response writes a real-looking session id. BNCServerRequestOperation drops
 // a non-init request when the session credentials are missing, so leaving one behind lets
 // later tests reach the network they would otherwise have skipped.
@@ -68,6 +70,7 @@ static NSString * const kResolvedLinkPayloadJSON =
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     self.savedSessionParams = preferenceHelper.sessionParams;
     self.savedAttributionLevel = preferenceHelper.attributionLevel;
+    self.savedUserURLFilter = [self.branch valueForKey:@"userURLFilter"];
     self.savedSpotlightIdentifier = preferenceHelper.spotlightIdentifier;
 
     preferenceHelper.sessionParams = nil;
@@ -91,6 +94,7 @@ static NSString * const kResolvedLinkPayloadJSON =
 
 - (void)tearDown {
     [self.branch setValue:[BNCServerRequestQueue getInstance] forKey:@"requestQueue"];
+    [self.branch setValue:self.savedUserURLFilter forKey:@"userURLFilter"];
     self.fakeQueue = nil;
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
@@ -258,6 +262,36 @@ static NSString * const kResolvedLinkPayloadJSON =
                   @"The web-redirect path returns early, but the resolved params must still be persisted.");
     XCTAssertEqualObjects(params[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK], kResolvedLinkURL);
     XCTAssertEqualObjects(params[@"$canonical_identifier"], @"content/12345");
+}
+
+#pragma mark - EMT-4029: skiplisted URLs must not be resolved
+
+// Control: proves the harness detects a resolution request when one is genuinely made.
+// Without this, the two skiplist assertions below could pass for want of a working queue.
+- (void)testRequestDeepLinkDataResolvesAnUnfilteredURL {
+    [self.branch requestDeepLinkData:kResolvedLinkURL callback:nil];
+
+    XCTAssertNotNil([self firstEnqueuedRequestOfClassNamed:@"BranchRequestDeepLink"],
+                    @"An unfiltered URL must still be resolved.");
+}
+
+// setUrlPatternsToIgnore: is consulted by handleDeepLink: but not by requestDeepLinkData:,
+// so a URL the host app explicitly asked us to ignore is still sent to /v3/deeplink.
+- (void)testRequestDeepLinkDataDoesNotResolveUserIgnoredURL {
+    [self.branch setUrlPatternsToIgnore:@[@"\\/ignore-this-path\\/"]];
+
+    [self.branch requestDeepLinkData:@"https://example.app.link/ignore-this-path/abc123" callback:nil];
+
+    XCTAssertNil([self firstEnqueuedRequestOfClassNamed:@"BranchRequestDeepLink"],
+                 @"A URL matching a user ignore pattern must not be sent to /v3/deeplink.");
+}
+
+// The built-in skiplist exists to keep credential-bearing URLs off the wire. Same gap.
+- (void)testRequestDeepLinkDataDoesNotResolveDefaultSkiplistURL {
+    [self.branch requestDeepLinkData:@"https://example.com/callback?access_token=abc123" callback:nil];
+
+    XCTAssertNil([self firstEnqueuedRequestOfClassNamed:@"BranchRequestDeepLink"],
+                 @"A URL matching the default skiplist must not be sent to /v3/deeplink.");
 }
 
 @end
