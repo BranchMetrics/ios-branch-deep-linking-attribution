@@ -79,7 +79,6 @@ static NSString * const kClickedLinkPayloadJSON =
 // The stubbed open responses write real-looking session credentials. BNCServerRequestOperation
 // drops a non-init request when these are missing, so leaving them behind lets later tests
 // reach the network they would otherwise have skipped.
-@property (nonatomic, copy) NSString *savedSessionID;
 @property (nonatomic, copy) NSString *savedDeviceToken;
 @end
 
@@ -98,7 +97,6 @@ static NSString * const kClickedLinkPayloadJSON =
     self.savedSkanWindow = preferenceHelper.skanCurrentWindow;
     self.savedHighestConversionValue = preferenceHelper.highestConversionValueSent;
     self.savedInvokeRegisterApp = preferenceHelper.invokeRegisterApp;
-    self.savedSessionID = preferenceHelper.sessionID;
     self.savedDeviceToken = preferenceHelper.randomizedDeviceToken;
 
     // A first-ever launch: no bundle token yet, nothing attributed yet.
@@ -150,7 +148,6 @@ static NSString * const kClickedLinkPayloadJSON =
     preferenceHelper.skanCurrentWindow = self.savedSkanWindow;
     preferenceHelper.highestConversionValueSent = self.savedHighestConversionValue;
     preferenceHelper.invokeRegisterApp = self.savedInvokeRegisterApp;
-    preferenceHelper.sessionID = self.savedSessionID;
     preferenceHelper.randomizedDeviceToken = self.savedDeviceToken;
     preferenceHelper.referringURL = nil;
 
@@ -179,7 +176,6 @@ static NSString * const kClickedLinkPayloadJSON =
 - (BNCServerResponse *)openResponseWithExtras:(NSDictionary *)extras {
     NSMutableDictionary *data = [@{
         BRANCH_RESPONSE_KEY_SESSION_DATA: kClickedLinkPayloadJSON,
-        BRANCH_RESPONSE_KEY_SESSION_ID: @"session_id",
         BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: @"bundle_token"
     } mutableCopy];
     [data addEntriesFromDictionary:extras];
