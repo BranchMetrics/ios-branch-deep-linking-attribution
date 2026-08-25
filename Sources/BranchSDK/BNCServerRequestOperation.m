@@ -97,9 +97,7 @@
 - (void)start {
     if (self.isCancelled) {
         [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Operation cancelled before starting: %@", self.request.requestUUID] error:nil];
-        if ([self claimCompletion]) {
-            self.finished = YES;
-        }
+        [self finishOperation];
         return;
     }
 
@@ -111,10 +109,7 @@
     if (![self.request isKindOfClass:[BranchRequestDeepLink class]]) {
         if ([preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
             [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Attribution Level is 'NONE'. Skipping request: %@", self.request.requestUUID] error:nil];
-            if ([self claimCompletion]) {
-                self.executing = NO;
-                self.finished = YES;
-            }
+            [self finishOperation];
             return;
         }
     }
@@ -130,10 +125,7 @@
             BNCPerformBlockOnMainThreadSync(^{
                 [self.request processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
             });
-            if ([self claimCompletion]) {
-                self.executing = NO;
-                self.finished = YES;
-            }
+            [self finishOperation];
             return;
         }
     }
