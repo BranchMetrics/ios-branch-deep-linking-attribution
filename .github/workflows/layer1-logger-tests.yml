@@ -135,7 +135,7 @@ jobs:
               echo "No wire requests were captured."
             fi
             echo
-            echo "Scenario coverage, per EMT-4076:"
+            echo "Scenario coverage:"
             echo
             echo "No scenario is authored yet, so the endpoint table above is the only assertion this gate makes."
             echo
