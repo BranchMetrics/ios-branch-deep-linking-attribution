@@ -40,7 +40,7 @@ final class L1WireValidationTest: XCTestCase {
         app.launch()
 
         // Wait for the host app to register as foreground; this is when
-        // Branch.initSession runs and `/v1/install` is queued.
+        // `Branch.initialize(_:)` runs and `/v1/install` is queued.
         XCTAssertTrue(
             app.wait(for: .runningForeground, timeout: 30),
             "TestBed app failed to reach runningForeground state"

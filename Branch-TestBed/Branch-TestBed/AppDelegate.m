@@ -10,6 +10,7 @@
 #import "LogOutputViewController.h"
 #import "NavigationController.h"
 #import "ViewController.h"
+#import "TestBedDeepLinkTestHook.h"
 @import BranchSDK;
 #import <UserNotifications/UserNotifications.h>
 
@@ -31,10 +32,10 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // Debug Branch Init example
     // BranchConfiguration *config = [BranchConfiguration debug:@"key_live_xxx"];
-    
+
     // production Branch Init example
     // BranchConfiguration *config = [BranchConfiguration production:@"key_live_xxx"];
-    
+
     // Compliance Branch Init example
     // BranchConfiguration *config = [BranchConfiguration compliance:@"key_live_xxx"];
 
@@ -106,6 +107,10 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // ── Initialize ───────────────────────────────────────────────────────
     [Branch initialize:config];
+
+#if DEBUG
+    [TestBedDeepLinkTestHook installIfRequested:application];
+#endif
 
     return YES;
 }
@@ -190,18 +195,18 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 - (BOOL)application:(UIApplication *)application
 continueUserActivity:(NSUserActivity *)userActivity
  restorationHandler:(void(^)(NSArray<id<UIUserActivityRestoring>>*restorableObjects))restorationHandler {
- 
+
     NSLog(@"application:continueUserActivity:restorationHandler: invoked.\n"
            "ActivityType: %@ userActivity.webpageURL: %@",
            userActivity.activityType,
            userActivity.webpageURL.absoluteString);
-    
+
     // Required. Returns YES if Branch Universal Link, else returns NO.
     // Add `branch_universal_link_domains` to .plist (String or Array) for custom domain(s).
-    
-    
+
+
     [[Branch getInstance] requestDeepLinkDataWithUserActivity:userActivity];
-    
+
     // Process non-Branch userActivities here...
     return YES;
 }
@@ -209,12 +214,12 @@ continueUserActivity:(NSUserActivity *)userActivity
 - (void)setBranchLogFile {
     NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
     NSString *logFilePath = [documentsDirectory stringByAppendingPathComponent:@"branchlogs.txt"];
-    
+
     // If the log file already exists, remove it to start fresh
     if ([[NSFileManager defaultManager] fileExistsAtPath:logFilePath]) {
         [[NSFileManager defaultManager] removeItemAtPath:logFilePath error:nil];
     }
-    
+
     self.logFileName = logFilePath;
 }
 
@@ -263,7 +268,7 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
 
 // Writes message to Log File.
 - (void) processLogMessage:(NSString *)message {
-    
+
     if (!self.logFileName)
         return;
 
@@ -285,15 +290,15 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
 // Set log File. If another file with the same name exits, delete it,
 // Different log files can be set for each command. This will make parsing of log files(for Test Automation) easier
 - (void) setLogFile:(NSString*)fileName {
-    
+
     if (!fileName) {
         self.logFileName = nil;
         return;
     }
-    
+
     NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString *pathForLog =  [[NSString alloc] initWithFormat:@"%@/%@.txt" , documentsDirectory, fileName];
-    
+
     if ( [[NSFileManager defaultManager] fileExistsAtPath:pathForLog]) {
         [[NSFileManager defaultManager] removeItemAtPath:pathForLog error:nil];
     }
