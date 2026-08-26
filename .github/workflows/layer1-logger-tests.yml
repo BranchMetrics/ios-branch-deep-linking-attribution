@@ -1,0 +1,186 @@
+name: Layer 1 - SDK Wire Validation (iOS PR Gate)
+
+# Ported from master. The master copy already lists `4.0.0-beta.*` as a base,
+# but a workflow only runs if it exists in the PR's merge tree, so the file has
+# to live on this line too. Without it the L1 scripts on this branch are run by
+# nothing.
+
+on:
+  # The ticket's acceptance is that a push to the beta triggers this, and the
+  # badges in EMT-4080 read a branch status, which only a push event produces.
+  # A PR-only trigger leaves both unmet.
+  push:
+    branches:
+      - "4.0.0-beta.*"
+    paths:
+      - "Sources/BranchSDK/**"
+      - "Sources/BranchSwiftSDK/**"
+      - "Branch-TestBed/**"
+      - ".github/workflows/layer1-logger-tests.yml"
+      - "scripts/validate_l1_logs.py"
+      - "scripts/test_validate_l1_logs.py"
+      - "scripts/fixtures/**"
+      - "scripts/run_l1_instrumented.sh"
+  pull_request:
+    branches:
+      - "4.0.0-beta.*"
+    # Duplicated rather than shared via a YAML anchor: GitHub Actions does not
+    # guarantee anchor support, and a silently dead trigger is the worst
+    # failure mode for a gate.
+    paths:
+      - "Sources/BranchSDK/**"
+      - "Sources/BranchSwiftSDK/**"
+      - "Branch-TestBed/**"
+      - ".github/workflows/layer1-logger-tests.yml"
+      - "scripts/validate_l1_logs.py"
+      - "scripts/test_validate_l1_logs.py"
+      - "scripts/fixtures/**"
+      - "scripts/run_l1_instrumented.sh"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: l1-ios-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-wire-logs:
+    runs-on: macos-15
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Select Xcode (16.4 or later 16.x)
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "^16.4"
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          xcrun simctl list runtimes | tail -10
+
+      # Resolve the simulator name from the runner rather than hardcoding one.
+      # `name=iPhone 16,OS=latest` fails whenever the image ships that device
+      # only on an older runtime — the destination resolves to nothing and the
+      # build errors out. verify.yml already solves it this way.
+      - name: Resolve simulator
+        id: sim
+        run: |
+          ./scripts/getSimulator
+          echo "name=$(cat ./iphoneSim)" >> "$GITHUB_OUTPUT"
+
+      - name: Build TestBed for testing
+        run: |
+          xcodebuild build-for-testing \
+            -project Branch-TestBed/Branch-TestBed.xcodeproj \
+            -scheme TestBed-GPTDriverTests \
+            -derivedDataPath ./DerivedData \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.name }},OS=latest" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY=""
+
+      - name: Run L1 instrumentation
+        env:
+          DERIVED_DATA_DIR: ./DerivedData
+          SIM_NAME: ${{ steps.sim.outputs.name }}
+          SIM_OS: latest
+          PROJECT_PATH: Branch-TestBed/Branch-TestBed.xcodeproj
+          SCHEME: TestBed-GPTDriverTests
+          ONLY_TESTING: TestBed-GPTDriverTests/L1WireValidationTest
+          BUNDLE_ID: io.branch.sdk.Branch-TestBed
+          OUTPUT_LOG: branchlogs.txt
+        run: ./scripts/run_l1_instrumented.sh
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+
+      # Self-test first: a regression in the validator would otherwise surface
+      # as a false PASS on the real capture.
+      - name: Run L1 validator unit tests
+        run: python3 -m unittest scripts.test_validate_l1_logs -v
+
+      # continue-on-error so the summary below still runs on a failure — the
+      # job is failed explicitly at the end.
+      #
+      # The scenario is required on this line: a capture is judged against the
+      # contract for the run that produced it. This job drives the default
+      # harness run, which is N1 organic_open — one open, no deep link.
+      - name: Validate wire logs
+        id: validate
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python3 scripts/validate_l1_logs.py branchlogs.txt --scenario N1 2>&1 | tee /tmp/l1-output.txt
+
+      # What the gate actually asserted, on the PR page rather than buried in
+      # the job log.
+      - name: Write run summary
+        if: always()
+        run: |
+          {
+            echo "### Layer 1 — SDK wire validation"
+            echo
+            grep -o 'Got https://[^ ]*' branchlogs.txt 2>/dev/null \
+              | sed 's|.*api2.branch.io||' | sort | uniq -c > /tmp/l1-endpoints.txt || true
+            if [ -s /tmp/l1-endpoints.txt ]; then
+              echo "| endpoint | requests |"
+              echo "| --- | ---: |"
+              awk '{printf "| `%s` | %s |\n", $2, $1}' /tmp/l1-endpoints.txt
+            else
+              echo "No wire requests were captured."
+            fi
+            echo
+            echo "Scenario coverage:"
+            echo
+            echo "No scenario is authored yet, so the endpoint table above is the only assertion this gate makes."
+            echo
+            echo "| scenario group | status |"
+            echo "| --- | --- |"
+            echo "| Cold (C1–C3) | not implemented |"
+            echo "| Warm (W1–W2) | not implemented |"
+            echo "| Hot (H1–H2) | not implemented |"
+            echo "| Negative / guards (N1–N4) | not implemented |"
+            echo
+            if [ "${{ steps.validate.outcome }}" = "success" ]; then
+              echo "Result: **PASS**"
+            else
+              echo "Result: **FAIL**"
+              echo
+              echo '```'
+              grep '^FAILED:' /tmp/l1-output.txt || echo "(no FAILED lines; see the job log)"
+              echo '```'
+              echo
+              echo "<details><summary>Captured wire log</summary>"
+              echo
+              echo '```'
+              if [ -s branchlogs.txt ]; then head -c 40000 branchlogs.txt; echo; else echo "(branchlogs.txt is empty or missing)"; fi
+              echo '```'
+              echo
+              echo "</details>"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail the job if validation failed
+        if: steps.validate.outcome == 'failure'
+        run: exit 1
+
+      - name: Upload wire logs on failure
+        if: failure() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-wire-logs
+          path: branchlogs.txt
+          retention-days: 7
+
+      - name: Teardown simulator
+        if: always()
+        run: xcrun simctl shutdown all || true

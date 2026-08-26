@@ -10,6 +10,7 @@
 #import "LogOutputViewController.h"
 #import "NavigationController.h"
 #import "ViewController.h"
+#import "TestBedDeepLinkTestHook.h"
 @import BranchSDK;
 #import <UserNotifications/UserNotifications.h>
 
@@ -106,6 +107,10 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // ── Initialize ───────────────────────────────────────────────────────
     [Branch initialize:config];
+
+#if DEBUG
+    [TestBedDeepLinkTestHook installIfRequested:application];
+#endif
 
     return YES;
 }
