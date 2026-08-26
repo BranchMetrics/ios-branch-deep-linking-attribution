@@ -19,6 +19,7 @@
 
 #import <XCTest/XCTest.h>
 #import "Branch.h"
+#import "BranchConfiguration.h"
 #import "BranchConstants.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCServerInterface.h"
@@ -27,6 +28,11 @@
 #import "BNCServerResponse.h"
 #import "BranchOpenRequest.h"
 #import "BranchRequestOpen.h"
+
+// Test-only reset for the +initialize: reinitialization guard (file-private in Branch.m).
+@interface Branch(Test)
++ (void)resetInitializationGuardForTesting;
+@end
 
 @interface BNCServerRequestQueue (DrainTest)
 @property (strong, nonatomic) NSOperationQueue *operationQueue;
@@ -101,7 +107,11 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
 
 - (void)setUp {
     [super setUp];
-    self.branch = [Branch getInstance];
+    // +sharedInstance requires the SDK to be initialized first. Reset the guard so each test can
+    // (re)initialize the singleton, then configure it via the canonical entry point.
+    [Branch resetInitializationGuardForTesting];
+    BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB"];
+    self.branch = [Branch initialize:config];
     sPostedURLs = [NSMutableArray array];
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
