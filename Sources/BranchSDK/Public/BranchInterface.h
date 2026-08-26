@@ -16,15 +16,9 @@
 #endif
 
 #import "BNCCallbacks.h"
+#import "BranchAttributionLevel.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-// Redeclared here (identical to the declaration in Branch.h) so this header does not
-// need to import Branch.h, which would be circular once Branch adopts this protocol.
-#ifndef BRANCH_ATTRIBUTION_LEVEL_DEFINED
-#define BRANCH_ATTRIBUTION_LEVEL_DEFINED
-typedef NSString * BranchAttributionLevel NS_STRING_ENUM;
-#endif
 
 /**
  An injectable abstraction over the public `Branch` API.
@@ -50,6 +44,20 @@ typedef NSString * BranchAttributionLevel NS_STRING_ENUM;
     NS_SWIFT_NAME(requestDeepLinkData(launchOptions:callback:))
     NS_SWIFT_ASYNC_NAME(requestDeepLinkData(launchOptions:));
 
+- (void)requestDeepLinkDataWithURL:(nullable NSURL *)url
+    NS_SWIFT_NAME(requestDeepLinkData(openURL:));
+
+- (void)requestDeepLinkDataWithURL:(nullable NSURL *)url
+                 sourceApplication:(nullable NSString *)sourceApplication
+                        annotation:(nullable id)annotation
+    NS_SWIFT_NAME(requestDeepLinkData(openURL:sourceApplication:annotation:));
+
+- (void)requestDeepLinkDataWithUserActivity:(nullable NSUserActivity *)userActivity
+    NS_SWIFT_NAME(requestDeepLinkData(userActivity:));
+
+- (void)requestDeepLinkDataWithUserInfo:(nullable NSDictionary *)userInfo
+    NS_SWIFT_NAME(requestDeepLinkData(userInfo:));
+
 #if !TARGET_OS_TV
 - (void)requestDeepLinkDataWithSceneOptions:(nullable UISceneConnectionOptions *)connectionOptions
                                       scene:(UIScene *)scene
@@ -57,6 +65,16 @@ typedef NSString * BranchAttributionLevel NS_STRING_ENUM;
     API_AVAILABLE(ios(13.0), macCatalyst(13.1))
     NS_SWIFT_NAME(requestDeepLinkData(sceneOptions:scene:callback:))
     NS_SWIFT_ASYNC_NAME(requestDeepLinkData(sceneOptions:scene:));
+
+- (void)requestDeepLinkDataWithScene:(UIScene *)scene
+                      openURLContexts:(NSSet<UIOpenURLContext *> *)urlContexts
+    API_AVAILABLE(ios(13.0))
+    NS_SWIFT_NAME(requestDeepLinkData(scene:openURLContexts:));
+
+- (void)requestDeepLinkDataWithScene:(UIScene *)scene
+                continueUserActivity:(NSUserActivity *)userActivity
+    API_AVAILABLE(ios(13.0))
+    NS_SWIFT_NAME(requestDeepLinkData(scene:userActivity:));
 #endif
 
 #pragma mark - Attribution open
