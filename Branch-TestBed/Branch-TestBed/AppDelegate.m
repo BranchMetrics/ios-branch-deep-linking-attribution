@@ -10,6 +10,7 @@
 #import "LogOutputViewController.h"
 #import "NavigationController.h"
 #import "ViewController.h"
+#import "TestBedDeepLinkTestHook.h"
 @import BranchSDK;
 #import <UserNotifications/UserNotifications.h>
 
@@ -106,9 +107,13 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // ── Initialize ───────────────────────────────────────────────────────
     [Branch initialize:config];
-    
+
+#if DEBUG
+    [TestBedDeepLinkTestHook installIfRequested:application];
+#endif
+
     // Set user Alias Example
-    
+
 //    [[Branch sharedInstance] setUserAlias:@"your_user_alias" completion:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
 //        if (error) {
 //            NSLog(@"Error setting user alias: %@", error);
@@ -116,7 +121,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 //            NSLog(@"Successfully set alias. Response: %@", params);
 //        }
 //    }];
-    
+
     return YES;
 }
 

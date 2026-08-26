@@ -98,8 +98,8 @@ typedef NS_ENUM(NSInteger, BranchEventAdType) {
  Logs the event on the Branch server.
  This version will callback on success/failure.
 
- This method should only be invoked after initSession.
- If invoked before initSession, the event will be dropped and a BNCInitError will be returned.
+ This method should only be invoked after `+[Branch initialize:]`.
+ If invoked before `+[Branch initialize:]`, the event will be dropped and a BNCInitError will be returned.
  */
 - (void)logEventWithCompletion:(void (^_Nullable)(BOOL success, NSError * _Nullable error))completion;
 
@@ -107,8 +107,8 @@ typedef NS_ENUM(NSInteger, BranchEventAdType) {
  Logs the event on the Branch server.
  This version automatically caches and retries as necessary.
 
- This method should only be invoked after initSession.
- If invoked before initSession, the event will be dropped.
+ This method should only be invoked after `+[Branch initialize:]`.
+ If invoked before `+[Branch initialize:]`, the event will be dropped.
  */
 - (void)logEvent;
 
