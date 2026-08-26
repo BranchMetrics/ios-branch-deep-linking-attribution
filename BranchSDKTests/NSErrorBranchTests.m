@@ -55,15 +55,18 @@
 
 - (void)testRetryableClassification_transientCodesAreRetryable {
     XCTAssertTrue([NSError branchErrorIsRetryableForCode:BNCServerProblemError]);
-    XCTAssertTrue([NSError branchErrorIsRetryableForCode:BNCNetworkServiceInterfaceError]);
 }
 
+// BNCNetworkServiceInterfaceError means the host app's own BNCNetworkServiceProtocol conformer
+// is broken (nil/non-conforming operation, or missing startDate/timeoutDate/request) — retrying
+// can't fix that, and verifyNetworkOperation: never reaches the SDK's own retry path anyway.
 - (void)testRetryableClassification_configAndAuthCodesAreNotRetryable {
     XCTAssertFalse([NSError branchErrorIsRetryableForCode:BNCBadRequestError]);
     XCTAssertFalse([NSError branchErrorIsRetryableForCode:BNCInitError]);
     XCTAssertFalse([NSError branchErrorIsRetryableForCode:BNCAttributionLevelNoneError]);
     XCTAssertFalse([NSError branchErrorIsRetryableForCode:BNCDNSAdBlockerError]);
     XCTAssertFalse([NSError branchErrorIsRetryableForCode:BNCVPNAdBlockerError]);
+    XCTAssertFalse([NSError branchErrorIsRetryableForCode:BNCNetworkServiceInterfaceError]);
 }
 
 - (void)testRetryableKeyPresentAndTrueForTransientError {

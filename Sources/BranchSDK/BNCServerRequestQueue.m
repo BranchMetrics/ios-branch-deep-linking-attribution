@@ -11,6 +11,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BranchInstallRequest.h"
 #import "BranchOpenRequest.h"
+#import "BranchRequestOpen.h"
 #import "BranchRequestDeepLink.h"
 #import "BranchEvent.h"
 #import "BranchLogger.h"
@@ -80,8 +81,17 @@
     return count;
 }
 
+// Init traffic is not a single class. BranchRequestOpen and BranchRequestDeepLink are siblings of
+// BranchOpenRequest, not subclasses, so a BranchOpenRequest-only test reports no init in flight for
+// every 4.0 session. Same enumeration as BNCServerRequestOperation -start.
+- (BOOL)isInitRequest:(BNCServerRequest *)request {
+    return [request isKindOfClass:[BranchOpenRequest class]] ||
+           [request isKindOfClass:[BranchRequestOpen class]] ||
+           [request isKindOfClass:[BranchRequestDeepLink class]];
+}
+
 - (void)addInitDependencyIfNeeded:(BNCServerRequestOperation *)operation {
-    if ([operation.request isKindOfClass:[BranchOpenRequest class]]) {
+    if ([self isInitRequest:operation.request]) {
         // This is an init/open request — track it as the current init operation
         self.currentInitOperation = operation;
     } else {
@@ -115,7 +125,7 @@
     for (NSOperation *op in self.operationQueue.operations) {
         if ([op isKindOfClass:[BNCServerRequestOperation class]]) {
             BNCServerRequestOperation *requestOp = (BNCServerRequestOperation *)op;
-            if ([requestOp.request isKindOfClass:[BranchOpenRequest class]]) {
+            if ([self isInitRequest:requestOp.request]) {
                 return YES;
             }
         }

@@ -191,7 +191,17 @@ static NSInteger gOperationCount = 0;
 
 #pragma mark - Exponential backoff
 
-// With a base interval of 0 (the default) every retry fires immediately.
+// Out of the box (retryInterval untouched) retries back off at 1s, 2s, 4s.
+- (void)testBackoffIsOneTwoFourByDefault {
+    BNCPreferenceHelper *defaults = [[BNCPreferenceHelper alloc] init];
+    XCTAssertEqualWithAccuracy(defaults.retryInterval, 1.0, 0.0001);
+    self.serverInterface.preferenceHelper = defaults;
+    XCTAssertEqualWithAccuracy([self.serverInterface backoffDelayForRetryNumber:0], 1.0, 0.0001);
+    XCTAssertEqualWithAccuracy([self.serverInterface backoffDelayForRetryNumber:1], 2.0, 0.0001);
+    XCTAssertEqualWithAccuracy([self.serverInterface backoffDelayForRetryNumber:2], 4.0, 0.0001);
+}
+
+// Explicitly opting into a zero interval disables backoff and retries fire immediately.
 - (void)testBackoffIsZeroWhenIntervalIsZero {
     self.preferenceHelper.retryInterval = 0;
     XCTAssertEqualWithAccuracy([self.serverInterface backoffDelayForRetryNumber:0], 0.0, 0.0001);
