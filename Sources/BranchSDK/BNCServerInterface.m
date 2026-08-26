@@ -130,9 +130,9 @@
             BOOL isRetryableStatusCode = status >= 500 || status < 0 || status == 53;
             if (retryNumber < self.preferenceHelper.retryCount && isRetryableStatusCode) {
                 // Exponential backoff: the configured retryInterval is the base delay and is
-                // doubled on each successive attempt (interval, 2x, 4x, …). With the default
-                // retryInterval of 0 this stays 0 and retries fire immediately, preserving the
-                // existing behavior; a configured interval of 1s yields 1s/2s/4s.
+                // doubled on each successive attempt (interval, 2x, 4x, …). Out of the box
+                // retryInterval defaults to 1s, so retries fire at 1s/2s/4s; setting it to 0
+                // opts back into immediate retries.
                 NSTimeInterval backoff = [self backoffDelayForRetryNumber:retryNumber];
                 dispatch_time_t dispatchTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(backoff * NSEC_PER_SEC));
                 dispatch_after(dispatchTime, dispatch_get_main_queue(), ^{
@@ -285,7 +285,7 @@
 
 // Exponential backoff for the Nth retry (0-based). Returns the configured base retryInterval
 // scaled by 2^retryNumber, so successive retries wait interval, 2*interval, 4*interval, …
-// A base interval of 0 always returns 0 (immediate retry), matching the historical default.
+// A base interval of 0 always returns 0 (immediate retry), opted into explicitly.
 - (NSTimeInterval)backoffDelayForRetryNumber:(NSInteger)retryNumber {
     NSTimeInterval base = self.preferenceHelper.retryInterval;
     if (base <= 0 || retryNumber < 0) {

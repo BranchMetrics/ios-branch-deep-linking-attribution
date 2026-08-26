@@ -79,6 +79,7 @@
 		9BEC6ECEF0E0BF1E734B843D /* NotificationHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D4DC04AFC52EEBC6E0120A /* NotificationHybridTest.swift */; };
 		AA12345600010000000000B1 /* BranchDisableNextForegroundTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AA12345600010000000000A1 /* BranchDisableNextForegroundTests.m */; };
 		B9F5DA27F77E0A392BD2E69A /* TestBedIdentifiers.m in Sources */ = {isa = PBXBuildFile; fileRef = CC1798D4BBC4E0E40ADA9310 /* TestBedIdentifiers.m */; };
+		A1B2C3D4000000000000A001 /* TestBedDeepLinkTestHook.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4000000000000A002 /* TestBedDeepLinkTestHook.m */; };
 		C10A6DE629A995590061A851 /* StoreKitTestCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = C10A6DE529A995590061A851 /* StoreKitTestCertificate.cer */; };
 		C10C61AA282481FB00761D7E /* BranchShareLinkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10C61A9282481FB00761D7E /* BranchShareLinkTests.m */; };
 		C12320B52808DB90007771C0 /* BranchQRCodeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C12320B42808DB90007771C0 /* BranchQRCodeTests.m */; };
@@ -91,6 +92,8 @@
 		DAEFBE7C9FFBD455BFBF4EC7 /* DeepLinkWarmOpenHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6F886CF5254858874E0154 /* DeepLinkWarmOpenHybridTest.swift */; };
 		DB18DA9C84F60B550B04B3FC /* DeepLinkColdOpenHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991B868E49743EF400DE3CA1 /* DeepLinkColdOpenHybridTest.swift */; };
 		E1A0001A0000000000000AA1 /* L1WireValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A0002A0000000000000AA2 /* L1WireValidationTest.swift */; };
+		E1A0001B0000000000000AB1 /* EventAndLinkWireCaptureTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A0002B0000000000000AB2 /* EventAndLinkWireCaptureTest.swift */; };
+		E1A0001C0000000000000AC1 /* DeepLinkWireValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A0002C0000000000000AC2 /* DeepLinkWireValidationTest.swift */; };
 		E369CEFCE0B1105282B6E900 /* ReferringParamsHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656C68E10670CEE96DC0A93D /* ReferringParamsHybridTest.swift */; };
 		E72489D228E40D0200DCD8FD /* PasteControlViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E72489D128E40D0200DCD8FD /* PasteControlViewController.m */; };
 		E732827F2E5F7D92005CACC8 /* GoogleAdsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = E732827E2E5F7D92005CACC8 /* GoogleAdsOnDeviceConversion */; };
@@ -261,8 +264,12 @@
 		C17DAF7A2AC20C2000B16B1A /* BranchClassTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchClassTests.m; sourceTree = "<group>"; };
 		C1CC888129BAAFC000BDD2B5 /* BNCReferringURLUtilityTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCReferringURLUtilityTests.m; sourceTree = "<group>"; };
 		CC1798D4BBC4E0E40ADA9310 /* TestBedIdentifiers.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = TestBedIdentifiers.m; sourceTree = "<group>"; };
+		A1B2C3D4000000000000A003 /* TestBedDeepLinkTestHook.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = TestBedDeepLinkTestHook.h; sourceTree = "<group>"; };
+		A1B2C3D4000000000000A002 /* TestBedDeepLinkTestHook.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = TestBedDeepLinkTestHook.m; sourceTree = "<group>"; };
 		DA914FAFCA750AE7C6CDCFCC /* LinkCreationDeterministicTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LinkCreationDeterministicTest.swift; sourceTree = "<group>"; };
 		E1A0002A0000000000000AA2 /* L1WireValidationTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = L1WireValidationTest.swift; sourceTree = "<group>"; };
+		E1A0002B0000000000000AB2 /* EventAndLinkWireCaptureTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EventAndLinkWireCaptureTest.swift; sourceTree = "<group>"; };
+		E1A0002C0000000000000AC2 /* DeepLinkWireValidationTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DeepLinkWireValidationTest.swift; sourceTree = "<group>"; };
 		E4D4DC04AFC52EEBC6E0120A /* NotificationHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NotificationHybridTest.swift; sourceTree = "<group>"; };
 		E50AA43771267258B0293FD1 /* TestBed-GPTDriverTests-Bridging-Header.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "TestBed-GPTDriverTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		E72489D028E40D0200DCD8FD /* PasteControlViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasteControlViewController.h; sourceTree = "<group>"; };
@@ -528,6 +535,8 @@
 				670016791940F51400A9E103 /* ViewController.m */,
 				4DF18A2F7FEBD06E1EBB8FD5 /* TestBedIdentifiers.h */,
 				CC1798D4BBC4E0E40ADA9310 /* TestBedIdentifiers.m */,
+				A1B2C3D4000000000000A003 /* TestBedDeepLinkTestHook.h */,
+				A1B2C3D4000000000000A002 /* TestBedDeepLinkTestHook.m */,
 			);
 			path = "Branch-TestBed";
 			sourceTree = "<group>";
@@ -558,6 +567,8 @@
 			children = (
 				DA914FAFCA750AE7C6CDCFCC /* LinkCreationDeterministicTest.swift */,
 				E1A0002A0000000000000AA2 /* L1WireValidationTest.swift */,
+				E1A0002B0000000000000AB2 /* EventAndLinkWireCaptureTest.swift */,
+				E1A0002C0000000000000AC2 /* DeepLinkWireValidationTest.swift */,
 			);
 			name = Deterministic;
 			path = Deterministic;
@@ -848,6 +859,7 @@
 				670016701940F51400A9E103 /* main.m in Sources */,
 				63E4C48B1D25E17B00A45FD8 /* NavigationController.m in Sources */,
 				B9F5DA27F77E0A392BD2E69A /* TestBedIdentifiers.m in Sources */,
+				A1B2C3D4000000000000A001 /* TestBedDeepLinkTestHook.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -906,6 +918,8 @@
 				257BD6BD304B0B87C0BDF67C /* BaseGptDriverTest.swift in Sources */,
 				D90E8A6639F523DC3B08FBCE /* LinkCreationDeterministicTest.swift in Sources */,
 				E1A0001A0000000000000AA1 /* L1WireValidationTest.swift in Sources */,
+				E1A0001B0000000000000AB1 /* EventAndLinkWireCaptureTest.swift in Sources */,
+				E1A0001C0000000000000AC1 /* DeepLinkWireValidationTest.swift in Sources */,
 				2FE60ACC53E3DDB95CB49E7C /* LinkCreationHybridTest.swift in Sources */,
 				EBB12FFFEE5BB34E5505BBB9 /* LinkCreationAITest.swift in Sources */,
 				143A1100894AF12F8F5E4CFB /* TestBedIdentifiers.m in Sources */,

@@ -84,7 +84,6 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
     switch (errorCode) {
         // Transient failures — retrying may succeed once conditions improve.
         case BNCServerProblemError:            // HTTP 5xx / trouble reaching Branch servers
-        case BNCNetworkServiceInterfaceError:  // timeout / connection reset / underlying network error
             return YES;
 
         // Everything else is a configuration, auth, or client-side problem where retrying
