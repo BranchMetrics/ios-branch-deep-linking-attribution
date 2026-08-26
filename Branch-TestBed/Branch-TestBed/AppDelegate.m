@@ -15,6 +15,12 @@
 #import <UserNotifications/UserNotifications.h>
 
 @interface AppDelegate() <UNUserNotificationCenterDelegate>
+- (void)logBranchMessage:(NSString *)message level:(BranchLogLevel)level error:(NSError *)error;
+- (void)logBranchRequest:(NSString *)url
+                  request:(NSDictionary *)request
+                 response:(NSDictionary *)response
+                    error:(NSError *)error
+        requestServiceURL:(NSString *)requestServiceURL;
 @end
 
 AppDelegate* appDelegate = nil;
@@ -59,14 +65,14 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Logging  (defaults: logLevel Error, callbacks nil)
     config.logLevel = BranchLogLevelDebug;
     config.loggingCallback = ^(NSString *message, BranchLogLevel level, NSError *error) {
-        NSLog(@"[Branch] %@", message);                  // custom log sink
+        [appDelegate logBranchMessage:message level:level error:error];
     };
     config.requestTracingCallback = ^(NSString *url,
                                       NSDictionary *request,
                                       NSDictionary *response,
                                       NSError *error,
                                       NSString *requestServiceURL) {
-        NSLog(@"[Branch trace] %@ -> %@", url, response); // per-request debug hook
+        [appDelegate logBranchRequest:url request:request response:response error:error requestServiceURL:requestServiceURL];
     };
 
     // Network  (defaults: networkTimeout 5.5s, retryCount 3, retryInterval 0s, thirdPartyAPIsWaitTime 0.5s)
@@ -93,7 +99,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [config addMetadataWithKey:@"store" value:@"app_store"];
 
     // Open tracking  (default: automaticOpenEvents YES)
-    config.automaticOpenEvents = YES;   // you will call [[Branch sharedInstance] sendOpen] manually
+    config.automaticOpenEvents = YES;   // Branch calls sendOpen automatically on foreground
 
     // Pasteboard  (default: checkPasteboardOnInstall NO)
     config.checkPasteboardOnInstall = YES;   // check the clipboard for a Branch Link on install
@@ -264,6 +270,39 @@ didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
 void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSString*_Nullable message) {
     NSString *formattedMessage = [NSString stringWithFormat:@"%@ [%lu] %@", timestamp, (unsigned long)level, message];
     [appDelegate processLogMessage:formattedMessage];
+}
+
+// Mirrors config.loggingCallback into branchlogs.txt via APPLogHookFunction.
+- (void)logBranchMessage:(NSString *)message level:(BranchLogLevel)level error:(NSError *)error {
+    NSLog(@"[Branch] %@", message);
+    NSString *logEntry = error
+        ? [NSString stringWithFormat:@"Level: %lu, Message: %@, Error: %@", (unsigned long)level, message, error.localizedDescription]
+        : [NSString stringWithFormat:@"Level: %lu, Message: %@", (unsigned long)level, message];
+    APPLogHookFunction([NSDate date], level, logEntry);
+}
+
+// Mirrors config.requestTracingCallback into branchlogs.txt in the
+// `[BranchLog] Got <url> Request: <jsonBody>` shape scripts/validate_l1_logs.py
+// parses. The newline terminator keeps each request on its own line even
+// when several fire back-to-back.
+- (void)logBranchRequest:(NSString *)url
+                  request:(NSDictionary *)request
+                 response:(NSDictionary *)response
+                    error:(NSError *)error
+        requestServiceURL:(NSString *)requestServiceURL {
+    NSLog(@"[Branch trace] %@ -> %@", url, response);
+
+    // `url` is the referring Branch link (nil for an organic open); the wire
+    // endpoint the L1 validator keys off is `requestServiceURL`.
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:(request ?: @{}) options:0 error:nil];
+    NSString *jsonString = jsonData ? [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding] : @"{}";
+    NSString *requestLine = [NSString stringWithFormat:@"[BranchLog] Got %@ Request: %@", requestServiceURL, jsonString];
+    [self processLogMessage:[requestLine stringByAppendingString:@"\n"]];
+
+    if (response) {
+        NSString *responseLine = [NSString stringWithFormat:@"[BranchLog] Got Response for request (%@): %@", requestServiceURL, response];
+        [self processLogMessage:[responseLine stringByAppendingString:@"\n"]];
+    }
 }
 
 // Writes message to Log File.
