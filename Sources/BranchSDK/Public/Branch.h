@@ -603,8 +603,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  DO NOT USE unless you are implementing deferred initialization for plugins.
 
  Platforms such as React Native and Unity, have slow runtime startups. This results in early lifecycle events before client code can run.
- When `deferInitForPlugin` is true in `branch.json` initSession with cache itself until this method is called.
-
+ When `deferInitForPlugin` is true in `branch.json`, `+[Branch initialize:]` will cache itself until this method is called.
+ 
  Note that while init is deferred, other calls to the Branch SDK may result in errors. For that reason, do not use this feature for general SDK init deferral.
  */
 - (void)notifyNativeToInit;
@@ -713,8 +713,8 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 /**
  Checks the pasteboard (clipboard) for a Branch Link on App Install.
  If found, the Branch Link is used to provide deferred deeplink data.
-
- This should be called before initSession
+ 
+ This should be called before `+[Branch initialize:]`
 
  Note, this may display a toast message to the end user.
  */
@@ -724,8 +724,8 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
  Let's client know if the Branch SDK will trigger a pasteboard toast to the end user.
 
  All of the following conditions must be true.
-
- 1. Developer called checkPastboardOnInstall before initSession
+ 
+ 1. Developer called checkPastboardOnInstall before `+[Branch initialize:]`
  2. A URL is on the pasteboard
  3. First time app is run with Branch SDK
  */
@@ -733,8 +733,8 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 
 /**
  Set the AppGroup used to share data between the App Clip and the Full App.
-
- This must be set before initSession is called.
+ 
+ This must be set before `+[Branch initialize:]` is called.
  */
 - (void)setAppClipAppGroup:(NSString *)appGroup __attribute__((deprecated("This API is deprecated. Please set config.appClipAppGroup on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
 
@@ -1021,10 +1021,10 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 /**
  Indicates whether or not this user has a custom identity specified for them. Note that this is *independent of installs*. If you call setIdentity, this device
  will have that identity associated with this user until `logout` is called. This includes persisting through uninstalls, as we track device id.
-
- This method should only be invoked after initSession completes, either within the callback or after a delay.
+ 
+ This method should only be invoked after the session opened by `+[Branch initialize:]` completes, either within the deep link callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ As a result, you may experience issues where the deep link callback does not fire. Again, the solution to this issue is to only invoke this method after you have called `+[Branch initialize:]`.
  */
 - (BOOL)isUserIdentified;
 
@@ -1063,11 +1063,11 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 /**
  Branch includes SDK methods to allow retrieval of our last attributed touch data (LATD) from the client. This results in an asynchronous call being made to Branch's servers with LATD data returned when possible.
  Last attributed touch data contains the information associated with that user's last viewed impression or clicked link.
-
- This method should only be invoked after initSession completes, either within the callback or after a delay.
+ 
+ This method should only be invoked after the session opened by `+[Branch initialize:]` completes, either within the deep link callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
-
+ As a result, you may experience issues where the deep link callback does not fire. Again, the solution to this issue is to only invoke this method after you have called `+[Branch initialize:]`.
+ 
  @param window attribution window in days.  If the window is 0, the server will use the server side default.  If the window is outside the server supported range, it will default to 30 days.
  @param completion callback with attribution data
  */
@@ -1204,7 +1204,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  @param campaign Use this field to organize the links by actual marketing campaign.
  @param alias The alias for a link.
  @param ignoreUAString The User Agent string to tell the server to ignore the next request from, to prevent it from treating a preview scrape as a link click.
- @param forceLinkCreation Whether we should create a link from the Branch Key even if initSession failed. Defaults to NO.
+ @param forceLinkCreation Whether we should create a link from the Branch Key even if the session opened by `+[Branch initialize:]` failed. Defaults to NO.
  @warning This method makes a synchronous url request.
  @warning This method is primarily intended to be an internal Branch method, used to work around a bug with SLComposeViewController
  @warning This can fail if the alias is already taken.
@@ -1353,10 +1353,10 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url without any items specified. The usage type will default to unlimited.
-
- This method should only be invoked after initSession completes, either within the callback or after a delay.
+ 
+ This method should only be invoked after the session opened by `+[Branch initialize:]` completes, either within the deep link callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ As a result, you may experience issues where the deep link callback does not fire. Again, the solution to this issue is to only invoke this method after you have called `+[Branch initialize:]`.
 
  @param callback Callback called with the url.
  */
@@ -1364,10 +1364,10 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url with the specified params. The usage type will default to unlimited.
-
- This method should only be invoked after initSession completes, either within the callback or after a delay.
+ 
+ This method should only be invoked after the session opened by `+[Branch initialize:]` completes, either within the deep link callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ As a result, you may experience issues where the deep link callback does not fire. Again, the solution to this issue is to only invoke this method after you have called `+[Branch initialize:]`.
 
  @param params Dictionary of parameters to include in the link.
  @param callback Callback called with the url.
@@ -1377,10 +1377,10 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url with the specified params, channel, and feature. The usage type will default to unlimited.
-
- This method should only be invoked after initSession completes, either within the callback or after a delay.
+ 
+ This method should only be invoked after the session opened by `+[Branch initialize:]` completes, either within the deep link callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ As a result, you may experience issues where the deep link callback does not fire. Again, the solution to this issue is to only invoke this method after you have called `+[Branch initialize:]`.
 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
@@ -1391,10 +1391,10 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url with the specified params, channel, feature, and stage. The usage type will default to unlimited.
-
- This method should only be invoked after initSession completes, either within the callback or after a delay.
+ 
+ This method should only be invoked after the session opened by `+[Branch initialize:]` completes, either within the deep link callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ As a result, you may experience issues where the deep link callback does not fire. Again, the solution to this issue is to only invoke this method after you have called `+[Branch initialize:]`.
 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
@@ -1406,10 +1406,10 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url with the specified params, channel, feature, stage, and alias. The usage type will default to unlimited.
-
- This method should only be invoked after initSession completes, either within the callback or after a delay.
+ 
+ This method should only be invoked after the session opened by `+[Branch initialize:]` completes, either within the deep link callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ As a result, you may experience issues where the deep link callback does not fire. Again, the solution to this issue is to only invoke this method after you have called `+[Branch initialize:]`.
 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
@@ -1423,10 +1423,10 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url with the specified params, channel, feature, stage, and link type.
-
- This method should only be invoked after initSession completes, either within the callback or after a delay.
+ 
+ This method should only be invoked after the session opened by `+[Branch initialize:]` completes, either within the deep link callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ As a result, you may experience issues where the deep link callback does not fire. Again, the solution to this issue is to only invoke this method after you have called `+[Branch initialize:]`.
 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
@@ -1439,10 +1439,10 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url with the specified params, channel, feature, stage, and match duration. The usage type will default to unlimited.
-
- This method should only be invoked after initSession completes, either within the callback or after a delay.
+ 
+ This method should only be invoked after the session opened by `+[Branch initialize:]` completes, either within the deep link callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ As a result, you may experience issues where the deep link callback does not fire. Again, the solution to this issue is to only invoke this method after you have called `+[Branch initialize:]`.
 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
@@ -1455,10 +1455,10 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url with the specified params, tags, channel, feature, and stage. The usage type will default to unlimited.
-
- This method should only be invoked after initSession completes, either within the callback or after a delay.
+ 
+ This method should only be invoked after the session opened by `+[Branch initialize:]` completes, either within the deep link callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ As a result, you may experience issues where the deep link callback does not fire. Again, the solution to this issue is to only invoke this method after you have called `+[Branch initialize:]`.
 
  @param params Dictionary of parameters to include in the link.
  @param tags An array of tags to associate with this link, useful for tracking.
@@ -1471,10 +1471,10 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url with the specified params, tags, channel, feature, stage, and alias. The usage type will default to unlimited.
-
- This method should only be invoked after initSession completes, either within the callback or after a delay.
+ 
+ This method should only be invoked after the session opened by `+[Branch initialize:]` completes, either within the deep link callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ As a result, you may experience issues where the deep link callback does not fire. Again, the solution to this issue is to only invoke this method after you have called `+[Branch initialize:]`.
 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
@@ -1489,10 +1489,10 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Get a short url with the specified params, tags, channel, feature, stage, and link type.
-
- This method should only be invoked after initSession completes, either within the callback or after a delay.
+ 
+ This method should only be invoked after the session opened by `+[Branch initialize:]` completes, either within the deep link callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ As a result, you may experience issues where the deep link callback does not fire. Again, the solution to this issue is to only invoke this method after you have called `+[Branch initialize:]`.
 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
@@ -1507,10 +1507,10 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 /**
  Get a short url with the specified params, tags, channel, feature, stage, and match duration. The usage type will default to unlimited.
 
- This method should only be invoked after initSession completes, either within the callback or after a delay.
+ This method should only be invoked after the session opened by `+[Branch initialize:]` completes, either within the deep link callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
-
+ As a result, you may experience issues where the deep link callback does not fire. Again, the solution to this issue is to only invoke this method after you have called `+[Branch initialize:]`.
+ 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param tags An array of tags to associate with this link, useful for tracking.
@@ -1524,10 +1524,10 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 /**
  Get a short url with the specified params, tags, channel, feature, stage, and match duration. The usage type will default to unlimited.
 
- This method should only be invoked after initSession completes, either within the callback or after a delay.
+ This method should only be invoked after the session opened by `+[Branch initialize:]` completes, either within the deep link callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
-
+ As a result, you may experience issues where the deep link callback does not fire. Again, the solution to this issue is to only invoke this method after you have called `+[Branch initialize:]`.
+ 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param tags An array of tags to associate with this link, useful for tracking.
@@ -1543,10 +1543,10 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 /**
  Get a short url with the specified params, tags, channel, feature, stage, campaign and match duration. The usage type will default to unlimited.
 
- This method should only be invoked after initSession completes, either within the callback or after a delay.
+ This method should only be invoked after the session opened by `+[Branch initialize:]` completes, either within the deep link callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
-
+ As a result, you may experience issues where the deep link callback does not fire. Again, the solution to this issue is to only invoke this method after you have called `+[Branch initialize:]`.
+ 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param tags An array of tags to associate with this link, useful for tracking.
@@ -1561,10 +1561,10 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 - (void)getShortUrlWithParams:(nullable NSDictionary *)params andTags:(nullable NSArray *)tags andAlias:(nullable NSString *)alias andMatchDuration:(NSUInteger)duration andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andCampaign:(nullable NSString *)campaign andCallback:(nullable callbackWithUrl)callback;
 
 /**
-
- This method should only be invoked after initSession completes, either within the callback or after a delay.
+ 
+ This method should only be invoked after the session opened by `+[Branch initialize:]` completes, either within the deep link callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ As a result, you may experience issues where the deep link callback does not fire. Again, the solution to this issue is to only invoke this method after you have called `+[Branch initialize:]`.
 
  */
 - (void)getSpotlightUrlWithParams:(NSDictionary *)params callback:(callbackWithParams)callback;
@@ -1816,10 +1816,10 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Method used by BranchUniversalObject to register a view on content
-
- This method should only be invoked after initSession completes, either within the callback or after a delay.
+ 
+ This method should only be invoked after the session opened by `+[Branch initialize:]` completes, either within the deep link callback or after a delay.
  If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ As a result, you may experience issues where the deep link callback does not fire. Again, the solution to this issue is to only invoke this method after you have called `+[Branch initialize:]`.
 
  @warning This is meant for use internally only and should not be used by apps.
  */
@@ -1830,14 +1830,16 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 - (void) sendServerRequestWithoutSession:(BNCServerRequest*)request __attribute__((deprecated(("This API is deprecated. Please use sendServerRequest instead."))));
 
 /**
- This is the block that is called each time a new Branch session is started. It is automatically set
- when Branch is initialized with `initSessionWithLaunchOptions:andRegisterDeepLinkHandler`.
+ This is the block that is called each time a new Branch session is started. It is no longer set
+ automatically; `+[Branch initialize:]` replaces the removed
+ `initSessionWithLaunchOptions:andRegisterDeepLinkHandler` that used to set it.
  */
 @property (copy, nonatomic) void(^ sessionInitWithParamsCallback) (NSDictionary * _Nullable params, NSError * _Nullable error) DEPRECATED_ATTRIBUTE;
 
 /**
- This is the block that is called each time a new Branch session is started. It is automatically set
- when Branch is initialized with `initSessionWithLaunchOptions:andRegisterDeepLinkHandlerUsingBranchUniversalObject`.
+ This is the block that is called each time a new Branch session is started. It is no longer set
+ automatically; `+[Branch initialize:]` replaces the removed
+ `initSessionWithLaunchOptions:andRegisterDeepLinkHandlerUsingBranchUniversalObject` that used to set it.
 
  The difference with this callback from `sessionInitWithParamsCallback` is that it is called with a
  BranchUniversalObject.

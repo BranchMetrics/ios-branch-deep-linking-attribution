@@ -11,7 +11,6 @@
 NSString * const BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN = @"randomized_bundle_token";
 NSString * const BRANCH_REQUEST_KEY_DEVELOPER_IDENTITY = @"identity";
 NSString * const BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN = @"randomized_device_token";
-NSString * const BRANCH_REQUEST_KEY_SESSION_ID = @"session_id";
 NSString * const BRANCH_REQUEST_KEY_ACTION = @"event";
 NSString * const BRANCH_REQUEST_KEY_STATE = @"metadata";
 NSString * const BRANCH_REQUEST_KEY_BUCKET = @"bucket";
