@@ -167,6 +167,9 @@ void ForceCategoriesToLoad(void) {
 // Private method used internally
 - (void)clearLinkIdentifiers;
 
++ (void)applyDeprecatedSettersFromConfiguration:(BranchConfiguration *)configuration
+                                        toBranch:(Branch *)branch;
+
 @end
 
 @implementation Branch
@@ -258,11 +261,6 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
 
 // Applies every configuration value that depends on the singleton already existing.
 + (void)applyConfiguration:(BranchConfiguration *)configuration toBranch:(Branch *)branch {
-    // Several setters invoked below are deprecated for external callers; applyConfiguration: is their
-    // canonical internal application point, so suppress the deprecation warning for this method body.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-
     // Logging: the caller's logLevel/callback own the logger state, overriding any branch.json toggle.
     if (configuration.loggingCallback) {
         [Branch enableLoggingAtLevel:configuration.logLevel withCallback:configuration.loggingCallback];
@@ -272,9 +270,7 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
         logger.logLevelThreshold = configuration.logLevel;
     }
 
-    if (configuration.requestTracingCallback) {
-        [Branch setCallbackForTracingRequests:configuration.requestTracingCallback];
-    }
+    [Branch applyDeprecatedSettersFromConfiguration:configuration toBranch:branch];
 
     // Identity & environment. These mutate the BNCServerAPI / BNCPreferenceHelper singletons, whose
     // values are read lazily at request time, so they don't need to precede singleton creation.
@@ -283,12 +279,6 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     }
     if (configuration.cdnBaseUrl) {
         [BranchPluginSupport setCDNBaseUrl:configuration.cdnBaseUrl];
-    }
-    if (configuration.apiUrl) {
-        [Branch setAPIUrl:configuration.apiUrl];
-    }
-    if (configuration.safeTrackAPIUrl) {
-        [Branch setSafetrackAPIURL:configuration.safeTrackAPIUrl];
     }
 
     // Network
@@ -343,12 +333,26 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     if (!configuration.automaticOpenEvents) {
         [Branch disableNextForegroundForTimeInterval:0];
     }
+}
 
+// Applies the setters below that are deprecated for external callers but still needed internally.
++ (void)applyDeprecatedSettersFromConfiguration:(BranchConfiguration *)configuration
+                                        toBranch:(Branch *)branch {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    if (configuration.requestTracingCallback) {
+        [Branch setCallbackForTracingRequests:configuration.requestTracingCallback];
+    }
+    if (configuration.apiUrl) {
+        [Branch setAPIUrl:configuration.apiUrl];
+    }
+    if (configuration.safeTrackAPIUrl) {
+        [Branch setSafetrackAPIURL:configuration.safeTrackAPIUrl];
+    }
     // Pasteboard
     if (configuration.checkPasteboardOnInstall) {
         [branch checkPasteboardOnInstall];
     }
-
 #pragma clang diagnostic pop
 }
 
