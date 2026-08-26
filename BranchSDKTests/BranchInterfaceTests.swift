@@ -37,12 +37,26 @@ private final class FakeBranch: NSObject, BranchInterface {
         callback?(stubbedLatestParams, nil)
     }
 
+    func requestDeepLinkData(openURL url: URL?) {}
+
+    func requestDeepLinkData(openURL url: URL?, sourceApplication: String?, annotation: Any?) {}
+
+    func requestDeepLinkData(userActivity: NSUserActivity?) {}
+
+    func requestDeepLinkData(userInfo: [AnyHashable: Any]?) {}
+
     @available(iOS 13.0, macCatalyst 13.1, *)
     func requestDeepLinkData(sceneOptions connectionOptions: UIScene.ConnectionOptions?,
                              scene: UIScene,
                              callback: callbackWithParams? = nil) {
         callback?(stubbedLatestParams, nil)
     }
+
+    @available(iOS 13.0, *)
+    func requestDeepLinkData(scene: UIScene, openURLContexts urlContexts: Set<UIOpenURLContext>) {}
+
+    @available(iOS 13.0, *)
+    func requestDeepLinkData(scene: UIScene, userActivity: NSUserActivity) {}
 
     func sendOpen() {
         sendOpenCallCount += 1
