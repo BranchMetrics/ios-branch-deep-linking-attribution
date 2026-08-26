@@ -1,5 +1,7 @@
 # Branch SDK Documentation for iOS
 
+[![unit](https://img.shields.io/github/actions/workflow/status/BranchMetrics/ios-branch-deep-linking-attribution/verify.yml?branch=4.0.0-beta.0&label=unit)](https://github.com/BranchMetrics/ios-branch-deep-linking-attribution/actions/workflows/verify.yml?query=branch%3A4.0.0-beta.0) [![black-box](https://img.shields.io/github/actions/workflow/status/BranchMetrics/ios-branch-deep-linking-attribution/layer1-logger-tests.yml?branch=4.0.0-beta.0&label=black-box)](https://github.com/BranchMetrics/ios-branch-deep-linking-attribution/actions/workflows/layer1-logger-tests.yml?query=branch%3A4.0.0-beta.0) [![ui](https://img.shields.io/github/actions/workflow/status/BranchMetrics/ios-branch-deep-linking-attribution/gptdriver-e2e.yml?branch=4.0.0-beta.0&label=ui)](https://github.com/BranchMetrics/ios-branch-deep-linking-attribution/actions/workflows/gptdriver-e2e.yml?query=branch%3A4.0.0-beta.0)
+
 The Branch iOS SDK for deep linking and attribution.
 
 > ## Branch Sandbox Program

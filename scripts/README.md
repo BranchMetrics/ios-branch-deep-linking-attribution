@@ -13,8 +13,11 @@ After capturing a `branchlogs.txt` (from a CI artifact, or by running
 validator at it:
 
 ```bash
-python3 scripts/validate_l1_logs.py path/to/branchlogs.txt
+python3 scripts/validate_l1_logs.py path/to/branchlogs.txt --scenario N1
 ```
+
+`--scenario` is required: a capture is judged against the contract for the run
+that produced it, so the validator has to be told which run that was.
 
 To run the validator's own test suite:
 
@@ -27,6 +30,31 @@ path, a missing-field failure, the v2-`user_data` nested shape (iOS
 nests device fields under `user_data` on `/v2/event/*`), the
 open-must-be-captured guard, the deep-link contract, the
 attribution-level tiers, and the uncontracted-endpoint case.
+
+## Scenarios
+
+Each scenario is one harness invocation with its own capture.
+`-[AppDelegate setBranchLogFile]` deletes `branchlogs.txt` on every launch,
+so two scenarios sharing one run would leave only the last one's capture.
+
+Each scenario declares a contract: the exact number of requests per endpoint,
+which endpoints must not appear, and the order between them. There is no global
+rule any more — a scenario that requires an open says so in its contract.
+
+```bash
+# N1 organic_open: a launch, no link resolved
+./scripts/run_l1_instrumented.sh
+python3 scripts/validate_l1_logs.py branchlogs.txt --scenario N1
+
+# deeplink: taps "Request DeepLink", which posts /v3/deeplink
+ONLY_TESTING=TestBed-GPTDriverTests/DeepLinkWireValidationTest \
+OUTPUT_LOG=branchlogs-deeplink.txt \
+  ./scripts/run_l1_instrumented.sh
+python3 scripts/validate_l1_logs.py branchlogs-deeplink.txt --scenario deeplink
+```
+
+An unrecognised or missing `--scenario` exits 2, so a typo in a CI matrix
+cannot silently validate a capture against nothing.
 
 ## Endpoints on this line
 

@@ -110,12 +110,16 @@ jobs:
 
       # continue-on-error so the summary below still runs on a failure — the
       # job is failed explicitly at the end.
+      #
+      # The scenario is required on this line: a capture is judged against the
+      # contract for the run that produced it. This job drives the default
+      # harness run, which is N1 organic_open — one open, no deep link.
       - name: Validate wire logs
         id: validate
         continue-on-error: true
         run: |
           set -o pipefail
-          python3 scripts/validate_l1_logs.py branchlogs.txt 2>&1 | tee /tmp/l1-output.txt
+          python3 scripts/validate_l1_logs.py branchlogs.txt --scenario N1 2>&1 | tee /tmp/l1-output.txt
 
       # What the gate actually asserted, on the PR page rather than buried in
       # the job log.
@@ -135,6 +139,17 @@ jobs:
               echo "No wire requests were captured."
             fi
             echo
+            echo "Scenario coverage:"
+            echo
+            echo "No scenario is authored yet, so the endpoint table above is the only assertion this gate makes."
+            echo
+            echo "| scenario group | status |"
+            echo "| --- | --- |"
+            echo "| Cold (C1–C3) | not implemented |"
+            echo "| Warm (W1–W2) | not implemented |"
+            echo "| Hot (H1–H2) | not implemented |"
+            echo "| Negative / guards (N1–N4) | not implemented |"
+            echo
             if [ "${{ steps.validate.outcome }}" = "success" ]; then
               echo "Result: **PASS**"
             else
@@ -143,6 +158,14 @@ jobs:
               echo '```'
               grep '^FAILED:' /tmp/l1-output.txt || echo "(no FAILED lines; see the job log)"
               echo '```'
+              echo
+              echo "<details><summary>Captured wire log</summary>"
+              echo
+              echo '```'
+              if [ -s branchlogs.txt ]; then head -c 40000 branchlogs.txt; echo; else echo "(branchlogs.txt is empty or missing)"; fi
+              echo '```'
+              echo
+              echo "</details>"
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 
