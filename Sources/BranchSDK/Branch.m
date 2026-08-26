@@ -2235,6 +2235,41 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 - (void) requestDeepLinkData:(NSString *)branchLink callback:(nullable callbackWithParams)callback {
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData called with branchLink: %@", branchLink] error:nil];
 
+    // Same question handleDeepLink: asks, asked before anything is cancelled or enqueued: a URL
+    // the skiplist or the host app told us to ignore must not reach /v3/deeplink. It is also
+    // asked before -cancelPendingDeepLinkRequests, so an ignored URL cannot discard a resolution
+    // already in flight for a link we are allowed to resolve.
+    NSString *ignoredPattern = nil;
+    if (branchLink.length > 0) {
+        NSURL *url = [NSURL URLWithString:branchLink];
+        ignoredPattern = [self.urlFilter patternMatchingURL:url];
+        if (!ignoredPattern) {
+            ignoredPattern = [self.userURLFilter patternMatchingURL:url];
+        }
+    }
+    if (ignoredPattern) {
+        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData will not resolve a URL matching ignored pattern %@", ignoredPattern] error:nil];
+
+        // handleDeepLink: records the URL and completes the session unattributed rather than
+        // dropping it silently. -sendOpen is how this line completes a session, so the SDK lands
+        // in the same state whichever entry point the filtered URL arrived through.
+        self.preferenceHelper.dropURLOpen = YES;
+        self.preferenceHelper.externalIntentURI = branchLink;
+        self.preferenceHelper.referringURL = branchLink;
+        [self sendOpen];
+
+        // The caller asked whether this URL carries link data and is owed an answer. It carries
+        // none, and nothing failed, so the answer is the SDK's own not-a-link payload rather than
+        // an error or -getLatestReferringParams, which still reports the last link that did
+        // resolve.
+        if (callback) {
+            dispatch_async(dispatch_get_main_queue(), ^ {
+                callback(@{ BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK : @0 }, nil);
+            });
+        }
+        return;
+    }
+
     if (branchLink.length > 0) {
         [self.requestQueue cancelPendingDeepLinkRequests];
     }
@@ -2398,7 +2433,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     API_AVAILABLE(ios(13.0), macCatalyst(13.1)) {
     [[BranchLogger shared] logDebug:@"requestDeepLinkDataWithSceneOptions called" error:nil];
 
-    // Mirror BranchScene.initSessionWithSceneOptions: build the same synthetic launchOptions
+    // Build the synthetic launchOptions the removed BranchScene scene-init API used to build,
     // so requestDeepLinkDataWithLaunchOptions applies the same early-return logic.
     NSMutableDictionary *launchOptions = [[NSMutableDictionary alloc] init];
     if (connectionOptions.userActivities.count) {
@@ -2414,7 +2449,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     // Mirror BranchScene: explicitly resolve the URL from connectionOptions,
     // equivalent to the continueUserActivity: / openURLContexts: calls BranchScene makes
-    // after its initSceneSession call.
+    // once the session is up — the work `+[Branch initialize:]` now covers.
     if (connectionOptions.userActivities.count) {
         NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject;
         if ([activity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
@@ -2516,7 +2551,12 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             }
         });
     };
-    BranchRequestOpen *openReq = [[BranchRequestOpen alloc] initWithCallback:openCallback];
+    // A launch with no randomized bundle token has never completed an open, so it is a first
+    // launch. This is the same criterion -initializeSessionAndCallCallback: uses to choose
+    // between BranchOpenRequest and BranchInstallRequest; without it no request on this path
+    // is ever an install, and every install-gated behaviour in BranchRequestOpen is unreachable.
+    BOOL isInstall = !self.preferenceHelper.randomizedBundleToken;
+    BranchRequestOpen *openReq = [[BranchRequestOpen alloc] initWithCallback:openCallback isInstall:isInstall];
     openReq.urlString = nil;
     openReq.traceCallback = bnc_tracingCallback;
 
@@ -2547,7 +2587,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             }
         });
     };
-    BranchRequestOpen *openReq = [[BranchRequestOpen alloc] initWithCallback:openCallback];
+    // Same first-launch criterion as -sendOpen. An install reaches this path too: a first
+    // launch attributed to a clicked link resolves the deep link first and spawns its open here,
+    // and that is exactly the open whose payload has to be kept as the install attribution.
+    BOOL isInstall = !self.preferenceHelper.randomizedBundleToken;
+    BranchRequestOpen *openReq = [[BranchRequestOpen alloc] initWithCallback:openCallback isInstall:isInstall];
     openReq.urlString = nil;
     openReq.traceCallback = bnc_tracingCallback;
     openReq.linkData = responseData;
