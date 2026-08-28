@@ -15,8 +15,8 @@ and prebuilt XCFrameworks.
 1. **The queue is an `NSOperationQueue`.** `processNextQueueItem` is gone from `Sources/`; each
    request is wrapped in a `BNCServerRequestOperation` that the queue executes.
 2. **New `/v3` endpoints for the open flow.** `openServiceURL` → `/v3/events/open` (was `/v1/open`),
-   plus a new `deepLinkServiceURL` → `/v3/deeplink`. Installs are still `/v1/install`, events still
-   `/v2/event/{standard,custom}`.
+   plus a new `deepLinkServiceURL` → `/v3/deeplink`. Installs are still `/v1/install`, events moved to
+   `/v3/events/{standard,custom}` (was `/v2/event/{standard,custom}`).
 3. **New public deep-link API.** `requestDeepLinkData:callback:` and friends replace driving
    everything through `initSession…`, which is now `__attribute__((deprecated))`.
 4. **`+setTrackingDisabled:` / `+trackingDisabled` are removed** from the public header _and_ from
