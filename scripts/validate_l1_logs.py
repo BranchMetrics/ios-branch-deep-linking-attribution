@@ -214,6 +214,16 @@ SCENARIO_CONTRACTS = {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 0},
         "order": (),
     },
+    # C1 cold_https: a Universal Link delivered into a freshly launched
+    # process. Two opens is correct, not a duplicate: the launch fires one
+    # carrying no link field, then the resolution's attributed open carries
+    # `link_data`. Requiring one would fail a healthy SDK. The plan also asks
+    # that the resolution carry the link; that is a field-level assertion this
+    # layer does not make, as with N1 and N3.
+    "C1": {
+        "counts": {"/v3/deeplink": 1, "/v3/events/open": 2},
+        "order": (("/v3/deeplink", "/v3/events/open"),),
+    },
     "deeplink": {
         "counts": {"/v3/deeplink": 1},
         "order": (("/v3/deeplink", "/v3/events/open"),),
