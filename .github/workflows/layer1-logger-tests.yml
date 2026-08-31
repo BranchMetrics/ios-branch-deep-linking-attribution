@@ -89,11 +89,9 @@ jobs:
       # Three scenarios, three captures. Each needs its own run: the app
       # deletes branchlogs.txt on every launch, so one run cannot hold two.
       #
-      # The order is load-bearing. C3 is a first install and wipes the app; C1
-      # is the same launch on a device that already has it, so it must follow
-      # C3 and keep that install. Reordering does not fail silently — C1's
-      # contract counts two token-carrying opens and would see one — but the
-      # message names the field, not the ordering, so this comment is the map.
+      # Each scenario wipes first and establishes whatever state it needs, so
+      # the steps are independent and reordering them is safe. C1 launches the
+      # app twice inside its own test: once to install, once entered by a link.
       - name: Capture N1 organic open
         env:
           DERIVED_DATA_DIR: ./DerivedData
@@ -127,8 +125,8 @@ jobs:
           SCHEME: TestBed-GPTDriverTests
           BUNDLE_ID: io.branch.sdk.Branch-TestBed
         run: |
-          ONLY_TESTING=TestBed-GPTDriverTests/ColdLinkWireValidationTest \
-          OUTPUT_LOG=wire-c1.txt UNINSTALL_FIRST=0 ./scripts/run_l1_instrumented.sh
+          ONLY_TESTING=TestBed-GPTDriverTests/ColdLinkInstalledWireValidationTest \
+          OUTPUT_LOG=wire-c1.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
 
       - name: Set up Python
         uses: actions/setup-python@v6
