@@ -343,14 +343,14 @@ class V2NestingTests(unittest.TestCase):
     descend into the nested block to find them."""
 
     def test_v2_nested_fields_resolve(self):
-        entries = v.parse_branch_logs(_fixture("v2_nested.txt"))
+        entries = v.parse_branch_logs(_fixture("v3_nested.txt"))
         request = entries[0]["request"]
         self.assertEqual(v.lookup_field(request, "brand"), "Apple")
         self.assertEqual(v.lookup_field(request, "connection_type"), "wifi")
         self.assertEqual(v.lookup_field(request, "sdk"), "ios")
 
     def test_v2_event_contract_is_satisfied_by_nested_shape(self):
-        entries = v.parse_branch_logs(_fixture("v2_nested.txt"))
+        entries = v.parse_branch_logs(_fixture("v3_nested.txt"))
         request = entries[0]["request"]
         missing = [
             f for f in v.REQUIRED_V2_EVENT
@@ -414,7 +414,7 @@ class BetaEndpointCoverageTests(unittest.TestCase):
         self.assertNotIn("hardware_id", fields)
 
     def test_v2_event_missing_device_field_fails(self):
-        errors, output = _run_validation("v2_event_missing_idfv.txt")
+        errors, output = _run_validation("v3_event_missing_idfv.txt")
         self.assertTrue(
             any("missing required field 'idfv'" in e for e in errors),
             f"Expected idfv-missing error, got: {errors}",
