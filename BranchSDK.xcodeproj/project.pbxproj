@@ -372,6 +372,9 @@
 		5FCDD52B2B7AC6A300EAF29F /* BranchInstallRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3D22B7AC6A100EAF29F /* BranchInstallRequest.h */; };
 		5FCDD52C2B7AC6A300EAF29F /* BranchInstallRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3D22B7AC6A100EAF29F /* BranchInstallRequest.h */; };
 		5FCDD52D2B7AC6A300EAF29F /* BranchInstallRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3D22B7AC6A100EAF29F /* BranchInstallRequest.h */; };
+		BB0831A12E00000000000011 /* BranchConfiguration+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = BB0831A12E00000000000001 /* BranchConfiguration+Private.h */; };
+		BB0831A12E00000000000012 /* BranchConfiguration+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = BB0831A12E00000000000001 /* BranchConfiguration+Private.h */; };
+		BB0831A12E00000000000013 /* BranchConfiguration+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = BB0831A12E00000000000001 /* BranchConfiguration+Private.h */; };
 		5FCDD52E2B7AC6A300EAF29F /* Branch+Validator.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3D32B7AC6A100EAF29F /* Branch+Validator.h */; };
 		5FCDD52F2B7AC6A300EAF29F /* Branch+Validator.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3D32B7AC6A100EAF29F /* Branch+Validator.h */; };
 		5FCDD5302B7AC6A300EAF29F /* Branch+Validator.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FCDD3D32B7AC6A100EAF29F /* Branch+Validator.h */; };
@@ -688,6 +691,7 @@
 		5FCDD3D02B7AC6A100EAF29F /* BNCSystemObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCSystemObserver.h; sourceTree = "<group>"; };
 		5FCDD3D12B7AC6A100EAF29F /* NSString+Branch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Branch.h"; sourceTree = "<group>"; };
 		5FCDD3D22B7AC6A100EAF29F /* BranchInstallRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchInstallRequest.h; sourceTree = "<group>"; };
+		BB0831A12E00000000000001 /* BranchConfiguration+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BranchConfiguration+Private.h"; sourceTree = "<group>"; };
 		5FCDD3D32B7AC6A100EAF29F /* Branch+Validator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Branch+Validator.h"; sourceTree = "<group>"; };
 		5FCDD3D42B7AC6A100EAF29F /* BNCDeepLinkViewControllerInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDeepLinkViewControllerInstance.h; sourceTree = "<group>"; };
 		5FCDD3D52B7AC6A100EAF29F /* BNCContentDiscoveryManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCContentDiscoveryManager.h; sourceTree = "<group>"; };
@@ -1029,6 +1033,7 @@
 				5FCDD3CA2B7AC6A100EAF29F /* BNCUserAgentCollector.h */,
 				E7F311B02DACB54100F824A7 /* BNCODMInfoCollector.h */,
 				5FCDD3D32B7AC6A100EAF29F /* Branch+Validator.h */,
+				BB0831A12E00000000000001 /* BranchConfiguration+Private.h */,
 				5FCDD3D82B7AC6A100EAF29F /* BranchContentDiscoverer.h */,
 				5FCDD3DA2B7AC6A100EAF29F /* BranchContentDiscoveryManifest.h */,
 				5FCDD3B82B7AC6A100EAF29F /* BranchContentPathProperties.h */,
@@ -1088,6 +1093,7 @@
 			files = (
 				E7FAF6A02E26E497006C167F /* BranchConstants.h in Headers */,
 				5FCDD52E2B7AC6A300EAF29F /* Branch+Validator.h in Headers */,
+				BB0831A12E00000000000011 /* BranchConfiguration+Private.h in Headers */,
 				5FCDD4A42B7AC6A200EAF29F /* BNCCallbacks.h in Headers */,
 				5FCDD4922B7AC6A100EAF29F /* BranchLinkProperties.h in Headers */,
 				5FCDD4C82B7AC6A200EAF29F /* BranchScene.h in Headers */,
@@ -1178,6 +1184,7 @@
 			files = (
 				E7FAF6A22E26E497006C167F /* BranchConstants.h in Headers */,
 				5FCDD52F2B7AC6A300EAF29F /* Branch+Validator.h in Headers */,
+				BB0831A12E00000000000012 /* BranchConfiguration+Private.h in Headers */,
 				5FCDD4A52B7AC6A200EAF29F /* BNCCallbacks.h in Headers */,
 				5FCDD4932B7AC6A100EAF29F /* BranchLinkProperties.h in Headers */,
 				5FCDD4C92B7AC6A200EAF29F /* BranchScene.h in Headers */,
@@ -1270,6 +1277,7 @@
 				E7FAF6A12E26E497006C167F /* BranchConstants.h in Headers */,
 				5FCDD4BB2B7AC6A200EAF29F /* BranchPasteControl.h in Headers */,
 				5FCDD5302B7AC6A300EAF29F /* Branch+Validator.h in Headers */,
+				BB0831A12E00000000000013 /* BranchConfiguration+Private.h in Headers */,
 				5FCDD4A62B7AC6A200EAF29F /* BNCCallbacks.h in Headers */,
 				5FCDD4942B7AC6A100EAF29F /* BranchLinkProperties.h in Headers */,
 				5FCDD4CA2B7AC6A200EAF29F /* BranchScene.h in Headers */,

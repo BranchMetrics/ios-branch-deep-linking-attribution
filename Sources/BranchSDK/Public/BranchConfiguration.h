@@ -141,7 +141,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Designated initializer.
- @param branchKey The Branch key. Must be non-empty; validated in `-validate`.
+ @param branchKey The Branch key. Must be non-empty; validated in `-validate:`.
  */
 - (instancetype)initWithKey:(NSString *)branchKey NS_DESIGNATED_INITIALIZER;
 
@@ -170,11 +170,15 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Validation
 
 /**
- Validates the configuration. Raises `NSInvalidArgumentException` with an actionable message if any field
- is invalid: empty key, non-positive or > 60s timeout, negative retry count, negative retry interval, or a
- third-party APIs wait time outside (0, 10] seconds. Called automatically by `+[Branch initialize:]`.
+ Validates the configuration.
+
+ Returns NO and, when `error` is non-NULL, populates it with an actionable message if any field is
+ invalid.
+
+ @param error On return, the reason validation failed. Pass NULL if you do not need it.
+ @return YES if every field is valid, otherwise NO.
  */
-- (void)validate;
+- (BOOL)validate:(NSError *_Nullable *_Nullable)error;
 
 @end
 
