@@ -153,7 +153,9 @@ final class BranchInterfaceTests: XCTestCase {
             _ = (Branch.self as AnyObject).perform(resetSelector)
         }
         let config = BranchConfiguration(key: "key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB")
-        let branch: BranchInterface = Branch.initialize(config)
+        let initialized = Branch.initialize(config)
+        XCTAssertNotNil(initialized, "Branch.initialize should return a BranchInterface-conforming instance")
+        let branch: BranchInterface? = initialized
         XCTAssertNotNil(branch, "Branch.initialize should return a BranchInterface-conforming instance")
     }
 }
