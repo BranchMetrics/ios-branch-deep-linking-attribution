@@ -8,6 +8,7 @@
 
 #import "Branch.h"
 #import "BranchConfiguration.h"
+#import "BranchConfiguration+Private.h"
 #import "BNCConfig.h"
 #import "BNCCrashlyticsWrapper.h"
 #import "BNCDeepLinkViewControllerInstance.h"
@@ -205,12 +206,22 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
 
 + (Branch *)initialize:(BranchConfiguration *)configuration {
     if (!configuration) {
-        [NSException raise:NSInvalidArgumentException
-                    format:@"A BranchConfiguration is required to initialize Branch."];
+        NSString *errorMessage = @"A BranchConfiguration is required to initialize Branch.";
+        NSError *configurationError = [NSError branchErrorWithCode:BNCInvalidConfigurationError localizedMessage:errorMessage];
+        [[BranchLogger shared] logError:errorMessage error:configurationError];
+        [[BranchLogger shared] logError:@"Failed to initialize Branch" error:nil];
+        return nil;
     }
 
-    // Raises NSInvalidArgumentException with an actionable message on any invalid field.
-    [configuration validate];
+    // Logging is applied before validation: a rejected configuration is reported only through the
+    // logger, so the caller's logLevel/loggingCallback must be live before anything can be rejected.
+    [Branch applyLoggingConfiguration:configuration];
+
+    // Logs an actionable message naming the first invalid field.
+    if (![configuration validate:NULL]) {
+        [[BranchLogger shared] logError:@"Failed to initialize Branch" error:nil];
+        return nil;
+    }
 
     // Single canonical initialization entry point. Guard against reinitializing the singleton:
     // once created, re-running the setter side-effects below would mutate a running SDK.
@@ -238,24 +249,31 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
 
         // --- Create (or fetch) the singleton ---
         branch = [Branch getInstanceInternal:self.branchKey];
-    }
 
-    // --- Settings applied to the instance / shared preference helper (caller wins) ---
-    [Branch applyConfiguration:configuration toBranch:branch];
+        // --- Settings applied to the instance / shared preference helper (caller wins) ---
+        [Branch applyConfiguration:configuration toBranch:branch];
+    }
 
     return branch;
 }
 
-// Applies every configuration value that depends on the singleton already existing.
-+ (void)applyConfiguration:(BranchConfiguration *)configuration toBranch:(Branch *)branch {
-    // Logging: the caller's logLevel/callback own the logger state, overriding any branch.json toggle.
+// A caller who supplied a callback or assigned logLevel owns the logger state. Called twice: once
+// before validation, so a rejected configuration still reports through the caller's own logger, and
+// again from applyConfiguration: after singleton creation, so the branch.json enableLogging toggle
+// cannot override an explicit choice. Both paths are plain assignments, so the repeat is a no-op.
++ (void)applyLoggingConfiguration:(BranchConfiguration *)configuration {
     if (configuration.loggingCallback) {
         [Branch enableLoggingAtLevel:configuration.logLevel withCallback:configuration.loggingCallback];
-    } else if (configuration.logLevel) {
+    } else if (configuration.logLevelWasSet) {
         BranchLogger *logger = [BranchLogger shared];
         logger.loggingEnabled = YES;
         logger.logLevelThreshold = configuration.logLevel;
     }
+}
+
+// Applies every configuration value that depends on the singleton already existing.
++ (void)applyConfiguration:(BranchConfiguration *)configuration toBranch:(Branch *)branch {
+    [Branch applyLoggingConfiguration:configuration];
 
     if (configuration.requestTracingCallback) {
         [Branch setCallbackForTracingRequests:configuration.requestTracingCallback];
@@ -263,8 +281,10 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
 
     // Identity & environment. These mutate the BNCServerAPI / BNCPreferenceHelper singletons, whose
     // values are read lazily at request time, so they don't need to precede singleton creation.
-    if (configuration.euEndpoint) {
-        [BNCServerAPI sharedInstance].useEUServers = YES;
+    // Assigned rather than only turned on, so `euEndpoint = NO` can undo a prior -useEUEndpoints
+    // call. A configuration that never touches euEndpoint leaves the current routing alone.
+    if (configuration.euEndpointWasSet) {
+        [BNCServerAPI sharedInstance].useEUServers = configuration.euEndpoint;
     }
     if (configuration.cdnBaseUrl) {
         [BranchPluginSupport setCDNBaseUrl:configuration.cdnBaseUrl];

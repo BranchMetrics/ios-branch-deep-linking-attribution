@@ -45,6 +45,7 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
         [messages setObject:@"Class not found (for Dynamic Method invocation)." forKey:@(BNCClassNotFoundError)];
         [messages setObject:@"Method not dound (for Dynamic Method invocation)." forKey:@(BNCMethodNotFoundError)];
         [messages setObject:@"ODCConversionManager API failed." forKey:@(BNCODCConversionManagerError)];
+        [messages setObject:@"The Branch configuration is invalid." forKey:@(BNCInvalidConfigurationError)];
     });
     
     NSString *errorMessage = [messages objectForKey:@(code)];
