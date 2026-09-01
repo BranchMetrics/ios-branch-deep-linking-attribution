@@ -7,9 +7,10 @@
 //  iOS semantics note: the pre-Scene UIApplication delegate path
 //  handles both cold and warm Universal Link arrivals through the
 //  SAME method — `application:continueUserActivity:restorationHandler:`.
-//  Branch SDK dispatches to `initSession` on cold launch and to
-//  `reInit` on warm delivery, but both eventually resolve link
-//  metadata via the same cloud call. Therefore, on this TestBed
+//  `Branch.initialize(_:)` — which replaced the removed
+//  `initSession`/`reInit` pair — opens the session on cold launch, and
+//  both cold and warm deliveries resolve link metadata through the same
+//  `requestDeepLinkData` cloud call. Therefore, on this TestBed
 //  (no SceneDelegate), there is no meaningful difference in the
 //  handler path between cold and warm for XCUITest purposes.
 //

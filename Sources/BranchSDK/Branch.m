@@ -7,6 +7,8 @@
 //
 
 #import "Branch.h"
+#import "BranchConfiguration.h"
+#import "BranchConfiguration+Private.h"
 #import "BNCConfig.h"
 #import "BNCCrashlyticsWrapper.h"
 #import "BNCDeepLinkViewControllerInstance.h"
@@ -188,6 +190,166 @@ void ForceCategoriesToLoad(void) {
     self.branchKey = branchKey;
     [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_GET_INSTANCE_API;
     return [Branch getInstanceInternal:self.branchKey];
+}
+
+// Tracks whether +initialize: has already created and configured the singleton, so a second call
+// warns and no-ops rather than re-applying setter side-effects to a running SDK.
+static BOOL bnc_didInitializeWithConfiguration = NO;
+
+// Test-only: clears the reinitialization guard so a subsequent +initialize: runs its side-effects
+// again. Not declared in the public header; exposed to tests via a category.
++ (void)resetInitializationGuardForTesting {
+    @synchronized ([Branch class]) {
+        bnc_didInitializeWithConfiguration = NO;
+    }
+}
+
++ (Branch *)initialize:(BranchConfiguration *)configuration {
+    if (!configuration) {
+        NSString *errorMessage = @"A BranchConfiguration is required to initialize Branch.";
+        NSError *configurationError = [NSError branchErrorWithCode:BNCInvalidConfigurationError localizedMessage:errorMessage];
+        [[BranchLogger shared] logError:errorMessage error:configurationError];
+        [[BranchLogger shared] logError:@"Failed to initialize Branch" error:nil];
+        return nil;
+    }
+
+    // Logging is applied before validation: a rejected configuration is reported only through the
+    // logger, so the caller's logLevel/loggingCallback must be live before anything can be rejected.
+    [Branch applyLoggingConfiguration:configuration];
+
+    // Logs an actionable message naming the first invalid field.
+    if (![configuration validate:NULL]) {
+        [[BranchLogger shared] logError:@"Failed to initialize Branch" error:nil];
+        return nil;
+    }
+
+    // Single canonical initialization entry point. Guard against reinitializing the singleton:
+    // once created, re-running the setter side-effects below would mutate a running SDK.
+    
+    Branch *branch = nil;
+    @synchronized ([Branch class]) {
+        if (bnc_didInitializeWithConfiguration) {
+            [[BranchLogger shared] logWarning:@"Warning, attempted to reinitialize Branch SDK singleton!" error:nil];
+            return [Branch getInstanceInternal:self.class.branchKey];
+        }
+        bnc_didInitializeWithConfiguration = YES;
+
+        // --- Settings that must be applied before the singleton is created ---
+
+        // Test key must be resolved before the branch key is read.
+        [Branch setUseTestBranchKey:configuration.testMode];
+
+        // Custom network service class is set-once and must precede singleton creation.
+        if (configuration.remoteInterface) {
+            [Branch setNetworkServiceClass:configuration.remoteInterface];
+        }
+
+        self.branchKey = configuration.branchKey;
+        [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_INIT_FUNCTION;
+
+        // --- Create (or fetch) the singleton ---
+        branch = [Branch getInstanceInternal:self.branchKey];
+
+        // --- Settings applied to the instance / shared preference helper (caller wins) ---
+        [Branch applyConfiguration:configuration toBranch:branch];
+    }
+
+    return branch;
+}
+
+// A caller who supplied a callback or assigned logLevel owns the logger state. Called twice: once
+// before validation, so a rejected configuration still reports through the caller's own logger, and
+// again from applyConfiguration: after singleton creation, so the branch.json enableLogging toggle
+// cannot override an explicit choice. Both paths are plain assignments, so the repeat is a no-op.
++ (void)applyLoggingConfiguration:(BranchConfiguration *)configuration {
+    if (configuration.loggingCallback) {
+        [Branch enableLoggingAtLevel:configuration.logLevel withCallback:configuration.loggingCallback];
+    } else if (configuration.logLevelWasSet) {
+        BranchLogger *logger = [BranchLogger shared];
+        logger.loggingEnabled = YES;
+        logger.logLevelThreshold = configuration.logLevel;
+    }
+}
+
+// Applies every configuration value that depends on the singleton already existing.
++ (void)applyConfiguration:(BranchConfiguration *)configuration toBranch:(Branch *)branch {
+    [Branch applyLoggingConfiguration:configuration];
+
+    if (configuration.requestTracingCallback) {
+        [Branch setCallbackForTracingRequests:configuration.requestTracingCallback];
+    }
+
+    // Identity & environment. These mutate the BNCServerAPI / BNCPreferenceHelper singletons, whose
+    // values are read lazily at request time, so they don't need to precede singleton creation.
+    // Assigned rather than only turned on, so `euEndpoint = NO` can undo a prior -useEUEndpoints
+    // call. A configuration that never touches euEndpoint leaves the current routing alone.
+    if (configuration.euEndpointWasSet) {
+        [BNCServerAPI sharedInstance].useEUServers = configuration.euEndpoint;
+    }
+    if (configuration.cdnBaseUrl) {
+        [BranchPluginSupport setCDNBaseUrl:configuration.cdnBaseUrl];
+    }
+    if (configuration.apiUrl) {
+        [Branch setAPIUrl:configuration.apiUrl];
+    }
+    if (configuration.safeTrackAPIUrl) {
+        [Branch setSafetrackAPIURL:configuration.safeTrackAPIUrl];
+    }
+
+    // Network
+    [branch setNetworkTimeout:configuration.networkTimeout];
+    [branch setMaxRetries:configuration.retryCount];
+    [branch setRetryInterval:configuration.retryInterval];
+    [Branch setSDKWaitTimeForThirdPartyAPIs:configuration.thirdPartyAPIsWaitTime];
+
+    // Privacy & attribution
+    [branch disableAdNetworkCallouts:configuration.adNetworkCalloutsDisabled];
+    [BNCPreferenceHelper sharedInstance].limitFacebookTracking = configuration.limitFacebookAttribution;
+
+    if (configuration.attributionLevel) {
+        [branch setConsumerProtectionAttributionLevel:configuration.attributionLevel resetSession:NO];
+    }
+
+    if (configuration.dmaParameters) {
+        // DMA parameters are config-only: written to preferences here so BNCRequestFactory picks them up.
+        BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
+        prefs.eeaRegion = configuration.dmaParameters.eeaRegion;
+        prefs.adPersonalizationConsent = configuration.dmaParameters.adPersonalizationConsent;
+        prefs.adUserDataUsageConsent = configuration.dmaParameters.adUserDataUsageConsent;
+    }
+
+    // URL collection
+    if (configuration.allowedSchemes.count > 0) {
+        [branch setAllowedSchemes:configuration.allowedSchemes];
+    }
+    if (configuration.urlPatternsToIgnore.count > 0) {
+        [branch setUrlPatternsToIgnore:configuration.urlPatternsToIgnore];
+    }
+
+    // Request metadata
+    for (NSString *key in configuration.requestMetadata) {
+        [branch setRequestMetadataKey:key value:configuration.requestMetadata[key]];
+    }
+
+    // App Clip
+    if (configuration.appClipAppGroup) {
+        [branch setAppClipAppGroup:configuration.appClipAppGroup];
+    }
+
+    // Debugging
+    if (configuration.deepLinkDebugParams) {
+        [branch setDeepLinkDebugMode:configuration.deepLinkDebugParams];
+    }
+
+    // Open tracking: when automatic open tracking is disabled the developer is responsible for -sendOpen.
+    if (!configuration.automaticOpenEvents) {
+        [Branch disableNextForegroundForTimeInterval:0];
+    }
+
+    // Pasteboard
+    if (configuration.checkPasteboardOnInstall) {
+        [branch checkPasteboardOnInstall];
+    }
 }
 
 - (id)initWithInterface:(BNCServerInterface *)interface
@@ -2262,7 +2424,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     API_AVAILABLE(ios(13.0), macCatalyst(13.1)) {
     [[BranchLogger shared] logDebug:@"requestDeepLinkDataWithSceneOptions called" error:nil];
 
-    // Mirror BranchScene.initSessionWithSceneOptions: build the same synthetic launchOptions
+    // Build the synthetic launchOptions the removed BranchScene scene-init API used to build,
     // so requestDeepLinkDataWithLaunchOptions applies the same early-return logic.
     NSMutableDictionary *launchOptions = [[NSMutableDictionary alloc] init];
     if (connectionOptions.userActivities.count) {
@@ -2278,7 +2440,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     // Mirror BranchScene: explicitly resolve the URL from connectionOptions,
     // equivalent to the continueUserActivity: / openURLContexts: calls BranchScene makes
-    // after its initSceneSession call.
+    // once the session is up — the work `+[Branch initialize:]` now covers.
     if (connectionOptions.userActivities.count) {
         NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject;
         if ([activity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {

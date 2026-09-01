@@ -11,7 +11,6 @@
 NSString * const BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN = @"randomized_bundle_token";
 NSString * const BRANCH_REQUEST_KEY_DEVELOPER_IDENTITY = @"identity";
 NSString * const BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN = @"randomized_device_token";
-NSString * const BRANCH_REQUEST_KEY_SESSION_ID = @"session_id";
 NSString * const BRANCH_REQUEST_KEY_ACTION = @"event";
 NSString * const BRANCH_REQUEST_KEY_STATE = @"metadata";
 NSString * const BRANCH_REQUEST_KEY_BUCKET = @"bucket";
@@ -189,6 +188,7 @@ NSString * const BRANCH_KEY_SOURCE_CONFIG_JSON = @"config_json";
 NSString * const BRANCH_KEY_SOURCE_INFO_PLIST = @"info_plist";
 NSString * const BRANCH_KEY_SOURCE_GET_INSTANCE_API = @"getInstance_api";
 NSString * const BRANCH_KEY_SOURCE_SET_BRANCH_KEY_API= @"setBranchKey_api";
+NSString * const BRANCH_KEY_SOURCE_INIT_FUNCTION = @"init_function";
 
 NSString * const BRANCH_REQUEST_KEY_LINKED_FRAMEORKS = @"linked_frameworks";
 NSString * const FRAMEWORK_ATT_TRACKING_MANAGER = @"ATTrackingManager";
