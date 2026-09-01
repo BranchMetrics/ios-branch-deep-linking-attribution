@@ -364,9 +364,10 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  instance is used to open a session.
 
  @param configuration The pre-init configuration. Must not be nil.
- @return The global Branch instance, configured per `configuration`.
+ @return The global Branch instance configured per `configuration`, or nil if `configuration` is nil
+         or invalid.
  */
-+ (Branch *)initialize:(BranchConfiguration *)configuration;
++ (nullable Branch *)initialize:(BranchConfiguration *)configuration;
 
 /**
  Allow Branch to handle a link opening the app, returning whether it was from a Branch link or not.

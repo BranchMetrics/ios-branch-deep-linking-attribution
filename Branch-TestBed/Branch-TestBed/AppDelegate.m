@@ -14,6 +14,19 @@
 @import BranchSDK;
 #import <UserNotifications/UserNotifications.h>
 
+/// Set to 1 to compile the exhaustive `BranchConfiguration` example in
+/// `-application:didFinishLaunchingWithOptions:`.
+///
+/// Off by default, and it must stay off for normal use: that block sets every
+/// field away from its default, and several of those values break the TestBed
+/// and the integration tests. `euEndpoint` routes to EU hosts this key is not
+/// provisioned for, `testMode` swaps in the Info.plist test key, `cdnBaseUrl`
+/// points at a host that does not exist, `addAllowedScheme:` narrows tracking
+/// from "all schemes" to one, `appClipAppGroup` names a group absent from the
+/// entitlements, and `deepLinkDebugParams` injects keys into every deep-link
+/// response the tests assert on.
+#define BRANCH_TESTBED_FULL_CONFIG_EXAMPLE 0
+
 @interface AppDelegate() <UNUserNotificationCenterDelegate>
 - (void)logBranchMessage:(NSString *)message level:(BranchLogLevel)level error:(NSError *)error;
 - (void)logBranchRequest:(NSString *)url
@@ -45,24 +58,14 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Compliance Branch Init example
     // BranchConfiguration *config = [BranchConfiguration compliance:@"key_live_xxx"];
 
-    // Example: full BranchConfiguration setup, with every settable field changed from its default.
-    // This is the iOS counterpart of the Android `BranchConfiguration.Builder` chain. Objective-C has no
-    // chained builder, so create the config with the key, set the properties you care about, then pass it
-    // to `+[Branch initialize:]`.
-
     // ── Build the configuration ──────────────────────────────────────────
+    // Objective-C has no chained builder, so create the config with the key, set the properties you
+    // care about, then pass it to `+[Branch initialize:]`.
     BranchConfiguration *config =
         [[BranchConfiguration alloc] initWithKey:@"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB"];
 
-    // Identity & environment  (defaults: testMode NO, apiUrl nil, safeTrackAPIUrl nil,
-    //                          cdnBaseUrl nil, euEndpoint NO)
-    config.testMode        = YES;                         // use the test key from Info.plist
-    config.apiUrl          = @"https://api2.branch.io";   // optional API base-URL override
-    config.safeTrackAPIUrl = @"https://api2.branch.io";   // optional safe-track base-URL override
-    // config.cdnBaseUrl   = @"https://cdn.branch.io";     // optional CDN pattern-list override (defaults to Branch's CDN)
-    config.euEndpoint      = YES;                          // route to Branch's EU endpoints
-
     // Logging  (defaults: logLevel Error, callbacks nil)
+    // The TestBed's log view is driven by these callbacks, so they are always set.
     config.logLevel = BranchLogLevelDebug;
     config.loggingCallback = ^(NSString *message, BranchLogLevel level, NSError *error) {
         [appDelegate logBranchMessage:message level:level error:error];
@@ -74,6 +77,19 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
                                       NSString *requestServiceURL) {
         [appDelegate logBranchRequest:url request:request response:response error:error requestServiceURL:requestServiceURL];
     };
+
+#if BRANCH_TESTBED_FULL_CONFIG_EXAMPLE
+    // Reference only — every settable field changed from its default.
+    // Compiled out by default; see the comment on.
+    // BRANCH_TESTBED_FULL_CONFIG_EXAMPLE at the top of this file for why.
+
+    // Identity & environment  (defaults: testMode NO, apiUrl nil, safeTrackAPIUrl nil,
+    //                          cdnBaseUrl nil, euEndpoint NO)
+    config.testMode        = YES;                         // use the test key from Info.plist
+    config.apiUrl          = @"https://api2.branch.io";   // optional API base-URL override
+    config.safeTrackAPIUrl = @"https://api2.branch.io";   // optional safe-track base-URL override
+    config.cdnBaseUrl      = @"https://cdn.example.com";   // optional CDN pattern-list override
+    config.euEndpoint      = YES;                          // route to Branch's EU endpoints
 
     // Network  (defaults: networkTimeout 5.5s, retryCount 3, retryInterval 0s, thirdPartyAPIsWaitTime 0.5s)
     // NOTE: iOS uses SECONDS (NSTimeInterval), unlike Android's milliseconds.
@@ -110,6 +126,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Debugging  (default: deepLinkDebugParams nil) — constant params merged into every deep-link response.
     // Not for production use.
     config.deepLinkDebugParams = @{ @"debug_key": @"debug_value" };
+#endif
 
     // ── Initialize ───────────────────────────────────────────────────────
     [Branch initialize:config];
