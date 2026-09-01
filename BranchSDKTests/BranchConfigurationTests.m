@@ -3,7 +3,6 @@
 //  Branch-SDK-Tests
 //
 //  Created by Brandon Boothe on 7/21/26.
-//  Copyright © 2026 Branch, Inc. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>
