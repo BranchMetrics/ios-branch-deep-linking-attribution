@@ -6,6 +6,8 @@
 //
 
 #import "BranchConfiguration.h"
+#import "BranchConfiguration+Private.h"
+#import "NSError+Branch.h"
 
 // Defaults mirror BNCPreferenceHelper (DEFAULT_TIMEOUT, DEFAULT_RETRY_COUNT, DEFAULT_RETRY_INTERVAL).
 static const NSTimeInterval BranchConfigurationDefaultNetworkTimeout = 5.5;
@@ -23,6 +25,8 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
 
 @interface BranchConfiguration ()
 @property (nonatomic, copy, readwrite) NSString *branchKey;
+@property (nonatomic, assign, readwrite) BOOL logLevelWasSet;
+@property (nonatomic, assign, readwrite) BOOL euEndpointWasSet;
 @property (nonatomic, strong) NSMutableArray<NSString *> *mutableAllowedSchemes;
 @property (nonatomic, strong) NSMutableArray<NSString *> *mutableUrlPatternsToIgnore;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *mutableRequestMetadata;
@@ -42,9 +46,11 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
     _safeTrackAPIUrl = nil;
     _cdnBaseUrl = nil;
     _euEndpoint = NO;
+    _euEndpointWasSet = NO;
 
     // Logging
     _logLevel = BranchLogLevelError;
+    _logLevelWasSet = NO;
     _loggingCallback = nil;
     _requestTracingCallback = nil;
 
@@ -79,6 +85,25 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
     _deepLinkDebugParams = nil;
 
     return self;
+}
+
+#pragma mark - Logging
+
+// BranchLogLevel is a non-optional enum whose first case, BranchLogLevelVerbose, is 0, so the value
+// alone cannot distinguish "never set" from "set to Verbose". Record the assignment instead.
+- (void)setLogLevel:(BranchLogLevel)logLevel {
+    _logLevel = logLevel;
+    _logLevelWasSet = YES;
+}
+
+#pragma mark - Identity & environment
+
+// A BOOL cannot distinguish "never set" from "set to NO", so an unset euEndpoint would leave
+// -[Branch useEUEndpoints] as the only way to reach EU routing and no way at all to turn it back
+// off. Record the assignment so `euEndpoint = NO` is honored as an explicit choice.
+- (void)setEuEndpoint:(BOOL)euEndpoint {
+    _euEndpoint = euEndpoint;
+    _euEndpointWasSet = YES;
 }
 
 #pragma mark - Factory helpers
@@ -134,44 +159,56 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
 
 #pragma mark - Validation
 
-- (void)validate {
+- (BOOL)validate:(NSError *_Nullable *_Nullable)error {
     if (self.branchKey.length == 0) {
-        [NSException raise:NSInvalidArgumentException
-                    format:@"Branch key cannot be empty. Get your key from dashboard.branch.io/settings."];
+        return [self failValidation:@"Branch key cannot be empty. Get your key from dashboard.branch.io/settings."
+                              error:error];
     }
     if (self.networkTimeout <= 0) {
-        [NSException raise:NSInvalidArgumentException
-                    format:@"Network timeout must be a positive number of seconds (got %.2f).", self.networkTimeout];
+        return [self failValidation:[NSString stringWithFormat:@"Network timeout must be a positive number of seconds (got %.2f).", self.networkTimeout]
+                              error:error];
     }
     if (self.networkTimeout > BranchConfigurationMaxNetworkTimeout) {
-        [NSException raise:NSInvalidArgumentException
-                    format:@"Network timeout cannot exceed 60 seconds (got %.2f).", self.networkTimeout];
+        return [self failValidation:[NSString stringWithFormat:@"Network timeout cannot exceed 60 seconds (got %.2f).", self.networkTimeout]
+                              error:error];
     }
     if (self.retryCount < 0) {
-        [NSException raise:NSInvalidArgumentException
-                    format:@"Retry count must be >= 0 (got %ld).", (long)self.retryCount];
+        return [self failValidation:[NSString stringWithFormat:@"Retry count must be >= 0 (got %ld).", (long)self.retryCount]
+                              error:error];
     }
     if (self.retryInterval < 0) {
-        [NSException raise:NSInvalidArgumentException
-                    format:@"Retry interval must be >= 0 seconds (got %.2f).", self.retryInterval];
+        return [self failValidation:[NSString stringWithFormat:@"Retry interval must be >= 0 seconds (got %.2f).", self.retryInterval]
+                              error:error];
     }
     if (self.thirdPartyAPIsWaitTime <= 0 || self.thirdPartyAPIsWaitTime > BranchConfigurationMaxThirdPartyAPIsWaitTime) {
-        [NSException raise:NSInvalidArgumentException
-                    format:@"Third-party APIs wait time must be > 0 and <= 10 seconds (got %.2f).", self.thirdPartyAPIsWaitTime];
+        return [self failValidation:[NSString stringWithFormat:@"Third-party APIs wait time must be > 0 and <= 10 seconds (got %.2f).", self.thirdPartyAPIsWaitTime]
+                              error:error];
     }
     if (self.remoteInterface && ![self.remoteInterface conformsToProtocol:@protocol(BNCNetworkServiceProtocol)]) {
-        [NSException raise:NSInvalidArgumentException
-                    format:@"remoteInterface class '%@' must conform to BNCNetworkServiceProtocol.",
-                           NSStringFromClass(self.remoteInterface)];
+        return [self failValidation:[NSString stringWithFormat:@"remoteInterface class '%@' must conform to BNCNetworkServiceProtocol.",
+                                     NSStringFromClass(self.remoteInterface)]
+                              error:error];
     }
     if (self.apiUrl && !([self.apiUrl hasPrefix:@"http://"] || [self.apiUrl hasPrefix:@"https://"])) {
-        [NSException raise:NSInvalidArgumentException
-                    format:@"A custom apiUrl must either have a prefix of http:// or https:// (got '%@').", self.apiUrl];
+        return [self failValidation:[NSString stringWithFormat:@"A custom apiUrl must either have a prefix of http:// or https:// (got '%@').", self.apiUrl]
+                              error:error];
     }
     if (self.safeTrackAPIUrl && !([self.safeTrackAPIUrl hasPrefix:@"http://"] || [self.safeTrackAPIUrl hasPrefix:@"https://"])) {
-        [NSException raise:NSInvalidArgumentException
-                    format:@"A custom safeTrackAPIUrl must either have a prefix of http:// or https:// (got '%@').", self.safeTrackAPIUrl];
+        return [self failValidation:[NSString stringWithFormat:@"A custom safeTrackAPIUrl must either have a prefix of http:// or https:// (got '%@').", self.safeTrackAPIUrl]
+                              error:error];
     }
+    return YES;
+}
+
+// Fills the caller's out-param, when supplied, with a BNCInvalidConfigurationError carrying `message`
+// as its failure reason. Always returns NO so each check above can `return [self failValidation:…]`.
+- (BOOL)failValidation:(NSString *)message error:(NSError *_Nullable *_Nullable)error {
+    NSError *validationError = [NSError branchErrorWithCode:BNCInvalidConfigurationError localizedMessage:message];
+    [[BranchLogger shared] logError:message error:validationError];
+    if (error) {
+        *error = validationError;
+    }
+    return NO;
 }
 
 @end

@@ -50,6 +50,7 @@ typedef NS_ENUM(NSInteger, BNCErrorCode) {
     BNCClassNotFoundError                = 1019,
     BNCMethodNotFoundError               = 1020,
     BNCODCConversionManagerError         = 1021,
+    BNCInvalidConfigurationError         = 1022,
     BNCHighestError
 };
 
