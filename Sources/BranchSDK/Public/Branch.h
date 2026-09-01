@@ -234,9 +234,9 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  with this method. See the documentation at
  https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/#configure-xcode-project
  for information about configuring your app with Branch keys.
- 
+
  You can only set the Branch key once per app run.  Any errors are logged.
- 
+
  @param branchKey The Branch key to use.
  */
 + (void)setBranchKey:(NSString *)branchKey;
@@ -437,7 +437,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 /**
  Resolves a Branch URL to deep link data, or returns deferred deep link data when `branchLink` is nil.
- 
+
  When called with a non-nil URL, any pending (not yet executing) nil-URL deep link requests are
  cancelled so that only one callback fires per app open.
  */
@@ -569,17 +569,17 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 /**
  DO NOT USE unless you are familiar with the SDK's threading model.
- 
+
  When certain actions are required to complete prior to session initialization, this method can be used to pass in a blocking dispatch_block_t.
  The passed in dispatch_block_t will block Branch initialization thread, not the main thread.
- 
+
  @param initBlock         dispatch_block_t object to be executed prior to session initialization
  */
 - (void)dispatchToIsolationQueue:(dispatch_block_t)initBlock;
 
 /**
  DO NOT USE unless you are implementing deferred initialization for plugins.
- 
+
  Platforms such as React Native and Unity, have slow runtime startups. This results in early lifecycle events before client code can run.
  When `deferInitForPlugin` is true in `branch.json`, `+[Branch initialize:]` will cache itself until this method is called.
  
@@ -606,7 +606,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 /**
  Send requests to EU endpoints.
- 
+
  This feature must also be enabled on the server side, otherwise the server will drop requests. Contact your account manager for details.
  */
 - (void)useEUEndpoints __attribute__((deprecated("This API is deprecated. Please set config.euEndpoint = YES on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
@@ -700,7 +700,7 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 
 /**
  Let's client know if the Branch SDK will trigger a pasteboard toast to the end user.
- 
+
  All of the following conditions must be true.
  
  1. Developer called checkPastboardOnInstall before `+[Branch initialize:]`
@@ -719,7 +719,7 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 /**
  Pass the AppTrackingTransparency authorization status to Branch to measure ATT prompt performance.
  This method should be called from the callback of ATTrackingManager.requestTrackingAuthorization.
- 
+
  Note:
  Before prompting the user, check that ATTrackingManager.trackingAuthorizationStatus is notDetermined.
  Otherwise the prompt will not display and the completion will be called with current status.
@@ -729,7 +729,7 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 
 /**
  Set time window for SKAdNetwork callouts.  By default, Branch limits calls to SKAdNetwork to within 24 hours after first install.
- 
+
  Note: Branch does not automatically call SKAdNetwork unless configured on the dashboard.
  */
 - (void)setSKAdNetworkCalloutMaxTimeSinceInstall:(NSTimeInterval)maxTimeInterval __attribute__((deprecated(("This is no longer supported for iOS 16.1+ - SKAN4.0"))));
@@ -737,7 +737,7 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 /*
  Add a Partner Parameter for Facebook.
  Once set, this parameter is attached to install, opens and events until cleared or the app restarts.
- 
+
  See Facebook's documentation for details on valid parameters
  */
 - (void)addFacebookPartnerParameterWithName:(NSString *)name value:(NSString *)value;
@@ -745,7 +745,7 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 /*
  Add a Partner Parameter for Snap.
  Once set, this parameter is attached to install, opens and events until cleared or the app restarts.
- 
+
  See Snap's documentation for details on valid parameters
  */
 - (void)addSnapPartnerParameterWithName:(NSString *)name value:(NSString *)value;
@@ -779,21 +779,21 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 /**
  Set the SDK wait time for third party APIs (for fetching ODM info and Apple Attribution Token) to finish
  This timeout should be > 0 and <= 10 seconds.
- 
+
  @param waitTime Number of seconds before third party API calls are considered timed out. Default is 0.5 seconds (500ms).
  */
 + (void)setSDKWaitTimeForThirdPartyAPIs:(NSTimeInterval)waitTime __attribute__((deprecated("This API is deprecated. Please set config.thirdPartyAPIsWaitTime on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
 
 /**
  Disable callouts to ad networks for all events for a user; by default Branch sends callouts to ad networks.
- 
+
  By calling this method with YES, Branch will not send any events to the ad networks specified in your Branch account.  If ad networks are not specified in your Branch account, this method will be ignored and events will still be sent.
  */
 - (void)disableAdNetworkCallouts:(BOOL)disableCallouts;
 
 /**
  For use by other Branch SDKs
- 
+
  @param name Plugin name.  For example, Unity or React Native
  @param version Plugin version
  */
@@ -801,9 +801,9 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 
 /**
  Checks if a url string is a probable Branch link.
- 
+
  Checks against the Info.plist and the standard Branch list.
- 
+
  @param urlString URL as an NSString
  */
 + (BOOL)isBranchLink:(NSString *)urlString;
@@ -850,13 +850,13 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 + (void)resumeSession;
 
 /*
- 
+
  Sets the time window for which referrer_graid is valid starting from now.
  After validity window is over, its cleared from settings and will not be sent
  with requests anymore.
- 
+
  Default time interval is 30 days (2,592,000 seconds).
- 
+
  @param validityWindow -(NSTimeInterval) number of seconds for which referrer_gbraid will be valid starting from now.
  */
 + (void) setReferrerGbraidValidityWindow:(NSTimeInterval) validityWindow;
@@ -1007,25 +1007,15 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 - (BOOL)isUserIdentified;
 
 /**
- Set the user's identity to an ID used by your system, so that it is identifiable by you elsewhere.
+ Set the user's alias to an ID used by your system, so that it is identifiable by you elsewhere. Receive a completion callback, notifying you whether it succeeded or failed.
 
- @param userId The ID Branch should use to identify this user.
- @warning If you use the same ID between users on different sessions / devices, their actions will be merged.
- @warning This request is not removed from the queue upon failure -- it will be retried until it succeeds.
- @warning You should call `logout` before calling `setIdentity:` a second time.
- */
-- (void)setIdentity:(nullable NSString *)userId;
-
-/**
- Set the user's identity to an ID used by your system, so that it is identifiable by you elsewhere. Receive a completion callback, notifying you whether it succeeded or failed.
-
- @param userId The ID Branch should use to identify this user.
- @param callback The callback to be called once the request has completed (success or failure).
+ @param userAlias The ID Branch should use to identify this user.
+ @param completion The callback to be called once the request has completed (success or failure).
  @warning If you use the same ID between users on different sessions / devices, their actions will be merged.
  @warning This request is not removed from the queue upon failure -- it will be retried until it succeeds. The callback will only ever be called once, though.
- @warning You should call `logout` before calling `setIdentity:` a second time.
+ @warning You should call `logout` before calling `setUserAlias:completion:` a second time.
  */
-- (void)setIdentity:(nullable NSString *)userId withCallback:(nullable callbackWithParams)callback;
+- (void)setUserAlias:(nullable NSString *)userAlias completion:(nullable callbackWithParams)completion;
 
 /**
  Clear all of the current user's session items.
@@ -1711,7 +1701,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Take the current screen and make it discoverable, adding it to Apple's Core Spotlight index. Will be public if specified. You can override the type as desired, using one of the types provided in MobileCoreServices.
- 
+
  @param title Title for the spotlight preview item.
  @param description Description for the spotlight preview item.
  @param thumbnailUrl Url to an image to be used for the thumnbail in spotlight.
@@ -1726,7 +1716,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
 
 /**
  Take the current screen and make it discoverable, adding it to Apple's Core Spotlight index. Will be public if specified. You can override the type as desired, using one of the types provided in MobileCoreServices.
- 
+
  @param title Title for the spotlight preview item.
  @param description Description for the spotlight preview item.
  @param thumbnailUrl Url to an image to be used for the thumnbail in spotlight.

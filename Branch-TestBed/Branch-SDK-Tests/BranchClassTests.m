@@ -45,7 +45,7 @@
 }
 
 - (void)testIsUserIdentified {
-    [self.branch setIdentity: @"userId"];
+    [self.branch setUserAlias: @"userId" completion:nil];
     XCTAssertTrue([self.branch isUserIdentified], @"User should be identified");
 }
 
