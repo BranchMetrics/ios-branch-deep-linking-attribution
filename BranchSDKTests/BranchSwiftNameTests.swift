@@ -199,7 +199,7 @@ final class BranchSwiftNameTests: XCTestCase {
     func testDocumentedCallSitesTypeCheckFromMainActor() {
         // application(_:didFinishLaunchingWithOptions:) — callback form; see the note above.
         func didFinishLaunching(launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
-            Branch.sharedInstance().requestDeepLinkData(launchOptions: launchOptions) { params, error in
+            Branch.sharedInstance()?.requestDeepLinkData(launchOptions: launchOptions) { params, error in
                 _ = (params, error)
             }
         }
@@ -207,7 +207,7 @@ final class BranchSwiftNameTests: XCTestCase {
         // scene(_:continue:) and scene(_:openURLContexts:)
         func handleOpenedURL(_ url: URL) {
             Task.detached {
-                _ = try? await Branch.sharedInstance().requestDeepLinkData(branchLink: url.absoluteString)
+                _ = try? await Branch.sharedInstance()?.requestDeepLinkData(branchLink: url.absoluteString)
             }
         }
 
@@ -218,7 +218,7 @@ final class BranchSwiftNameTests: XCTestCase {
         // scene(_:willConnectTo:options:)
         func willConnect(scene: UIScene, connectionOptions: UIScene.ConnectionOptions) {
             Task.detached {
-                _ = try? await Branch.sharedInstance().requestDeepLinkData(
+                _ = try? await Branch.sharedInstance()?.requestDeepLinkData(
                     sceneOptions: connectionOptions,
                     scene: scene
                 )
