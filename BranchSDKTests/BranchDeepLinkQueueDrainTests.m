@@ -214,10 +214,10 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
 // at all: -containsInstallOrOpen counts an in-flight BranchRequestDeepLink as init traffic, so
 // the foreground short-circuits rather than racing the resolution it would have overwritten.
 //
-// -applicationDidBecomeActive sends that open only when three things hold at once: attribution
-// is not None, the session reads uninitialized, and no install or open is already queued. The
-// first two are established and asserted below, so a missing open can only be the third — this
-// fails if the queue stops recognising the 4.0 request classes.
+// -applicationDidBecomeActive sends that open only when two things hold at once: attribution is
+// not None, and no install or open is already queued. The first is established and asserted
+// below, so a missing open can only be the second — this fails if the queue stops recognising
+// the 4.0 request classes.
 - (void)testLiveResolutionSuppressesTheLifecycleOrganicOpen {
     [self.branch requestDeepLinkData:kResolvedLinkURL callback:nil];
     [self waitForCondition:^BOOL{ return [self enqueuedOperationCount] >= 1; }
@@ -229,14 +229,14 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
     XCTAssertEqualObjects([self enqueuedRequestClassNames], @[@"BranchRequestDeepLink"],
                           @"Precondition: the queued operation must be the deep link resolution, alone.");
 
-    // Production path: resign marks the session uninitialized, which is what arms the organic
-    // open on the next foreground.
+    // Production path: background before foregrounding, so the foreground under test arrives the
+    // way it does in the app. Resign itself only arms the open response lock.
     [self.branch applicationWillResignActive];
     [self waitForIsolationQueue];
 
-    // Precondition: -applicationDidBecomeActive skips the organic open on exactly two conditions,
-    // attributionLevelNone and an init request already in the queue. The second is the behaviour
-    // under test, so attribution is the only unrelated reason left to rule out.
+    // Precondition: attribution is Full, set in -setUp. Without it, -applicationDidBecomeActive
+    // would skip the open for a reason that has nothing to do with the in-flight resolution, and
+    // this test would pass hollow.
     XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelFull,
                           @"Precondition: attribution must not be None, or the open is suppressed for an unrelated reason.");
 

@@ -14,7 +14,27 @@
 @import BranchSDK;
 #import <UserNotifications/UserNotifications.h>
 
+/// Set to 1 to compile the exhaustive `BranchConfiguration` example in
+/// `-application:didFinishLaunchingWithOptions:`.
+///
+/// Off by default, and it must stay off for normal use: that block sets every
+/// field away from its default, and several of those values break the TestBed
+/// and the integration tests. `euEndpoint` routes to EU hosts this key is not
+/// provisioned for, `testMode` swaps in the Info.plist test key, `cdnBaseUrl`
+/// points at a host that does not exist, `addAllowedScheme:` narrows tracking
+/// from "all schemes" to one, `urlPatternsToIgnore` suppresses any URL matching
+/// its patterns before the request is built, `appClipAppGroup` names a group
+/// absent from the entitlements, and `deepLinkDebugParams` injects keys into
+/// every deep-link response the tests assert on.
+#define BRANCH_TESTBED_FULL_CONFIG_EXAMPLE 0
+
 @interface AppDelegate() <UNUserNotificationCenterDelegate>
+- (void)logBranchMessage:(NSString *)message level:(BranchLogLevel)level error:(NSError *)error;
+- (void)logBranchRequest:(NSString *)url
+                  request:(NSDictionary *)request
+                 response:(NSDictionary *)response
+                    error:(NSError *)error
+        requestServiceURL:(NSString *)requestServiceURL;
 @end
 
 AppDelegate* appDelegate = nil;
@@ -24,50 +44,107 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
 
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
+
     [self setBranchLogFile];
 
     appDelegate = self;
     [UNUserNotificationCenter currentNotificationCenter].delegate = self;
 
-    Branch *branch = [Branch getInstance];
+    // Debug Branch Init example
+    // BranchConfiguration *config = [BranchConfiguration debug:@"key_live_xxx"];
 
-    // Change the Branch base API URL
-    [Branch setAPIUrl:@"https://api2.branch.io"];
-    
-    [Branch enableLoggingAtLevel:BranchLogLevelVerbose withAdvancedCallback:^(NSString * _Nonnull message, BranchLogLevel logLevel, NSError * _Nullable error, NSMutableURLRequest * _Nullable request, BNCServerResponse * _Nullable response) {
-        // Handle the log message and error here. For example, printing to the console:
-        if (error) {
-            NSLog(@"[BranchLog] Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription);
-        } else {
-            NSLog(@"[BranchLog] Level: %lu, Message: %@", (unsigned long)logLevel, message);
-        }
+    // production Branch Init example
+    // BranchConfiguration *config = [BranchConfiguration production:@"key_live_xxx"];
 
-        if (request) {
-            NSString *jsonString = [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding];
-            NSString *requestLine = [NSString stringWithFormat:@"[BranchLog] Got %@ Request: %@", request.URL, jsonString];
-            NSLog(@"%@", requestLine);
-            // L1 wire validation: mirror the request line to branchlogs.txt so
-            // CI can parse it. The newline terminator keeps each request on its
-            // own line for the regex parser, even when several requests fire
-            // back-to-back.
-            [appDelegate processLogMessage:[requestLine stringByAppendingString:@"\n"]];
-        }
+    // Compliance Branch Init example
+    // BranchConfiguration *config = [BranchConfiguration compliance:@"key_live_xxx"];
 
-        if (response) {
-            NSString *responseLine = [NSString stringWithFormat:@"[BranchLog] Got Response for request (%@): %@", response.requestId, response.data];
-            NSLog(@"%@", responseLine);
-            [appDelegate processLogMessage:[responseLine stringByAppendingString:@"\n"]];
-        }
+    // ── Build the configuration ──────────────────────────────────────────
+    // Objective-C has no chained builder, so create the config with the key, set the properties you
+    // care about, then pass it to `+[Branch initialize:]`.
+    BranchConfiguration *config =
+        [[BranchConfiguration alloc] initWithKey:@"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB"];
 
-        NSString *logEntry = error ? [NSString stringWithFormat:@"Level: %lu, Message: %@, Error: %@", (unsigned long)logLevel, message, error.localizedDescription]
-                                   : [NSString stringWithFormat:@"Level: %lu, Message: %@", (unsigned long)logLevel, message];
-        APPLogHookFunction([NSDate date], logLevel, logEntry);
-    }];
+    // Logging  (defaults: logLevel Error, callbacks nil)
+    // The TestBed's log view is driven by these callbacks, so they are always set.
+    config.logLevel = BranchLogLevelDebug;
+    config.loggingCallback = ^(NSString *message, BranchLogLevel level, NSError *error) {
+        [appDelegate logBranchMessage:message level:level error:error];
+    };
+    config.requestTracingCallback = ^(NSString *url,
+                                      NSDictionary *request,
+                                      NSDictionary *response,
+                                      NSError *error,
+                                      NSString *requestServiceURL) {
+        [appDelegate logBranchRequest:url request:request response:response error:error requestServiceURL:requestServiceURL];
+    };
 
-    [branch checkPasteboardOnInstall];
-    
-    //[[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
+#if BRANCH_TESTBED_FULL_CONFIG_EXAMPLE
+    // Reference only — every settable field changed from its default.
+    // Compiled out by default; see the comment on.
+    // BRANCH_TESTBED_FULL_CONFIG_EXAMPLE at the top of this file for why.
+
+    // Identity & environment  (defaults: testMode NO, apiUrl nil, safeTrackAPIUrl nil,
+    //                          cdnBaseUrl nil, euEndpoint NO)
+    config.testMode        = YES;                         // use the test key from Info.plist
+    config.apiUrl          = @"https://api2.branch.io";   // optional API base-URL override
+    config.safeTrackAPIUrl = @"https://api2.branch.io";   // optional safe-track base-URL override
+    config.cdnBaseUrl      = @"https://cdn.example.com";   // optional CDN pattern-list override
+    config.euEndpoint      = YES;                          // route to Branch's EU endpoints
+
+    // Network  (defaults: networkTimeout 5.5s, retryCount 3, retryInterval 0s, thirdPartyAPIsWaitTime 0.5s)
+    // NOTE: iOS uses SECONDS (NSTimeInterval), unlike Android's milliseconds.
+    config.networkTimeout        = 10.0;                 // 10s   (Android 10_000ms)
+    config.retryCount            = 5;
+    config.retryInterval         = 1.0;                  // 1s    (Android 1_000ms)
+    config.thirdPartyAPIsWaitTime = 2.0;                 // wait up to 2s for ODM / Apple attribution token
+    // config.remoteInterface = [MyCustomNetworkService class]; // must conform to BNCNetworkServiceProtocol
+
+    // Privacy & attribution  (defaults: attributionLevel nil, limitFacebookAttribution NO,
+    //                          adNetworkCalloutsDisabled NO, DMA params unset)
+    config.attributionLevel = BranchAttributionLevelFull;
+    config.dmaParameters = [BranchDMAParameters eeaRegion:YES
+                                adPersonalizationConsent:NO
+                                  adUserDataUsageConsent:YES];
+    config.limitFacebookAttribution  = YES;
+    config.adNetworkCalloutsDisabled = YES;
+
+    // URL collection  (default: allowedSchemes empty == all schemes allowed)
+    [config addAllowedScheme:@"myapp"];                  // ← Android addWhitelistedScheme
+    // Each collection takes one entry at a time via the `add…` methods, or the whole collection at
+    // once by assigning the property. Assignment REPLACES — it discards anything added earlier, so
+    // the line below would drop the @"myapp" added above rather than appending to it:
+    // config.allowedSchemes = @[@"myapp", @"myapp-alt"];
+    // Assigning nil clears the list back to empty (== all schemes allowed again):
+    // config.allowedSchemes = nil;
+
+    // URLs Branch should never transmit  (default: empty). Regex patterns, not globs — these are
+    // matched against the full URL string. Same replace-on-assign semantics as above.
+    config.urlPatternsToIgnore = @[ @"^myapp://reset-password", @"\\?.*token=" ];
+
+    // Request metadata  (default: empty) — no direct Android builder analog
+    [config addMetadataWithKey:@"store" value:@"app_store"];
+    // Or set every pair at once. Again REPLACES, so this would drop @"store" above:
+    // config.requestMetadata = @{ @"store": @"app_store", @"tier": @"premium" };
+    // And nil clears it:
+    // config.requestMetadata = nil;
+
+    // Open tracking  (default: automaticOpenEvents YES)
+    config.automaticOpenEvents = YES;   // Branch calls sendOpen automatically on foreground
+
+    // Pasteboard  (default: checkPasteboardOnInstall NO)
+    config.checkPasteboardOnInstall = YES;   // check the clipboard for a Branch Link on install
+
+    // App Clip  (default: appClipAppGroup nil) — share data between an App Clip and the full app
+    config.appClipAppGroup = @"group.com.example.myapp";
+
+    // Debugging  (default: deepLinkDebugParams nil) — constant params merged into every deep-link response.
+    // Not for production use.
+    config.deepLinkDebugParams = @{ @"debug_key": @"debug_value" };
+#endif
+
+    // ── Initialize ───────────────────────────────────────────────────────
+    [Branch initialize:config];
 
 #if DEBUG
     [TestBedDeepLinkTestHook installIfRequested:application];
@@ -156,18 +233,18 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 - (BOOL)application:(UIApplication *)application
 continueUserActivity:(NSUserActivity *)userActivity
  restorationHandler:(void(^)(NSArray<id<UIUserActivityRestoring>>*restorableObjects))restorationHandler {
- 
+
     NSLog(@"application:continueUserActivity:restorationHandler: invoked.\n"
            "ActivityType: %@ userActivity.webpageURL: %@",
            userActivity.activityType,
            userActivity.webpageURL.absoluteString);
-    
+
     // Required. Returns YES if Branch Universal Link, else returns NO.
     // Add `branch_universal_link_domains` to .plist (String or Array) for custom domain(s).
-    
-    
+
+
     [[Branch getInstance] requestDeepLinkDataWithUserActivity:userActivity];
-    
+
     // Process non-Branch userActivities here...
     return YES;
 }
@@ -175,12 +252,12 @@ continueUserActivity:(NSUserActivity *)userActivity
 - (void)setBranchLogFile {
     NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
     NSString *logFilePath = [documentsDirectory stringByAppendingPathComponent:@"branchlogs.txt"];
-    
+
     // If the log file already exists, remove it to start fresh
     if ([[NSFileManager defaultManager] fileExistsAtPath:logFilePath]) {
         [[NSFileManager defaultManager] removeItemAtPath:logFilePath error:nil];
     }
-    
+
     self.logFileName = logFilePath;
 }
 
@@ -227,9 +304,42 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
     [appDelegate processLogMessage:formattedMessage];
 }
 
+// Mirrors config.loggingCallback into branchlogs.txt via APPLogHookFunction.
+- (void)logBranchMessage:(NSString *)message level:(BranchLogLevel)level error:(NSError *)error {
+    NSLog(@"[Branch] %@", message);
+    NSString *logEntry = error
+        ? [NSString stringWithFormat:@"Level: %lu, Message: %@, Error: %@", (unsigned long)level, message, error.localizedDescription]
+        : [NSString stringWithFormat:@"Level: %lu, Message: %@", (unsigned long)level, message];
+    APPLogHookFunction([NSDate date], level, logEntry);
+}
+
+// Mirrors config.requestTracingCallback into branchlogs.txt in the
+// `[BranchLog] Got <url> Request: <jsonBody>` shape scripts/validate_l1_logs.py
+// parses. The newline terminator keeps each request on its own line even
+// when several fire back-to-back.
+- (void)logBranchRequest:(NSString *)url
+                  request:(NSDictionary *)request
+                 response:(NSDictionary *)response
+                    error:(NSError *)error
+        requestServiceURL:(NSString *)requestServiceURL {
+    NSLog(@"[Branch trace] %@ -> %@", url, response);
+
+    // `url` is the referring Branch link (nil for an organic open); the wire
+    // endpoint the L1 validator keys off is `requestServiceURL`.
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:(request ?: @{}) options:0 error:nil];
+    NSString *jsonString = jsonData ? [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding] : @"{}";
+    NSString *requestLine = [NSString stringWithFormat:@"[BranchLog] Got %@ Request: %@", requestServiceURL, jsonString];
+    [self processLogMessage:[requestLine stringByAppendingString:@"\n"]];
+
+    if (response) {
+        NSString *responseLine = [NSString stringWithFormat:@"[BranchLog] Got Response for request (%@): %@", requestServiceURL, response];
+        [self processLogMessage:[responseLine stringByAppendingString:@"\n"]];
+    }
+}
+
 // Writes message to Log File.
 - (void) processLogMessage:(NSString *)message {
-    
+
     if (!self.logFileName)
         return;
 
@@ -251,15 +361,15 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
 // Set log File. If another file with the same name exits, delete it,
 // Different log files can be set for each command. This will make parsing of log files(for Test Automation) easier
 - (void) setLogFile:(NSString*)fileName {
-    
+
     if (!fileName) {
         self.logFileName = nil;
         return;
     }
-    
+
     NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString *pathForLog =  [[NSString alloc] initWithFormat:@"%@/%@.txt" , documentsDirectory, fileName];
-    
+
     if ( [[NSFileManager defaultManager] fileExistsAtPath:pathForLog]) {
         [[NSFileManager defaultManager] removeItemAtPath:pathForLog error:nil];
     }

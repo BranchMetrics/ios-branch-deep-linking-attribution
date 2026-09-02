@@ -82,7 +82,7 @@ if (testDeepLinkURL.length > 0) {
 #endif
 ```
 
-The hook reads a `-testDeepLinkURL <url>` launch argument and, if present, constructs an `NSUserActivity` of type `NSUserActivityTypeBrowsingWeb` and calls `application:continueUserActivity:` after a 1.5s delay (enough for `Branch.initSessionWithLaunchOptions` to register its handler). The Branch SDK resolution path is **byte-for-byte identical** to a real Safari Universal Link handoff — the SDK has no way to tell the synthetic delivery apart from the real thing.
+The hook reads a `-testDeepLinkURL <url>` launch argument and, if present, constructs an `NSUserActivity` of type `NSUserActivityTypeBrowsingWeb` and calls `application:continueUserActivity:` after a 1.5s delay (enough for `Branch.initialize(_:)` to register its handler). The Branch SDK resolution path is **byte-for-byte identical** to a real Safari Universal Link handoff — the SDK has no way to tell the synthetic delivery apart from the real thing.
 
 **Why this is necessary on simulator:** Universal Link handoff via Safari requires the app to be code-signed with the `com.apple.developer.associated-domains` entitlement embedded in the signature. Tests run unsigned via `CODE_SIGNING_ALLOWED=NO`, so the `swcutil` daemon never associates the app with `bnctestbed.test-app.link` and Safari does not hand off. The hook bypasses Safari entirely while still exercising the full SDK code path.
 
