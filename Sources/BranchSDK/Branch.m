@@ -189,11 +189,13 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     // deep link handling would silently drop attribution.
     @synchronized ([Branch class]) {
         if (!bnc_didInitializeWithConfiguration) {
-            [NSException raise:NSInternalInconsistencyException
-                        format:@"[Branch sharedInstance] was called before [Branch initialize:]. "
-                               @"Call +[Branch initialize:] with a BranchConfiguration in your "
-                               @"application:didFinishLaunchingWithOptions: before accessing the "
-                               @"shared instance."];
+            NSString *errorMessage = @"[Branch sharedInstance] was called before [Branch initialize:]. "
+                                      "Call +[Branch initialize:] with a BranchConfiguration in your "
+                                      "application:didFinishLaunchingWithOptions: before accessing the "
+                                      "shared instance.";
+            NSError *initError = [NSError branchErrorWithCode:BNCInitError localizedMessage:errorMessage];
+            [[BranchLogger shared] logError:errorMessage error:initError];
+            return nil;
         }
     }
     return [Branch getInstanceInternal:self.class.branchKey];
@@ -302,6 +304,8 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     }
 
     // Network
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [branch setNetworkTimeout:configuration.networkTimeout];
     
     [branch setMaxRetries:configuration.retryCount];
@@ -309,6 +313,7 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     [branch setRetryInterval:configuration.retryInterval];
     
     [Branch setSDKWaitTimeForThirdPartyAPIs:configuration.thirdPartyAPIsWaitTime];
+#pragma clang diagnostic pop
 
     // Privacy & attribution
     [branch disableAdNetworkCallouts:configuration.adNetworkCalloutsDisabled];
@@ -327,18 +332,23 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     }
 
     // URL collection
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (configuration.allowedSchemes.count > 0) {
         [branch setAllowedSchemes:configuration.allowedSchemes];
     }
     if (configuration.urlPatternsToIgnore.count > 0) {
         [branch setUrlPatternsToIgnore:configuration.urlPatternsToIgnore];
     }
+#pragma clang diagnostic pop
 
     // Request metadata
     for (NSString *key in configuration.requestMetadata) {
         [branch setRequestMetadataKey:key value:configuration.requestMetadata[key]];
     }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     // App Clip
     if (configuration.appClipAppGroup) {
         [branch setAppClipAppGroup:configuration.appClipAppGroup];
@@ -348,6 +358,7 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     if (configuration.deepLinkDebugParams) {
         [branch setDeepLinkDebugMode:configuration.deepLinkDebugParams];
     }
+#pragma clang diagnostic pop
 
     // Open tracking: when automatic open tracking is disabled the developer is responsible for -sendOpen.
     if (!configuration.automaticOpenEvents) {

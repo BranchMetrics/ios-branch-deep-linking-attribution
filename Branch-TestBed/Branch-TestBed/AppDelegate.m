@@ -22,9 +22,10 @@
 /// and the integration tests. `euEndpoint` routes to EU hosts this key is not
 /// provisioned for, `testMode` swaps in the Info.plist test key, `cdnBaseUrl`
 /// points at a host that does not exist, `addAllowedScheme:` narrows tracking
-/// from "all schemes" to one, `appClipAppGroup` names a group absent from the
-/// entitlements, and `deepLinkDebugParams` injects keys into every deep-link
-/// response the tests assert on.
+/// from "all schemes" to one, `urlPatternsToIgnore` suppresses any URL matching
+/// its patterns before the request is built, `appClipAppGroup` names a group
+/// absent from the entitlements, and `deepLinkDebugParams` injects keys into
+/// every deep-link response the tests assert on.
 #define BRANCH_TESTBED_FULL_CONFIG_EXAMPLE 0
 
 @interface AppDelegate() <UNUserNotificationCenterDelegate>
@@ -110,9 +111,23 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // URL collection  (default: allowedSchemes empty == all schemes allowed)
     [config addAllowedScheme:@"myapp"];                  // ← Android addWhitelistedScheme
+    // Each collection takes one entry at a time via the `add…` methods, or the whole collection at
+    // once by assigning the property. Assignment REPLACES — it discards anything added earlier, so
+    // the line below would drop the @"myapp" added above rather than appending to it:
+    // config.allowedSchemes = @[@"myapp", @"myapp-alt"];
+    // Assigning nil clears the list back to empty (== all schemes allowed again):
+    // config.allowedSchemes = nil;
+
+    // URLs Branch should never transmit  (default: empty). Regex patterns, not globs — these are
+    // matched against the full URL string. Same replace-on-assign semantics as above.
+    config.urlPatternsToIgnore = @[ @"^myapp://reset-password", @"\\?.*token=" ];
 
     // Request metadata  (default: empty) — no direct Android builder analog
     [config addMetadataWithKey:@"store" value:@"app_store"];
+    // Or set every pair at once. Again REPLACES, so this would drop @"store" above:
+    // config.requestMetadata = @{ @"store": @"app_store", @"tier": @"premium" };
+    // And nil clears it:
+    // config.requestMetadata = nil;
 
     // Open tracking  (default: automaticOpenEvents YES)
     config.automaticOpenEvents = YES;   // Branch calls sendOpen automatically on foreground
@@ -134,16 +149,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 #if DEBUG
     [TestBedDeepLinkTestHook installIfRequested:application];
 #endif
-
-    // Set user Alias Example
-
-//    [[Branch sharedInstance] setUserAlias:@"your_user_alias" completion:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
-//        if (error) {
-//            NSLog(@"Error setting user alias: %@", error);
-//        } else {
-//            NSLog(@"Successfully set alias. Response: %@", params);
-//        }
-//    }];
 
     return YES;
 }
