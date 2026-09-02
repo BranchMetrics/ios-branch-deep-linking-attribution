@@ -13,6 +13,7 @@
 #import "BNCEncodingUtils.h"
 #import "Branch.h"
 #import "BranchEvent.h"
+#import "BranchLinkBuilder.h"
 #import "NSMutableDictionary+Branch.h"
 
 #if !TARGET_OS_TV
@@ -348,21 +349,31 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 
 #pragma mark - Link Creation Methods
 
+// The seven options every link-property-driven call below shares. matchDuration and ignoreUAString
+// are deliberately left to the caller: the three short-URL methods disagree about them, and each
+// overload they replace disagreed the same way.
+- (BranchLinkBuilder *)linkBuilderWithLinkProperties:(BranchLinkProperties *)linkProperties {
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
+    builder.params = [self getParamsForServerRequestWithAddedLinkProperties:linkProperties];
+    builder.tags = linkProperties.tags;
+    builder.alias = linkProperties.alias;
+    builder.channel = linkProperties.channel;
+    builder.feature = linkProperties.feature;
+    builder.stage = linkProperties.stage;
+    builder.campaign = linkProperties.campaign;
+    return builder;
+}
+
 - (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties {
     if (!self.canonicalIdentifier && !self.title) {
         [[BranchLogger shared] logWarning:@"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL." error:nil];
 
         return nil;
     }
-    
-    return [[Branch sharedInstance] getShortUrlWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties]
-                                               andTags:linkProperties.tags
-                                              andAlias:linkProperties.alias
-                                            andChannel:linkProperties.channel
-                                            andFeature:linkProperties.feature
-                                              andStage:linkProperties.stage
-                                           andCampaign:linkProperties.campaign
-                                      andMatchDuration:linkProperties.matchDuration];
+
+    BranchLinkBuilder *builder = [self linkBuilderWithLinkProperties:linkProperties];
+    builder.matchDuration = linkProperties.matchDuration;
+    return [builder fetchShortURL];
 }
 
 - (void)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties andCallback:(callbackWithUrl)callback {
@@ -374,15 +385,9 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         return;
     }
     
-    [[Branch sharedInstance] getShortUrlWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties]
-                                        andTags:linkProperties.tags
-                                       andAlias:linkProperties.alias
-                               andMatchDuration:linkProperties.matchDuration
-                                     andChannel:linkProperties.channel
-                                     andFeature:linkProperties.feature
-                                       andStage:linkProperties.stage
-                                    andCampaign:linkProperties.campaign
-                                    andCallback:callback];
+    BranchLinkBuilder *builder = [self linkBuilderWithLinkProperties:linkProperties];
+    builder.matchDuration = linkProperties.matchDuration;
+    [builder fetchShortURLWithCallback:callback];
 }
 
 - (NSString *)getShortUrlWithLinkPropertiesAndIgnoreFirstClick:(BranchLinkProperties *)linkProperties {
@@ -399,15 +404,11 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     UAString = [BNCUserAgentCollector instance].userAgent;
     #endif
     
-    return [[Branch sharedInstance] getShortURLWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties]
-                                        andTags:linkProperties.tags
-                                     andChannel:linkProperties.channel
-                                     andFeature:linkProperties.feature
-                                       andStage:linkProperties.stage
-                                    andCampaign:linkProperties.campaign
-                                       andAlias:linkProperties.alias
-                                 ignoreUAString:UAString
-                              forceLinkCreation:YES];
+    BranchLinkBuilder *builder = [self linkBuilderWithLinkProperties:linkProperties];
+    // matchDuration is deliberately not carried over: the overload this replaces hardcoded 0 and
+    // never read linkProperties.matchDuration, unlike the two methods above. Pre-existing, preserved.
+    builder.ignoreUAString = UAString;
+    return [builder fetchShortURL];
 }
 
 - (NSString *)getLongUrlWithChannel:(NSString *)channel
@@ -415,15 +416,17 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
                          andFeature:(NSString *)feature
                            andStage:(NSString *)stage
                            andAlias:(NSString *)alias {
-    NSString *urlString =
-        [[Branch sharedInstance]
-            getLongURLWithParams:self.dictionary
-            andChannel:channel
-            andTags:tags
-            andFeature:feature
-            andStage:stage
-            andAlias:alias];
-    return urlString;
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
+    builder.params = self.dictionary;
+    builder.channel = channel;
+    builder.tags = tags;
+    builder.feature = feature;
+    builder.stage = stage;
+    builder.alias = alias;
+    // NOTE: the URL now carries channel=. -getLongURLWithParams:andChannel:… accepted a channel and
+    // then passed nil for it into the URL assembly, so it never reached the link. That was a bug and
+    // the builder does not reproduce it, so this method's output changes when a channel is given.
+    return [builder buildLongURL];
 }
 
 #pragma mark - Share Sheets

@@ -14,6 +14,7 @@
 #import "BranchLogger.h"
 
 #import "Branch.h"
+#import "BranchLinkBuilder.h"
 #import "BNCSystemObserver.h"
 
 #ifndef kUTTypeGeneric
@@ -102,7 +103,9 @@
         spotlightLinkData[BRANCH_LINK_DATA_KEY_KEYWORDS] = [self.keywords allObjects];
     }
     
-    [[Branch sharedInstance] getSpotlightUrlWithParams:spotlightLinkData callback:^(NSDictionary *data, NSError *urlError) {
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
+    builder.params = spotlightLinkData;
+    [builder fetchSpotlightURLWithCallback:^(NSDictionary *data, NSError *urlError) {
         if (urlError) {
             if (callback) {
                 callback(nil, nil, urlError);

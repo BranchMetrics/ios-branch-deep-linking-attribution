@@ -149,14 +149,34 @@ final class BranchSwiftNameTests: XCTestCase {
         XCTAssertTrue(branch.responds(to: NSSelectorFromString("lastAttributedTouchDataWithAttributionWindow:completion:")))
     }
 
-    /// `getShortURLWithParams:andCallback:` → `getShortURL(params:) async throws -> String`
-    func testAsyncNameGetShortURL() {
-        let asyncMethod: ([AnyHashable: Any]?) async throws -> String = branch.getShortURL(params:)
-        let callbackMethod: ([AnyHashable: Any]?, ((String?, Error?) -> Void)?) -> Void =
-            branch.getShortURL(withParams:andCallback:)
-        _ = asyncMethod
-        _ = callbackMethod
-        XCTAssertTrue(branch.responds(to: NSSelectorFromString("getShortURLWithParams:andCallback:")))
+    /// Replaces `testAsyncNameGetShortURL`. EMT-4069 deleted
+    /// `getShortURLWithParams:andCallback:` and the other 35 link-generation overloads from
+    /// `Branch`; `BranchLinkBuilder` is the only entry point now, so this pins *its* Swift
+    /// projection instead.
+    ///
+    /// The interesting case is the pair of short-URL terminals. `fetchShortURL` is blocking and
+    /// `fetchShortURLWithCallback:` is asynchronous, and the Swift importer derives an `async`
+    /// name from the latter by dropping the trailing `WithCallback` — which is exactly the
+    /// shadowing hazard `logEventAsync()` is named around. Binding both to written-out types
+    /// makes any collision or rename a build failure rather than a silent source break.
+    func testSwiftNamesOfBranchLinkBuilderTerminals() {
+        let builder = BranchLinkBuilder()
+
+        let blocking: () -> String? = builder.fetchShortURL
+        let callbackBased: (((String?, Error?) -> Void)?) -> Void = builder.fetchShortURL(callback:)
+        let offline: () -> String? = builder.buildLongURL
+        let spotlight: ((([AnyHashable: Any]?, Error?) -> Void)?) -> Void =
+            builder.fetchSpotlightURL(callback:)
+
+        _ = blocking
+        _ = callbackBased
+        _ = offline
+        _ = spotlight
+
+        XCTAssertTrue(builder.responds(to: NSSelectorFromString("fetchShortURL")))
+        XCTAssertTrue(builder.responds(to: NSSelectorFromString("fetchShortURLWithCallback:")))
+        XCTAssertTrue(builder.responds(to: NSSelectorFromString("buildLongURL")))
+        XCTAssertTrue(builder.responds(to: NSSelectorFromString("fetchSpotlightURLWithCallback:")))
     }
 
     /// `BranchEvent.logEventWithCompletion:` → `logEventAsync() async throws -> Bool`
