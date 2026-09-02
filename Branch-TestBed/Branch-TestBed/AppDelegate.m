@@ -27,6 +27,14 @@
 /// response the tests assert on.
 #define BRANCH_TESTBED_FULL_CONFIG_EXAMPLE 0
 
+/// Set to 1 to run the `BranchLinkBuilder` example at the end of
+/// `-application:didFinishLaunchingWithOptions:`.
+///
+/// Off by default because it creates a real link on every launch: the short-URL
+/// terminal is a network call against the TestBed's live key, and the resulting
+/// link shows up in the dashboard. The long-URL half is offline and harmless.
+#define BRANCH_TESTBED_LINK_BUILDER_EXAMPLE 0
+
 @interface AppDelegate() <UNUserNotificationCenterDelegate>
 - (void)logBranchMessage:(NSString *)message level:(BranchLogLevel)level error:(NSError *)error;
 - (void)logBranchRequest:(NSString *)url
@@ -145,7 +153,69 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 //        }
 //    }];
 
+#if BRANCH_TESTBED_LINK_BUILDER_EXAMPLE
+    [self branchLinkBuilderExample];
+#endif
+
     return YES;
+}
+
+#pragma mark - Creating links
+
+/// Worked example of `BranchLinkBuilder`, which in 4.0 replaces the `getShortURL…` /
+/// `getLongURL…` family that used to live on `Branch`.
+///
+/// Objective-C has no chained builder, so the shape matches `BranchConfiguration` above: create the
+/// builder, set the properties you care about, then call a terminal. The builder is reusable — the
+/// terminals do not consume it — so both halves below share one instance.
+///
+/// You do not need a `Branch` reference to make a link, and you do not need to wait for
+/// `+[Branch initialize:]` to finish; the builder resolves the SDK when a terminal runs.
+- (void)branchLinkBuilderExample {
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
+
+    // Link content. `params` carries both Branch-reserved keys, which control how the link behaves,
+    // and your own keys, which come back to you in the deep-link callback.
+    builder.params = @{
+        @"$og_title": @"Branch TestBed",
+        @"$og_description": @"A link made with BranchLinkBuilder",
+        @"deeplink_text": @"Opened from a builder-generated link",
+    };
+    builder.channel = @"testbed";
+    builder.feature = @"share";
+    builder.stage = @"launch";
+    builder.tags = @[@"example"];
+
+    // ── Long URL: offline, synchronous ───────────────────────────────────
+    // `params` are JSON-encoded and base64'd into the URL itself, so this needs no network and
+    // returns immediately. That also makes the URL long — prefer a short link anywhere the user
+    // sees the URL. Returns nil only if no Branch key is available.
+    NSString *longURL = [builder buildLongURL];
+    NSLog(@"Branch TestBed: long URL: %@", longURL);
+
+    // For the app.link domain instead of the default link domain, set `useAppLinkDomain` first:
+    //
+    //     builder.useAppLinkDomain = YES;
+    //     NSString *appLinkURL = [builder buildLongURL];
+
+    // ── Short URL: network, non-blocking ─────────────────────────────────
+    // This is the terminal to reach for by default. The callback is delivered on the main queue, so
+    // it is safe to update UI directly from it.
+    //
+    // Check `error`, not `url`. On a server error the SDK still hands back a URL — a long-link
+    // fallback — so `if (url)` would read a failed request as a success.
+    [builder fetchShortURLWithCallback:^(NSString * _Nullable url, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"Branch TestBed: could not create a short link: %@", error.localizedDescription);
+            return;
+        }
+        NSLog(@"Branch TestBed: short URL: %@", url);
+    }];
+
+    // There is also a blocking `-fetchShortURL`, which returns the URL directly. It is not shown
+    // here on purpose: it performs a synchronous network round trip, so on the main thread it
+    // freezes the UI until the server answers — or until the request times out on a bad connection.
+    // Use it only from a background queue, and prefer the callback form above.
 }
 
 // pre init support is meant for extensions, for example, when Adobe axtension needs to pass in Adobe IDs

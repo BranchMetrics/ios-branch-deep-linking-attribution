@@ -211,25 +211,18 @@
     XCTAssertEqualObjects(result.campaign, @"latest campaign");
 }
 
-- (void)testGetShortURL {
-    NSString *shortURL = [self.branch getShortURL];
-    XCTAssertNotNil(shortURL, @"URL should not be nil");
-    XCTAssertTrue([shortURL hasPrefix:@"https://"], @"URL should start with 'https://'");
-}
+// testGetShortURL was removed in EMT-4069. Its only assertion, hasPrefix:@"https://", was also
+// satisfied by BranchShortUrlSyncRequest's non-200 long-URL fallback, so it could not distinguish a
+// created short link from a failed request -- and whether the fallback returned a string or nil
+// depended on preferenceHelper.userUrl, shared persisted state that other test classes overwrite.
+// Replaced by -[BranchLinkBuilderTests testFetchShortURLLiveSmokeTest], which asserts the Branch
+// link domain and rejects the fallback, plus the stubbed fetchShortURL cases in that class.
 
-- (void)testGetLongURLWithParamsAndChannelAndTagsAndFeatureAndStageAndAlias {
-    NSDictionary *params = @{@"key": @"value"};
-    NSString *channel = @"channel1";
-    NSArray *tags = @[@"tag1", @"tag2"];
-    NSString *feature = @"feature1";
-    NSString *stage = @"stage1";
-    NSString *alias = @"alias1";
-
-    NSString *generatedURL = [self.branch getLongURLWithParams:params andChannel:channel andTags:tags andFeature:feature andStage:stage andAlias:alias];
-    NSString *expectedURL = @"https://bnc.lt/a/key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB?tags=tag1&tags=tag2&alias=alias1&feature=feature1&stage=stage1&source=ios&data=eyJrZXkiOiJ2YWx1ZSJ9";
-
-    XCTAssertEqualObjects(generatedURL, expectedURL, @"URL should match the expected format");
-}
+// testGetLongURLWithParamsAndChannelAndTagsAndFeatureAndStageAndAlias was removed in EMT-4069 along
+// with -[Branch getLongURLWithParams:andChannel:andTags:andFeature:andStage:andAlias:]. Its exact
+// expected string lives on in -[BranchLinkBuilderTests testLongURLDefaultDomainExactString], with
+// the one difference the migration introduces: channel=channel1& between alias= and feature=. The
+// deleted method took a channel and dropped it before assembling the URL, which was a bug.
 
 - (void)testDMAParamsWriteThroughToPreferences {
     // DMA parameters are config-only (no runtime setter). This asserts the preference-write mechanism that
