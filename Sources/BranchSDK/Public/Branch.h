@@ -175,12 +175,13 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  `+[Branch initialize:]` (called from `application:didFinishLaunchingWithOptions:`); everywhere else
  in your app, call `+sharedInstance` — it takes no key and no context.
 
- @warning `+sharedInstance` must not be called before `+[Branch initialize:]`. Doing so raises an
-          `NSInternalInconsistencyException` directing you to call `+[Branch initialize:]` in
-          `application:didFinishLaunchingWithOptions:`.
- @return The global, configured Branch instance.
+ @warning `+sharedInstance` must not be called before `+[Branch initialize:]`. Doing so logs a
+          `BNCInitError` directing you to call `+[Branch initialize:]` in
+          `application:didFinishLaunchingWithOptions:`, and returns `nil`.
+ @return The global, configured Branch instance, or `nil` if `+[Branch initialize:]` has not been
+         called yet.
  */
-+ (instancetype)sharedInstance;
++ (nullable instancetype)sharedInstance;
 
 /**
  Set the network service class.

@@ -189,11 +189,13 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     // deep link handling would silently drop attribution.
     @synchronized ([Branch class]) {
         if (!bnc_didInitializeWithConfiguration) {
-            [NSException raise:NSInternalInconsistencyException
-                        format:@"[Branch sharedInstance] was called before [Branch initialize:]. "
-                               @"Call +[Branch initialize:] with a BranchConfiguration in your "
-                               @"application:didFinishLaunchingWithOptions: before accessing the "
-                               @"shared instance."];
+            NSString *errorMessage = @"[Branch sharedInstance] was called before [Branch initialize:]. "
+                                      "Call +[Branch initialize:] with a BranchConfiguration in your "
+                                      "application:didFinishLaunchingWithOptions: before accessing the "
+                                      "shared instance.";
+            NSError *initError = [NSError branchErrorWithCode:BNCInitError localizedMessage:errorMessage];
+            [[BranchLogger shared] logError:errorMessage error:initError];
+            return nil;
         }
     }
     return [Branch getInstanceInternal:self.class.branchKey];
