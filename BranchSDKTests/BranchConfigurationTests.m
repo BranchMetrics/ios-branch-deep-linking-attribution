@@ -20,6 +20,8 @@
 @interface Branch (BranchConfigurationTest)
 // Test-only reset for the +initialize: reinitialization guard (file-private in Branch.m).
 + (void)resetInitializationGuardForTesting;
+// Clears the set-once branch key static so each test starts from an unset key.
++ (void)resetBranchKey;
 @end
 
 @interface BranchConfigurationTests : XCTestCase
@@ -27,15 +29,22 @@
 
 @implementation BranchConfigurationTests
 
-// BranchLogger is a dispatch_once singleton, so logger state leaks between tests unless it is put
-// back to the values +[BranchLogger shared] starts with.
+// +initialize: writes the fake key below into the process-wide branch key, which is set-once and
+// cached by +branchKey. Left in place it leaks into every later test class in this (non-parallel)
+// suite -- BranchQRCodeTests then sends "key_live_abc" to the QR endpoint and gets a 400. Reset the
+// key and the guard around each test so this class leaves the process as it found it.
+// BranchLogger and BNCServerAPI are also singletons whose state leaks between tests unless reset.
 - (void)setUp {
     [super setUp];
+    [Branch resetBranchKey];
+    [Branch resetInitializationGuardForTesting];
     [self resetSharedLogger];
     [self resetSharedServerAPI];
 }
 
 - (void)tearDown {
+    [Branch resetBranchKey];
+    [Branch resetInitializationGuardForTesting];
     [self resetSharedLogger];
     [self resetSharedServerAPI];
     [super tearDown];

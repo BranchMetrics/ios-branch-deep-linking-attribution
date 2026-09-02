@@ -168,6 +168,9 @@ void ForceCategoriesToLoad(void) {
 // Private method used internally
 - (void)clearLinkIdentifiers;
 
++ (void)applyDeprecatedSettersFromConfiguration:(BranchConfiguration *)configuration
+                                        toBranch:(Branch *)branch;
+
 @end
 
 @implementation Branch
@@ -225,7 +228,7 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
 
     // Single canonical initialization entry point. Guard against reinitializing the singleton:
     // once created, re-running the setter side-effects below would mutate a running SDK.
-    
+
     Branch *branch = nil;
     @synchronized ([Branch class]) {
         if (bnc_didInitializeWithConfiguration) {
@@ -235,6 +238,10 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
         bnc_didInitializeWithConfiguration = YES;
 
         // --- Settings that must be applied before the singleton is created ---
+        // These setters are deprecated for external callers, but +initialize: is their canonical
+        // internal application point, so suppress the deprecation warning at these call sites.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
         // Test key must be resolved before the branch key is read.
         [Branch setUseTestBranchKey:configuration.testMode];
@@ -244,10 +251,16 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
             [Branch setNetworkServiceClass:configuration.remoteInterface];
         }
 
+#pragma clang diagnostic pop
+
+        // Set the branch key explicitly so it takes precedence over Info.plist / branch.json.
         self.branchKey = configuration.branchKey;
         [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_INIT_FUNCTION;
 
         // --- Create (or fetch) the singleton ---
+        // Note: the constructor applies branch.json values (apiUrl, logging, cppLevel). Caller-supplied
+        // settings that overlap with branch.json are (re)applied AFTER this so the caller wins and
+        // branch.json serves only as a fallback.
         branch = [Branch getInstanceInternal:self.branchKey];
 
         // --- Settings applied to the instance / shared preference helper (caller wins) ---
@@ -275,9 +288,7 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
 + (void)applyConfiguration:(BranchConfiguration *)configuration toBranch:(Branch *)branch {
     [Branch applyLoggingConfiguration:configuration];
 
-    if (configuration.requestTracingCallback) {
-        [Branch setCallbackForTracingRequests:configuration.requestTracingCallback];
-    }
+    [Branch applyDeprecatedSettersFromConfiguration:configuration toBranch:branch];
 
     // Identity & environment. These mutate the BNCServerAPI / BNCPreferenceHelper singletons, whose
     // values are read lazily at request time, so they don't need to precede singleton creation.
@@ -289,18 +300,15 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     if (configuration.cdnBaseUrl) {
         [BranchPluginSupport setCDNBaseUrl:configuration.cdnBaseUrl];
     }
-    if (configuration.apiUrl) {
-        [Branch setAPIUrl:configuration.apiUrl];
-    }
-    if (configuration.safeTrackAPIUrl) {
-        [Branch setSafetrackAPIURL:configuration.safeTrackAPIUrl];
-    }
 
     // Network
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [branch setNetworkTimeout:configuration.networkTimeout];
     [branch setMaxRetries:configuration.retryCount];
     [branch setRetryInterval:configuration.retryInterval];
     [Branch setSDKWaitTimeForThirdPartyAPIs:configuration.thirdPartyAPIsWaitTime];
+#pragma clang diagnostic pop
 
     // Privacy & attribution
     [branch disableAdNetworkCallouts:configuration.adNetworkCalloutsDisabled];
@@ -319,18 +327,23 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     }
 
     // URL collection
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (configuration.allowedSchemes.count > 0) {
         [branch setAllowedSchemes:configuration.allowedSchemes];
     }
     if (configuration.urlPatternsToIgnore.count > 0) {
         [branch setUrlPatternsToIgnore:configuration.urlPatternsToIgnore];
     }
+#pragma clang diagnostic pop
 
     // Request metadata
     for (NSString *key in configuration.requestMetadata) {
         [branch setRequestMetadataKey:key value:configuration.requestMetadata[key]];
     }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     // App Clip
     if (configuration.appClipAppGroup) {
         [branch setAppClipAppGroup:configuration.appClipAppGroup];
@@ -340,16 +353,33 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     if (configuration.deepLinkDebugParams) {
         [branch setDeepLinkDebugMode:configuration.deepLinkDebugParams];
     }
+#pragma clang diagnostic pop
 
     // Open tracking: when automatic open tracking is disabled the developer is responsible for -sendOpen.
     if (!configuration.automaticOpenEvents) {
         [Branch disableNextForegroundForTimeInterval:0];
     }
+}
 
+// Applies the setters below that are deprecated for external callers but still needed internally.
++ (void)applyDeprecatedSettersFromConfiguration:(BranchConfiguration *)configuration
+                                        toBranch:(Branch *)branch {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    if (configuration.requestTracingCallback) {
+        [Branch setCallbackForTracingRequests:configuration.requestTracingCallback];
+    }
+    if (configuration.apiUrl) {
+        [Branch setAPIUrl:configuration.apiUrl];
+    }
+    if (configuration.safeTrackAPIUrl) {
+        [Branch setSafetrackAPIURL:configuration.safeTrackAPIUrl];
+    }
     // Pasteboard
     if (configuration.checkPasteboardOnInstall) {
         [branch checkPasteboardOnInstall];
     }
+#pragma clang diagnostic pop
 }
 
 - (id)initWithInterface:(BNCServerInterface *)interface
@@ -409,6 +439,10 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     [BranchConfigurationController sharedInstance].deferInitForPluginRuntime = self.deferInitForPluginRuntime;
 
 
+    // These setters are deprecated for external callers; the branch.json fallback path applies them
+    // internally, so suppress the deprecation warning at these call sites.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (config.apiUrl) {
         [Branch setAPIUrl:config.apiUrl];
     }
@@ -420,6 +454,7 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     if (config.checkPasteboardOnInstall) {
         [self checkPasteboardOnInstall];
     }
+#pragma clang diagnostic pop
 
     if (config.cppLevel) {
         if ([config.cppLevel caseInsensitiveCompare:@"FULL"] == NSOrderedSame) {
@@ -586,7 +621,12 @@ static NSString *bnc_branchKey = nil;
         BranchJsonConfig *config = BranchJsonConfig.instance;
         BOOL usingTestInstance = bnc_useTestBranchKey || config.useTestInstance;
         branchKey = config.branchKey ?: usingTestInstance ? config.testKey : config.liveKey;
+        // +setUseTestBranchKey: is deprecated for external callers; this internal resolution path
+        // still needs it, so suppress the deprecation warning at this call site.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [self setUseTestBranchKey:usingTestInstance];
+#pragma clang diagnostic pop
 
         if (branchKey) {
             branchKeySource = BRANCH_KEY_SOURCE_CONFIG_JSON;
@@ -597,7 +637,7 @@ static NSString *bnc_branchKey = nil;
             } else
             if ([branchDictionary isKindOfClass:[NSDictionary class]]) {
                 branchKey =
-                    (self.useTestBranchKey) ? branchDictionary[@"test"] : branchDictionary[@"live"];
+                    ([self useTestBranchKey]) ? branchDictionary[@"test"] : branchDictionary[@"live"];
             }
             if (branchKey)
                 branchKeySource = BRANCH_KEY_SOURCE_INFO_PLIST;
@@ -2394,7 +2434,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
 
     if (!urlStr.length) return;
-    
+
     NSURL *url = [NSURL URLWithString:urlStr];
     if (url) {
         BOOL filtered = NO;
