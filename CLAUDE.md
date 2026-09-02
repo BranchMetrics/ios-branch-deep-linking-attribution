@@ -15,8 +15,11 @@ and prebuilt XCFrameworks.
 1. **The queue is an `NSOperationQueue`.** `processNextQueueItem` is gone from `Sources/`; each
    request is wrapped in a `BNCServerRequestOperation` that the queue executes.
 2. **New `/v3` endpoints for the open flow.** `openServiceURL` → `/v3/events/open` (was `/v1/open`),
-   plus a new `deepLinkServiceURL` → `/v3/deeplink`. Installs are still `/v1/install`, events still
-   `/v2/event/{standard,custom}`.
+   plus a new `deepLinkServiceURL` → `/v3/deeplink`. Events moved to
+   `/v3/events/{standard,custom}` (was `/v2/event/{standard,custom}`).
+3. **New public deep-link API.** `requestDeepLinkData:callback:` and friends replace driving
+   everything through `initSession…`, which is now `__attribute__((deprecated))`.
+   plus a new `deepLinkServiceURL` → `/v3/deeplink`.
 3. **New public deep-link API.** `initSession…` is **removed**. `+[Branch initialize:]` (with a
    `BranchConfiguration`) is the entry point, and `requestDeepLinkData:callback:` and friends
    replace driving everything through the old session-init calls.
