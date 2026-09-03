@@ -9,11 +9,14 @@
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
 #import "BranchEvent.h"
+#import "BranchConfiguration.h"
 #import "BNCDeviceInfo.h"
 #import "NSError+Branch.h"
 
 @interface Branch (BranchEventTest)
 - (void) processNextQueueItem;
+// Test-only reset for the +initialize: reinitialization guard (file-private in Branch.m).
++ (void)resetInitializationGuardForTesting;
 @end
 
 @interface BranchEvent()
@@ -34,6 +37,11 @@
 - (void)setUp {
     [BNCPreferenceHelper sharedInstance].randomizedBundleToken = @"575759106028389737";
     [[BNCPreferenceHelper sharedInstance] clearInstrumentationDictionary];
+    // -logEvent reaches +sharedInstance, which raises unless the SDK was initialized first. Don't
+    // rely on an earlier test class having left the guard set: initialize here, as the other test
+    // classes that touch the singleton do.
+    [Branch resetInitializationGuardForTesting];
+    [Branch initialize:[[BranchConfiguration alloc] initWithKey:@"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB"]];
 }
 
 - (void)tearDown {

@@ -83,7 +83,7 @@
     }
     NSDictionary *data = response.data;
     
-    preferenceHelper.userIdentity = [self userIdentityFromResponseData:data];
+    preferenceHelper.userAlias = [self userIdentityFromResponseData:data];
 
     NSString *deviceToken = [self randomizedDeviceTokenFromResponseData:data];
     if (deviceToken) {

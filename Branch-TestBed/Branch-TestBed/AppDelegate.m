@@ -186,7 +186,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         [navigationController pushViewController:logOutputViewController animated:YES];
         NSString *logOutput =
             [NSString stringWithFormat:@"Successfully Deeplinked:\n\n%@\nSession Details:\n\n%@",
-                deeplinkText, [[[Branch getInstance] getLatestReferringParams] description]];
+                deeplinkText, [[[Branch sharedInstance] getLatestReferringParams] description]];
         logOutputViewController.logOutput = logOutput;
 
     } else {
@@ -213,7 +213,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         [navigationController pushViewController:logOutputViewController animated:YES];
         NSString *logOutput =
             [NSString stringWithFormat:@"Successfully Deeplinked!\n\nCustom Metadata Deeplink Text: %@\n\nSession Details:\n\n%@",
-                deeplinkText, [[[Branch getInstance] getLatestReferringParams] description]];
+                deeplinkText, [[[Branch sharedInstance] getLatestReferringParams] description]];
         logOutputViewController.logOutput = logOutput;
     }
 }
@@ -224,7 +224,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
          annotation:(id)annotation {
 
     NSLog(@"application:openURL:sourceApplication:annotation: invoked with URL: %@", [url description]);
-    [[Branch getInstance] requestDeepLinkDataWithURL:url sourceApplication:sourceApplication annotation:annotation];
+    [[Branch sharedInstance] requestDeepLinkDataWithURL:url sourceApplication:sourceApplication annotation:annotation];
 
     // Process non-Branch URIs here...
     return YES;
@@ -243,7 +243,7 @@ continueUserActivity:(NSUserActivity *)userActivity
     // Add `branch_universal_link_domains` to .plist (String or Array) for custom domain(s).
 
 
-    [[Branch getInstance] requestDeepLinkDataWithUserActivity:userActivity];
+    [[Branch sharedInstance] requestDeepLinkDataWithUserActivity:userActivity];
 
     // Process non-Branch userActivities here...
     return YES;
@@ -288,7 +288,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    [[Branch getInstance] requestDeepLinkDataWithUserInfo:userInfo];
+    [[Branch sharedInstance] requestDeepLinkDataWithUserInfo:userInfo];
     // process your non-Branch notification payload items here...
 }
 
@@ -392,7 +392,7 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler {
-    [[Branch getInstance] requestDeepLinkDataWithUserInfo:response.notification.request.content.userInfo];
+    [[Branch sharedInstance] requestDeepLinkDataWithUserInfo:response.notification.request.content.userInfo];
     completionHandler();
 }
 

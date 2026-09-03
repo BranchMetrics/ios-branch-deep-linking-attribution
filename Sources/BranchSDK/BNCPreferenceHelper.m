@@ -103,7 +103,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     randomizedBundleToken = _randomizedBundleToken,
     linkClickIdentifier = _linkClickIdentifier,
     userUrl = _userUrl,
-    userIdentity = _userIdentity,
+    userAlias = _userAlias,
     sessionParams = _sessionParams,
     installParams = _installParams,
     universalLinkUrl = _universalLinkUrl,
@@ -299,12 +299,12 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     [self writeObjectToDefaults:BRANCH_PREFS_KEY_RANDOMIZED_BUNDLE_TOKEN value:randomizedBundleToken];
 }
 
-- (NSString *)userIdentity {
+- (NSString *)userAlias {
     return [self readStringFromDefaults:BRANCH_PREFS_KEY_IDENTITY];
 }
 
-- (void)setUserIdentity:(NSString *)userIdentity {
-    [self writeObjectToDefaults:BRANCH_PREFS_KEY_IDENTITY value:userIdentity];
+- (void)setUserAlias:(NSString *)userAlias {
+    [self writeObjectToDefaults:BRANCH_PREFS_KEY_IDENTITY value:userAlias];
 }
 
 - (NSString *)linkClickIdentifier {
@@ -941,7 +941,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         self.previousAppBuildDate = nil;
         self.requestMetadataDictionary = nil;
         self.lastStrongMatchDate = nil;
-        self.userIdentity = nil;
+        self.userAlias = nil;
         self.referringURLQueryParameters = nil;
         self.anonID = nil;
         [[BranchLogger shared] logVerbose:@"Tracking information cleared" error:nil];

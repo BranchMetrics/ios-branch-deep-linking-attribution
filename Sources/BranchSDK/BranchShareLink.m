@@ -143,7 +143,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         
         // use a long app.link url as the placeholder url
         NSString *URLString =
-        [[Branch getInstance]
+        [[Branch sharedInstance]
          getLongAppLinkURLWithParams:self.serverParameters
          andChannel:self.linkProperties.channel
          andTags:self.linkProperties.tags
@@ -278,7 +278,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         #endif
     }
     NSString *URLString =
-        [[Branch getInstance]
+        [[Branch sharedInstance]
             getShortURLWithParams:self.serverParameters
             andTags:self.linkProperties.tags
             andChannel:self.linkProperties.channel
