@@ -17,7 +17,7 @@
 
 static const NSTimeInterval DEFAULT_TIMEOUT = 5.5;
 static const NSTimeInterval DEFAULT_THIRD_PARTY_APIS_TIMEOUT = 0.5; // 500ms default
-static const NSTimeInterval DEFAULT_RETRY_INTERVAL = 0;
+static const NSTimeInterval DEFAULT_RETRY_INTERVAL = 1.0;
 static const NSInteger DEFAULT_RETRY_COUNT = 3;
 static const NSTimeInterval DEFAULT_REFERRER_GBRAID_WINDOW = 2592000; // 30 days = 2,592,000 seconds
 static const NSTimeInterval DEFAULT_ODM_INFO_VALIDITY_WINDOW = 15552000; // 180 days = 15,552,000 seconds

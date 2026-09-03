@@ -14,6 +14,8 @@
 #endif
 
 // Public classes that should be in the umbrella header
+#import "BranchInterface.h"
+#import "BranchAttributionLevel.h"
 #import "BranchLinkProperties.h"
 #import "BranchUniversalObject.h"
 #import "BranchLastAttributedTouchData.h"
@@ -58,6 +60,29 @@ NS_ASSUME_NONNULL_BEGIN
 ///----------------
 /// @name Constants
 ///----------------
+
+#pragma mark Error Handling
+
+/**
+ Key in an `NSError`'s `userInfo` dictionary whose value is an `NSNumber` wrapping a `BOOL`.
+
+ A value of `YES` means the failure is transient and retrying may succeed (network timeouts,
+ connection resets, HTTP 5xx). The SDK retries transient network failures automatically before
+ surfacing the error, so a retryable error indicates the automatic retries were already exhausted.
+
+ A value of `NO` means the failure is a configuration or authorization problem (HTTP 400, invalid
+ key, attribution level none) and retrying will not help.
+
+ ```
+ [branch getShortURLWithParams:params andCallback:^(NSString *url, NSError *error) {
+     if (error) {
+         BOOL isRetryable = [error.userInfo[BNCErrorIsRetryableKey] boolValue];
+         // ...
+     }
+ }];
+ ```
+*/
+FOUNDATION_EXPORT NSString * const BNCErrorIsRetryableKey;
 
 #pragma mark Branch Link Features
 
@@ -160,7 +185,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 #pragma mark - Branch
 
-@interface Branch : NSObject
+@interface Branch : NSObject <BranchInterface>
 
 #pragma mark Global Instance Accessors
 
@@ -885,53 +910,6 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
  @param anonID The custom Meta Anon ID to be used by Branch.
  */
 + (void)setAnonID:(NSString *)anonID;
-
-/**
- * Enumeration representing different levels of consumer protection attribution levels
- */
-typedef NSString * BranchAttributionLevel NS_STRING_ENUM;
-
-/**
- * Full:
- * - Advertising Ids
- * - Device Ids
- * - Local IP
- * - Persisted Non-Aggregate Ids
- * - Persisted Aggregate Ids
- * - Ads Postbacks / Webhooks
- * - Data Integrations Webhooks
- * - SAN Callouts
- * - Privacy Frameworks
- * - Deep Linking
- */
-extern BranchAttributionLevel const BranchAttributionLevelFull;
-
-/**
- * Reduced:
- * - Device Ids
- * - Local IP
- * - Data Integrations Webhooks
- * - Privacy Frameworks
- * - Deep Linking
- */
-extern BranchAttributionLevel const BranchAttributionLevelReduced;
-
-/**
- * Minimal:
- * - Device Ids
- * - Local IP
- * - Data Integrations Webhooks
- * - Deep Linking
- */
-extern BranchAttributionLevel const BranchAttributionLevelMinimal;
-
-/**
- * None:
- * - Only Deterministic Deep Linking
- * - Disables all other Branch requests
- */
-extern BranchAttributionLevel const BranchAttributionLevelNone;
-
 
 /**
  Sets the consumer protection attribution level.

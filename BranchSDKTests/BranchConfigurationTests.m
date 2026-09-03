@@ -3,7 +3,6 @@
 //  Branch-SDK-Tests
 //
 //  Created by Brandon Boothe on 7/21/26.
-//  Copyright © 2026 Branch, Inc. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>
@@ -80,7 +79,7 @@
     XCTAssertNil(config.requestTracingCallback);
     XCTAssertEqualWithAccuracy(config.networkTimeout, 5.5, 0.001);
     XCTAssertEqual(config.retryCount, 3);
-    XCTAssertEqualWithAccuracy(config.retryInterval, 0, 0.001);
+    XCTAssertEqualWithAccuracy(config.retryInterval, 1.0, 0.001);
     XCTAssertNil(config.remoteInterface);
     XCTAssertEqualWithAccuracy(config.thirdPartyAPIsWaitTime, 0.5, 0.001);
     XCTAssertNil(config.attributionLevel);
