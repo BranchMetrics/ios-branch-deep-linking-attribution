@@ -101,8 +101,7 @@ typedef NS_ENUM(NSInteger, BranchEventAdType) {
  This method should only be invoked after `+[Branch initialize:]`.
  If invoked before `+[Branch initialize:]`, the event will be dropped and a BNCInitError will be returned.
  */
-- (void)logEventWithCompletion:(void (^_Nullable)(BOOL success, NSError * _Nullable error))completion
-    NS_SWIFT_ASYNC_NAME(logEventAsync());
+- (void)logEventWithCompletion:(void (^_Nullable)(BOOL success, NSError * _Nullable error))completion;
 
 /**
  Logs the event on the Branch server.

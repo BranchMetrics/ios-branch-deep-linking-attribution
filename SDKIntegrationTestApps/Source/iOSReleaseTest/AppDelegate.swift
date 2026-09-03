@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import BranchSDK
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,48 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-
-        // Callback variant — NS_SWIFT_NAME:
-        // Branch.sharedInstance()?.requestDeepLinkData(launchOptions: launchOptions) { params, error in
-        //     print("Deep Link Params: \(params ?? [:]), error: \(String(describing: error))")
-        // }
-
-        // Async/await variant — NS_SWIFT_ASYNC_NAME:
-        // Task {
-        //     let params = try? await Branch.sharedInstance()?.requestDeepLinkData(launchOptions: launchOptions)
-        //     print("Deep Link Params: \(params ?? [:])")
-        // }
-
-        // The remaining async variants — NS_SWIFT_ASYNC_NAME. Uncomment whichever you want to run.
-        // These should only be called after the deep link request above completes, so they are
-        // shown here as one sequential Task.
-        // Task {
-        //     // setUserAlias:completion: -> setUserAlias(_:)
-        //     if let params = try? await Branch.sharedInstance()?.setUserAlias("test_user_alias") {
-        //         print("Set User Alias Params: \(params)")
-        //     }
-        //
-        //     // getShortURLWithParams:andCallback: -> getShortURL(params:)
-        //     if let url = try? await Branch.sharedInstance()?.getShortURL(params: ["$og_title": "Async Example"]) {
-        //         print("Short URL: \(url)")
-        //     }
-        //
-        //     // lastAttributedTouchDataWithAttributionWindow:completion: -> lastAttributedTouchData(attributionWindow:)
-        //     if let latd = try? await Branch.sharedInstance()?.lastAttributedTouchData(attributionWindow: 30) {
-        //         print("Last Attributed Touch Data: \(latd.lastAttributedTouchJSON)")
-        //     }
-        //
-        //     // BranchEvent logEventWithCompletion: -> logEventAsync()
-        //     if let success = try? await BranchEvent.standardEvent(.purchase).logEventAsync() {
-        //         print("Log Event Succeeded: \(success)")
-        //     }
-        //
-        //     // logoutWithCallback: -> logoutAsync()
-        //     if let changed = try? await Branch.sharedInstance()?.logoutAsync() {
-        //         print("Logout Changed: \(changed)")
-        //     }
-        // }
-
+        
+        
         return true
     }
 
