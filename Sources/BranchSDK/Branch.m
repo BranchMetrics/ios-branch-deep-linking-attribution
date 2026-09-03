@@ -307,11 +307,8 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [branch setNetworkTimeout:configuration.networkTimeout];
-    
     [branch setMaxRetries:configuration.retryCount];
-    
     [branch setRetryInterval:configuration.retryInterval];
-    
     [Branch setSDKWaitTimeForThirdPartyAPIs:configuration.thirdPartyAPIsWaitTime];
 #pragma clang diagnostic pop
 

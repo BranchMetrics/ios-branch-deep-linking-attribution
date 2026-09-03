@@ -16,9 +16,6 @@
 #import <WebKit/WebKit.h>
 #endif
 
-static const NSInteger BNCUserAgentCollectorMaxRetryCount = 5;
-static const NSTimeInterval BNCUserAgentCollectorRetryDelay = 0.5;
-
 @interface BNCUserAgentCollector()
 // need to hold onto the webview until the async user agent fetch is done
 @property (nonatomic, strong, readwrite) WKWebView *webview;
@@ -90,40 +87,23 @@ static const NSTimeInterval BNCUserAgentCollectorRetryDelay = 0.5;
 
 // collect user agent from webkit.  this is expensive.
 - (void)collectUserAgentWithCompletion:(void (^)(NSString *userAgent))completion {
-    [self collectUserAgentWithCompletion:completion retryCount:0];
-}
-
-// A WKWebView whose web content process never came up does not recover, so each retry
-// releases the webview and evaluates against a fresh one. Retries are bounded and spaced;
-// retrying the same webview immediately spins the main queue for as long as the caller waits.
-- (void)collectUserAgentWithCompletion:(void (^)(NSString *userAgent))completion retryCount:(NSInteger)retryCount {
     dispatch_async(dispatch_get_main_queue(), ^{
         if (!self.webview) {
             self.webview = [[WKWebView alloc] initWithFrame:CGRectZero];
         }
 
         [self.webview evaluateJavaScript:@"navigator.userAgent;" completionHandler:^(id _Nullable response, NSError * _Nullable error) {
-            if (!completion) {
-                return;
+            if (completion) {
+                if (response) {
+                    // release the webview
+                    self.webview = nil;
+
+                    completion(response);
+                } else {
+                    // retry if we failed to obtain user agent.  This occasionally occurs on simulator.
+                    [self collectUserAgentWithCompletion:completion];
+                }
             }
-
-            // release the webview
-            self.webview = nil;
-
-            if (response) {
-                completion(response);
-                return;
-            }
-
-            // retry if we failed to obtain user agent.  This occasionally occurs on simulator.
-            if (retryCount >= BNCUserAgentCollectorMaxRetryCount) {
-                completion(nil);
-                return;
-            }
-
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(BNCUserAgentCollectorRetryDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self collectUserAgentWithCompletion:completion retryCount:retryCount + 1];
-            });
         }];
     });
 }

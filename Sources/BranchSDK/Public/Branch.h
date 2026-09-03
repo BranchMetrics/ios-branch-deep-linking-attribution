@@ -527,7 +527,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
     API_AVAILABLE(ios(13.0), macCatalyst(13.1))
     NS_SWIFT_NAME(requestDeepLinkData(sceneOptions:scene:callback:))
     NS_SWIFT_ASYNC_NAME(requestDeepLinkData(sceneOptions:scene:));
-#endif
 
 /**
  Convenience method for SceneDelegate's `scene:openURLContexts:` to handle custom URI schemes.
@@ -558,6 +557,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
                 continueUserActivity:(NSUserActivity *)userActivity
     API_AVAILABLE(ios(13.0))
     NS_SWIFT_NAME(requestDeepLinkData(scene:userActivity:));
+#endif
 
 #pragma mark - Attribution Methods
 
@@ -1016,8 +1016,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  @warning This request is not removed from the queue upon failure -- it will be retried until it succeeds. The callback will only ever be called once, though.
  @warning You should call `logout` before calling `setUserAlias:completion:` a second time.
  */
-- (void)setUserAlias:(nullable NSString *)userAlias completion:(nullable callbackWithParams)completion
-    NS_SWIFT_ASYNC_NAME(setUserAlias(_:));
+- (void)setUserAlias:(nullable NSString *)userAlias completion:(nullable callbackWithParams)completion;
 
 /**
  Clear all of the current user's session items.
@@ -1026,16 +1025,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  */
 - (void)logout;
 
-/**
- Clear all of the current user's session items. Receive a completion callback, notifying you whether it succeeded or failed.
-
- @warning If the request to logout fails, the items will not be cleared.
-
- The async variant is named `logoutAsync()` rather than `logout()` so that it does not shadow the
- fire-and-forget `logout` above, which would force existing async-context callers to add `try await`.
- */
-- (void)logoutWithCallback:(nullable callbackWithStatus)callback
-    NS_SWIFT_ASYNC_NAME(logoutAsync());
+- (void)logoutWithCallback:(nullable callbackWithStatus)callback;
 
 #pragma mark - Query methods
 
@@ -1050,8 +1040,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  @param window attribution window in days.  If the window is 0, the server will use the server side default.  If the window is outside the server supported range, it will default to 30 days.
  @param completion callback with attribution data
  */
-- (void)lastAttributedTouchDataWithAttributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData * _Nullable latd, NSError * _Nullable error))completion
-    NS_SWIFT_ASYNC_NAME(lastAttributedTouchData(attributionWindow:));
+- (void)lastAttributedTouchDataWithAttributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData * _Nullable latd, NSError * _Nullable error))completion;
 
 #pragma mark - Short Url Sync methods
 
@@ -1351,8 +1340,7 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  @param params Dictionary of parameters to include in the link.
  @param callback Callback called with the url.
  */
-- (void)getShortURLWithParams:(nullable NSDictionary *)params andCallback:(nullable callbackWithUrl)callback
-    NS_SWIFT_ASYNC_NAME(getShortURL(params:));
+- (void)getShortURLWithParams:(nullable NSDictionary *)params andCallback:(nullable callbackWithUrl)callback;
 
 /**
  Get a short url with the specified params, channel, and feature. The usage type will default to unlimited.
