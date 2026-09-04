@@ -18,6 +18,11 @@
 - (void)writeObjectToDefaults:(NSString *)key value:(NSObject *)value;
 @end
 
+@interface Branch (BranchClassTest)
+// Test-only reset for the +initialize: reinitialization guard (file-private in Branch.m).
++ (void)resetInitializationGuardForTesting;
+@end
+
 @interface BranchClassTests : XCTestCase
 @property (nonatomic, strong) Branch *branch;
 @property (nonatomic, strong, readwrite) BNCPreferenceHelper *prefHelper;
@@ -27,7 +32,10 @@
 
 - (void)setUp {
     [super setUp];
-    self.branch = [Branch getInstance];
+    // +sharedInstance requires the SDK to be initialized first. Reset the guard so each test can
+    // (re)initialize the singleton, then configure it via the canonical entry point.
+    [Branch resetInitializationGuardForTesting];
+    self.branch = [Branch initialize:[[BranchConfiguration alloc] initWithKey:@"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB"]];
     self.prefHelper = [BNCPreferenceHelper sharedInstance];
 }
 
@@ -37,7 +45,7 @@
 }
 
 - (void)testIsUserIdentified {
-    [self.branch setIdentity: @"userId"];
+    [self.branch setUserAlias: @"userId" completion:nil];
     XCTAssertTrue([self.branch isUserIdentified], @"User should be identified");
 }
 
@@ -235,7 +243,7 @@
 
 - (void)testSetConsumerProtectionAttributionLevel {
     // Set to Reduced and check
-    Branch *branch = [Branch getInstance];
+    Branch *branch = [Branch sharedInstance];
     [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
     XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelReduced);
     

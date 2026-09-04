@@ -49,7 +49,7 @@
             delegate:(id <BranchActivityItemProviderDelegate>)delegate {
 
     NSString *url =
-        [[Branch getInstance]
+        [[Branch sharedInstance]
          getLongURLWithParams:params
          andChannel:nil
          andTags:tags
@@ -125,7 +125,7 @@
     ];
     for (NSString *scraper in scrapers) {
         if ([channel isEqualToString:scraper]) {
-            NSURL *URL = [NSURL URLWithString:[[Branch getInstance]
+            NSURL *URL = [NSURL URLWithString:[[Branch sharedInstance]
                 getShortURLWithParams:params
                 andTags:tags
                 andChannel:channel
@@ -143,7 +143,7 @@
     if (self.activityType == UIActivityTypeMail &&
         [params objectForKey:BRANCH_LINK_DATA_KEY_EMAIL_HTML_HEADER] &&
         [params objectForKey:BRANCH_LINK_DATA_KEY_EMAIL_HTML_FOOTER]) {
-        NSURL *link = [NSURL URLWithString:[[Branch getInstance]
+        NSURL *link = [NSURL URLWithString:[[Branch sharedInstance]
             getShortURLWithParams:params
             andTags:tags
             andChannel:channel
@@ -168,7 +168,7 @@
     }
 
     NSURL *URL =
-        [NSURL URLWithString:[[Branch getInstance]
+        [NSURL URLWithString:[[Branch sharedInstance]
             getShortURLWithParams:params
             andTags:tags
             andChannel:channel

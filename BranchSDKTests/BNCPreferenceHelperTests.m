@@ -36,7 +36,7 @@
 
 - (void)testPreferenceDefaults {
     XCTAssertEqual(self.prefHelper.timeout, 5.5);
-    XCTAssertEqual(self.prefHelper.retryInterval, 0);
+    XCTAssertEqual(self.prefHelper.retryInterval, 1.0);
     XCTAssertEqual(self.prefHelper.retryCount, 3);
     XCTAssertFalse(self.prefHelper.disableAdNetworkCallouts);
 }
@@ -360,7 +360,7 @@
     XCTAssertNil(self.prefHelper.previousAppBuildDate);
     XCTAssertEqual(self.prefHelper.requestMetadataDictionary.count, 0);
     XCTAssertNil(self.prefHelper.lastStrongMatchDate);
-    XCTAssertNil(self.prefHelper.userIdentity);
+    XCTAssertNil(self.prefHelper.userAlias);
     XCTAssertNil(self.prefHelper.referringURLQueryParameters);
     XCTAssertNil(self.prefHelper.anonID);
 }

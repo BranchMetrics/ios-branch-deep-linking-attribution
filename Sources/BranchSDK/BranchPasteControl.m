@@ -40,7 +40,7 @@
 }
 
 - (void)pasteItemProviders:(NSArray<NSItemProvider *> *)itemProviders {
-    [[Branch getInstance] passPasteItemProviders:itemProviders];
+    [[Branch sharedInstance] passPasteItemProviders:itemProviders];
 }
 
 - (BOOL)canPasteItemProviders:(NSArray<NSItemProvider *> *)itemProviders {

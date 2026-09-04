@@ -30,7 +30,7 @@
 - (void)testPropertySettersAndGetters {
     BranchConfigurationController *configController = [BranchConfigurationController sharedInstance];
     
-    NSString *keySource = BRANCH_KEY_SOURCE_GET_INSTANCE_API;
+    NSString *keySource = BRANCH_KEY_SOURCE_SET_BRANCH_KEY_API;
     configController.branchKeySource = keySource;
     XCTAssertTrue([configController.branchKeySource isEqualToString:keySource]);
     
