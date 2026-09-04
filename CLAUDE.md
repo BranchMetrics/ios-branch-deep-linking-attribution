@@ -117,13 +117,22 @@ interface. `processing_sema` and `networkCount` survive but no longer gate execu
 `setBranchKey:`/`getInstance:` → `branch.json` → `Info.plist` `branch_key`.
 
 **Queue.** `BNCServerRequestQueue` owns an `NSOperationQueue` with `maxConcurrentOperationCount = 1`
-— still serial, but serialized by the OS. Ordering comes from `NSOperationQueuePriority`
-(session-critical work enqueued `High`) plus dependencies via `addInitDependencyIfNeeded:`.
-**A dependency outranks priority, and "init" means only `BranchOpenRequest`** and its subclass
-`BranchInstallRequest`, so `BranchRequestOpen` and `BranchRequestDeepLink` — despite `High` — count
-as non-init and wait behind any in-flight legacy init. On a pure `/v3` session nothing becomes
-`currentInitOperation`, so the gate never engages at all. This is the opposite grouping from the
-operation's session-validation step, which treats all three as session-establishing.
+— still serial, but serialized by the OS. **Ordering comes from that serialization**, with
+session-critical work enqueued `High`. `addInitDependencyIfNeeded:` adds a dependency on top when
+an init operation is already tracked, attached before `addOperation:`; a dependency outranks
+priority, but it is not what the ordering rests on.
+
+`isInitRequest:` counts all three of `BranchOpenRequest`, `BranchRequestOpen` and
+`BranchRequestDeepLink`, matching the operation's own session-validation grouping. The two agreed
+as of EMT-4028; before that the queue recognised only `BranchOpenRequest` and a `/v3` session never
+set `currentInitOperation` at all.
+
+**The dependency is a refinement, not the ordering guarantee.** `currentInitOperation` is nil until
+an init request is enqueued, so the first session-dependent request through gets no dependency.
+Serialization is what orders work here: `maxConcurrentOperationCount = 1` with session work at
+`High`. That is the design, not a gap — 4.0 is token-gated rather than state-machine-driven, and a
+session-dependent request missing either randomized token is dropped immediately with
+`BNCInitError`, never held or replayed.
 
 **`BNCServerRequestOperation`** is a concurrent `NSOperation` with manual KVO. Its `start`: bail if
 cancelled → attribution gate (drop if `NONE`, except `BranchRequestDeepLink`) → session validation
