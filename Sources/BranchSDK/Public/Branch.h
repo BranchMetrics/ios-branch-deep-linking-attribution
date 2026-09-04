@@ -14,6 +14,8 @@
 #endif
 
 // Public classes that should be in the umbrella header
+#import "BranchInterface.h"
+#import "BranchAttributionLevel.h"
 #import "BranchLinkProperties.h"
 #import "BranchUniversalObject.h"
 #import "BranchLastAttributedTouchData.h"
@@ -58,6 +60,29 @@ NS_ASSUME_NONNULL_BEGIN
 ///----------------
 /// @name Constants
 ///----------------
+
+#pragma mark Error Handling
+
+/**
+ Key in an `NSError`'s `userInfo` dictionary whose value is an `NSNumber` wrapping a `BOOL`.
+
+ A value of `YES` means the failure is transient and retrying may succeed (network timeouts,
+ connection resets, HTTP 5xx). The SDK retries transient network failures automatically before
+ surfacing the error, so a retryable error indicates the automatic retries were already exhausted.
+
+ A value of `NO` means the failure is a configuration or authorization problem (HTTP 400, invalid
+ key, attribution level none) and retrying will not help.
+
+ ```
+ [branch getShortURLWithParams:params andCallback:^(NSString *url, NSError *error) {
+     if (error) {
+         BOOL isRetryable = [error.userInfo[BNCErrorIsRetryableKey] boolValue];
+         // ...
+     }
+ }];
+ ```
+*/
+FOUNDATION_EXPORT NSString * const BNCErrorIsRetryableKey;
 
 #pragma mark Branch Link Features
 
@@ -160,7 +185,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 #pragma mark - Branch
 
-@interface Branch : NSObject
+@interface Branch : NSObject <BranchInterface>
 
 #pragma mark Global Instance Accessors
 
@@ -527,6 +552,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
     API_AVAILABLE(ios(13.0), macCatalyst(13.1))
     NS_SWIFT_NAME(requestDeepLinkData(sceneOptions:scene:callback:))
     NS_SWIFT_ASYNC_NAME(requestDeepLinkData(sceneOptions:scene:));
+#endif
 
 /**
  Convenience method for SceneDelegate's `scene:openURLContexts:` to handle custom URI schemes.
@@ -557,7 +583,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
                 continueUserActivity:(NSUserActivity *)userActivity
     API_AVAILABLE(ios(13.0))
     NS_SWIFT_NAME(requestDeepLinkData(scene:userActivity:));
-#endif
 
 #pragma mark - Attribution Methods
 
@@ -887,53 +912,6 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 + (void)setAnonID:(NSString *)anonID;
 
 /**
- * Enumeration representing different levels of consumer protection attribution levels
- */
-typedef NSString * BranchAttributionLevel NS_STRING_ENUM;
-
-/**
- * Full:
- * - Advertising Ids
- * - Device Ids
- * - Local IP
- * - Persisted Non-Aggregate Ids
- * - Persisted Aggregate Ids
- * - Ads Postbacks / Webhooks
- * - Data Integrations Webhooks
- * - SAN Callouts
- * - Privacy Frameworks
- * - Deep Linking
- */
-extern BranchAttributionLevel const BranchAttributionLevelFull;
-
-/**
- * Reduced:
- * - Device Ids
- * - Local IP
- * - Data Integrations Webhooks
- * - Privacy Frameworks
- * - Deep Linking
- */
-extern BranchAttributionLevel const BranchAttributionLevelReduced;
-
-/**
- * Minimal:
- * - Device Ids
- * - Local IP
- * - Data Integrations Webhooks
- * - Deep Linking
- */
-extern BranchAttributionLevel const BranchAttributionLevelMinimal;
-
-/**
- * None:
- * - Only Deterministic Deep Linking
- * - Disables all other Branch requests
- */
-extern BranchAttributionLevel const BranchAttributionLevelNone;
-
-
-/**
  Sets the consumer protection attribution level.
 
  @param level The desired consumer protection attribution level, represented by the BranchAttributionLevel enum (Full, Reduced, Minimal, None).
@@ -1016,7 +994,8 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  @warning This request is not removed from the queue upon failure -- it will be retried until it succeeds. The callback will only ever be called once, though.
  @warning You should call `logout` before calling `setUserAlias:completion:` a second time.
  */
-- (void)setUserAlias:(nullable NSString *)userAlias completion:(nullable callbackWithParams)completion;
+- (void)setUserAlias:(nullable NSString *)userAlias completion:(nullable callbackWithParams)completion
+    NS_SWIFT_ASYNC_NAME(setUserAlias(_:));
 
 /**
  Clear all of the current user's session items.
@@ -1025,7 +1004,16 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  */
 - (void)logout;
 
-- (void)logoutWithCallback:(nullable callbackWithStatus)callback;
+/**
+ Clear all of the current user's session items. Receive a completion callback, notifying you whether it succeeded or failed.
+
+ @warning If the request to logout fails, the items will not be cleared.
+
+ The async variant is named `logoutAsync()` rather than `logout()` so that it does not shadow the
+ fire-and-forget `logout` above, which would force existing async-context callers to add `try await`.
+ */
+- (void)logoutWithCallback:(nullable callbackWithStatus)callback
+    NS_SWIFT_ASYNC_NAME(logoutAsync());
 
 #pragma mark - Query methods
 
@@ -1040,7 +1028,8 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  @param window attribution window in days.  If the window is 0, the server will use the server side default.  If the window is outside the server supported range, it will default to 30 days.
  @param completion callback with attribution data
  */
-- (void)lastAttributedTouchDataWithAttributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData * _Nullable latd, NSError * _Nullable error))completion;
+- (void)lastAttributedTouchDataWithAttributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData * _Nullable latd, NSError * _Nullable error))completion
+    NS_SWIFT_ASYNC_NAME(lastAttributedTouchData(attributionWindow:));
 
 #pragma mark - Short Url Sync methods
 
@@ -1340,7 +1329,8 @@ extern BranchAttributionLevel const BranchAttributionLevelNone;
  @param params Dictionary of parameters to include in the link.
  @param callback Callback called with the url.
  */
-- (void)getShortURLWithParams:(nullable NSDictionary *)params andCallback:(nullable callbackWithUrl)callback;
+- (void)getShortURLWithParams:(nullable NSDictionary *)params andCallback:(nullable callbackWithUrl)callback
+    NS_SWIFT_ASYNC_NAME(getShortURL(params:));
 
 /**
  Get a short url with the specified params, channel, and feature. The usage type will default to unlimited.

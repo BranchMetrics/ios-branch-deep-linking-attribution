@@ -12,7 +12,7 @@
 // Defaults mirror BNCPreferenceHelper (DEFAULT_TIMEOUT, DEFAULT_RETRY_COUNT, DEFAULT_RETRY_INTERVAL).
 static const NSTimeInterval BranchConfigurationDefaultNetworkTimeout = 5.5;
 static const NSInteger      BranchConfigurationDefaultRetryCount     = 3;
-static const NSTimeInterval BranchConfigurationDefaultRetryInterval  = 0;
+static const NSTimeInterval BranchConfigurationDefaultRetryInterval  = 1.0;
 
 // Mirrors BNCPreferenceHelper's DEFAULT_THIRD_PARTY_APIS_TIMEOUT (500ms).
 static const NSTimeInterval BranchConfigurationDefaultThirdPartyAPIsWaitTime = 0.5;

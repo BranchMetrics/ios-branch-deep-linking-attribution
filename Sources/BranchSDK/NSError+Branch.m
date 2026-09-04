@@ -10,6 +10,8 @@
 
 #import "NSError+Branch.h"
 
+NSString * const BNCErrorIsRetryableKey = @"BNCErrorIsRetryableKey";
+
 __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
     // Nothing here, but forces linker to load the category.
 }
@@ -74,7 +76,70 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad(void) {
         }
     }
 
+    userInfo[BNCErrorIsRetryableKey] = @([self branchErrorIsRetryableForCode:errorCode]);
+
     return [NSError errorWithDomain:[self bncErrorDomain] code:errorCode userInfo:userInfo];
+}
+
++ (BOOL)branchErrorIsRetryableForCode:(BNCErrorCode)errorCode {
+    switch (errorCode) {
+        // Transient failures — retrying may succeed once conditions improve.
+        case BNCServerProblemError:            // HTTP 5xx / trouble reaching Branch servers
+            return YES;
+
+        // Everything else is a configuration, auth, or client-side problem where retrying
+        // will not change the outcome (e.g. BNCBadRequestError, BNCInitError,
+        // BNCAttributionLevelNoneError, DNS/VPN ad blockers, Spotlight/content errors).
+        default:
+            return NO;
+    }
+}
+
+// Allowlist of transient NSURLError / CFNetwork codes that are worth retrying. These are the same
+// conditions the HTTP layer already retries on (poor/flaky connectivity, timeouts, connection
+// resets). Codes such as bad URL (-1000, also what a DNS sinkhole produces), cancelled (-999), and
+// TLS/ATS failures are deliberately excluded — retrying them will not change the outcome.
++ (BOOL)isTransientNetworkErrorCode:(NSInteger)code {
+    switch (code) {
+        case NSURLErrorTimedOut:                    // -1001
+        case NSURLErrorCannotConnectToHost:         // -1004
+        case NSURLErrorNetworkConnectionLost:       // -1005
+        case NSURLErrorDNSLookupFailed:             // -1006
+        case NSURLErrorNotConnectedToInternet:      // -1009
+        case NSURLErrorCannotFindHost:              // -1003
+        case NSURLErrorResourceUnavailable:         // -1008
+            return YES;
+        default:
+            return NO;
+    }
+}
+
++ (NSError *)branchErrorByAnnotatingRetryable:(NSError *)error {
+    if (!error) {
+        return nil;
+    }
+
+    // Already classified — leave it as-is.
+    if (error.userInfo[BNCErrorIsRetryableKey] != nil) {
+        return error;
+    }
+
+    BOOL isRetryable;
+    if ([error.domain isEqualToString:[self bncErrorDomain]]) {
+        isRetryable = [self branchErrorIsRetryableForCode:(BNCErrorCode)error.code];
+    } else {
+        // A non-Branch error is typically a raw NSURLError / CFNetwork failure. Only classify the
+        // codes that represent a genuinely transient network condition as retryable — a bad URL,
+        // a cancelled request, or a security/ATS failure will not be fixed by retrying. Note this
+        // also keeps us consistent with the DNS/VPN ad-blocker Branch codes (which are
+        // non-retryable): a DNS sinkhole surfaces as NSURLErrorBadURL (-1000), which is not on the
+        // transient list below.
+        isRetryable = [self isTransientNetworkErrorCode:error.code];
+    }
+
+    NSMutableDictionary *userInfo = [error.userInfo mutableCopy] ?: [NSMutableDictionary new];
+    userInfo[BNCErrorIsRetryableKey] = @(isRetryable);
+    return [NSError errorWithDomain:error.domain code:error.code userInfo:userInfo];
 }
 
 + (NSError *) branchErrorWithCode:(BNCErrorCode)errorCode {
