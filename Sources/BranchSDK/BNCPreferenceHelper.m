@@ -17,7 +17,7 @@
 
 static const NSTimeInterval DEFAULT_TIMEOUT = 5.5;
 static const NSTimeInterval DEFAULT_THIRD_PARTY_APIS_TIMEOUT = 0.5; // 500ms default
-static const NSTimeInterval DEFAULT_RETRY_INTERVAL = 0;
+static const NSTimeInterval DEFAULT_RETRY_INTERVAL = 1.0;
 static const NSInteger DEFAULT_RETRY_COUNT = 3;
 static const NSTimeInterval DEFAULT_REFERRER_GBRAID_WINDOW = 2592000; // 30 days = 2,592,000 seconds
 static const NSTimeInterval DEFAULT_ODM_INFO_VALIDITY_WINDOW = 15552000; // 180 days = 15,552,000 seconds
@@ -103,7 +103,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     randomizedBundleToken = _randomizedBundleToken,
     linkClickIdentifier = _linkClickIdentifier,
     userUrl = _userUrl,
-    userIdentity = _userIdentity,
+    userAlias = _userAlias,
     sessionParams = _sessionParams,
     installParams = _installParams,
     universalLinkUrl = _universalLinkUrl,
@@ -299,12 +299,12 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     [self writeObjectToDefaults:BRANCH_PREFS_KEY_RANDOMIZED_BUNDLE_TOKEN value:randomizedBundleToken];
 }
 
-- (NSString *)userIdentity {
+- (NSString *)userAlias {
     return [self readStringFromDefaults:BRANCH_PREFS_KEY_IDENTITY];
 }
 
-- (void)setUserIdentity:(NSString *)userIdentity {
-    [self writeObjectToDefaults:BRANCH_PREFS_KEY_IDENTITY value:userIdentity];
+- (void)setUserAlias:(NSString *)userAlias {
+    [self writeObjectToDefaults:BRANCH_PREFS_KEY_IDENTITY value:userAlias];
 }
 
 - (NSString *)linkClickIdentifier {
@@ -941,7 +941,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         self.previousAppBuildDate = nil;
         self.requestMetadataDictionary = nil;
         self.lastStrongMatchDate = nil;
-        self.userIdentity = nil;
+        self.userAlias = nil;
         self.referringURLQueryParameters = nil;
         self.anonID = nil;
         [[BranchLogger shared] logVerbose:@"Tracking information cleared" error:nil];

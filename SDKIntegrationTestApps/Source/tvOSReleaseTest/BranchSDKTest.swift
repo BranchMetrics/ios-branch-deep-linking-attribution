@@ -11,10 +11,10 @@ import BranchSDK
 class BranchSDKTest {
     
     init(callback: @escaping ([AnyHashable: Any]?, Error?) -> Void) {
-        Branch.getInstance().requestDeepLinkData(branchLink: nil, callback: callback)
+        Branch.sharedInstance()?.requestDeepLinkData(launchOptions: nil, callback: callback)
     }
-    
+
     func setCPPLevel( status: BranchAttributionLevel)  {
-        Branch.getInstance().setConsumerProtectionAttributionLevel(status)
+        Branch.sharedInstance()?.setConsumerProtectionAttributionLevel(status)
     }
 }

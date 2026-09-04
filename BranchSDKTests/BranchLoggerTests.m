@@ -9,6 +9,12 @@
 #import <XCTest/XCTest.h>
 #import "BranchLogger.h"
 #import "Branch.h"
+#import "BranchConfiguration.h"
+
+@interface Branch (BranchLoggerTest)
+// Test-only reset for the +initialize: reinitialization guard (file-private in Branch.m).
++ (void)resetInitializationGuardForTesting;
+@end
 
 @interface BranchLoggerTests : XCTestCase
 
@@ -16,9 +22,16 @@
 
 @implementation BranchLoggerTests
 
+- (void)setUp {
+    [super setUp];
+    // +sharedInstance requires the SDK to be initialized first.
+    [Branch resetInitializationGuardForTesting];
+    [Branch initialize:[[BranchConfiguration alloc] initWithKey:@"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB"]];
+}
+
 // public API test
 - (void)testEnableLoggingSetsCorrectDefaultLevel {
-    [[Branch getInstance] enableLogging];
+    [[Branch sharedInstance] enableLogging];
     XCTAssertEqual([BranchLogger shared].logLevelThreshold, BranchLogLevelDebug, "Default log level should be Debug.");
 }
 

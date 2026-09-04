@@ -15,25 +15,29 @@ and prebuilt XCFrameworks.
 1. **The queue is an `NSOperationQueue`.** `processNextQueueItem` is gone from `Sources/`; each
    request is wrapped in a `BNCServerRequestOperation` that the queue executes.
 2. **New `/v3` endpoints for the open flow.** `openServiceURL` → `/v3/events/open` (was `/v1/open`),
-   plus a new `deepLinkServiceURL` → `/v3/deeplink`. Installs are still `/v1/install`, events still
-   `/v2/event/{standard,custom}`.
+   plus a new `deepLinkServiceURL` → `/v3/deeplink`. Events moved to
+   `/v3/events/{standard,custom}` (was `/v2/event/{standard,custom}`).
 3. **New public deep-link API.** `requestDeepLinkData:callback:` and friends replace driving
    everything through `initSession…`, which is now `__attribute__((deprecated))`.
+   plus a new `deepLinkServiceURL` → `/v3/deeplink`.
+3. **New public deep-link API.** `initSession…` is **removed**. `+[Branch initialize:]` (with a
+   `BranchConfiguration`) is the entry point, and `requestDeepLinkData:callback:` and friends
+   replace driving everything through the old session-init calls.
 4. **`+setTrackingDisabled:` / `+trackingDisabled` are removed** from the public header _and_ from
    `Branch.m`. Attribution gating is `setConsumerProtectionAttributionLevel:` plus
    `+attributionLevelNone`. Code referencing `Branch.trackingDisabled` will not compile here.
 
-## In flight
+## Recently landed
 
-Open PRs that change what is documented below. Until they merge, this file describes the branch as
-it is today — check the PR before assuming the new shape exists.
+These have merged; the rest of this file already describes the post-merge shape.
 
-- **#1614** — adds `BranchConfiguration` + `[Branch initialize:config]`, deprecating the public API
-  setters. Adds `BranchConfiguration.m` alongside the existing `BranchConfigurationController.m`.
-- **#1603** — removes the initialization states (`BNCInitStatus`) and `sessionID`. Both are still
-  live here, including the `sessionID` requirement in session validation.
-- **#1605** — adds AppDelegate convenience functions wrapping `requestDeepLinkData`, replacing
-  direct `continueUserActivity:` / `handlePushNotification:` use. Stacked on #1603.
+- **#1614** — `BranchConfiguration` + `+[Branch initialize:]`, which supersedes the public API
+  setters. `BranchConfiguration.m` sits alongside the existing `BranchConfigurationController.m`.
+- **#1603** — removed the initialization states (`BNCInitStatus`) and `sessionID`. Neither exists in
+  `Sources/` anymore, and session validation no longer requires a `sessionID`.
+- **#1605** — AppDelegate convenience methods wrapping `requestDeepLinkData`
+  (`requestDeepLinkDataWithURL:`, `…WithUserActivity:`), replacing direct `continueUserActivity:` /
+  `handlePushNotification:` use.
 
 ## Products, distribution, versioning
 
@@ -66,7 +70,7 @@ contract, `Private/` is internal (including this branch's `BNCServerRequestOpera
 | The new deep-link resolution flow                       | `Branch.m` — `requestDeepLinkData:callback:`, `…WithLaunchOptions:`, `…WithSceneOptions:scene:`; request in `BranchRequestDeepLink.m`                                                                                                                                            |
 | The new attribution open                                | `Branch.m` — `sendOpen`, `sendOpen:skipCallback:`; request in `BranchRequestOpen.m`                                                                                                                                                                                              |
 | Queue behavior, ordering, cancellation                  | `BNCServerRequestQueue.m` **and** `BNCServerRequestOperation.m` — execution lives in the operation, not `Branch.m`                                                                                                                                                               |
-| Legacy session init (deprecated, still live)            | `Branch.m` — `initUserSessionAndCallCallback:`, `initializeSessionAndCallCallback:`, `handleInitSuccessAndCallCallback:`, `handleInitFailure:`                                                                                                                                   |
+| Session initialization                                  | `Branch.m` — `+initialize:` (takes a `BranchConfiguration`; replaces the removed `initSession…` family), `handleInitSuccess`, `handleInitFailure:`                                                                                                                                |
 | Universal link / scheme / push / user-activity entry    | `Branch.m` — `handleDeepLink:sceneIdentifier:`, `handleSchemeDeepLink_private:`, `handleUniversalDeepLink_private:`, `continueUserActivity:`, `handlePushNotification:`                                                                                                          |
 | A new API request type                                  | subclass `BNCServerRequest`; body in `BNCRequestFactory`; endpoint in `BNCServerAPI`; enqueue via `[self.requestQueue enqueue:req withPriority:]`                                                                                                                                |
 | Request body fields / wire format                       | `BNCRequestFactory.m` — `dataForInstallWithURLString:`, `dataForOpenWithURLString:`, **`dataForDeepLinkWithURLString:`**, **`dataForRequestOpenWithURLString:`**, `dataForEventWithEventDictionary:`, `dataForShortURLWithLinkDataDictionary:`, `dataForLATDWithDataDictionary:` |
@@ -124,7 +128,7 @@ operation's session-validation step, which treats all three as session-establish
 **`BNCServerRequestOperation`** is a concurrent `NSOperation` with manual KVO. Its `start`: bail if
 cancelled → attribution gate (drop if `NONE`, except `BranchRequestDeepLink`) → session validation
 (installs and the three session-establishing classes skip it; everything else needs
-`randomizedDeviceToken` **and** `sessionID` **and** `randomizedBundleToken`, else `BNCInitError`) →
+`randomizedDeviceToken` **and** `randomizedBundleToken`, else `BNCInitError`) →
 take the response lock → request, then process the response synchronously on the main thread.
 **No queue-level retry or replay here** — HTTP retries live in `BNCServerInterface`, and requests
 are not persisted.
@@ -135,15 +139,17 @@ pending (not executing) deep-link operations when given a non-nil `branchLink`, 
 (web redirect: attribution sent, app callback suppressed) or fires the app callback then
 `sendOpen:skipCallback:NO`. That reaches the network **only if a referring link was resolved**;
 otherwise it calls `clearLinkIdentifiers:`. So a link-resolving open is two requests — resolve, then
-attribute. `handleUniversalDeepLink_private:` calls `sendOpen` directly; the legacy init call there
-is commented out.
+attribute. `handleUniversalDeepLink_private:` no longer kicks off a session at all — it just records
+`universalLinkUrl` / `referringURL` and returns `+isBranchLink:`; opening the session is
+`+[Branch initialize:]`'s job.
 
 **`BNCPreferenceHelper`** persists to a **custom `NSKeyedArchiver` file** (`BNCPreferences`), not
 `NSUserDefaults` — anything stored must be secure-coding compatible or the whole archive silently
 fails to serialize. First-build and first-install dates live in the **keychain** via `BNCKeyChain`
 so they survive reinstall, which is what makes install-vs-reinstall attribution work; do not move
-them. `sendServerRequest:` **refuses** when status is `Uninitialized` (`master` self-initializes),
-and the synchronous referring-params getters wait on **three** locks.
+them. `sendServerRequest:` no longer gates on an init status — with `BNCInitStatus` gone it just
+hops the isolation queue and enqueues — and the synchronous referring-params getters wait on
+**three** locks.
 
 ## Non-obvious invariants
 

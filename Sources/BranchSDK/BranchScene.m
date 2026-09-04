@@ -25,32 +25,32 @@
     [[BranchLogger shared] logVerbose:@"BranchScene continueUserActivity" error:nil];
 
 #if !TARGET_OS_TV
-    [[Branch getInstance] requestDeepLinkDataWithScene:scene continueUserActivity:userActivity];
+    [[Branch sharedInstance] requestDeepLinkDataWithScene:scene continueUserActivity:userActivity];
 #else
     // requestDeepLinkDataWithScene:continueUserActivity: is declared inside #if !TARGET_OS_TV, so tvOS
     // still goes through the legacy entry point. Both run the same preprocessing and enqueue one request.
     NSString *identifier = scene.session.persistentIdentifier;
-    [[Branch getInstance] continueUserActivity:userActivity sceneIdentifier:identifier];
+    [[Branch sharedInstance] continueUserActivity:userActivity sceneIdentifier:identifier];
 #endif
 }
 
 - (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts NS_EXTENSION_UNAVAILABLE("BranchScene does not support Extensions") {
     [[BranchLogger shared] logVerbose:@"BranchScene openURLContexts" error:nil];
-    
+
     if (URLContexts.count != 1) {
         [[BranchLogger shared] logWarning:@"Branch only supports a single URLContext" error:nil];
     }
 
 #if !TARGET_OS_TV
     // Takes the first context and returns early when there is none, as the code below did.
-    [[Branch getInstance] requestDeepLinkDataWithScene:scene openURLContexts:URLContexts];
+    [[Branch sharedInstance] requestDeepLinkDataWithScene:scene openURLContexts:URLContexts];
 #else
     // requestDeepLinkDataWithScene:openURLContexts: is declared inside #if !TARGET_OS_TV, so tvOS still
     // goes through the legacy entry point. Both run the same preprocessing and enqueue one request.
     UIOpenURLContext *context = [URLContexts allObjects].firstObject;
     if (context) {
         NSString *identifier = scene.session.persistentIdentifier;
-        [[Branch getInstance] sceneIdentifier:identifier openURL:context.URL sourceApplication:context.options.sourceApplication annotation:context.options.annotation];
+        [[Branch sharedInstance] sceneIdentifier:identifier openURL:context.URL sourceApplication:context.options.sourceApplication annotation:context.options.annotation];
     }
 #endif
 }
