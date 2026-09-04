@@ -266,7 +266,7 @@ BranchStandardEvent BranchStandardEventOptOut                 = @"OPT_OUT";
     BranchEventRequest *request = [self buildRequestWithEventDictionary:eventDictionary];
     [[BNCCallbackMap shared] storeRequest:request withCompletion:completion];
     
-    [[Branch getInstance] sendServerRequest:request];
+    [[Branch sharedInstance] sendServerRequest:request];
 }
 
 - (void) logEvent {

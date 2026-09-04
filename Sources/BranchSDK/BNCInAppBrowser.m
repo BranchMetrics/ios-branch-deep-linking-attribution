@@ -19,12 +19,12 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)sharedInstance {
     static BNCInAppBrowser *sharedInstance = nil;
     static dispatch_once_t onceToken;
-    
+
     if (NSClassFromString(@"SFSafariViewController") == nil) {
         [[BranchLogger shared] logDebug:@"[Branch SDK] SafariServices.framework is not linked. BNCInAppBrowser will not be available." error:nil];
         return nil;
     }
-    
+
     dispatch_once(&onceToken, ^{
         sharedInstance = [[BNCInAppBrowser alloc] init];
     });
@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)openURLInSafariVC:(NSURL *) url {
-    
+
     UIViewController *topVC = [UIViewController bnc_currentViewController];
     if (!topVC) {
         [[BranchLogger shared] logDebug:@"SDK: Cannot present SafariViewController – no top view controller found." error:nil];
@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)openURLInSafariVC:(NSURL *)url overViewController:(UIViewController *)topVC {
-    
+
     Class safariClass = NSClassFromString(@"SFSafariViewController");
     if (!safariClass) {
         [[BranchLogger shared] logDebug:@"SDK: SFSafariViewController not available or not linked. Falling back." error:nil];
@@ -77,7 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)safariViewControllerDidFinish:(SFSafariViewController *)controller {
-    [[Branch getInstance] requestDeepLinkData:nil callback:nil];
+    [[Branch sharedInstance] requestDeepLinkData:nil callback:nil];
 }
 
 @end

@@ -190,7 +190,6 @@
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" placeholder="Your Branch Link" minimumFontSize="10" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="SOP-3u-nhT" userLabel="branchLinkTextField">
                                                     <rect key="frame" x="16" y="11" width="311" height="22"/>
-                                                    <accessibility key="accessibilityConfiguration" identifier="txt_branch_link"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="280" id="QJ6-EZ-1I1"/>
                                                     </constraints>
@@ -329,7 +328,7 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mUN-NU-xns">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
-                                                    <accessibility key="accessibilityConfiguration" identifier="btn_create_qr_code"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="tracking"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="27" id="Ger-Li-JdZ"/>
                                                         <constraint firstAttribute="width" constant="190" id="Kcd-Il-mHi"/>
@@ -366,7 +365,6 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bek-2J-IjD">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
-                                                    <accessibility key="accessibilityConfiguration" identifier="btn_view_first_referring_params"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="190" id="Th6-ew-uaE"/>
                                                     </constraints>
@@ -399,7 +397,6 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NJe-OT-1Eg">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
-                                                    <accessibility key="accessibilityConfiguration" identifier="btn_view_latest_referring_params"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="190" id="cAM-OI-xnD"/>
                                                     </constraints>

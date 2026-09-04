@@ -16,6 +16,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ Key in an `NSError`'s `userInfo` dictionary whose value is an `NSNumber` wrapping a `BOOL`.
+ A value of `YES` means the failure is transient and retrying the operation may succeed
+ (network timeouts, connection resets, HTTP 5xx). A value of `NO` means the failure is a
+ configuration or authorization problem (HTTP 400, invalid key, attribution level none) and
+ retrying will not help.
+
+ This is also declared in the public `Branch.h` so callers can read it without importing the
+ private error category.
+*/
+FOUNDATION_EXPORT NSString * const BNCErrorIsRetryableKey;
+
 typedef NS_ENUM(NSInteger, BNCErrorCode) {
     BNCInitError                    = 1000,
     BNCDuplicateResourceError       = 1001,
@@ -38,6 +50,7 @@ typedef NS_ENUM(NSInteger, BNCErrorCode) {
     BNCClassNotFoundError                = 1019,
     BNCMethodNotFoundError               = 1020,
     BNCODCConversionManagerError         = 1021,
+    BNCInvalidConfigurationError         = 1022,
     BNCHighestError
 };
 
@@ -48,6 +61,14 @@ typedef NS_ENUM(NSInteger, BNCErrorCode) {
 + (NSError *) branchErrorWithCode:(BNCErrorCode)errorCode;
 + (NSError *) branchErrorWithCode:(BNCErrorCode)errorCode error:(NSError *_Nullable)error;
 + (NSError *) branchErrorWithCode:(BNCErrorCode)errorCode localizedMessage:(NSString *_Nullable)message;
+
+// Returns YES if a failure with the given Branch error code is transient and worth retrying.
++ (BOOL)branchErrorIsRetryableForCode:(BNCErrorCode)errorCode;
+
+// Returns a copy of the error with BNCErrorIsRetryableKey set in its userInfo. Non-Branch errors
+// (e.g. raw network NSErrors delivered to a callback) are treated as retryable, since the SDK only
+// surfaces them after its own HTTP retries are exhausted. Passing nil returns nil.
++ (nullable NSError *)branchErrorByAnnotatingRetryable:(nullable NSError *)error;
 
 // Checks if an NSError looks like a DNS blocking error
 + (BOOL)branchDNSBlockingError:(NSError *)error;

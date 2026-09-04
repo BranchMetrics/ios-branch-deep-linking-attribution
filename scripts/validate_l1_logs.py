@@ -21,7 +21,7 @@ of the simulator's app sandbox after the test run.
 Endpoint contract: this file targets the 4.0.0-beta line, which does NOT
 emit `/v1/install` or `/v1/open`. Install and open both land on
 `/v3/events/open`, deep-link resolution on `/v3/deeplink`, and events on
-`/v2/event/standard`. Only link creation still uses a v1 path (`/v1/url`).
+`/v3/events/standard`. Only link creation still uses a v1 path (`/v1/url`).
 The required-field lists below are derived from captured payloads on that
 line, not from the v1 protocol master still speaks.
 
@@ -104,7 +104,7 @@ REQUIRED_COMMON_FULL = ["hardware_id"]
 REQUIRED_OPEN_EXTRAS_NOT_NONE = ["anon_id", "first_install_time"]
 REQUIRED_OPEN_EXTRAS_FULL = ["is_hardware_id_real"]
 
-# `/v2/event/standard` does not extend REQUIRED_COMMON: it uses a different
+# `/v3/events/standard` does not extend REQUIRED_COMMON: it uses a different
 # schema, so it gets its own complete list. Request identity stays at the
 # top level; the device block moves under `user_data`, where `hardware_id`
 # is spelled `idfv` and `sdk` splits into `sdk` + `sdk_version`. Everything
@@ -169,7 +169,7 @@ REQUIRED_PER_ENDPOINT = {
         "not_none": REQUIRED_COMMON_NOT_NONE + REQUIRED_OPEN_EXTRAS_NOT_NONE,
         "full": REQUIRED_COMMON_FULL + REQUIRED_OPEN_EXTRAS_FULL,
     },
-    "/v2/event/standard": {
+    "/v3/events/standard": {
         "always": REQUIRED_V2_EVENT,
         "not_none": REQUIRED_V2_EVENT_NOT_NONE,
         "full": [],

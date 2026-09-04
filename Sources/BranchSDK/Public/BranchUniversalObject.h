@@ -222,7 +222,7 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
 - (NSDictionary*_Nonnull)getDictionaryWithCompleteLinkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
 - (NSDictionary*_Nonnull)getParamsForServerRequestWithAddedLinkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
 
-/// Convenience method for initSession methods that return BranchUniversalObject, but can be used safely by anyone.
+/// Convenience method for the `+[Branch initialize:]` deep link callbacks that return BranchUniversalObject, but can be used safely by anyone.
 - (NSMutableDictionary*_Nonnull) dictionary;
 + (BranchUniversalObject*_Nonnull) objectWithDictionary:(NSDictionary*_Null_unspecified)dictionary;
 

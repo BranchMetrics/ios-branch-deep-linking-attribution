@@ -40,7 +40,7 @@
 
 - (void)pasteItemProviders:(NSArray<NSItemProvider *> *)itemProviders {
     if (@available(iOS 16, macCatalyst 16.0, *)) {
-        [[Branch getInstance] passPasteItemProviders:itemProviders];
+        [[Branch sharedInstance] passPasteItemProviders:itemProviders];
     }
 }
 

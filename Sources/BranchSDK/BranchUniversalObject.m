@@ -355,7 +355,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         return nil;
     }
     
-    return [[Branch getInstance] getShortUrlWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties]
+    return [[Branch sharedInstance] getShortUrlWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties]
                                                andTags:linkProperties.tags
                                               andAlias:linkProperties.alias
                                             andChannel:linkProperties.channel
@@ -374,7 +374,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         return;
     }
     
-    [[Branch getInstance] getShortUrlWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties]
+    [[Branch sharedInstance] getShortUrlWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties]
                                         andTags:linkProperties.tags
                                        andAlias:linkProperties.alias
                                andMatchDuration:linkProperties.matchDuration
@@ -399,7 +399,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     UAString = [BNCUserAgentCollector instance].userAgent;
     #endif
     
-    return [[Branch getInstance] getShortURLWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties]
+    return [[Branch sharedInstance] getShortURLWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties]
                                         andTags:linkProperties.tags
                                      andChannel:linkProperties.channel
                                      andFeature:linkProperties.feature
@@ -416,7 +416,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
                            andStage:(NSString *)stage
                            andAlias:(NSString *)alias {
     NSString *urlString =
-        [[Branch getInstance]
+        [[Branch sharedInstance]
             getLongURLWithParams:self.dictionary
             andChannel:channel
             andTags:tags
@@ -460,7 +460,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 }
 
 - (void)listOnSpotlightWithCallback:(callbackWithUrl)callback {
-    [[Branch getInstance]
+    [[Branch sharedInstance]
         indexOnSpotlightWithBranchUniversalObject:self
         linkProperties:nil
         completion:^(BranchUniversalObject *universalObject, NSString *url, NSError *error) {
@@ -485,7 +485,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         metadataAndProperties[BRANCH_LINK_DATA_KEY_CANONICAL_URL] = self.canonicalUrl;
     }
     
-    [[Branch getInstance] createDiscoverableContentWithTitle:self.title
+    [[Branch sharedInstance] createDiscoverableContentWithTitle:self.title
                                                  description:self.contentDescription
                                                 thumbnailUrl:[NSURL URLWithString:self.imageUrl]
                                                  canonicalId:self.canonicalIdentifier
@@ -500,7 +500,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 - (void)listOnSpotlightWithLinkProperties:(BranchLinkProperties*_Nullable)linkproperties
                                 callback:(void (^_Nullable)(NSString * _Nullable url,
                                                             NSError * _Nullable error))completion {
-    [[Branch getInstance]
+    [[Branch sharedInstance]
         indexOnSpotlightWithBranchUniversalObject:self
         linkProperties:linkproperties
         completion:^(BranchUniversalObject *universalObject, NSString *url, NSError *error) {
@@ -510,7 +510,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 
 - (void)removeFromSpotlightWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion {
     if (self.locallyIndex) {
-        [[Branch getInstance] removeSearchableItemWithBranchUniversalObject:self callback:^(NSError *error) {
+        [[Branch sharedInstance] removeSearchableItemWithBranchUniversalObject:self callback:^(NSError *error) {
             if (completion) {
                 completion(error);
             }
