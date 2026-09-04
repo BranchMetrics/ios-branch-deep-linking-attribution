@@ -95,6 +95,7 @@
 		E1A0001B0000000000000AB1 /* EventAndLinkWireCaptureTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A0002B0000000000000AB2 /* EventAndLinkWireCaptureTest.swift */; };
 		E1A0001C0000000000000AC1 /* DeepLinkWireValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A0002C0000000000000AC2 /* DeepLinkWireValidationTest.swift */; };
 		E1A0001D0000000000000AD1 /* ColdLinkWireValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A0002D0000000000000AD2 /* ColdLinkWireValidationTest.swift */; };
+		E1A0001E0000000000000AE1 /* ColdLinkInstalledWireValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A0002E0000000000000AE2 /* ColdLinkInstalledWireValidationTest.swift */; };
 		E369CEFCE0B1105282B6E900 /* ReferringParamsHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656C68E10670CEE96DC0A93D /* ReferringParamsHybridTest.swift */; };
 		E72489D228E40D0200DCD8FD /* PasteControlViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E72489D128E40D0200DCD8FD /* PasteControlViewController.m */; };
 		E732827F2E5F7D92005CACC8 /* GoogleAdsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = E732827E2E5F7D92005CACC8 /* GoogleAdsOnDeviceConversion */; };
@@ -272,6 +273,7 @@
 		E1A0002B0000000000000AB2 /* EventAndLinkWireCaptureTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EventAndLinkWireCaptureTest.swift; sourceTree = "<group>"; };
 		E1A0002C0000000000000AC2 /* DeepLinkWireValidationTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DeepLinkWireValidationTest.swift; sourceTree = "<group>"; };
 		E1A0002D0000000000000AD2 /* ColdLinkWireValidationTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ColdLinkWireValidationTest.swift; sourceTree = "<group>"; };
+		E1A0002E0000000000000AE2 /* ColdLinkInstalledWireValidationTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ColdLinkInstalledWireValidationTest.swift; sourceTree = "<group>"; };
 		E4D4DC04AFC52EEBC6E0120A /* NotificationHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NotificationHybridTest.swift; sourceTree = "<group>"; };
 		E50AA43771267258B0293FD1 /* TestBed-GPTDriverTests-Bridging-Header.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "TestBed-GPTDriverTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		E72489D028E40D0200DCD8FD /* PasteControlViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasteControlViewController.h; sourceTree = "<group>"; };
@@ -572,6 +574,7 @@
 				E1A0002B0000000000000AB2 /* EventAndLinkWireCaptureTest.swift */,
 				E1A0002C0000000000000AC2 /* DeepLinkWireValidationTest.swift */,
 				E1A0002D0000000000000AD2 /* ColdLinkWireValidationTest.swift */,
+				E1A0002E0000000000000AE2 /* ColdLinkInstalledWireValidationTest.swift */,
 			);
 			name = Deterministic;
 			path = Deterministic;
@@ -924,6 +927,7 @@
 				E1A0001B0000000000000AB1 /* EventAndLinkWireCaptureTest.swift in Sources */,
 				E1A0001C0000000000000AC1 /* DeepLinkWireValidationTest.swift in Sources */,
 				E1A0001D0000000000000AD1 /* ColdLinkWireValidationTest.swift in Sources */,
+				E1A0001E0000000000000AE1 /* ColdLinkInstalledWireValidationTest.swift in Sources */,
 				2FE60ACC53E3DDB95CB49E7C /* LinkCreationHybridTest.swift in Sources */,
 				EBB12FFFEE5BB34E5505BBB9 /* LinkCreationAITest.swift in Sources */,
 				143A1100894AF12F8F5E4CFB /* TestBedIdentifiers.m in Sources */,
