@@ -162,12 +162,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
 #pragma mark - Creating links
 
-/// Worked example of `BranchLinkBuilder`, which in 4.0 replaces the `getShortURL…` /
-/// `getLongURL…` family that used to live on `Branch`.
-///
-/// Objective-C has no chained builder, so the shape matches `BranchConfiguration` above: create the
-/// builder, set the properties you care about, then call a terminal. The builder is reusable — the
-/// terminals do not consume it — so both halves below share one instance.
+/// Working example of `BranchLinkBuilder`
 ///
 /// You do not need a `Branch` reference to make a link, and you do not need to wait for
 /// `+[Branch initialize:]` to finish; the builder resolves the SDK when a terminal runs.
@@ -188,8 +183,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // ── Long URL: offline, synchronous ───────────────────────────────────
     // `params` are JSON-encoded and base64'd into the URL itself, so this needs no network and
-    // returns immediately. That also makes the URL long — prefer a short link anywhere the user
-    // sees the URL. Returns nil only if no Branch key is available.
+    // returns immediately.
     NSString *longURL = [builder buildLongURL];
     NSLog(@"Branch TestBed: long URL: %@", longURL);
 
@@ -199,8 +193,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     //     NSString *appLinkURL = [builder buildLongURL];
 
     // ── Short URL: network, non-blocking ─────────────────────────────────
-    // This is the terminal to reach for by default. The callback is delivered on the main queue, so
-    // it is safe to update UI directly from it.
     //
     // Check `error`, not `url`. On a server error the SDK still hands back a URL — a long-link
     // fallback — so `if (url)` would read a failed request as a success.

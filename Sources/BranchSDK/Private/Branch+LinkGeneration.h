@@ -12,10 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  The collaborators `BranchLinkBuilder` needs in order to generate links.
 
- All five live in the file-private class extension in `Branch.m`. Link generation used to be a set
- of methods on `Branch` itself, so it reached them directly; now that it lives in
- `BranchLinkBuilder`, they have to be visible outside that file. This category is the narrowest way
- to do that — readonly, private header, no promotion to `Public/`.
+ All five live in the file-private class extension in `Branch.m`.
  */
 @interface Branch (LinkGeneration)
 

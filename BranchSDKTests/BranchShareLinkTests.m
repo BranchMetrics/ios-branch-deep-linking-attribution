@@ -42,10 +42,7 @@ static NSString * const kTestBranchKey = @"key_live_hcnegAumkH7Kv18M8AOHhfgiohpX
 
 #pragma mark - Placeholder long URL
 
-// -activityItems builds the placeholder share URL offline, through -buildLongURL. This is the one
-// user-visible consequence of the Decision-2 fix: -getLongAppLinkURLWithParams:andChannel:… took a
-// channel and dropped it before assembling the URL, so this placeholder never carried one. It does
-// now.
+// -activityItems builds the placeholder share URL offline, through -buildLongURL.
 - (void)testPlaceholderURLNowCarriesTheChannel {
     BranchUniversalObject *buo = [[BranchUniversalObject alloc] initWithCanonicalIdentifier:@"test/001"];
     BranchLinkProperties *lp = [[BranchLinkProperties alloc] init];

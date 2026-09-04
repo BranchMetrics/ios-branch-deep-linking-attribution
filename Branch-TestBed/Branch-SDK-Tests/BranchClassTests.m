@@ -205,17 +205,6 @@
     XCTAssertEqualObjects(result.campaign, @"latest campaign");
 }
 
-// testGetShortURL and testGetLongURLWithParamsAndChannelAndTagsAndFeatureAndStageAndAlias were
-// removed in EMT-4069, which deleted -[Branch getShortURL] and
-// -[Branch getLongURLWithParams:andChannel:andTags:andFeature:andStage:andAlias:] along with the
-// other 34 link-generation overloads. BranchLinkBuilder is the entry point now.
-//
-// This directory is the pre-4.0 test copy and does not run in CI -- the live suite is
-// BranchSDKTests/. The replacements live there: -[BranchLinkBuilderTests testFetchShortURLLiveSmokeTest]
-// and -[BranchLinkBuilderTests testLongURLDefaultDomainExactString]. The latter pins the same
-// expected string as the deleted test plus channel=channel1&, which the old method accepted and then
-// dropped before assembling the URL.
-
 - (void)testSetDMAParamsForEEA {
     XCTAssertFalse([[BNCPreferenceHelper sharedInstance] eeaRegionInitialized]);
     

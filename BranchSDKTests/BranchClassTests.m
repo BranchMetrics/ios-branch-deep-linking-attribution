@@ -211,19 +211,6 @@
     XCTAssertEqualObjects(result.campaign, @"latest campaign");
 }
 
-// testGetShortURL was removed in EMT-4069. Its only assertion, hasPrefix:@"https://", was also
-// satisfied by BranchShortUrlSyncRequest's non-200 long-URL fallback, so it could not distinguish a
-// created short link from a failed request -- and whether the fallback returned a string or nil
-// depended on preferenceHelper.userUrl, shared persisted state that other test classes overwrite.
-// Replaced by -[BranchLinkBuilderTests testFetchShortURLLiveSmokeTest], which asserts the Branch
-// link domain and rejects the fallback, plus the stubbed fetchShortURL cases in that class.
-
-// testGetLongURLWithParamsAndChannelAndTagsAndFeatureAndStageAndAlias was removed in EMT-4069 along
-// with -[Branch getLongURLWithParams:andChannel:andTags:andFeature:andStage:andAlias:]. Its exact
-// expected string lives on in -[BranchLinkBuilderTests testLongURLDefaultDomainExactString], with
-// the one difference the migration introduces: channel=channel1& between alias= and feature=. The
-// deleted method took a channel and dropped it before assembling the URL, which was a bug.
-
 - (void)testDMAParamsWriteThroughToPreferences {
     // DMA parameters are config-only (no runtime setter). This asserts the preference-write mechanism that
     // +[Branch initialize:] uses when applying a BranchConfiguration.dmaParameters value.

@@ -19,9 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  **Resolved lazily, on each read.** When no instance was injected this returns
  `+[Branch sharedInstance]`, which raises if `+[Branch initialize:]` has not run yet. Resolving in
- `-init` instead would mean that merely constructing a builder before initialization throws, which
- none of the overloads this builder replaces ever did — they were messages to an instance the caller
- already held. Deferring to the terminal keeps the failure at the point of actual use.
+ `-init` instead would mean that merely constructing a builder before initialization throws. Deferring to the terminal keeps the failure at the point of actual use.
 
  Tests inject a `Branch` whose `serverInterface` is a fake, so the short-URL terminals can be
  exercised without reaching the network.

@@ -148,12 +148,7 @@ final class BranchSwiftNameTests: XCTestCase {
         _ = asyncMethod
         XCTAssertTrue(branch.responds(to: NSSelectorFromString("lastAttributedTouchDataWithAttributionWindow:completion:")))
     }
-
-    /// Replaces `testAsyncNameGetShortURL`. EMT-4069 deleted
-    /// `getShortURLWithParams:andCallback:` and the other 35 link-generation overloads from
-    /// `Branch`; `BranchLinkBuilder` is the only entry point now, so this pins *its* Swift
-    /// projection instead.
-    ///
+    
     /// The interesting case is the pair of short-URL terminals. `fetchShortURL` is blocking and
     /// `fetchShortURLWithCallback:` is asynchronous, and the Swift importer derives an `async`
     /// name from the latter by dropping the trailing `WithCallback` — which is exactly the

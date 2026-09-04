@@ -79,9 +79,7 @@
     // Note it does NOT isolate the cache entry: BNCLinkCache keys on -[BNCLinkData hash], and that
     // hash covers type/alias/channel/feature/stage/campaign/params/duration/tags but *not*
     // ignoreUAString. So the link fetched here is written under the same key an ordinary link would
-    // use, and a later call without an ignoreUAString can be served this link from the cache. That
-    // is pre-existing behavior, carried over verbatim; pinned by
-    // testIgnoreUAStringDoesNotAffectTheCacheKey.
+    // use, and a later call without an ignoreUAString can be served this link from the cache.
     if (!self.ignoreUAString && [branch.linkCache objectForKey:linkData]) {
         [[BranchLogger shared] logVerbose:@"Returning cached Branch Link" error:nil];
         return [branch.linkCache objectForKey:linkData];
