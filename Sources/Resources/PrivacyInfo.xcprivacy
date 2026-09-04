@@ -2,10 +2,29 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- NSPrivacyTracking reflects the default configuration. If the app sets
-	     limitFacebookAttribution = YES in its BranchConfiguration, the SDK does not
-	     send device identifiers to the safetrack domain and this value may be
-	     declared false. The effective value depends on the app's BranchConfiguration. -->
+	<!-- NSPrivacyTracking reflects the DEFAULT configuration, i.e. an app that never sets an
+	     attribution level: the SDK behaves as FULL and sends the IDFA, the hardware-ID
+	     fields, ODM info and the referring-URL ad click IDs (gclid/gbraid/sccid). The
+	     effective value depends on the app's BranchConfiguration:
+
+	     - attributionLevel / -setConsumerProtectionAttributionLevel: gates what is on the
+	       wire (see BNCRequestFactory.m):
+	         FULL    - as declared below.
+	         REDUCED - no IDFA, no hardware-ID fields, no ODM info, no ad click IDs. IDFV
+	                   and the remaining device fields are still sent.
+	         MINIMAL - same payload as REDUCED here; only the cpp_level value differs.
+	         NONE    - BNCServerInterface drops every request except /v3/deeplink, and that
+	                   call carries no IDFA, hardware IDs or device/bundle tokens. An app
+	                   pinned to NONE may declare this false.
+
+	     - limitFacebookAttribution = YES only adds limit_facebook_tracking: true to the
+	       request body. It does not suppress device identifiers and does not change which
+	       domain is used.
+
+	     The safetrack domains below are chosen from the ATT status, not from the attribution
+	     level (BNCServerAPI -getBaseURL / -optedIntoIDFA): the SDK switches to them when ATT
+	     is "authorized". Apps that ship a non-FULL level should re-evaluate this key in
+	     their own manifest. -->
 	<key>NSPrivacyTracking</key>
 	<true/>
 	<key>NSPrivacyTrackingDomains</key>
