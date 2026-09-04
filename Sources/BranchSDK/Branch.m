@@ -7,6 +7,8 @@
 //
 
 #import "Branch.h"
+#import "BranchConfiguration.h"
+#import "BranchConfiguration+Private.h"
 #import "BNCConfig.h"
 #import "BNCCrashlyticsWrapper.h"
 #import "BNCDeepLinkViewControllerInstance.h"
@@ -166,28 +168,223 @@ void ForceCategoriesToLoad(void) {
 // Private method used internally
 - (void)clearLinkIdentifiers;
 
++ (void)applyDeprecatedSettersFromConfiguration:(BranchConfiguration *)configuration
+                                        toBranch:(Branch *)branch;
+
 @end
 
 @implementation Branch
 
 #pragma mark - Public methods
 
-#pragma mark - GetInstance methods
+#pragma mark - Shared Instance Accessor
 
-// deprecated
-+ (Branch *)getTestInstance {
-    Branch.useTestBranchKey = YES;
-    return [Branch getInstance];
-}
+// Tracks whether +initialize: has already created and configured the singleton, so a second call
+// warns and no-ops rather than re-applying setter side-effects to a running SDK.
+static BOOL bnc_didInitializeWithConfiguration = NO;
 
-+ (Branch *)getInstance {
++ (instancetype)sharedInstance {
+    // The singleton must be configured exactly once at launch via +initialize:. Accessing it before
+    // then is a programming error: there is no key/configuration to build the instance from, and any
+    // deep link handling would silently drop attribution.
+    @synchronized ([Branch class]) {
+        if (!bnc_didInitializeWithConfiguration) {
+            NSString *errorMessage = @"[Branch sharedInstance] was called before [Branch initialize:]. "
+                                      "Call +[Branch initialize:] with a BranchConfiguration in your "
+                                      "application:didFinishLaunchingWithOptions: before accessing the "
+                                      "shared instance.";
+            NSError *initError = [NSError branchErrorWithCode:BNCInitError localizedMessage:errorMessage];
+            [[BranchLogger shared] logError:errorMessage error:initError];
+            return nil;
+        }
+    }
     return [Branch getInstanceInternal:self.class.branchKey];
 }
 
-+ (Branch *)getInstance:(NSString *)branchKey {
-    self.branchKey = branchKey;
-    [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_GET_INSTANCE_API;
-    return [Branch getInstanceInternal:self.branchKey];
+// Test-only: clears the reinitialization guard so a subsequent +initialize: runs its side-effects
+// again. Not declared in the public header; exposed to tests via a category.
++ (void)resetInitializationGuardForTesting {
+    @synchronized ([Branch class]) {
+        bnc_didInitializeWithConfiguration = NO;
+    }
+}
+
++ (Branch *)initialize:(BranchConfiguration *)configuration {
+    if (!configuration) {
+        NSString *errorMessage = @"A BranchConfiguration is required to initialize Branch.";
+        NSError *configurationError = [NSError branchErrorWithCode:BNCInvalidConfigurationError localizedMessage:errorMessage];
+        [[BranchLogger shared] logError:errorMessage error:configurationError];
+        [[BranchLogger shared] logError:@"Failed to initialize Branch" error:nil];
+        return nil;
+    }
+
+    // Logging is applied before validation: a rejected configuration is reported only through the
+    // logger, so the caller's logLevel/loggingCallback must be live before anything can be rejected.
+    [Branch applyLoggingConfiguration:configuration];
+
+    // Logs an actionable message naming the first invalid field.
+    if (![configuration validate:NULL]) {
+        [[BranchLogger shared] logError:@"Failed to initialize Branch" error:nil];
+        return nil;
+    }
+
+    // Single canonical initialization entry point. Guard against reinitializing the singleton:
+    // once created, re-running the setter side-effects below would mutate a running SDK.
+
+    Branch *branch = nil;
+    @synchronized ([Branch class]) {
+        if (bnc_didInitializeWithConfiguration) {
+            [[BranchLogger shared] logWarning:@"Warning, attempted to reinitialize Branch SDK singleton!" error:nil];
+            return [Branch getInstanceInternal:self.class.branchKey];
+        }
+        bnc_didInitializeWithConfiguration = YES;
+
+        // --- Settings that must be applied before the singleton is created ---
+        // These setters are deprecated for external callers, but +initialize: is their canonical
+        // internal application point, so suppress the deprecation warning at these call sites.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
+        // Test key must be resolved before the branch key is read.
+        [Branch setUseTestBranchKey:configuration.testMode];
+
+        // Custom network service class is set-once and must precede singleton creation.
+        if (configuration.remoteInterface) {
+            [Branch setNetworkServiceClass:configuration.remoteInterface];
+        }
+
+#pragma clang diagnostic pop
+
+        // Set the branch key explicitly so it takes precedence over Info.plist / branch.json.
+        self.branchKey = configuration.branchKey;
+        [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_INIT_FUNCTION;
+
+        // --- Create (or fetch) the singleton ---
+        // Note: the constructor applies branch.json values (apiUrl, logging, cppLevel). Caller-supplied
+        // settings that overlap with branch.json are (re)applied AFTER this so the caller wins and
+        // branch.json serves only as a fallback.
+        branch = [Branch getInstanceInternal:self.branchKey];
+
+        // --- Settings applied to the instance / shared preference helper (caller wins) ---
+        [Branch applyConfiguration:configuration toBranch:branch];
+    }
+
+    return branch;
+}
+
+// A caller who supplied a callback or assigned logLevel owns the logger state. Called twice: once
+// before validation, so a rejected configuration still reports through the caller's own logger, and
+// again from applyConfiguration: after singleton creation, so the branch.json enableLogging toggle
+// cannot override an explicit choice. Both paths are plain assignments, so the repeat is a no-op.
++ (void)applyLoggingConfiguration:(BranchConfiguration *)configuration {
+    if (configuration.loggingCallback) {
+        [Branch enableLoggingAtLevel:configuration.logLevel withCallback:configuration.loggingCallback];
+    } else if (configuration.logLevelWasSet) {
+        BranchLogger *logger = [BranchLogger shared];
+        logger.loggingEnabled = YES;
+        logger.logLevelThreshold = configuration.logLevel;
+    }
+}
+
+// Applies every configuration value that depends on the singleton already existing.
++ (void)applyConfiguration:(BranchConfiguration *)configuration toBranch:(Branch *)branch {
+    [Branch applyLoggingConfiguration:configuration];
+
+    [Branch applyDeprecatedSettersFromConfiguration:configuration toBranch:branch];
+
+    // Identity & environment. These mutate the BNCServerAPI / BNCPreferenceHelper singletons, whose
+    // values are read lazily at request time, so they don't need to precede singleton creation.
+    // Assigned rather than only turned on, so `euEndpoint = NO` can undo a prior -useEUEndpoints
+    // call. A configuration that never touches euEndpoint leaves the current routing alone.
+    if (configuration.euEndpointWasSet) {
+        [BNCServerAPI sharedInstance].useEUServers = configuration.euEndpoint;
+    }
+    if (configuration.cdnBaseUrl) {
+        [BranchPluginSupport setCDNBaseUrl:configuration.cdnBaseUrl];
+    }
+
+    // Network
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    [branch setNetworkTimeout:configuration.networkTimeout];
+    
+    [branch setMaxRetries:configuration.retryCount];
+    
+    [branch setRetryInterval:configuration.retryInterval];
+    
+    [Branch setSDKWaitTimeForThirdPartyAPIs:configuration.thirdPartyAPIsWaitTime];
+#pragma clang diagnostic pop
+
+    // Privacy & attribution
+    [branch disableAdNetworkCallouts:configuration.adNetworkCalloutsDisabled];
+    [BNCPreferenceHelper sharedInstance].limitFacebookTracking = configuration.limitFacebookAttribution;
+
+    if (configuration.attributionLevel) {
+        [branch setConsumerProtectionAttributionLevel:configuration.attributionLevel resetSession:NO];
+    }
+
+    if (configuration.dmaParameters) {
+        // DMA parameters are config-only: written to preferences here so BNCRequestFactory picks them up.
+        BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
+        prefs.eeaRegion = configuration.dmaParameters.eeaRegion;
+        prefs.adPersonalizationConsent = configuration.dmaParameters.adPersonalizationConsent;
+        prefs.adUserDataUsageConsent = configuration.dmaParameters.adUserDataUsageConsent;
+    }
+
+    // URL collection
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    if (configuration.allowedSchemes.count > 0) {
+        [branch setAllowedSchemes:configuration.allowedSchemes];
+    }
+    if (configuration.urlPatternsToIgnore.count > 0) {
+        [branch setUrlPatternsToIgnore:configuration.urlPatternsToIgnore];
+    }
+#pragma clang diagnostic pop
+
+    // Request metadata
+    for (NSString *key in configuration.requestMetadata) {
+        [branch setRequestMetadataKey:key value:configuration.requestMetadata[key]];
+    }
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    // App Clip
+    if (configuration.appClipAppGroup) {
+        [branch setAppClipAppGroup:configuration.appClipAppGroup];
+    }
+
+    // Debugging
+    if (configuration.deepLinkDebugParams) {
+        [branch setDeepLinkDebugMode:configuration.deepLinkDebugParams];
+    }
+#pragma clang diagnostic pop
+
+    // Open tracking: when automatic open tracking is disabled the developer is responsible for -sendOpen.
+    if (!configuration.automaticOpenEvents) {
+        [Branch disableNextForegroundForTimeInterval:0];
+    }
+}
+
+// Applies the setters below that are deprecated for external callers but still needed internally.
++ (void)applyDeprecatedSettersFromConfiguration:(BranchConfiguration *)configuration
+                                        toBranch:(Branch *)branch {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    if (configuration.requestTracingCallback) {
+        [Branch setCallbackForTracingRequests:configuration.requestTracingCallback];
+    }
+    if (configuration.apiUrl) {
+        [Branch setAPIUrl:configuration.apiUrl];
+    }
+    if (configuration.safeTrackAPIUrl) {
+        [Branch setSafetrackAPIURL:configuration.safeTrackAPIUrl];
+    }
+    // Pasteboard
+    if (configuration.checkPasteboardOnInstall) {
+        [branch checkPasteboardOnInstall];
+    }
+#pragma clang diagnostic pop
 }
 
 - (id)initWithInterface:(BNCServerInterface *)interface
@@ -247,6 +444,10 @@ void ForceCategoriesToLoad(void) {
     [BranchConfigurationController sharedInstance].deferInitForPluginRuntime = self.deferInitForPluginRuntime;
 
 
+    // These setters are deprecated for external callers; the branch.json fallback path applies them
+    // internally, so suppress the deprecation warning at these call sites.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (config.apiUrl) {
         [Branch setAPIUrl:config.apiUrl];
     }
@@ -258,16 +459,19 @@ void ForceCategoriesToLoad(void) {
     if (config.checkPasteboardOnInstall) {
         [self checkPasteboardOnInstall];
     }
+#pragma clang diagnostic pop
 
     if (config.cppLevel) {
+        // Runs during singleton construction, so route through self rather than the shared accessor
+        // (which would re-enter this constructor's dispatch_once).
         if ([config.cppLevel caseInsensitiveCompare:@"FULL"] == NSOrderedSame) {
-            [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
+            [self setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
         } else if ([config.cppLevel caseInsensitiveCompare:@"REDUCED"] == NSOrderedSame) {
-            [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
+            [self setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
         } else if ([config.cppLevel caseInsensitiveCompare:@"MINIMAL"] == NSOrderedSame) {
-            [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelMinimal];
+            [self setConsumerProtectionAttributionLevel:BranchAttributionLevelMinimal];
         } else if ([config.cppLevel caseInsensitiveCompare:@"NONE"] == NSOrderedSame) {
-            [[Branch getInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelNone];
+            [self setConsumerProtectionAttributionLevel:BranchAttributionLevelNone];
         } else {
             NSLog(@"Invalid CPP Level set in branch.json: %@", config.cppLevel);
         }
@@ -424,7 +628,12 @@ static NSString *bnc_branchKey = nil;
         BranchJsonConfig *config = BranchJsonConfig.instance;
         BOOL usingTestInstance = bnc_useTestBranchKey || config.useTestInstance;
         branchKey = config.branchKey ?: usingTestInstance ? config.testKey : config.liveKey;
+        // +setUseTestBranchKey: is deprecated for external callers; this internal resolution path
+        // still needs it, so suppress the deprecation warning at this call site.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [self setUseTestBranchKey:usingTestInstance];
+#pragma clang diagnostic pop
 
         if (branchKey) {
             branchKeySource = BRANCH_KEY_SOURCE_CONFIG_JSON;
@@ -435,7 +644,7 @@ static NSString *bnc_branchKey = nil;
             } else
             if ([branchDictionary isKindOfClass:[NSDictionary class]]) {
                 branchKey =
-                    (self.useTestBranchKey) ? branchDictionary[@"test"] : branchDictionary[@"live"];
+                    ([self useTestBranchKey]) ? branchDictionary[@"test"] : branchDictionary[@"live"];
             }
             if (branchKey)
                 branchKeySource = BRANCH_KEY_SOURCE_INFO_PLIST;
@@ -513,7 +722,7 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (BOOL)isUserIdentified {
-    return self.preferenceHelper.userIdentity != nil;
+    return self.preferenceHelper.userAlias != nil;
 }
 
 - (void)disableAdNetworkCallouts:(BOOL)disableCallouts {
@@ -666,9 +875,10 @@ static NSString *bnc_branchKey = nil;
         // Clear partner parameters
         [[BNCPartnerParameters shared] clearAllParameters];
 
-        Branch *branch = Branch.getInstance;
-        [branch clearNetworkQueue];
-        [branch.linkCache clear];
+        // This is an instance method on the singleton, and it can run during singleton construction
+        // (via the branch.json cppLevel path), so operate on self rather than re-entering the accessor.
+        [self clearNetworkQueue];
+        [self.linkCache clear];
         // Release the lock in case it's locked:
         [BranchOpenRequest releaseOpenResponseLock];
     } else {
@@ -676,7 +886,7 @@ static NSString *bnc_branchKey = nil;
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enabling attribution events due to Consumer Protection Attribution Level being %@.", level] error:nil];
 
         if (resetSession) {
-            [[Branch getInstance] sendOpen];
+            [self sendOpen];
         }
     }
 }
@@ -1065,16 +1275,12 @@ static NSString *bnc_branchKey = nil;
 
 #pragma mark - Identity methods
 
-- (void)setIdentity:(NSString *)userId {
-    [self setIdentity:userId withCallback: nil];
-}
-
-- (void)setIdentity:(NSString *)userId withCallback:(callbackWithParams)callback {
-    if (userId) {
-        self.preferenceHelper.userIdentity = userId;
+- (void)setUserAlias:(NSString *)userAlias completion:(callbackWithParams)completion {
+    if (userAlias) {
+        self.preferenceHelper.userAlias = userAlias;
     }
-    if (callback) {
-        callback([self getFirstReferringParams], nil);
+    if (completion) {
+        completion([self getFirstReferringParams], nil);
     }
 }
 
@@ -1094,7 +1300,7 @@ static NSString *bnc_branchKey = nil;
     self.linkCache = [[BNCLinkCache alloc] init];
 
     // Removed stored values
-    self.preferenceHelper.userIdentity = nil;
+    self.preferenceHelper.userAlias = nil;
 
     if (callback) {
         callback(YES, nil);
@@ -1499,7 +1705,7 @@ static NSString *bnc_branchKey = nil;
                 else if ([Branch isBranchLink:url.absoluteString]) {
                     [self.preferenceHelper setLocalUrl:[url absoluteString]];
                     // 3. Send Open Event
-                    [[Branch getInstance] requestDeepLinkDataWithURL:url];
+                    [[Branch sharedInstance] requestDeepLinkDataWithURL:url];
                 }
             }];
         }
@@ -2177,7 +2383,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // The URL matched the skiplist. Preferences are recorded, but the URL itself is never sent.
     if (filtered) return;
 
-    [[Branch getInstance] requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
+    [self requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
             if (params != nil) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
@@ -2214,7 +2420,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // nil for a Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
     NSString *urlStr = userActivity.webpageURL.absoluteString;
 
-    [[Branch getInstance] requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
+    [self requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
             if (params != nil) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
@@ -2232,7 +2438,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
 
     if (!urlStr.length) return;
-    
+
     NSURL *url = [NSURL URLWithString:urlStr];
     if (url) {
         BOOL filtered = NO;
@@ -2241,7 +2447,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         if (filtered) return;
     }
 
-    [[Branch getInstance] requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
+    [self requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
             if (params != nil) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
@@ -2262,7 +2468,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     API_AVAILABLE(ios(13.0), macCatalyst(13.1)) {
     [[BranchLogger shared] logDebug:@"requestDeepLinkDataWithSceneOptions called" error:nil];
 
-    // Mirror BranchScene.initSessionWithSceneOptions: build the same synthetic launchOptions
+    // Build the synthetic launchOptions the removed BranchScene scene-init API used to build,
     // so requestDeepLinkDataWithLaunchOptions applies the same early-return logic.
     NSMutableDictionary *launchOptions = [[NSMutableDictionary alloc] init];
     if (connectionOptions.userActivities.count) {
@@ -2278,7 +2484,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     // Mirror BranchScene: explicitly resolve the URL from connectionOptions,
     // equivalent to the continueUserActivity: / openURLContexts: calls BranchScene makes
-    // after its initSceneSession call.
+    // once the session is up — the work `+[Branch initialize:]` now covers.
     if (connectionOptions.userActivities.count) {
         NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject;
         if ([activity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
@@ -2313,7 +2519,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     if (filtered) return;
 
-    [[Branch getInstance] requestDeepLinkData:context.URL.absoluteString callback:^(NSDictionary *params, NSError *error) {
+    [self requestDeepLinkData:context.URL.absoluteString callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
             if (params != nil) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
@@ -2337,7 +2543,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // nil for a Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
     NSString *urlStr = userActivity.webpageURL.absoluteString;
 
-    [[Branch getInstance] requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
+    [self requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
             if (params != nil) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];

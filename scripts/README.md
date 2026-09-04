@@ -27,7 +27,7 @@ python3 -m unittest scripts.test_validate_l1_logs -v
 
 The tests use fixtures in `scripts/fixtures/` and exercise: the happy
 path, a missing-field failure, the v2-`user_data` nested shape (iOS
-nests device fields under `user_data` on `/v2/event/*`), the
+nests device fields under `user_data` on `/v3/events/*`), the
 open-must-be-captured guard, the deep-link contract, the
 attribution-level tiers, and the uncontracted-endpoint case.
 
@@ -66,7 +66,7 @@ Install and open both post to `/v3/events/open`:
 | install (fresh install) | `/v3/events/open`    |
 | open (cold and warm)    | `/v3/events/open`    |
 | deep link resolution    | `/v3/deeplink`       |
-| event                   | `/v2/event/standard` |
+| event                   | `/v3/events/standard` |
 | link creation           | `/v1/url`            |
 
 `/v3/events/open` is mandatory: every session posts one, so a capture
@@ -93,7 +93,7 @@ The required field lists live at the top of `validate_l1_logs.py`:
   `randomized_device_token` / `randomized_bundle_token` are deliberately
   **not** required — a first-ever install open has neither.
 - `REQUIRED_V2_EVENT` (+ `REQUIRED_V2_EVENT_NOT_NONE`) — the standalone
-  list for `/v2/event/standard`, which does not extend `REQUIRED_COMMON`.
+  list for `/v3/events/standard`, which does not extend `REQUIRED_COMMON`.
   Request identity stays at the top level; the device block moves under
   `user_data`, where `hardware_id` is spelled `idfv` and `sdk` splits into
   `sdk` + `sdk_version`.
@@ -133,7 +133,7 @@ omit, breaking any E2E run that exercises
 
 Checks are keyed on the endpoint path, not on a `/v1/*` prefix. Prefix
 scoping is what previously let `/v3/events/open`, `/v3/deeplink` and
-`/v2/event/standard` — every endpoint carrying this line's attribution
+`/v3/events/standard` — every endpoint carrying this line's attribution
 traffic — pass without a single field being checked.
 
 `/v3/deeplink` shares the open contract because it _is_ the open
@@ -143,7 +143,7 @@ extra key is not required — it is only set when the resolution was
 driven by a URL.
 
 An endpoint with no entry in `REQUIRED_PER_ENDPOINT` (e.g. `/v1/qr-code`,
-`/v2/event/custom`) has its payload printed and is labelled as having no
+`/v3/events/custom`) has its payload printed and is labelled as having no
 contract. It does not fail the run, but it is not silent either.
 
 Lookups tolerate `user_data` nesting so payloads using that shape are

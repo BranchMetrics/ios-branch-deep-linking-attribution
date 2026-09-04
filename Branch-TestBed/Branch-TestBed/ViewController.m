@@ -162,7 +162,7 @@ bool hasSetPartnerParams = false;
 }
 
 - (IBAction)changeConsumerProtectionAttributionLevel:(id)sender {
-    Branch *branch = [Branch getInstance];
+    Branch *branch = [Branch sharedInstance];
     UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Select Consumer Protection Attribution Level" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
     UIAlertAction *fullAction = [UIAlertAction actionWithTitle:@"Full" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
@@ -207,7 +207,7 @@ bool hasSetPartnerParams = false;
     // automatic open and fails every later request with BNCInitError.
     BranchAttributionLevel nextLevel =
         [Branch attributionLevelNone] ? BranchAttributionLevelFull : BranchAttributionLevelNone;
-    [[Branch getInstance] setConsumerProtectionAttributionLevel:nextLevel];
+    [[Branch sharedInstance] setConsumerProtectionAttributionLevel:nextLevel];
     [self syncDisableTrackingButton];
 }
 
@@ -252,9 +252,9 @@ bool hasSetPartnerParams = false;
 }
 
 - (IBAction)setUserIDButtonTouchUpInside:(id)sender {
-    Branch *branch = [Branch getInstance];
+    Branch *branch = [Branch sharedInstance];
     [appDelegate setLogFile:@"SetUserID"];
-    [branch setIdentity: user_id2 withCallback:^(NSDictionary *params, NSError *error) {
+    [branch setUserAlias: user_id2 completion:^(NSDictionary *params, NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [appDelegate setLogFile:nil];
             if (!error) {
@@ -272,7 +272,7 @@ bool hasSetPartnerParams = false;
 
 
 - (IBAction)logoutWithCallback {
-    Branch *branch = [Branch getInstance];
+    Branch *branch = [Branch sharedInstance];
     [branch logoutWithCallback:^(BOOL changed, NSError *error) {
         if (error || !changed) {
             NSLog(@"Branch TestBed: Logout failed: %@", error);
@@ -354,24 +354,40 @@ bool hasSetPartnerParams = false;
         }];
     }]];
     
+    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Custom Event" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        event = [[BranchEvent alloc] initWithName:@"my_custom_event"];
+        event.alias = @"my custom alias";
+        event.eventDescription = @"Testbed custom event";
+        event.customData = (NSMutableDictionary*) @{
+            @"Custom_Event_Property_Key1": @"Custom_Event_Property_val1"
+        };
+        [event logEventWithCompletion:^(BOOL success, NSError * _Nullable error) {
+            if (success) {
+                [self showAlert:@"Succesfully logged custom event" withDescription:@""];
+            } else {
+                [self showAlert:@"Error sending custom event:" withDescription:error.description];
+            }
+        }];
+    }]];
+
     [actionSheet addAction:[UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
         NSLog(@"Content Event action sheet dismissed.");
     }]];
-    
+
     [self presentViewController:actionSheet animated:YES completion:nil];
 }
 
 
 
 - (IBAction)viewFirstReferringParamsButtonTouchUpInside:(id)sender {
-    Branch *branch = [Branch getInstance];
+    Branch *branch = [Branch sharedInstance];
     [self performSegueWithIdentifier:@"ShowLogOutput" sender:[[branch getFirstReferringParams] description]];
     NSLog(@"Branch TestBed: FirstReferringParams:\n%@", [[branch getFirstReferringParams] description]);
 }
 
 
 - (IBAction)viewLatestReferringParamsButtonTouchUpInside:(id)sender {
-    Branch *branch = [Branch getInstance];
+    Branch *branch = [Branch sharedInstance];
     [self performSegueWithIdentifier:@"ShowLogOutput" sender:[[branch getLatestReferringParams] description]];
     NSLog(@"Branch TestBed: LatestReferringParams:\n%@", [[branch getLatestReferringParams] description]);
 }
@@ -493,7 +509,7 @@ bool hasSetPartnerParams = false;
 
 - (IBAction) openBranchLinkInApp:(id)sender {
     NSURL *URL = [NSURL URLWithString:@"https://bnctestbed.app.link/izPBY2xCqF"];
-    [[Branch getInstance] handleDeepLink:URL];
+    [[Branch sharedInstance] handleDeepLink:URL];
 }
 
 #pragma mark - Commerce Events
@@ -831,7 +847,7 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
 - (IBAction)togglePartnerParams:(id)sender {
     if (hasSetPartnerParams) {
         NSLog(@"Cleared Partner Params");
-        [[Branch getInstance] clearPartnerParameters];
+        [[Branch sharedInstance] clearPartnerParameters];
         [self showAlert:@"Cleared Partner Parameters" withDescription:@""];
         hasSetPartnerParams = false;
         [self.setParnerParamsButton setTitle:@"Set Partner Params" forState:UIControlStateNormal];
@@ -840,8 +856,8 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
         }
     } else {
         NSLog(@"Set Partner Params");
-        [[Branch getInstance] addFacebookPartnerParameterWithName:@"ph" value:@"b90598b67534f00b1e3e68e8006631a40d24fba37a3a34e2b84922f1f0b3b29b"];
-        [[Branch getInstance] addFacebookPartnerParameterWithName:@"em" value:@"11234e56af071e9c79927651156bd7a10bca8ac34672aba121056e2698ee7088"];
+        [[Branch sharedInstance] addFacebookPartnerParameterWithName:@"ph" value:@"b90598b67534f00b1e3e68e8006631a40d24fba37a3a34e2b84922f1f0b3b29b"];
+        [[Branch sharedInstance] addFacebookPartnerParameterWithName:@"em" value:@"11234e56af071e9c79927651156bd7a10bca8ac34672aba121056e2698ee7088"];
         [self showAlert:@"Set Partner Parameters" withDescription:@""];
         hasSetPartnerParams = true;
         [self.setParnerParamsButton setTitle:@"Clear Partner Params" forState:UIControlStateNormal];
@@ -922,7 +938,7 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
 
     NSString *deepLinkUrl = @"https://bnctestbed.app.link/7HTLJ2jXi3b";
 
-    [[Branch getInstance] requestDeepLinkData:deepLinkUrl callback:^(NSDictionary *params, NSError *error) {
+    [[Branch sharedInstance] requestDeepLinkData:deepLinkUrl callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
             if (params != nil) {
                 NSLog(@"Deep Link Params: %@", params);
@@ -967,7 +983,7 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
 }
 
 - (IBAction)pluginNotifyInit:(id)sender {
-    [[Branch getInstance] notifyNativeToInit];
+    [[Branch sharedInstance] notifyNativeToInit];
     [self showAlert:@"notifyNativeToInit called" withDescription:@"The SDK should now complete initialization."];
 }
 

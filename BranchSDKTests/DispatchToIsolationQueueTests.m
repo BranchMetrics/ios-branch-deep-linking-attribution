@@ -18,7 +18,7 @@
 @implementation DispatchToIsolationQueueTests
 
 - (void)setUp {
-   // self.branch = [Branch getInstance];
+   // self.branch = [Branch sharedInstance];
    // self.prefHelper = [[BNCPreferenceHelper alloc] init];
 }
 

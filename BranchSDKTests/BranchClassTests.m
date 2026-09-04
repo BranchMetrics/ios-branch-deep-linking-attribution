@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "Branch.h"
+#import "BranchConfiguration.h"
 #import "BranchConstants.h"
 #import "BNCPasteboard.h"
 #import "BNCAppGroupsData.h"
@@ -19,6 +20,8 @@
 @end
 
 @interface Branch(Test)
+// Test-only reset for the +initialize: reinitialization guard (file-private in Branch.m).
++ (void)resetInitializationGuardForTesting;
 // Expose the private preprocessing helpers shared by the legacy handlers and the
 // requestDeepLinkData* convenience methods.
 - (BOOL)processDeepLinkURL:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier;
@@ -35,7 +38,11 @@
 
 - (void)setUp {
     [super setUp];
-    self.branch = [Branch getInstance];
+    // +sharedInstance requires the SDK to be initialized first. Reset the guard so each test can
+    // (re)initialize the singleton, then configure it via the canonical entry point.
+    [Branch resetInitializationGuardForTesting];
+    BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB"];
+    self.branch = [Branch initialize:config];
 }
 
 - (void)tearDown {
@@ -44,7 +51,7 @@
 }
 
 - (void)testIsUserIdentified {
-    [self.branch setIdentity: @"userId"];
+    [self.branch setUserAlias: @"userId" completion:nil];
     XCTAssertTrue([self.branch isUserIdentified], @"User should be identified");
 }
 
@@ -108,21 +115,21 @@
 - (void)testClearPartnerParameters {
     [self.branch addFacebookPartnerParameterWithName:@"ph" value:@"123456789"];
     [[BNCPartnerParameters shared] clearAllParameters];
-       
+
     NSDictionary *result = [[BNCPartnerParameters shared] parameterJson];
     XCTAssertEqual([result count], 0, @"Parameters should be empty after calling clearAllParameters");
 }
 
 - (void)testAddFacebookParameterWithName_Value {
     [self.branch addFacebookPartnerParameterWithName:@"name" value:@"3D4F2BF07DC1BE38B20C653EE9A7E446158F84E525BBB98FEDF721CB5A40A346"];
-    
+
     NSDictionary *result = [[BNCPartnerParameters shared] parameterJson][@"fb"];
     XCTAssertEqualObjects(result[@"name"], @"3D4F2BF07DC1BE38B20C653EE9A7E446158F84E525BBB98FEDF721CB5A40A346", @"Should add parameter for Facebook");
 }
 
 - (void)testAddSnapParameterWithName_Value {
     [self.branch addSnapPartnerParameterWithName:@"name" value:@"3D4F2BF07DC1BE38B20C653EE9A7E446158F84E525BBB98FEDF721CB5A40A346"];
-    
+
     NSDictionary *result = [[BNCPartnerParameters shared] parameterJson][@"snap"];
     XCTAssertEqualObjects(result[@"name"], @"3D4F2BF07DC1BE38B20C653EE9A7E446158F84E525BBB98FEDF721CB5A40A346", @"Should add parameter for Snap");
 }
@@ -140,7 +147,7 @@
 - (void)testGetFirstReferringBranchUniversalObject_NotClickedBranchLink {
     NSString *installParamsString = @"{\"+clicked_branch_link\":false,\"+is_first_session\":true}";
     [[BNCPreferenceHelper sharedInstance] setInstallParams: installParamsString];
-        
+
     BranchUniversalObject *result = [self.branch getFirstReferringBranchUniversalObject];
     XCTAssertNil(result);
 }
@@ -204,7 +211,7 @@
     XCTAssertEqualObjects(result.campaign, @"latest campaign");
 }
 
-- (void)testGetShortURL {      
+- (void)testGetShortURL {
     NSString *shortURL = [self.branch getShortURL];
     XCTAssertNotNil(shortURL, @"URL should not be nil");
     XCTAssertTrue([shortURL hasPrefix:@"https://"], @"URL should start with 'https://'");
@@ -217,17 +224,21 @@
     NSString *feature = @"feature1";
     NSString *stage = @"stage1";
     NSString *alias = @"alias1";
-    
+
     NSString *generatedURL = [self.branch getLongURLWithParams:params andChannel:channel andTags:tags andFeature:feature andStage:stage andAlias:alias];
     NSString *expectedURL = @"https://bnc.lt/a/key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB?tags=tag1&tags=tag2&alias=alias1&feature=feature1&stage=stage1&source=ios&data=eyJrZXkiOiJ2YWx1ZSJ9";
-    
+
     XCTAssertEqualObjects(generatedURL, expectedURL, @"URL should match the expected format");
 }
 
-- (void)testSetDMAParamsForEEA {
+- (void)testDMAParamsWriteThroughToPreferences {
+    // DMA parameters are config-only (no runtime setter). This asserts the preference-write mechanism that
+    // +[Branch initialize:] uses when applying a BranchConfiguration.dmaParameters value.
     XCTAssertFalse([[BNCPreferenceHelper sharedInstance] eeaRegionInitialized]);
-    
-    [Branch setDMAParamsForEEA:FALSE AdPersonalizationConsent:TRUE AdUserDataUsageConsent:TRUE];
+
+    [BNCPreferenceHelper sharedInstance].eeaRegion = FALSE;
+    [BNCPreferenceHelper sharedInstance].adPersonalizationConsent = TRUE;
+    [BNCPreferenceHelper sharedInstance].adUserDataUsageConsent = TRUE;
     XCTAssertTrue([[BNCPreferenceHelper sharedInstance] eeaRegionInitialized]);
     XCTAssertFalse([BNCPreferenceHelper sharedInstance].eeaRegion);
     XCTAssertTrue([BNCPreferenceHelper sharedInstance].adPersonalizationConsent);
@@ -242,18 +253,18 @@
 
 - (void)testSetConsumerProtectionAttributionLevel {
     // Set to Reduced and check
-    Branch *branch = [Branch getInstance];
+    Branch *branch = [Branch sharedInstance];
     [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
     XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelReduced);
-    
+
     // Set to Minimal and check
     [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelMinimal];
     XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelMinimal);
-    
+
     // Set to None and check
     [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelNone];
     XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelNone);
-    
+
     // Set to Full and check
     [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
     XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelFull);

@@ -14,7 +14,7 @@ final class BranchEventTestSwift : XCTestCase {
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         
-        Branch.getInstance("key_live_foo")
+        Branch.initialize(BranchConfiguration(key: "key_live_foo"))
     }
 
     override func tearDownWithError() throws {

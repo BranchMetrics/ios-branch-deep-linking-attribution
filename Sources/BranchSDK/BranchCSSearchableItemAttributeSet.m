@@ -102,7 +102,7 @@
         spotlightLinkData[BRANCH_LINK_DATA_KEY_KEYWORDS] = [self.keywords allObjects];
     }
     
-    [[Branch getInstance] getSpotlightUrlWithParams:spotlightLinkData callback:^(NSDictionary *data, NSError *urlError) {
+    [[Branch sharedInstance] getSpotlightUrlWithParams:spotlightLinkData callback:^(NSDictionary *data, NSError *urlError) {
         if (urlError) {
             if (callback) {
                 callback(nil, nil, urlError);
