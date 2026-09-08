@@ -102,15 +102,20 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - URL collection
 
 /// URI schemes allowed to be tracked by Branch. Empty means all schemes (the default).
-@property (nonatomic, copy, readonly) NSArray<NSString *> *allowedSchemes;
+/// Assigning replaces the entire list, discarding any schemes added with `-addAllowedScheme:`.
+/// Assigning nil clears the list; the getter never returns nil.
+@property (nonatomic, copy, null_resettable) NSArray<NSString *> *allowedSchemes;
 
 /// Regex patterns matching URLs that Branch should never transmit (e.g. URLs with sensitive tokens).
-@property (nonatomic, copy) NSArray<NSString *> *urlPatternsToIgnore;
+/// Assigning nil clears the list; the getter never returns nil.
+@property (nonatomic, copy, null_resettable) NSArray<NSString *> *urlPatternsToIgnore;
 
 #pragma mark - Request metadata
 
 /// Key-value pairs included in the metadata on every request.
-@property (nonatomic, copy, readonly) NSDictionary<NSString *, NSString *> *requestMetadata;
+/// Assigning replaces the entire dictionary, discarding any pairs added with `-addMetadataWithKey:value:`.
+/// Assigning nil clears the dictionary; the getter never returns nil.
+@property (nonatomic, copy, null_resettable) NSDictionary<NSString *, NSString *> *requestMetadata;
 
 #pragma mark - Open tracking
 
@@ -161,10 +166,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Mutators for collection / grouped settings
 
-/// Add a single URI scheme to the allow list.
+/// Append a single URI scheme to the allow list. To set the whole list at once, assign `allowedSchemes`.
 - (void)addAllowedScheme:(NSString *)scheme;
 
-/// Add a single key/value pair to the per-request metadata.
+/// Add a single key/value pair to the per-request metadata, leaving existing pairs in place. To set the
+/// whole dictionary at once, assign `requestMetadata`.
 - (void)addMetadataWithKey:(NSString *)key value:(NSString *)value;
 
 #pragma mark - Validation

@@ -333,6 +333,8 @@
     [self addV2DictionaryToJSON:json];
     
     // TODO: refactor to simply request values for event
+    // Endpoint *key*, not a URL — BNCReferringURLUtility matches on it to attach gclid/gbraid/sccid.
+    // Wire path moved to v3/events; this must not follow unless those matchers move too.
     [self addReferringURLsToJSON:json forEndpoint:@"/v2/event"];
     
     

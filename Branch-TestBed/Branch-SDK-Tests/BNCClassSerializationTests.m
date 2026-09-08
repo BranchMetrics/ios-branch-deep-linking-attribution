@@ -39,7 +39,7 @@
 // In order to test building it, we need to expose some private methods. :(
 - (BranchEventRequest *)buildBranchEventRequest {
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventPurchase];
-    NSURL *url = [NSURL URLWithString:@"https://api3.branch.io/v2/event/standard"];
+    NSURL *url = [NSURL URLWithString:@"https://api3.branch.io/v3/events/standard"];
     NSDictionary *eventDictionary = [event buildEventDictionary];
     
     BranchEventRequest *request = [[BranchEventRequest alloc] initWithServerURL:url eventDictionary:eventDictionary completion:nil];

@@ -7,7 +7,7 @@ Run from the repo root:
 Fixtures live in scripts/fixtures/ — each file is a snippet of a real
 branchlogs.txt capture, hand-tailored to exercise one validator behaviour.
 They encode the 4.0.0-beta wire protocol (`/v3/events/open`, `/v3/deeplink`,
-`/v2/event/standard`, `/v1/url`), not master's v1 protocol.
+`/v3/events/standard`, `/v1/url`), not master's v1 protocol.
 """
 
 import inspect
@@ -339,18 +339,18 @@ class MissingFieldTests(unittest.TestCase):
 
 
 class V2NestingTests(unittest.TestCase):
-    """iOS nests device fields under user_data on /v2/event/* — lookup must
+    """iOS nests device fields under user_data on /v3/events/* — lookup must
     descend into the nested block to find them."""
 
     def test_v2_nested_fields_resolve(self):
-        entries = v.parse_branch_logs(_fixture("v2_nested.txt"))
+        entries = v.parse_branch_logs(_fixture("v3_nested.txt"))
         request = entries[0]["request"]
         self.assertEqual(v.lookup_field(request, "brand"), "Apple")
         self.assertEqual(v.lookup_field(request, "connection_type"), "wifi")
         self.assertEqual(v.lookup_field(request, "sdk"), "ios")
 
     def test_v2_event_contract_is_satisfied_by_nested_shape(self):
-        entries = v.parse_branch_logs(_fixture("v2_nested.txt"))
+        entries = v.parse_branch_logs(_fixture("v3_nested.txt"))
         request = entries[0]["request"]
         missing = [
             f for f in v.REQUIRED_V2_EVENT
@@ -391,7 +391,7 @@ class BetaEndpointCoverageTests(unittest.TestCase):
     unexamined."""
 
     def test_open_event_and_deeplink_all_have_contracts(self):
-        for uri in ("/v3/events/open", "/v3/deeplink", "/v2/event/standard"):
+        for uri in ("/v3/events/open", "/v3/deeplink", "/v3/events/standard"):
             self.assertIn(uri, v.REQUIRED_PER_ENDPOINT)
             self.assertTrue(v.required_fields_for(uri, {}))
 
@@ -408,18 +408,18 @@ class BetaEndpointCoverageTests(unittest.TestCase):
         self.assertNotIn("randomized_bundle_token", fields)
 
     def test_v2_event_requires_idfv_not_hardware_id(self):
-        # /v2/event/* spells the vendor id `idfv` under user_data.
-        fields = v.required_fields_for("/v2/event/standard", {})
+        # /v3/events/* spells the vendor id `idfv` under user_data.
+        fields = v.required_fields_for("/v3/events/standard", {})
         self.assertIn("idfv", fields)
         self.assertNotIn("hardware_id", fields)
 
     def test_v2_event_missing_device_field_fails(self):
-        errors, output = _run_validation("v2_event_missing_idfv.txt")
+        errors, output = _run_validation("v3_event_missing_idfv.txt")
         self.assertTrue(
             any("missing required field 'idfv'" in e for e in errors),
             f"Expected idfv-missing error, got: {errors}",
         )
-        self.assertIn("/v2/event/standard", output)
+        self.assertIn("/v3/events/standard", output)
 
     def test_deeplink_is_checked_and_passes(self):
         errors, output = _run_validation("deeplink.txt")
@@ -538,7 +538,7 @@ class AttributionLevelTierTests(unittest.TestCase):
                 self.assertIn(field, fields, f"{field} dropped at level {level}")
 
     def test_level_resolves_from_user_data_on_v2_shape(self):
-        # /v2/event/* nests cpp_level under user_data alongside the device
+        # /v3/events/* nests cpp_level under user_data alongside the device
         # block (BNCRequestFactory.m:733).
         request = {"user_data": {"cpp_level": "REDUCED"}}
         self.assertEqual(v.attribution_level(request), "REDUCED")
@@ -546,11 +546,11 @@ class AttributionLevelTierTests(unittest.TestCase):
     def test_v2_event_idfv_is_not_none_gated(self):
         # v2dictionary gates idfv on not-None-or-uninitialized (:688-690).
         self.assertNotIn(
-            "idfv", v.required_fields_for("/v2/event/standard",
+            "idfv", v.required_fields_for("/v3/events/standard",
                                           {"user_data": {"cpp_level": "NONE"}})
         )
         self.assertIn(
-            "idfv", v.required_fields_for("/v2/event/standard", {})
+            "idfv", v.required_fields_for("/v3/events/standard", {})
         )
 
 

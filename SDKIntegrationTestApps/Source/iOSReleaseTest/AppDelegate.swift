@@ -17,13 +17,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
 
         // Callback variant — NS_SWIFT_NAME:
-        // Branch.sharedInstance().requestDeepLinkData(launchOptions: launchOptions) { params, error in
+        // Branch.sharedInstance()?.requestDeepLinkData(launchOptions: launchOptions) { params, error in
         //     print("Deep Link Params: \(params ?? [:]), error: \(String(describing: error))")
         // }
 
         // Async/await variant — NS_SWIFT_ASYNC_NAME:
         // Task {
-        //     let params = try? await Branch.sharedInstance().requestDeepLinkData(launchOptions: launchOptions)
+        //     let params = try? await Branch.sharedInstance()?.requestDeepLinkData(launchOptions: launchOptions)
         //     print("Deep Link Params: \(params ?? [:])")
         // }
 
@@ -32,17 +32,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // shown here as one sequential Task.
         // Task {
         //     // setUserAlias:completion: -> setUserAlias(_:)
-        //     if let params = try? await Branch.sharedInstance().setUserAlias("test_user_alias") {
+        //     if let params = try? await Branch.sharedInstance()?.setUserAlias("test_user_alias") {
         //         print("Set User Alias Params: \(params)")
         //     }
         //
         //     // getShortURLWithParams:andCallback: -> getShortURL(params:)
-        //     if let url = try? await Branch.sharedInstance().getShortURL(params: ["$og_title": "Async Example"]) {
+        //     if let url = try? await Branch.sharedInstance()?.getShortURL(params: ["$og_title": "Async Example"]) {
         //         print("Short URL: \(url)")
         //     }
         //
         //     // lastAttributedTouchDataWithAttributionWindow:completion: -> lastAttributedTouchData(attributionWindow:)
-        //     if let latd = try? await Branch.sharedInstance().lastAttributedTouchData(attributionWindow: 30) {
+        //     if let latd = try? await Branch.sharedInstance()?.lastAttributedTouchData(attributionWindow: 30) {
         //         print("Last Attributed Touch Data: \(latd.lastAttributedTouchJSON)")
         //     }
         //
@@ -52,7 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //     }
         //
         //     // logoutWithCallback: -> logoutAsync()
-        //     if let changed = try? await Branch.sharedInstance().logoutAsync() {
+        //     if let changed = try? await Branch.sharedInstance()?.logoutAsync() {
         //         print("Logout Changed: \(changed)")
         //     }
         // }

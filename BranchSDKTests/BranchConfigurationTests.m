@@ -215,6 +215,45 @@
     XCTAssertEqualObjects(config.requestMetadata[@"store"], @"app_store");
 }
 
+- (void)testSetAllowedSchemesReplacesAddedSchemes {
+    BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_abc"];
+    [config addAllowedScheme:@"myapp"];
+    config.allowedSchemes = @[@"replacement", @"https"];
+    XCTAssertEqualObjects(config.allowedSchemes, (@[@"replacement", @"https"]));
+}
+
+- (void)testSetRequestMetadataReplacesAddedMetadata {
+    BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_abc"];
+    [config addMetadataWithKey:@"store" value:@"app_store"];
+    config.requestMetadata = @{@"tier": @"premium"};
+    XCTAssertEqualObjects(config.requestMetadata, (@{@"tier": @"premium"}));
+}
+
+// Assigning nil must leave a usable empty collection, not a nil backing store — the getters are
+// documented as non-null and -addAllowedScheme: / -addMetadataWithKey:value: must still work after.
+// All three collections are null_resettable and must behave identically here.
+- (void)testSetCollectionsToNilClearsRatherThanNilsStore {
+    BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_abc"];
+    [config addAllowedScheme:@"myapp"];
+    [config addMetadataWithKey:@"store" value:@"app_store"];
+    config.urlPatternsToIgnore = @[@"^myapp://reset-password"];
+
+    config.allowedSchemes = nil;
+    config.requestMetadata = nil;
+    config.urlPatternsToIgnore = nil;
+    XCTAssertNotNil(config.allowedSchemes);
+    XCTAssertNotNil(config.requestMetadata);
+    XCTAssertNotNil(config.urlPatternsToIgnore);
+    XCTAssertEqual(config.allowedSchemes.count, 0);
+    XCTAssertEqual(config.requestMetadata.count, 0);
+    XCTAssertEqual(config.urlPatternsToIgnore.count, 0);
+
+    [config addAllowedScheme:@"after"];
+    [config addMetadataWithKey:@"after" value:@"yes"];
+    XCTAssertEqualObjects(config.allowedSchemes, (@[@"after"]));
+    XCTAssertEqualObjects(config.requestMetadata[@"after"], @"yes");
+}
+
 - (void)testDMAParameters {
     BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_abc"];
     config.dmaParameters = [BranchDMAParameters eeaRegion:YES

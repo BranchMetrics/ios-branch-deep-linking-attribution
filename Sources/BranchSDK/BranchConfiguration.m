@@ -153,6 +153,17 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
     }
 }
 
+// The collection setters replace the backing store outright rather than merging, so assigning after
+// -addAllowedScheme: / -addMetadataWithKey:value: discards those entries. Assigning nil clears the
+// collection instead of leaving a nil store, keeping the readonly-style getters non-nil.
+- (void)setAllowedSchemes:(nullable NSArray<NSString *> *)allowedSchemes {
+    self.mutableAllowedSchemes = [allowedSchemes mutableCopy] ?: [NSMutableArray array];
+}
+
+- (void)setRequestMetadata:(nullable NSDictionary<NSString *, NSString *> *)requestMetadata {
+    self.mutableRequestMetadata = [requestMetadata mutableCopy] ?: [NSMutableDictionary dictionary];
+}
+
 - (void)setUrlPatternsToIgnore:(NSArray<NSString *> *)urlPatternsToIgnore {
     self.mutableUrlPatternsToIgnore = [urlPatternsToIgnore mutableCopy] ?: [NSMutableArray array];
 }

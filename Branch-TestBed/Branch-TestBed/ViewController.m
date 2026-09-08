@@ -354,10 +354,26 @@ bool hasSetPartnerParams = false;
         }];
     }]];
     
+    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Custom Event" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        event = [[BranchEvent alloc] initWithName:@"my_custom_event"];
+        event.alias = @"my custom alias";
+        event.eventDescription = @"Testbed custom event";
+        event.customData = (NSMutableDictionary*) @{
+            @"Custom_Event_Property_Key1": @"Custom_Event_Property_val1"
+        };
+        [event logEventWithCompletion:^(BOOL success, NSError * _Nullable error) {
+            if (success) {
+                [self showAlert:@"Succesfully logged custom event" withDescription:@""];
+            } else {
+                [self showAlert:@"Error sending custom event:" withDescription:error.description];
+            }
+        }];
+    }]];
+
     [actionSheet addAction:[UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
         NSLog(@"Content Event action sheet dismissed.");
     }]];
-    
+
     [self presentViewController:actionSheet animated:YES completion:nil];
 }
 

@@ -48,11 +48,11 @@
 }
 
 - (NSString *)standardEventServiceURL{
-    return [[self getBaseURL] stringByAppendingString: @"/v2/event/standard"];
+    return [[self getBaseURL] stringByAppendingString: @"/v3/events/standard"];
 }
 
 - (NSString *)customEventServiceURL{
-    return [[self getBaseURL] stringByAppendingString: @"/v2/event/custom"];
+    return [[self getBaseURL] stringByAppendingString: @"/v3/events/custom"];
 }
 
 - (NSString *)linkServiceURL {

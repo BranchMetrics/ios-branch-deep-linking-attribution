@@ -54,7 +54,7 @@
     serverAPI.automaticallyEnableTrackingDomain = NO;
     
     NSString *url = [serverAPI standardEventServiceURL];
-    NSString *expectedUrlStr = @"https://api3.branch.io/v2/event/standard";
+    NSString *expectedUrlStr = @"https://api3.branch.io/v3/events/standard";
     
     XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
@@ -64,7 +64,7 @@
     serverAPI.automaticallyEnableTrackingDomain = NO;
     
     NSString *url = [serverAPI customEventServiceURL];
-    NSString *expectedUrlStr = @"https://api3.branch.io/v2/event/custom";
+    NSString *expectedUrlStr = @"https://api3.branch.io/v3/events/custom";
     
     XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
@@ -137,7 +137,7 @@
     serverAPI.useTrackingDomain = YES;
     
     NSString *url = [serverAPI standardEventServiceURL];
-    NSString *expectedUrlStr = @"https://api-safetrack.branch.io/v2/event/standard";
+    NSString *expectedUrlStr = @"https://api-safetrack.branch.io/v3/events/standard";
     
     XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
@@ -148,7 +148,7 @@
     serverAPI.useTrackingDomain = YES;
     
     NSString *url = [serverAPI customEventServiceURL];
-    NSString *expectedUrlStr = @"https://api-safetrack.branch.io/v2/event/custom";
+    NSString *expectedUrlStr = @"https://api-safetrack.branch.io/v3/events/custom";
     
     XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
@@ -225,7 +225,7 @@
     serverAPI.useEUServers = YES;
 
     NSString *url = [serverAPI standardEventServiceURL];
-    NSString *expectedUrlStr = @"https://api3-eu.branch.io/v2/event/standard";
+    NSString *expectedUrlStr = @"https://api3-eu.branch.io/v3/events/standard";
     
     XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
@@ -236,7 +236,7 @@
     serverAPI.useEUServers = YES;
 
     NSString *url = [serverAPI customEventServiceURL];
-    NSString *expectedUrlStr = @"https://api3-eu.branch.io/v2/event/custom";
+    NSString *expectedUrlStr = @"https://api3-eu.branch.io/v3/events/custom";
     
     XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
@@ -316,7 +316,7 @@
     serverAPI.useTrackingDomain = YES;
 
     NSString *url = [serverAPI standardEventServiceURL];
-    NSString *expectedUrlStr = @"https://api-safetrack-eu.branch.io/v2/event/standard";
+    NSString *expectedUrlStr = @"https://api-safetrack-eu.branch.io/v3/events/standard";
     
     XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
@@ -328,7 +328,7 @@
     serverAPI.useTrackingDomain = YES;
 
     NSString *url = [serverAPI customEventServiceURL];
-    NSString *expectedUrlStr = @"https://api-safetrack-eu.branch.io/v2/event/custom";
+    NSString *expectedUrlStr = @"https://api-safetrack-eu.branch.io/v3/events/custom";
     
     XCTAssertTrue([url isEqualToString:expectedUrlStr]);
 }
@@ -440,11 +440,11 @@
     XCTAssertEqualObjects(storedUrl, expectedUrl);
     
     storedUrl = [[BNCServerAPI sharedInstance] standardEventServiceURL];
-    expectedUrl = @"https://links.toTestDomain-safeTrack.com/v2/event/standard";
+    expectedUrl = @"https://links.toTestDomain-safeTrack.com/v3/events/standard";
     XCTAssertEqualObjects(storedUrl, expectedUrl);
     
     storedUrl = [[BNCServerAPI sharedInstance] customEventServiceURL];
-    expectedUrl = @"https://links.toTestDomain-safeTrack.com/v2/event/custom";
+    expectedUrl = @"https://links.toTestDomain-safeTrack.com/v3/events/custom";
     XCTAssertEqualObjects(storedUrl, expectedUrl);
     
     storedUrl = [[BNCServerAPI sharedInstance] linkServiceURL];
@@ -491,11 +491,11 @@
     XCTAssertEqualObjects(storedUrl, expectedUrl);
     
     storedUrl = [[BNCServerAPI sharedInstance] standardEventServiceURL];
-    expectedUrl = @"https://links.toTestDomain.com/v2/event/standard";
+    expectedUrl = @"https://links.toTestDomain.com/v3/events/standard";
     XCTAssertEqualObjects(storedUrl, expectedUrl);
     
     storedUrl = [[BNCServerAPI sharedInstance] customEventServiceURL];
-    expectedUrl = @"https://links.toTestDomain.com/v2/event/custom";
+    expectedUrl = @"https://links.toTestDomain.com/v3/events/custom";
     XCTAssertEqualObjects(storedUrl, expectedUrl);
     
     storedUrl = [[BNCServerAPI sharedInstance] linkServiceURL];
