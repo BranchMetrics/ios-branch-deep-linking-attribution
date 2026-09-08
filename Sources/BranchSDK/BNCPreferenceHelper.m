@@ -501,14 +501,12 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         NSString *id_string = [NSString stringWithFormat:@"%%24randomized_bundle_token=%@", self.randomizedBundleToken];
         NSRange range = [baseUrl rangeOfString:id_string];
         if (range.location != NSNotFound) [baseUrl replaceCharactersInRange:range withString:@""];
-    } else
-    if ([baseUrl hasSuffix:@"&"] || [baseUrl hasSuffix:@"?"]) {
-    } else
-    if ([baseUrl containsString:@"?"]) {
-        [baseUrl appendString:@"&"];
     }
-    else {
-        [baseUrl appendString:@"?"];
+
+    // Callers append query parameters straight onto the result, so the separator is required
+    // regardless of attribution level.
+    if (![baseUrl hasSuffix:@"&"] && ![baseUrl hasSuffix:@"?"]) {
+        [baseUrl appendString:([baseUrl containsString:@"?"] ? @"&" : @"?")];
     }
     return baseUrl;
 }

@@ -1282,8 +1282,9 @@ static NSString *bnc_branchKey = nil;
         return;
     }
 
-    // Clear cached links
-    self.linkCache = [[BNCLinkCache alloc] init];
+    // Clear cached links in place. Replacing the cache would orphan any in-flight short-URL
+    // request, which holds the instance it was constructed with and writes its result there.
+    [self.linkCache clear];
 
     // Removed stored values
     self.preferenceHelper.userAlias = nil;

@@ -122,7 +122,7 @@
         [longUrl appendFormat:@"type=%ld&", (long)self.type];
     }
     if (self.matchDuration) {
-        [longUrl appendFormat:@"duration=%ld&", (long)self.matchDuration];
+        [longUrl appendFormat:@"matchDuration=%ld&", (long)self.matchDuration];
     }
 
     NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:self.params];

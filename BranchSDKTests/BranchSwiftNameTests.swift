@@ -149,15 +149,16 @@ final class BranchSwiftNameTests: XCTestCase {
         XCTAssertTrue(branch.responds(to: NSSelectorFromString("lastAttributedTouchDataWithAttributionWindow:completion:")))
     }
     
-    /// The interesting case is the pair of short-URL terminals. `fetchShortURL` is blocking and
-    /// `fetchShortURLWithCallback:` is asynchronous, and the Swift importer derives an `async`
-    /// name from the latter by dropping the trailing `WithCallback` — which is exactly the
-    /// shadowing hazard `logEventAsync()` is named around. Binding both to written-out types
-    /// makes any collision or rename a build failure rather than a silent source break.
+    /// The interesting case is the pair of short-URL terminals. `fetchShortURLWithCallback:` gets
+    /// an `async` projection named `fetchShortURL()`, which would shadow the blocking terminal —
+    /// exactly the hazard `logEventAsync()` is named around. `NS_SWIFT_NAME` moves the blocking
+    /// one to `fetchShortURLSynchronously()` so the two cannot be confused at a call site.
+    /// Binding each to a written-out type makes a collision or rename a build failure rather than
+    /// a silent source break.
     func testSwiftNamesOfBranchLinkBuilderTerminals() {
         let builder = BranchLinkBuilder()
 
-        let blocking: () -> String? = builder.fetchShortURL
+        let blocking: () -> String? = builder.fetchShortURLSynchronously
         let callbackBased: (((String?, Error?) -> Void)?) -> Void = builder.fetchShortURL(callback:)
         let offline: () -> String? = builder.buildLongURL
         let spotlight: ((([AnyHashable: Any]?, Error?) -> Void)?) -> Void =

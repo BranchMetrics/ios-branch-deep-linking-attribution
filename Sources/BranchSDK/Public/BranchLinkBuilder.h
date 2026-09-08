@@ -103,9 +103,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// reaches the network. Setting it and then calling any other terminal logs a warning and is
 /// otherwise ignored.
 ///
-/// It is sent as link data but is **not** part of the cache key, so the fetched link is stored under
-/// the same key an otherwise-identical link would use — a later call without an `ignoreUAString` may
-/// be served this link from the cache.
+/// It is part of the cache key, so a link fetched with an `ignoreUAString` is never served to a
+/// later call that does not set one.
 @property (nonatomic, copy, nullable) NSString *ignoreUAString;
 
 /// When YES, `-buildLongURL` builds against your app.link domain instead of the default link
@@ -131,19 +130,25 @@ NS_ASSUME_NONNULL_BEGIN
  thread it freezes the UI for the duration and, on a slow or unreachable network, for the full
  request timeout.
 
- Results are cached: a second call with identical link options returns the cached URL without a
- request. Setting `ignoreUAString` bypasses that cache read, so the call always reaches the network.
+ Successful results are cached: a second call with identical link options returns the cached URL
+ without a request. Setting `ignoreUAString` bypasses that cache read, so the call always reaches
+ the network.
 
  If the server returns a non-200, the SDK falls back to a long link built from the last known link
- domain — so a non-nil result is not proof the request succeeded. When no link domain is known yet,
- the fallback returns nil.
+ domain — so a non-nil result is not proof the request succeeded. That fallback is not cached, so a
+ later call retries the request. When no link domain is known yet, the fallback returns nil.
 
  Reads every link-content property plus `campaign`, `matchDuration`, `linkType` and
  `ignoreUAString`. `useAppLinkDomain` does not apply and is ignored with a warning.
 
+ Raises `NSInternalInconsistencyException` if `+[Branch initialize:]` has not run.
+
+ In Swift this is `fetchShortURLSynchronously()`, so it cannot be reached by mistake from an `async`
+ context in place of `fetchShortURL(callback:)`'s `async` projection.
+
  @return The short URL; a long-URL fallback on a server error; or nil.
  */
-- (nullable NSString *)fetchShortURL;
+- (nullable NSString *)fetchShortURL NS_SWIFT_NAME(fetchShortURLSynchronously());
 
 /**
  Requests a short Branch link without blocking, delivering it to `callback`.
@@ -160,6 +165,8 @@ NS_ASSUME_NONNULL_BEGIN
  Reads every link-content property plus `campaign`, `matchDuration` and `linkType`.
  `ignoreUAString` and `useAppLinkDomain` do not apply and are ignored with a warning.
 
+ Raises `NSInternalInconsistencyException` if `+[Branch initialize:]` has not run.
+
  @param callback Receives the short URL, or a long-link fallback plus an error. May be nil, in which
         case the link is still created and cached.
  */
@@ -168,13 +175,16 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Builds a long Branch link offline, with no network call.
 
- The link's `params` are JSON-encoded and base64'd into the URL's `data` query item, so the whole
- link is self-describing and can be produced with no connectivity and no round trip. That also
- makes it long — prefer a short link where the URL is user-visible.
+ The link's `params` are JSON-encoded, base64'd and percent-encoded into the URL's `data` query
+ item, so the whole link is self-describing and can be produced with no connectivity and no round
+ trip. That also makes it long — prefer a short link where the URL is user-visible.
 
  Reads `params`, `tags`, `alias`, `channel`, `feature`, `stage`, `linkType`, `matchDuration` and
  `useAppLinkDomain`. A long URL has no campaign parameter, so `campaign` is silently unused;
  `ignoreUAString` does not apply either and is ignored with a warning.
+
+ This is the one terminal that does not require `+[Branch initialize:]` to have run: it needs only
+ a Branch key, which it also reads from `branch.json` or the `branch_key` Info.plist entry.
 
  @return The long URL, or nil if the Branch key is unavailable.
  */
@@ -198,6 +208,8 @@ NS_ASSUME_NONNULL_BEGIN
 
  The callback is invoked on the **main thread**. On a server error it receives an empty dictionary
  together with the error, rather than nil.
+
+ Raises `NSInternalInconsistencyException` if `+[Branch initialize:]` has not run.
 
  @param callback Receives the server's link payload, or an empty dictionary plus an error. May be
         nil, in which case the link is still created.

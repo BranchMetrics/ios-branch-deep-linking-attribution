@@ -128,6 +128,9 @@
     result = prime * result + [[BNCEncodingUtils sha256Encode:self.stage] hash];
     result = prime * result + [[BNCEncodingUtils sha256Encode:self.campaign] hash];
     result = prime * result + [[BNCEncodingUtils sha256Encode:encodedParams] hash];
+    // A link created with an ignoreUAString is not interchangeable with one created without it:
+    // its first click is not counted, so it must not share a cache entry with an ordinary link.
+    result = prime * result + [[BNCEncodingUtils sha256Encode:self.ignoreUAString] hash];
     result = prime * result + self.duration;
     
     for (NSString *tag in self.tags) {

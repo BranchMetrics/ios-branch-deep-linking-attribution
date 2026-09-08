@@ -75,11 +75,6 @@
     // An ignoreUAString means the caller wants a link that will not be counted as clicked by a
     // preview scrape, so we always go to the server for a fresh one rather than serving a cached
     // ordinary link.
-    //
-    // Note it does NOT isolate the cache entry: BNCLinkCache keys on -[BNCLinkData hash], and that
-    // hash covers type/alias/channel/feature/stage/campaign/params/duration/tags but *not*
-    // ignoreUAString. So the link fetched here is written under the same key an ordinary link would
-    // use, and a later call without an ignoreUAString can be served this link from the cache.
     if (!self.ignoreUAString && [branch.linkCache objectForKey:linkData]) {
         [[BranchLogger shared] logVerbose:@"Returning cached Branch Link" error:nil];
         return [branch.linkCache objectForKey:linkData];
@@ -100,15 +95,10 @@
 
     [[BranchLogger shared] logVerbose:@"Requesting Branch Link synchronously" error:nil];
     BNCServerResponse *serverResponse = [req makeRequest:branch.serverInterface key:[Branch branchKey]];
-    NSString *shortURL = [req processResponse:serverResponse];
 
-    // -processResponse: already caches on a 200. This second write is what the funnel did, and it
-    // also catches the non-200 long-URL fallback, so a failed request is not retried on every call.
-    if (shortURL) {
-        [branch.linkCache setObject:shortURL forKey:linkData];
-    }
-
-    return shortURL;
+    // -processResponse: caches on a 200. Nothing is cached here, so the long-URL fallback it
+    // returns on a non-200 does not displace the short link a later call can still fetch.
+    return [req processResponse:serverResponse];
 }
 
 - (void)fetchShortURLWithCallback:(callbackWithUrl)callback {
@@ -220,7 +210,7 @@
         return [NSString stringWithFormat:@"%@/a/%@", BNC_LINK_URL, branchKey];
     }
 
-    BNCPreferenceHelper *preferenceHelper = self.branch.preferenceHelper;
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     if (preferenceHelper.userUrl) {
         NSString *fullUserUrl = [preferenceHelper sanitizedMutableBaseURL:preferenceHelper.userUrl];
         return [fullUserUrl componentsSeparatedByString:@"?"].firstObject;
@@ -231,7 +221,7 @@
 // Query-parameter order is fixed and pinned by tests: tags (repeated) -> alias -> channel ->
 // feature -> stage -> type -> matchDuration -> source=ios&data=<base64>.
 - (NSString *)longUrlWithBaseUrl:(NSString *)baseUrl {
-    NSMutableString *longUrl = [self.branch.preferenceHelper sanitizedMutableBaseURL:baseUrl];
+    NSMutableString *longUrl = [[BNCPreferenceHelper sharedInstance] sanitizedMutableBaseURL:baseUrl];
 
     for (NSString *tag in self.tags) {
         [longUrl appendFormat:@"tags=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:tag]];
@@ -262,9 +252,11 @@
         [longUrl appendFormat:@"matchDuration=%ld&", (long)self.matchDuration];
     }
 
+    // The base64 alphabet includes "+", which a server decodes as a space, so the encoded params
+    // have to be percent-encoded before they go into the query.
     NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:self.params];
     NSString *base64EncodedParams = [BNCEncodingUtils base64EncodeData:jsonData];
-    [longUrl appendFormat:@"source=ios&data=%@", base64EncodedParams];
+    [longUrl appendFormat:@"source=ios&data=%@", [BNCEncodingUtils urlEncodedString:base64EncodedParams]];
 
     return longUrl;
 }

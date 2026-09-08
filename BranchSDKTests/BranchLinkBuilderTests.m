@@ -312,6 +312,22 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     XCTAssertThrows([builder branch]);
 }
 
+// buildLongURL needs a Branch key and the preference-helper singleton, neither of which requires
+// the Branch singleton -- so the one offline terminal stays usable before +initialize:.
+- (void)testBuildLongURLDoesNotRequireTheSharedInstance {
+    [BNCPreferenceHelper sharedInstance].userUrl = nil;
+    [Branch resetInitializationGuardForTesting];
+
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
+    builder.params = @{@"key": @"value"};
+
+    NSString *url = nil;
+    XCTAssertNoThrow(url = [builder buildLongURL]);
+
+    NSString *expectedPrefix = [NSString stringWithFormat:@"https://bnc.lt/a/%@?", kTestBranchKey];
+    XCTAssertTrue([url hasPrefix:expectedPrefix], @"%@", url);
+}
+
 - (void)testInjectedBranchIsUsedEvenWhenSharedInstanceIsUnavailable {
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:self.branch];
     Branch *injected = self.branch;
@@ -491,6 +507,46 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     XCTAssertTrue([url hasPrefix:expectedPrefix], @"%@", url);
 }
 
+// The base64 alphabet includes "+", which a server decodes as a space -- so an unencoded data=
+// blob loses the params it exists to carry. A "+" needs a byte of ">" or "~", or any multi-byte
+// UTF-8, at an offset of 3n+2; the HTML email params make that ordinary rather than exotic.
+- (void)testLongURLPercentEncodesTheBase64DataParameter {
+    [BNCPreferenceHelper sharedInstance].userUrl = nil;
+
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:self.branch];
+    builder.params = @{BRANCH_LINK_DATA_KEY_EMAIL_HTML_HEADER: @"<style>a{color:red}</style>"};
+
+    NSString *url = [builder buildLongURL];
+    NSString *data = [url componentsSeparatedByString:@"&data="].lastObject;
+
+    XCTAssertTrue([data containsString:@"%2B"], @"expected an escaped '+', got %@", url);
+
+    NSCharacterSet *rawBase64Punctuation = [NSCharacterSet characterSetWithCharactersInString:@"+/="];
+    XCTAssertEqual([data rangeOfCharacterFromSet:rawBase64Punctuation].location, (NSUInteger)NSNotFound,
+                   @"data= must carry no raw base64 punctuation: %@", url);
+
+    NSString *decoded = [data stringByRemovingPercentEncoding];
+    NSDictionary *roundTripped = [NSJSONSerialization JSONObjectWithData:[[NSData alloc] initWithBase64EncodedString:decoded options:0]
+                                                                 options:0
+                                                                   error:nil];
+    XCTAssertEqualObjects(roundTripped, builder.params);
+}
+
+// -sanitizedMutableBaseURL: strips a randomized bundle token at attribution level NONE. That must
+// not cost the "?" separator, or every query parameter fuses onto the Branch key.
+- (void)testLongURLIsWellFormedAtAttributionLevelNone {
+    [BNCPreferenceHelper sharedInstance].userUrl = nil;
+    NSString *savedLevel = [BNCPreferenceHelper sharedInstance].attributionLevel;
+    [BNCPreferenceHelper sharedInstance].attributionLevel = BranchAttributionLevelNone;
+
+    NSString *url = [[self fullyPopulatedLongURLBuilder] buildLongURL];
+
+    [BNCPreferenceHelper sharedInstance].attributionLevel = savedLevel;
+
+    NSString *expectedPrefix = [NSString stringWithFormat:@"https://bnc.lt/a/%@?tags=tag1", kTestBranchKey];
+    XCTAssertTrue([url hasPrefix:expectedPrefix], @"%@", url);
+}
+
 #pragma mark - fetchShortURL — link data / cache key
 
 // BNCLinkCache keys on -[BNCLinkData hash], so the exact setupX: sequence the builder uses is what
@@ -535,19 +591,17 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     XCTAssertEqualObjects(linkData.data[BRANCH_REQUEST_KEY_URL_IGNORE_UA_STRING], @"Slackbot-LinkExpanding");
 }
 
-// ...but NOT the cache key. -[BNCLinkData hash] omits ignoreUAString, and BNCLinkCache keys on that
-// hash alone, so an ignoreUAString link is cached under the same key as an ordinary one. Contradicts
-// research.md Behavior #3's claim that it is "part of the cache key"; pinned here because the
-// difference decides whether the cache-bypass test below means anything.
-- (void)testIgnoreUAStringDoesNotAffectTheCacheKey {
+// ...and the cache key. A link created with an ignoreUAString does not count its first click, so it
+// must never be served to a later call that did not ask for one.
+- (void)testIgnoreUAStringAffectsTheCacheKey {
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:self.branch];
     builder.channel = @"channel1";
 
     BNCLinkData *withUA = [builder linkDataWithIgnoreUAString:@"Slackbot-LinkExpanding"];
     BNCLinkData *withoutUA = [builder linkDataWithIgnoreUAString:nil];
 
-    XCTAssertEqual([withUA hash], [withoutUA hash]);
-    XCTAssertNotEqualObjects(withUA.data, withoutUA.data, @"payloads should still differ");
+    XCTAssertNotEqual([withUA hash], [withoutUA hash]);
+    XCTAssertNotEqualObjects(withUA.data, withoutUA.data);
 }
 
 #pragma mark - fetchShortURL — network (stubbed)
@@ -573,7 +627,8 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     XCTAssertEqualObjects([builder fetchShortURL], @"https://example.app.link/abc123");
     XCTAssertEqual(fake.requestCount, 1);
 
-    // Cache write (Branch.m:1864) -- the second call must not reach the network.
+    // -[BranchShortUrlSyncRequest processResponse:] caches on a 200, so the second call must not
+    // reach the network.
     XCTAssertEqualObjects([builder fetchShortURL], @"https://example.app.link/abc123");
     XCTAssertEqual(fake.requestCount, 1, @"second call should have been served from the cache");
     XCTAssertEqualObjects([linkCache objectForKey:[builder linkDataWithIgnoreUAString:nil]], @"https://example.app.link/abc123");
@@ -596,9 +651,27 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     [builder fetchShortURL];
     XCTAssertEqual(fake.requestCount, 2, @"ignoreUAString must force a fresh request");
 
-    // ...and again, every time, because the read is skipped rather than the entry isolated.
+    // ...and again, every time: the read is skipped even though the entry is now keyed separately.
     [builder fetchShortURL];
     XCTAssertEqual(fake.requestCount, 3);
+}
+
+// The cache-key isolation has to hold end to end -- an ignoreUAString link must not become the
+// answer to a later ordinary fetch, whose first click is supposed to be counted.
+- (void)testIgnoreUAStringLinkIsNotServedToAnOrdinaryFetch {
+    BNCFakeServerInterface *fake = [[BNCFakeServerInterface alloc] init];
+    fake.stubResponse = [BNCFakeServerInterface responseWithStatusCode:200 url:@"https://example.app.link/ignore-ua"];
+
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:[self branchWithFakeInterface:fake linkCache:[[BNCLinkCache alloc] init]]];
+    builder.channel = @"sms";
+    builder.ignoreUAString = @"Slackbot-LinkExpanding";
+    XCTAssertEqualObjects([builder fetchShortURL], @"https://example.app.link/ignore-ua");
+
+    fake.stubResponse = [BNCFakeServerInterface responseWithStatusCode:200 url:@"https://example.app.link/ordinary"];
+    builder.ignoreUAString = nil;
+
+    XCTAssertEqualObjects([builder fetchShortURL], @"https://example.app.link/ordinary");
+    XCTAssertEqual(fake.requestCount, 2);
 }
 
 // This branch has no layer1-logger-tests.yml, so these are the only assertions on the outgoing
@@ -652,6 +725,28 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     XCTAssertTrue([url hasPrefix:@"https://example.app.link?"], @"%@", url);
     XCTAssertTrue([url containsString:@"channel=channel1&"], @"%@", url);
     XCTAssertTrue([url containsString:@"source=ios&data="], @"%@", url);
+}
+
+// The fallback is a degraded result, not an answer. Caching it would make one transient failure
+// permanent for the process, for the async terminal too since both share the cache.
+- (void)testFetchShortURLDoesNotCacheTheNon200Fallback {
+    [BNCPreferenceHelper sharedInstance].userUrl = @"https://example.app.link";
+
+    BNCFakeServerInterface *fake = [[BNCFakeServerInterface alloc] init];
+    fake.stubResponse = [BNCFakeServerInterface responseWithStatusCode:500 url:nil];
+    BNCLinkCache *linkCache = [[BNCLinkCache alloc] init];
+
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:[self branchWithFakeInterface:fake linkCache:linkCache]];
+    builder.channel = @"channel1";
+
+    XCTAssertNotNil([builder fetchShortURL]);
+    XCTAssertNil([linkCache objectForKey:[builder linkDataWithIgnoreUAString:nil]]);
+
+    fake.stubResponse = [BNCFakeServerInterface responseWithStatusCode:200 url:@"https://example.app.link/abc123"];
+
+    XCTAssertEqualObjects([builder fetchShortURL], @"https://example.app.link/abc123",
+                          @"the retry must reach the network rather than return the cached fallback");
+    XCTAssertEqual(fake.requestCount, 2);
 }
 
 // ...and returns nil when no link domain is known, which is exactly why a short-URL test may not
@@ -859,6 +954,50 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     [self waitForExpectations:@[drained] timeout:5];
 
     XCTAssertEqual([queue snapshot].count, (NSUInteger)0);
+}
+
+// Link creation carries no attribution and BNCServerInterface whitelists /v1/url at attribution
+// level NONE, so the request has to survive BNCServerRequestOperation's gate to reach that check.
+// A dropped operation never runs -processResponse:error:, which is where the callback lives, so a
+// drop here does not fail the call -- it strands the caller forever.
+- (void)testFetchShortURLWithCallbackStillCallsBackAtAttributionLevelNone {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    NSString *savedLevel = preferenceHelper.attributionLevel;
+    NSString *savedDeviceToken = preferenceHelper.randomizedDeviceToken;
+    NSString *savedBundleToken = preferenceHelper.randomizedBundleToken;
+    preferenceHelper.randomizedDeviceToken = @"device_token";
+    preferenceHelper.randomizedBundleToken = @"bundle_token";
+    preferenceHelper.attributionLevel = BranchAttributionLevelNone;
+
+    BNCFakeServerInterface *fake = [[BNCFakeServerInterface alloc] init];
+    fake.stubResponse = [BNCFakeServerInterface responseWithStatusCode:200 url:@"https://example.app.link/abc123"];
+
+    BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
+    [queue configureWithServerInterface:fake branchKey:kTestBranchKey preferenceHelper:preferenceHelper];
+
+    Branch *branch = [[Branch alloc] initWithInterface:fake
+                                                 queue:queue
+                                                 cache:[[BNCLinkCache alloc] init]
+                                      preferenceHelper:preferenceHelper
+                                                   key:kTestBranchKey];
+
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:branch];
+    builder.channel = @"sms";
+
+    XCTestExpectation *calledBack = [self expectationWithDescription:@"callback"];
+    __block NSString *deliveredURL = nil;
+    [builder fetchShortURLWithCallback:^(NSString *url, NSError *error) {
+        deliveredURL = url;
+        [calledBack fulfill];
+    }];
+    [self waitForExpectations:@[calledBack] timeout:5];
+
+    preferenceHelper.attributionLevel = savedLevel;
+    preferenceHelper.randomizedDeviceToken = savedDeviceToken;
+    preferenceHelper.randomizedBundleToken = savedBundleToken;
+
+    XCTAssertEqualObjects(deliveredURL, @"https://example.app.link/abc123");
+    XCTAssertEqual(fake.requestCount, 1);
 }
 
 #pragma mark - fetchSpotlightURLWithCallback:
@@ -1127,8 +1266,9 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 // result is a *short* link on a Branch domain, which the fallback cannot satisfy: the fallback
 // carries a "source=ios&data=" query, and with userUrl cleared it returns nil outright.
 //
-// Runs on a background queue because fetchShortURL blocks; the real network makes this the slowest
-// test in the class.
+// Runs on a background queue because fetchShortURL blocks. This is the only test here that touches
+// the real network, so it is skipped by the BranchSDKTests plan -- the one verify.yml runs -- and
+// selected by BranchSDKTestsLiveNetwork.xctestplan instead.
 - (void)testFetchShortURLLiveSmokeTest {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     preferenceHelper.userUrl = nil;
