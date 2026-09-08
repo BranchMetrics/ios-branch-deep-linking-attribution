@@ -406,7 +406,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     
     BranchLinkBuilder *builder = [self linkBuilderWithLinkProperties:linkProperties];
     // matchDuration is deliberately not carried over: the overload this replaces hardcoded 0 and
-    // never read linkProperties.matchDuration, unlike the two methods above. Pre-existing, preserved.
+    // never read linkProperties.matchDuration, unlike the two methods above.
     builder.ignoreUAString = UAString;
     return [builder fetchShortURL];
 }
@@ -423,9 +423,6 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     builder.feature = feature;
     builder.stage = stage;
     builder.alias = alias;
-    // NOTE: the URL now carries channel=. -getLongURLWithParams:andChannel:… accepted a channel and
-    // then passed nil for it into the URL assembly, so it never reached the link. That was a bug and
-    // the builder does not reproduce it, so this method's output changes when a channel is given.
     return [builder buildLongURL];
 }
 

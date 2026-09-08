@@ -151,14 +151,8 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         builder.feature = self.linkProperties.feature;
         builder.stage = self.linkProperties.stage;
         builder.alias = self.linkProperties.alias;
-        // NOTE: the placeholder URL now carries channel=. -getLongAppLinkURLWithParams:andChannel:…
-        // took a channel and dropped it before the URL was assembled; the builder does not reproduce
-        // that bug, so this URL changes whenever the link properties name a channel.
         NSString *URLString = [builder buildLongURL];
 
-        // -buildLongURL returns nil when no Branch key is available, where the method it replaces
-        // formatted "(null)" into the URL and always returned a string. -initWithString: raises on
-        // nil, so guard rather than trading a bad placeholder for a crash.
         self.shareURL = URLString ? [[NSURL alloc] initWithString:URLString] : nil;
     }
     

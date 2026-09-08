@@ -17,13 +17,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- `BranchLinkBuilder` collects every link-generation option into a single object, replacing the 36
- telescoping `getShortURL…` / `getLongURL…` / `getSpotlightUrl…` overloads that used to live on
- `Branch`.
+ `BranchLinkBuilder` collects every link-generation option into a single object.
 
  This class is a plain mutable builder: create it, set the properties you care about, then call a
- terminal. It follows the same shape as `BranchConfiguration` — construct, assign, hand off — so
- there is one pattern to learn across the 4.0 surface.
+ terminal.
 
      BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
      builder.params = @{@"$og_title": @"Sale"};
@@ -54,38 +51,6 @@ NS_ASSUME_NONNULL_BEGIN
  On a server error the two short-URL terminals hand back a **long-link fallback**, not nil — so a
  non-nil URL is not proof of success. Check `error`.
 
- ## Migrating from the `Branch` link methods (4.0 breaking change)
-
- Every method below was removed. Set the corresponding properties, then call a terminal. Options you
- do not set are simply omitted, so the short forms of the old overloads map to setting less.
-
- | Removed on `Branch`                                     | Replacement                                               |
- | ------------------------------------------------------- | --------------------------------------------------------- |
- | `getShortURL`, `getShortURLWithParams:…`                 | set the options, then `-fetchShortURL`                      |
- | `getShortUrlWithParams:…andCampaign:andMatchDuration:`   | also set `campaign` / `matchDuration`                       |
- | `getShortURLWithParams:…ignoreUAString:forceLinkCreation:` | also set `ignoreUAString` (see below re `forceLinkCreation`) |
- | `getShortURLWithParams:…andCallback:` (all async forms)  | `-fetchShortURLWithCallback:`                               |
- | `getLongURLWithParams:…`                                 | `-buildLongURL`                                             |
- | `getLongAppLinkURLWithParams:…`                          | set `useAppLinkDomain = YES`, then `-buildLongURL`          |
- | `getSpotlightUrlWithParams:callback:`                    | set `params`, then `-fetchSpotlightURLWithCallback:`        |
-
- Argument renames: `andType:` → `linkType`, `andMatchDuration:` → `matchDuration`, `andTags:` →
- `tags`, and so on for each `and…:` keyword.
-
- Three behavior changes to be aware of:
-
- 1. **`forceLinkCreation:` is gone.** It was accepted and never read, so passing it changed nothing.
- 2. **Long URLs now include `channel`.** `getLongURLWithParams:andChannel:…` and
-    `getLongAppLinkURLWithParams:andChannel:…` accepted a channel and then dropped it before
-    assembling the URL. That was a bug. `-buildLongURL` emits `channel=`, so a long link built with
-    a channel set is not byte-identical to what 3.x produced.
- 3. **There is no `Branch`-instance entry point.** Construct a builder directly; you do not need a
-    `Branch` reference to make a link.
-
- Unlike `BranchConfiguration`, there is no `-validate:`. A configuration is read once at launch, so
- a bad one is a programming error worth surfacing as an `NSError`. Link generation happens at
- runtime in response to user action, so the terminals instead log through `BranchLogger` and return
- nil (or call back with an error).
  */
 @interface BranchLinkBuilder : NSObject
 

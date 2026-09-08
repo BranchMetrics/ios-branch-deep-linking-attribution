@@ -116,11 +116,7 @@
 
     Branch *branch = self.branch;
 
-    // Snapshot every option *before* dispatching. The funnel this replaces received them as method
-    // arguments, so they were fixed at call time; reading self.* inside the block instead would let
-    // a caller who mutates the builder right after this call change the request already in flight --
-    // and the builder is explicitly documented as reusable. Pinned by
-    // testFetchShortURLWithCallbackSnapshotsOptionsAtCallTime.
+    // Snapshot every option *before* dispatching.
     //
     // The async path has no ignoreUAString option: the funnel hardcoded nil here, and a link whose
     // click should not be counted is only ever requested through the blocking terminal.
@@ -185,17 +181,6 @@
 
     Branch *branch = self.branch;
 
-    // Snapshot before dispatching, for the same reason -fetchShortURLWithCallback: does: the funnel
-    // this replaces took params as an argument, so mutating a reusable builder right after the call
-    // could not change the request already in flight. Pinned by
-    // testFetchSpotlightURLSnapshotsParamsAtCallTime.
-    //
-    // params is the only property read. BranchSpotlightUrlRequest builds its own BNCLinkData from
-    // params plus a fixed channel of "spotlight", and passes tags/alias/stage/campaign as nil and
-    // type/matchDuration as zero to its superclass -- so every other builder option is discarded
-    // here, exactly as it was by -getSpotlightUrlWithParams:callback:, which only ever accepted
-    // params. (It does hand "share" to the superclass as the feature, but the feature never reaches
-    // the BNCLinkData, so it is not on the wire either.)
     NSDictionary *params = self.params;
 
     dispatch_async(branch.isolationQueue, ^{
@@ -208,12 +193,9 @@
 #pragma mark - Link data
 
 // Ports -prepareLinkDataFor:… . BNCLinkData's -isEqual:/-hash derive from the dictionary these ten
-// calls build, and that dictionary is the BNCLinkCache key, so **the set of calls must stay exactly
-// as it is** or previously cached links stop being found. Pinned by
-// testLinkDataMatchesTheDocumentedSetupSequence.
-//
-// ignoreUAString is a parameter rather than a property read because the async terminal hardcodes
-// nil there, exactly as the async funnel did.
+// calls build, and that dictionary is the BNCLinkCache key, so the set of calls must stay exactly
+// as it is or previously cached links stop being found.
+
 - (BNCLinkData *)linkDataWithIgnoreUAString:(NSString *)ignoreUAString {
     BNCLinkData *post = [[BNCLinkData alloc] init];
 
@@ -233,20 +215,11 @@
 
 #pragma mark - Long URL assembly
 
-// Ports the base-URL selection that used to be split across -generateLongURLWithParams:… and
-// -generateLongAppLinkURLWithParams:…. The trailing "?" asymmetry between the two branches is
-// deliberate and load-bearing: -sanitizedMutableBaseURL: appends its own separator only when the
-// URL does not already end in "?" or "&", so the app-link branch pre-terminates and the default
-// branch lets the helper do it.
 - (NSString *)longUrlBaseUrlWithBranchKey:(NSString *)branchKey {
     if (!self.useAppLinkDomain) {
         return [NSString stringWithFormat:@"%@/a/%@", BNC_LINK_URL, branchKey];
     }
 
-    // The original read [BNCPreferenceHelper sharedInstance] here while -longUrlWithBaseUrl: read
-    // self.preferenceHelper. For the singleton those are the same object (-getInstanceInternal:
-    // hands the shared helper to -initWithInterface:…), so reading one helper throughout is
-    // behavior-preserving -- and correct rather than merely equivalent when a test injects a Branch.
     BNCPreferenceHelper *preferenceHelper = self.branch.preferenceHelper;
     if (preferenceHelper.userUrl) {
         NSString *fullUserUrl = [preferenceHelper sanitizedMutableBaseURL:preferenceHelper.userUrl];
@@ -268,9 +241,6 @@
         [longUrl appendFormat:@"alias=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:self.alias]];
     }
 
-    // The methods this replaces accepted a channel and then dropped it on the floor -- both long-URL
-    // funnels passed channel:nil into -longUrlWithBaseUrl:, which was ready to emit it. That was a
-    // bug, and it is not reproduced here: a builder with a channel set emits channel=.
     if ([self.channel length]) {
         [longUrl appendFormat:@"channel=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:self.channel]];
     }
@@ -301,9 +271,6 @@
 
 #pragma mark - Terminal-specific option warnings
 
-// Options that apply to some terminals and not others degrade with a warning rather than an assert:
-// link generation runs in response to user action, so a misconfigured builder should still produce
-// a link.
 - (void)warnAboutOptionsUnusedBy:(NSString *)terminal
                   ignoreUAString:(BOOL)ignoreUAStringIsUnused
                 useAppLinkDomain:(BOOL)useAppLinkDomainIsUnused {
@@ -321,13 +288,6 @@
     }
 }
 
-// The spotlight terminal reads params and nothing else. On the old surface that was self-evident --
-// -getSpotlightUrlWithParams:callback: had no other parameter to pass -- but on a shared builder
-// every option is visible and settable, so a channel set for a share link and then carried into a
-// spotlight call would otherwise vanish silently.
-//
-// Truthiness rather than nil checks, matching -longUrlWithBaseUrl:: BranchLinkTypeUnlimitedUse and a
-// matchDuration of 0 are the defaults, so an untouched builder warns about nothing.
 - (void)warnAboutLinkContentUnusedBySpotlight {
     NSMutableArray<NSString *> *ignored = [NSMutableArray array];
 
