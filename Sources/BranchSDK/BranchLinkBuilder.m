@@ -14,6 +14,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCServerResponse.h"
 #import "BranchLogger.h"
+#import "NSError+Branch.h"
 #import "BranchShortUrlRequest.h"
 #import "BranchShortUrlSyncRequest.h"
 #import "BranchSpotlightUrlRequest.h"
@@ -64,12 +65,40 @@
     return self.injectedBranch ?: [Branch sharedInstance];
 }
 
+// Resolves the Branch instance the terminals send through, logging a BNCInitError when the SDK has
+// not been initialized. Terminals call this rather than reading self.branch, which is nil until
+// +[Branch initialize:] has run and is not safe to pass to dispatch_async.
+//
+// @param terminal Name of the calling terminal, used in the logged message.
+// @param error On return, the BNCInitError to hand to the caller's callback. May be NULL.
+// @return The Branch instance, or nil if the SDK has not been initialized.
+- (Branch *)resolvedBranchForTerminal:(NSString *)terminal error:(NSError **)error {
+    Branch *branch = self.branch;
+    if (branch) {
+        return branch;
+    }
+
+    NSString *message = [NSString stringWithFormat:
+        @"-[BranchLinkBuilder %@] requires +[Branch initialize:] to have run. Dropping the request.",
+        terminal];
+    NSError *initError = [NSError branchErrorWithCode:BNCInitError localizedMessage:message];
+    [[BranchLogger shared] logError:message error:initError];
+    if (error) {
+        *error = initError;
+    }
+    return nil;
+}
+
 #pragma mark - Terminals
 
 - (NSString *)fetchShortURL {
     [self warnAboutOptionsUnusedBy:@"fetchShortURL" ignoreUAString:NO useAppLinkDomain:YES];
 
-    Branch *branch = self.branch;
+    Branch *branch = [self resolvedBranchForTerminal:@"fetchShortURL" error:NULL];
+    if (!branch) {
+        return nil;
+    }
+
     BNCLinkData *linkData = [self linkDataWithIgnoreUAString:self.ignoreUAString];
 
     // An ignoreUAString means the caller wants a link that will not be counted as clicked by a
@@ -104,7 +133,16 @@
 - (void)fetchShortURLWithCallback:(callbackWithUrl)callback {
     [self warnAboutOptionsUnusedBy:@"fetchShortURLWithCallback:" ignoreUAString:YES useAppLinkDomain:YES];
 
-    Branch *branch = self.branch;
+    NSError *initError = nil;
+    Branch *branch = [self resolvedBranchForTerminal:@"fetchShortURLWithCallback:" error:&initError];
+    if (!branch) {
+        if (callback) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                callback(nil, initError);
+            });
+        }
+        return;
+    }
 
     // Snapshot every option *before* dispatching.
     //
@@ -169,7 +207,16 @@
     [self warnAboutOptionsUnusedBy:@"fetchSpotlightURLWithCallback:" ignoreUAString:YES useAppLinkDomain:YES];
     [self warnAboutLinkContentUnusedBySpotlight];
 
-    Branch *branch = self.branch;
+    NSError *initError = nil;
+    Branch *branch = [self resolvedBranchForTerminal:@"fetchSpotlightURLWithCallback:" error:&initError];
+    if (!branch) {
+        if (callback) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                callback(@{}, initError);
+            });
+        }
+        return;
+    }
 
     NSDictionary *params = self.params;
 

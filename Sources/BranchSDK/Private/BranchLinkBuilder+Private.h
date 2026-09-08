@@ -18,13 +18,18 @@ NS_ASSUME_NONNULL_BEGIN
  `Branch (LinkGeneration)`.
 
  **Resolved lazily, on each read.** When no instance was injected this returns
- `+[Branch sharedInstance]`, which raises if `+[Branch initialize:]` has not run yet. Resolving in
- `-init` instead would mean that merely constructing a builder before initialization throws. Deferring to the terminal keeps the failure at the point of actual use.
+ `+[Branch sharedInstance]`, which is nil until `+[Branch initialize:]` has run. Resolving in
+ `-init` instead would mean that merely constructing a builder before initialization failed.
+ Deferring to the terminal keeps the failure at the point of actual use.
+
+ Nil here is not safe to pass on: the async terminals dispatch onto `branch.isolationQueue`, and
+ `dispatch_async` with a nil queue crashes. Terminals resolve through
+ `-resolvedBranchForTerminal:error:` instead of reading this directly.
 
  Tests inject a `Branch` whose `serverInterface` is a fake, so the short-URL terminals can be
  exercised without reaching the network.
  */
-@property (nonatomic, strong, readonly) Branch *branch;
+@property (nonatomic, strong, readonly, nullable) Branch *branch;
 
 /**
  Designated initializer behind `-init`.

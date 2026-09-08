@@ -17,6 +17,7 @@
 #import "BNCServerResponse.h"
 #import "BNCServerRequestQueue.h"
 #import "BranchConstants.h"
+#import "NSError+Branch.h"
 #import "BranchShortUrlRequest.h"
 #import "BranchSpotlightUrlRequest.h"
 #import "BranchUniversalObject.h"
@@ -294,10 +295,10 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     XCTAssertIdentical(builder.branch, [Branch sharedInstance]);
 }
 
-// +[Branch sharedInstance] raises when +initialize: has not run. Constructing a builder must not
-// trigger that -- none of the overloads this builder replaces could fail at construction, since
-// they were messages to an instance the caller already held. Resolution is deferred to the first
-// `branch` read, which is inside a terminal.
+// +[Branch sharedInstance] logs a BNCInitError and returns nil when +initialize: has not run.
+// Constructing a builder must not resolve it -- none of the overloads this builder replaces could
+// fail at construction, since they were messages to an instance the caller already held.
+// Resolution is deferred to the first `branch` read, which is inside a terminal.
 - (void)testBranchIsResolvedLazilyRatherThanAtInit {
     [Branch resetInitializationGuardForTesting];
 
@@ -308,8 +309,38 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     // Setting options is likewise safe before initialization.
     XCTAssertNoThrow(builder.channel = @"sms");
 
-    // The deferred resolution is what raises, and only when something actually needs the instance.
-    XCTAssertThrows([builder branch]);
+    // The deferred resolution is what fails, and only when something actually needs the instance.
+    XCTAssertNil([builder branch]);
+}
+
+// The async terminals dispatch onto branch.isolationQueue. With no instance to resolve that is a
+// nil queue, and dispatch_async with a nil queue crashes the calling app rather than reporting
+// anything -- so each terminal has to answer its own contract instead of passing nil along.
+- (void)testTerminalsReportInitErrorRatherThanCrashingBeforeInitialize {
+    [Branch resetInitializationGuardForTesting];
+
+    XCTAssertNil([[[BranchLinkBuilder alloc] init] fetchShortURL],
+                 @"The blocking terminal must report failure by returning nil.");
+
+    XCTestExpectation *shortURLCalledBack = [self expectationWithDescription:@"fetchShortURLWithCallback:"];
+    [[[BranchLinkBuilder alloc] init] fetchShortURLWithCallback:^(NSString *url, NSError *error) {
+        XCTAssertNil(url);
+        XCTAssertEqual(error.code, BNCInitError);
+        [shortURLCalledBack fulfill];
+    }];
+
+    XCTestExpectation *spotlightCalledBack = [self expectationWithDescription:@"fetchSpotlightURLWithCallback:"];
+    [[[BranchLinkBuilder alloc] init] fetchSpotlightURLWithCallback:^(NSDictionary *params, NSError *error) {
+        XCTAssertEqualObjects(params, @{});
+        XCTAssertEqual(error.code, BNCInitError);
+        [spotlightCalledBack fulfill];
+    }];
+
+    // A nil callback must be equally survivable: the crash was in the dispatch, not the callback.
+    XCTAssertNoThrow([[[BranchLinkBuilder alloc] init] fetchShortURLWithCallback:nil]);
+    XCTAssertNoThrow([[[BranchLinkBuilder alloc] init] fetchSpotlightURLWithCallback:nil]);
+
+    [self waitForExpectations:@[shortURLCalledBack, spotlightCalledBack] timeout:5.0];
 }
 
 // buildLongURL needs a Branch key and the preference-helper singleton, neither of which requires

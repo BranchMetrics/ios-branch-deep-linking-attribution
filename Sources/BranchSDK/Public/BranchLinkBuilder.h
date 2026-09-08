@@ -141,7 +141,8 @@ NS_ASSUME_NONNULL_BEGIN
  Reads every link-content property plus `campaign`, `matchDuration`, `linkType` and
  `ignoreUAString`. `useAppLinkDomain` does not apply and is ignored with a warning.
 
- Raises `NSInternalInconsistencyException` if `+[Branch initialize:]` has not run.
+ If `+[Branch initialize:]` has not run there is no instance to send the request through: the call
+ logs a `BNCInitError` and returns nil without reaching the network.
 
  In Swift this is `fetchShortURLSynchronously()`, so it cannot be reached by mistake from an `async`
  context in place of `fetchShortURL(callback:)`'s `async` projection.
@@ -165,7 +166,8 @@ NS_ASSUME_NONNULL_BEGIN
  Reads every link-content property plus `campaign`, `matchDuration` and `linkType`.
  `ignoreUAString` and `useAppLinkDomain` do not apply and are ignored with a warning.
 
- Raises `NSInternalInconsistencyException` if `+[Branch initialize:]` has not run.
+ If `+[Branch initialize:]` has not run there is no instance to send the request through: the
+ callback receives a nil URL and a `BNCInitError`, and nothing reaches the network.
 
  @param callback Receives the short URL, or a long-link fallback plus an error. May be nil, in which
         case the link is still created and cached.
@@ -209,7 +211,8 @@ NS_ASSUME_NONNULL_BEGIN
  The callback is invoked on the **main thread**. On a server error it receives an empty dictionary
  together with the error, rather than nil.
 
- Raises `NSInternalInconsistencyException` if `+[Branch initialize:]` has not run.
+ If `+[Branch initialize:]` has not run there is no instance to send the request through: the
+ callback receives an empty dictionary and a `BNCInitError`, and nothing reaches the network.
 
  @param callback Receives the server's link payload, or an empty dictionary plus an error. May be
         nil, in which case the link is still created.
