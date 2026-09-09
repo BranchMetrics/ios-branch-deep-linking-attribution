@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSString *apiUrl;
 
 /// Optional custom base URL for non-linking ("safe track") calls to the Branch API. Must start with
-/// `http://` or `https://`. Maps to `+[Branch setSafetrackAPIURL:]`.
+/// `http://` or `https://`.
 @property (nonatomic, copy, nullable) NSString *safeTrackAPIUrl;
 
 /// Optional custom base URL used for the CDN pattern list.
@@ -81,7 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, nullable) Class remoteInterface;
 
 /// SDK wait time in seconds for third-party APIs (ODM info, Apple Attribution Token). Must be > 0 and <= 10.
-/// Default matches the SDK default (0.5s). Maps to `+[Branch setSDKWaitTimeForThirdPartyAPIs:]`.
+/// Default matches the SDK default (0.5s).
 @property (nonatomic, assign) NSTimeInterval thirdPartyAPIsWaitTime;
 
 #pragma mark - Privacy & attribution
@@ -126,20 +126,19 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Pasteboard
 
 /// When YES, Branch checks the pasteboard (clipboard) for a Branch Link on app install, which may present
-/// the system paste-permission toast to the user. Equivalent to calling `-[Branch checkPasteboardOnInstall]`
-/// before init. Default NO.
+/// the system paste-permission toast to the user. Default NO.
 @property (nonatomic, assign) BOOL checkPasteboardOnInstall;
 
 #pragma mark - App Clip
 
-/// Optional App Group identifier used to share data between an App Clip and the full app. Maps to
-/// `-[Branch setAppClipAppGroup:]`, which must be set before the first session begins.
+/// Optional App Group identifier used to share data between an App Clip and the full app. Must be
+/// set before the first session begins.
 @property (nonatomic, copy, nullable) NSString *appClipAppGroup;
 
 #pragma mark - Debugging
 
-/// Optional constant parameters merged into every deep-link response, for debugging. Maps to
-/// `-[Branch setDeepLinkDebugMode:]`. Not for production use.
+/// Optional constant parameters merged into every deep-link response, for debugging.
+/// Not for production use.
 @property (nonatomic, copy, nullable) NSDictionary *deepLinkDebugParams;
 
 #pragma mark - Initialization
