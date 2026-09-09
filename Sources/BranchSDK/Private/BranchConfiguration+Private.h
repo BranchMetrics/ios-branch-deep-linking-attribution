@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  `+[Branch initialize:]` uses this so that `euEndpoint = NO` reads as "route to the default
  endpoints" rather than "no opinion". Without it a configuration could only ever turn EU routing on,
- leaving no way to undo a prior `-[Branch useEUEndpoints]` call. A configuration that never touches
+ leaving no way to undo a prior EU routing choice. A configuration that never touches
  `euEndpoint` leaves `BNCServerAPI.useEUServers` alone.
  */
 @property (nonatomic, assign, readonly) BOOL euEndpointWasSet;

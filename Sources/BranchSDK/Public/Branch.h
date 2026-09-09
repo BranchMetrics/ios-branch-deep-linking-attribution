@@ -211,33 +211,11 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 + (nullable instancetype)sharedInstance;
 
 /**
- Set the network service class.
-
- The class must conform to the `BNCNetworkServiceProtocol` and be a drop in replacement for the
- standard Branch SDK networking.
-
- This allows the use of Branch SDK with your own apps network service.
-
- The NetworkServiceClass can be set only once, before the Branch SDK initialization.
-
- @param networkServiceClass     The class to use as the network service class.
-*/
-+ (void)setNetworkServiceClass:(Class)networkServiceClass __attribute__((deprecated("This API is deprecated. Please set config.remoteInterface on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
-
-/**
  Return the Branch SDK network service class.
 
  @return Returns the network service class.
  */
 + (Class)networkServiceClass;
-
-/**
-    Sets Branch to use the test `key_test_...` Branch key found in the Info.plist.
-    This can only be set before `[Branch initialize:]` is called.
-
- @param useTestKey If YES then Branch to use the Branch test found in your app's Info.plist.
-*/
-+ (void)setUseTestBranchKey:(BOOL)useTestKey __attribute__((deprecated("This API is deprecated. Please set config.testMode = YES on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
 
 /// @return Returns true if the Branch test key should be used.
 + (BOOL)useTestBranchKey;
@@ -633,28 +611,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 - (void)enableLoggingAtLevel:(BranchLogLevel)logLevel withCallback:(nullable BranchLogCallback)callback __attribute__((deprecated(("This API is deprecated. Please use the static version."))));
 
 /**
- Send requests to EU endpoints.
-
- This feature must also be enabled on the server side, otherwise the server will drop requests. Contact your account manager for details.
- */
-- (void)useEUEndpoints __attribute__((deprecated("This API is deprecated. Please set config.euEndpoint = YES on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
-
-/**
-Sets a custom base URL for all calls to the Branch API.
-@param url  Base URL that the Branch API will use.
-*/
-+ (void)setAPIUrl:(NSString *)url __attribute__((deprecated("This API is deprecated. Please set config.apiUrl on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
-
-/**
-Sets a custom base safetrack URL for non-linking calls to the Branch API.
-@param url  Base safetrack URL that the Branch API will use.
- */
-
-+ (void)setSafetrackAPIURL:(NSString *)url __attribute__((deprecated("This API is deprecated. Please set config.safeTrackAPIUrl on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
-
-+ (void)setCallbackForTracingRequests: (callbackForTracingRequests) callback __attribute__((deprecated("This API is deprecated. Please set config.requestTracingCallback on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
-
-/**
   @brief        Use the `validateSDKIntegration` method as a debugging aid to assure that you've
                 integrated the Branch SDK correctly.
 
@@ -681,52 +637,6 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 - (void)validateSDKIntegration;
 
 /**
- Specify additional constant parameters to be included in the response
-
- @param debugParams dictionary of keystrings/valuestrings that will be added to response
- */
--(void)setDeepLinkDebugMode:(nullable NSDictionary *)debugParams __attribute__((deprecated("This API is deprecated. Please set config.deepLinkDebugParams on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
-
-/**
- Allow a URI scheme to be tracked by Branch. Default to all schemes.
-
- @param scheme URI scheme allowed to track, i.e. @"http", @"https" or @"myapp"
- */
--(void)addAllowedScheme:(nullable NSString *)scheme __attribute__((deprecated("This API is deprecated. Please use -[BranchConfiguration addAllowedScheme:] and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
-
-/**
- Allow an array of URI schemes to be tracked by Branch. Default to all schemes.
-
- @param schemes An array of URI schemes allowed to track, i.e. @[@"http", @"https", @"myapp"]
- */
--(void)setAllowedSchemes:(nullable NSArray *)schemes __attribute__((deprecated("This API is deprecated. Please use -[BranchConfiguration addAllowedScheme:] and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
-
-/**
- @brief     Sets an array of regex patterns that match URLs for Branch to ignore.
-
- @discusion Set this property to prevent URLs containing sensitive data such as oauth tokens,
-            passwords, login credentials, and other URLs from being transmitted to Branch.
-
-            The Branch SDK already ignores login URLs for Facebook, Twitter, Google, and many oauth
-            security URLs, so it's usually unnecessary to set this parameter yourself.
-
-            Set this parameter with any additional URLs that should be ignored by Branch.
-
-            These are ICU standard regular expressions.
-*/
-- (void)setUrlPatternsToIgnore:(NSArray<NSString *> *)urlsToIgnore __attribute__((deprecated("This API is deprecated. Please set config.urlPatternsToIgnore on BranchConfiguration and call +[Branch initialize:] instead.")));
-
-/**
- Checks the pasteboard (clipboard) for a Branch Link on App Install.
- If found, the Branch Link is used to provide deferred deeplink data.
- 
- This should be called before `+[Branch initialize:]`
-
- Note, this may display a toast message to the end user.
- */
-- (void)checkPasteboardOnInstall __attribute__((deprecated("This API is deprecated. Please set config.checkPasteboardOnInstall = YES on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
-
-/**
  Let's client know if the Branch SDK will trigger a pasteboard toast to the end user.
 
  All of the following conditions must be true.
@@ -736,13 +646,6 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
  3. First time app is run with Branch SDK
  */
 - (BOOL)willShowPasteboardToast;
-
-/**
- Set the AppGroup used to share data between the App Clip and the Full App.
- 
- This must be set before `+[Branch initialize:]` is called.
- */
-- (void)setAppClipAppGroup:(NSString *)appGroup __attribute__((deprecated("This API is deprecated. Please set config.appClipAppGroup on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
 
 /**
  Pass the AppTrackingTransparency authorization status to Branch to measure ATT prompt performance.
@@ -782,35 +685,6 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
  Clears all Partner Parameters
  */
 - (void)clearPartnerParameters;
-
-/**
- Specify the time to wait in seconds between retries in the case of a Branch server error
-
- @param retryInterval Number of seconds to wait between retries.
- */
-- (void)setRetryInterval:(NSTimeInterval)retryInterval __attribute__((deprecated("This API is deprecated. Please set config.retryInterval on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
-
-/**
- Specify the max number of times to retry in the case of a Branch server error
-
- @param maxRetries Number of retries to make.
- */
-- (void)setMaxRetries:(NSInteger)maxRetries __attribute__((deprecated("This API is deprecated. Please set config.retryCount on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
-
-/**
- Specify the amount of time before a request should be considered "timed out"
-
- @param timeout Number of seconds to before a request is considered timed out.
- */
-- (void)setNetworkTimeout:(NSTimeInterval)timeout __attribute__((deprecated("This API is deprecated. Please set config.networkTimeout on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
-
-/**
- Set the SDK wait time for third party APIs (for fetching ODM info and Apple Attribution Token) to finish
- This timeout should be > 0 and <= 10 seconds.
-
- @param waitTime Number of seconds before third party API calls are considered timed out. Default is 0.5 seconds (500ms).
- */
-+ (void)setSDKWaitTimeForThirdPartyAPIs:(NSTimeInterval)waitTime __attribute__((deprecated("This API is deprecated. Please set config.thirdPartyAPIsWaitTime on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
 
 /**
  Disable callouts to ad networks for all events for a user; by default Branch sends callouts to ad networks.
@@ -888,16 +762,6 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
  @param validityWindow -(NSTimeInterval) number of seconds for which referrer_gbraid will be valid starting from now.
  */
 + (void) setReferrerGbraidValidityWindow:(NSTimeInterval) validityWindow;
-
-/*
-
- Sets the value of parameters required by Google Conversion APIs for DMA Compliance in EEA region.
-
- @param eeaRegion -(BOOL) If European regulations, including the DMA, apply to this user and conversion.
- @param adPersonalizationConsent - (BOOL) If End user has granted/denied ads personalization consent.
- @param adUserDataUsageConsent - (BOOL) If User has granted/denied consent for 3P transmission of user level data for ads
- */
-+ (void) setDMAParamsForEEA:(BOOL) eeaRegion AdPersonalizationConsent:(BOOL) adPersonalizationConsent AdUserDataUsageConsent:(BOOL) adUserDataUsageConsent __attribute__((deprecated("This API is deprecated. Please set config.dmaParameters on BranchConfiguration and call +[Branch initialize:config] instead. This function will be made non-public in a future release.")));
 
 /**
  Sets the ODM ( Fetched using Google framework - AppAdsOnDeviceConversion:fetchAggregateConversionInfoForInteraction ) info in SDK.
