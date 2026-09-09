@@ -168,9 +168,6 @@ void ForceCategoriesToLoad(void) {
 // Private method used internally
 - (void)clearLinkIdentifiers;
 
-+ (void)applyDeprecatedSettersFromConfiguration:(BranchConfiguration *)configuration
-                                        toBranch:(Branch *)branch;
-
 @end
 
 @implementation Branch
@@ -240,10 +237,6 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
         bnc_didInitializeWithConfiguration = YES;
 
         // --- Settings that must be applied before the singleton is created ---
-        // These setters are deprecated for external callers, but +initialize: is their canonical
-        // internal application point, so suppress the deprecation warning at these call sites.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
         // Test key must be resolved before the branch key is read.
         [Branch setUseTestBranchKey:configuration.testMode];
@@ -252,8 +245,6 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
         if (configuration.remoteInterface) {
             [Branch setNetworkServiceClass:configuration.remoteInterface];
         }
-
-#pragma clang diagnostic pop
 
         // Set the branch key explicitly so it takes precedence over Info.plist / branch.json.
         self.branchKey = configuration.branchKey;
@@ -290,12 +281,26 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
 + (void)applyConfiguration:(BranchConfiguration *)configuration toBranch:(Branch *)branch {
     [Branch applyLoggingConfiguration:configuration];
 
-    [Branch applyDeprecatedSettersFromConfiguration:configuration toBranch:branch];
+    // Request tracing & custom endpoints
+    if (configuration.requestTracingCallback) {
+        [Branch setCallbackForTracingRequests:configuration.requestTracingCallback];
+    }
+    if (configuration.apiUrl) {
+        [Branch setAPIUrl:configuration.apiUrl];
+    }
+    if (configuration.safeTrackAPIUrl) {
+        [Branch setSafetrackAPIURL:configuration.safeTrackAPIUrl];
+    }
+
+    // Pasteboard
+    if (configuration.checkPasteboardOnInstall) {
+        [branch checkPasteboardOnInstall];
+    }
 
     // Identity & environment. These mutate the BNCServerAPI / BNCPreferenceHelper singletons, whose
     // values are read lazily at request time, so they don't need to precede singleton creation.
-    // Assigned rather than only turned on, so `euEndpoint = NO` can undo a prior -useEUEndpoints
-    // call. A configuration that never touches euEndpoint leaves the current routing alone.
+    // Assigned rather than only turned on, so `euEndpoint = NO` can undo a prior EU routing choice.
+    // A configuration that never touches euEndpoint leaves the current routing alone.
     if (configuration.euEndpointWasSet) {
         [BNCServerAPI sharedInstance].useEUServers = configuration.euEndpoint;
     }
@@ -304,16 +309,13 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     }
 
     // Network
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [branch setNetworkTimeout:configuration.networkTimeout];
-    
+
     [branch setMaxRetries:configuration.retryCount];
-    
+
     [branch setRetryInterval:configuration.retryInterval];
-    
+
     [Branch setSDKWaitTimeForThirdPartyAPIs:configuration.thirdPartyAPIsWaitTime];
-#pragma clang diagnostic pop
 
     // Privacy & attribution
     [branch disableAdNetworkCallouts:configuration.adNetworkCalloutsDisabled];
@@ -332,23 +334,18 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     }
 
     // URL collection
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (configuration.allowedSchemes.count > 0) {
         [branch setAllowedSchemes:configuration.allowedSchemes];
     }
     if (configuration.urlPatternsToIgnore.count > 0) {
         [branch setUrlPatternsToIgnore:configuration.urlPatternsToIgnore];
     }
-#pragma clang diagnostic pop
 
     // Request metadata
     for (NSString *key in configuration.requestMetadata) {
         [branch setRequestMetadataKey:key value:configuration.requestMetadata[key]];
     }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     // App Clip
     if (configuration.appClipAppGroup) {
         [branch setAppClipAppGroup:configuration.appClipAppGroup];
@@ -358,33 +355,11 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     if (configuration.deepLinkDebugParams) {
         [branch setDeepLinkDebugMode:configuration.deepLinkDebugParams];
     }
-#pragma clang diagnostic pop
 
     // Open tracking: when automatic open tracking is disabled the developer is responsible for -sendOpen.
     if (!configuration.automaticOpenEvents) {
         [Branch disableNextForegroundForTimeInterval:0];
     }
-}
-
-// Applies the setters below that are deprecated for external callers but still needed internally.
-+ (void)applyDeprecatedSettersFromConfiguration:(BranchConfiguration *)configuration
-                                        toBranch:(Branch *)branch {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if (configuration.requestTracingCallback) {
-        [Branch setCallbackForTracingRequests:configuration.requestTracingCallback];
-    }
-    if (configuration.apiUrl) {
-        [Branch setAPIUrl:configuration.apiUrl];
-    }
-    if (configuration.safeTrackAPIUrl) {
-        [Branch setSafetrackAPIURL:configuration.safeTrackAPIUrl];
-    }
-    // Pasteboard
-    if (configuration.checkPasteboardOnInstall) {
-        [branch checkPasteboardOnInstall];
-    }
-#pragma clang diagnostic pop
 }
 
 - (id)initWithInterface:(BNCServerInterface *)interface
@@ -444,10 +419,6 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     [BranchConfigurationController sharedInstance].deferInitForPluginRuntime = self.deferInitForPluginRuntime;
 
 
-    // These setters are deprecated for external callers; the branch.json fallback path applies them
-    // internally, so suppress the deprecation warning at these call sites.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (config.apiUrl) {
         [Branch setAPIUrl:config.apiUrl];
     }
@@ -459,7 +430,6 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     if (config.checkPasteboardOnInstall) {
         [self checkPasteboardOnInstall];
     }
-#pragma clang diagnostic pop
 
     if (config.cppLevel) {
         // Runs during singleton construction, so route through self rather than the shared accessor
@@ -628,12 +598,7 @@ static NSString *bnc_branchKey = nil;
         BranchJsonConfig *config = BranchJsonConfig.instance;
         BOOL usingTestInstance = bnc_useTestBranchKey || config.useTestInstance;
         branchKey = config.branchKey ?: usingTestInstance ? config.testKey : config.liveKey;
-        // +setUseTestBranchKey: is deprecated for external callers; this internal resolution path
-        // still needs it, so suppress the deprecation warning at this call site.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [self setUseTestBranchKey:usingTestInstance];
-#pragma clang diagnostic pop
 
         if (branchKey) {
             branchKeySource = BRANCH_KEY_SOURCE_CONFIG_JSON;
@@ -695,10 +660,6 @@ static NSString *bnc_branchKey = nil;
     if (callback) {
         logger.advancedLogCallback = callback;
     }
-}
-
-- (void)useEUEndpoints {
-    [BNCServerAPI sharedInstance].useEUServers = YES;
 }
 
 + (void)setAPIUrl:(NSString *)url {
@@ -830,12 +791,6 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
-+ (void) setDMAParamsForEEA:(BOOL)eeaRegion AdPersonalizationConsent:(BOOL)adPersonalizationConsent AdUserDataUsageConsent:(BOOL)adUserDataUsageConsent{
-    [BNCPreferenceHelper sharedInstance].eeaRegion = eeaRegion;
-    [BNCPreferenceHelper sharedInstance].adPersonalizationConsent = adPersonalizationConsent;
-    [BNCPreferenceHelper sharedInstance].adUserDataUsageConsent = adUserDataUsageConsent;
-}
-
 + (void)setODMInfo:(NSString *)odmInfo andFirstOpenTimestamp:(NSDate *) firstOpenTimestamp {
 #if !TARGET_OS_TV
     @synchronized (self) {
@@ -901,10 +856,6 @@ static NSString *bnc_branchKey = nil;
 
 - (void)setAllowedSchemes:(NSArray *)schemes {
     self.allowedSchemeList = [schemes mutableCopy];
-}
-
-- (void)addAllowedScheme:(NSString *)scheme {
-    [self.allowedSchemeList addObject:scheme];
 }
 
 - (void)setUrlPatternsToIgnore:(NSArray<NSString*>*)urlsToIgnore {
