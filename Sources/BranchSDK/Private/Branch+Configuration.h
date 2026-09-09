@@ -2,6 +2,8 @@
 //  Branch+Configuration.h
 //  BranchSDK
 //
+//  Created by Brandon Boothe on 9/9/26.
+//
 //  Copyright © 2026 Branch, Inc. All rights reserved.
 //
 
