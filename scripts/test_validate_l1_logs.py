@@ -293,6 +293,44 @@ class N3ContractTests(unittest.TestCase):
         self.assertEqual(set(v.contract_for("N3")["counts"]), {"/v3/deeplink", "/v3/events/open"})
 
 
+class C1ContractTests(unittest.TestCase):
+    """C1 cold_https: a Universal Link delivered into a freshly launched
+    process. Fixtures derived from a real capture measured 2026-08-28 on an
+    iPhone 16e, with the device and account identifiers replaced."""
+
+    def test_the_cold_link_capture_passes(self):
+        errors, _ = _run_validation("c1_cold_https.txt", v.contract_for("C1"))
+        self.assertEqual(errors, [], f"Unexpected errors: {errors}")
+
+    def test_a_resolution_with_no_attributed_open_fails(self):
+        # The regression C1 exists to catch: the link resolves and the open
+        # that attributes it never follows. Both halves of the contract fire.
+        errors, _ = _run_validation("c1_no_attributed_open.txt", v.contract_for("C1"))
+        self.assertTrue(
+            any("Expected 2 '/v3/events/open'" in e for e in errors), errors
+        )
+        self.assertTrue(any("after" in e for e in errors), errors)
+
+    def test_two_opens_is_the_contract_not_a_duplicate(self):
+        # The launch open and the attributed open are both correct. The
+        # ticket originally asked for one, which would fail a healthy SDK.
+        self.assertEqual(v.contract_for("C1")["counts"]["/v3/events/open"], 2)
+
+    def test_the_two_opens_are_distinguishable_by_payload(self):
+        # Not asserted by the contract, which is bounded at counts and order.
+        # Pinned here so a future field-level contract has its discriminator:
+        # only the attributed open carries link data.
+        entries = v.parse_branch_logs(_fixture("c1_cold_https.txt"))
+        opens = [e for e in entries if e["uri"] == "/v3/events/open"]
+        self.assertEqual(len(opens), 2)
+        self.assertNotIn("link_data", opens[0]["request"])
+        self.assertIn("link_data", opens[1]["request"])
+
+    def test_c1_does_not_assert_that_the_resolution_carries_the_link(self):
+        # Recorded, not hidden: field-level, same boundary as N1 and N3.
+        self.assertEqual(set(v.contract_for("C1")["counts"]), {"/v3/deeplink", "/v3/events/open"})
+
+
 class HappyPathTests(unittest.TestCase):
     """Every required field is present — validator must return no errors."""
 
