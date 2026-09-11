@@ -158,16 +158,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [TestBedDeepLinkTestHook installIfRequested:application];
 #endif
 
-    // Set user Alias Example
-
-//    [[Branch sharedInstance] setUserAlias:@"your_user_alias" completion:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
-//        if (error) {
-//            NSLog(@"Error setting user alias: %@", error);
-//        } else {
-//            NSLog(@"Successfully set alias. Response: %@", params);
-//        }
-//    }];
-
 #if BRANCH_TESTBED_LINK_BUILDER_EXAMPLE
     [self branchLinkBuilderExample];
 #endif
@@ -190,18 +180,20 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     linkProperties.stage = @"launch";
     linkProperties.tags = @[@"example"];
 
-    // `params` carries both Branch-reserved keys, which control how the link behaves, and your own
-    // keys, which come back to you in the deep-link callback.
-    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
-    builder.params = @{
+    // `controlParams` is the link's data payload. It carries both Branch-reserved keys, which
+    // control how the link behaves, and your own keys, which come back to you in the deep-link
+    // callback.
+    linkProperties.controlParams = @{
         @"$og_title": @"Branch TestBed",
         @"$og_description": @"A link made with BranchLinkBuilder",
         @"deeplink_text": @"Opened from a builder-generated link",
     };
 
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
+
     // ── Long URL: offline, synchronous ───────────────────────────────────
-    // `params` are JSON-encoded and base64'd into the URL itself, so this needs no network and
-    // returns immediately.
+    // `controlParams` are JSON-encoded and base64'd into the URL itself, so this needs no network
+    // and returns immediately.
     NSString *longURL = [builder getLongURLWithLinkProperties:linkProperties useAppLinkDomain:NO];
     NSLog(@"Branch TestBed: long URL: %@", longURL);
 

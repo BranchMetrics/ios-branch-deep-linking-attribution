@@ -65,7 +65,8 @@ static NSString * const kTestBranchKey = @"key_live_hcnegAumkH7Kv18M8AOHhfgiohpX
                   @"expected prefix %@, got %@", expectedPrefix, bsl.shareURL.absoluteString);
 }
 
-// A default builder emits neither type= nor matchDuration=, and a long URL never carries a campaign.
+// Default link properties emit neither type= nor duration=, and the placeholder is built from a
+// link-properties subset that carries no campaign.
 - (void)testPlaceholderURLOmitsTypeMatchDurationAndCampaign {
     BranchUniversalObject *buo = [[BranchUniversalObject alloc] initWithCanonicalIdentifier:@"test/001"];
     BranchLinkProperties *lp = [[BranchLinkProperties alloc] init];
@@ -77,7 +78,7 @@ static NSString * const kTestBranchKey = @"key_live_hcnegAumkH7Kv18M8AOHhfgiohpX
     NSString *url = bsl.shareURL.absoluteString;
     XCTAssertFalse([url containsString:@"campaign"]);
     XCTAssertFalse([url containsString:@"type="]);
-    XCTAssertFalse([url containsString:@"matchDuration="]);
+    XCTAssertFalse([url containsString:@"duration="]);
 }
 
 // An explicit placeholderURL short-circuits link generation entirely.

@@ -169,23 +169,20 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     self.branch = [Branch initialize:config];
 }
 
-// The link content and behavior the terminals take as an argument. Most tests below vary one option,
-// so they build their own; this is the shared shape.
+// The link content, behavior and data the terminals take as an argument. Most tests below vary one
+// option, so they build their own; this is the shared shape. The control params are the payload
+// kEncodedKeyValueParams is the base64 of.
 - (BranchLinkProperties *)linkPropertiesWithChannel:(NSString *)channel {
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.channel = channel;
+    linkProperties.controlParams = @{@"key": @"value"};
     return linkProperties;
 }
 
 #pragma mark - Defaults
 
-- (void)testBuilderDefaults {
-    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
-    XCTAssertNil(builder.params);
-}
-
-// Every other link option now lives on BranchLinkProperties, so its defaults are what decide what a
-// link with no options set sends.
+// Every link option lives on BranchLinkProperties, so its defaults are what decide what a link
+// with no options set sends. The builder itself holds no state.
 - (void)testLinkPropertiesDefaults {
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
 
@@ -198,6 +195,10 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 
     XCTAssertEqual(linkProperties.matchDuration, (NSUInteger)0);
     XCTAssertEqual(linkProperties.linkType, BranchLinkTypeUnlimitedUse);
+
+    // Not nil: the getter lazily substitutes an empty dictionary. The builder has to treat that as
+    // "no params" -- see testLinkDataTreatsEmptyControlParamsAsNoParams.
+    XCTAssertEqualObjects(linkProperties.controlParams, @{});
 }
 
 // BranchLinkTypeUnlimitedUse is 0, which is what lets longUrlWithBaseUrl:'s `if (type)` guard omit
@@ -210,27 +211,17 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 
 #pragma mark - Property round-trips
 
-- (void)testParamsRoundTrips {
-    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
-    NSDictionary *params = @{@"$og_title": @"Sale", @"custom": @2};
+- (void)testControlParamsRoundTrip {
+    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    NSDictionary *controlParams = @{@"$og_title": @"Sale", @"custom": @2};
 
-    builder.params = params;
-    XCTAssertEqualObjects(builder.params, params);
+    linkProperties.controlParams = controlParams;
+    XCTAssertEqualObjects(linkProperties.controlParams, controlParams);
 
-    builder.params = nil;
-    XCTAssertNil(builder.params);
-}
-
-// params is declared `copy`, so a caller mutating the dictionary it handed over cannot change what
-// the builder will send. The terminals read it long after assignment.
-- (void)testParamsIsCopied {
-    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
-
-    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:@{@"a": @"b"}];
-    builder.params = params;
-    params[@"c"] = @"d";
-
-    XCTAssertEqualObjects(builder.params, @{@"a": @"b"});
+    // -addControlParam:withValue: rebuilds the dictionary rather than mutating it in place.
+    [linkProperties addControlParam:@"$desktop_url" withValue:@"https://example.com"];
+    XCTAssertEqualObjects(linkProperties.controlParams[@"$og_title"], @"Sale");
+    XCTAssertEqualObjects(linkProperties.controlParams[@"$desktop_url"], @"https://example.com");
 }
 
 - (void)testLinkPropertiesRoundTrip {
@@ -308,9 +299,6 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     XCTAssertNoThrow(builder = [[BranchLinkBuilder alloc] init]);
     XCTAssertNotNil(builder);
 
-    // Setting params is likewise safe before initialization.
-    XCTAssertNoThrow(builder.params = @{@"key": @"value"});
-
     // The deferred resolution is what fails, and only when something actually needs the instance.
     XCTAssertNil([builder branch]);
 }
@@ -357,7 +345,6 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     [Branch resetInitializationGuardForTesting];
 
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
-    builder.params = @{@"key": @"value"};
 
     NSString *url = nil;
     XCTAssertNoThrow(url = [builder getLongURLWithLinkProperties:nil useAppLinkDomain:NO]);
@@ -378,13 +365,12 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 #pragma mark - getLongURLWithLinkProperties:useAppLinkDomain:
 
 - (BranchLinkBuilder *)longURLBuilder {
-    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:self.branch];
-    builder.params = @{@"key": @"value"};
-    return builder;
+    return [[BranchLinkBuilder alloc] initWithBranch:self.branch];
 }
 
 - (BranchLinkProperties *)fullyPopulatedLinkProperties {
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.controlParams = @{@"key": @"value"};
     linkProperties.tags = @[@"tag1", @"tag2"];
     linkProperties.alias = @"alias1";
     linkProperties.channel = @"channel1";
@@ -471,17 +457,19 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 
 // BranchLinkTypeUnlimitedUse is 0 and matchDuration defaults to 0, and both are emitted behind
 // truthiness guards, so default link properties must emit neither.
-- (void)testLongURLOmitsTypeAndMatchDurationAtDefaults {
+- (void)testLongURLOmitsTypeAndDurationAtDefaults {
     [BNCPreferenceHelper sharedInstance].userUrl = nil;
 
     NSString *url = [[self longURLBuilder] getLongURLWithLinkProperties:[self fullyPopulatedLinkProperties]
                                                       useAppLinkDomain:NO];
 
     XCTAssertFalse([url containsString:@"type="], @"%@", url);
-    XCTAssertFalse([url containsString:@"matchDuration="], @"%@", url);
+    XCTAssertFalse([url containsString:@"duration="], @"%@", url);
 }
 
-- (void)testLongURLEmitsTypeAndMatchDurationWhenSet {
+// matchDuration is the property name; `duration` is the wire spelling -- the one
+// BRANCH_REQUEST_KEY_URL_DURATION, the Web SDK and Android's ServerRequestCreateUrl all use.
+- (void)testLongURLEmitsTypeAndDurationWhenSet {
     [BNCPreferenceHelper sharedInstance].userUrl = nil;
 
     BranchLinkProperties *linkProperties = [self fullyPopulatedLinkProperties];
@@ -490,7 +478,7 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 
     NSString *expected = [NSString stringWithFormat:
         @"https://bnc.lt/a/%@?tags=tag1&tags=tag2&alias=alias1&channel=channel1&feature=feature1"
-        @"&stage=stage1&type=1&matchDuration=300&source=ios&data=%@",
+        @"&stage=stage1&type=1&duration=300&source=ios&data=%@",
         kTestBranchKey, kEncodedKeyValueParams];
 
     NSString *url = [[self longURLBuilder] getLongURLWithLinkProperties:linkProperties
@@ -499,21 +487,32 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     XCTAssertEqualObjects(url, expected);
 }
 
-// campaign has no place in a long URL. The methods this replaces had no campaign parameter at all,
-// so setting one must not change the output.
-- (void)testLongURLIgnoresCampaign {
+// The methods this replaces had no campaign parameter, so a campaign never reached a long link.
+// It does now, after `stage` and before `type`, matching Android's ServerRequestCreateUrl.
+- (void)testLongURLEmitsCampaign {
     [BNCPreferenceHelper sharedInstance].userUrl = nil;
-
-    NSString *without = [[self longURLBuilder] getLongURLWithLinkProperties:[self fullyPopulatedLinkProperties]
-                                                          useAppLinkDomain:NO];
 
     BranchLinkProperties *linkProperties = [self fullyPopulatedLinkProperties];
     linkProperties.campaign = @"back-to-school";
 
-    NSString *with = [[self longURLBuilder] getLongURLWithLinkProperties:linkProperties
-                                                       useAppLinkDomain:NO];
+    NSString *expected = [NSString stringWithFormat:
+        @"https://bnc.lt/a/%@?tags=tag1&tags=tag2&alias=alias1&channel=channel1&feature=feature1"
+        @"&stage=stage1&campaign=back-to-school&source=ios&data=%@",
+        kTestBranchKey, kEncodedKeyValueParams];
 
-    XCTAssertEqualObjects(with, without);
+    NSString *url = [[self longURLBuilder] getLongURLWithLinkProperties:linkProperties
+                                                      useAppLinkDomain:NO];
+
+    XCTAssertEqualObjects(url, expected);
+}
+
+- (void)testLongURLOmitsCampaignWhenUnset {
+    [BNCPreferenceHelper sharedInstance].userUrl = nil;
+
+    NSString *url = [[self longURLBuilder] getLongURLWithLinkProperties:[self fullyPopulatedLinkProperties]
+                                                      useAppLinkDomain:NO];
+
+    XCTAssertFalse([url containsString:@"campaign="], @"%@", url);
 }
 
 // Values go through +[BNCEncodingUtils stringByPercentEncodingStringForQuery:], which uses
@@ -554,10 +553,11 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 - (void)testLongURLPercentEncodesTheBase64DataParameter {
     [BNCPreferenceHelper sharedInstance].userUrl = nil;
 
-    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:self.branch];
-    builder.params = @{BRANCH_LINK_DATA_KEY_EMAIL_HTML_HEADER: @"<style>a{color:red}</style>"};
+    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.controlParams = @{BRANCH_LINK_DATA_KEY_EMAIL_HTML_HEADER: @"<style>a{color:red}</style>"};
 
-    NSString *url = [builder getLongURLWithLinkProperties:nil useAppLinkDomain:NO];
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:self.branch];
+    NSString *url = [builder getLongURLWithLinkProperties:linkProperties useAppLinkDomain:NO];
     NSString *data = [url componentsSeparatedByString:@"&data="].lastObject;
 
     XCTAssertTrue([data containsString:@"%2B"], @"expected an escaped '+', got %@", url);
@@ -570,7 +570,7 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     NSDictionary *roundTripped = [NSJSONSerialization JSONObjectWithData:[[NSData alloc] initWithBase64EncodedString:decoded options:0]
                                                                  options:0
                                                                    error:nil];
-    XCTAssertEqualObjects(roundTripped, builder.params);
+    XCTAssertEqualObjects(roundTripped, linkProperties.controlParams);
 }
 
 // -sanitizedMutableBaseURL: strips a randomized bundle token at attribution level NONE. That must
@@ -585,8 +585,12 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 
     [BNCPreferenceHelper sharedInstance].attributionLevel = savedLevel;
 
-    NSString *expectedPrefix = [NSString stringWithFormat:@"https://bnc.lt/a/%@?tags=tag1", kTestBranchKey];
-    XCTAssertTrue([url hasPrefix:expectedPrefix], @"%@", url);
+    NSString *expected = [NSString stringWithFormat:
+        @"https://bnc.lt/a/%@?tags=tag1&tags=tag2&alias=alias1&channel=channel1&feature=feature1"
+        @"&stage=stage1&source=ios&data=%@", kTestBranchKey, kEncodedKeyValueParams];
+
+    XCTAssertEqualObjects(url, expected,
+                          @"the query separator must survive the randomized-token strip");
 }
 
 #pragma mark - Short URL — link data / cache key
@@ -597,7 +601,6 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 // deletion of that overload.
 - (void)testLinkDataMatchesTheDocumentedSetupSequence {
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:self.branch];
-    builder.params = @{@"key": @"value"};
 
     BranchLinkProperties *linkProperties = [self fullyPopulatedLinkProperties];
     linkProperties.campaign = @"campaign1";
@@ -645,11 +648,39 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     XCTAssertNotEqualObjects(withUA.data, withoutUA.data);
 }
 
+// -[BranchLinkProperties controlParams] lazily returns an empty dictionary, and
+// -[BNCLinkData setupParams:] only skips a *nil* one -- so passing it straight through would start
+// sending "data": {} on every optionless link, where the deleted overloads sent no data key at all.
+- (void)testLinkDataTreatsEmptyControlParamsAsNoParams {
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:self.branch];
+    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.channel = @"sms";
+
+    BNCLinkData *linkData = [builder linkDataWithLinkProperties:linkProperties ignoreUAString:nil];
+
+    XCTAssertNil(linkData.data[BRANCH_REQUEST_KEY_URL_DATA]);
+    XCTAssertEqualObjects(linkData.data[BRANCH_REQUEST_KEY_URL_CHANNEL], @"sms");
+}
+
+// ...and the same request body, which is what the server sees.
+- (void)testEmptyControlParamsSendNoDataKey {
+    BNCFakeServerInterface *fake = [[BNCFakeServerInterface alloc] init];
+    fake.stubResponse = [BNCFakeServerInterface responseWithStatusCode:200 url:@"https://example.app.link/abc123"];
+
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:[self branchWithFakeInterface:fake linkCache:[[BNCLinkCache alloc] init]]];
+    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.channel = @"sms";
+
+    [builder getShortURLWithLinkProperties:linkProperties];
+
+    XCTAssertEqual(fake.requestCount, 1);
+    XCTAssertNil(fake.lastPostBody[BRANCH_REQUEST_KEY_URL_DATA]);
+}
+
 // The link properties the builder reads come from the argument, so nil must be equivalent to a
 // BranchLinkProperties with nothing set rather than a special case.
 - (void)testNilLinkPropertiesMatchDefaultLinkProperties {
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:self.branch];
-    builder.params = @{@"key": @"value"};
 
     BNCLinkData *fromNil = [builder linkDataWithLinkProperties:nil ignoreUAString:nil];
     BNCLinkData *fromDefaults = [builder linkDataWithLinkProperties:[[BranchLinkProperties alloc] init]
@@ -755,7 +786,6 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     fake.stubResponse = [BNCFakeServerInterface responseWithStatusCode:200 url:@"https://example.app.link/abc123"];
 
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:[self branchWithFakeInterface:fake linkCache:[[BNCLinkCache alloc] init]]];
-    builder.params = @{@"key": @"value"};
 
     BranchLinkProperties *linkProperties = [self fullyPopulatedLinkProperties];
     linkProperties.campaign = @"campaign1";
@@ -1134,16 +1164,15 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     XCTAssertEqualObjects(fake.lastKey, kTestBranchKey);
 }
 
-// The spotlight terminal takes its params as an argument and does not read the params property, so
-// a builder carrying params from an earlier share link must not leak them into the spotlight body.
-// Everything else about the link is fixed by BranchSpotlightUrlRequest and cannot be passed at all.
-- (void)testSpotlightURLUsesItsArgumentAndIgnoresTheParamsProperty {
+// A Spotlight link's shape is fixed by BranchSpotlightUrlRequest, so the terminal takes no link
+// properties at all and its data payload is the argument. Nothing about an ordinary link can reach
+// this body.
+- (void)testSpotlightURLSendsOnlyItsArgumentAndTheFixedChannel {
     BNCRecordingRequestQueue *queue = [[BNCRecordingRequestQueue alloc] init];
     BNCFakeServerInterface *fake = [[BNCFakeServerInterface alloc] init];
     Branch *branch = [self branchWithRecordingQueue:queue fakeInterface:fake];
 
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:branch];
-    builder.params = @{@"key": @"from-the-property"};
 
     [builder getSpotlightURLWithParams:@{@"key": @"from-the-argument"} callback:nil];
 
@@ -1261,7 +1290,6 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     Branch *branch = [self branchWithRecordingQueue:queue linkCache:linkCache];
 
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:branch];
-    builder.params = @{@"key": @"value"};
     // A cached entry under the key the short-URL terminals would use for these options.
     [linkCache setObject:@"https://example.app.link/cached"
                   forKey:[builder linkDataWithLinkProperties:nil ignoreUAString:nil]];
@@ -1359,11 +1387,8 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 // seeding it under exactly the options BranchUniversalObject is expected to produce turns "did it
 // build the right BNCLinkData?" into a hit-or-miss with no network call. BNCLinkCache keys on
 // -[BNCLinkData hash], so one wrong option is a different key and a miss.
-- (void)seedSharedLinkCacheWithURL:(NSString *)url
-                            params:(NSDictionary *)params
-                    linkProperties:(BranchLinkProperties *)linkProperties {
+- (void)seedSharedLinkCacheWithURL:(NSString *)url linkProperties:(BranchLinkProperties *)linkProperties {
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
-    builder.params = params;
     [[Branch sharedInstance].linkCache setObject:url
                                           forKey:[builder linkDataWithLinkProperties:linkProperties
                                                                       ignoreUAString:nil]];
@@ -1373,6 +1398,23 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     BranchUniversalObject *buo = [[BranchUniversalObject alloc] initWithCanonicalIdentifier:@"test/001"];
     buo.title = @"Title";
     return buo;
+}
+
+// What BranchUniversalObject is expected to hand the builder: the caller's link properties with the
+// control params replaced by the full server-request payload.
+- (BranchLinkProperties *)expectedRequestPropertiesFor:(BranchUniversalObject *)buo
+                                        linkProperties:(BranchLinkProperties *)linkProperties {
+    BranchLinkProperties *expected = [[BranchLinkProperties alloc] init];
+    expected.tags = linkProperties.tags;
+    expected.alias = linkProperties.alias;
+    expected.channel = linkProperties.channel;
+    expected.feature = linkProperties.feature;
+    expected.stage = linkProperties.stage;
+    expected.campaign = linkProperties.campaign;
+    expected.matchDuration = linkProperties.matchDuration;
+    expected.linkType = linkProperties.linkType;
+    expected.controlParams = [buo getParamsForServerRequestWithAddedLinkProperties:linkProperties];
+    return expected;
 }
 
 - (BranchLinkProperties *)linkPropertiesForLinkTestsWithAlias:(NSString *)alias {
@@ -1413,9 +1455,7 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     BranchLinkProperties *lp = [self linkPropertiesForLinkTestsWithAlias:alias];
     NSString *cached = @"https://example.app.link/buo-sync";
 
-    [self seedSharedLinkCacheWithURL:cached
-                              params:[buo getParamsForServerRequestWithAddedLinkProperties:lp]
-                      linkProperties:lp];
+    [self seedSharedLinkCacheWithURL:cached linkProperties:[self expectedRequestPropertiesFor:buo linkProperties:lp]];
 
     XCTAssertEqualObjects([buo getShortUrlWithLinkProperties:lp], cached,
                           @"a miss means the options handed to the builder differ from the link "
@@ -1428,9 +1468,7 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     BranchLinkProperties *lp = [self linkPropertiesForLinkTestsWithAlias:alias];
     NSString *cached = @"https://example.app.link/buo-async";
 
-    [self seedSharedLinkCacheWithURL:cached
-                              params:[buo getParamsForServerRequestWithAddedLinkProperties:lp]
-                      linkProperties:lp];
+    [self seedSharedLinkCacheWithURL:cached linkProperties:[self expectedRequestPropertiesFor:buo linkProperties:lp]];
 
     XCTestExpectation *calledBack = [self expectationWithDescription:@"callback"];
     __block NSString *deliveredURL = nil;
@@ -1444,6 +1482,23 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 
     XCTAssertEqualObjects(deliveredURL, cached);
     XCTAssertTrue(onMainThread);
+}
+
+// BranchUniversalObject folds its own dictionary into the control params it sends, which means
+// deriving a new BranchLinkProperties -- the caller's object belongs to the app and outlives the
+// call, so writing the payload into it would be visible corruption.
+- (void)testUniversalObjectDoesNotMutateTheCallersLinkProperties {
+    BranchUniversalObject *buo = [self universalObjectForLinkTests];
+    BranchLinkProperties *lp = [self linkPropertiesForLinkTestsWithAlias:[[NSUUID UUID] UUIDString]];
+    [lp addControlParam:@"$desktop_url" withValue:@"https://example.com"];
+
+    NSString *cached = @"https://example.app.link/buo-no-mutation";
+    [self seedSharedLinkCacheWithURL:cached linkProperties:[self expectedRequestPropertiesFor:buo linkProperties:lp]];
+
+    XCTAssertEqualObjects([buo getShortUrlWithLinkProperties:lp], cached);
+
+    XCTAssertEqualObjects(lp.controlParams, @{@"$desktop_url": @"https://example.com"},
+                          @"the caller's control params must come back untouched");
 }
 
 // Both short-URL methods bail before any link generation when the content cannot be identified.

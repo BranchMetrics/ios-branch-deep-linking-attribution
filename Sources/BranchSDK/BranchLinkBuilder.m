@@ -40,7 +40,6 @@
     if (!self) return self;
 
     _injectedBranch = branch;
-    _params = nil;
 
     return self;
 }
@@ -108,7 +107,7 @@
                                                 feature:linkProperties.feature
                                                   stage:linkProperties.stage
                                                campaign:linkProperties.campaign
-                                                 params:self.params
+                                                 params:[self paramsFromLinkProperties:linkProperties]
                                                linkData:linkData
                                               linkCache:branch.linkCache];
 
@@ -148,7 +147,7 @@
     NSString *feature = linkProperties.feature;
     NSString *stage = linkProperties.stage;
     NSString *campaign = linkProperties.campaign;
-    NSDictionary *params = self.params;
+    NSDictionary *params = [self paramsFromLinkProperties:linkProperties];
 
     // The body runs on the isolation queue, as the funnel did -- reading and writing the link cache
     // off the caller's thread.
@@ -197,12 +196,6 @@
 }
 
 - (void)getSpotlightURLWithParams:(NSDictionary *)params callback:(callbackWithParams)callback {
-    if (self.params) {
-        [[BranchLogger shared] logWarning:
-            @"-getSpotlightURLWithParams:callback: reads the params it is passed, not the params "
-            @"property, which is set but ignored." error:nil];
-    }
-
     NSError *initError = nil;
     Branch *branch = [self resolvedBranchForTerminal:@"getSpotlightURLWithParams:callback:"
                                                error:&initError];
@@ -228,6 +221,17 @@
 // calls build, and that dictionary is the BNCLinkCache key, so the set of calls must stay exactly
 // as it is or previously cached links stop being found.
 
+// The link's data payload. BranchLinkProperties returns an empty dictionary rather than nil for
+// unset control params, and -[BNCLinkData setupParams:] only skips a nil one -- so without this an
+// optionless link would start sending "data": {} where it used to send no data key at all.
+//
+// @param linkProperties The link properties to read. May be nil.
+// @return The control params, or nil when there are none.
+- (NSDictionary *)paramsFromLinkProperties:(BranchLinkProperties *)linkProperties {
+    NSDictionary *controlParams = linkProperties.controlParams;
+    return controlParams.count ? controlParams : nil;
+}
+
 - (BNCLinkData *)linkDataWithLinkProperties:(BranchLinkProperties *)linkProperties
                              ignoreUAString:(NSString *)ignoreUAString {
     BNCLinkData *post = [[BNCLinkData alloc] init];
@@ -241,7 +245,7 @@
     [post setupAlias:linkProperties.alias];
     [post setupMatchDuration:linkProperties.matchDuration];
     [post setupIgnoreUAString:ignoreUAString];
-    [post setupParams:self.params];
+    [post setupParams:[self paramsFromLinkProperties:linkProperties]];
 
     return post;
 }
@@ -263,7 +267,7 @@
 }
 
 // Query-parameter order is fixed and pinned by tests: tags (repeated) -> alias -> channel ->
-// feature -> stage -> type -> matchDuration -> source=ios&data=<base64>.
+// feature -> stage -> campaign -> type -> duration -> source=ios&data=<base64>.
 - (NSString *)longUrlWithBaseUrl:(NSString *)baseUrl
                   linkProperties:(BranchLinkProperties *)linkProperties {
     NSMutableString *longUrl = [[BNCPreferenceHelper sharedInstance] sanitizedMutableBaseURL:baseUrl];
@@ -288,18 +292,22 @@
         [longUrl appendFormat:@"stage=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:linkProperties.stage]];
     }
 
+    if ([linkProperties.campaign length]) {
+        [longUrl appendFormat:@"campaign=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:linkProperties.campaign]];
+    }
+
     // Truthiness guards, not nil checks: BranchLinkTypeUnlimitedUse is 0 and a matchDuration of 0
-    // means "server default", so a default builder emits neither parameter.
+    // means "server default", so default link properties emit neither parameter.
     if (linkProperties.linkType) {
         [longUrl appendFormat:@"type=%ld&", (long)linkProperties.linkType];
     }
     if (linkProperties.matchDuration) {
-        [longUrl appendFormat:@"matchDuration=%ld&", (long)linkProperties.matchDuration];
+        [longUrl appendFormat:@"duration=%ld&", (long)linkProperties.matchDuration];
     }
 
     // The base64 alphabet includes "+", which a server decodes as a space, so the encoded params
     // have to be percent-encoded before they go into the query.
-    NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:self.params];
+    NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:linkProperties.controlParams];
     NSString *base64EncodedParams = [BNCEncodingUtils base64EncodeData:jsonData];
     [longUrl appendFormat:@"source=ios&data=%@", [BNCEncodingUtils urlEncodedString:base64EncodedParams]];
 

@@ -49,16 +49,14 @@
                alias:(NSString *)alias
             delegate:(id <BranchActivityItemProviderDelegate>)delegate {
 
-    // No channel here, so this URL is unaffected by the builder's channel= fix -- unlike the other
-    // long-URL call sites, its output is byte-identical to what the old overload produced.
     BranchLinkProperties *longURLProperties = [[BranchLinkProperties alloc] init];
     longURLProperties.tags = tags;
     longURLProperties.feature = feature;
     longURLProperties.stage = stage;
     longURLProperties.alias = alias;
+    longURLProperties.controlParams = params;
 
     BranchLinkBuilder *longURLBuilder = [[BranchLinkBuilder alloc] init];
-    longURLBuilder.params = params;
     NSString *url = [longURLBuilder getLongURLWithLinkProperties:longURLProperties
                                                useAppLinkDomain:NO];
 
@@ -127,9 +125,9 @@
     linkProperties.stage = stage;
     linkProperties.campaign = campaign;
     linkProperties.alias = alias;
+    linkProperties.controlParams = params;
 
     BranchLinkBuilder *shortURLBuilder = [[BranchLinkBuilder alloc] init];
-    shortURLBuilder.params = params;
 
     // Because Facebook et al immediately scrape URLs, we add an additional parameter to the
     // existing list, telling the backend to ignore the first click

@@ -149,9 +149,9 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         linkProperties.feature = self.linkProperties.feature;
         linkProperties.stage = self.linkProperties.stage;
         linkProperties.alias = self.linkProperties.alias;
+        linkProperties.controlParams = [self.serverParameters copy];
 
         BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
-        builder.params = self.serverParameters;
         NSString *URLString = [builder getLongURLWithLinkProperties:linkProperties
                                                   useAppLinkDomain:YES];
 
@@ -288,9 +288,9 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     linkProperties.stage = self.linkProperties.stage;
     linkProperties.campaign = self.linkProperties.campaign;
     linkProperties.alias = self.linkProperties.alias;
+    linkProperties.controlParams = [self.serverParameters copy];
 
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
-    builder.params = self.serverParameters;
     NSString *URLString = [builder getShortURLWithLinkProperties:linkProperties
                                                  ignoreUAString:userAgentString];
     self.shareURL = [NSURL URLWithString:URLString];

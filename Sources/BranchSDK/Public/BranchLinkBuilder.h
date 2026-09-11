@@ -20,16 +20,16 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  `BranchLinkBuilder` generates Branch links.
 
- The link's content and behavior — tags, alias, channel, feature, stage, campaign, match duration
- and link type — are carried by a `BranchLinkProperties`, which each terminal takes as an argument.
- The builder itself holds only `params`, the link's data payload.
+ Everything about the link — its content, its behavior and its data payload — is carried by the
+ `BranchLinkProperties` each terminal takes as an argument. The link's data travels as
+ `controlParams`.
 
      BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
      linkProperties.channel = @"sms";
      linkProperties.feature = @"share";
+     [linkProperties addControlParam:@"$og_title" withValue:@"Sale"];
 
      BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
-     builder.params = @{@"$og_title": @"Sale"};
 
      [builder getShortURLWithParamsWithLinkProperties:linkProperties
                                             callback:^(NSString *url, NSError *error) {
@@ -38,8 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
          // `url` is a short Branch link. This callback runs on the main queue.
      }];
 
- A builder is reusable: the terminals do not mutate it or the link properties handed to them, so the
- same builder can generate several links.
+ The builder holds no state of its own, so one instance can generate any number of links, and the
+ terminals do not mutate the link properties handed to them.
 
  ## Choosing a terminal
 
@@ -53,23 +53,19 @@ NS_ASSUME_NONNULL_BEGIN
    **network**, blocking. Never call them on the main thread; they freeze the UI for a full network
    round trip, or for the request timeout on a bad connection.
  - `-getSpotlightURLWithParams:callback:` — **network**, for Core Spotlight indexing. Takes its
-   params directly and reads no link properties.
+   params directly, since a Spotlight link's shape is fixed and it reads no link properties.
 
  On a server error the short-URL terminals hand back a **long-link fallback**, not nil — so a
  non-nil URL is not proof of success. Check `error`.
 
+ ## Link data
+
+ `linkProperties.controlParams` is the link's data payload: base64-encoded into long URLs, sent as
+ the link's `data` on short-link requests. Branch-reserved keys (`$og_title`, `$desktop_url`, …)
+ control how the link behaves; anything else is passed through to your app on the deep link.
+
  */
 @interface BranchLinkBuilder : NSObject
-
-#pragma mark - Link content
-
-/// Link parameters. Base64-encoded into long URLs; sent as the link's data on short-link requests.
-/// Branch-reserved keys (`$og_title`, `$desktop_url`, …) control link behavior; anything else is
-/// passed through to your app.
-///
-/// Read by every terminal except `-getSpotlightURLWithParams:callback:`, which takes its params as
-/// an argument instead.
-@property (nonatomic, copy, nullable) NSDictionary *params;
 
 #pragma mark - Initialization
 
@@ -151,11 +147,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Builds a long Branch link offline, with no network call.
 
- The link's `params` are JSON-encoded, base64'd and percent-encoded into the URL's `data` query
- item, so the whole link is self-describing and can be produced with no connectivity and no round
- trip. That also makes it long — prefer a short link where the URL is user-visible.
+ The link properties' `controlParams` are JSON-encoded, base64'd and percent-encoded into the URL's
+ `data` query item, so the whole link is self-describing and can be produced with no connectivity
+ and no round trip. That also makes it long — prefer a short link where the URL is user-visible.
 
- A long URL has no campaign parameter, so `linkProperties.campaign` is silently unused.
+ Every option on `linkProperties` reaches the URL, `campaign` included. The match duration is sent
+ as `duration=`, the spelling the Branch backend, the Web SDK and the Android SDK all use.
 
  This is the one terminal that does not require `+[Branch initialize:]` to have run: it needs only
  a Branch key, which it also reads from `branch.json` or the `branch_key` Info.plist entry.
@@ -179,8 +176,8 @@ NS_ASSUME_NONNULL_BEGIN
  accompanying fields — the URL alone is under the `url` key.
 
  A Spotlight link is not an ordinary link, and the SDK fixes its shape: it is always created with a
- channel of `spotlight`, and it takes no link properties. Its params come from this method's
- argument, not from the `params` property, which it does not read.
+ channel of `spotlight`, and it takes no link properties — so its data payload is this method's
+ argument rather than a `controlParams`.
 
  Results are **not** cached — every call reaches the network, where the two short-URL terminals
  share a link cache.

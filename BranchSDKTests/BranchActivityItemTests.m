@@ -93,8 +93,9 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
                    @"builder's channel= fix");
 }
 
-// A long URL has no campaign parameter. The provider stores campaign for the short-link paths, so
-// pin that it does not leak into the placeholder.
+// The builder emits campaign= when the link properties carry one, but the provider passes no
+// campaign into its placeholder -- it keeps the campaign for the short-link paths only. Pin that,
+// so the placeholder's wire format cannot change by accident.
 - (void)testPlaceholderOmitsCampaign {
     BranchActivityItemProvider *provider =
         [[BranchActivityItemProvider alloc] initWithParams:@{@"key": @"value"}
@@ -125,6 +126,7 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
                           campaign:(NSString *)campaign {
 
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.controlParams = params;
     linkProperties.tags = tags;
     linkProperties.alias = alias;
     linkProperties.channel = channel;
@@ -133,7 +135,6 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     linkProperties.campaign = campaign;
 
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
-    builder.params = params;
 
     [[Branch sharedInstance].linkCache setObject:url
                                           forKey:[builder linkDataWithLinkProperties:linkProperties

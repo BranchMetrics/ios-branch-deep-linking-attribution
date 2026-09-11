@@ -349,12 +349,24 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 
 #pragma mark - Link Creation Methods
 
-// The link data every link-property-driven call below sends. The link's content and behavior travel
-// as the BranchLinkProperties the caller already passed, so only params is assembled here.
-- (BranchLinkBuilder *)linkBuilderWithLinkProperties:(BranchLinkProperties *)linkProperties {
-    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
-    builder.params = [self getParamsForServerRequestWithAddedLinkProperties:linkProperties];
-    return builder;
+// Copies `linkProperties`, replacing its control params with this object's full server-request
+// payload -- which already folds the caller's own control params in. The caller's object is left
+// untouched, since it belongs to the app and outlives the call.
+//
+// @param linkProperties The link properties the caller passed.
+// @return A copy carrying the link data to send.
+- (BranchLinkProperties *)linkPropertiesForServerRequest:(BranchLinkProperties *)linkProperties {
+    BranchLinkProperties *forRequest = [[BranchLinkProperties alloc] init];
+    forRequest.tags = linkProperties.tags;
+    forRequest.alias = linkProperties.alias;
+    forRequest.channel = linkProperties.channel;
+    forRequest.feature = linkProperties.feature;
+    forRequest.stage = linkProperties.stage;
+    forRequest.campaign = linkProperties.campaign;
+    forRequest.matchDuration = linkProperties.matchDuration;
+    forRequest.linkType = linkProperties.linkType;
+    forRequest.controlParams = [self getParamsForServerRequestWithAddedLinkProperties:linkProperties];
+    return forRequest;
 }
 
 - (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties {
@@ -364,8 +376,8 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         return nil;
     }
 
-    BranchLinkBuilder *builder = [self linkBuilderWithLinkProperties:linkProperties];
-    return [builder getShortURLWithLinkProperties:linkProperties];
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
+    return [builder getShortURLWithLinkProperties:[self linkPropertiesForServerRequest:linkProperties]];
 }
 
 - (void)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties andCallback:(callbackWithUrl)callback {
@@ -377,8 +389,9 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         return;
     }
     
-    BranchLinkBuilder *builder = [self linkBuilderWithLinkProperties:linkProperties];
-    [builder getShortURLWithParamsWithLinkProperties:linkProperties callback:callback];
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
+    [builder getShortURLWithParamsWithLinkProperties:[self linkPropertiesForServerRequest:linkProperties]
+                                            callback:callback];
 }
 
 - (NSString *)getShortUrlWithLinkPropertiesAndIgnoreFirstClick:(BranchLinkProperties *)linkProperties {
@@ -395,8 +408,9 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     UAString = [BNCUserAgentCollector instance].userAgent;
     #endif
     
-    BranchLinkBuilder *builder = [self linkBuilderWithLinkProperties:linkProperties];
-    return [builder getShortURLWithLinkProperties:linkProperties ignoreUAString:UAString];
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
+    return [builder getShortURLWithLinkProperties:[self linkPropertiesForServerRequest:linkProperties]
+                                   ignoreUAString:UAString];
 }
 
 - (NSString *)getLongUrlWithChannel:(NSString *)channel
@@ -410,9 +424,9 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     linkProperties.feature = feature;
     linkProperties.stage = stage;
     linkProperties.alias = alias;
+    linkProperties.controlParams = self.dictionary;
 
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
-    builder.params = self.dictionary;
     return [builder getLongURLWithLinkProperties:linkProperties useAppLinkDomain:NO];
 }
 
