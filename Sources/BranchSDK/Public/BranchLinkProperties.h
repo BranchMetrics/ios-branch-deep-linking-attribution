@@ -14,7 +14,7 @@
 
 #import "BNCLinkData.h"
 
-@interface BranchLinkProperties : NSObject
+@interface BranchLinkProperties : NSObject <NSCopying>
 
 @property (nonatomic, strong) NSArray *tags;
 @property (nonatomic, copy) NSString *feature;
@@ -28,6 +28,17 @@
 @property (nonatomic, assign) BranchLinkType linkType;
 
 @property (nonatomic, strong) NSDictionary *controlParams;
+
+/**
+ Returns link properties with the same options as `linkProperties`.
+
+ The `tags` and `controlParams` collections are copied, so mutating the original's afterwards does
+ not change this one.
+
+ @param linkProperties The properties to copy. May be nil, in which case every option takes its
+        default.
+ */
+- (instancetype)initWithLinkProperties:(BranchLinkProperties *)linkProperties;
 
 - (void)addControlParam:(NSString *)controlParam withValue:(NSString *)value;
 + (BranchLinkProperties *)getBranchLinkPropertiesFromDictionary:(NSDictionary *)dictionary;

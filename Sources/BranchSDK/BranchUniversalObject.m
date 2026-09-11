@@ -356,15 +356,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 // @param linkProperties The link properties the caller passed.
 // @return A copy carrying the link data to send.
 - (BranchLinkProperties *)linkPropertiesForServerRequest:(BranchLinkProperties *)linkProperties {
-    BranchLinkProperties *forRequest = [[BranchLinkProperties alloc] init];
-    forRequest.tags = linkProperties.tags;
-    forRequest.alias = linkProperties.alias;
-    forRequest.channel = linkProperties.channel;
-    forRequest.feature = linkProperties.feature;
-    forRequest.stage = linkProperties.stage;
-    forRequest.campaign = linkProperties.campaign;
-    forRequest.matchDuration = linkProperties.matchDuration;
-    forRequest.linkType = linkProperties.linkType;
+    BranchLinkProperties *forRequest = [[BranchLinkProperties alloc] initWithLinkProperties:linkProperties];
     forRequest.controlParams = [self getParamsForServerRequestWithAddedLinkProperties:linkProperties];
     return forRequest;
 }
@@ -390,8 +382,8 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     }
     
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
-    [builder getShortURLWithParamsWithLinkProperties:[self linkPropertiesForServerRequest:linkProperties]
-                                            callback:callback];
+    [builder getShortURLWithLinkProperties:[self linkPropertiesForServerRequest:linkProperties]
+                                  callback:callback];
 }
 
 - (NSString *)getShortUrlWithLinkPropertiesAndIgnoreFirstClick:(BranchLinkProperties *)linkProperties {

@@ -137,7 +137,7 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
 
     [[Branch sharedInstance].linkCache setObject:url
-                                          forKey:[builder linkDataWithLinkProperties:linkProperties
+                                          forKey:[BNCLinkData linkDataWithLinkProperties:linkProperties
                                                                       ignoreUAString:nil]];
 }
 

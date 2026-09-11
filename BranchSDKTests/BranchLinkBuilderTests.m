@@ -247,6 +247,56 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     XCTAssertEqual(linkProperties.linkType, BranchLinkTypeOneTimeUse);
 }
 
+// The copy constructor is what lets a caller derive link properties without writing into the app's
+// own object -- BranchUniversalObject does exactly that to add its content dictionary.
+- (void)testLinkPropertiesCopyCarriesEveryOption {
+    BranchLinkProperties *original = [self fullyPopulatedLinkProperties];
+    original.campaign = @"campaign1";
+    original.matchDuration = 300;
+    original.linkType = BranchLinkTypeOneTimeUse;
+
+    BranchLinkProperties *copy = [[BranchLinkProperties alloc] initWithLinkProperties:original];
+
+    XCTAssertEqualObjects(copy.tags, original.tags);
+    XCTAssertEqualObjects(copy.alias, original.alias);
+    XCTAssertEqualObjects(copy.channel, original.channel);
+    XCTAssertEqualObjects(copy.feature, original.feature);
+    XCTAssertEqualObjects(copy.stage, original.stage);
+    XCTAssertEqualObjects(copy.campaign, original.campaign);
+    XCTAssertEqual(copy.matchDuration, original.matchDuration);
+    XCTAssertEqual(copy.linkType, original.linkType);
+    XCTAssertEqualObjects(copy.controlParams, original.controlParams);
+
+    // Same options, so the same link: a copy has to hit the cache entry the original seeded.
+    XCTAssertEqual([[BNCLinkData linkDataWithLinkProperties:copy ignoreUAString:nil] hash],
+                   [[BNCLinkData linkDataWithLinkProperties:original ignoreUAString:nil] hash]);
+}
+
+- (void)testLinkPropertiesCopyIsIndependentOfTheOriginal {
+    BranchLinkProperties *original = [[BranchLinkProperties alloc] init];
+    original.tags = [NSMutableArray arrayWithArray:@[@"tag1"]];
+    original.controlParams = [NSMutableDictionary dictionaryWithDictionary:@{@"a": @"b"}];
+
+    BranchLinkProperties *copy = [original copy];
+
+    [(NSMutableArray *)original.tags addObject:@"tag2"];
+    ((NSMutableDictionary *)original.controlParams)[@"c"] = @"d";
+    original.channel = @"email";
+
+    XCTAssertEqualObjects(copy.tags, @[@"tag1"]);
+    XCTAssertEqualObjects(copy.controlParams, @{@"a": @"b"});
+    XCTAssertNil(copy.channel);
+}
+
+- (void)testLinkPropertiesCopyOfNilIsDefaultProperties {
+    BranchLinkProperties *copy = [[BranchLinkProperties alloc] initWithLinkProperties:nil];
+
+    XCTAssertNil(copy.channel);
+    XCTAssertEqual(copy.matchDuration, (NSUInteger)0);
+    XCTAssertEqual(copy.linkType, BranchLinkTypeUnlimitedUse);
+    XCTAssertEqualObjects(copy.controlParams, @{});
+}
+
 // linkType is the option that moved onto BranchLinkProperties, so it also has to survive the
 // dictionary round trip that populates a referring link's properties.
 - (void)testLinkPropertiesFromDictionaryCarriesLinkType {
@@ -315,8 +365,8 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
                  @"The blocking terminal must report failure by returning nil.");
 
     XCTestExpectation *shortURLCalledBack = [self expectationWithDescription:@"async short URL"];
-    [[[BranchLinkBuilder alloc] init] getShortURLWithParamsWithLinkProperties:linkProperties
-                                                                    callback:^(NSString *url, NSError *error) {
+    [[[BranchLinkBuilder alloc] init] getShortURLWithLinkProperties:linkProperties
+                                                      callback:^(NSString *url, NSError *error) {
         XCTAssertNil(url);
         XCTAssertEqual(error.code, BNCInitError);
         [shortURLCalledBack fulfill];
@@ -331,8 +381,8 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     }];
 
     // A nil callback must be equally survivable: the crash was in the dispatch, not the callback.
-    XCTAssertNoThrow([[[BranchLinkBuilder alloc] init] getShortURLWithParamsWithLinkProperties:linkProperties
-                                                                                     callback:nil]);
+    XCTAssertNoThrow([[[BranchLinkBuilder alloc] init] getShortURLWithLinkProperties:linkProperties
+                                                                       callback:nil]);
     XCTAssertNoThrow([[[BranchLinkBuilder alloc] init] getSpotlightURLWithParams:nil callback:nil]);
 
     [self waitForExpectations:@[shortURLCalledBack, spotlightCalledBack] timeout:5.0];
@@ -619,7 +669,7 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     [expected setupIgnoreUAString:nil];
     [expected setupParams:@{@"key": @"value"}];
 
-    BNCLinkData *actual = [builder linkDataWithLinkProperties:linkProperties ignoreUAString:nil];
+    BNCLinkData *actual = [BNCLinkData linkDataWithLinkProperties:linkProperties ignoreUAString:nil];
 
     XCTAssertEqual([actual hash], [expected hash]);
     XCTAssertEqualObjects(actual.data, expected.data);
@@ -628,7 +678,7 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 // ignoreUAString reaches the wire payload...
 - (void)testIgnoreUAStringReachesTheLinkDataPayload {
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:self.branch];
-    BNCLinkData *linkData = [builder linkDataWithLinkProperties:nil
+    BNCLinkData *linkData = [BNCLinkData linkDataWithLinkProperties:nil
                                                 ignoreUAString:@"Slackbot-LinkExpanding"];
 
     XCTAssertEqualObjects(linkData.data[BRANCH_REQUEST_KEY_URL_IGNORE_UA_STRING], @"Slackbot-LinkExpanding");
@@ -640,9 +690,9 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:self.branch];
     BranchLinkProperties *linkProperties = [self linkPropertiesWithChannel:@"channel1"];
 
-    BNCLinkData *withUA = [builder linkDataWithLinkProperties:linkProperties
+    BNCLinkData *withUA = [BNCLinkData linkDataWithLinkProperties:linkProperties
                                               ignoreUAString:@"Slackbot-LinkExpanding"];
-    BNCLinkData *withoutUA = [builder linkDataWithLinkProperties:linkProperties ignoreUAString:nil];
+    BNCLinkData *withoutUA = [BNCLinkData linkDataWithLinkProperties:linkProperties ignoreUAString:nil];
 
     XCTAssertNotEqual([withUA hash], [withoutUA hash]);
     XCTAssertNotEqualObjects(withUA.data, withoutUA.data);
@@ -656,7 +706,7 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.channel = @"sms";
 
-    BNCLinkData *linkData = [builder linkDataWithLinkProperties:linkProperties ignoreUAString:nil];
+    BNCLinkData *linkData = [BNCLinkData linkDataWithLinkProperties:linkProperties ignoreUAString:nil];
 
     XCTAssertNil(linkData.data[BRANCH_REQUEST_KEY_URL_DATA]);
     XCTAssertEqualObjects(linkData.data[BRANCH_REQUEST_KEY_URL_CHANNEL], @"sms");
@@ -682,8 +732,8 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 - (void)testNilLinkPropertiesMatchDefaultLinkProperties {
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:self.branch];
 
-    BNCLinkData *fromNil = [builder linkDataWithLinkProperties:nil ignoreUAString:nil];
-    BNCLinkData *fromDefaults = [builder linkDataWithLinkProperties:[[BranchLinkProperties alloc] init]
+    BNCLinkData *fromNil = [BNCLinkData linkDataWithLinkProperties:nil ignoreUAString:nil];
+    BNCLinkData *fromDefaults = [BNCLinkData linkDataWithLinkProperties:[[BranchLinkProperties alloc] init]
                                                     ignoreUAString:nil];
 
     XCTAssertEqual([fromNil hash], [fromDefaults hash]);
@@ -717,7 +767,7 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     // reach the network.
     XCTAssertEqualObjects([builder getShortURLWithLinkProperties:linkProperties], @"https://example.app.link/abc123");
     XCTAssertEqual(fake.requestCount, 1, @"second call should have been served from the cache");
-    XCTAssertEqualObjects([linkCache objectForKey:[builder linkDataWithLinkProperties:linkProperties ignoreUAString:nil]],
+    XCTAssertEqualObjects([linkCache objectForKey:[BNCLinkData linkDataWithLinkProperties:linkProperties ignoreUAString:nil]],
                           @"https://example.app.link/abc123");
 }
 
@@ -839,7 +889,7 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     BranchLinkProperties *linkProperties = [self linkPropertiesWithChannel:@"channel1"];
 
     XCTAssertNotNil([builder getShortURLWithLinkProperties:linkProperties]);
-    XCTAssertNil([linkCache objectForKey:[builder linkDataWithLinkProperties:linkProperties ignoreUAString:nil]]);
+    XCTAssertNil([linkCache objectForKey:[BNCLinkData linkDataWithLinkProperties:linkProperties ignoreUAString:nil]]);
 
     fake.stubResponse = [BNCFakeServerInterface responseWithStatusCode:200 url:@"https://example.app.link/abc123"];
 
@@ -883,7 +933,7 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:[self branchWithFakeInterface:fake linkCache:linkCache]];
 
     XCTAssertNil([builder getShortURLWithLinkProperties:nil]);
-    XCTAssertNil([linkCache objectForKey:[builder linkDataWithLinkProperties:nil ignoreUAString:nil]]);
+    XCTAssertNil([linkCache objectForKey:[BNCLinkData linkDataWithLinkProperties:nil ignoreUAString:nil]]);
 }
 
 #pragma mark - Short URL — async
@@ -904,8 +954,8 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:branch];
 
-    [builder getShortURLWithParamsWithLinkProperties:[self linkPropertiesWithChannel:@"sms"]
-                                           callback:^(NSString *url, NSError *error) { }];
+    [builder getShortURLWithLinkProperties:[self linkPropertiesWithChannel:@"sms"]
+                                    callback:^(NSString *url, NSError *error) { }];
 
     // The body runs on the isolation queue, so wait for it to drain rather than asserting inline.
     XCTestExpectation *drained = [self expectationWithDescription:@"isolation queue drained"];
@@ -927,15 +977,15 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:branch];
     BranchLinkProperties *linkProperties = [self linkPropertiesWithChannel:@"sms"];
     [linkCache setObject:@"https://example.app.link/cached"
-                  forKey:[builder linkDataWithLinkProperties:linkProperties ignoreUAString:nil]];
+                  forKey:[BNCLinkData linkDataWithLinkProperties:linkProperties ignoreUAString:nil]];
 
     XCTestExpectation *calledBack = [self expectationWithDescription:@"callback"];
     __block NSString *deliveredURL = nil;
     __block NSError *deliveredError = nil;
     __block BOOL onMainThread = NO;
 
-    [builder getShortURLWithParamsWithLinkProperties:linkProperties
-                                           callback:^(NSString *url, NSError *error) {
+    [builder getShortURLWithLinkProperties:linkProperties
+                                    callback:^(NSString *url, NSError *error) {
         deliveredURL = url;
         deliveredError = error;
         onMainThread = [NSThread isMainThread];
@@ -960,12 +1010,12 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:branch];
     BranchLinkProperties *linkProperties = [self linkPropertiesWithChannel:@"sms"];
     [linkCache setObject:@"https://example.app.link/cached"
-                  forKey:[builder linkDataWithLinkProperties:linkProperties ignoreUAString:nil]];
+                  forKey:[BNCLinkData linkDataWithLinkProperties:linkProperties ignoreUAString:nil]];
 
     XCTestExpectation *calledBack = [self expectationWithDescription:@"callback"];
     __block NSString *deliveredURL = nil;
-    [builder getShortURLWithParamsWithLinkProperties:linkProperties
-                                           callback:^(NSString *url, NSError *error) {
+    [builder getShortURLWithLinkProperties:linkProperties
+                                    callback:^(NSString *url, NSError *error) {
         deliveredURL = url;
         [calledBack fulfill];
     }];
@@ -989,12 +1039,12 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:branch];
     BranchLinkProperties *linkProperties = [self linkPropertiesWithChannel:@"sms"];
     [linkCache setObject:@"https://example.app.link/sms"
-                  forKey:[builder linkDataWithLinkProperties:linkProperties ignoreUAString:nil]];
+                  forKey:[BNCLinkData linkDataWithLinkProperties:linkProperties ignoreUAString:nil]];
 
     XCTestExpectation *calledBack = [self expectationWithDescription:@"callback"];
     __block NSString *deliveredURL = nil;
-    [builder getShortURLWithParamsWithLinkProperties:linkProperties
-                                           callback:^(NSString *url, NSError *error) {
+    [builder getShortURLWithLinkProperties:linkProperties
+                                    callback:^(NSString *url, NSError *error) {
         deliveredURL = url;
         [calledBack fulfill];
     }];
@@ -1016,8 +1066,8 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:branch];
 
-    XCTAssertNoThrow([builder getShortURLWithParamsWithLinkProperties:[self linkPropertiesWithChannel:@"sms"]
-                                                            callback:nil]);
+    XCTAssertNoThrow([builder getShortURLWithLinkProperties:[self linkPropertiesWithChannel:@"sms"]
+                                                     callback:nil]);
 
     XCTestExpectation *drained = [self expectationWithDescription:@"isolation queue drained"];
     dispatch_async(branch.isolationQueue, ^{ [drained fulfill]; });
@@ -1035,9 +1085,9 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:branch];
     [linkCache setObject:@"https://example.app.link/cached"
-                  forKey:[builder linkDataWithLinkProperties:nil ignoreUAString:nil]];
+                  forKey:[BNCLinkData linkDataWithLinkProperties:nil ignoreUAString:nil]];
 
-    XCTAssertNoThrow([builder getShortURLWithParamsWithLinkProperties:nil callback:nil]);
+    XCTAssertNoThrow([builder getShortURLWithLinkProperties:nil callback:nil]);
 
     XCTestExpectation *drained = [self expectationWithDescription:@"isolation queue drained"];
     dispatch_async(branch.isolationQueue, ^{ [drained fulfill]; });
@@ -1075,8 +1125,8 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 
     XCTestExpectation *calledBack = [self expectationWithDescription:@"callback"];
     __block NSString *deliveredURL = nil;
-    [builder getShortURLWithParamsWithLinkProperties:[self linkPropertiesWithChannel:@"sms"]
-                                           callback:^(NSString *url, NSError *error) {
+    [builder getShortURLWithLinkProperties:[self linkPropertiesWithChannel:@"sms"]
+                                    callback:^(NSString *url, NSError *error) {
         deliveredURL = url;
         [calledBack fulfill];
     }];
@@ -1292,7 +1342,7 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:branch];
     // A cached entry under the key the short-URL terminals would use for these options.
     [linkCache setObject:@"https://example.app.link/cached"
-                  forKey:[builder linkDataWithLinkProperties:nil ignoreUAString:nil]];
+                  forKey:[BNCLinkData linkDataWithLinkProperties:nil ignoreUAString:nil]];
 
     [builder getSpotlightURLWithParams:@{@"key": @"value"} callback:nil];
 
@@ -1390,7 +1440,7 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 - (void)seedSharedLinkCacheWithURL:(NSString *)url linkProperties:(BranchLinkProperties *)linkProperties {
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
     [[Branch sharedInstance].linkCache setObject:url
-                                          forKey:[builder linkDataWithLinkProperties:linkProperties
+                                          forKey:[BNCLinkData linkDataWithLinkProperties:linkProperties
                                                                       ignoreUAString:nil]];
 }
 

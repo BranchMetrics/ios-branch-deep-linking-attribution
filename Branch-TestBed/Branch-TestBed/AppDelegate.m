@@ -207,8 +207,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     //
     // Check `error`, not `url`. On a server error the SDK still hands back a URL — a long-link
     // fallback — so `if (url)` would read a failed request as a success.
-    [builder getShortURLWithParamsWithLinkProperties:linkProperties
-                                           callback:^(NSString * _Nullable url, NSError * _Nullable error) {
+    [builder getShortURLWithLinkProperties:linkProperties
+                                  callback:^(NSString * _Nullable url, NSError * _Nullable error) {
         if (error) {
             NSLog(@"Branch TestBed: could not create a short link: %@", error.localizedDescription);
             return;

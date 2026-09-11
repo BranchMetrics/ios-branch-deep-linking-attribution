@@ -31,8 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 
      BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
 
-     [builder getShortURLWithParamsWithLinkProperties:linkProperties
-                                            callback:^(NSString *url, NSError *error) {
+     [builder getShortURLWithLinkProperties:linkProperties
+                                   callback:^(NSString *url, NSError *error) {
          // Check `error`, not `url` — see "Choosing a terminal" below.
          if (error) return;
          // `url` is a short Branch link. This callback runs on the main queue.
@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  - `-getLongURLWithLinkProperties:useAppLinkDomain:` — **offline**, returns immediately. The link's
    data is encoded into the URL, so it works with no connectivity, but the URL is long.
- - `-getShortURLWithParamsWithLinkProperties:callback:` — **network**, non-blocking. Prefer this. The
+ - `-getShortURLWithLinkProperties:callback:` — **network**, non-blocking. Prefer this. The
    callback is delivered on the main queue.
  - `-getShortURLWithLinkProperties:` and `-getShortURLWithLinkProperties:ignoreUAString:` —
    **network**, blocking. Never call them on the main thread; they freeze the UI for a full network
@@ -140,8 +140,8 @@ NS_ASSUME_NONNULL_BEGIN
  @param callback Receives the short URL, or a long-link fallback plus an error. May be nil, in which
         case the link is still created and cached.
  */
-- (void)getShortURLWithParamsWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
-                                       callback:(nullable callbackWithUrl)callback
+- (void)getShortURLWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
+                             callback:(nullable callbackWithUrl)callback
     NS_SWIFT_NAME(getShortURL(withLinkProperties:callback:));
 
 /**

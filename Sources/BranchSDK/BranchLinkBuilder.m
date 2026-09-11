@@ -87,8 +87,8 @@
         return nil;
     }
 
-    BNCLinkData *linkData = [self linkDataWithLinkProperties:linkProperties
-                                             ignoreUAString:ignoreUAString];
+    BNCLinkData *linkData = [BNCLinkData linkDataWithLinkProperties:linkProperties
+                                                    ignoreUAString:ignoreUAString];
 
     // An ignoreUAString means the caller wants a link that will not be counted as clicked by a
     // preview scrape, so we always go to the server for a fresh one rather than serving a cached
@@ -107,7 +107,7 @@
                                                 feature:linkProperties.feature
                                                   stage:linkProperties.stage
                                                campaign:linkProperties.campaign
-                                                 params:[self paramsFromLinkProperties:linkProperties]
+                                                 params:linkProperties.controlParams
                                                linkData:linkData
                                               linkCache:branch.linkCache];
 
@@ -119,11 +119,11 @@
     return [req processResponse:serverResponse];
 }
 
-- (void)getShortURLWithParamsWithLinkProperties:(BranchLinkProperties *)linkProperties
-                                       callback:(callbackWithUrl)callback {
+- (void)getShortURLWithLinkProperties:(BranchLinkProperties *)linkProperties
+                             callback:(callbackWithUrl)callback {
 
     NSError *initError = nil;
-    Branch *branch = [self resolvedBranchForTerminal:@"getShortURLWithParamsWithLinkProperties:callback:"
+    Branch *branch = [self resolvedBranchForTerminal:@"getShortURLWithLinkProperties:callback:"
                                                error:&initError];
     if (!branch) {
         if (callback) {
@@ -134,20 +134,13 @@
         return;
     }
 
-    // Snapshot every option *before* dispatching.
+    // Copy the options *before* dispatching, so a caller mutating its link properties right after
+    // the call cannot change a request already in flight.
     //
     // The async path has no ignoreUAString option: the funnel hardcoded nil here, and a link whose
     // click should not be counted is only ever requested through the blocking terminal.
-    BNCLinkData *linkData = [self linkDataWithLinkProperties:linkProperties ignoreUAString:nil];
-    NSArray *tags = linkProperties.tags;
-    NSString *alias = linkProperties.alias;
-    BranchLinkType linkType = linkProperties.linkType;
-    NSUInteger matchDuration = linkProperties.matchDuration;
-    NSString *channel = linkProperties.channel;
-    NSString *feature = linkProperties.feature;
-    NSString *stage = linkProperties.stage;
-    NSString *campaign = linkProperties.campaign;
-    NSDictionary *params = [self paramsFromLinkProperties:linkProperties];
+    BranchLinkProperties *options = [linkProperties copy];
+    BNCLinkData *linkData = [BNCLinkData linkDataWithLinkProperties:options ignoreUAString:nil];
 
     // The body runs on the isolation queue, as the funnel did -- reading and writing the link cache
     // off the caller's thread.
@@ -165,15 +158,15 @@
         }
 
         BranchShortUrlRequest *req =
-            [[BranchShortUrlRequest alloc] initWithTags:tags
-                                                  alias:alias
-                                                   type:linkType
-                                          matchDuration:matchDuration
-                                                channel:channel
-                                                feature:feature
-                                                  stage:stage
-                                               campaign:campaign
-                                                 params:params
+            [[BranchShortUrlRequest alloc] initWithTags:options.tags
+                                                  alias:options.alias
+                                                   type:options.linkType
+                                          matchDuration:options.matchDuration
+                                                channel:options.channel
+                                                feature:options.feature
+                                                  stage:options.stage
+                                               campaign:options.campaign
+                                                 params:options.controlParams
                                                linkData:linkData
                                               linkCache:branch.linkCache
                                                callback:callback];
@@ -213,41 +206,6 @@
                                                                                   callback:callback];
         [branch.requestQueue enqueue:req];
     });
-}
-
-#pragma mark - Link data
-
-// Ports -prepareLinkDataFor:… . BNCLinkData's -isEqual:/-hash derive from the dictionary these ten
-// calls build, and that dictionary is the BNCLinkCache key, so the set of calls must stay exactly
-// as it is or previously cached links stop being found.
-
-// The link's data payload. BranchLinkProperties returns an empty dictionary rather than nil for
-// unset control params, and -[BNCLinkData setupParams:] only skips a nil one -- so without this an
-// optionless link would start sending "data": {} where it used to send no data key at all.
-//
-// @param linkProperties The link properties to read. May be nil.
-// @return The control params, or nil when there are none.
-- (NSDictionary *)paramsFromLinkProperties:(BranchLinkProperties *)linkProperties {
-    NSDictionary *controlParams = linkProperties.controlParams;
-    return controlParams.count ? controlParams : nil;
-}
-
-- (BNCLinkData *)linkDataWithLinkProperties:(BranchLinkProperties *)linkProperties
-                             ignoreUAString:(NSString *)ignoreUAString {
-    BNCLinkData *post = [[BNCLinkData alloc] init];
-
-    [post setupType:linkProperties.linkType];
-    [post setupTags:linkProperties.tags];
-    [post setupChannel:linkProperties.channel];
-    [post setupFeature:linkProperties.feature];
-    [post setupStage:linkProperties.stage];
-    [post setupCampaign:linkProperties.campaign];
-    [post setupAlias:linkProperties.alias];
-    [post setupMatchDuration:linkProperties.matchDuration];
-    [post setupIgnoreUAString:ignoreUAString];
-    [post setupParams:[self paramsFromLinkProperties:linkProperties]];
-
-    return post;
 }
 
 #pragma mark - Long URL assembly

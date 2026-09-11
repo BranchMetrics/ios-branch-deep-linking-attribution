@@ -150,10 +150,10 @@ final class BranchSwiftNameTests: XCTestCase {
     }
     
     /// The interesting case is the pair of blocking short-URL terminals.
-    /// `getShortURLWithParamsWithLinkProperties:callback:` gets an `async` projection, so both
-    /// blocking terminals are moved to `getShortURLSynchronously(…)` by `NS_SWIFT_NAME` — the
-    /// hazard `logEventAsync()` is named around. Binding each to a written-out type makes a
-    /// collision or rename a build failure rather than a silent source break.
+    /// `getShortURLWithLinkProperties:callback:` gets an `async` projection, so both blocking
+    /// terminals are moved to `getShortURLSynchronously(…)` by `NS_SWIFT_NAME` — the hazard
+    /// `logEventAsync()` is named around. Binding each to a written-out type makes a collision or
+    /// rename a build failure rather than a silent source break.
     func testSwiftNamesOfBranchLinkBuilderTerminals() {
         let builder = BranchLinkBuilder()
 
@@ -176,7 +176,7 @@ final class BranchSwiftNameTests: XCTestCase {
 
         XCTAssertTrue(builder.responds(to: NSSelectorFromString("getShortURLWithLinkProperties:")))
         XCTAssertTrue(builder.responds(to: NSSelectorFromString("getShortURLWithLinkProperties:ignoreUAString:")))
-        XCTAssertTrue(builder.responds(to: NSSelectorFromString("getShortURLWithParamsWithLinkProperties:callback:")))
+        XCTAssertTrue(builder.responds(to: NSSelectorFromString("getShortURLWithLinkProperties:callback:")))
         XCTAssertTrue(builder.responds(to: NSSelectorFromString("getLongURLWithLinkProperties:useAppLinkDomain:")))
         XCTAssertTrue(builder.responds(to: NSSelectorFromString("getSpotlightURLWithParams:callback:")))
     }

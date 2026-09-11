@@ -11,6 +11,27 @@
 
 @implementation BranchLinkProperties
 
+- (instancetype)initWithLinkProperties:(BranchLinkProperties *)linkProperties {
+    self = [super init];
+    if (!self) return self;
+
+    _tags = [linkProperties.tags copy];
+    _feature = [linkProperties.feature copy];
+    _alias = [linkProperties.alias copy];
+    _channel = [linkProperties.channel copy];
+    _stage = [linkProperties.stage copy];
+    _campaign = [linkProperties.campaign copy];
+    _matchDuration = linkProperties.matchDuration;
+    _linkType = linkProperties.linkType;
+    _controlParams = [linkProperties.controlParams copy];
+
+    return self;
+}
+
+- (id)copyWithZone:(NSZone *)zone {
+    return [[BranchLinkProperties allocWithZone:zone] initWithLinkProperties:self];
+}
+
 - (NSDictionary *)controlParams {
     if (!_controlParams) {
         _controlParams = [[NSDictionary alloc] init];

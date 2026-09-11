@@ -39,21 +39,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (instancetype)initWithBranch:(nullable Branch *)branch;
 
-/**
- Builds the `BNCLinkData` that identifies this link on the wire and, via its `-hash`, in
- `BNCLinkCache`.
-
- Exposed so tests can pin the exact `setupX:` sequence — `-[BNCLinkData hash]` is the cache key, so
- a change to that sequence silently orphans every previously cached link.
-
- @param linkProperties The link's content and behavior. May be nil, in which case every option takes
-        its default.
- @param ignoreUAString Passed through to `-setupIgnoreUAString:`. The async terminal hardcodes nil
-        here, matching the funnel it replaces.
- */
-- (BNCLinkData *)linkDataWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
-                             ignoreUAString:(nullable NSString *)ignoreUAString;
-
 @end
 
 NS_ASSUME_NONNULL_END
