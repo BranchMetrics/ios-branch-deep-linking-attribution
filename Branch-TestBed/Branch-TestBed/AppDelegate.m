@@ -146,6 +146,9 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // ── Initialize ───────────────────────────────────────────────────────
     [Branch initialize:config];
 
+    // Required. Covers the deferred check and push cold launch.
+    [[Branch sharedInstance] requestDeepLinkDataWithLaunchOptions:launchOptions callback:nil];
+
 #if DEBUG
     [TestBedDeepLinkTestHook installIfRequested:application];
 #endif
