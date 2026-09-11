@@ -112,14 +112,16 @@ jobs:
       # job is failed explicitly at the end.
       #
       # The scenario is required on this line: a capture is judged against the
-      # contract for the run that produced it. This job drives the default
-      # harness run, which is N1 organic_open: one resolve, then one open.
+      # contract for the run that produced it. This job drives a first
+      # install, not an organic open: run_l1_instrumented.sh uninstalls the
+      # bundle before every run, so the harness always produces the install
+      # run, one resolve then one open.
       - name: Validate wire logs
         id: validate
         continue-on-error: true
         run: |
           set -o pipefail
-          python3 scripts/validate_l1_logs.py branchlogs.txt --scenario N1 2>&1 | tee /tmp/l1-output.txt
+          python3 scripts/validate_l1_logs.py branchlogs.txt --scenario install 2>&1 | tee /tmp/l1-output.txt
 
       # What the gate actually asserted, on the PR page rather than buried in
       # the job log.
