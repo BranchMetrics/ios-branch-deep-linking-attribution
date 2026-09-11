@@ -193,8 +193,6 @@ jobs:
             echo "| Warm (W1–W2) | not implemented |"
             echo "| Hot (H1–H2) | not implemented |"
             echo
-            echo "C2 cold_uriScheme is out of scope: the modern openURL:options: entry point is absent from the TestBed."
-            echo
             if [ "${{ steps.validate.outcome }}" = "success" ]; then
               echo "Result: **PASS**"
             else
