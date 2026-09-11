@@ -10,6 +10,7 @@
 #import "BNCLinkData.h"
 #import "BNCEncodingUtils.h"
 #import "BranchConstants.h"
+#import "BranchLinkProperties.h"
 
 
 @interface BNCLinkData ()
@@ -34,6 +35,30 @@
         self.data[@"source"] = @"ios";
     }
     return self;
+}
+
+// -hash derives from the dictionary these ten calls build, and that dictionary is the BNCLinkCache
+// key, so the set of calls must stay exactly as it is or previously cached links stop being found.
++ (instancetype)linkDataWithLinkProperties:(BranchLinkProperties *)linkProperties
+                            ignoreUAString:(NSString *)ignoreUAString {
+    BNCLinkData *post = [[self alloc] init];
+
+    [post setupType:linkProperties.linkType];
+    [post setupTags:linkProperties.tags];
+    [post setupChannel:linkProperties.channel];
+    [post setupFeature:linkProperties.feature];
+    [post setupStage:linkProperties.stage];
+    [post setupCampaign:linkProperties.campaign];
+    [post setupAlias:linkProperties.alias];
+    [post setupMatchDuration:linkProperties.matchDuration];
+    [post setupIgnoreUAString:ignoreUAString];
+
+    // -controlParams lazily returns an empty dictionary and -setupParams: only skips a nil one, so
+    // without this an optionless link would send "data": {} where it used to send no data key.
+    NSDictionary *controlParams = linkProperties.controlParams;
+    [post setupParams:controlParams.count ? controlParams : nil];
+
+    return post;
 }
 
 - (void)setupTags:(NSArray *)tags {
@@ -128,6 +153,9 @@
     result = prime * result + [[BNCEncodingUtils sha256Encode:self.stage] hash];
     result = prime * result + [[BNCEncodingUtils sha256Encode:self.campaign] hash];
     result = prime * result + [[BNCEncodingUtils sha256Encode:encodedParams] hash];
+    // A link created with an ignoreUAString is not interchangeable with one created without it:
+    // its first click is not counted, so it must not share a cache entry with an ordinary link.
+    result = prime * result + [[BNCEncodingUtils sha256Encode:self.ignoreUAString] hash];
     result = prime * result + self.duration;
     
     for (NSString *tag in self.tags) {

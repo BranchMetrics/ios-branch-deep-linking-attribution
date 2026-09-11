@@ -14,6 +14,7 @@
 #import "BNCCallbackMap.h"
 #import "BranchRequestOpen.h"
 #import "BranchRequestDeepLink.h"
+#import "BranchShortUrlRequest.h"
 
 @interface BNCServerRequestOperation ()
 @property (nonatomic, assign, readwrite, getter = isExecuting) BOOL executing;
@@ -106,7 +107,14 @@
 
     BNCPreferenceHelper *preferenceHelper = self.preferenceHelper ?: [BNCPreferenceHelper sharedInstance];
 
-    if (![self.request isKindOfClass:[BranchRequestDeepLink class]]) {
+    // Deep-link resolution and link creation carry no attribution, so they stay available at
+    // attribution level NONE. BNCServerInterface applies the final per-endpoint check. Dropping a
+    // BranchShortUrlRequest here would also strand its callback, which never runs unless
+    // -processResponse:error: does.
+    BOOL exemptFromAttributionGate = [self.request isKindOfClass:[BranchRequestDeepLink class]] ||
+                                     [self.request isKindOfClass:[BranchShortUrlRequest class]];
+
+    if (!exemptFromAttributionGate) {
         if ([preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
             [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Attribution Level is 'NONE'. Skipping request: %@", self.request.requestUUID] error:nil];
             [self finishOperation];

@@ -13,6 +13,7 @@
 #import "BranchLogger.h"
 #import "Branch.h"
 #import "BranchEvent.h"
+#import "BranchLinkBuilder.h"
 #import "UIViewController+Branch.h"
 
 #if !TARGET_OS_TV
@@ -142,16 +143,19 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     } else {
         
         // use a long app.link url as the placeholder url
-        NSString *URLString =
-        [[Branch sharedInstance]
-         getLongAppLinkURLWithParams:self.serverParameters
-         andChannel:self.linkProperties.channel
-         andTags:self.linkProperties.tags
-         andFeature:self.linkProperties.feature
-         andStage:self.linkProperties.stage
-         andAlias:self.linkProperties.alias];
-                
-        self.shareURL = [[NSURL alloc] initWithString:URLString];
+        BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+        linkProperties.channel = self.linkProperties.channel;
+        linkProperties.tags = self.linkProperties.tags;
+        linkProperties.feature = self.linkProperties.feature;
+        linkProperties.stage = self.linkProperties.stage;
+        linkProperties.alias = self.linkProperties.alias;
+        linkProperties.controlParams = [self.serverParameters copy];
+
+        BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
+        NSString *URLString = [builder getLongURLWithLinkProperties:linkProperties
+                                                  useAppLinkDomain:YES];
+
+        self.shareURL = URLString ? [[NSURL alloc] initWithString:URLString] : nil;
     }
     
     if (self.returnURL) {
@@ -277,17 +281,18 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         userAgentString = [BNCUserAgentCollector instance].userAgent;
         #endif
     }
-    NSString *URLString =
-        [[Branch sharedInstance]
-            getShortURLWithParams:self.serverParameters
-            andTags:self.linkProperties.tags
-            andChannel:self.linkProperties.channel
-            andFeature:self.linkProperties.feature
-            andStage:self.linkProperties.stage
-            andCampaign:self.linkProperties.campaign
-            andAlias:self.linkProperties.alias
-            ignoreUAString:userAgentString
-            forceLinkCreation:YES];
+    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.tags = self.linkProperties.tags;
+    linkProperties.channel = self.linkProperties.channel;
+    linkProperties.feature = self.linkProperties.feature;
+    linkProperties.stage = self.linkProperties.stage;
+    linkProperties.campaign = self.linkProperties.campaign;
+    linkProperties.alias = self.linkProperties.alias;
+    linkProperties.controlParams = [self.serverParameters copy];
+
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
+    NSString *URLString = [builder getShortURLWithLinkProperties:linkProperties
+                                                 ignoreUAString:userAgentString];
     self.shareURL = [NSURL URLWithString:URLString];
     return (self.returnURL) ? self.shareURL :self.shareURL.absoluteString;
 }

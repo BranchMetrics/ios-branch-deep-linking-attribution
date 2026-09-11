@@ -11,6 +11,7 @@
 #import "BranchActivityItemProvider.h"
 #import "Branch.h"
 #import "BranchConstants.h"
+#import "BranchLinkBuilder.h"
 #import "BNCSystemObserver.h"
 
 #if !TARGET_OS_TV
@@ -48,14 +49,16 @@
                alias:(NSString *)alias
             delegate:(id <BranchActivityItemProviderDelegate>)delegate {
 
-    NSString *url =
-        [[Branch sharedInstance]
-         getLongURLWithParams:params
-         andChannel:nil
-         andTags:tags
-         andFeature:feature
-         andStage:stage
-         andAlias:alias];
+    BranchLinkProperties *longURLProperties = [[BranchLinkProperties alloc] init];
+    longURLProperties.tags = tags;
+    longURLProperties.feature = feature;
+    longURLProperties.stage = stage;
+    longURLProperties.alias = alias;
+    longURLProperties.controlParams = params;
+
+    BranchLinkBuilder *longURLBuilder = [[BranchLinkBuilder alloc] init];
+    NSString *url = [longURLBuilder getLongURLWithLinkProperties:longURLProperties
+                                               useAppLinkDomain:NO];
 
     if (self.returnURL) {
         if ((self = [super initWithPlaceholderItem:[NSURL URLWithString:url]])) {
@@ -112,7 +115,20 @@
     if ([self.delegate respondsToSelector:@selector(activityItemOverrideChannelForChannel:)]) {
         channel = [self.delegate activityItemOverrideChannelForChannel:channel];
     }
-    
+
+    // All three short-link paths below share these options and differ only in ignoreUAString, which
+    // each passes to the terminal itself.
+    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.tags = tags;
+    linkProperties.channel = channel;
+    linkProperties.feature = feature;
+    linkProperties.stage = stage;
+    linkProperties.campaign = campaign;
+    linkProperties.alias = alias;
+    linkProperties.controlParams = params;
+
+    BranchLinkBuilder *shortURLBuilder = [[BranchLinkBuilder alloc] init];
+
     // Because Facebook et al immediately scrape URLs, we add an additional parameter to the
     // existing list, telling the backend to ignore the first click
     NSArray *scrapers = @[
@@ -125,16 +141,9 @@
     ];
     for (NSString *scraper in scrapers) {
         if ([channel isEqualToString:scraper]) {
-            NSURL *URL = [NSURL URLWithString:[[Branch sharedInstance]
-                getShortURLWithParams:params
-                andTags:tags
-                andChannel:channel
-                andFeature:feature
-                andStage:stage
-                andCampaign:campaign
-                andAlias:alias
-                ignoreUAString:self.userAgentString
-                forceLinkCreation:YES]];
+            NSURL *URL = [NSURL URLWithString:
+                [shortURLBuilder getShortURLWithLinkProperties:linkProperties
+                                               ignoreUAString:self.userAgentString]];
             return (self.returnURL) ? URL : URL.absoluteString;
         }
     }
@@ -143,16 +152,8 @@
     if (self.activityType == UIActivityTypeMail &&
         [params objectForKey:BRANCH_LINK_DATA_KEY_EMAIL_HTML_HEADER] &&
         [params objectForKey:BRANCH_LINK_DATA_KEY_EMAIL_HTML_FOOTER]) {
-        NSURL *link = [NSURL URLWithString:[[Branch sharedInstance]
-            getShortURLWithParams:params
-            andTags:tags
-            andChannel:channel
-            andFeature:feature
-            andStage:stage
-            andCampaign:campaign
-            andAlias:alias
-            ignoreUAString:nil
-            forceLinkCreation:YES]];
+        NSURL *link = [NSURL URLWithString:
+            [shortURLBuilder getShortURLWithLinkProperties:linkProperties]];
         NSString *emailLink;
         if ([params objectForKey:BRANCH_LINK_DATA_KEY_EMAIL_HTML_LINK_TEXT]) {
             emailLink = [NSString stringWithFormat:@"<a href=\"%@\">%@</a>",
@@ -167,17 +168,8 @@
             [params objectForKey:BRANCH_LINK_DATA_KEY_EMAIL_HTML_FOOTER]];
     }
 
-    NSURL *URL =
-        [NSURL URLWithString:[[Branch sharedInstance]
-            getShortURLWithParams:params
-            andTags:tags
-            andChannel:channel
-            andFeature:feature
-            andStage:stage
-            andCampaign:campaign
-            andAlias:alias
-            ignoreUAString:nil
-            forceLinkCreation:YES]];
+    NSURL *URL = [NSURL URLWithString:
+        [shortURLBuilder getShortURLWithLinkProperties:linkProperties]];
     return (self.returnURL) ? URL : URL.absoluteString;
 }
 

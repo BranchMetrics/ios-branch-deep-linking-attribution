@@ -11,6 +11,27 @@
 
 @implementation BranchLinkProperties
 
+- (instancetype)initWithLinkProperties:(BranchLinkProperties *)linkProperties {
+    self = [super init];
+    if (!self) return self;
+
+    _tags = [linkProperties.tags copy];
+    _feature = [linkProperties.feature copy];
+    _alias = [linkProperties.alias copy];
+    _channel = [linkProperties.channel copy];
+    _stage = [linkProperties.stage copy];
+    _campaign = [linkProperties.campaign copy];
+    _matchDuration = linkProperties.matchDuration;
+    _linkType = linkProperties.linkType;
+    _controlParams = [linkProperties.controlParams copy];
+
+    return self;
+}
+
+- (id)copyWithZone:(NSZone *)zone {
+    return [[BranchLinkProperties allocWithZone:zone] initWithLinkProperties:self];
+}
+
 - (NSDictionary *)controlParams {
     if (!_controlParams) {
         _controlParams = [[NSDictionary alloc] init];
@@ -49,6 +70,9 @@
     if (dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_DURATION]]) {
         linkProperties.matchDuration = [dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_DURATION]] intValue];
     }
+    if (dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_LINK_TYPE]]) {
+        linkProperties.linkType = [dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_LINK_TYPE]] integerValue];
+    }
     if (dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_STAGE]]) {
         linkProperties.stage = dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_STAGE]];
     }
@@ -65,7 +89,7 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"BranchLinkProperties | tags: %@ \n feature: %@ \n alias: %@ \n channel: %@ \n stage: %@ \n campaign: %@ \n matchDuration: %lu \n controlParams: %@", self.tags, self.feature, self.alias, self.channel, self.stage, self.campaign, (long)self.matchDuration, self.controlParams];
+    return [NSString stringWithFormat:@"BranchLinkProperties | tags: %@ \n feature: %@ \n alias: %@ \n channel: %@ \n stage: %@ \n campaign: %@ \n matchDuration: %lu \n linkType: %lu \n controlParams: %@", self.tags, self.feature, self.alias, self.channel, self.stage, self.campaign, (long)self.matchDuration, (unsigned long)self.linkType, self.controlParams];
 }
 
 @end

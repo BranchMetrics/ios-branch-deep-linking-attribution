@@ -28,6 +28,14 @@
 /// every deep-link response the tests assert on.
 #define BRANCH_TESTBED_FULL_CONFIG_EXAMPLE 0
 
+/// Set to 1 to run the `BranchLinkBuilder` example at the end of
+/// `-application:didFinishLaunchingWithOptions:`.
+///
+/// Off by default because it creates a real link on every launch: the short-URL
+/// terminal is a network call against the TestBed's live key, and the resulting
+/// link shows up in the dashboard. The long-URL half is offline and harmless.
+#define BRANCH_TESTBED_LINK_BUILDER_EXAMPLE 0
+
 @interface AppDelegate() <UNUserNotificationCenterDelegate>
 - (void)logBranchMessage:(NSString *)message level:(BranchLogLevel)level error:(NSError *)error;
 - (void)logBranchRequest:(NSString *)url
@@ -150,7 +158,68 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [TestBedDeepLinkTestHook installIfRequested:application];
 #endif
 
+#if BRANCH_TESTBED_LINK_BUILDER_EXAMPLE
+    [self branchLinkBuilderExample];
+#endif
+
     return YES;
+}
+
+#pragma mark - Creating links
+
+/// Working example of `BranchLinkBuilder`
+///
+/// You do not need a `Branch` reference to make a link, and you do not need to wait for
+/// `+[Branch initialize:]` to finish; the builder resolves the SDK when a terminal runs.
+- (void)branchLinkBuilderExample {
+    // Link content and behavior travel as a BranchLinkProperties, which every terminal takes as an
+    // argument. The same properties object can be reused for as many links as you like.
+    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.channel = @"testbed";
+    linkProperties.feature = @"share";
+    linkProperties.stage = @"launch";
+    linkProperties.tags = @[@"example"];
+
+    // `controlParams` is the link's data payload. It carries both Branch-reserved keys, which
+    // control how the link behaves, and your own keys, which come back to you in the deep-link
+    // callback.
+    linkProperties.controlParams = @{
+        @"$og_title": @"Branch TestBed",
+        @"$og_description": @"A link made with BranchLinkBuilder",
+        @"deeplink_text": @"Opened from a builder-generated link",
+    };
+
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
+
+    // ── Long URL: offline, synchronous ───────────────────────────────────
+    // `controlParams` are JSON-encoded and base64'd into the URL itself, so this needs no network
+    // and returns immediately.
+    NSString *longURL = [builder getLongURLWithLinkProperties:linkProperties useAppLinkDomain:NO];
+    NSLog(@"Branch TestBed: long URL: %@", longURL);
+
+    // Pass YES for useAppLinkDomain to build against the app.link domain instead of the default
+    // link domain:
+    //
+    //     NSString *appLinkURL = [builder getLongURLWithLinkProperties:linkProperties
+    //                                                useAppLinkDomain:YES];
+
+    // ── Short URL: network, non-blocking ─────────────────────────────────
+    //
+    // Check `error`, not `url`. On a server error the SDK still hands back a URL — a long-link
+    // fallback — so `if (url)` would read a failed request as a success.
+    [builder getShortURLWithLinkProperties:linkProperties
+                                  callback:^(NSString * _Nullable url, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"Branch TestBed: could not create a short link: %@", error.localizedDescription);
+            return;
+        }
+        NSLog(@"Branch TestBed: short URL: %@", url);
+    }];
+
+    // There is also a blocking `-getShortURLWithLinkProperties:`, which returns the URL directly.
+    // It is not shown here on purpose: it performs a synchronous network round trip, so on the main
+    // thread it freezes the UI until the server answers — or until the request times out on a bad
+    // connection. Use it only from a background queue, and prefer the callback form above.
 }
 
 // pre init support is meant for extensions, for example, when Adobe axtension needs to pass in Adobe IDs
