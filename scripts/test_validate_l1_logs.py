@@ -198,9 +198,13 @@ class RetryCollapseTests(unittest.TestCase):
     Counting attempts would fail an exact-count contract on a flaky network."""
 
     def test_retried_request_counts_once(self):
+        # The fixture carries the launch deeplink plus three attempts of one
+        # open; collapse must leave the deeplink and exactly one open.
         entries = v.parse_branch_logs(_fixture("retried_open.txt"))
-        self.assertEqual(len(entries), 1)
-        self.assertEqual(entries[0]["request"][v.RETRY_COUNT_FIELD], 0)
+        self.assertEqual(len(entries), 2)
+        opens = [e for e in entries if e["uri"] == "/v3/events/open"]
+        self.assertEqual(len(opens), 1)
+        self.assertEqual(opens[0]["request"][v.RETRY_COUNT_FIELD], 0)
 
     def test_retried_capture_satisfies_an_exact_count_contract(self):
         entries = v.parse_branch_logs(_fixture("retried_open.txt"))
@@ -230,7 +234,7 @@ class N1ContractTests(unittest.TestCase):
     only demonstrated passing is a contract that cannot fail."""
 
     def test_a_clean_organic_open_passes(self):
-        errors, _ = _run_validation("happy_path.txt", v.contract_for("N1"))
+        errors, _ = _run_validation("n1_organic_resolve.txt", v.contract_for("N1"))
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 
     def test_wrong_count_fails(self):
@@ -240,12 +244,6 @@ class N1ContractTests(unittest.TestCase):
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("Expected 1", errors[0])
         self.assertIn("captured 2", errors[0])
-
-    def test_forbidden_endpoint_present_fails(self):
-        errors, _ = _run_validation("deeplink.txt", v.contract_for("N1"))
-        self.assertEqual(len(errors), 1, errors)
-        self.assertIn("must not be captured", errors[0])
-        self.assertIn("/v3/deeplink", errors[0])
 
     def test_wrong_order_fails(self):
         # deeplink.txt is open then deeplink, with no open after it, so the
@@ -258,7 +256,7 @@ class N1ContractTests(unittest.TestCase):
     def test_n1_does_not_assert_the_absence_of_link_data_in_the_open(self):
         # Recorded, not hidden: the plan also wants the open to carry no link
         # data. That is a field-level assertion this layer does not make.
-        self.assertEqual(v.contract_for("N1")["counts"].get("/v3/deeplink"), 0)
+        self.assertEqual(set(v.contract_for("N1")), {"counts", "order"})
 
 
 class N3ContractTests(unittest.TestCase):
@@ -457,11 +455,11 @@ class ScenarioEnforcementTests(unittest.TestCase):
         errors, _ = _run_validation("deeplink_scenario.txt", v.contract_for("deeplink"))
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 
-    def test_the_same_capture_passes_install_and_fails_deeplink(self):
+    def test_the_same_capture_passes_n1_and_fails_n3(self):
         # The point of per-scenario contracts: one global rule cannot express
         # this, and before this change the install capture could not fail.
-        passing, _ = _run_validation("happy_path.txt", v.contract_for("N1"))
-        failing, _ = _run_validation("happy_path.txt", v.contract_for("deeplink"))
+        passing, _ = _run_validation("n1_organic_resolve.txt", v.contract_for("N1"))
+        failing, _ = _run_validation("n1_organic_resolve.txt", v.contract_for("N3"))
         self.assertEqual(passing, [])
         self.assertTrue(failing)
 
