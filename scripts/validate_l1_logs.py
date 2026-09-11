@@ -197,13 +197,18 @@ ATTRIBUTION_LEVEL_NONE = "NONE"
 # `install` and `deeplink` are not test-plan scenarios — they are the runs
 # the harness drives today. Plan scenarios use their plan ID (C1, W1, N4).
 SCENARIO_CONTRACTS = {
-    # N1 organic_open: a launch with no link. The test plan also asks that the
-    # open carry no link data; that is a field-level assertion, and this layer
-    # is bounded at counts and required-field presence, so N1 is not fully
-    # covered here. The endpoint half is.
+    # N1 organic_open: measured on the harness with the canonical integration
+    # wired. The organic response carries no `~referring_link`, so
+    # BranchRequestDeepLink sends no open of its own (BranchRequestDeepLink.m:
+    # 300-305); the applicationDidBecomeActive open lands after the resolve,
+    # which is what produces the order. These are WHOLE-RUN counts, so they
+    # include the launch pair every scenario on this line now emits. The test
+    # plan also asks that the open carry no link data; that is a field-level
+    # assertion, and this layer is bounded at counts and required-field
+    # presence.
     "N1": {
-        "counts": {"/v3/events/open": 1, "/v3/deeplink": 0},
-        "order": (),
+        "counts": {"/v3/deeplink": 1, "/v3/events/open": 1},
+        "order": (("/v3/deeplink", "/v3/events/open"),),
     },
     # N3 attribution_none: a link resolved while the consumer-protection level
     # is NONE. BNCServerRequestOperation drops every request at that level
