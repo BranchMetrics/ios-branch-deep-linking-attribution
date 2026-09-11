@@ -20,12 +20,17 @@
 #                          TestBed-GPTDriverTests/L1WireValidationTest)
 #   BUNDLE_ID            - TestBed app bundle id (default io.branch.sdk.Branch-TestBed)
 #   OUTPUT_LOG           - destination for the pulled file (default branchlogs.txt)
+#   UNINSTALL_FIRST      - 1 (default) wipes the app before running, so the SDK
+#                          treats the launch as a first install. 0 leaves the
+#                          prior install in place, which is the only way to
+#                          drive a launch on an already-installed device —
+#                          C1 and C3 share a driver and differ only in this.
 #
 # Notes:
-#   * We deliberately uninstall the TestBed bundle before running so the SDK
-#     emits a fresh /v1/install. If we skip this, a cached randomized_device
-#     _token would route the request to /v1/open and the validator would
-#     fail to assert the mandatory /v1/install endpoint.
+#   * The uninstall is what makes a run a first install. On this line that is
+#     not a separate endpoint: install and open both post to /v3/events/open
+#     and are told apart by the install one carrying no randomized_bundle_token.
+#     Set UNINSTALL_FIRST=0 to keep the prior install and drive the other case.
 #   * `xcodebuild test-without-building` exits non-zero on test failure; we
 #     trap to ensure we still attempt to pull the log file for diagnostics.
 
@@ -39,6 +44,7 @@ SCHEME="${SCHEME:-TestBed-GPTDriverTests}"
 ONLY_TESTING="${ONLY_TESTING:-TestBed-GPTDriverTests/L1WireValidationTest}"
 BUNDLE_ID="${BUNDLE_ID:-io.branch.sdk.Branch-TestBed}"
 OUTPUT_LOG="${OUTPUT_LOG:-branchlogs.txt}"
+UNINSTALL_FIRST="${UNINSTALL_FIRST:-1}"
 
 echo "==> L1 instrumentation starting"
 echo "    Derived data dir : $DERIVED_DATA_DIR"
@@ -46,6 +52,7 @@ echo "    Simulator        : $SIM_NAME ($SIM_OS)"
 echo "    Scheme           : $SCHEME"
 echo "    Only testing     : $ONLY_TESTING"
 echo "    Bundle id        : $BUNDLE_ID"
+echo "    Uninstall first  : $UNINSTALL_FIRST"
 
 # Boot the simulator first so subsequent simctl commands target an awake
 # device. `simctl boot` is idempotent (no-op if already booted).
@@ -78,9 +85,12 @@ echo "    UDID: $SIM_UDID"
 xcrun simctl boot "$SIM_UDID" 2>/dev/null || true
 xcrun simctl bootstatus "$SIM_UDID" -b
 
-# Wipe any prior install so the SDK fires /v1/install (not /v1/open).
-echo "==> Uninstalling any prior TestBed install..."
-xcrun simctl uninstall "$SIM_UDID" "$BUNDLE_ID" 2>/dev/null || true
+if [ "$UNINSTALL_FIRST" = "1" ]; then
+    echo "==> Uninstalling any prior TestBed install..."
+    xcrun simctl uninstall "$SIM_UDID" "$BUNDLE_ID" 2>/dev/null || true
+else
+    echo "==> Keeping any prior install (UNINSTALL_FIRST=0)"
+fi
 
 # Run the L1 test. We use test-without-building because the workflow's
 # previous step already produced the .xctestrun in DerivedData. We do
