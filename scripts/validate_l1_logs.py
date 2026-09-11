@@ -197,30 +197,26 @@ ATTRIBUTION_LEVEL_NONE = "NONE"
 # `install` and `deeplink` are not test-plan scenarios — they are the runs
 # the harness drives today. Plan scenarios use their plan ID (C1, W1, N4).
 SCENARIO_CONTRACTS = {
-    # N1 organic_open. MEASURED on the harness with the canonical integration
-    # wired: one resolve, then one open, in that order, repeatedly.
+    # install: the run the harness actually drives. run_l1_instrumented.sh
+    # uninstalls the bundle before every run, so every capture is a first
+    # install, never an organic open. MEASURED on this branch: one resolve,
+    # then one open.
     #
-    # One half of the why is read from the source: the organic response carries
-    # no `~referring_link`, so BranchRequestDeepLink sends no open of its own
-    # (BranchRequestDeepLink.m:300-305).
+    # These are WHOLE-RUN counts. The order is measured, not guaranteed: the
+    # queue creates no explicit dependency between the two requests, and
+    # applicationDidBecomeActive skips its open entirely when the queue still
+    # holds the resolve, since containsInstallOrOpen counts
+    # BranchRequestDeepLink. A capture without the open would therefore be a
+    # count failure, not an ordering one.
     #
-    # The order is INFERRED, not guaranteed. The queue's explicit primitive does
-    # not cover this pair: isInitRequest: treats BranchRequestDeepLink and
-    # BranchRequestOpen as siblings, so no addDependency: is created between
-    # them, and both run at NSOperationQueuePriorityHigh. The order that is
-    # observed comes from lifecycle timing, the resolve being enqueued
-    # synchronously in didFinishLaunchingWithOptions: while the open is enqueued
-    # later off applicationDidBecomeActive, with maxConcurrentOperationCount = 1
-    # then serialising them. That gap is wide and the order has been stable, but
-    # it is a timing artifact rather than a contract. If this assertion ever
-    # flakes, that is the reason, and the fix is an explicit dependency in the
-    # queue rather than a looser contract here.
-    #
-    # These are WHOLE-RUN counts, so they include the launch pair every scenario
-    # on this line now emits. The test plan also asks that the open carry no
-    # link data; that is a field-level assertion, and this layer is bounded at
-    # counts and required-field presence.
-    "N1": {
+    # N1 organic_open is deliberately NOT contracted here. It is a launch with
+    # no link on a device that already has the app, which this harness cannot
+    # produce, and the two design sources disagree on what it should emit:
+    # the design page says no resolve and one open, while the September
+    # integration document, which describes the code rather than deciding it,
+    # says one resolve and no open. Authoring N1 before that is settled would
+    # freeze whichever one the harness happens to produce.
+    "install": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 1},
         "order": (("/v3/deeplink", "/v3/events/open"),),
     },
