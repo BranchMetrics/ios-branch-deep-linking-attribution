@@ -198,13 +198,17 @@ class RetryCollapseTests(unittest.TestCase):
     Counting attempts would fail an exact-count contract on a flaky network."""
 
     def test_retried_request_counts_once(self):
+        # The fixture carries the launch deeplink plus three attempts of one
+        # open; collapse must leave the deeplink and exactly one open.
         entries = v.parse_branch_logs(_fixture("retried_open.txt"))
-        self.assertEqual(len(entries), 1)
-        self.assertEqual(entries[0]["request"][v.RETRY_COUNT_FIELD], 0)
+        self.assertEqual(len(entries), 2)
+        opens = [e for e in entries if e["uri"] == "/v3/events/open"]
+        self.assertEqual(len(opens), 1)
+        self.assertEqual(opens[0]["request"][v.RETRY_COUNT_FIELD], 0)
 
     def test_retried_capture_satisfies_an_exact_count_contract(self):
         entries = v.parse_branch_logs(_fixture("retried_open.txt"))
-        self.assertEqual(v.assert_contract(entries, v.contract_for("N1")), [])
+        self.assertEqual(v.assert_contract(entries, v.contract_for("install")), [])
 
     def test_first_attempt_is_kept(self):
         kept = v.collapse_retries([{"uri": "/a", "url": "u", "request": {"retryNumber": 0}}])
@@ -224,28 +228,23 @@ class RetryCollapseTests(unittest.TestCase):
         self.assertEqual(len(kept), 1)
 
 
-class N1ContractTests(unittest.TestCase):
-    """N1 organic_open, the worked example: one open, no deep link. Each test
-    below proves an assertion type FAILS on a violating capture — a contract
-    only demonstrated passing is a contract that cannot fail."""
+class InstallContractTests(unittest.TestCase):
+    """install: the run the harness actually drives, one resolve then one
+    open. Each test below proves an assertion type FAILS on a violating
+    capture, since a contract only demonstrated passing is a contract that
+    cannot fail."""
 
     def test_a_clean_organic_open_passes(self):
-        errors, _ = _run_validation("happy_path.txt", v.contract_for("N1"))
+        errors, _ = _run_validation("n1_organic_resolve.txt", v.contract_for("install"))
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 
     def test_wrong_count_fails(self):
         # Two opens is the duplicate-open shape #1612 produced. Before this
         # engine the capture could not fail, which is why it went unnoticed.
-        errors, _ = _run_validation("n1_duplicate_open.txt", v.contract_for("N1"))
+        errors, _ = _run_validation("n1_duplicate_open.txt", v.contract_for("install"))
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("Expected 1", errors[0])
         self.assertIn("captured 2", errors[0])
-
-    def test_forbidden_endpoint_present_fails(self):
-        errors, _ = _run_validation("deeplink.txt", v.contract_for("N1"))
-        self.assertEqual(len(errors), 1, errors)
-        self.assertIn("must not be captured", errors[0])
-        self.assertIn("/v3/deeplink", errors[0])
 
     def test_wrong_order_fails(self):
         # deeplink.txt is open then deeplink, with no open after it, so the
@@ -255,10 +254,10 @@ class N1ContractTests(unittest.TestCase):
             any("after" in e for e in errors), f"Expected an order error: {errors}"
         )
 
-    def test_n1_does_not_assert_the_absence_of_link_data_in_the_open(self):
+    def test_install_does_not_assert_the_absence_of_link_data_in_the_open(self):
         # Recorded, not hidden: the plan also wants the open to carry no link
         # data. That is a field-level assertion this layer does not make.
-        self.assertEqual(v.contract_for("N1")["counts"].get("/v3/deeplink"), 0)
+        self.assertEqual(set(v.contract_for("install")), {"counts", "order"})
 
 
 class N3ContractTests(unittest.TestCase):
@@ -278,10 +277,10 @@ class N3ContractTests(unittest.TestCase):
         self.assertIn("/v3/events/open", errors[0])
 
     def test_the_old_global_rule_would_have_failed_this_correct_capture(self):
-        # The retired MANDATORY_ENDPOINT required an open in every capture. N1
-        # still does, and N3's capture is correct without one — which is why a
-        # single global rule could not serve both scenarios.
-        errors, _ = _run_validation("n3_attribution_none.txt", v.contract_for("N1"))
+        # The retired MANDATORY_ENDPOINT required an open in every capture.
+        # install still does, and N3's capture is correct without one, which is
+        # why a single global rule could not serve both scenarios.
+        errors, _ = _run_validation("n3_attribution_none.txt", v.contract_for("install"))
         self.assertTrue(
             any("/v3/events/open" in e for e in errors),
             f"Expected the open requirement to fire: {errors}",
@@ -365,7 +364,7 @@ class OpenRequiredTests(unittest.TestCase):
     /v1/install is never sent and is no longer asserted."""
 
     def test_capture_without_open_fails_when_the_contract_requires_one(self):
-        errors, _ = _run_validation("no_open.txt", v.contract_for("N1"))
+        errors, _ = _run_validation("no_open.txt", v.contract_for("install"))
         self.assertTrue(
             any("'/v3/events/open'" in e for e in errors),
             f"Expected open-missing error, got: {errors}",
@@ -457,11 +456,11 @@ class ScenarioEnforcementTests(unittest.TestCase):
         errors, _ = _run_validation("deeplink_scenario.txt", v.contract_for("deeplink"))
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 
-    def test_the_same_capture_passes_install_and_fails_deeplink(self):
+    def test_the_same_capture_passes_install_and_fails_n3(self):
         # The point of per-scenario contracts: one global rule cannot express
         # this, and before this change the install capture could not fail.
-        passing, _ = _run_validation("happy_path.txt", v.contract_for("N1"))
-        failing, _ = _run_validation("happy_path.txt", v.contract_for("deeplink"))
+        passing, _ = _run_validation("n1_organic_resolve.txt", v.contract_for("install"))
+        failing, _ = _run_validation("n1_organic_resolve.txt", v.contract_for("N3"))
         self.assertEqual(passing, [])
         self.assertTrue(failing)
 
