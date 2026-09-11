@@ -349,18 +349,11 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 
 #pragma mark - Link Creation Methods
 
-// The seven options every link-property-driven call below shares. matchDuration and ignoreUAString
-// are deliberately left to the caller: the three short-URL methods disagree about them, and each
-// overload they replace disagreed the same way.
+// The link data every link-property-driven call below sends. The link's content and behavior travel
+// as the BranchLinkProperties the caller already passed, so only params is assembled here.
 - (BranchLinkBuilder *)linkBuilderWithLinkProperties:(BranchLinkProperties *)linkProperties {
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
     builder.params = [self getParamsForServerRequestWithAddedLinkProperties:linkProperties];
-    builder.tags = linkProperties.tags;
-    builder.alias = linkProperties.alias;
-    builder.channel = linkProperties.channel;
-    builder.feature = linkProperties.feature;
-    builder.stage = linkProperties.stage;
-    builder.campaign = linkProperties.campaign;
     return builder;
 }
 
@@ -372,8 +365,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     }
 
     BranchLinkBuilder *builder = [self linkBuilderWithLinkProperties:linkProperties];
-    builder.matchDuration = linkProperties.matchDuration;
-    return [builder fetchShortURL];
+    return [builder getShortURLWithLinkProperties:linkProperties];
 }
 
 - (void)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties andCallback:(callbackWithUrl)callback {
@@ -386,8 +378,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     }
     
     BranchLinkBuilder *builder = [self linkBuilderWithLinkProperties:linkProperties];
-    builder.matchDuration = linkProperties.matchDuration;
-    [builder fetchShortURLWithCallback:callback];
+    [builder getShortURLWithParamsWithLinkProperties:linkProperties callback:callback];
 }
 
 - (NSString *)getShortUrlWithLinkPropertiesAndIgnoreFirstClick:(BranchLinkProperties *)linkProperties {
@@ -405,10 +396,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     #endif
     
     BranchLinkBuilder *builder = [self linkBuilderWithLinkProperties:linkProperties];
-    // matchDuration is deliberately not carried over: the overload this replaces hardcoded 0 and
-    // never read linkProperties.matchDuration, unlike the two methods above.
-    builder.ignoreUAString = UAString;
-    return [builder fetchShortURL];
+    return [builder getShortURLWithLinkProperties:linkProperties ignoreUAString:UAString];
 }
 
 - (NSString *)getLongUrlWithChannel:(NSString *)channel
@@ -416,14 +404,16 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
                          andFeature:(NSString *)feature
                            andStage:(NSString *)stage
                            andAlias:(NSString *)alias {
+    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.channel = channel;
+    linkProperties.tags = tags;
+    linkProperties.feature = feature;
+    linkProperties.stage = stage;
+    linkProperties.alias = alias;
+
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
     builder.params = self.dictionary;
-    builder.channel = channel;
-    builder.tags = tags;
-    builder.feature = feature;
-    builder.stage = stage;
-    builder.alias = alias;
-    return [builder buildLongURL];
+    return [builder getLongURLWithLinkProperties:linkProperties useAppLinkDomain:NO];
 }
 
 #pragma mark - Share Sheets

@@ -182,36 +182,41 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 /// You do not need a `Branch` reference to make a link, and you do not need to wait for
 /// `+[Branch initialize:]` to finish; the builder resolves the SDK when a terminal runs.
 - (void)branchLinkBuilderExample {
-    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
+    // Link content and behavior travel as a BranchLinkProperties, which every terminal takes as an
+    // argument. The same properties object can be reused for as many links as you like.
+    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.channel = @"testbed";
+    linkProperties.feature = @"share";
+    linkProperties.stage = @"launch";
+    linkProperties.tags = @[@"example"];
 
-    // Link content. `params` carries both Branch-reserved keys, which control how the link behaves,
-    // and your own keys, which come back to you in the deep-link callback.
+    // `params` carries both Branch-reserved keys, which control how the link behaves, and your own
+    // keys, which come back to you in the deep-link callback.
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
     builder.params = @{
         @"$og_title": @"Branch TestBed",
         @"$og_description": @"A link made with BranchLinkBuilder",
         @"deeplink_text": @"Opened from a builder-generated link",
     };
-    builder.channel = @"testbed";
-    builder.feature = @"share";
-    builder.stage = @"launch";
-    builder.tags = @[@"example"];
 
     // ── Long URL: offline, synchronous ───────────────────────────────────
     // `params` are JSON-encoded and base64'd into the URL itself, so this needs no network and
     // returns immediately.
-    NSString *longURL = [builder buildLongURL];
+    NSString *longURL = [builder getLongURLWithLinkProperties:linkProperties useAppLinkDomain:NO];
     NSLog(@"Branch TestBed: long URL: %@", longURL);
 
-    // For the app.link domain instead of the default link domain, set `useAppLinkDomain` first:
+    // Pass YES for useAppLinkDomain to build against the app.link domain instead of the default
+    // link domain:
     //
-    //     builder.useAppLinkDomain = YES;
-    //     NSString *appLinkURL = [builder buildLongURL];
+    //     NSString *appLinkURL = [builder getLongURLWithLinkProperties:linkProperties
+    //                                                useAppLinkDomain:YES];
 
     // ── Short URL: network, non-blocking ─────────────────────────────────
     //
     // Check `error`, not `url`. On a server error the SDK still hands back a URL — a long-link
     // fallback — so `if (url)` would read a failed request as a success.
-    [builder fetchShortURLWithCallback:^(NSString * _Nullable url, NSError * _Nullable error) {
+    [builder getShortURLWithParamsWithLinkProperties:linkProperties
+                                           callback:^(NSString * _Nullable url, NSError * _Nullable error) {
         if (error) {
             NSLog(@"Branch TestBed: could not create a short link: %@", error.localizedDescription);
             return;
@@ -219,10 +224,10 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         NSLog(@"Branch TestBed: short URL: %@", url);
     }];
 
-    // There is also a blocking `-fetchShortURL`, which returns the URL directly. It is not shown
-    // here on purpose: it performs a synchronous network round trip, so on the main thread it
-    // freezes the UI until the server answers — or until the request times out on a bad connection.
-    // Use it only from a background queue, and prefer the callback form above.
+    // There is also a blocking `-getShortURLWithLinkProperties:`, which returns the URL directly.
+    // It is not shown here on purpose: it performs a synchronous network round trip, so on the main
+    // thread it freezes the UI until the server answers — or until the request times out on a bad
+    // connection. Use it only from a background queue, and prefer the callback form above.
 }
 
 // pre init support is meant for extensions, for example, when Adobe axtension needs to pass in Adobe IDs

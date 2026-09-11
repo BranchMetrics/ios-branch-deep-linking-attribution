@@ -40,23 +40,7 @@
     if (!self) return self;
 
     _injectedBranch = branch;
-
-    // Link content
     _params = nil;
-    _tags = nil;
-    _alias = nil;
-    _channel = nil;
-    _feature = nil;
-    _stage = nil;
-    _campaign = nil;
-
-    // Link behavior
-    _matchDuration = 0;
-    _linkType = BranchLinkTypeUnlimitedUse;
-
-    // Terminal-specific options
-    _ignoreUAString = nil;
-    _useAppLinkDomain = NO;
 
     return self;
 }
@@ -91,33 +75,39 @@
 
 #pragma mark - Terminals
 
-- (NSString *)fetchShortURL {
-    [self warnAboutOptionsUnusedBy:@"fetchShortURL" ignoreUAString:NO useAppLinkDomain:YES];
+- (NSString *)getShortURLWithLinkProperties:(BranchLinkProperties *)linkProperties {
+    return [self getShortURLWithLinkProperties:linkProperties ignoreUAString:nil];
+}
 
-    Branch *branch = [self resolvedBranchForTerminal:@"fetchShortURL" error:NULL];
+- (NSString *)getShortURLWithLinkProperties:(BranchLinkProperties *)linkProperties
+                             ignoreUAString:(NSString *)ignoreUAString {
+
+    Branch *branch = [self resolvedBranchForTerminal:@"getShortURLWithLinkProperties:ignoreUAString:"
+                                               error:NULL];
     if (!branch) {
         return nil;
     }
 
-    BNCLinkData *linkData = [self linkDataWithIgnoreUAString:self.ignoreUAString];
+    BNCLinkData *linkData = [self linkDataWithLinkProperties:linkProperties
+                                             ignoreUAString:ignoreUAString];
 
     // An ignoreUAString means the caller wants a link that will not be counted as clicked by a
     // preview scrape, so we always go to the server for a fresh one rather than serving a cached
     // ordinary link.
-    if (!self.ignoreUAString && [branch.linkCache objectForKey:linkData]) {
+    if (!ignoreUAString && [branch.linkCache objectForKey:linkData]) {
         [[BranchLogger shared] logVerbose:@"Returning cached Branch Link" error:nil];
         return [branch.linkCache objectForKey:linkData];
     }
 
     BranchShortUrlSyncRequest *req =
-        [[BranchShortUrlSyncRequest alloc] initWithTags:self.tags
-                                                  alias:self.alias
-                                                   type:self.linkType
-                                          matchDuration:self.matchDuration
-                                                channel:self.channel
-                                                feature:self.feature
-                                                  stage:self.stage
-                                               campaign:self.campaign
+        [[BranchShortUrlSyncRequest alloc] initWithTags:linkProperties.tags
+                                                  alias:linkProperties.alias
+                                                   type:linkProperties.linkType
+                                          matchDuration:linkProperties.matchDuration
+                                                channel:linkProperties.channel
+                                                feature:linkProperties.feature
+                                                  stage:linkProperties.stage
+                                               campaign:linkProperties.campaign
                                                  params:self.params
                                                linkData:linkData
                                               linkCache:branch.linkCache];
@@ -130,11 +120,12 @@
     return [req processResponse:serverResponse];
 }
 
-- (void)fetchShortURLWithCallback:(callbackWithUrl)callback {
-    [self warnAboutOptionsUnusedBy:@"fetchShortURLWithCallback:" ignoreUAString:YES useAppLinkDomain:YES];
+- (void)getShortURLWithParamsWithLinkProperties:(BranchLinkProperties *)linkProperties
+                                       callback:(callbackWithUrl)callback {
 
     NSError *initError = nil;
-    Branch *branch = [self resolvedBranchForTerminal:@"fetchShortURLWithCallback:" error:&initError];
+    Branch *branch = [self resolvedBranchForTerminal:@"getShortURLWithParamsWithLinkProperties:callback:"
+                                               error:&initError];
     if (!branch) {
         if (callback) {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -148,15 +139,15 @@
     //
     // The async path has no ignoreUAString option: the funnel hardcoded nil here, and a link whose
     // click should not be counted is only ever requested through the blocking terminal.
-    BNCLinkData *linkData = [self linkDataWithIgnoreUAString:nil];
-    NSArray *tags = self.tags;
-    NSString *alias = self.alias;
-    BranchLinkType linkType = self.linkType;
-    NSUInteger matchDuration = self.matchDuration;
-    NSString *channel = self.channel;
-    NSString *feature = self.feature;
-    NSString *stage = self.stage;
-    NSString *campaign = self.campaign;
+    BNCLinkData *linkData = [self linkDataWithLinkProperties:linkProperties ignoreUAString:nil];
+    NSArray *tags = linkProperties.tags;
+    NSString *alias = linkProperties.alias;
+    BranchLinkType linkType = linkProperties.linkType;
+    NSUInteger matchDuration = linkProperties.matchDuration;
+    NSString *channel = linkProperties.channel;
+    NSString *feature = linkProperties.feature;
+    NSString *stage = linkProperties.stage;
+    NSString *campaign = linkProperties.campaign;
     NSDictionary *params = self.params;
 
     // The body runs on the isolation queue, as the funnel did -- reading and writing the link cache
@@ -191,8 +182,8 @@
     });
 }
 
-- (NSString *)buildLongURL {
-    [self warnAboutOptionsUnusedBy:@"buildLongURL" ignoreUAString:YES useAppLinkDomain:NO];
+- (NSString *)getLongURLWithLinkProperties:(BranchLinkProperties *)linkProperties
+                          useAppLinkDomain:(BOOL)useAppLinkDomain {
 
     NSString *branchKey = [Branch branchKey];
     if (!branchKey) {
@@ -200,15 +191,21 @@
         return nil;
     }
 
-    return [self longUrlWithBaseUrl:[self longUrlBaseUrlWithBranchKey:branchKey]];
+    NSString *baseUrl = [self longUrlBaseUrlWithBranchKey:branchKey
+                                        useAppLinkDomain:useAppLinkDomain];
+    return [self longUrlWithBaseUrl:baseUrl linkProperties:linkProperties];
 }
 
-- (void)fetchSpotlightURLWithCallback:(callbackWithParams)callback {
-    [self warnAboutOptionsUnusedBy:@"fetchSpotlightURLWithCallback:" ignoreUAString:YES useAppLinkDomain:YES];
-    [self warnAboutLinkContentUnusedBySpotlight];
+- (void)getSpotlightURLWithParams:(NSDictionary *)params callback:(callbackWithParams)callback {
+    if (self.params) {
+        [[BranchLogger shared] logWarning:
+            @"-getSpotlightURLWithParams:callback: reads the params it is passed, not the params "
+            @"property, which is set but ignored." error:nil];
+    }
 
     NSError *initError = nil;
-    Branch *branch = [self resolvedBranchForTerminal:@"fetchSpotlightURLWithCallback:" error:&initError];
+    Branch *branch = [self resolvedBranchForTerminal:@"getSpotlightURLWithParams:callback:"
+                                               error:&initError];
     if (!branch) {
         if (callback) {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -217,8 +214,6 @@
         }
         return;
     }
-
-    NSDictionary *params = self.params;
 
     dispatch_async(branch.isolationQueue, ^{
         BranchSpotlightUrlRequest *req = [[BranchSpotlightUrlRequest alloc] initWithParams:params
@@ -233,17 +228,18 @@
 // calls build, and that dictionary is the BNCLinkCache key, so the set of calls must stay exactly
 // as it is or previously cached links stop being found.
 
-- (BNCLinkData *)linkDataWithIgnoreUAString:(NSString *)ignoreUAString {
+- (BNCLinkData *)linkDataWithLinkProperties:(BranchLinkProperties *)linkProperties
+                             ignoreUAString:(NSString *)ignoreUAString {
     BNCLinkData *post = [[BNCLinkData alloc] init];
 
-    [post setupType:self.linkType];
-    [post setupTags:self.tags];
-    [post setupChannel:self.channel];
-    [post setupFeature:self.feature];
-    [post setupStage:self.stage];
-    [post setupCampaign:self.campaign];
-    [post setupAlias:self.alias];
-    [post setupMatchDuration:self.matchDuration];
+    [post setupType:linkProperties.linkType];
+    [post setupTags:linkProperties.tags];
+    [post setupChannel:linkProperties.channel];
+    [post setupFeature:linkProperties.feature];
+    [post setupStage:linkProperties.stage];
+    [post setupCampaign:linkProperties.campaign];
+    [post setupAlias:linkProperties.alias];
+    [post setupMatchDuration:linkProperties.matchDuration];
     [post setupIgnoreUAString:ignoreUAString];
     [post setupParams:self.params];
 
@@ -252,8 +248,9 @@
 
 #pragma mark - Long URL assembly
 
-- (NSString *)longUrlBaseUrlWithBranchKey:(NSString *)branchKey {
-    if (!self.useAppLinkDomain) {
+- (NSString *)longUrlBaseUrlWithBranchKey:(NSString *)branchKey
+                         useAppLinkDomain:(BOOL)useAppLinkDomain {
+    if (!useAppLinkDomain) {
         return [NSString stringWithFormat:@"%@/a/%@", BNC_LINK_URL, branchKey];
     }
 
@@ -267,36 +264,37 @@
 
 // Query-parameter order is fixed and pinned by tests: tags (repeated) -> alias -> channel ->
 // feature -> stage -> type -> matchDuration -> source=ios&data=<base64>.
-- (NSString *)longUrlWithBaseUrl:(NSString *)baseUrl {
+- (NSString *)longUrlWithBaseUrl:(NSString *)baseUrl
+                  linkProperties:(BranchLinkProperties *)linkProperties {
     NSMutableString *longUrl = [[BNCPreferenceHelper sharedInstance] sanitizedMutableBaseURL:baseUrl];
 
-    for (NSString *tag in self.tags) {
+    for (NSString *tag in linkProperties.tags) {
         [longUrl appendFormat:@"tags=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:tag]];
     }
 
-    if ([self.alias length]) {
-        [longUrl appendFormat:@"alias=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:self.alias]];
+    if ([linkProperties.alias length]) {
+        [longUrl appendFormat:@"alias=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:linkProperties.alias]];
     }
 
-    if ([self.channel length]) {
-        [longUrl appendFormat:@"channel=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:self.channel]];
+    if ([linkProperties.channel length]) {
+        [longUrl appendFormat:@"channel=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:linkProperties.channel]];
     }
 
-    if ([self.feature length]) {
-        [longUrl appendFormat:@"feature=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:self.feature]];
+    if ([linkProperties.feature length]) {
+        [longUrl appendFormat:@"feature=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:linkProperties.feature]];
     }
 
-    if ([self.stage length]) {
-        [longUrl appendFormat:@"stage=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:self.stage]];
+    if ([linkProperties.stage length]) {
+        [longUrl appendFormat:@"stage=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:linkProperties.stage]];
     }
 
     // Truthiness guards, not nil checks: BranchLinkTypeUnlimitedUse is 0 and a matchDuration of 0
     // means "server default", so a default builder emits neither parameter.
-    if (self.linkType) {
-        [longUrl appendFormat:@"type=%ld&", (long)self.linkType];
+    if (linkProperties.linkType) {
+        [longUrl appendFormat:@"type=%ld&", (long)linkProperties.linkType];
     }
-    if (self.matchDuration) {
-        [longUrl appendFormat:@"matchDuration=%ld&", (long)self.matchDuration];
+    if (linkProperties.matchDuration) {
+        [longUrl appendFormat:@"matchDuration=%ld&", (long)linkProperties.matchDuration];
     }
 
     // The base64 alphabet includes "+", which a server decodes as a space, so the encoded params
@@ -306,46 +304,6 @@
     [longUrl appendFormat:@"source=ios&data=%@", [BNCEncodingUtils urlEncodedString:base64EncodedParams]];
 
     return longUrl;
-}
-
-#pragma mark - Terminal-specific option warnings
-
-- (void)warnAboutOptionsUnusedBy:(NSString *)terminal
-                  ignoreUAString:(BOOL)ignoreUAStringIsUnused
-                useAppLinkDomain:(BOOL)useAppLinkDomainIsUnused {
-
-    if (ignoreUAStringIsUnused && self.ignoreUAString) {
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:
-            @"ignoreUAString is set but does not apply to -%@; it is ignored. It applies to "
-            @"-fetchShortURL only.", terminal] error:nil];
-    }
-
-    if (useAppLinkDomainIsUnused && self.useAppLinkDomain) {
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:
-            @"useAppLinkDomain is set but does not apply to -%@; it is ignored. It applies to "
-            @"-buildLongURL only.", terminal] error:nil];
-    }
-}
-
-- (void)warnAboutLinkContentUnusedBySpotlight {
-    NSMutableArray<NSString *> *ignored = [NSMutableArray array];
-
-    if (self.tags.count) [ignored addObject:@"tags"];
-    if (self.alias.length) [ignored addObject:@"alias"];
-    if (self.channel.length) [ignored addObject:@"channel"];
-    if (self.feature.length) [ignored addObject:@"feature"];
-    if (self.stage.length) [ignored addObject:@"stage"];
-    if (self.campaign.length) [ignored addObject:@"campaign"];
-    if (self.linkType) [ignored addObject:@"linkType"];
-    if (self.matchDuration) [ignored addObject:@"matchDuration"];
-
-    if (!ignored.count) return;
-
-    [[BranchLogger shared] logWarning:[NSString stringWithFormat:
-        @"-fetchSpotlightURLWithCallback: reads params only; %@ %@ set but ignored. A Spotlight link "
-        @"is always created with a channel of \"spotlight\".",
-        [ignored componentsJoinedByString:@", "],
-        ignored.count == 1 ? @"is" : @"are"] error:nil];
 }
 
 @end

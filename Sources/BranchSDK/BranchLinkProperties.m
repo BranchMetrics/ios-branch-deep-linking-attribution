@@ -49,6 +49,9 @@
     if (dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_DURATION]]) {
         linkProperties.matchDuration = [dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_DURATION]] intValue];
     }
+    if (dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_LINK_TYPE]]) {
+        linkProperties.linkType = [dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_LINK_TYPE]] integerValue];
+    }
     if (dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_STAGE]]) {
         linkProperties.stage = dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_STAGE]];
     }
@@ -65,7 +68,7 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"BranchLinkProperties | tags: %@ \n feature: %@ \n alias: %@ \n channel: %@ \n stage: %@ \n campaign: %@ \n matchDuration: %lu \n controlParams: %@", self.tags, self.feature, self.alias, self.channel, self.stage, self.campaign, (long)self.matchDuration, self.controlParams];
+    return [NSString stringWithFormat:@"BranchLinkProperties | tags: %@ \n feature: %@ \n alias: %@ \n channel: %@ \n stage: %@ \n campaign: %@ \n matchDuration: %lu \n linkType: %lu \n controlParams: %@", self.tags, self.feature, self.alias, self.channel, self.stage, self.campaign, (long)self.matchDuration, (unsigned long)self.linkType, self.controlParams];
 }
 
 @end

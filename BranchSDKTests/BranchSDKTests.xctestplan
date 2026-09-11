@@ -20,7 +20,7 @@
       "parallelizable" : false,
       "skippedTests" : [
         "BNCDisableAdNetworkCalloutsTests",
-        "BranchLinkBuilderTests\/testFetchShortURLLiveSmokeTest",
+        "BranchLinkBuilderTests\/testGetShortURLLiveSmokeTest",
         "BranchQRCodeTests\/testNormalQRCodeAsDataWithNoSettings",
         "BranchQRCodeTests\/testNormalQRCodeAsImage",
         "BranchQRCodeTests\/testNormalQRCodeDataWithAllSettings",

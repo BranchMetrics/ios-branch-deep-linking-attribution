@@ -76,7 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
  ```
  BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
  builder.params = params;
- [builder fetchShortURLWithCallback:^(NSString *url, NSError *error) {
+ [builder getShortURLWithParamsWithLinkProperties:linkProperties callback:^(NSString *url, NSError *error) {
      if (error) {
          BOOL isRetryable = [error.userInfo[BNCErrorIsRetryableKey] boolValue];
          // ...

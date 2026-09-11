@@ -19,7 +19,7 @@
     {
       "parallelizable" : false,
       "selectedTests" : [
-        "BranchLinkBuilderTests\/testFetchShortURLLiveSmokeTest"
+        "BranchLinkBuilderTests\/testGetShortURLLiveSmokeTest"
       ],
       "target" : {
         "containerPath" : "container:BranchSDK.xcodeproj",

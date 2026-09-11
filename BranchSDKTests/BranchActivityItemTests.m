@@ -111,7 +111,8 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 #pragma mark - Short link option assembly
 
 // Seeds the shared link cache with `url` under exactly the options the provider is expected to hand
-// the builder. -fetchShortURL reads that cache before going to the network, so a subsequent -item
+// the builder. The blocking short-URL terminal reads that cache before going to the network, so a
+// subsequent -item
 // returning `url` proves the provider assembled those options and no others: BNCLinkCache keys on
 // -[BNCLinkData hash], so one wrong option is a different key and a miss.
 - (void)seedSharedLinkCacheWithURL:(NSString *)url
@@ -123,17 +124,20 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
                              stage:(NSString *)stage
                           campaign:(NSString *)campaign {
 
+    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.tags = tags;
+    linkProperties.alias = alias;
+    linkProperties.channel = channel;
+    linkProperties.feature = feature;
+    linkProperties.stage = stage;
+    linkProperties.campaign = campaign;
+
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
     builder.params = params;
-    builder.tags = tags;
-    builder.alias = alias;
-    builder.channel = channel;
-    builder.feature = feature;
-    builder.stage = stage;
-    builder.campaign = campaign;
 
     [[Branch sharedInstance].linkCache setObject:url
-                                          forKey:[builder linkDataWithIgnoreUAString:nil]];
+                                          forKey:[builder linkDataWithLinkProperties:linkProperties
+                                                                      ignoreUAString:nil]];
 }
 
 // With no activityType set, -humanReadableChannelWithActivityType: yields a nil channel, so -item

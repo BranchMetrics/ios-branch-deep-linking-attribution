@@ -51,13 +51,16 @@
 
     // No channel here, so this URL is unaffected by the builder's channel= fix -- unlike the other
     // long-URL call sites, its output is byte-identical to what the old overload produced.
+    BranchLinkProperties *longURLProperties = [[BranchLinkProperties alloc] init];
+    longURLProperties.tags = tags;
+    longURLProperties.feature = feature;
+    longURLProperties.stage = stage;
+    longURLProperties.alias = alias;
+
     BranchLinkBuilder *longURLBuilder = [[BranchLinkBuilder alloc] init];
     longURLBuilder.params = params;
-    longURLBuilder.tags = tags;
-    longURLBuilder.feature = feature;
-    longURLBuilder.stage = stage;
-    longURLBuilder.alias = alias;
-    NSString *url = [longURLBuilder buildLongURL];
+    NSString *url = [longURLBuilder getLongURLWithLinkProperties:longURLProperties
+                                               useAppLinkDomain:NO];
 
     if (self.returnURL) {
         if ((self = [super initWithPlaceholderItem:[NSURL URLWithString:url]])) {
@@ -115,21 +118,18 @@
         channel = [self.delegate activityItemOverrideChannelForChannel:channel];
     }
 
-    // All three short-link paths below share these options and differ only in ignoreUAString, so
-    // build one and set that per path. The builder is reusable, but each path returns immediately,
-    // so only one is ever used.
-    BranchLinkBuilder * (^shortURLBuilder)(NSString *) = ^(NSString *ignoreUAString) {
-        BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
-        builder.params = params;
-        builder.tags = tags;
-        builder.channel = channel;
-        builder.feature = feature;
-        builder.stage = stage;
-        builder.campaign = campaign;
-        builder.alias = alias;
-        builder.ignoreUAString = ignoreUAString;
-        return builder;
-    };
+    // All three short-link paths below share these options and differ only in ignoreUAString, which
+    // each passes to the terminal itself.
+    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.tags = tags;
+    linkProperties.channel = channel;
+    linkProperties.feature = feature;
+    linkProperties.stage = stage;
+    linkProperties.campaign = campaign;
+    linkProperties.alias = alias;
+
+    BranchLinkBuilder *shortURLBuilder = [[BranchLinkBuilder alloc] init];
+    shortURLBuilder.params = params;
 
     // Because Facebook et al immediately scrape URLs, we add an additional parameter to the
     // existing list, telling the backend to ignore the first click
@@ -143,7 +143,9 @@
     ];
     for (NSString *scraper in scrapers) {
         if ([channel isEqualToString:scraper]) {
-            NSURL *URL = [NSURL URLWithString:[shortURLBuilder(self.userAgentString) fetchShortURL]];
+            NSURL *URL = [NSURL URLWithString:
+                [shortURLBuilder getShortURLWithLinkProperties:linkProperties
+                                               ignoreUAString:self.userAgentString]];
             return (self.returnURL) ? URL : URL.absoluteString;
         }
     }
@@ -152,7 +154,8 @@
     if (self.activityType == UIActivityTypeMail &&
         [params objectForKey:BRANCH_LINK_DATA_KEY_EMAIL_HTML_HEADER] &&
         [params objectForKey:BRANCH_LINK_DATA_KEY_EMAIL_HTML_FOOTER]) {
-        NSURL *link = [NSURL URLWithString:[shortURLBuilder(nil) fetchShortURL]];
+        NSURL *link = [NSURL URLWithString:
+            [shortURLBuilder getShortURLWithLinkProperties:linkProperties]];
         NSString *emailLink;
         if ([params objectForKey:BRANCH_LINK_DATA_KEY_EMAIL_HTML_LINK_TEXT]) {
             emailLink = [NSString stringWithFormat:@"<a href=\"%@\">%@</a>",
@@ -167,7 +170,8 @@
             [params objectForKey:BRANCH_LINK_DATA_KEY_EMAIL_HTML_FOOTER]];
     }
 
-    NSURL *URL = [NSURL URLWithString:[shortURLBuilder(nil) fetchShortURL]];
+    NSURL *URL = [NSURL URLWithString:
+        [shortURLBuilder getShortURLWithLinkProperties:linkProperties]];
     return (self.returnURL) ? URL : URL.absoluteString;
 }
 

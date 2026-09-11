@@ -104,8 +104,7 @@
     }
     
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
-    builder.params = spotlightLinkData;
-    [builder fetchSpotlightURLWithCallback:^(NSDictionary *data, NSError *urlError) {
+    [builder getSpotlightURLWithParams:spotlightLinkData callback:^(NSDictionary *data, NSError *urlError) {
         if (urlError) {
             if (callback) {
                 callback(nil, nil, urlError);

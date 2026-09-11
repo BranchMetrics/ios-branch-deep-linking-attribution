@@ -46,10 +46,13 @@ NS_ASSUME_NONNULL_BEGIN
  Exposed so tests can pin the exact `setupX:` sequence — `-[BNCLinkData hash]` is the cache key, so
  a change to that sequence silently orphans every previously cached link.
 
+ @param linkProperties The link's content and behavior. May be nil, in which case every option takes
+        its default.
  @param ignoreUAString Passed through to `-setupIgnoreUAString:`. The async terminal hardcodes nil
         here, matching the funnel it replaces.
  */
-- (BNCLinkData *)linkDataWithIgnoreUAString:(nullable NSString *)ignoreUAString;
+- (BNCLinkData *)linkDataWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
+                             ignoreUAString:(nullable NSString *)ignoreUAString;
 
 @end
 

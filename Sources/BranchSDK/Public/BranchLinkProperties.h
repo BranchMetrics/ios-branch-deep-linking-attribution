@@ -12,6 +12,8 @@
 #import <Foundation/Foundation.h>
 #endif
 
+#import "BNCLinkData.h"
+
 @interface BranchLinkProperties : NSObject
 
 @property (nonatomic, strong) NSArray *tags;
@@ -21,6 +23,10 @@
 @property (nonatomic, copy) NSString *stage;
 @property (nonatomic, copy) NSString *campaign;
 @property (nonatomic, assign) NSUInteger matchDuration;
+
+/// Whether the link may be clicked once or without limit. Default `BranchLinkTypeUnlimitedUse`.
+@property (nonatomic, assign) BranchLinkType linkType;
+
 @property (nonatomic, strong) NSDictionary *controlParams;
 
 - (void)addControlParam:(NSString *)controlParam withValue:(NSString *)value;

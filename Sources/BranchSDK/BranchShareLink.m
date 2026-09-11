@@ -143,15 +143,17 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     } else {
         
         // use a long app.link url as the placeholder url
+        BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+        linkProperties.channel = self.linkProperties.channel;
+        linkProperties.tags = self.linkProperties.tags;
+        linkProperties.feature = self.linkProperties.feature;
+        linkProperties.stage = self.linkProperties.stage;
+        linkProperties.alias = self.linkProperties.alias;
+
         BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
-        builder.useAppLinkDomain = YES;
         builder.params = self.serverParameters;
-        builder.channel = self.linkProperties.channel;
-        builder.tags = self.linkProperties.tags;
-        builder.feature = self.linkProperties.feature;
-        builder.stage = self.linkProperties.stage;
-        builder.alias = self.linkProperties.alias;
-        NSString *URLString = [builder buildLongURL];
+        NSString *URLString = [builder getLongURLWithLinkProperties:linkProperties
+                                                  useAppLinkDomain:YES];
 
         self.shareURL = URLString ? [[NSURL alloc] initWithString:URLString] : nil;
     }
@@ -279,16 +281,18 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         userAgentString = [BNCUserAgentCollector instance].userAgent;
         #endif
     }
+    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.tags = self.linkProperties.tags;
+    linkProperties.channel = self.linkProperties.channel;
+    linkProperties.feature = self.linkProperties.feature;
+    linkProperties.stage = self.linkProperties.stage;
+    linkProperties.campaign = self.linkProperties.campaign;
+    linkProperties.alias = self.linkProperties.alias;
+
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
     builder.params = self.serverParameters;
-    builder.tags = self.linkProperties.tags;
-    builder.channel = self.linkProperties.channel;
-    builder.feature = self.linkProperties.feature;
-    builder.stage = self.linkProperties.stage;
-    builder.campaign = self.linkProperties.campaign;
-    builder.alias = self.linkProperties.alias;
-    builder.ignoreUAString = userAgentString;
-    NSString *URLString = [builder fetchShortURL];
+    NSString *URLString = [builder getShortURLWithLinkProperties:linkProperties
+                                                 ignoreUAString:userAgentString];
     self.shareURL = [NSURL URLWithString:URLString];
     return (self.returnURL) ? self.shareURL :self.shareURL.absoluteString;
 }
