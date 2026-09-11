@@ -197,15 +197,29 @@ ATTRIBUTION_LEVEL_NONE = "NONE"
 # `install` and `deeplink` are not test-plan scenarios — they are the runs
 # the harness drives today. Plan scenarios use their plan ID (C1, W1, N4).
 SCENARIO_CONTRACTS = {
-    # N1 organic_open: measured on the harness with the canonical integration
-    # wired. The organic response carries no `~referring_link`, so
-    # BranchRequestDeepLink sends no open of its own (BranchRequestDeepLink.m:
-    # 300-305); the applicationDidBecomeActive open lands after the resolve,
-    # which is what produces the order. These are WHOLE-RUN counts, so they
-    # include the launch pair every scenario on this line now emits. The test
-    # plan also asks that the open carry no link data; that is a field-level
-    # assertion, and this layer is bounded at counts and required-field
-    # presence.
+    # N1 organic_open. MEASURED on the harness with the canonical integration
+    # wired: one resolve, then one open, in that order, repeatedly.
+    #
+    # One half of the why is read from the source: the organic response carries
+    # no `~referring_link`, so BranchRequestDeepLink sends no open of its own
+    # (BranchRequestDeepLink.m:300-305).
+    #
+    # The order is INFERRED, not guaranteed. The queue's explicit primitive does
+    # not cover this pair: isInitRequest: treats BranchRequestDeepLink and
+    # BranchRequestOpen as siblings, so no addDependency: is created between
+    # them, and both run at NSOperationQueuePriorityHigh. The order that is
+    # observed comes from lifecycle timing, the resolve being enqueued
+    # synchronously in didFinishLaunchingWithOptions: while the open is enqueued
+    # later off applicationDidBecomeActive, with maxConcurrentOperationCount = 1
+    # then serialising them. That gap is wide and the order has been stable, but
+    # it is a timing artifact rather than a contract. If this assertion ever
+    # flakes, that is the reason, and the fix is an explicit dependency in the
+    # queue rather than a looser contract here.
+    #
+    # These are WHOLE-RUN counts, so they include the launch pair every scenario
+    # on this line now emits. The test plan also asks that the open carry no
+    # link data; that is a field-level assertion, and this layer is bounded at
+    # counts and required-field presence.
     "N1": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 1},
         "order": (("/v3/deeplink", "/v3/events/open"),),
