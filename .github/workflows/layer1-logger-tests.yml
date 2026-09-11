@@ -113,7 +113,7 @@ jobs:
       #
       # The scenario is required on this line: a capture is judged against the
       # contract for the run that produced it. This job drives the default
-      # harness run, which is N1 organic_open — one open, no deep link.
+      # harness run, which is N1 organic_open: one resolve, then one open.
       - name: Validate wire logs
         id: validate
         continue-on-error: true
