@@ -206,10 +206,11 @@ SCENARIO_CONTRACTS = {
         "order": (),
     },
     # N3 attribution_none: a link resolved while the consumer-protection level
-    # is NONE. BNCServerRequestOperation drops every request at that level
-    # except BranchRequestDeepLink, so the resolution goes out and the
-    # attributed open does not. The test plan also asks that identifiers be
-    # cleared, which is a field-level assertion this layer does not make.
+    # is NONE. Resolution is exempt from the NONE gate and the attributed open
+    # is not, so the resolution goes out and the open does not. Only those two
+    # endpoints are counted, so other traffic such as link creation is outside
+    # this contract. The test plan also asks that identifiers be cleared, which
+    # is a field-level assertion this layer does not make.
     "N3": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 0},
         "order": (),
