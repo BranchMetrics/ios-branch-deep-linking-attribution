@@ -258,7 +258,18 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
     dispatch_queue_t isolationQueue = [self.branch valueForKey:@"isolationQueue"];
     XCTAssertNotNil(isolationQueue,
                     @"Precondition: the isolation queue must be reachable, or this barrier proves nothing.");
-    dispatch_sync(isolationQueue, ^{});
+    // Must not block main: isolation-queue blocks can hop to main (-loadUserAgent).
+    // Spins the run loop, so isolation work enqueued during the wait is not covered.
+    __block BOOL isolationQueueDrained = NO;
+    NSObject *drainLock = [NSObject new];
+    dispatch_async(isolationQueue, ^{
+        @synchronized (drainLock) { isolationQueueDrained = YES; }
+    });
+    [self waitForCondition:^BOOL{
+        @synchronized (drainLock) { return isolationQueueDrained; }
+    }
+               description:@"the isolation queue to drain"
+                   timeout:15.0];
 }
 
 - (NSArray<NSString *> *)postedURLs {
