@@ -12,7 +12,9 @@
 #import <Foundation/Foundation.h>
 #endif
 
-@interface BranchLinkProperties : NSObject
+#import "BNCLinkData.h"
+
+@interface BranchLinkProperties : NSObject <NSCopying>
 
 @property (nonatomic, strong) NSArray *tags;
 @property (nonatomic, copy) NSString *feature;
@@ -21,7 +23,22 @@
 @property (nonatomic, copy) NSString *stage;
 @property (nonatomic, copy) NSString *campaign;
 @property (nonatomic, assign) NSUInteger matchDuration;
+
+/// Whether the link may be clicked once or without limit. Default `BranchLinkTypeUnlimitedUse`.
+@property (nonatomic, assign) BranchLinkType linkType;
+
 @property (nonatomic, strong) NSDictionary *controlParams;
+
+/**
+ Returns link properties with the same options as `linkProperties`.
+
+ The `tags` and `controlParams` collections are copied, so mutating the original's afterwards does
+ not change this one.
+
+ @param linkProperties The properties to copy. May be nil, in which case every option takes its
+        default.
+ */
+- (instancetype)initWithLinkProperties:(BranchLinkProperties *)linkProperties;
 
 - (void)addControlParam:(NSString *)controlParam withValue:(NSString *)value;
 + (BranchLinkProperties *)getBranchLinkPropertiesFromDictionary:(NSDictionary *)dictionary;

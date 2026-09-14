@@ -28,6 +28,15 @@
 /// every deep-link response the tests assert on.
 #define BRANCH_TESTBED_FULL_CONFIG_EXAMPLE 0
 
+/// Set to 1 to run the `BranchLinkBuilder` example at the end of
+/// `-application:didFinishLaunchingWithOptions:`.
+///
+/// Off by default because it creates real links on every launch: four of the
+/// five terminals are network calls against the TestBed's live key, and the
+/// resulting links show up in the dashboard. The long-URL terminal is offline
+/// and harmless.
+#define BRANCH_TESTBED_LINK_BUILDER_EXAMPLE 1
+
 @interface AppDelegate() <UNUserNotificationCenterDelegate>
 - (void)logBranchMessage:(NSString *)message level:(BranchLogLevel)level error:(NSError *)error;
 - (void)logBranchRequest:(NSString *)url
@@ -150,7 +159,108 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [TestBedDeepLinkTestHook installIfRequested:application];
 #endif
 
+#if BRANCH_TESTBED_LINK_BUILDER_EXAMPLE
+    [self branchLinkBuilderExample];
+#endif
+
     return YES;
+}
+
+#pragma mark - Creating links
+
+/// Working example of `BranchLinkBuilder`
+///
+/// You do not need a `Branch` reference to make a link, and you do not need to wait for
+/// `+[Branch initialize:]` to finish; the builder resolves the SDK when a terminal runs.
+- (void)branchLinkBuilderExample {
+    // Link content and behavior travel as a BranchLinkProperties, which every terminal takes as an
+    // argument. The same properties object can be reused for as many links as you like.
+    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.channel = @"testbed";
+    linkProperties.feature = @"share";
+    linkProperties.stage = @"launch";
+    linkProperties.tags = @[@"example"];
+
+    // `controlParams` is the link's data payload. It carries both Branch-reserved keys, which
+    // control how the link behaves, and your own keys, which come back to you in the deep-link
+    // callback.
+    linkProperties.controlParams = @{
+        @"$og_title": @"Branch TestBed",
+        @"$og_description": @"A link made with BranchLinkBuilder",
+        @"deeplink_text": @"Opened from a builder-generated link",
+    };
+
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
+
+    // ── getLongURLWithLinkProperties:useAppLinkDomain: ───────────────────
+    // Offline and synchronous. `controlParams` are JSON-encoded and base64'd into the URL itself,
+    // so this needs no network and returns immediately. It is also the one terminal that does not
+    // need `+[Branch initialize:]` to have run — a Branch key is enough.
+    NSString *longURL = [builder getLongURLWithLinkProperties:linkProperties useAppLinkDomain:NO];
+    NSLog(@"Branch TestBed: long URL: %@", longURL);
+
+    // Pass YES for useAppLinkDomain to build against the app.link domain instead of the default
+    // link domain.
+    NSString *appLinkURL = [builder getLongURLWithLinkProperties:linkProperties
+                                               useAppLinkDomain:YES];
+    NSLog(@"Branch TestBed: long URL (app.link domain): %@", appLinkURL);
+
+    // ── getShortURLWithLinkProperties:callback: ──────────────────────────
+    // Network, non-blocking, and the terminal to prefer everywhere. The callback is delivered on
+    // the main queue, so it is safe to update UI from it directly.
+    //
+    // Check `error`, not `url`. On a server error the SDK still hands back a URL — a long-link
+    // fallback — so `if (url)` would read a failed request as a success.
+    [builder getShortURLWithLinkProperties:linkProperties
+                                  callback:^(NSString * _Nullable url, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"Branch TestBed: could not create a short link: %@", error.localizedDescription);
+            return;
+        }
+        NSLog(@"Branch TestBed: short URL: %@", url);
+    }];
+
+    // ── getSpotlightURLWithParams:callback: ──────────────────────────────
+    // Network, non-blocking, and the terminal behind Core Spotlight indexing. It takes its params
+    // directly rather than a BranchLinkProperties, because a Spotlight link's shape is fixed — the
+    // channel is always `spotlight`. It also calls back with the server's whole link payload, not
+    // just a URL, since Core Spotlight needs the accompanying fields; the URL is under `url`.
+    //
+    // Results are not cached here, unlike the short-URL terminals, so every call reaches the
+    // network. On a server error the callback receives an empty dictionary plus the error.
+    [builder getSpotlightURLWithParams:@{
+        @"$og_title": @"Branch TestBed",
+        @"$og_description": @"A Spotlight link made with BranchLinkBuilder",
+        @"deeplink_text": @"Opened from a Spotlight-indexed link",
+    }
+                              callback:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"Branch TestBed: could not create a Spotlight link: %@", error.localizedDescription);
+            return;
+        }
+        NSLog(@"Branch TestBed: Spotlight URL: %@ (full payload: %@)", params[@"url"], params);
+    }];
+
+    // ── The blocking terminals ───────────────────────────────────────────
+    // Both of these perform a synchronous network round trip, so on the main thread they freeze the
+    // UI until the server answers — or for the full request timeout on a bad connection. They are
+    // shown here on a background queue for that reason; prefer the callback form above.
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
+        // getShortURLWithLinkProperties: — equivalent to passing a nil ignoreUAString below.
+        // Same long-link fallback on a server error, and with no error to check there is no way to
+        // tell a fallback from a real short link.
+        NSString *shortURL = [builder getShortURLWithLinkProperties:linkProperties];
+        NSLog(@"Branch TestBed: short URL (blocking): %@", shortURL);
+
+        // getShortURLWithLinkProperties:ignoreUAString: — names a User-Agent the Branch backend
+        // should ignore, so a link-preview scrape is not counted as a click. Passing one also
+        // bypasses the link cache read, so this call always reaches the network even though the
+        // link options match the request above.
+        NSString *ignoredUAURL =
+            [builder getShortURLWithLinkProperties:linkProperties
+                                    ignoreUAString:@"Mozilla/5.0 (compatible; TestBedScraper/1.0)"];
+        NSLog(@"Branch TestBed: short URL (blocking, ignored UA): %@", ignoredUAURL);
+    });
 }
 
 // pre init support is meant for extensions, for example, when Adobe axtension needs to pass in Adobe IDs

@@ -43,6 +43,9 @@
             reference = "container:BranchSDKTests/BranchSDKTests.xctestplan"
             default = "YES">
          </TestPlanReference>
+         <TestPlanReference
+            reference = "container:BranchSDKTests/BranchSDKTestsLiveNetwork.xctestplan">
+         </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference

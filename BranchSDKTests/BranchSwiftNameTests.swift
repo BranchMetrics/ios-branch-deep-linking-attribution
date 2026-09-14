@@ -148,15 +148,37 @@ final class BranchSwiftNameTests: XCTestCase {
         _ = asyncMethod
         XCTAssertTrue(branch.responds(to: NSSelectorFromString("lastAttributedTouchDataWithAttributionWindow:completion:")))
     }
+    
+    /// The interesting case is the pair of blocking short-URL terminals.
+    /// `getShortURLWithLinkProperties:callback:` gets an `async` projection, so both blocking
+    /// terminals are moved to `getShortURLSynchronously(…)` by `NS_SWIFT_NAME` — the hazard
+    /// `logEventAsync()` is named around. Binding each to a written-out type makes a collision or
+    /// rename a build failure rather than a silent source break.
+    func testSwiftNamesOfBranchLinkBuilderTerminals() {
+        let builder = BranchLinkBuilder()
 
-    /// `getShortURLWithParams:andCallback:` → `getShortURL(params:) async throws -> String`
-    func testAsyncNameGetShortURL() {
-        let asyncMethod: ([AnyHashable: Any]?) async throws -> String = branch.getShortURL(params:)
-        let callbackMethod: ([AnyHashable: Any]?, ((String?, Error?) -> Void)?) -> Void =
-            branch.getShortURL(withParams:andCallback:)
-        _ = asyncMethod
-        _ = callbackMethod
-        XCTAssertTrue(branch.responds(to: NSSelectorFromString("getShortURLWithParams:andCallback:")))
+        let blocking: (BranchLinkProperties?) -> String? =
+            builder.getShortURLSynchronously(withLinkProperties:)
+        let blockingIgnoringUA: (BranchLinkProperties?, String?) -> String? =
+            builder.getShortURLSynchronously(withLinkProperties:ignoreUAString:)
+        let callbackBased: (BranchLinkProperties?, ((String?, Error?) -> Void)?) -> Void =
+            builder.getShortURL(withLinkProperties:callback:)
+        let offline: (BranchLinkProperties?, Bool) -> String? =
+            builder.getLongURL(withLinkProperties:useAppLinkDomain:)
+        let spotlight: ([AnyHashable: Any]?, (([AnyHashable: Any]?, Error?) -> Void)?) -> Void =
+            builder.getSpotlightURL(withParams:callback:)
+
+        _ = blocking
+        _ = blockingIgnoringUA
+        _ = callbackBased
+        _ = offline
+        _ = spotlight
+
+        XCTAssertTrue(builder.responds(to: NSSelectorFromString("getShortURLWithLinkProperties:")))
+        XCTAssertTrue(builder.responds(to: NSSelectorFromString("getShortURLWithLinkProperties:ignoreUAString:")))
+        XCTAssertTrue(builder.responds(to: NSSelectorFromString("getShortURLWithLinkProperties:callback:")))
+        XCTAssertTrue(builder.responds(to: NSSelectorFromString("getLongURLWithLinkProperties:useAppLinkDomain:")))
+        XCTAssertTrue(builder.responds(to: NSSelectorFromString("getSpotlightURLWithParams:callback:")))
     }
 
     /// `BranchEvent.logEventWithCompletion:` → `logEventAsync() async throws -> Bool`

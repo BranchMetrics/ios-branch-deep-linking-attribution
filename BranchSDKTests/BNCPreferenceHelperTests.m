@@ -422,4 +422,52 @@
     [self.prefHelper setAttributionLevel:BranchAttributionLevelFull];
 }
 
+#pragma mark - sanitizedMutableBaseURL:
+
+// Callers append query parameters straight onto this result -- BranchLinkBuilder's long-URL
+// assembly and the long-link fallbacks in BranchShortUrlRequest / BranchShortUrlSyncRequest all do
+// "tags=%@&" next -- so the separator has to be appended at every attribution level. The NONE
+// branch, which strips the randomized bundle token, used to return without one, and a long URL came
+// out as https://bnc.lt/a/<key>tags=x.
+
+- (void)testSanitizedMutableBaseURLAppendsAQuerySeparator {
+    XCTAssertEqualObjects([self.prefHelper sanitizedMutableBaseURL:@"https://bnc.lt/a/key_live_x"],
+                          @"https://bnc.lt/a/key_live_x?");
+}
+
+- (void)testSanitizedMutableBaseURLKeepsAnExistingSeparator {
+    XCTAssertEqualObjects([self.prefHelper sanitizedMutableBaseURL:@"https://bnc.lt/a/key_live_x?"],
+                          @"https://bnc.lt/a/key_live_x?");
+    XCTAssertEqualObjects([self.prefHelper sanitizedMutableBaseURL:@"https://bnc.lt/a/key_live_x?a=b&"],
+                          @"https://bnc.lt/a/key_live_x?a=b&");
+    XCTAssertEqualObjects([self.prefHelper sanitizedMutableBaseURL:@"https://bnc.lt/a/key_live_x?a=b"],
+                          @"https://bnc.lt/a/key_live_x?a=b&");
+}
+
+- (void)testSanitizedMutableBaseURLAppendsAQuerySeparatorAtAttributionLevelNone {
+    [self.prefHelper setAttributionLevel:BranchAttributionLevelNone];
+
+    NSString *url = [self.prefHelper sanitizedMutableBaseURL:@"https://bnc.lt/a/key_live_x"];
+
+    [self.prefHelper setAttributionLevel:BranchAttributionLevelFull];
+
+    XCTAssertEqualObjects(url, @"https://bnc.lt/a/key_live_x?",
+                          @"without the separator every query parameter fuses onto the Branch key");
+}
+
+// The strip is the reason that branch exists, and it must not cost the separator.
+- (void)testSanitizedMutableBaseURLStripsTheRandomizedBundleTokenAtAttributionLevelNone {
+    NSString *savedBundleToken = self.prefHelper.randomizedBundleToken;
+    self.prefHelper.randomizedBundleToken = @"token123";
+    [self.prefHelper setAttributionLevel:BranchAttributionLevelNone];
+
+    NSString *url = [self.prefHelper sanitizedMutableBaseURL:
+                     @"https://example.app.link/xyz?%24randomized_bundle_token=token123"];
+
+    [self.prefHelper setAttributionLevel:BranchAttributionLevelFull];
+    self.prefHelper.randomizedBundleToken = savedBundleToken;
+
+    XCTAssertEqualObjects(url, @"https://example.app.link/xyz?");
+}
+
 @end

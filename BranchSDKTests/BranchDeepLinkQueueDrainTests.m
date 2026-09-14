@@ -18,6 +18,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <UIKit/UIKit.h>
 #import "Branch.h"
 #import "BranchConfiguration.h"
 #import "BranchConstants.h"
@@ -114,6 +115,13 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
     self.branch = [Branch initialize:config];
     sPostedURLs = [NSMutableArray array];
 
+    // Branch observes the real UIApplication lifecycle notifications, and its handlers are the two
+    // methods these tests drive by hand. A genuine foreground arriving mid-test enqueues an organic
+    // open that is then indistinguishable from the one under test. Detached for the duration and
+    // restored in -tearDown; the tests call the handlers directly, so nothing under test relies on
+    // the wiring.
+    [self detachLifecycleObservers];
+
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     self.savedSessionParams = preferenceHelper.sessionParams;
     self.savedAttributionLevel = preferenceHelper.attributionLevel;
@@ -137,7 +145,14 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
                                            branchKey:realQueue.branchKey
                                     preferenceHelper:preferenceHelper];
     self.drainingQueue.operationQueue.suspended = YES;
+
+    [self absorbPendingIsolationQueueWork];
     [self.branch setValue:self.drainingQueue forKey:@"requestQueue"];
+
+    // Every assertion below counts queue contents and posted URLs, so a request that is not this
+    // test's own corrupts all of them. Fail here, at the source, rather than three assertions later.
+    XCTAssertEqualObjects([self enqueuedRequestClassNames], @[],
+                          @"Precondition: the queue under test must start empty.");
 }
 
 - (void)tearDown {
@@ -159,8 +174,51 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
 
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
 
+    [self reattachLifecycleObservers];
+
     self.branch = nil;
     [super tearDown];
+}
+
+#pragma mark - Isolating the shared singleton
+
+// Branch is a process-wide singleton, and -setUp installs a private request queue into it. A block
+// already sitting on its shared isolation queue -- an earlier test's lifecycle call, a -sendOpen --
+// reads branch.requestQueue when it runs rather than when it was dispatched, so it would otherwise
+// enqueue an organic open into the queue under test and be counted as this test's traffic.
+//
+// Absorbed into a throwaway suspended queue so it reaches neither the network nor this test. The
+// barrier is a dispatch_sync onto the same serial queue: once it returns, every block dispatched
+// before it has run to completion.
+- (void)absorbPendingIsolationQueueWork {
+    BNCServerRequestQueue *absorbingQueue = [BNCServerRequestQueue new];
+    absorbingQueue.operationQueue.suspended = YES;
+    [self.branch setValue:absorbingQueue forKey:@"requestQueue"];
+
+    [self waitForIsolationQueue];
+
+    [absorbingQueue.operationQueue cancelAllOperations];
+}
+
+- (void)detachLifecycleObservers {
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center removeObserver:self.branch name:UIApplicationWillResignActiveNotification object:nil];
+    [center removeObserver:self.branch name:UIApplicationDidBecomeActiveNotification object:nil];
+}
+
+// Restores exactly the two registrations -[Branch initWithInterface:queue:cache:preferenceHelper:key:]
+// makes. That initializer runs once per process behind a dispatch_once, so the singleton never
+// re-registers them itself and leaving them detached would silently disarm every later test.
+- (void)reattachLifecycleObservers {
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self.branch
+               selector:@selector(applicationWillResignActive)
+                   name:UIApplicationWillResignActiveNotification
+                 object:nil];
+    [center addObserver:self.branch
+               selector:@selector(applicationDidBecomeActive)
+                   name:UIApplicationDidBecomeActiveNotification
+                 object:nil];
 }
 
 #pragma mark - Helpers

@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "9EAB663B-7807-43EE-AD4E-658E8734932A",
+      "id" : "BA126DE8-0A36-4043-849C-9F2F8C29C93B",
       "name" : "Test Scheme Action",
       "options" : {
 
@@ -18,14 +18,8 @@
   "testTargets" : [
     {
       "parallelizable" : false,
-      "skippedTests" : [
-        "BNCDisableAdNetworkCalloutsTests",
-        "BranchLinkBuilderTests\/testGetShortURLLiveSmokeTest",
-        "BranchQRCodeTests\/testNormalQRCodeAsDataWithNoSettings",
-        "BranchQRCodeTests\/testNormalQRCodeAsImage",
-        "BranchQRCodeTests\/testNormalQRCodeDataWithAllSettings",
-        "BranchQRCodeTests\/testNormalQRCodeWithInvalidLogoURL",
-        "BranchQRCodeTests\/testQRCodeCache"
+      "selectedTests" : [
+        "BranchLinkBuilderTests\/testGetShortURLLiveSmokeTest"
       ],
       "target" : {
         "containerPath" : "container:BranchSDK.xcodeproj",

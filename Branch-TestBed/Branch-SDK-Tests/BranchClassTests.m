@@ -205,26 +205,6 @@
     XCTAssertEqualObjects(result.campaign, @"latest campaign");
 }
 
-- (void)testGetShortURL {      
-    NSString *shortURL = [self.branch getShortURL];
-    XCTAssertNotNil(shortURL, @"URL should not be nil");
-    XCTAssertTrue([shortURL hasPrefix:@"https://"], @"URL should start with 'https://'");
-}
-
-- (void)testGetLongURLWithParamsAndChannelAndTagsAndFeatureAndStageAndAlias {
-    NSDictionary *params = @{@"key": @"value"};
-    NSString *channel = @"channel1";
-    NSArray *tags = @[@"tag1", @"tag2"];
-    NSString *feature = @"feature1";
-    NSString *stage = @"stage1";
-    NSString *alias = @"alias1";
-    
-    NSString *generatedURL = [self.branch getLongURLWithParams:params andChannel:channel andTags:tags andFeature:feature andStage:stage andAlias:alias];
-    NSString *expectedURL = @"https://bnc.lt/a/key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB?tags=tag1&tags=tag2&alias=alias1&feature=feature1&stage=stage1&source=ios&data=eyJrZXkiOiJ2YWx1ZSJ9";
-    
-    XCTAssertEqualObjects(generatedURL, expectedURL, @"URL should match the expected format");
-}
-
 - (void)testSetDMAParamsForEEA {
     XCTAssertFalse([[BNCPreferenceHelper sharedInstance] eeaRegionInitialized]);
     

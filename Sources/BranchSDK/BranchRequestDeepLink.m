@@ -11,6 +11,7 @@
 #import "Branch.h"
 
 #import "BranchLogger.h"
+#import "NSError+Branch.h"
 #import "BNCRequestFactory.h"
 
 #import "BNCServerAPI.h"
@@ -299,7 +300,16 @@ static BOOL deepLinkRequestWaitQueueIsSuspended = NO;
 
     if (referringURL != nil) {
         [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"~referring_link found in response: %@, sending sendOpen network request." ,referringURL] error:nil];
-        [[Branch sharedInstance] sendOpen:response.data skipCallback:skipCallback];
+
+        // +sharedInstance is nil until +[Branch initialize:] has run; the attributed open cannot be
+        // sent without an instance.
+        Branch *branch = [Branch sharedInstance];
+        if (branch) {
+            [branch sendOpen:response.data skipCallback:skipCallback];
+        } else {
+            [[BranchLogger shared] logError:@"Resolved a deep link with no initialized Branch instance. The attributed open was not sent."
+                                      error:[NSError branchErrorWithCode:BNCInitError]];
+        }
     } else {
         [[BranchLogger shared] logDebug:@"No ~referring_link on deeplink data. Not sending sendOpen network request. Clearing link identifiers to prevent reuse." error:nil];
         [self clearLinkIdentifiers:preferenceHelper];

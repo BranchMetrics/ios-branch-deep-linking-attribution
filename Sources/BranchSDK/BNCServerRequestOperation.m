@@ -14,6 +14,7 @@
 #import "BNCCallbackMap.h"
 #import "BranchRequestOpen.h"
 #import "BranchRequestDeepLink.h"
+#import "BranchShortUrlRequest.h"
 
 @interface BNCServerRequestOperation ()
 @property (nonatomic, assign, readwrite, getter = isExecuting) BOOL executing;
@@ -109,6 +110,14 @@
     if (![self.request isKindOfClass:[BranchRequestDeepLink class]]) {
         if ([preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
             [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Attribution Level is 'NONE'. Skipping request: %@", self.request.requestUUID] error:nil];
+            // A dropped short-link request still owes its caller an answer: the callback runs only
+            // from -processResponse:error:, which hands back the long-link fallback on an error.
+            if ([self.request isKindOfClass:[BranchShortUrlRequest class]]) {
+                BNCPerformBlockOnMainThreadSync(^{
+                    [self.request processResponse:nil
+                                            error:[NSError branchErrorWithCode:BNCAttributionLevelNoneError]];
+                });
+            }
             [self finishOperation];
             return;
         }
