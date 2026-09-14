@@ -93,8 +93,8 @@ NS_ASSUME_NONNULL_BEGIN
  request timeout.
 
  Successful results are cached: a second call with identical link options returns the cached URL
- without a request. Passing an `ignoreUAString` bypasses that cache read, so the call always reaches
- the network.
+ without a request. The `ignoreUAString` is part of those options, so a call that passes one is
+ served only by an earlier call that passed the same one.
 
  If the server returns a non-200, the SDK falls back to a long link built from the last known link
  domain — so a non-nil result is not proof the request succeeded. That fallback is not cached, so a
@@ -103,14 +103,17 @@ NS_ASSUME_NONNULL_BEGIN
  If `+[Branch initialize:]` has not run there is no instance to send the request through: the call
  logs a `BNCInitError` and returns nil without reaching the network.
 
+ At attribution level `BranchAttributionLevelNone` the request is dropped before the network and the
+ call returns the same long-link fallback.
+
  In Swift both blocking terminals are named `getShortURLSynchronously(…)`, so neither can be reached
  by mistake from an `async` context in place of the non-blocking terminal.
 
  @param linkProperties The link's content and behavior. May be nil, in which case every option takes
         its default.
  @param ignoreUAString A User-Agent string the Branch backend should ignore, so a link preview
-        scrape is not counted as a click. It is not part of the link's cache key, so a link fetched
-        with one can still be served to a later call that passes nil.
+        scrape is not counted as a click. It is part of the link's cache key, so a link fetched with
+        one is never served to a later call that passes nil.
  @return The short URL; a long-URL fallback on a server error; or nil.
  */
 - (nullable NSString *)getShortURLWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
@@ -134,6 +137,9 @@ NS_ASSUME_NONNULL_BEGIN
 
  If `+[Branch initialize:]` has not run there is no instance to send the request through: the
  callback receives a nil URL and a `BNCInitError`, and nothing reaches the network.
+
+ At attribution level `BranchAttributionLevelNone` the request is dropped before the network and the
+ callback receives the long-link fallback with a `BNCAttributionLevelNoneError`.
 
  @param linkProperties The link's content and behavior. May be nil, in which case every option takes
         its default.

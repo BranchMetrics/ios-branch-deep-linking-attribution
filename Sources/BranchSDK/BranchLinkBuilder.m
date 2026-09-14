@@ -90,12 +90,12 @@
     BNCLinkData *linkData = [BNCLinkData linkDataWithLinkProperties:linkProperties
                                                     ignoreUAString:ignoreUAString];
 
-    // An ignoreUAString means the caller wants a link that will not be counted as clicked by a
-    // preview scrape, so we always go to the server for a fresh one rather than serving a cached
-    // ordinary link.
-    if (!ignoreUAString && [branch.linkCache objectForKey:linkData]) {
+    // -[BNCLinkData hash] includes ignoreUAString, so a hit is a link fetched with the same
+    // ignoreUAString -- a cached ordinary link is never served in its place.
+    NSString *cachedURL = [branch.linkCache objectForKey:linkData];
+    if (cachedURL) {
         [[BranchLogger shared] logVerbose:@"Returning cached Branch Link" error:nil];
-        return [branch.linkCache objectForKey:linkData];
+        return cachedURL;
     }
 
     BranchShortUrlSyncRequest *req =

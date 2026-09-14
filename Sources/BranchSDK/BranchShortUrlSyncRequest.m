@@ -14,6 +14,7 @@
 #import "BranchLogger.h"
 #import "BNCRequestFactory.h"
 #import "BNCServerAPI.h"
+#import "NSError+Branch.h"
 
 @interface BranchShortUrlSyncRequest ()
 
@@ -55,6 +56,14 @@
 }
 
 - (BNCServerResponse *)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key {
+    // This terminal does not run through BNCServerRequestOperation, so the attribution gate the
+    // queued requests get has to happen here. -processResponse: turns the nil into a long link.
+    if ([Branch attributionLevelNone]) {
+        [[BranchLogger shared] logWarning:@"Attribution Level is 'NONE'. Dropping short link request."
+                                    error:[NSError branchErrorWithCode:BNCAttributionLevelNoneError]];
+        return nil;
+    }
+
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
     NSDictionary *json = [factory dataForShortURLWithLinkDataDictionary:[self.linkData.data mutableCopy] isSpotlightRequest:NO];
 
@@ -65,8 +74,10 @@
 
 - (NSString *)processResponse:(BNCServerResponse *)response {
     if (![response.statusCode isEqualToNumber:@200]) {
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"Short link creation received HTTP status code %@. Using long link instead.",
-                                           response.statusCode] error:nil];
+        NSString *message = response
+            ? [NSString stringWithFormat:@"Short link creation received HTTP status code %@. Using long link instead.", response.statusCode]
+            : @"Short link creation did not reach the server. Using long link instead.";
+        [[BranchLogger shared] logWarning:message error:nil];
         NSString *failedUrl = nil;
         NSString *userUrl = [BNCPreferenceHelper sharedInstance].userUrl;
         if (userUrl) {

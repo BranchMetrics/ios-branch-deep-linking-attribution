@@ -790,9 +790,9 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     XCTAssertEqual(fake.requestCount, 1, @"the chained call must hit the same cache entry");
 }
 
-// Behavior #3: an ignoreUAString bypasses the cache *read*, so a request is issued even when a
-// cached link for the same key already exists.
-- (void)testGetShortURLWithIgnoreUAStringBypassesTheCacheRead {
+// Behavior #3: an ignoreUAString gets its own cache entry. A cached ordinary link cannot answer it,
+// but its own entry can -- so repeated calls with the same one do not each block on the network.
+- (void)testGetShortURLWithIgnoreUAStringUsesItsOwnCacheEntry {
     BNCFakeServerInterface *fake = [[BNCFakeServerInterface alloc] init];
     fake.stubResponse = [BNCFakeServerInterface responseWithStatusCode:200 url:@"https://example.app.link/abc123"];
     BNCLinkCache *linkCache = [[BNCLinkCache alloc] init];
@@ -804,10 +804,17 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     XCTAssertEqual(fake.requestCount, 1);
 
     [builder getShortURLWithLinkProperties:linkProperties ignoreUAString:@"Slackbot-LinkExpanding"];
-    XCTAssertEqual(fake.requestCount, 2, @"ignoreUAString must force a fresh request");
+    XCTAssertEqual(fake.requestCount, 2, @"the cached ordinary link must not answer an ignoreUAString call");
 
-    // ...and again, every time: the read is skipped even though the entry is now keyed separately.
     [builder getShortURLWithLinkProperties:linkProperties ignoreUAString:@"Slackbot-LinkExpanding"];
+    XCTAssertEqual(fake.requestCount, 2, @"the second ignoreUAString call should have been served from the cache");
+
+    XCTAssertEqualObjects([linkCache objectForKey:[BNCLinkData linkDataWithLinkProperties:linkProperties
+                                                                           ignoreUAString:@"Slackbot-LinkExpanding"]],
+                          @"https://example.app.link/abc123");
+
+    // A different ignoreUAString is a different key again.
+    [builder getShortURLWithLinkProperties:linkProperties ignoreUAString:@"Twitterbot"];
     XCTAssertEqual(fake.requestCount, 3);
 }
 
@@ -896,6 +903,33 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     XCTAssertEqualObjects([builder getShortURLWithLinkProperties:linkProperties], @"https://example.app.link/abc123",
                           @"the retry must reach the network rather than return the cached fallback");
     XCTAssertEqual(fake.requestCount, 2);
+}
+
+// The blocking terminal never runs through BNCServerRequestOperation, so it carries the attribution
+// gate itself -- otherwise it would keep creating short links at level NONE while the async terminal
+// stopped. It has no error out-parameter, so the drop looks like a server error: the long-link
+// fallback, uncached.
+- (void)testGetShortURLIsDroppedAtAttributionLevelNone {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    NSString *savedLevel = preferenceHelper.attributionLevel;
+    preferenceHelper.userUrl = @"https://example.app.link";
+    preferenceHelper.attributionLevel = BranchAttributionLevelNone;
+
+    BNCFakeServerInterface *fake = [[BNCFakeServerInterface alloc] init];
+    fake.stubResponse = [BNCFakeServerInterface responseWithStatusCode:200 url:@"https://example.app.link/abc123"];
+    BNCLinkCache *linkCache = [[BNCLinkCache alloc] init];
+
+    BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] initWithBranch:[self branchWithFakeInterface:fake linkCache:linkCache]];
+    BranchLinkProperties *linkProperties = [self linkPropertiesWithChannel:@"channel1"];
+
+    NSString *url = [builder getShortURLWithLinkProperties:linkProperties];
+
+    preferenceHelper.attributionLevel = savedLevel;
+
+    XCTAssertEqual(fake.requestCount, 0, @"the request must not reach the network at level NONE");
+    XCTAssertTrue([url hasPrefix:@"https://example.app.link?"], @"%@", url);
+    XCTAssertTrue([url containsString:@"channel=channel1&"], @"%@", url);
+    XCTAssertNil([linkCache objectForKey:[BNCLinkData linkDataWithLinkProperties:linkProperties ignoreUAString:nil]]);
 }
 
 // ...and returns nil when no link domain is known, which is exactly why a short-URL test may not
@@ -1096,15 +1130,16 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     XCTAssertEqual([queue snapshot].count, (NSUInteger)0);
 }
 
-// Link creation carries no attribution and BNCServerInterface whitelists /v1/url at attribution
-// level NONE, so the request has to survive BNCServerRequestOperation's gate to reach that check.
-// A dropped operation never runs -processResponse:error:, which is where the callback lives, so a
-// drop here does not fail the call -- it strands the caller forever.
-- (void)testAsyncShortURLStillCallsBackAtAttributionLevelNone {
+// Short-link creation is not exempt from the attribution gate: at level NONE
+// BNCServerRequestOperation drops the request before the network. The callback still has to run --
+// it lives in -processResponse:error:, so a silent drop would strand the caller with no error and
+// no timeout -- and it carries the long-link fallback, as it does on a server error.
+- (void)testAsyncShortURLIsDroppedButStillCallsBackAtAttributionLevelNone {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     NSString *savedLevel = preferenceHelper.attributionLevel;
     NSString *savedDeviceToken = preferenceHelper.randomizedDeviceToken;
     NSString *savedBundleToken = preferenceHelper.randomizedBundleToken;
+    preferenceHelper.userUrl = @"https://example.app.link";
     preferenceHelper.randomizedDeviceToken = @"device_token";
     preferenceHelper.randomizedBundleToken = @"bundle_token";
     preferenceHelper.attributionLevel = BranchAttributionLevelNone;
@@ -1125,9 +1160,13 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
 
     XCTestExpectation *calledBack = [self expectationWithDescription:@"callback"];
     __block NSString *deliveredURL = nil;
+    __block NSError *deliveredError = nil;
+    __block BOOL onMainThread = NO;
     [builder getShortURLWithLinkProperties:[self linkPropertiesWithChannel:@"sms"]
                                     callback:^(NSString *url, NSError *error) {
         deliveredURL = url;
+        deliveredError = error;
+        onMainThread = [NSThread isMainThread];
         [calledBack fulfill];
     }];
     [self waitForExpectations:@[calledBack] timeout:5];
@@ -1136,8 +1175,10 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     preferenceHelper.randomizedDeviceToken = savedDeviceToken;
     preferenceHelper.randomizedBundleToken = savedBundleToken;
 
-    XCTAssertEqualObjects(deliveredURL, @"https://example.app.link/abc123");
-    XCTAssertEqual(fake.requestCount, 1);
+    XCTAssertEqual(fake.requestCount, 0, @"the request must not reach the network at level NONE");
+    XCTAssertEqual(deliveredError.code, BNCAttributionLevelNoneError);
+    XCTAssertTrue(onMainThread);
+    XCTAssertTrue([deliveredURL hasPrefix:@"https://example.app.link"], @"%@", deliveredURL);
 }
 
 #pragma mark - getSpotlightURLWithParams:callback:

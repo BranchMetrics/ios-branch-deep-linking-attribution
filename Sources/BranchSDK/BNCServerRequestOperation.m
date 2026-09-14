@@ -107,16 +107,17 @@
 
     BNCPreferenceHelper *preferenceHelper = self.preferenceHelper ?: [BNCPreferenceHelper sharedInstance];
 
-    // Deep-link resolution and link creation carry no attribution, so they stay available at
-    // attribution level NONE. BNCServerInterface applies the final per-endpoint check. Dropping a
-    // BranchShortUrlRequest here would also strand its callback, which never runs unless
-    // -processResponse:error: does.
-    BOOL exemptFromAttributionGate = [self.request isKindOfClass:[BranchRequestDeepLink class]] ||
-                                     [self.request isKindOfClass:[BranchShortUrlRequest class]];
-
-    if (!exemptFromAttributionGate) {
+    if (![self.request isKindOfClass:[BranchRequestDeepLink class]]) {
         if ([preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
             [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Attribution Level is 'NONE'. Skipping request: %@", self.request.requestUUID] error:nil];
+            // A dropped short-link request still owes its caller an answer: the callback runs only
+            // from -processResponse:error:, which hands back the long-link fallback on an error.
+            if ([self.request isKindOfClass:[BranchShortUrlRequest class]]) {
+                BNCPerformBlockOnMainThreadSync(^{
+                    [self.request processResponse:nil
+                                            error:[NSError branchErrorWithCode:BNCAttributionLevelNoneError]];
+                });
+            }
             [self finishOperation];
             return;
         }

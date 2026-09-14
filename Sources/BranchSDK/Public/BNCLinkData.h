@@ -29,8 +29,8 @@ typedef NS_ENUM(NSUInteger, BranchLinkType) {
 
  @param linkProperties The link's content and behavior. May be nil, in which case every option takes
         its default.
- @param ignoreUAString A User-Agent string the Branch backend should ignore. Not part of the cache
-        key.
+ @param ignoreUAString A User-Agent string the Branch backend should ignore. Part of the cache key,
+        so a link fetched with one does not share an entry with an ordinary link.
  */
 + (instancetype)linkDataWithLinkProperties:(BranchLinkProperties *)linkProperties
                             ignoreUAString:(NSString *)ignoreUAString;
