@@ -114,6 +114,14 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
     self.branch = [Branch initialize:config];
     sPostedURLs = [NSMutableArray array];
 
+    // The singleton's lifecycle observers (Branch.m applicationWillResignActive /
+    // applicationDidBecomeActive) are registered once for the whole process, so a real host-app
+    // foreground during this test would drive them too (EMT-4356). Removed here, restored in
+    // -tearDown so only this test's own manual lifecycle calls reach the SDK.
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    [notificationCenter removeObserver:self.branch name:UIApplicationWillResignActiveNotification object:nil];
+    [notificationCenter removeObserver:self.branch name:UIApplicationDidBecomeActiveNotification object:nil];
+
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     self.savedSessionParams = preferenceHelper.sessionParams;
     self.savedAttributionLevel = preferenceHelper.attributionLevel;
@@ -141,6 +149,17 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
 }
 
 - (void)tearDown {
+    // Restore the observers removed in -setUp so the rest of the suite sees real lifecycle events.
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    [notificationCenter addObserver:self.branch
+                            selector:@selector(applicationWillResignActive)
+                                name:UIApplicationWillResignActiveNotification
+                              object:nil];
+    [notificationCenter addObserver:self.branch
+                            selector:@selector(applicationDidBecomeActive)
+                                name:UIApplicationDidBecomeActiveNotification
+                              object:nil];
+
     [self.branch setValue:[BNCServerRequestQueue getInstance] forKey:@"requestQueue"];
     self.drainingQueue = nil;
     sPostedURLs = nil;
