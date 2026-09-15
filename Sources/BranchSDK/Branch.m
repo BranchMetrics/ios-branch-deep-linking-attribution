@@ -149,6 +149,8 @@ void ForceCategoriesToLoad(void) {
 @property (strong, nonatomic) NSMutableArray *allowedSchemeList;
 @property (strong, nonatomic) BNCURLFilter *urlFilter;
 @property (strong, nonatomic, readwrite) BNCURLFilter *userURLFilter;
+// Test seam for the application state; nil reads UIApplication.sharedApplication.
+@property (strong, nonatomic, nullable) id application;
 
 @property (strong, nonatomic) BNCServerAPI *serverAPI;
 
@@ -424,6 +426,12 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
         addObserver:self
         selector:@selector(applicationWillResignActive)
         name:UIApplicationWillResignActiveNotification
+        object:nil];
+
+    [notificationCenter
+        addObserver:self
+        selector:@selector(applicationDidEnterBackground)
+        name:UIApplicationDidEnterBackgroundNotification
         object:nil];
 
     [notificationCenter
@@ -1580,10 +1588,12 @@ static NSString *bnc_branchKey = nil;
                 preferenceHelper.randomizedBundleToken = nil;
                 preferenceHelper.userUrl = nil;
                 preferenceHelper.installParams = nil;
-                preferenceHelper.sessionParams = nil;
 
                 [[BNCServerRequestQueue getInstance] clearQueue];
             }
+
+            // Clears sessionParams once per process, before the first open, regardless of a key change.
+            preferenceHelper.sessionParams = nil;
 
             if(!preferenceHelper.firstAppLaunchTime){
                 preferenceHelper.firstAppLaunchTime = [NSDate date];
@@ -1668,6 +1678,23 @@ static NSString *bnc_branchKey = nil;
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationWillResignActive"] error:nil];
             [BranchOpenRequest setWaitNeededForOpenResponseLock];
         }
+    });
+}
+
+- (void)applicationDidEnterBackground {
+    [[BranchLogger shared] logVerbose:@"applicationDidEnterBackground" error:nil];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        Class UIApplicationClass = NSClassFromString(@"UIApplication");
+        UIApplication *application = self.application ?: [UIApplicationClass sharedApplication];
+        if ([Branch automaticOpenTrackingDisabled] ||
+            application.applicationState != UIApplicationStateBackground ||
+            [self.requestQueue containsInstallOrOpen]) {
+            return;
+        }
+        // Not mid-write: an operation stays in the queue until finishOperation, after its main-thread write.
+        // Not before a callback: main-queue FIFO keeps this behind any callback a finished resolution queued.
+        self.preferenceHelper.sessionParams = nil;
     });
 }
 
