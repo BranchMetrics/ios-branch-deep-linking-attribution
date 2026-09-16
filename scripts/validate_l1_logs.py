@@ -214,6 +214,11 @@ SCENARIO_CONTRACTS = {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 0},
         "order": (),
     },
+    # H2 hot_uriScheme: a scheme URL opened into the foregrounded app, counted on the delivery delta (--pre).
+    "H2": {
+        "counts": {"/v3/deeplink": 1, "/v3/events/open": 1},
+        "order": (("/v3/deeplink", "/v3/events/open"),),
+    },
     "deeplink": {
         "counts": {"/v3/deeplink": 1},
         "order": (("/v3/deeplink", "/v3/events/open"),),
