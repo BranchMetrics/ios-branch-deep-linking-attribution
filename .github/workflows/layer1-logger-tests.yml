@@ -119,8 +119,13 @@ jobs:
           OUTPUT_DIR: /tmp/h2
           H2_EXPECT_RUNTIME: iOS-18-5
         run: |
-          set -o pipefail
-          ./scripts/run_h2_hot.sh 2>&1 | grep -E '^(RUNTIME=|consent key: |settled after |openurl attempt |pid unchanged$|ERROR: )'
+          rc=0
+          ./scripts/run_h2_hot.sh > /tmp/h2-driver.txt 2>&1 || rc=$?
+          grep -E '^(RUNTIME=|consent key: |settled after |openurl attempt |pid unchanged$|ERROR: )' /tmp/h2-driver.txt || true
+          if grep -q '^ERROR: no available .* on runtime ' /tmp/h2-driver.txt; then
+            touch /tmp/h2-runtime-missing
+          fi
+          [ "$rc" -eq 0 ] || { echo "ERROR: driver exited $rc"; exit "$rc"; }
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -165,6 +170,9 @@ jobs:
             grep -E '^(FAILED:|--- VALIDATION)' /tmp/h2-validate.txt || true
             grep -E '^(FAILED:|pre: |delta: )' /tmp/h2-markers.txt || true
           } | sed 's/^FAILED: /FAILED: [H2] /' | tee /tmp/h2-output.txt
+          if [ "$rc" -ne 0 ] && ! grep -q '^FAILED:' /tmp/h2-output.txt; then
+            echo "FAILED: [H2] a checker exited without a verdict" | tee -a /tmp/h2-output.txt
+          fi
           exit "$rc"
 
       # What the gate actually asserted, on the PR page rather than buried in
@@ -187,7 +195,7 @@ jobs:
             echo
             echo "Scenario coverage:"
             echo
-            echo "H2 is the only authored scenario so far; apart from it, the endpoint table above is the only assertion this gate makes."
+            echo "The endpoint table counts the N1 capture; N1 and H2 are the contracts this gate asserts."
             echo
             echo "| scenario group | status |"
             echo "| --- | --- |"
@@ -195,8 +203,12 @@ jobs:
             echo "| Warm (W1–W2) | not implemented |"
             if [ "${{ steps.h2.outcome }}" = "success" ]; then
               echo "| Hot (H1, H2) | H2 pass; H1 deferred until CI builds are signed |"
-            else
+            elif [ -f /tmp/h2-runtime-missing ]; then
+              echo "| Hot (H1, H2) | H2 not run: the runner has no simulator on the expected runtime (update H2_EXPECT_RUNTIME); H1 deferred until CI builds are signed |"
+            elif [ "${{ steps.h2.outcome }}" = "failure" ]; then
               echo "| Hot (H1, H2) | H2 fail, see failures below; H1 deferred until CI builds are signed |"
+            else
+              echo "| Hot (H1, H2) | H2 not run; H1 deferred until CI builds are signed |"
             fi
             echo "| Negative / guards (N1–N4) | not implemented |"
             echo
