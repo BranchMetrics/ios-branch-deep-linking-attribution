@@ -11,6 +11,7 @@
 
 #import <XCTest/XCTest.h>
 #import <UIKit/UIKit.h>
+#import <CoreSpotlight/CoreSpotlight.h>
 #import "Branch.h"
 #import "BranchConfiguration.h"
 #import "BranchConstants.h"
@@ -53,7 +54,8 @@ static NSString * const kRecordBodyKey = @"body";
 
 typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     BranchResolveStubModeLinkPayload,
-    BranchResolveStubModeOrganicPayload
+    BranchResolveStubModeOrganicPayload,
+    BranchResolveStubModeError
 };
 
 #pragma mark - Stub transport
@@ -88,6 +90,7 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 
     BNCServerResponse *response = [BNCServerResponse new];
     response.statusCode = @200;
+    NSError *error = nil;
 
     if ([url containsString:kDeepLinkEndpoint]) {
         switch (self.deepLinkMode) {
@@ -96,6 +99,10 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
                 break;
             case BranchResolveStubModeOrganicPayload:
                 response.data = @{ BRANCH_RESPONSE_KEY_SESSION_DATA: kOrganicPayloadJSON };
+                break;
+            case BranchResolveStubModeError:
+                response.statusCode = @500;
+                error = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorTimedOut userInfo:nil];
                 break;
         }
     } else {
@@ -106,7 +113,7 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     }
 
     if (callback) {
-        callback(response, nil);
+        callback(response, error);
     }
 }
 
@@ -137,6 +144,7 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 @property (nonatomic, copy) NSString *savedInitialReferrer;
 @property (nonatomic, copy) NSString *savedUXType;
 @property (nonatomic, strong) NSDate *savedURLLoadMs;
+@property (nonatomic, assign) BOOL savedDropURLOpen;
 @end
 
 @implementation BranchLifecycleOpenResolveTests
@@ -166,10 +174,15 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     self.savedInitialReferrer = preferenceHelper.initialReferrer;
     self.savedUXType = preferenceHelper.uxType;
     self.savedURLLoadMs = preferenceHelper.urlLoadMs;
+    self.savedDropURLOpen = preferenceHelper.dropURLOpen;
 
     preferenceHelper.sessionParams = nil;
     preferenceHelper.referringURL = nil;
+    preferenceHelper.spotlightIdentifier = nil;
     preferenceHelper.attributionLevel = BranchAttributionLevelFull;
+    // With dropURLOpen YES a resolve error is rewritten into a dummy success
+    // (BranchRequestDeepLink.m:55 to :62), which is a different case from the one under test.
+    preferenceHelper.dropURLOpen = NO;
 
     // -sendOpen reads isInstall as !randomizedBundleToken, so without a fixed value the open
     // would take the install path, and its SKAdNetwork and app-group work, on whichever test
@@ -218,6 +231,7 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     preferenceHelper.initialReferrer = self.savedInitialReferrer;
     preferenceHelper.uxType = self.savedUXType;
     preferenceHelper.urlLoadMs = self.savedURLLoadMs;
+    preferenceHelper.dropURLOpen = self.savedDropURLOpen;
 
     // The open callback chain finishes on main. Spin before handing the singleton back, so a
     // block still pending cannot enqueue into the real queue.
@@ -362,9 +376,8 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     return [self postedOpenBodies].count;
 }
 
-// Enqueues the resolve a launch with no link makes, and returns once it is the only thing queued.
-- (void)enqueueOrganicResolve {
-    [self.branch requestDeepLinkData:nil callback:nil];
+// Returns once a resolve carrying no URL is the only request queued.
+- (void)awaitOneQueuedOrganicResolve {
     [self waitForCondition:^BOOL{ return [self enqueuedOperationCount] >= 1; }
                description:@"the deep link resolve to be enqueued"
                    timeout:5.0];
@@ -376,6 +389,11 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     BranchRequestDeepLink *resolve = (BranchRequestDeepLink *)[self enqueuedRequests].firstObject;
     XCTAssertEqual(resolve.urlString.length, (NSUInteger)0,
                    @"Precondition: the resolve under test must carry no URL. urlString: %@.", resolve.urlString);
+}
+
+- (void)enqueueOrganicResolve {
+    [self.branch requestDeepLinkData:nil callback:nil];
+    [self awaitOneQueuedOrganicResolve];
 }
 
 // Drives the production foreground path, and returns once the activation handler's block has run.
@@ -399,6 +417,75 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 }
 
 #pragma mark - Tests
+
+// Test (a). The central case: an organic relaunch calls requestDeepLinkDataWithLaunchOptions:,
+// whose resolve is still queued when the foreground runs and which chains nothing when it
+// returns. The launch must still send exactly one open. On base it sends none.
+- (void)testOrganicLaunchResolveQueuedAtTheForegroundSendsOneOpen {
+    self.stub.deepLinkMode = BranchResolveStubModeOrganicPayload;
+
+    [self.branch requestDeepLinkDataWithLaunchOptions:@{} callback:nil];
+    [self awaitOneQueuedOrganicResolve];
+
+    [self foreground];
+
+    XCTAssertEqualObjects([self enqueuedRequestClassNames], @[@"BranchRequestDeepLink"],
+                          @"Precondition: the foreground must have been evaluated while the resolve was queued.");
+
+    [self drainQueue];
+
+    XCTAssertEqualObjects([self postedEndpoints], (@[kDeepLinkEndpoint, kOpenEndpoint]),
+                          @"An organic launch whose resolve chains nothing must still send one open.");
+}
+
+// Test (c). A Spotlight activity carrying no URL takes the same nil-URL resolve path, so a
+// foreground while that resolve is queued must also end with one open. On base it sends none.
+- (void)testSpotlightActivityWithNoURLResolveQueuedAtTheForegroundSendsOneOpen {
+    self.stub.deepLinkMode = BranchResolveStubModeOrganicPayload;
+
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:CSSearchableItemActionType];
+    activity.userInfo = @{ CSSearchableItemActivityIdentifier: @"emt4362/not-a-branch-link" };
+    [self.branch requestDeepLinkDataWithUserActivity:activity];
+
+    // Precondition: the Spotlight branch ran. A Branch-link identifier would have resolved a URL
+    // instead, which is a different path.
+    XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].spotlightIdentifier, @"emt4362/not-a-branch-link",
+                          @"Precondition: the activity must have been handled as a Spotlight activity.");
+
+    [self awaitOneQueuedOrganicResolve];
+    [self foreground];
+
+    XCTAssertEqualObjects([self enqueuedRequestClassNames], @[@"BranchRequestDeepLink"],
+                          @"Precondition: the foreground must have been evaluated while the resolve was queued.");
+
+    [self drainQueue];
+
+    XCTAssertEqualObjects([self postedEndpoints], (@[kDeepLinkEndpoint, kOpenEndpoint]),
+                          @"A Spotlight launch whose resolve chains nothing must still send one open.");
+}
+
+// Test (f). A resolve that errors chains nothing either, so the launch that skipped its open for
+// that resolve must still send one. On base it sends none.
+- (void)testFailedOrganicResolveQueuedAtTheForegroundSendsOneOpen {
+    self.stub.deepLinkMode = BranchResolveStubModeError;
+
+    [self enqueueOrganicResolve];
+
+    // Precondition: set in -setUp. With it YES the error is rewritten into a dummy success and
+    // the resolve chains an open of its own, which is not the case under test.
+    XCTAssertFalse([BNCPreferenceHelper sharedInstance].dropURLOpen,
+                   @"Precondition: dropURLOpen must be NO, or the error becomes a dummy success.");
+
+    [self foreground];
+
+    XCTAssertEqualObjects([self enqueuedRequestClassNames], @[@"BranchRequestDeepLink"],
+                          @"Precondition: the foreground must have been evaluated while the resolve was queued.");
+
+    [self drainQueue];
+
+    XCTAssertEqualObjects([self postedEndpoints], (@[kDeepLinkEndpoint, kOpenEndpoint]),
+                          @"A launch whose resolve failed must still send one open.");
+}
 
 // Guard (e). An organic launch whose resolve drained before the foreground: nothing chained an
 // open and the queue is empty, so the foreground must send exactly one.
