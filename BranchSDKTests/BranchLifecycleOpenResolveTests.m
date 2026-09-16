@@ -64,9 +64,6 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 /// to -deepLinkMode. Every other endpoint gets the session credentials a real open returns.
 @interface BranchResolveStubServerInterface : BNCServerInterface
 @property (assign, atomic) BranchResolveStubMode deepLinkMode;
-/// Seconds to hold the /v3/deeplink response, so the resolve is genuinely in flight rather than
-/// answered inside -postRequest:. Zero, the default, answers synchronously.
-@property (assign, atomic) NSTimeInterval deepLinkResponseDelay;
 /// Each entry is @{ kRecordURLKey: NSString, kRecordBodyKey: NSDictionary }.
 - (NSArray<NSDictionary *> *)postedRequests;
 @end
@@ -115,18 +112,9 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
         };
     }
 
-    if (!callback) return;
-
-    NSTimeInterval delay = [url containsString:kDeepLinkEndpoint] ? self.deepLinkResponseDelay : 0;
-    if (delay <= 0) {
+    if (callback) {
         callback(response, error);
-        return;
     }
-
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)),
-                   dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
-        callback(response, error);
-    });
 }
 
 - (NSArray<NSDictionary *> *)postedRequests {
@@ -472,11 +460,12 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
                    @"Precondition: the isolation queue must be held before the resolve runs.");
 
     self.testQueue.operationQueue.suspended = NO;
-    [self waitForCondition:^BOOL{ return deferredCheck.isFinished && [self enqueuedOperationCount] == 0; }
+    [self waitForCondition:^BOOL{ return deferredCheck.isFinished; }
                description:@"the resolve and the deferred check to run"
                    timeout:15.0];
-    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.3]];
 
+    XCTAssertFalse([[self enqueuedRequestClassNames] containsObject:@"BranchRequestOpen"],
+                   @"The check must not enqueue an open from the request queue thread.");
     XCTAssertEqualObjects([self postedEndpoints], @[kDeepLinkEndpoint],
                           @"No open may be sent while the isolation queue is held.");
 
@@ -557,28 +546,22 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
                           @"A launch whose resolve failed must still send one open.");
 }
 
-// The falsifier for the deferred check's re-read. The queue runs, so the resolve is in flight at
-// the foreground and finishes on its own rather than through a staged resume. The check therefore
-// runs with its own just-finished dependency possibly still in -operations: a re-read that did not
-// skip finished operations would see init traffic and send nothing, intermittently. Run repeatedly.
-- (void)testNaturallyFinishingResolveStillSendsOneOpen {
+// Two activations while the resolve is live, as when a system prompt interrupts the launch, must
+// still send one open.
+- (void)testTwoActivationsWhileTheResolveIsQueuedSendOneOpen {
     self.stub.deepLinkMode = BranchResolveStubModeOrganicPayload;
-    self.stub.deepLinkResponseDelay = 0.15;
-    self.testQueue.operationQueue.suspended = NO;
 
-    [self.branch requestDeepLinkDataWithLaunchOptions:@{} callback:nil];
+    [self enqueueOrganicResolve];
+    [self foreground];
     [self foreground];
 
-    [self waitForCondition:^BOOL{ return [self postedOpenCount] >= 1; }
-               description:@"the open to reach the wire"
-                   timeout:15.0];
-    [self waitForCondition:^BOOL{ return [self enqueuedOperationCount] == 0; }
-               description:@"the request queue to drain"
-                   timeout:15.0];
-    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+    XCTAssertEqualObjects([self enqueuedRequestClassNames], @[@"BranchRequestDeepLink"],
+                          @"Precondition: both activations must have been evaluated while the resolve was queued.");
+
+    [self drainQueue];
 
     XCTAssertEqualObjects([self postedEndpoints], (@[kDeepLinkEndpoint, kOpenEndpoint]),
-                          @"A resolve that finishes on its own must still leave exactly one open.");
+                          @"Two activations during one live resolve must send exactly one open.");
 }
 
 // Guard (g). A link arriving after the foreground replaces the pending resolve, and the deferred
