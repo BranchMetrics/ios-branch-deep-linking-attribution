@@ -22,8 +22,11 @@ import validate_l1_logs as v  # noqa: E402
 FIXTURE_DIR = os.path.join(THIS_DIR, "fixtures")
 
 
-def _validate(fixture_name, scenario):
+def _validate(fixture_name, scenario, drop_field=None):
     entries = v.parse_branch_logs(os.path.join(FIXTURE_DIR, fixture_name))
+    if drop_field is not None:
+        for entry in entries:
+            entry["request"].pop(drop_field, None)
     with redirect_stdout(io.StringIO()):
         return v.validate_entries(entries, v.contract_for(scenario))
 
@@ -40,6 +43,11 @@ class H2ContractTests(unittest.TestCase):
         errors = _validate("h2_duplicate_open.txt", "H2")
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("captured 2", errors[0])
+
+    def test_a_resolve_without_external_intent_uri_fails(self):
+        errors = _validate("h2_hot_urischeme.txt", "H2", drop_field="external_intent_uri")
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("'/v3/deeplink' request(s) to carry 'external_intent_uri'", errors[0])
 
 
 def _fixture_bytes(name):

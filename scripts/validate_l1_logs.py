@@ -254,7 +254,8 @@ SCENARIO_CONTRACTS = {
     "H2": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 1},
         "order": (("/v3/deeplink", "/v3/events/open"),),
-        "fields": {},
+        # The URL on the resolve is what separates a real scheme delivery from the synthetic hook.
+        "fields": {"/v3/deeplink": {"external_intent_uri": 1}},
     },
     "deeplink": {
         "counts": {"/v3/deeplink": 1},
