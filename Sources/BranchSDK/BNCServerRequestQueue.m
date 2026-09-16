@@ -18,18 +18,14 @@
 #import "Private/BNCServerRequestOperation.h"
 #import "Branch.h"
 
-// A foreground open that cannot be decided when the foreground happens. Whether a live resolve
-// chains its own open is known only when that resolve completes, so this operation waits on the
-// resolve as a dependency and runs the block afterwards. It stores nothing and leaves the queue
-// either by running or by being cancelled.
-@interface BNCDeferredForegroundOpenOperation : NSOperation
+// Runs a foreground open check after the resolves it depends on finish.
+@interface BNCForegroundOpenCheckOperation : NSOperation
 @property (copy, nonatomic) dispatch_block_t block;
 @end
 
-@implementation BNCDeferredForegroundOpenOperation
+@implementation BNCForegroundOpenCheckOperation
 
 - (void)main {
-    if (self.isCancelled) return;
     dispatch_block_t block = self.block;
     if (block) block();
 }
@@ -83,8 +79,7 @@
     operation.preferenceHelper = self.preferenceHelper;
     operation.queuePriority = priority;
 
-    // This request owns the foreground's open now, so a deferred check still waiting on a resolve
-    // would send a second one.
+    // Cancels pending foreground open checks when an install or open is enqueued.
     if ([self isInstallOrOpenRequest:request]) {
         [self cancelDeferredForegroundOpenChecks];
     }
@@ -109,20 +104,17 @@
 // BranchOpenRequest, not subclasses, so a BranchOpenRequest-only test reports no init in flight for
 // every 4.0 session. Same enumeration as BNCServerRequestOperation -start.
 - (BOOL)isInitRequest:(BNCServerRequest *)request {
-    return [request isKindOfClass:[BranchOpenRequest class]] ||
-           [request isKindOfClass:[BranchRequestOpen class]] ||
+    return [self isInstallOrOpenRequest:request] ||
            [request isKindOfClass:[BranchRequestDeepLink class]];
 }
 
-// The init requests that are themselves an open, which is -isInitRequest: without the resolve.
+// YES for an install or open request.
 - (BOOL)isInstallOrOpenRequest:(BNCServerRequest *)request {
     return [request isKindOfClass:[BranchOpenRequest class]] ||
            [request isKindOfClass:[BranchRequestOpen class]];
 }
 
-// YES when an init request is still live. Same enumeration as -isInitRequest:, but skipping
-// finished and cancelled operations, because NSOperationQueue does not guarantee that a finished
-// dependency has left -operations by the time its dependent runs.
+// -isInitRequest: over operations neither finished nor cancelled.
 - (BOOL)hasUnfinishedInitRequest {
     for (NSOperation *op in self.operationQueue.operations) {
         if (![op isKindOfClass:[BNCServerRequestOperation class]]) continue;
@@ -132,12 +124,9 @@
     return NO;
 }
 
-// Adds a check that runs `block` once every live resolve carrying no URL has finished, and
-// returns YES when it did. Returns NO, adding nothing, when an install or open is already live,
-// since that request owns the foreground's open, or when no such resolve is live, since then
-// there is nothing to wait for. Call on the main thread, where the chained open is also enqueued,
-// so the read and the add cannot interleave with it.
+// Adds a check that runs after every live nil-URL resolve. NO when an install or open is live, or no such resolve is. Main thread only.
 - (BOOL)addDeferredForegroundOpenCheck:(dispatch_block_t)block {
+    NSAssert([NSThread isMainThread], @"The foreground open check must be added on the main thread.");
     NSMutableArray<NSOperation *> *liveResolves = [NSMutableArray array];
 
     for (NSOperation *op in self.operationQueue.operations) {
@@ -156,9 +145,8 @@
 
     if (liveResolves.count == 0) return NO;
 
-    BNCDeferredForegroundOpenOperation *check = [BNCDeferredForegroundOpenOperation new];
+    BNCForegroundOpenCheckOperation *check = [BNCForegroundOpenCheckOperation new];
     check.block = block;
-    check.queuePriority = NSOperationQueuePriorityNormal;
     for (NSOperation *resolve in liveResolves) {
         [check addDependency:resolve];
     }
@@ -170,7 +158,7 @@
 
 - (void)cancelDeferredForegroundOpenChecks {
     for (NSOperation *op in self.operationQueue.operations) {
-        if ([op isKindOfClass:[BNCDeferredForegroundOpenOperation class]]) {
+        if ([op isKindOfClass:[BNCForegroundOpenCheckOperation class]]) {
             [op cancel];
         }
     }
@@ -195,8 +183,7 @@
 }
 
 - (void)cancelPendingDeepLinkRequests {
-    // Cancelled first, so that cancelling the resolves below cannot release a check into a queue
-    // whose replacing resolve has not been enqueued yet.
+    // Before the resolves, so cancelling them cannot release a check.
     [self cancelDeferredForegroundOpenChecks];
 
     for (NSOperation *op in self.operationQueue.operations) {

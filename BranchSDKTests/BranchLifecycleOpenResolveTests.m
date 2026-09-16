@@ -249,10 +249,12 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     // block still pending cannot enqueue into the real queue.
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
 
+    // A deferred open reads branch.requestQueue on the isolation queue, so let it run first.
+    [self waitForIsolationQueue:@"pending isolation-queue work before restoring the shared queue"];
+
     [self.branch setValue:[BNCServerRequestQueue getInstance] forKey:@"requestQueue"];
 
-    // Nothing but BNCServerRequestOperation reaches this queue today, so this asserts nothing
-    // yet. It is here for the deferred check the later pieces add.
+    // A foreground open check still in the queue is a leak.
     XCTAssertEqualObjects([self enqueuedNonRequestClassNames], @[],
                           @"The queue under test must hold no operation other than BNCServerRequestOperation.");
 
@@ -392,7 +394,7 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 // Held by the caller across the drain, so its cancellation can be read after it left the queue.
 - (NSOperation *)deferredForegroundOpenCheck {
     for (NSOperation *op in self.testQueue.operationQueue.operations) {
-        if ([NSStringFromClass([op class]) isEqualToString:@"BNCDeferredForegroundOpenOperation"]) {
+        if ([NSStringFromClass([op class]) isEqualToString:@"BNCForegroundOpenCheckOperation"]) {
             return op;
         }
     }
