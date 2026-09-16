@@ -176,6 +176,9 @@ void ForceCategoriesToLoad(void) {
 // the check was added to.
 - (void)sendDeferredForegroundOpenForQueue:(BNCServerRequestQueue *)queue;
 
+// YES when a deferred foreground open for `queue` should still be sent.
+- (BOOL)shouldSendDeferredForegroundOpenForQueue:(BNCServerRequestQueue *)queue;
+
 + (void)applyDeprecatedSettersFromConfiguration:(BranchConfiguration *)configuration
                                         toBranch:(Branch *)branch;
 
@@ -1683,32 +1686,42 @@ static NSString *bnc_branchKey = nil;
     });
 }
 
-// Everything the foreground read can change while the check waits, so all of it is read again
-// here, and the check sends nothing rather than sending late if any of it moved.
+// Hands the open to the isolation queue, as the base foreground open is sent, so it waits for the
+// loaders queued there. Both sides re-read, since the conditions can move during that wait.
 - (void)sendDeferredForegroundOpenForQueue:(BNCServerRequestQueue *)queue {
+    if (![self shouldSendDeferredForegroundOpenForQueue:queue]) return;
+
+    dispatch_async(self.isolationQueue, ^(){
+        if (![self shouldSendDeferredForegroundOpenForQueue:queue]) return;
+        [self sendOpen];
+    });
+}
+
+// Everything the foreground read can change while the check waits. NO when any of it moved.
+- (BOOL)shouldSendDeferredForegroundOpenForQueue:(BNCServerRequestQueue *)queue {
     @synchronized ([Branch class]) {
         if (bnc_disableAutomaticOpenTracking) {
             [[BranchLogger shared] logVerbose:@"Deferred foreground open: automatic open tracking is disabled, skipping" error:nil];
-            return;
+            return NO;
         }
     }
 
     if (queue != self.requestQueue) {
         [[BranchLogger shared] logVerbose:@"Deferred foreground open: the request queue was replaced, skipping" error:nil];
-        return;
+        return NO;
     }
 
     if ([queue hasUnfinishedInitRequest]) {
         [[BranchLogger shared] logVerbose:@"Deferred foreground open: init traffic is still in the queue, skipping" error:nil];
-        return;
+        return NO;
     }
 
     if ([Branch attributionLevelNone]) {
         [[BranchLogger shared] logVerbose:@"Deferred foreground open: attribution level is NONE, skipping" error:nil];
-        return;
+        return NO;
     }
 
-    [self sendOpen];
+    return YES;
 }
 
 - (void)applicationWillResignActive {
