@@ -26,7 +26,8 @@ def _validate(fixture_name, scenario, drop_field=None):
     entries = v.parse_branch_logs(os.path.join(FIXTURE_DIR, fixture_name))
     if drop_field is not None:
         for entry in entries:
-            entry["request"].pop(drop_field, None)
+            if entry["uri"] == "/v3/deeplink":
+                entry["request"].pop(drop_field, None)
     with redirect_stdout(io.StringIO()):
         return v.validate_entries(entries, v.contract_for(scenario))
 
