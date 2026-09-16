@@ -41,23 +41,22 @@ APPROVAL_KEY="com.apple.CoreSimulator.CoreSimulatorBridge-->${H2_URL%%:*}"
 
 fail() { echo "ERROR: $*"; exit 1; }
 
-# 1. Device on an iOS 18 runtime. Prints "<udid> <runtime id>".
+# 1. Device on exactly H2_EXPECT_RUNTIME. The same name can exist on several runtimes.
 selection=$(xcrun simctl list devices available -j | python3 -c '
 import json, sys
-name, udid = sys.argv[1], sys.argv[2]
+name, udid, expected = sys.argv[1], sys.argv[2], sys.argv[3]
 for runtime, devices in json.load(sys.stdin)["devices"].items():
-    if "SimRuntime.iOS-18" not in runtime:
+    if not runtime.endswith("." + expected):
         continue
     for d in devices:
         if d.get("isAvailable") and (d["udid"] == udid if udid else d.get("name") == name):
             print(d["udid"], runtime.rsplit(".", 1)[-1])
             sys.exit(0)
 sys.exit(1)
-' "$SIM_NAME" "$SIM_UDID") || fail "no available '$SIM_NAME' on an iOS 18 runtime"
+' "$SIM_NAME" "$SIM_UDID" "$H2_EXPECT_RUNTIME") \
+    || fail "no available ${SIM_UDID:+device with SIM_UDID}${SIM_UDID:-'$SIM_NAME'} on runtime $H2_EXPECT_RUNTIME"
 udid=${selection% *}
-runtime=${selection#* }
-echo "RUNTIME=$runtime"
-[ "$runtime" = "$H2_EXPECT_RUNTIME" ] || fail "RUNTIME=$runtime, expected $H2_EXPECT_RUNTIME"
+echo "RUNTIME=${selection#* }"
 
 # 2. Boot.
 xcrun simctl boot "$udid" 2>/dev/null || true
@@ -70,8 +69,10 @@ approval=$(xcrun simctl spawn "$udid" defaults read "$APPROVAL_DOMAIN" "$APPROVA
 echo "consent key: set"
 
 # 4. Fresh install of the single built TestBed.
+shopt -s nullglob
 apps=("$DERIVED_DATA_DIR"/Build/Products/*-iphonesimulator/Branch-TestBed.app)
-[ "${#apps[@]}" -eq 1 ] && [ -d "${apps[0]}" ] || fail "expected one Branch-TestBed.app under $DERIVED_DATA_DIR/Build/Products, found ${#apps[@]}"
+shopt -u nullglob
+[ "${#apps[@]}" -eq 1 ] || fail "expected one Branch-TestBed.app under $DERIVED_DATA_DIR/Build/Products, found ${#apps[@]}"
 xcrun simctl terminate "$udid" "$BUNDLE_ID" 2>/dev/null || true
 xcrun simctl uninstall "$udid" "$BUNDLE_ID" 2>/dev/null || true
 xcrun simctl install "$udid" "${apps[0]}"
@@ -102,6 +103,19 @@ wait_settled() {
     fail "branchlogs.txt did not settle within ${SETTLE_MAX_S}s"
 }
 
+# Waits until the log is larger than $1 bytes, so a slow delivery is not snapshotted early.
+wait_grown() {
+    local path size elapsed=0
+    while [ "$elapsed" -lt "$SETTLE_MAX_S" ]; do
+        size=0
+        if path=$(log_path) && [ -f "$path" ]; then size=$(stat -f %z "$path"); fi
+        if [ "$size" -gt "$1" ]; then return 0; fi
+        sleep 1
+        elapsed=$((elapsed + 1))
+    done
+    fail "branchlogs.txt did not grow past the pre snapshot within ${SETTLE_MAX_S}s; the URL was not delivered"
+}
+
 mkdir -p "$OUTPUT_DIR"
 pre="$OUTPUT_DIR/wire-h2.pre.txt"
 post="$OUTPUT_DIR/wire-h2.post.txt"
@@ -110,7 +124,7 @@ post="$OUTPUT_DIR/wire-h2.post.txt"
 xcrun simctl launch "$udid" "$BUNDLE_ID" >/dev/null
 wait_settled
 pid=$(app_pid)
-[ -n "$pid" ] || fail "TestBed is not running after launch"
+[[ $pid =~ ^[0-9]+$ ]] || fail "TestBed is not running after launch"
 
 # 6. Snapshot. A launch that never opened is not a hot app.
 cp "$(log_path)" "$pre"
@@ -125,13 +139,20 @@ while :; do
     output=$(xcrun simctl openurl "$udid" "$H2_URL" 2>&1) || rc=$?
     echo "openurl attempt $attempt exit=$rc"
     [ "$rc" -eq 0 ] && break
-    echo "$output" | grep -q 'Code=115' || fail "openurl failed: $(echo "$output" | grep -oE 'Domain=[A-Za-z]+ Code=-?[0-9]+' | head -1)"
+    if [[ $output != *Code=115* ]]; then
+        reason=""
+        [[ $output =~ Domain=[A-Za-z]+\ Code=-?[0-9]+ ]] && reason=${BASH_REMATCH[0]}
+        fail "openurl failed: $reason"
+    fi
     [ $((SECONDS - start + 10)) -le "$OPENURL_MAX_S" ] || fail "openurl still returned Code=115 after ${OPENURL_MAX_S}s"
     sleep 10
 done
 
-# 8. Settle, snapshot, and prove the delivery reached the same process.
+# 8. Wait for the delivery to land, settle, snapshot, and prove it reached the same process.
+wait_grown "$(stat -f %z "$pre")"
 wait_settled
 cp "$(log_path)" "$post"
-[ "$(app_pid)" = "$pid" ] || fail "relaunched"
+post_pid=$(app_pid)
+[[ $post_pid =~ ^[0-9]+$ ]] || fail "TestBed is not running after delivery"
+[ "$post_pid" = "$pid" ] || fail "relaunched"
 echo "pid unchanged"
