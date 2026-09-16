@@ -25,6 +25,7 @@
 #import "BNCServerResponse.h"
 #import "BranchOpenRequest.h"
 #import "BranchRequestOpen.h"
+#import "BranchRequestDeepLink.h"
 
 // Test-only entry points, all file-private to Branch.m. Driving the lifecycle handlers rather
 // than calling -sendOpen directly is what makes the interleaving real rather than staged.
@@ -61,9 +62,7 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     /// /v3/deeplink answers with a payload carrying ~referring_link.
     BranchResolveStubModeLinkPayload,
     /// /v3/deeplink answers with a payload that carries no ~referring_link.
-    BranchResolveStubModeOrganicPayload,
-    /// /v3/deeplink answers with a transport error.
-    BranchResolveStubModeError
+    BranchResolveStubModeOrganicPayload
 };
 
 #pragma mark - Stub transport
@@ -98,7 +97,6 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 
     BNCServerResponse *response = [BNCServerResponse new];
     response.statusCode = @200;
-    NSError *error = nil;
 
     if ([url containsString:kDeepLinkEndpoint]) {
         switch (self.deepLinkMode) {
@@ -107,10 +105,6 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
                 break;
             case BranchResolveStubModeOrganicPayload:
                 response.data = @{ BRANCH_RESPONSE_KEY_SESSION_DATA: kOrganicPayloadJSON };
-                break;
-            case BranchResolveStubModeError:
-                response.statusCode = @500;
-                error = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorTimedOut userInfo:nil];
                 break;
         }
     } else {
@@ -121,7 +115,7 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     }
 
     if (callback) {
-        callback(response, error);
+        callback(response, nil);
     }
 }
 
@@ -142,11 +136,18 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 @property (nonatomic, copy) NSString *savedSessionParams;
 @property (nonatomic, copy) NSString *savedAttributionLevel;
 @property (nonatomic, copy) NSString *savedReferringURL;
-// The stubbed open response writes real-looking session credentials, and a resolve rewrites
-// dropURLOpen. Left behind, both change how a later test's requests are handled.
+// The stubbed open response writes real-looking session credentials. Left behind, they change
+// how a later test's requests are handled.
 @property (nonatomic, copy) NSString *savedBundleToken;
 @property (nonatomic, copy) NSString *savedDeviceToken;
-@property (nonatomic, assign) BOOL savedDropURLOpen;
+// A resolve that chains nothing runs -clearLinkIdentifiers:, which wipes all seven of these.
+@property (nonatomic, copy) NSString *savedLinkClickIdentifier;
+@property (nonatomic, copy) NSString *savedSpotlightIdentifier;
+@property (nonatomic, copy) NSString *savedUniversalLinkURL;
+@property (nonatomic, copy) NSString *savedExternalIntentURI;
+@property (nonatomic, copy) NSString *savedInitialReferrer;
+@property (nonatomic, copy) NSString *savedUXType;
+@property (nonatomic, strong) NSDate *savedURLLoadMs;
 @end
 
 @implementation BranchLifecycleOpenResolveTests
@@ -170,11 +171,16 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     self.savedReferringURL = preferenceHelper.referringURL;
     self.savedBundleToken = preferenceHelper.randomizedBundleToken;
     self.savedDeviceToken = preferenceHelper.randomizedDeviceToken;
-    self.savedDropURLOpen = preferenceHelper.dropURLOpen;
+    self.savedLinkClickIdentifier = preferenceHelper.linkClickIdentifier;
+    self.savedSpotlightIdentifier = preferenceHelper.spotlightIdentifier;
+    self.savedUniversalLinkURL = preferenceHelper.universalLinkUrl;
+    self.savedExternalIntentURI = preferenceHelper.externalIntentURI;
+    self.savedInitialReferrer = preferenceHelper.initialReferrer;
+    self.savedUXType = preferenceHelper.uxType;
+    self.savedURLLoadMs = preferenceHelper.urlLoadMs;
 
     preferenceHelper.sessionParams = nil;
     preferenceHelper.referringURL = nil;
-    preferenceHelper.dropURLOpen = NO;
     preferenceHelper.attributionLevel = BranchAttributionLevelFull;
 
     // A real queue that executes its operations, with the network replaced at the transport
@@ -203,9 +209,9 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 - (void)tearDown {
     [self.branch setValue:[BNCServerRequestQueue getInstance] forKey:@"requestQueue"];
 
-    // Every operation this queue should ever hold is a BNCServerRequestOperation. A deferred
-    // check left behind would run later against whatever queue is installed then, so a stray
-    // operation class is caught here rather than as unexplained traffic in another test.
+    // BNCServerRequestOperation is the only operation class the queue holds today, so this
+    // asserts nothing yet. It is here for the deferred check the later pieces add: one left
+    // behind would run against whatever queue is installed by then.
     XCTAssertEqualObjects([self enqueuedNonRequestClassNames], @[],
                           @"The queue under test must hold no operation other than BNCServerRequestOperation.");
 
@@ -213,10 +219,12 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     self.testQueue = nil;
     self.stub = nil;
 
-    // applicationWillResignActive suspends this lock; leaving it suspended would hang any later
-    // test that calls getLatestReferringParamsSynchronous.
+    // applicationWillResignActive suspends the open lock and every resolve start suspends the
+    // deep link lock; getLatestReferringParamsSynchronous waits on both, so leaving either
+    // suspended hangs a later test rather than failing it.
     [BranchOpenRequest releaseOpenResponseLock];
     [BranchRequestOpen releaseOpenResponseLock];
+    [BranchRequestDeepLink releaseDeepLinkResponseLock];
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     preferenceHelper.sessionParams = self.savedSessionParams;
@@ -224,7 +232,13 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     preferenceHelper.referringURL = self.savedReferringURL;
     preferenceHelper.randomizedBundleToken = self.savedBundleToken;
     preferenceHelper.randomizedDeviceToken = self.savedDeviceToken;
-    preferenceHelper.dropURLOpen = self.savedDropURLOpen;
+    preferenceHelper.linkClickIdentifier = self.savedLinkClickIdentifier;
+    preferenceHelper.spotlightIdentifier = self.savedSpotlightIdentifier;
+    preferenceHelper.universalLinkUrl = self.savedUniversalLinkURL;
+    preferenceHelper.externalIntentURI = self.savedExternalIntentURI;
+    preferenceHelper.initialReferrer = self.savedInitialReferrer;
+    preferenceHelper.uxType = self.savedUXType;
+    preferenceHelper.urlLoadMs = self.savedURLLoadMs;
 
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
 
@@ -276,7 +290,7 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 
 // Barrier on the serial isolation queue: a sentinel dispatched after the lifecycle call cannot run
 // until that call's block has finished. Waiting on an expectation rather than dispatch_sync keeps
-// main servicing, which the chained open needs — it is enqueued from main.
+// main servicing, which the chained open needs -- it is enqueued from main.
 - (void)waitForIsolationQueue:(NSString *)description {
     XCTestExpectation *sentinel = [[XCTestExpectation alloc] initWithDescription:description];
     [self.branch dispatchToIsolationQueue:^{
@@ -305,11 +319,19 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 
 // This project loads BNCServerRequestOperation from two images at once, so Class-pointer identity
 // is unreliable here; name-based matching is not.
-- (NSArray<NSString *> *)enqueuedRequestClassNames {
-    NSMutableArray<NSString *> *names = [NSMutableArray array];
+- (NSArray *)enqueuedRequests {
+    NSMutableArray *requests = [NSMutableArray array];
     for (NSOperation *op in self.testQueue.operationQueue.operations) {
         if (![NSStringFromClass([op class]) isEqualToString:@"BNCServerRequestOperation"]) continue;
-        [names addObject:NSStringFromClass([[op valueForKey:@"request"] class])];
+        [requests addObject:[op valueForKey:@"request"]];
+    }
+    return requests;
+}
+
+- (NSArray<NSString *> *)enqueuedRequestClassNames {
+    NSMutableArray<NSString *> *names = [NSMutableArray array];
+    for (id request in [self enqueuedRequests]) {
+        [names addObject:NSStringFromClass([request class])];
     }
     return names;
 }
@@ -363,6 +385,13 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
                    timeout:5.0];
     XCTAssertEqualObjects([self enqueuedRequestClassNames], @[@"BranchRequestDeepLink"],
                           @"Precondition: the queued operation must be the deep link resolve, alone.");
+
+    // A launch with no link leaves urlString nil rather than empty, and that property is what
+    // decides whether the resolve chains an open. Pinned here because a predicate written as
+    // isEqualToString:@"" would collect nothing and still leave both tests below green.
+    BranchRequestDeepLink *resolve = (BranchRequestDeepLink *)[self enqueuedRequests].firstObject;
+    XCTAssertEqual(resolve.urlString.length, (NSUInteger)0,
+                   @"Precondition: the resolve under test must carry no URL. urlString: %@.", resolve.urlString);
 }
 
 // Drives the production foreground path: a resign, then the activation whose handler decides
@@ -411,7 +440,7 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 
 // Guard (d). A deferred link: the same nil-URL resolve, but its response carries ~referring_link,
 // so it chains its own attributed open. The foreground runs while it is still queued and must add
-// nothing, leaving exactly one open on the wire — the resolve's, carrying the link payload.
+// nothing, leaving exactly one open on the wire -- the resolve's, carrying the link payload.
 - (void)testDeferredLinkResolveQueuedAtTheForegroundSendsOneOpenCarryingLinkData {
     self.stub.deepLinkMode = BranchResolveStubModeLinkPayload;
 
