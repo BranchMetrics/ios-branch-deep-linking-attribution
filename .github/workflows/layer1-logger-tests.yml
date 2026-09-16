@@ -17,10 +17,7 @@ on:
       - "Sources/BranchSwiftSDK/**"
       - "Branch-TestBed/**"
       - ".github/workflows/layer1-logger-tests.yml"
-      - "scripts/validate_l1_logs.py"
-      - "scripts/test_validate_l1_logs.py"
-      - "scripts/fixtures/**"
-      - "scripts/run_l1_instrumented.sh"
+      - "scripts/**"
   pull_request:
     branches:
       - "4.0.0-beta.*"
@@ -32,10 +29,7 @@ on:
       - "Sources/BranchSwiftSDK/**"
       - "Branch-TestBed/**"
       - ".github/workflows/layer1-logger-tests.yml"
-      - "scripts/validate_l1_logs.py"
-      - "scripts/test_validate_l1_logs.py"
-      - "scripts/fixtures/**"
-      - "scripts/run_l1_instrumented.sh"
+      - "scripts/**"
   workflow_dispatch:
 
 permissions:
@@ -106,7 +100,7 @@ jobs:
       # Self-test first: a regression in the validator would otherwise surface
       # as a false PASS on the real capture.
       - name: Run L1 validator unit tests
-        run: python3 -m unittest scripts.test_validate_l1_logs -v
+        run: python3 -m unittest discover -s scripts -p "test_*.py" -v
 
       # continue-on-error so the summary below still runs on a failure — the
       # job is failed explicitly at the end.
