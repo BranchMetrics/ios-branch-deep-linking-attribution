@@ -4,14 +4,9 @@
 //
 //  Copyright © 2026 Branch, Inc. All rights reserved.
 //
-//  How many /v3/events/open a foreground sends while a /v3/deeplink resolve is around, measured
-//  against a real BNCServerRequestQueue with a stubbed transport: real operations, real serial
-//  ordering, no network.
-//
-//  The two cases here are the base behaviours that must not change. -applicationDidBecomeActive
-//  reads the queue and sends an organic open only when nothing init-shaped is in it, so the
-//  outcome turns on whether the resolve is still queued when that read happens: drained (the
-//  foreground owns the open) or queued (the resolve owns it).
+//  How many /v3/events/open a foreground sends around a /v3/deeplink resolve, against a real
+//  BNCServerRequestQueue with the transport stubbed. The outcome turns on whether the resolve is
+//  still queued when -applicationDidBecomeActive reads the queue.
 //
 
 #import <XCTest/XCTest.h>
@@ -27,8 +22,6 @@
 #import "BranchRequestOpen.h"
 #import "BranchRequestDeepLink.h"
 
-// Test-only entry points, all file-private to Branch.m. Driving the lifecycle handlers rather
-// than calling -sendOpen directly is what makes the interleaving real rather than staged.
 @interface Branch (LifecycleOpenResolveTest)
 + (void)resetInitializationGuardForTesting;
 + (BOOL)automaticOpenTrackingDisabled;
@@ -46,8 +39,8 @@ static NSString * const kOpenEndpoint = @"/v3/events/open";
 
 static NSString * const kResolvedLinkURL = @"https://example.app.link/lifecycle-open-resolve";
 
-// A resolve whose response carries ~referring_link chains its own attributed open; one without it
-// chains nothing. These two payloads are the only difference between the two tests below.
+// A resolve chains its own open only when the response carries ~referring_link. These two
+// payloads are the only difference between the two tests below.
 static NSString * const kLinkPayloadJSON =
     @"{\"+clicked_branch_link\":true,\"+is_first_session\":false,"
      "\"$canonical_identifier\":\"content/4362\",\"~campaign\":\"lifecycle open\","
@@ -59,9 +52,7 @@ static NSString * const kRecordURLKey = @"url";
 static NSString * const kRecordBodyKey = @"body";
 
 typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
-    /// /v3/deeplink answers with a payload carrying ~referring_link.
     BranchResolveStubModeLinkPayload,
-    /// /v3/deeplink answers with a payload that carries no ~referring_link.
     BranchResolveStubModeOrganicPayload
 };
 
@@ -136,8 +127,6 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 @property (nonatomic, copy) NSString *savedSessionParams;
 @property (nonatomic, copy) NSString *savedAttributionLevel;
 @property (nonatomic, copy) NSString *savedReferringURL;
-// The stubbed open response writes real-looking session credentials. Left behind, they change
-// how a later test's requests are handled.
 @property (nonatomic, copy) NSString *savedBundleToken;
 @property (nonatomic, copy) NSString *savedDeviceToken;
 // A resolve that chains nothing runs -clearLinkIdentifiers:, which wipes all seven of these.
@@ -154,15 +143,14 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 
 - (void)setUp {
     [super setUp];
-    // +sharedInstance requires the SDK to be initialized first. Reset the guard so each test can
-    // (re)initialize the singleton, then configure it via the canonical entry point.
+    // +sharedInstance is nil until the SDK is initialized, and the guard allows that once.
     [Branch resetInitializationGuardForTesting];
     BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB"];
     self.branch = [Branch initialize:config];
 
-    // Branch observes the real UIApplication lifecycle notifications, and its handlers are the two
-    // methods these tests drive by hand. A genuine foreground arriving mid-test enqueues an organic
-    // open indistinguishable from the one under test.
+    // Branch observes the real UIApplication notifications, and its handlers are the two methods
+    // these tests drive by hand. A genuine foreground mid-test enqueues an open indistinguishable
+    // from the one under test.
     [self detachLifecycleObservers];
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
@@ -183,8 +171,13 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     preferenceHelper.referringURL = nil;
     preferenceHelper.attributionLevel = BranchAttributionLevelFull;
 
-    // A real queue that executes its operations, with the network replaced at the transport
-    // boundary. Starts suspended so the interleaving can be arranged deterministically.
+    // -sendOpen reads isInstall as !randomizedBundleToken, so without a fixed value the open
+    // would take the install path, and its SKAdNetwork and app-group work, on whichever test
+    // happens to run first.
+    preferenceHelper.randomizedBundleToken = @"lifecycle_open_resolve_bundle_token";
+    preferenceHelper.randomizedDeviceToken = @"lifecycle_open_resolve_device_token";
+
+    // Suspended, so the interleaving can be arranged deterministically.
     self.stub = [BranchResolveStubServerInterface new];
     BNCServerRequestQueue *sharedQueue = [BNCServerRequestQueue getInstance];
     self.testQueue = [BNCServerRequestQueue new];
@@ -196,8 +189,6 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     [self absorbPendingIsolationQueueWork];
     [self.branch setValue:self.testQueue forKey:@"requestQueue"];
 
-    // Every assertion below counts queue contents and posted requests, so a request that is not
-    // this test's own corrupts all of them. Fail here rather than three assertions later.
     XCTAssertEqualObjects([self enqueuedRequestClassNames], @[],
                           @"Precondition: the queue under test must start empty.");
     XCTAssertEqualObjects(preferenceHelper.attributionLevel, BranchAttributionLevelFull,
@@ -207,20 +198,8 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 }
 
 - (void)tearDown {
-    [self.branch setValue:[BNCServerRequestQueue getInstance] forKey:@"requestQueue"];
-
-    // BNCServerRequestOperation is the only operation class the queue holds today, so this
-    // asserts nothing yet. It is here for the deferred check the later pieces add: one left
-    // behind would run against whatever queue is installed by then.
-    XCTAssertEqualObjects([self enqueuedNonRequestClassNames], @[],
-                          @"The queue under test must hold no operation other than BNCServerRequestOperation.");
-
-    [self.testQueue.operationQueue cancelAllOperations];
-    self.testQueue = nil;
-    self.stub = nil;
-
     // applicationWillResignActive suspends the open lock and every resolve start suspends the
-    // deep link lock; getLatestReferringParamsSynchronous waits on both, so leaving either
+    // deep link lock. getLatestReferringParamsSynchronous waits on both, so leaving either
     // suspended hangs a later test rather than failing it.
     [BranchOpenRequest releaseOpenResponseLock];
     [BranchRequestOpen releaseOpenResponseLock];
@@ -240,7 +219,20 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     preferenceHelper.uxType = self.savedUXType;
     preferenceHelper.urlLoadMs = self.savedURLLoadMs;
 
+    // The open callback chain finishes on main. Spin before handing the singleton back, so a
+    // block still pending cannot enqueue into the real queue.
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
+
+    [self.branch setValue:[BNCServerRequestQueue getInstance] forKey:@"requestQueue"];
+
+    // Nothing but BNCServerRequestOperation reaches this queue today, so this asserts nothing
+    // yet. It is here for the deferred check the later pieces add.
+    XCTAssertEqualObjects([self enqueuedNonRequestClassNames], @[],
+                          @"The queue under test must hold no operation other than BNCServerRequestOperation.");
+
+    [self.testQueue.operationQueue cancelAllOperations];
+    self.testQueue = nil;
+    self.stub = nil;
 
     [self reattachLifecycleObservers];
 
@@ -250,11 +242,9 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 
 #pragma mark - Isolating the shared singleton
 
-// Branch is a process-wide singleton, and -setUp installs a private request queue into it. A block
-// already sitting on its shared isolation queue reads branch.requestQueue when it runs rather than
-// when it was dispatched, so it would otherwise enqueue into the queue under test and be counted as
-// this test's traffic. Absorbed into a throwaway suspended queue so it reaches neither the network
-// nor this test.
+// A block already sitting on the shared isolation queue reads branch.requestQueue when it runs
+// rather than when it was dispatched, so it would enqueue into the queue under test and be
+// counted as this test's traffic. Absorbed into a throwaway suspended queue instead.
 - (void)absorbPendingIsolationQueueWork {
     BNCServerRequestQueue *absorbingQueue = [BNCServerRequestQueue new];
     absorbingQueue.operationQueue.suspended = YES;
@@ -271,9 +261,8 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     [center removeObserver:self.branch name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
-// Restores exactly the two registrations -[Branch initWithInterface:queue:cache:preferenceHelper:key:]
-// makes. That initializer runs once per process behind a dispatch_once, so leaving them detached
-// would silently disarm every later test.
+// Restores exactly the two registrations the Branch initializer makes. It runs once per process
+// behind a dispatch_once, so leaving them detached would silently disarm every later test.
 - (void)reattachLifecycleObservers {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self.branch
@@ -288,9 +277,9 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 
 #pragma mark - Helpers
 
-// Barrier on the serial isolation queue: a sentinel dispatched after the lifecycle call cannot run
-// until that call's block has finished. Waiting on an expectation rather than dispatch_sync keeps
-// main servicing, which the chained open needs -- it is enqueued from main.
+// Barrier on the serial isolation queue: a sentinel dispatched after the lifecycle call cannot
+// run until that call's block has finished. Waiting on an expectation rather than dispatch_sync
+// keeps main servicing, which the chained open needs, since it is enqueued from main.
 - (void)waitForIsolationQueue:(NSString *)description {
     XCTestExpectation *sentinel = [[XCTestExpectation alloc] initWithDescription:description];
     [self.branch dispatchToIsolationQueue:^{
@@ -300,8 +289,6 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     XCTAssertEqual(result, XCTWaiterResultCompleted, @"Timed out waiting for %@.", description);
 }
 
-// Polls rather than sleeping a fixed duration: as fast as the real event, with a ceiling generous
-// enough for loaded CI.
 - (void)waitForCondition:(BOOL (^)(void))condition
              description:(NSString *)description
                  timeout:(NSTimeInterval)timeout {
@@ -317,8 +304,8 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     return self.testQueue.operationQueue.operations.count;
 }
 
-// This project loads BNCServerRequestOperation from two images at once, so Class-pointer identity
-// is unreliable here; name-based matching is not.
+// This project loads BNCServerRequestOperation from two images at once, so Class-pointer
+// identity is unreliable here; name-based matching is not.
 - (NSArray *)enqueuedRequests {
     NSMutableArray *requests = [NSMutableArray array];
     for (NSOperation *op in self.testQueue.operationQueue.operations) {
@@ -346,8 +333,6 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     return names;
 }
 
-// The endpoints the SDK posted, in order, named rather than full URLs so an assertion failure
-// reads as the sequence it is.
 - (NSArray<NSString *> *)postedEndpoints {
     NSMutableArray<NSString *> *endpoints = [NSMutableArray array];
     for (NSDictionary *request in [self.stub postedRequests]) {
@@ -386,16 +371,14 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     XCTAssertEqualObjects([self enqueuedRequestClassNames], @[@"BranchRequestDeepLink"],
                           @"Precondition: the queued operation must be the deep link resolve, alone.");
 
-    // A launch with no link leaves urlString nil rather than empty, and that property is what
-    // decides whether the resolve chains an open. Pinned here because a predicate written as
-    // isEqualToString:@"" would collect nothing and still leave both tests below green.
+    // urlString is nil here, not empty, and it is what decides whether the resolve chains an
+    // open. A predicate written as isEqualToString:@"" would collect nothing and still pass.
     BranchRequestDeepLink *resolve = (BranchRequestDeepLink *)[self enqueuedRequests].firstObject;
     XCTAssertEqual(resolve.urlString.length, (NSUInteger)0,
                    @"Precondition: the resolve under test must carry no URL. urlString: %@.", resolve.urlString);
 }
 
-// Drives the production foreground path: a resign, then the activation whose handler decides
-// whether to send an organic open. Returns once that handler's block has run to completion.
+// Drives the production foreground path, and returns once the activation handler's block has run.
 - (void)foreground {
     [self.branch applicationWillResignActive];
     [self waitForIsolationQueue:@"the resign handler to run"];
@@ -406,6 +389,9 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 
 - (void)drainQueue {
     self.testQueue.operationQueue.suspended = NO;
+    // Polling for an empty queue is safe only because a chained open is enqueued inside
+    // -processResponse:, before the resolve calls -finishOperation, so the queue never dips to
+    // empty between the resolve leaving and its open arriving.
     [self waitForCondition:^BOOL{ return [self enqueuedOperationCount] == 0; }
                description:@"the request queue to drain"
                    timeout:15.0];
@@ -414,17 +400,14 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 
 #pragma mark - Tests
 
-// Guard (e). An organic launch whose resolve has already drained when the foreground runs: the
-// queue is empty, nothing chained an open, and the foreground is the only thing that can send one.
-// It must send exactly one.
+// Guard (e). An organic launch whose resolve drained before the foreground: nothing chained an
+// open and the queue is empty, so the foreground must send exactly one.
 - (void)testOrganicResolveDrainedBeforeTheForegroundSendsOneOpen {
     self.stub.deepLinkMode = BranchResolveStubModeOrganicPayload;
 
     [self enqueueOrganicResolve];
     [self drainQueue];
 
-    // Precondition: a response without ~referring_link chains nothing, so every open counted
-    // below belongs to the foreground rather than to the resolve.
     XCTAssertEqualObjects([self postedEndpoints], @[kDeepLinkEndpoint],
                           @"Precondition: the resolve must not have chained an open of its own.");
 
@@ -440,15 +423,13 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 
 // Guard (d). A deferred link: the same nil-URL resolve, but its response carries ~referring_link,
 // so it chains its own attributed open. The foreground runs while it is still queued and must add
-// nothing, leaving exactly one open on the wire -- the resolve's, carrying the link payload.
+// nothing, leaving one open on the wire carrying the link payload.
 - (void)testDeferredLinkResolveQueuedAtTheForegroundSendsOneOpenCarryingLinkData {
     self.stub.deepLinkMode = BranchResolveStubModeLinkPayload;
 
     [self enqueueOrganicResolve];
     [self foreground];
 
-    // Precondition: the queue is suspended, so the resolve was still in it when the foreground
-    // handler read it. Without this the test would pass for the wrong reason on a fast machine.
     XCTAssertEqualObjects([self enqueuedRequestClassNames], @[@"BranchRequestDeepLink"],
                           @"Precondition: the foreground must have been evaluated while the resolve was queued.");
 
