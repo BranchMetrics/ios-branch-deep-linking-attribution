@@ -106,6 +106,22 @@ jobs:
           OUTPUT_LOG: branchlogs.txt
         run: ./scripts/run_l1_instrumented.sh
 
+      # H2 hot_uriScheme on the same device. The driver reinstalls the TestBed,
+      # so the N1 capture above is already copied out. Only receipt lines are
+      # printed; the captures stay in /tmp/h2 and are never uploaded.
+      - name: Capture H2 hot scheme URL
+        id: h2capture
+        continue-on-error: true
+        env:
+          DERIVED_DATA_DIR: ./DerivedData
+          SIM_NAME: ${{ steps.sim.outputs.name }}
+          BUNDLE_ID: io.branch.sdk.Branch-TestBed
+          OUTPUT_DIR: /tmp/h2
+          H2_EXPECT_RUNTIME: iOS-18-5
+        run: |
+          set -o pipefail
+          ./scripts/run_h2_hot.sh 2>&1 | grep -E '^(RUNTIME=|consent key: |settled after |openurl attempt |pid unchanged$|ERROR: )'
+
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
@@ -128,6 +144,28 @@ jobs:
         run: |
           set -o pipefail
           python3 scripts/validate_l1_logs.py branchlogs.txt --scenario N1 2>&1 | tee /tmp/l1-output.txt
+
+      # The wire contract counts the delivery delta, and the marker checker
+      # proves the app stayed foreground across it. Both print payloads or
+      # counts, so only their verdict lines reach the log.
+      - name: Validate H2
+        id: h2
+        continue-on-error: true
+        env:
+          OUTPUT_DIR: /tmp/h2
+        run: |
+          if [ "${{ steps.h2capture.outcome }}" != "success" ]; then
+            echo "FAILED: [H2] driver failed; see the capture step log" | tee /tmp/h2-output.txt
+            exit 1
+          fi
+          rc=0
+          python3 scripts/validate_l1_logs.py "$OUTPUT_DIR/wire-h2.post.txt" --scenario H2 --pre "$OUTPUT_DIR/wire-h2.pre.txt" > /tmp/h2-validate.txt 2>&1 || rc=1
+          python3 scripts/check_foreground_markers.py "$OUTPUT_DIR/wire-h2.post.txt" --pre "$OUTPUT_DIR/wire-h2.pre.txt" > /tmp/h2-markers.txt 2>&1 || rc=1
+          {
+            grep -E '^(FAILED:|--- VALIDATION)' /tmp/h2-validate.txt || true
+            grep -E '^(FAILED:|pre: |delta: )' /tmp/h2-markers.txt || true
+          } | sed 's/^FAILED: /FAILED: [H2] /' | tee /tmp/h2-output.txt
+          exit "$rc"
 
       # What the gate actually asserted, on the PR page rather than buried in
       # the job log.
@@ -158,22 +196,25 @@ jobs:
             echo "| Hot (H1–H2) | not implemented |"
             echo "| Negative / guards (N1–N4) | not implemented |"
             echo
-            if [ "${{ steps.validate.outcome }}" = "success" ]; then
+            if [ "${{ steps.validate.outcome }}" = "success" ] && [ "${{ steps.h2.outcome }}" = "success" ]; then
               echo "Result: **PASS**"
             else
               echo "Result: **FAIL**"
               echo
               echo '```'
-              grep '^FAILED:' /tmp/l1-output.txt || echo "(no FAILED lines; see the job log)"
+              cat /tmp/l1-output.txt /tmp/h2-output.txt 2>/dev/null | grep '^FAILED:' || echo "(no FAILED lines; see the job log)"
               echo '```'
-              echo
-              echo "<details><summary>Captured wire log</summary>"
-              echo
-              echo '```'
-              if [ -s branchlogs.txt ]; then head -c 40000 branchlogs.txt; echo; else echo "(branchlogs.txt is empty or missing)"; fi
-              echo '```'
-              echo
-              echo "</details>"
+              # Only the N1 capture is rendered; H2 captures stay off the page.
+              if [ "${{ steps.validate.outcome }}" != "success" ]; then
+                echo
+                echo "<details><summary>Captured wire log</summary>"
+                echo
+                echo '```'
+                if [ -s branchlogs.txt ]; then head -c 40000 branchlogs.txt; echo; else echo "(branchlogs.txt is empty or missing)"; fi
+                echo '```'
+                echo
+                echo "</details>"
+              fi
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 
@@ -188,6 +229,11 @@ jobs:
           name: ios-wire-logs
           path: branchlogs.txt
           retention-days: 7
+
+      # After the upload, so an H2-only failure uploads nothing.
+      - name: Fail the job if H2 failed
+        if: steps.h2.outcome == 'failure'
+        run: exit 1
 
       - name: Teardown simulator
         if: always()
