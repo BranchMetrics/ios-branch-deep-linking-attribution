@@ -193,7 +193,11 @@ jobs:
             echo "| --- | --- |"
             echo "| Cold (C1–C3) | not implemented |"
             echo "| Warm (W1–W2) | not implemented |"
-            echo "| Hot (H1–H2) | not implemented |"
+            if [ "${{ steps.h2.outcome }}" = "success" ]; then
+              echo "| Hot (H1, H2) | H2 pass; H1 deferred until CI builds are signed |"
+            else
+              echo "| Hot (H1, H2) | H2 fail, see failures below; H1 deferred until CI builds are signed |"
+            fi
             echo "| Negative / guards (N1–N4) | not implemented |"
             echo
             if [ "${{ steps.validate.outcome }}" = "success" ] && [ "${{ steps.h2.outcome }}" = "success" ]; then
