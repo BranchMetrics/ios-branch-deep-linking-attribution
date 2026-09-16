@@ -1,0 +1,92 @@
+"""Tests for the H2 foreground marker checker, run against marker lines from
+TestBed captures.
+
+Run from the repo root:
+
+    python -m unittest discover -s scripts -p "test_*.py"
+"""
+
+import io
+import os
+import shutil
+import sys
+import tempfile
+import unittest
+from contextlib import redirect_stdout
+
+THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, THIS_DIR)
+
+import check_foreground_markers as c  # noqa: E402
+
+FIXTURE_DIR = os.path.join(THIS_DIR, "fixtures")
+
+
+def _fixture_bytes(name):
+    with open(os.path.join(FIXTURE_DIR, name), "rb") as f:
+        return f.read()
+
+
+class ForegroundMarkerTests(unittest.TestCase):
+    """H2 delivery reached a foregrounded app: one openURL, no lifecycle transition."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmp)
+
+    def _write(self, name, data):
+        path = os.path.join(self.tmp, name)
+        with open(path, "wb") as f:
+            f.write(data)
+        return path
+
+    def _main(self, pre_bytes, post_bytes):
+        pre = self._write("pre.txt", pre_bytes)
+        post = self._write("post.txt", post_bytes)
+        saved_argv = sys.argv
+        sys.argv = ["check_foreground_markers.py", post, "--pre", pre]
+        out = io.StringIO()
+        try:
+            with redirect_stdout(out):
+                with self.assertRaises(SystemExit) as ctx:
+                    c.main()
+        finally:
+            sys.argv = saved_argv
+        failed = [line for line in out.getvalue().splitlines() if line.startswith("FAILED:")]
+        return ctx.exception.code, out.getvalue(), failed
+
+    def test_the_hot_capture_passes(self):
+        code, output, failed = self._main(
+            _fixture_bytes("h2_markers_hot.pre.txt"), _fixture_bytes("h2_markers_hot.post.txt")
+        )
+        self.assertEqual((code, failed), (0, []), output)
+
+    def test_a_transition_fails(self):
+        # Preferences in front, then the URL: the app resigns, backgrounds and reactivates.
+        code, output, failed = self._main(
+            _fixture_bytes("h2_markers_transition.pre.txt"),
+            _fixture_bytes("h2_markers_transition.post.txt"),
+        )
+        self.assertEqual(code, 1)
+        self.assertEqual(len(failed), 3, output)
+        for name in c.TRANSITIONS:
+            self.assertTrue(any(f"'{name}'" in line for line in failed), output)
+
+    def test_a_snapshot_without_markers_fails_liveness(self):
+        # Without it, a TestBed that writes no markers would pass on zero transitions.
+        pre = b"placeholder log entry\n"
+        hot = _fixture_bytes("h2_markers_hot.post.txt")[len(_fixture_bytes("h2_markers_hot.pre.txt")):]
+        code, output, failed = self._main(pre, pre + hot)
+        self.assertEqual(code, 1)
+        self.assertEqual(len(failed), 1, output)
+        self.assertIn("'applicationDidBecomeActive' marker before delivery, found 0", failed[0])
+
+    def test_nothing_delivered_fails(self):
+        pre = _fixture_bytes("h2_markers_hot.pre.txt")
+        code, output, failed = self._main(pre, pre)
+        self.assertEqual(code, 1)
+        self.assertEqual(failed, ["FAILED: Expected exactly 1 'openURL' marker after delivery, found 0."], output)
+
+
+if __name__ == "__main__":
+    unittest.main()
