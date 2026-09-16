@@ -8,7 +8,9 @@ Run from the repo root:
 
 import io
 import os
+import shutil
 import sys
+import tempfile
 import unittest
 from contextlib import redirect_stdout
 
@@ -38,6 +40,71 @@ class H2ContractTests(unittest.TestCase):
         errors = _validate("h2_duplicate_open.txt", "H2")
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("captured 2", errors[0])
+
+
+
+def _fixture_bytes(name):
+    with open(os.path.join(FIXTURE_DIR, name), "rb") as f:
+        return f.read()
+
+
+class CaptureDeltaTests(unittest.TestCase):
+    """`--pre` validates only what the delivery appended to the capture."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmp)
+
+    def _write(self, name, data):
+        path = os.path.join(self.tmp, name)
+        with open(path, "wb") as f:
+            f.write(data)
+        return path
+
+    def _main(self, post, pre):
+        saved_argv = sys.argv
+        sys.argv = ["validate_l1_logs.py", post, "--scenario", "H2", "--pre", pre]
+        out = io.StringIO()
+        try:
+            with redirect_stdout(out):
+                with self.assertRaises(SystemExit) as ctx:
+                    v.main()
+        finally:
+            sys.argv = saved_argv
+        return ctx.exception.code, out.getvalue()
+
+    def test_launch_traffic_before_the_snapshot_is_not_counted(self):
+        # The launch open sits in the snapshot; counted, it is a second open.
+        pre_bytes = _fixture_bytes("h2_launch_pre.txt")
+        pre = self._write("pre.txt", pre_bytes)
+        post = self._write("post.txt", pre_bytes + _fixture_bytes("h2_hot_urischeme.txt"))
+        code, output = self._main(post, pre)
+        self.assertEqual(code, 0, output)
+        self.assertIn("--- VALIDATION PASSED (2/2 requests valid) ---", output)
+
+    def test_a_snapshot_that_is_not_a_prefix_fails(self):
+        # A relaunch deletes and restarts the log, so the snapshot no longer leads it.
+        pre = self._write("pre.txt", _fixture_bytes("h2_launch_pre.txt"))
+        post = self._write("post.txt", _fixture_bytes("h2_hot_urischeme.txt"))
+        code, output = self._main(post, pre)
+        self.assertEqual(code, 1)
+        self.assertIn("FAILED: --pre capture is not a byte prefix of the capture", output)
+
+    def test_an_empty_snapshot_fails(self):
+        pre = self._write("pre.txt", b"")
+        post = self._write("post.txt", _fixture_bytes("h2_hot_urischeme.txt"))
+        code, output = self._main(post, pre)
+        self.assertEqual(code, 1)
+        self.assertIn("FAILED: --pre capture is empty", output)
+
+    def test_nothing_appended_after_the_snapshot_fails(self):
+        # openurl can exit 0 without delivering, leaving the capture unchanged.
+        pre_bytes = _fixture_bytes("h2_launch_pre.txt")
+        pre = self._write("pre.txt", pre_bytes)
+        post = self._write("post.txt", pre_bytes)
+        code, output = self._main(post, pre)
+        self.assertEqual(code, 1)
+        self.assertIn("FAILED: nothing was appended after --pre", output)
 
 
 if __name__ == "__main__":

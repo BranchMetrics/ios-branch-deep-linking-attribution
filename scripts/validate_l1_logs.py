@@ -43,6 +43,7 @@ import json
 import os
 import re
 import sys
+import tempfile
 from urllib.parse import urlparse
 
 
@@ -489,6 +490,26 @@ def validate_entries(entries, contract):
     return errors
 
 
+def capture_delta(pre_path, post_path):
+    """Return the bytes `post_path` gained after the `pre_path` snapshot.
+
+    Raises ValueError when the snapshot is empty or is not a byte prefix of
+    the capture. Bytes, not lines: SDK log entries reach the file without a
+    trailing newline, so the snapshot can end mid-line."""
+    with open(pre_path, "rb") as f:
+        pre = f.read()
+    with open(post_path, "rb") as f:
+        post = f.read()
+    if not pre:
+        raise ValueError("--pre capture is empty; the launch never settled into it.")
+    if not post.startswith(pre):
+        raise ValueError(
+            "--pre capture is not a byte prefix of the capture; "
+            "the app relaunched or the file was rewritten."
+        )
+    return post[len(pre):]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.strip().splitlines()[0])
     parser.add_argument(
@@ -503,9 +524,41 @@ def main():
         required=True,
         help="which scenario produced this capture; selects its contract",
     )
+    parser.add_argument(
+        "--pre",
+        metavar="SNAPSHOT",
+        help="copy of the capture taken before delivery; only bytes appended after it are validated",
+    )
     args = parser.parse_args()
     log_file_path = args.log_file
 
+    if args.pre is not None:
+        for path in (args.pre, log_file_path):
+            if not os.path.exists(path):
+                print("\n--- VALIDATION FAILED ---")
+                print(f"FAILED: Log file not found at {path}")
+                sys.exit(1)
+        try:
+            delta = capture_delta(args.pre, log_file_path)
+        except ValueError as e:
+            print("\n--- VALIDATION FAILED ---")
+            print(f"FAILED: {e}")
+            sys.exit(1)
+        if not delta:
+            print("\n--- VALIDATION FAILED ---")
+            print("FAILED: nothing was appended after --pre; the URL was not delivered.")
+            sys.exit(1)
+        with tempfile.NamedTemporaryFile("wb", suffix=".txt", delete=False) as f:
+            f.write(delta)
+        try:
+            validate_file(f.name, args.scenario)
+        finally:
+            os.remove(f.name)
+    validate_file(log_file_path, args.scenario)
+
+
+def validate_file(log_file_path, scenario):
+    """Validate one capture file against `scenario` and exit with the result."""
     entries = parse_branch_logs(log_file_path)
 
     if entries is None:
@@ -521,7 +574,7 @@ def main():
     except OSError:
         pass
 
-    errors = validate_entries(entries, contract_for(args.scenario))
+    errors = validate_entries(entries, contract_for(scenario))
 
     if errors:
         print("\n--- VALIDATION FAILED ---")
