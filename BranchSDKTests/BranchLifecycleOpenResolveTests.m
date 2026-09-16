@@ -436,10 +436,55 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     [self waitForCondition:^BOOL{ return [self enqueuedOperationCount] == 0; }
                description:@"the request queue to drain"
                    timeout:15.0];
+    // A deferred check hands its open to the isolation queue after it has left the request queue.
+    [self waitForIsolationQueue:@"a deferred open to be enqueued"];
+    [self waitForCondition:^BOOL{ return [self enqueuedOperationCount] == 0; }
+               description:@"the deferred open to drain"
+                   timeout:15.0];
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
 }
 
 #pragma mark - Tests
+
+// The deferred open is sent from the isolation queue, so on a first launch it waits behind the
+// user-agent load there, as the base foreground open does, and its body carries user_agent.
+- (void)testDeferredOpenWaitsForTheIsolationQueue {
+    self.stub.deepLinkMode = BranchResolveStubModeOrganicPayload;
+
+    [self enqueueOrganicResolve];
+    [self foreground];
+
+    NSOperation *deferredCheck = [self deferredForegroundOpenCheck];
+    XCTAssertNotNil(deferredCheck,
+                    @"Precondition: the foreground must have deferred its open behind the resolve.");
+
+    // Stands in for loadUserAgent holding the isolation queue on a cache miss.
+    dispatch_semaphore_t release = dispatch_semaphore_create(0);
+    XCTestExpectation *held = [[XCTestExpectation alloc] initWithDescription:@"the isolation queue to be held"];
+    __block long holdResult = -1;
+    [self.branch dispatchToIsolationQueue:^{
+        [held fulfill];
+        holdResult = dispatch_semaphore_wait(release, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20 * NSEC_PER_SEC)));
+    }];
+    XCTAssertEqual([XCTWaiter waitForExpectations:@[held] timeout:5.0], XCTWaiterResultCompleted,
+                   @"Precondition: the isolation queue must be held before the resolve runs.");
+
+    self.testQueue.operationQueue.suspended = NO;
+    [self waitForCondition:^BOOL{ return deferredCheck.isFinished && [self enqueuedOperationCount] == 0; }
+               description:@"the resolve and the deferred check to run"
+                   timeout:15.0];
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.3]];
+
+    XCTAssertEqualObjects([self postedEndpoints], @[kDeepLinkEndpoint],
+                          @"No open may be sent while the isolation queue is held.");
+
+    dispatch_semaphore_signal(release);
+    [self drainQueue];
+
+    XCTAssertEqual(holdResult, 0L, @"The hold must have ended by signal, not by timeout.");
+    XCTAssertEqualObjects([self postedEndpoints], (@[kDeepLinkEndpoint, kOpenEndpoint]),
+                          @"Releasing the isolation queue must send exactly one open.");
+}
 
 // Test (a). The central case: an organic relaunch calls requestDeepLinkDataWithLaunchOptions:,
 // whose resolve is still queued when the foreground runs and which chains nothing when it
