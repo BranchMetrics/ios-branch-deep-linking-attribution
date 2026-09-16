@@ -64,6 +64,9 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 /// to -deepLinkMode. Every other endpoint gets the session credentials a real open returns.
 @interface BranchResolveStubServerInterface : BNCServerInterface
 @property (assign, atomic) BranchResolveStubMode deepLinkMode;
+/// Seconds to hold the /v3/deeplink response, so the resolve is genuinely in flight rather than
+/// answered inside -postRequest:. Zero, the default, answers synchronously.
+@property (assign, atomic) NSTimeInterval deepLinkResponseDelay;
 /// Each entry is @{ kRecordURLKey: NSString, kRecordBodyKey: NSDictionary }.
 - (NSArray<NSDictionary *> *)postedRequests;
 @end
@@ -112,9 +115,18 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
         };
     }
 
-    if (callback) {
+    if (!callback) return;
+
+    NSTimeInterval delay = [url containsString:kDeepLinkEndpoint] ? self.deepLinkResponseDelay : 0;
+    if (delay <= 0) {
         callback(response, error);
+        return;
     }
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)),
+                   dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
+        callback(response, error);
+    });
 }
 
 - (NSArray<NSDictionary *> *)postedRequests {
@@ -376,6 +388,17 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     return [self postedOpenBodies].count;
 }
 
+// The deferred foreground open check, whose class is file-private to BNCServerRequestQueue.m.
+// Held by the caller across the drain, so its cancellation can be read after it left the queue.
+- (NSOperation *)deferredForegroundOpenCheck {
+    for (NSOperation *op in self.testQueue.operationQueue.operations) {
+        if ([NSStringFromClass([op class]) isEqualToString:@"BNCDeferredForegroundOpenOperation"]) {
+            return op;
+        }
+    }
+    return nil;
+}
+
 // Returns once a resolve carrying no URL is the only request queued.
 - (void)awaitOneQueuedOrganicResolve {
     [self waitForCondition:^BOOL{ return [self enqueuedOperationCount] >= 1; }
@@ -487,6 +510,87 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
                           @"A launch whose resolve failed must still send one open.");
 }
 
+// The falsifier for the deferred check's re-read. The queue runs, so the resolve is in flight at
+// the foreground and finishes on its own rather than through a staged resume. The check therefore
+// runs with its own just-finished dependency possibly still in -operations: a re-read that did not
+// skip finished operations would see init traffic and send nothing, intermittently. Run repeatedly.
+- (void)testNaturallyFinishingResolveStillSendsOneOpen {
+    self.stub.deepLinkMode = BranchResolveStubModeOrganicPayload;
+    self.stub.deepLinkResponseDelay = 0.15;
+    self.testQueue.operationQueue.suspended = NO;
+
+    [self.branch requestDeepLinkDataWithLaunchOptions:@{} callback:nil];
+    [self foreground];
+
+    [self waitForCondition:^BOOL{ return [self postedOpenCount] >= 1; }
+               description:@"the open to reach the wire"
+                   timeout:15.0];
+    [self waitForCondition:^BOOL{ return [self enqueuedOperationCount] == 0; }
+               description:@"the request queue to drain"
+                   timeout:15.0];
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+
+    XCTAssertEqualObjects([self postedEndpoints], (@[kDeepLinkEndpoint, kOpenEndpoint]),
+                          @"A resolve that finishes on its own must still leave exactly one open.");
+}
+
+// Guard (g). A link arriving after the foreground replaces the pending resolve, and the deferred
+// check must go with it: the replacing resolve owns the open from then on. Asserts the
+// cancellation directly, because no wire count reaches it.
+- (void)testLinkArrivingAfterTheForegroundCancelsTheDeferredCheck {
+    self.stub.deepLinkMode = BranchResolveStubModeLinkPayload;
+
+    [self enqueueOrganicResolve];
+    [self foreground];
+
+    NSOperation *deferredCheck = [self deferredForegroundOpenCheck];
+    XCTAssertNotNil(deferredCheck,
+                    @"Precondition: the foreground must have deferred its open behind the resolve.");
+    XCTAssertFalse(deferredCheck.isCancelled,
+                   @"Precondition: the deferred check must still be live before the link arrives.");
+
+    [self.branch requestDeepLinkData:kResolvedLinkURL callback:nil];
+
+    XCTAssertTrue(deferredCheck.isCancelled,
+                  @"A replacing resolve must cancel the deferred check before the call returns.");
+
+    [self drainQueue];
+
+    XCTAssertEqualObjects([self postedEndpoints], (@[kDeepLinkEndpoint, kOpenEndpoint]),
+                          @"The replacing resolve must own the single open.");
+
+    NSDictionary *linkData = [self postedOpenBodies].firstObject[@"link_data"];
+    XCTAssertEqualObjects(linkData[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK], kResolvedLinkURL,
+                          @"The open must be the replacing resolve's own, carrying its link payload.");
+}
+
+// The gate. An activation landing after a chained open was enqueued but before its resolve
+// finished must defer nothing: the open already in the queue owns this foreground. Without the
+// gate a check would be added here, the resolve would finish, the open would drain, and the
+// check would then find an empty queue and send a second open.
+- (void)testActivationWhileAChainedOpenIsQueuedDefersNothing {
+    self.stub.deepLinkMode = BranchResolveStubModeOrganicPayload;
+
+    [self enqueueOrganicResolve];
+
+    BranchRequestOpen *chainedOpen = [[BranchRequestOpen alloc] initWithCallback:nil isInstall:NO];
+    [self.testQueue enqueue:chainedOpen withPriority:NSOperationQueuePriorityHigh];
+
+    XCTAssertEqualObjects([self enqueuedRequestClassNames],
+                          (@[@"BranchRequestDeepLink", @"BranchRequestOpen"]),
+                          @"Precondition: the open must be queued while the resolve is unfinished.");
+
+    [self foreground];
+
+    XCTAssertNil([self deferredForegroundOpenCheck],
+                 @"An activation must defer nothing while an install or open is already queued.");
+
+    [self drainQueue];
+
+    XCTAssertEqualObjects([self postedEndpoints], (@[kDeepLinkEndpoint, kOpenEndpoint]),
+                          @"The queued open must remain the only open, as on base.");
+}
+
 // Guard (e). An organic launch whose resolve drained before the foreground: nothing chained an
 // open and the queue is empty, so the foreground must send exactly one.
 - (void)testOrganicResolveDrainedBeforeTheForegroundSendsOneOpen {
@@ -520,6 +624,8 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     XCTAssertEqualObjects([self enqueuedRequestClassNames], @[@"BranchRequestDeepLink"],
                           @"Precondition: the foreground must have been evaluated while the resolve was queued.");
 
+    NSOperation *deferredCheck = [self deferredForegroundOpenCheck];
+
     [self drainQueue];
 
     XCTAssertEqualObjects([self postedEndpoints], (@[kDeepLinkEndpoint, kOpenEndpoint]),
@@ -528,6 +634,12 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     NSDictionary *linkData = [self postedOpenBodies].firstObject[@"link_data"];
     XCTAssertEqualObjects(linkData[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK], kResolvedLinkURL,
                           @"The open on the wire must be the resolve's own, carrying the resolved link payload.");
+
+    // The count above cannot see this: on a suspended queue the chained open is already enqueued
+    // when the queue resumes, so a check that was never cancelled would have found the queue
+    // empty and sent a second open only under a different interleaving.
+    XCTAssertTrue(deferredCheck.isCancelled,
+                  @"The chained open must cancel the deferred check rather than race it.");
 }
 
 @end
