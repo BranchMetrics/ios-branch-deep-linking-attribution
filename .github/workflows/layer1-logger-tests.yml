@@ -118,6 +118,7 @@ jobs:
           BUNDLE_ID: io.branch.sdk.Branch-TestBed
           OUTPUT_DIR: /tmp/h2
           H2_EXPECT_RUNTIME: iOS-18-5
+          H2_URL: branchtest://open?scenario=H2
         run: |
           rc=0
           ./scripts/run_h2_hot.sh > /tmp/h2-driver.txt 2>&1 || rc=$?
@@ -158,13 +159,14 @@ jobs:
         continue-on-error: true
         env:
           OUTPUT_DIR: /tmp/h2
+          H2_URL: branchtest://open?scenario=H2
         run: |
           if [ "${{ steps.h2capture.outcome }}" != "success" ]; then
             echo "FAILED: [H2] driver failed; see the capture step log" | tee /tmp/h2-output.txt
             exit 1
           fi
           rc=0
-          python3 scripts/validate_l1_logs.py "$OUTPUT_DIR/wire-h2.post.txt" --scenario H2 --pre "$OUTPUT_DIR/wire-h2.pre.txt" > /tmp/h2-validate.txt 2>&1 || rc=1
+          python3 scripts/validate_l1_logs.py "$OUTPUT_DIR/wire-h2.post.txt" --scenario H2 --pre "$OUTPUT_DIR/wire-h2.pre.txt" --url "$H2_URL" > /tmp/h2-validate.txt 2>&1 || rc=1
           python3 scripts/check_foreground_markers.py "$OUTPUT_DIR/wire-h2.post.txt" --pre "$OUTPUT_DIR/wire-h2.pre.txt" > /tmp/h2-markers.txt 2>&1 || rc=1
           {
             grep -E '^(FAILED:|--- VALIDATION)' /tmp/h2-validate.txt || true
@@ -204,7 +206,7 @@ jobs:
             if [ "${{ steps.h2.outcome }}" = "success" ]; then
               echo "| Hot (H1, H2) | H2 pass; H1 deferred until CI builds are signed |"
             elif [ -f /tmp/h2-runtime-missing ]; then
-              echo "| Hot (H1, H2) | H2 not run: the runner has no simulator on the expected runtime (update H2_EXPECT_RUNTIME); H1 deferred until CI builds are signed |"
+              echo "| Hot (H1, H2) | H2 not run: the runner has no simulator on the expected runtime (measure H2 on the new runtime, then update H2_EXPECT_RUNTIME); H1 deferred until CI builds are signed |"
             elif [ "${{ steps.h2.outcome }}" = "failure" ]; then
               echo "| Hot (H1, H2) | H2 fail, see failures below; H1 deferred until CI builds are signed |"
             else

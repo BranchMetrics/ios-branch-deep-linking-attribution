@@ -334,6 +334,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
          annotation:(id)annotation {
 
     NSLog(@"application:openURL:sourceApplication:annotation: invoked with URL: %@", [url description]);
+    // H2 counts this marker (scripts/check_foreground_markers.py); move it with any new URL entry point.
     [self logLifecycleMarker:@"openURL"];
     [[Branch sharedInstance] requestDeepLinkDataWithURL:url sourceApplication:sourceApplication annotation:annotation];
 
