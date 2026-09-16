@@ -130,6 +130,13 @@ void ForceCategoriesToLoad(void) {
 
 #pragma mark - Branch
 
+// Queue methods used only here. Declared rather than exported, so the public queue header stays
+// as it is.
+@interface BNCServerRequestQueue (DeferredForegroundOpen)
+- (BOOL)addDeferredForegroundOpenCheck:(dispatch_block_t)block;
+- (BOOL)hasUnfinishedInitRequest;
+@end
+
 @interface Branch() <BranchDeepLinkingControllerCompletionDelegate> {
     NSInteger _networkCount;
 }
@@ -164,6 +171,10 @@ void ForceCategoriesToLoad(void) {
 
 // Private method used internally
 - (void)clearLinkIdentifiers;
+
+// Runs when a deferred foreground open check reaches the front of the queue. `queue` is the queue
+// the check was added to.
+- (void)sendDeferredForegroundOpenForQueue:(BNCServerRequestQueue *)queue;
 
 + (void)applyDeprecatedSettersFromConfiguration:(BranchConfiguration *)configuration
                                         toBranch:(Branch *)branch;
@@ -1646,6 +1657,18 @@ static NSString *bnc_branchKey = nil;
         }
     }
 
+    // Whether a live resolve will chain its own open is decided when that resolve completes, so
+    // this foreground cannot decide its open here. Defer it behind the resolve instead of
+    // skipping it, which is what leaves an organic launch with no open at all. Read and added on
+    // main, where the chained open is also enqueued, so the two cannot interleave.
+    BNCServerRequestQueue *queue = self.requestQueue;
+    __weak __typeof(self) weakSelf = self;
+    if ([queue addDeferredForegroundOpenCheck:^{
+        [weakSelf sendDeferredForegroundOpenForQueue:queue];
+    }]) {
+        return;
+    }
+
     dispatch_async(self.isolationQueue, ^(){
         //  if necessary, creates a new organic open
         BOOL installOrOpenInQueue = [self.requestQueue containsInstallOrOpen];
@@ -1658,6 +1681,34 @@ static NSString *bnc_branchKey = nil;
             [self sendOpen];
         }
     });
+}
+
+// Everything the foreground read can change while the check waits, so all of it is read again
+// here, and the check sends nothing rather than sending late if any of it moved.
+- (void)sendDeferredForegroundOpenForQueue:(BNCServerRequestQueue *)queue {
+    @synchronized ([Branch class]) {
+        if (bnc_disableAutomaticOpenTracking) {
+            [[BranchLogger shared] logVerbose:@"Deferred foreground open: automatic open tracking is disabled, skipping" error:nil];
+            return;
+        }
+    }
+
+    if (queue != self.requestQueue) {
+        [[BranchLogger shared] logVerbose:@"Deferred foreground open: the request queue was replaced, skipping" error:nil];
+        return;
+    }
+
+    if ([queue hasUnfinishedInitRequest]) {
+        [[BranchLogger shared] logVerbose:@"Deferred foreground open: init traffic is still in the queue, skipping" error:nil];
+        return;
+    }
+
+    if ([Branch attributionLevelNone]) {
+        [[BranchLogger shared] logVerbose:@"Deferred foreground open: attribution level is NONE, skipping" error:nil];
+        return;
+    }
+
+    [self sendOpen];
 }
 
 - (void)applicationWillResignActive {
