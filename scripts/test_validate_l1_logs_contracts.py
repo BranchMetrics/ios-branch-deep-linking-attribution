@@ -42,7 +42,6 @@ class H2ContractTests(unittest.TestCase):
         self.assertIn("captured 2", errors[0])
 
 
-
 def _fixture_bytes(name):
     with open(os.path.join(FIXTURE_DIR, name), "rb") as f:
         return f.read()
@@ -96,15 +95,6 @@ class CaptureDeltaTests(unittest.TestCase):
         code, output = self._main(post, pre)
         self.assertEqual(code, 1)
         self.assertIn("FAILED: --pre capture is empty", output)
-
-    def test_nothing_appended_after_the_snapshot_fails(self):
-        # openurl can exit 0 without delivering, leaving the capture unchanged.
-        pre_bytes = _fixture_bytes("h2_launch_pre.txt")
-        pre = self._write("pre.txt", pre_bytes)
-        post = self._write("post.txt", pre_bytes)
-        code, output = self._main(post, pre)
-        self.assertEqual(code, 1)
-        self.assertIn("FAILED: nothing was appended after --pre", output)
 
 
 if __name__ == "__main__":

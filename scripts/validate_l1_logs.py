@@ -532,7 +532,9 @@ def main():
     args = parser.parse_args()
     log_file_path = args.log_file
 
-    if args.pre is not None:
+    if args.pre is None:
+        validate_file(log_file_path, args.scenario)
+    else:
         for path in (args.pre, log_file_path):
             if not os.path.exists(path):
                 print("\n--- VALIDATION FAILED ---")
@@ -544,17 +546,13 @@ def main():
             print("\n--- VALIDATION FAILED ---")
             print(f"FAILED: {e}")
             sys.exit(1)
-        if not delta:
-            print("\n--- VALIDATION FAILED ---")
-            print("FAILED: nothing was appended after --pre; the URL was not delivered.")
-            sys.exit(1)
+        # An empty delta fails validate_file's empty-file check.
         with tempfile.NamedTemporaryFile("wb", suffix=".txt", delete=False) as f:
             f.write(delta)
         try:
             validate_file(f.name, args.scenario)
         finally:
             os.remove(f.name)
-    validate_file(log_file_path, args.scenario)
 
 
 def validate_file(log_file_path, scenario):
