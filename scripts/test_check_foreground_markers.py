@@ -111,6 +111,15 @@ class WarmMarkerTests(unittest.TestCase):
         self.assertEqual((code, failed), (0, []), output)
         self.assertIn("pre last transition: applicationDidEnterBackground", output)
 
+    def test_a_reactivation_before_delivery_fails(self):
+        # Same two delta markers as the passing capture, reordered: the app woke on its
+        # own and the URL arrived while already foreground, a hot delivery disguised as warm.
+        reordered_delta = _markers("applicationDidBecomeActive", "openURL")
+        code, output, failed = self._main(WARM_PRE, WARM_PRE + reordered_delta)
+        self.assertEqual(code, 1)
+        self.assertEqual(len(failed), 1, output)
+        self.assertIn("Expected 'openURL' before 'applicationDidBecomeActive'", failed[0])
+
     def test_markers_out_of_order_fail(self):
         # Every pre marker present, but the app became active again after backgrounding.
         pre = _markers("applicationDidBecomeActive", "applicationDidEnterBackground", "applicationWillResignActive")

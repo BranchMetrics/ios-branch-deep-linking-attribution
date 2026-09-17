@@ -17,8 +17,8 @@ With --scenario W2 it asserts the inverse, a delivery into a backgrounded app:
 - the snapshot holds at least one applicationDidBecomeActive, and its last
   transition marker is applicationDidEnterBackground;
 - the bytes appended after it hold exactly one openURL, exactly one
-  applicationDidBecomeActive, and no applicationWillResignActive or
-  applicationDidEnterBackground.
+  applicationDidBecomeActive in that order, and no applicationWillResignActive
+  or applicationDidEnterBackground.
 
 Usage:
 
@@ -87,7 +87,7 @@ def last_transition(data):
     return transitions[-1] if transitions else None
 
 
-def check_warm_markers(pre_counts, pre_last, delta_counts):
+def check_warm_markers(pre_counts, pre_last, delta_counts, delta):
     """Return one error string per broken W2 rule."""
     errors = liveness_errors(pre_counts)
     if pre_last != BACKGROUND:
@@ -105,6 +105,14 @@ def check_warm_markers(pre_counts, pre_last, delta_counts):
             errors.append(
                 f"Expected 0 '{name}' markers after delivery, found {delta_counts[name]}; "
                 "the app left the foreground."
+            )
+    delta_names = [name.decode("ascii") for name in MARKER_RE.findall(delta)]
+    # A count-only check passes a reordering; the wake sequence delivers the URL first.
+    if DELIVERY in delta_names and LIVENESS in delta_names:
+        if delta_names.index(LIVENESS) < delta_names.index(DELIVERY):
+            errors.append(
+                f"Expected '{DELIVERY}' before '{LIVENESS}' in the delta; "
+                "the app was already foreground when it arrived."
             )
     return errors
 
@@ -149,7 +157,7 @@ def main():
     if args.scenario == "W2":
         pre_last = last_transition(pre_bytes)
         print(f"pre last transition: {pre_last or 'none'}")
-        errors = check_warm_markers(pre_counts, pre_last, delta_counts)
+        errors = check_warm_markers(pre_counts, pre_last, delta_counts, delta)
     else:
         errors = check_markers(pre_counts, delta_counts)
     for error in errors:
