@@ -166,6 +166,15 @@ class H2WiringTests(unittest.TestCase):
         self.assertIn('check_foreground_markers.py "$OUTPUT_DIR/wire-h2.post.txt" --pre "$OUTPUT_DIR/wire-h2.pre.txt"', workflow)
         self.assertEqual(workflow.count("H2_URL: branchtest://open?scenario=H2"), 2)
 
+    def test_the_workflow_runs_both_checkers_on_the_w2_delta(self):
+        workflow = self._read(".github", "workflows", "layer1-logger-tests.yml")
+        self.assertIn('validate_l1_logs.py "$OUTPUT_DIR/wire-w2.post.txt" --scenario W2 --pre "$OUTPUT_DIR/wire-w2.pre.txt" --url "$H2_URL"', workflow)
+        self.assertIn('check_foreground_markers.py "$OUTPUT_DIR/wire-w2.post.txt" --pre "$OUTPUT_DIR/wire-w2.pre.txt" --scenario W2', workflow)
+        self.assertIn('WARM: "1"', workflow)
+        # Without the capture-outcome check a relaunch caught by the driver would still be validated.
+        step = workflow.split("- name: Validate W2\n", 1)[-1].split("\n      - name: ", 1)[0]
+        self.assertIn("steps.w2capture.outcome", step)
+
     def test_the_testbed_delivers_urls_only_through_the_marked_app_delegate_method(self):
         # A scene manifest or openURL:options: would bypass the openURL marker.
         self.assertNotIn("UIApplicationSceneManifest", self._read("Branch-TestBed", "Branch-TestBed", "Branch-TestBed-Info.plist"))

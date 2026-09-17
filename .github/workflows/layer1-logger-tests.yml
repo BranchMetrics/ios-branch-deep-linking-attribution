@@ -128,6 +128,29 @@ jobs:
           fi
           [ "$rc" -eq 0 ] || { echo "ERROR: driver exited $rc"; exit "$rc"; }
 
+      # The same driver in warm mode: the app is backgrounded with Preferences
+      # before the pre snapshot, so the delivery reaches a live, background process.
+      - name: Capture W2 warm scheme URL
+        id: w2capture
+        continue-on-error: true
+        env:
+          DERIVED_DATA_DIR: ./DerivedData
+          SIM_NAME: ${{ steps.sim.outputs.name }}
+          BUNDLE_ID: io.branch.sdk.Branch-TestBed
+          OUTPUT_DIR: /tmp/w2
+          H2_EXPECT_RUNTIME: iOS-18-5
+          H2_URL: branchtest://open?scenario=W2
+          WARM: "1"
+          CAPTURE_NAME: wire-w2
+        run: |
+          rc=0
+          ./scripts/run_h2_hot.sh > /tmp/w2-driver.txt 2>&1 || rc=$?
+          grep -E '^(RUNTIME=|consent key: |settled after |openurl attempt |backgrounded, pid unchanged$|pid unchanged$|ERROR: )' /tmp/w2-driver.txt || true
+          if grep -q '^ERROR: no available .* on runtime ' /tmp/w2-driver.txt; then
+            touch /tmp/w2-runtime-missing
+          fi
+          [ "$rc" -eq 0 ] || { echo "ERROR: driver exited $rc"; exit "$rc"; }
+
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
@@ -177,6 +200,31 @@ jobs:
           fi
           exit "$rc"
 
+      # The warm contract bounds the open count and the checker reads the last
+      # transition marker in pre, which is what tells a warm delivery from a hot one.
+      - name: Validate W2
+        id: w2
+        continue-on-error: true
+        env:
+          OUTPUT_DIR: /tmp/w2
+          H2_URL: branchtest://open?scenario=W2
+        run: |
+          if [ "${{ steps.w2capture.outcome }}" != "success" ]; then
+            echo "FAILED: [W2] driver failed; see the capture step log" | tee /tmp/w2-output.txt
+            exit 1
+          fi
+          rc=0
+          python3 scripts/validate_l1_logs.py "$OUTPUT_DIR/wire-w2.post.txt" --scenario W2 --pre "$OUTPUT_DIR/wire-w2.pre.txt" --url "$H2_URL" > /tmp/w2-validate.txt 2>&1 || rc=1
+          python3 scripts/check_foreground_markers.py "$OUTPUT_DIR/wire-w2.post.txt" --pre "$OUTPUT_DIR/wire-w2.pre.txt" --scenario W2 > /tmp/w2-markers.txt 2>&1 || rc=1
+          {
+            grep -E '^(FAILED:|--- VALIDATION)' /tmp/w2-validate.txt || true
+            grep -E '^(FAILED:|pre: |delta: |pre last transition: )' /tmp/w2-markers.txt || true
+          } | sed 's/^FAILED: /FAILED: [W2] /' | tee /tmp/w2-output.txt
+          if [ "$rc" -ne 0 ] && ! grep -q '^FAILED:' /tmp/w2-output.txt; then
+            echo "FAILED: [W2] a checker exited without a verdict" | tee -a /tmp/w2-output.txt
+          fi
+          exit "$rc"
+
       # What the gate actually asserted, on the PR page rather than buried in
       # the job log.
       - name: Write run summary
@@ -197,12 +245,20 @@ jobs:
             echo
             echo "Scenario coverage:"
             echo
-            echo "The endpoint table counts the N1 capture; N1 and H2 are the contracts this gate asserts."
+            echo "The endpoint table counts the N1 capture; N1, H2 and W2 are the contracts this gate asserts."
             echo
             echo "| scenario group | status |"
             echo "| --- | --- |"
             echo "| Cold (C1–C3) | not implemented |"
-            echo "| Warm (W1–W2) | not implemented |"
+            if [ "${{ steps.w2.outcome }}" = "success" ]; then
+              echo "| Warm (W1, W2) | W2 pass (at most 2 opens allowed until the SDK fix); W1 not implemented |"
+            elif [ -f /tmp/w2-runtime-missing ]; then
+              echo "| Warm (W1, W2) | W2 not run: the runner has no simulator on the expected runtime (measure W2 on the new runtime, then update H2_EXPECT_RUNTIME); W1 not implemented |"
+            elif [ "${{ steps.w2.outcome }}" = "failure" ]; then
+              echo "| Warm (W1, W2) | W2 fail, see failures below; W1 not implemented |"
+            else
+              echo "| Warm (W1, W2) | W2 not run; W1 not implemented |"
+            fi
             if [ "${{ steps.h2.outcome }}" = "success" ]; then
               echo "| Hot (H1, H2) | H2 pass; H1 deferred until CI builds are signed |"
             elif [ -f /tmp/h2-runtime-missing ]; then
@@ -214,13 +270,13 @@ jobs:
             fi
             echo "| Negative / guards (N1–N4) | not implemented |"
             echo
-            if [ "${{ steps.validate.outcome }}" = "success" ] && [ "${{ steps.h2.outcome }}" = "success" ]; then
+            if [ "${{ steps.validate.outcome }}" = "success" ] && [ "${{ steps.h2.outcome }}" = "success" ] && [ "${{ steps.w2.outcome }}" = "success" ]; then
               echo "Result: **PASS**"
             else
               echo "Result: **FAIL**"
               echo
               echo '```'
-              cat /tmp/l1-output.txt /tmp/h2-output.txt 2>/dev/null | grep '^FAILED:' || echo "(no FAILED lines; see the job log)"
+              cat /tmp/l1-output.txt /tmp/h2-output.txt /tmp/w2-output.txt 2>/dev/null | grep '^FAILED:' || echo "(no FAILED lines; see the job log)"
               echo '```'
               # Only the N1 capture is rendered; H2 captures stay off the page.
               if [ "${{ steps.validate.outcome }}" != "success" ]; then
@@ -251,6 +307,10 @@ jobs:
       # After the upload, so an H2-only failure uploads nothing.
       - name: Fail the job if H2 failed
         if: steps.h2.outcome == 'failure'
+        run: exit 1
+
+      - name: Fail the job if W2 failed
+        if: steps.w2.outcome == 'failure'
         run: exit 1
 
       - name: Teardown simulator
