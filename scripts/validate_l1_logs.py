@@ -602,9 +602,7 @@ def validate_entries(entries, contract):
 
 def assert_delivered_url(entries, url):
     """Check that each resolve, and each open carrying link_data, carries `url`, the URL the driver delivered.
-
-    Opens without link_data are not checked: under --url that removes a failure only for contracts that do not
-    require link_data on every open (deeplink, N1, C1, C3; H2 does). The workflow passes --url only for H2 and W2."""
+    Skipping opens without link_data removes a failure only for contracts that do not require it on every open."""
     errors = []
     for entry in entries:
         if entry["uri"] == "/v3/deeplink":
