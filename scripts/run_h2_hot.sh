@@ -21,6 +21,8 @@
 #   SETTLE_MAX_S       - give up settling after this many seconds (default 120)
 #   OPENURL_MAX_S      - retry budget for LaunchServices error 115 (default 120)
 #   H2_URL             - URL to deliver (default branchtest://open?scenario=H2)
+#   WARM               - 1 backgrounds the app with Preferences before the pre snapshot (W2)
+#   CAPTURE_NAME       - snapshot file prefix (default wire-h2)
 
 set -euo pipefail
 
@@ -34,6 +36,8 @@ SETTLE_S="${SETTLE_S:-10}"
 SETTLE_MAX_S="${SETTLE_MAX_S:-120}"
 OPENURL_MAX_S="${OPENURL_MAX_S:-120}"
 H2_URL="${H2_URL:-branchtest://open?scenario=H2}"
+WARM="${WARM:-}"
+CAPTURE_NAME="${CAPTURE_NAME:-wire-h2}"
 
 # The consent SpringBoard otherwise asks for on the first `simctl openurl` of the scheme.
 APPROVAL_DOMAIN="com.apple.launchservices.schemeapproval"
@@ -117,8 +121,8 @@ wait_grown() {
 }
 
 mkdir -p "$OUTPUT_DIR"
-pre="$OUTPUT_DIR/wire-h2.pre.txt"
-post="$OUTPUT_DIR/wire-h2.post.txt"
+pre="$OUTPUT_DIR/$CAPTURE_NAME.pre.txt"
+post="$OUTPUT_DIR/$CAPTURE_NAME.post.txt"
 
 # 5. Launch and settle.
 xcrun simctl launch "$udid" "$BUNDLE_ID" >/dev/null
@@ -129,6 +133,15 @@ pid=$(app_pid)
 # 6. Snapshot. A launch that never opened is not a hot app.
 cp "$(log_path)" "$pre"
 grep -qE '\[BranchLog\] Got https?://[^ ]+/v3/events/open Request:' "$pre" || fail "launch did not settle"
+
+# 6b. Warm: background the same process, then retake pre so it holds the resign and background markers.
+if [ "$WARM" = "1" ]; then
+    xcrun simctl launch "$udid" com.apple.Preferences >/dev/null
+    wait_settled
+    [ "$(app_pid)" = "$pid" ] || fail "relaunched during background"
+    echo "backgrounded, pid unchanged"
+    cp "$(log_path)" "$pre"
+fi
 
 # 7. Deliver, retrying while LaunchServices is still settling after boot.
 attempt=0
