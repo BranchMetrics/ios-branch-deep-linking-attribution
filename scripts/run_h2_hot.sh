@@ -92,9 +92,9 @@ app_pid() {
         | awk -v label="UIKitApplication:$BUNDLE_ID" 'index($3, label) == 1 { print $1 }'
 }
 
-# Waits until the log is non-empty and its size unchanged for SETTLE_S.
+# Waits until the log is non-empty and its size unchanged for SETTLE_S; $1 names what failed to settle.
 wait_settled() {
-    local path size last=-1 same=0 elapsed=0
+    local what="${1:-branchlogs.txt}" path size last=-1 same=0 elapsed=0
     while [ "$elapsed" -lt "$SETTLE_MAX_S" ]; do
         size=0
         if path=$(log_path) && [ -f "$path" ]; then size=$(stat -f %z "$path"); fi
@@ -104,7 +104,7 @@ wait_settled() {
         sleep 1
         elapsed=$((elapsed + 1))
     done
-    fail "branchlogs.txt did not settle within ${SETTLE_MAX_S}s"
+    fail "$what did not settle within ${SETTLE_MAX_S}s"
 }
 
 # Waits until the log is larger than $1 bytes, so a slow delivery is not snapshotted early.
@@ -118,6 +118,21 @@ wait_grown() {
         elapsed=$((elapsed + 1))
     done
     fail "branchlogs.txt did not grow past the pre snapshot within ${SETTLE_MAX_S}s"
+}
+
+# Waits until applicationDidEnterBackground is logged after the first $1 bytes.
+wait_backgrounded() {
+    local path found elapsed=0
+    while [ "$elapsed" -lt "$SETTLE_MAX_S" ]; do
+        found=0
+        if path=$(log_path) && [ -f "$path" ]; then
+            found=$(tail -c +$(($1 + 1)) "$path" | grep -c '\[TestBedLifecycle\] applicationDidEnterBackground' || true)
+        fi
+        if [ "$found" -gt 0 ]; then return 0; fi
+        sleep 1
+        elapsed=$((elapsed + 1))
+    done
+    fail "TestBed did not log applicationDidEnterBackground within ${SETTLE_MAX_S}s of launching Preferences"
 }
 
 mkdir -p "$OUTPUT_DIR"
@@ -137,8 +152,11 @@ grep -qE '\[BranchLog\] Got https?://[^ ]+/v3/events/open Request:' "$pre" || fa
 # 6b. Warm: background the same process, then retake pre so it holds the resign and background markers.
 if [ "$WARM" = "1" ]; then
     xcrun simctl launch "$udid" com.apple.Preferences >/dev/null
-    wait_settled
-    [ "$(app_pid)" = "$pid" ] || fail "relaunched during background"
+    wait_backgrounded "$(stat -f %z "$pre")"
+    wait_settled "backgrounding"
+    bg_pid=$(app_pid)
+    [[ $bg_pid =~ ^[0-9]+$ ]] || fail "TestBed not running after background"
+    [ "$bg_pid" = "$pid" ] || fail "relaunched during background"
     echo "backgrounded, pid unchanged"
     cp "$(log_path)" "$pre"
 fi
