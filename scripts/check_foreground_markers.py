@@ -12,9 +12,17 @@ this checker asserts the delivery reached a foregrounded app:
   applicationWillResignActive, applicationDidEnterBackground or
   applicationDidBecomeActive.
 
+With --scenario W2 it asserts the inverse, a delivery into a backgrounded app:
+
+- the last transition marker in the snapshot is applicationDidEnterBackground;
+- the bytes appended after it hold exactly one openURL, exactly one
+  applicationDidBecomeActive, and no applicationWillResignActive or
+  applicationDidEnterBackground.
+
 Usage:
 
     check_foreground_markers.py wire-h2.post.txt --pre wire-h2.pre.txt
+    check_foreground_markers.py wire-w2.post.txt --pre wire-w2.pre.txt --scenario W2
 """
 
 import argparse
@@ -63,6 +71,38 @@ def check_markers(pre_counts, delta_counts):
     return errors
 
 
+BACKGROUND = "applicationDidEnterBackground"
+
+
+def last_transition(data):
+    """Return the last transition marker name in `data` (bytes), or None."""
+    names = [name.decode("ascii") for name in MARKER_RE.findall(data)]
+    transitions = [name for name in names if name in TRANSITIONS]
+    return transitions[-1] if transitions else None
+
+
+def check_warm_markers(pre_last, delta_counts):
+    """Return one error string per broken W2 rule."""
+    errors = []
+    if pre_last != BACKGROUND:
+        errors.append(
+            f"Expected the last transition marker before delivery to be '{BACKGROUND}', "
+            f"found {pre_last or 'none'}; the app was not backgrounded."
+        )
+    for name, expected in ((DELIVERY, 1), (LIVENESS, 1)):
+        if delta_counts[name] != expected:
+            errors.append(
+                f"Expected exactly {expected} '{name}' marker after delivery, found {delta_counts[name]}."
+            )
+    for name in TRANSITIONS:
+        if name != LIVENESS and delta_counts[name]:
+            errors.append(
+                f"Expected 0 '{name}' markers after delivery, found {delta_counts[name]}; "
+                "the app left the foreground."
+            )
+    return errors
+
+
 def format_counts(label, counts):
     return f"{label}: " + " ".join(f"{name}={counts[name]}" for name in MARKERS)
 
@@ -76,6 +116,12 @@ def main():
         required=True,
         help="copy of the capture taken before delivery",
     )
+    parser.add_argument(
+        "--scenario",
+        choices=("H2", "W2"),
+        default="H2",
+        help="H2 asserts a foregrounded app (default), W2 a backgrounded one",
+    )
     args = parser.parse_args()
 
     for path in (args.pre, args.log_file):
@@ -88,12 +134,18 @@ def main():
         print(f"FAILED: {e}")
         sys.exit(1)
     with open(args.pre, "rb") as f:
-        pre_counts = count_markers(f.read())
+        pre_bytes = f.read()
+    pre_counts = count_markers(pre_bytes)
     delta_counts = count_markers(delta)
 
     print(format_counts("pre", pre_counts))
     print(format_counts("delta", delta_counts))
-    errors = check_markers(pre_counts, delta_counts)
+    if args.scenario == "W2":
+        pre_last = last_transition(pre_bytes)
+        print(f"pre last transition: {pre_last or 'none'}")
+        errors = check_warm_markers(pre_last, delta_counts)
+    else:
+        errors = check_markers(pre_counts, delta_counts)
     for error in errors:
         print(f"FAILED: {error}")
     sys.exit(1 if errors else 0)

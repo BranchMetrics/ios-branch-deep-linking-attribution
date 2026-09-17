@@ -30,6 +30,8 @@ def _fixture_bytes(name):
 class ForegroundMarkerTests(unittest.TestCase):
     """H2 delivery reached a foregrounded app: one openURL, no lifecycle transition."""
 
+    extra_args = ()
+
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
         self.addCleanup(shutil.rmtree, self.tmp)
@@ -44,7 +46,7 @@ class ForegroundMarkerTests(unittest.TestCase):
         pre = self._write("pre.txt", pre_bytes)
         post = self._write("post.txt", post_bytes)
         saved_argv = sys.argv
-        sys.argv = ["check_foreground_markers.py", post, "--pre", pre]
+        sys.argv = ["check_foreground_markers.py", post, "--pre", pre] + list(self.extra_args)
         out = io.StringIO()
         try:
             with redirect_stdout(out):
@@ -86,6 +88,52 @@ class ForegroundMarkerTests(unittest.TestCase):
         code, output, failed = self._main(pre, pre)
         self.assertEqual(code, 1)
         self.assertEqual(failed, ["FAILED: Expected exactly 1 'openURL' marker after delivery, found 0."], output)
+
+
+WARM_PRE = _fixture_bytes("w2_markers_warm.pre.txt")
+WARM_DELTA = _fixture_bytes("w2_markers_warm.post.txt")[len(WARM_PRE):]
+
+
+def _markers(*names):
+    return b"".join(b"[TestBedLifecycle] " + name.encode() + b"\n" for name in names)
+
+
+class WarmMarkerTests(unittest.TestCase):
+    """W2 delivery reached a backgrounded app: backgrounded last before, one openURL and one reactivation after."""
+
+    extra_args = ("--scenario", "W2")
+    setUp = ForegroundMarkerTests.setUp
+    _write = ForegroundMarkerTests._write
+    _main = ForegroundMarkerTests._main
+
+    def test_the_w2_marker_capture_passes(self):
+        code, output, failed = self._main(WARM_PRE, WARM_PRE + WARM_DELTA)
+        self.assertEqual((code, failed), (0, []), output)
+        self.assertIn("pre last transition: applicationDidEnterBackground", output)
+
+    def test_markers_out_of_order_fail(self):
+        # Every pre marker present, but the app became active again after backgrounding.
+        pre = _markers("applicationDidBecomeActive", "applicationDidEnterBackground", "applicationWillResignActive")
+        code, output, failed = self._main(pre, pre + WARM_DELTA)
+        self.assertEqual(code, 1)
+        self.assertEqual(len(failed), 1, output)
+        self.assertIn("'applicationDidEnterBackground'", failed[0])
+
+    def test_a_hot_delivery_fails_as_w2(self):
+        code, output, failed = self._main(
+            _fixture_bytes("h2_markers_hot.pre.txt"), _fixture_bytes("h2_markers_hot.post.txt")
+        )
+        self.assertEqual(code, 1)
+        self.assertEqual(len(failed), 2, output)
+        self.assertIn("'applicationDidEnterBackground'", failed[0])
+        self.assertIn("'applicationDidBecomeActive' marker after delivery, found 0", failed[1])
+
+    def test_a_resign_during_delivery_fails(self):
+        # The shape of a system prompt taking the foreground during delivery.
+        code, output, failed = self._main(WARM_PRE, WARM_PRE + WARM_DELTA + _markers("applicationWillResignActive"))
+        self.assertEqual(code, 1)
+        self.assertEqual(len(failed), 1, output)
+        self.assertIn("'applicationWillResignActive'", failed[0])
 
 
 if __name__ == "__main__":
