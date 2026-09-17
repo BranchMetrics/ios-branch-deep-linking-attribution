@@ -14,7 +14,8 @@ this checker asserts the delivery reached a foregrounded app:
 
 With --scenario W2 it asserts the inverse, a delivery into a backgrounded app:
 
-- the last transition marker in the snapshot is applicationDidEnterBackground;
+- the snapshot holds at least one applicationDidBecomeActive, and its last
+  transition marker is applicationDidEnterBackground;
 - the bytes appended after it hold exactly one openURL, exactly one
   applicationDidBecomeActive, and no applicationWillResignActive or
   applicationDidEnterBackground.
@@ -50,14 +51,19 @@ def count_markers(data):
     return Counter(name.decode("ascii") for name in MARKER_RE.findall(data))
 
 
+def liveness_errors(pre_counts):
+    """Return the error for a snapshot with no liveness marker, or none."""
+    if pre_counts[LIVENESS] >= 1:
+        return []
+    return [
+        f"Expected at least 1 '{LIVENESS}' marker before delivery, found 0; "
+        "the TestBed is not writing markers."
+    ]
+
+
 def check_markers(pre_counts, delta_counts):
     """Return one error string per broken rule."""
-    errors = []
-    if pre_counts[LIVENESS] < 1:
-        errors.append(
-            f"Expected at least 1 '{LIVENESS}' marker before delivery, found 0; "
-            "the TestBed is not writing markers."
-        )
+    errors = liveness_errors(pre_counts)
     if delta_counts[DELIVERY] != 1:
         errors.append(
             f"Expected exactly 1 '{DELIVERY}' marker after delivery, found {delta_counts[DELIVERY]}."
@@ -81,9 +87,9 @@ def last_transition(data):
     return transitions[-1] if transitions else None
 
 
-def check_warm_markers(pre_last, delta_counts):
+def check_warm_markers(pre_counts, pre_last, delta_counts):
     """Return one error string per broken W2 rule."""
-    errors = []
+    errors = liveness_errors(pre_counts)
     if pre_last != BACKGROUND:
         errors.append(
             f"Expected the last transition marker before delivery to be '{BACKGROUND}', "
@@ -143,7 +149,7 @@ def main():
     if args.scenario == "W2":
         pre_last = last_transition(pre_bytes)
         print(f"pre last transition: {pre_last or 'none'}")
-        errors = check_warm_markers(pre_last, delta_counts)
+        errors = check_warm_markers(pre_counts, pre_last, delta_counts)
     else:
         errors = check_markers(pre_counts, delta_counts)
     for error in errors:

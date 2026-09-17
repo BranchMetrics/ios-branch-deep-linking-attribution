@@ -118,6 +118,12 @@ class WarmMarkerTests(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertEqual(len(failed), 1, output)
         self.assertIn("'applicationDidEnterBackground'", failed[0])
+        # Backgrounded last, but no liveness marker: the TestBed may not be writing markers.
+        pre = _markers("applicationWillResignActive", "applicationDidEnterBackground")
+        code, output, failed = self._main(pre, pre + WARM_DELTA)
+        self.assertEqual(code, 1)
+        self.assertEqual(len(failed), 1, output)
+        self.assertIn("'applicationDidBecomeActive' marker before delivery, found 0", failed[0])
 
     def test_a_hot_delivery_fails_as_w2(self):
         code, output, failed = self._main(
