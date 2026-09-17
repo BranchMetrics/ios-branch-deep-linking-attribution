@@ -194,33 +194,32 @@ ATTRIBUTION_LEVEL_NONE = "NONE"
 #   order   (earlier, later) pairs. Relative, not adjacency: a request
 #           between the two does not violate it.
 #
-# `install` and `deeplink` are not test-plan scenarios — they are the runs
-# the harness drives today. Plan scenarios use their plan ID (C1, W1, N4).
+# `cold_https` and `attribution_none` are test-plan scenarios. `install` and
+# `deeplink` are not in the plan: they are the runs the harness drives today.
 SCENARIO_CONTRACTS = {
-    # N1 organic_open: a launch with no link. The test plan also asks that the
-    # open carry no link data; that is a field-level assertion, and this layer
-    # is bounded at counts and required-field presence, so N1 is not fully
-    # covered here. The endpoint half is.
-    "N1": {
+    # install: the harness uninstalls first (run_l1_instrumented.sh), so no
+    # `randomizedBundleToken` persists and `Branch.m:2226` decides install
+    # rather than open. The plan's organic_open is not contracted on this line.
+    "install": {
         "counts": {"/v3/events/open": 1, "/v3/deeplink": 0},
         "order": (),
     },
-    # N3 attribution_none: a link resolved while the consumer-protection level
+    # attribution_none: a link resolved while the consumer-protection level
     # is NONE. BNCServerRequestOperation drops every request at that level
     # except BranchRequestDeepLink, so the resolution goes out and the
     # attributed open does not. The test plan also asks that identifiers be
     # cleared, which is a field-level assertion this layer does not make.
-    "N3": {
+    "attribution_none": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 0},
         "order": (),
     },
-    # C1 cold_https: a Universal Link delivered into a freshly launched
+    # cold_https: a Universal Link delivered into a freshly launched
     # process. Two opens is correct, not a duplicate: the launch fires one
     # carrying no link field, then the resolution's attributed open carries
     # `link_data`. Requiring one would fail a healthy SDK. The plan also asks
     # that the resolution carry the link; that is a field-level assertion this
-    # layer does not make, as with N1 and N3.
-    "C1": {
+    # layer does not make, as with attribution_none.
+    "cold_https": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 2},
         "order": (("/v3/deeplink", "/v3/events/open"),),
     },
