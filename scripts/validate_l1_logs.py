@@ -203,6 +203,14 @@ ATTRIBUTION_LEVEL_NONE = "NONE"
 #           any other, and EMT-4027 shipped with nothing on the surface ever
 #           being an install. Counts were identical throughout.
 #
+# Optional keys, for a scenario whose endpoint total is deliberately not exact:
+#
+#   carrying        endpoint -> field -> exact number of that endpoint's
+#                   requests carrying the field; the endpoint total stays free.
+#   carried_by_all  endpoint -> fields every request to it must carry.
+#   max_counts      endpoint -> most requests allowed, for an endpoint absent
+#                   from counts.
+#
 # `install` and `deeplink` are not test-plan scenarios — they are the runs
 # the harness drives today. Plan scenarios use their plan ID (C1, W1, N4).
 SCENARIO_CONTRACTS = {
@@ -260,6 +268,16 @@ SCENARIO_CONTRACTS = {
             "/v3/deeplink": {"external_intent_uri": 1},
             "/v3/events/open": {"link_data": 1},
         },
+    },
+    # W2 warm_uriScheme: a scheme URL opened into the backgrounded app, counted on the delivery delta (--pre).
+    # A warm delivery can add a plain open without link_data, so opens are bounded, not exact; an install is an open without the token.
+    "W2": {
+        "counts": {"/v3/deeplink": 1},
+        "order": (("/v3/deeplink", "/v3/events/open"),),
+        "fields": {"/v3/deeplink": {"external_intent_uri": 1}},
+        "carrying": {"/v3/events/open": {"link_data": 1}},
+        "carried_by_all": {"/v3/events/open": ("randomized_bundle_token",)},
+        "max_counts": {"/v3/events/open": 2},
     },
     "deeplink": {
         "counts": {"/v3/deeplink": 1},
@@ -350,6 +368,13 @@ def assert_contract(entries, contract):
                 f"Expected {expected} '{endpoint}' request(s), captured {actual}."
             )
 
+    for endpoint, bound in sorted(contract.get("max_counts", {}).items()):
+        actual = uris.count(endpoint)
+        if actual > bound:
+            errors.append(
+                f"Expected at most {bound} '{endpoint}' request(s), captured {actual}."
+            )
+
     for earlier, later in contract["order"]:
         if not occurs_after(uris, earlier, later):
             errors.append(f"Expected a '{later}' request after a '{earlier}' one.")
@@ -371,6 +396,30 @@ def assert_contract(entries, contract):
                 errors.append(
                     f"Expected {expected} of the '{endpoint}' request(s) to carry "
                     f"'{field}', but {actual} of {len(matching)} did."
+                )
+
+    for endpoint, fields in sorted(contract.get("carrying", {}).items()):
+        matching = [e for e in entries if e["uri"] == endpoint]
+        for field, expected in sorted(fields.items()):
+            actual = sum(
+                1 for e in matching if is_present(lookup_field(e["request"], field))
+            )
+            if actual != expected:
+                errors.append(
+                    f"Expected {expected} of the '{endpoint}' request(s) to carry "
+                    f"'{field}', but {actual} of {len(matching)} did."
+                )
+
+    for endpoint, fields in sorted(contract.get("carried_by_all", {}).items()):
+        matching = [e for e in entries if e["uri"] == endpoint]
+        for field in fields:
+            missing = sum(
+                1 for e in matching if not is_present(lookup_field(e["request"], field))
+            )
+            if missing:
+                errors.append(
+                    f"Every '{endpoint}' request must carry '{field}', "
+                    f"but {missing} of {len(matching)} did not."
                 )
 
     return errors
@@ -552,13 +601,18 @@ def validate_entries(entries, contract):
 
 
 def assert_delivered_url(entries, url):
-    """Check that each resolve and open carries `url`, the URL the driver delivered."""
+    """Check that each resolve, and each open carrying link_data, carries `url`, the URL the driver delivered.
+
+    Opens without link_data are not checked: under --url that removes a failure only for contracts that do not
+    require link_data on every open (deeplink, N1, C1, C3; H2 does). The workflow passes --url only for H2 and W2."""
     errors = []
     for entry in entries:
         if entry["uri"] == "/v3/deeplink":
             actual = lookup_field(entry["request"], "external_intent_uri")
         elif entry["uri"] == "/v3/events/open":
             link_data = lookup_field(entry["request"], "link_data")
+            if not is_present(link_data):
+                continue
             actual = link_data.get("+non_branch_link") if isinstance(link_data, dict) else None
         else:
             continue
@@ -608,7 +662,7 @@ def main():
     )
     parser.add_argument(
         "--url",
-        help="URL the driver delivered; every resolve and open must carry it",
+        help="URL the driver delivered; every resolve and every open carrying link_data must carry it",
     )
     args = parser.parse_args()
     log_file_path = args.log_file
