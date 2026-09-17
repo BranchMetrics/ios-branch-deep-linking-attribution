@@ -296,6 +296,9 @@ jobs:
         if: steps.validate.outcome == 'failure'
         run: exit 1
 
+      # Fires only for the blocking steps above; H2 and W2 run continue-on-error,
+      # so a W2 or H2 step marked continue-on-error never publishes a capture on
+      # its own. Do not widen this condition to cover those steps.
       - name: Upload wire logs on failure
         if: failure() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
         uses: actions/upload-artifact@v4
@@ -304,7 +307,7 @@ jobs:
           path: branchlogs.txt
           retention-days: 7
 
-      # After the upload, so an H2-only failure uploads nothing.
+      # After the upload, so an H2-only or W2-only failure uploads nothing.
       - name: Fail the job if H2 failed
         if: steps.h2.outcome == 'failure'
         run: exit 1
