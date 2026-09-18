@@ -19,8 +19,10 @@ on:
       - ".github/workflows/layer1-logger-tests.yml"
       - "scripts/validate_l1_logs.py"
       - "scripts/test_validate_l1_logs.py"
+      - "scripts/test_validate_l1_logs_contracts.py"
       - "scripts/fixtures/**"
       - "scripts/run_l1_instrumented.sh"
+      - "scripts/run_h2_hot.sh"
   pull_request:
     branches:
       - "4.0.0-beta.*"
@@ -34,8 +36,10 @@ on:
       - ".github/workflows/layer1-logger-tests.yml"
       - "scripts/validate_l1_logs.py"
       - "scripts/test_validate_l1_logs.py"
+      - "scripts/test_validate_l1_logs_contracts.py"
       - "scripts/fixtures/**"
       - "scripts/run_l1_instrumented.sh"
+      - "scripts/run_h2_hot.sh"
   workflow_dispatch:
 
 permissions:
@@ -106,20 +110,20 @@ jobs:
       # Self-test first: a regression in the validator would otherwise surface
       # as a false PASS on the real capture.
       - name: Run L1 validator unit tests
-        run: python3 -m unittest scripts.test_validate_l1_logs -v
+        run: python3 -m unittest discover -s scripts -p "test_*.py" -v
 
       # continue-on-error so the summary below still runs on a failure — the
       # job is failed explicitly at the end.
       #
       # The scenario is required on this line: a capture is judged against the
       # contract for the run that produced it. This job drives the default
-      # harness run, which is N1 organic_open — one open, no deep link.
+      # harness run, which is install: one open, no deep link.
       - name: Validate wire logs
         id: validate
         continue-on-error: true
         run: |
           set -o pipefail
-          python3 scripts/validate_l1_logs.py branchlogs.txt --scenario N1 2>&1 | tee /tmp/l1-output.txt
+          python3 scripts/validate_l1_logs.py branchlogs.txt --scenario install 2>&1 | tee /tmp/l1-output.txt
 
       # What the gate actually asserted, on the PR page rather than buried in
       # the job log.
@@ -145,10 +149,10 @@ jobs:
             echo
             echo "| scenario group | status |"
             echo "| --- | --- |"
-            echo "| Cold (C1–C3) | not implemented |"
-            echo "| Warm (W1–W2) | not implemented |"
-            echo "| Hot (H1–H2) | not implemented |"
-            echo "| Negative / guards (N1–N4) | not implemented |"
+            echo "| Cold | not implemented |"
+            echo "| Warm | not implemented |"
+            echo "| Hot | not implemented |"
+            echo "| Negative and guards | not implemented |"
             echo
             if [ "${{ steps.validate.outcome }}" = "success" ]; then
               echo "Result: **PASS**"
