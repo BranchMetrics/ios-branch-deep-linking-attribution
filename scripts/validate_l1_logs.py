@@ -195,7 +195,7 @@ ATTRIBUTION_LEVEL_NONE = "NONE"
 #           between the two does not violate it.
 #
 # `install` and `deeplink` are not test-plan scenarios — they are the runs
-# the harness drives today. Plan scenarios use their plan ID (C1, W1, N4).
+# the harness drives today. Plan scenarios carry the test plan's own name.
 SCENARIO_CONTRACTS = {
     # install: the run the harness actually drives. run_l1_instrumented.sh
     # uninstalls the bundle before every run, so every capture is a first
@@ -209,23 +209,23 @@ SCENARIO_CONTRACTS = {
     # BranchRequestDeepLink. A capture without the open would therefore be a
     # count failure, not an ordering one.
     #
-    # N1 organic_open is deliberately NOT contracted here. It is a launch with
+    # organic_open is deliberately NOT contracted here. It is a launch with
     # no link on a device that already has the app, which this harness cannot
     # produce, and the two design sources disagree on what it should emit:
     # the design page says no resolve and one open, while the September
     # integration document, which describes the code rather than deciding it,
-    # says one resolve and no open. Authoring N1 before that is settled would
+    # says one resolve and no open. Authoring it before that is settled would
     # freeze whichever one the harness happens to produce.
     "install": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 1},
         "order": (("/v3/deeplink", "/v3/events/open"),),
     },
-    # N3 attribution_none: a link resolved while the consumer-protection level
+    # attribution_none: a link resolved while the consumer-protection level
     # is NONE. BNCServerRequestOperation drops every request at that level
     # except BranchRequestDeepLink, so the resolution goes out and the
     # attributed open does not. The test plan also asks that identifiers be
     # cleared, which is a field-level assertion this layer does not make.
-    "N3": {
+    "attribution_none": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 0},
         "order": (),
     },

@@ -234,14 +234,14 @@ class InstallContractTests(unittest.TestCase):
     capture, since a contract only demonstrated passing is a contract that
     cannot fail."""
 
-    def test_a_clean_organic_open_passes(self):
-        errors, _ = _run_validation("n1_organic_resolve.txt", v.contract_for("install"))
+    def test_a_clean_install_capture_passes(self):
+        errors, _ = _run_validation("install.txt", v.contract_for("install"))
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 
     def test_wrong_count_fails(self):
         # Two opens is the duplicate-open shape #1612 produced. Before this
         # engine the capture could not fail, which is why it went unnoticed.
-        errors, _ = _run_validation("n1_duplicate_open.txt", v.contract_for("install"))
+        errors, _ = _run_validation("install_duplicate_open.txt", v.contract_for("install"))
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("Expected 1", errors[0])
         self.assertIn("captured 2", errors[0])
@@ -260,36 +260,39 @@ class InstallContractTests(unittest.TestCase):
         self.assertEqual(set(v.contract_for("install")), {"counts", "order"})
 
 
-class N3ContractTests(unittest.TestCase):
-    """N3 attribution_none: at consumer-protection level NONE,
+class AttributionNoneContractTests(unittest.TestCase):
+    """attribution_none: at consumer-protection level NONE,
     BNCServerRequestOperation drops every request except BranchRequestDeepLink,
     so the resolution goes out and the attributed open does not."""
 
     def test_the_none_level_capture_passes(self):
-        errors, _ = _run_validation("n3_attribution_none.txt", v.contract_for("N3"))
+        errors, _ = _run_validation("attribution_none.txt", v.contract_for("attribution_none"))
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 
     def test_an_open_at_none_level_fails(self):
-        # The regression N3 exists to catch: an open must not be sent at NONE.
-        errors, _ = _run_validation("attribution_none_deeplink.txt", v.contract_for("N3"))
+        # The regression this scenario exists to catch: an open must not be
+        # sent at NONE.
+        contract = v.contract_for("attribution_none")
+        errors, _ = _run_validation("attribution_none_deeplink.txt", contract)
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("must not be captured", errors[0])
         self.assertIn("/v3/events/open", errors[0])
 
     def test_the_old_global_rule_would_have_failed_this_correct_capture(self):
         # The retired MANDATORY_ENDPOINT required an open in every capture.
-        # install still does, and N3's capture is correct without one, which is
+        # install still does, and this capture is correct without one, which is
         # why a single global rule could not serve both scenarios.
-        errors, _ = _run_validation("n3_attribution_none.txt", v.contract_for("install"))
+        errors, _ = _run_validation("attribution_none.txt", v.contract_for("install"))
         self.assertTrue(
             any("/v3/events/open" in e for e in errors),
             f"Expected the open requirement to fire: {errors}",
         )
 
-    def test_n3_does_not_assert_that_identifiers_were_cleared(self):
+    def test_the_contract_does_not_assert_that_identifiers_were_cleared(self):
         # Recorded, not hidden: that is a field-level assertion, and this layer
         # is bounded at counts and required-field presence.
-        self.assertEqual(set(v.contract_for("N3")["counts"]), {"/v3/deeplink", "/v3/events/open"})
+        counts = v.contract_for("attribution_none")["counts"]
+        self.assertEqual(set(counts), {"/v3/deeplink", "/v3/events/open"})
 
 
 class HappyPathTests(unittest.TestCase):
@@ -456,11 +459,11 @@ class ScenarioEnforcementTests(unittest.TestCase):
         errors, _ = _run_validation("deeplink_scenario.txt", v.contract_for("deeplink"))
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 
-    def test_the_same_capture_passes_install_and_fails_n3(self):
+    def test_the_same_capture_passes_install_and_fails_attribution_none(self):
         # The point of per-scenario contracts: one global rule cannot express
         # this, and before this change the install capture could not fail.
-        passing, _ = _run_validation("n1_organic_resolve.txt", v.contract_for("install"))
-        failing, _ = _run_validation("n1_organic_resolve.txt", v.contract_for("N3"))
+        passing, _ = _run_validation("install.txt", v.contract_for("install"))
+        failing, _ = _run_validation("install.txt", v.contract_for("attribution_none"))
         self.assertEqual(passing, [])
         self.assertTrue(failing)
 

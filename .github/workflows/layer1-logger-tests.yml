@@ -147,10 +147,10 @@ jobs:
             echo
             echo "| scenario group | status |"
             echo "| --- | --- |"
-            echo "| Cold (C1–C3) | not implemented |"
-            echo "| Warm (W1–W2) | not implemented |"
-            echo "| Hot (H1–H2) | not implemented |"
-            echo "| Negative / guards (N1–N4) | not implemented |"
+            echo "| Cold | not implemented |"
+            echo "| Warm | not implemented |"
+            echo "| Hot | not implemented |"
+            echo "| Negative and guards | not implemented |"
             echo
             if [ "${{ steps.validate.outcome }}" = "success" ]; then
               echo "Result: **PASS**"
