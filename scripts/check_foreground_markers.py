@@ -1,5 +1,5 @@
 """
-Foreground receipt for H2 hot_uriScheme, read from TestBed lifecycle markers.
+Foreground receipt for hot_uriScheme, read from TestBed lifecycle markers.
 
 One `/v3/events/open` on the delivery delta does not prove the app stayed
 foreground: a transition whose foreground open was suppressed also sends one.
@@ -12,7 +12,8 @@ this checker asserts the delivery reached a foregrounded app:
   applicationWillResignActive, applicationDidEnterBackground or
   applicationDidBecomeActive.
 
-With --scenario W2 it asserts the inverse, a delivery into a backgrounded app:
+With --scenario warm_uriScheme it asserts the inverse, a delivery into a
+backgrounded app:
 
 - the snapshot holds at least one applicationDidBecomeActive, and its last
   transition marker is applicationDidEnterBackground;
@@ -22,8 +23,10 @@ With --scenario W2 it asserts the inverse, a delivery into a backgrounded app:
 
 Usage:
 
-    check_foreground_markers.py wire-h2.post.txt --pre wire-h2.pre.txt
-    check_foreground_markers.py wire-w2.post.txt --pre wire-w2.pre.txt --scenario W2
+    check_foreground_markers.py wire-hot_uriScheme.post.txt \
+        --pre wire-hot_uriScheme.pre.txt
+    check_foreground_markers.py wire-warm_uriScheme.post.txt \
+        --pre wire-warm_uriScheme.pre.txt --scenario warm_uriScheme
 """
 
 import argparse
@@ -88,7 +91,7 @@ def last_transition(data):
 
 
 def check_warm_markers(pre_counts, pre_last, delta_counts, delta):
-    """Return one error string per broken W2 rule."""
+    """Return one error string per broken warm_uriScheme rule."""
     errors = liveness_errors(pre_counts)
     if pre_last != BACKGROUND:
         errors.append(
@@ -132,9 +135,12 @@ def main():
     )
     parser.add_argument(
         "--scenario",
-        choices=("H2", "W2"),
-        default="H2",
-        help="H2 asserts a foregrounded app (default), W2 a backgrounded one",
+        choices=("hot_uriScheme", "warm_uriScheme"),
+        default="hot_uriScheme",
+        help=(
+            "hot_uriScheme asserts a foregrounded app (default), "
+            "warm_uriScheme a backgrounded one"
+        ),
     )
     args = parser.parse_args()
 
@@ -154,7 +160,7 @@ def main():
 
     print(format_counts("pre", pre_counts))
     print(format_counts("delta", delta_counts))
-    if args.scenario == "W2":
+    if args.scenario == "warm_uriScheme":
         pre_last = last_transition(pre_bytes)
         print(f"pre last transition: {pre_last or 'none'}")
         errors = check_warm_markers(pre_counts, pre_last, delta_counts, delta)

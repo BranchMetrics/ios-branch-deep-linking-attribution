@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 #
-# H2 hot_uriScheme driver for the iOS Branch SDK TestBed.
+# hot_uriScheme driver for the iOS Branch SDK TestBed.
 #
 # Launches the TestBed, snapshots branchlogs.txt once the launch settles, opens
 # a scheme URL into the foregrounded app with `simctl openurl`, and snapshots
 # again. Validate with:
 #
-#   validate_l1_logs.py "$OUTPUT_DIR/wire-h2.post.txt" --scenario H2 \
-#       --pre "$OUTPUT_DIR/wire-h2.pre.txt"
+#   validate_l1_logs.py "$OUTPUT_DIR/wire-hot_uriScheme.post.txt" \
+#       --scenario hot_uriScheme --pre "$OUTPUT_DIR/wire-hot_uriScheme.pre.txt"
 #
 # Required env:
 #   H2_EXPECT_RUNTIME  - runtime the device must be on, for example iOS-18-5
@@ -21,8 +21,9 @@
 #   SETTLE_MAX_S       - give up settling after this many seconds (default 120)
 #   OPENURL_MAX_S      - retry budget for LaunchServices error 115 (default 120)
 #   H2_URL             - URL to deliver (default branchtest://open?scenario=H2)
-#   WARM               - 1 backgrounds the app with Preferences before the pre snapshot (W2)
-#   CAPTURE_NAME       - snapshot file prefix (default wire-h2)
+#   WARM               - 1 backgrounds the app with Preferences before the pre
+#                        snapshot (warm_uriScheme)
+#   CAPTURE_NAME       - snapshot file prefix (default wire-hot_uriScheme)
 
 set -euo pipefail
 
@@ -37,7 +38,7 @@ SETTLE_MAX_S="${SETTLE_MAX_S:-120}"
 OPENURL_MAX_S="${OPENURL_MAX_S:-120}"
 H2_URL="${H2_URL:-branchtest://open?scenario=H2}"
 WARM="${WARM:-}"
-CAPTURE_NAME="${CAPTURE_NAME:-wire-h2}"
+CAPTURE_NAME="${CAPTURE_NAME:-wire-hot_uriScheme}"
 
 # The consent SpringBoard otherwise asks for on the first `simctl openurl` of the scheme.
 APPROVAL_DOMAIN="com.apple.launchservices.schemeapproval"

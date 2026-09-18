@@ -106,10 +106,10 @@ jobs:
           OUTPUT_LOG: branchlogs.txt
         run: ./scripts/run_l1_instrumented.sh
 
-      # H2 hot_uriScheme on the same device. The driver reinstalls the TestBed,
-      # so the N1 capture above is already copied out. Only receipt lines are
-      # printed; the captures stay in /tmp/h2 and are never uploaded.
-      - name: Capture H2 hot scheme URL
+      # hot_uriScheme on the same device. The driver reinstalls the TestBed,
+      # so the install capture above is already copied out. Only receipt lines
+      # are printed; the captures stay in /tmp/h2 and are never uploaded.
+      - name: Capture hot_uriScheme
         id: h2capture
         continue-on-error: true
         env:
@@ -143,37 +143,42 @@ jobs:
       #
       # The scenario is required on this line: a capture is judged against the
       # contract for the run that produced it. This job drives the default
-      # harness run, which is N1 organic_open — one open, no deep link.
+      # harness run, which is install: one open, no deep link.
       - name: Validate wire logs
         id: validate
         continue-on-error: true
         run: |
           set -o pipefail
-          python3 scripts/validate_l1_logs.py branchlogs.txt --scenario N1 2>&1 | tee /tmp/l1-output.txt
+          python3 scripts/validate_l1_logs.py branchlogs.txt --scenario install 2>&1 | tee /tmp/l1-output.txt
 
       # The wire contract counts the delivery delta, and the marker checker
       # proves the app stayed foreground across it. Both print payloads or
       # counts, so only their verdict lines reach the log.
-      - name: Validate H2
+      - name: Validate hot_uriScheme
         id: h2
         continue-on-error: true
         env:
           OUTPUT_DIR: /tmp/h2
           H2_URL: branchtest://open?scenario=H2
         run: |
+          tag="[hot_uriScheme]"
           if [ "${{ steps.h2capture.outcome }}" != "success" ]; then
-            echo "FAILED: [H2] driver failed; see the capture step log" | tee /tmp/h2-output.txt
+            echo "FAILED: $tag driver failed; see the capture step log" | tee /tmp/h2-output.txt
             exit 1
           fi
+          post="$OUTPUT_DIR/wire-hot_uriScheme.post.txt"
+          pre="$OUTPUT_DIR/wire-hot_uriScheme.pre.txt"
           rc=0
-          python3 scripts/validate_l1_logs.py "$OUTPUT_DIR/wire-h2.post.txt" --scenario H2 --pre "$OUTPUT_DIR/wire-h2.pre.txt" --url "$H2_URL" > /tmp/h2-validate.txt 2>&1 || rc=1
-          python3 scripts/check_foreground_markers.py "$OUTPUT_DIR/wire-h2.post.txt" --pre "$OUTPUT_DIR/wire-h2.pre.txt" > /tmp/h2-markers.txt 2>&1 || rc=1
+          python3 scripts/validate_l1_logs.py "$post" --scenario hot_uriScheme \
+            --pre "$pre" --url "$H2_URL" > /tmp/h2-validate.txt 2>&1 || rc=1
+          python3 scripts/check_foreground_markers.py "$post" --pre "$pre" \
+            > /tmp/h2-markers.txt 2>&1 || rc=1
           {
             grep -E '^(FAILED:|--- VALIDATION)' /tmp/h2-validate.txt || true
             grep -E '^(FAILED:|pre: |delta: )' /tmp/h2-markers.txt || true
-          } | sed 's/^FAILED: /FAILED: [H2] /' | tee /tmp/h2-output.txt
+          } | sed "s/^FAILED: /FAILED: $tag /" | tee /tmp/h2-output.txt
           if [ "$rc" -ne 0 ] && ! grep -q '^FAILED:' /tmp/h2-output.txt; then
-            echo "FAILED: [H2] a checker exited without a verdict" | tee -a /tmp/h2-output.txt
+            echo "FAILED: $tag a checker exited without a verdict" | tee -a /tmp/h2-output.txt
           fi
           exit "$rc"
 
@@ -197,22 +202,26 @@ jobs:
             echo
             echo "Scenario coverage:"
             echo
-            echo "The endpoint table counts the N1 capture; N1 and H2 are the contracts this gate asserts."
+            echo "The endpoint table counts the install capture."
+            echo "install and hot_uriScheme are the contracts this gate asserts."
             echo
             echo "| scenario group | status |"
             echo "| --- | --- |"
-            echo "| Cold (C1–C3) | not implemented |"
-            echo "| Warm (W1–W2) | not implemented |"
+            echo "| Cold | not implemented |"
+            echo "| Warm | not implemented |"
+            hot_defer="hot_https_foreground deferred until CI builds are signed"
+            no_runtime="the runner has no simulator on the expected runtime"
+            hot_retake="measure hot_uriScheme on the new runtime, then update H2_EXPECT_RUNTIME"
             if [ "${{ steps.h2.outcome }}" = "success" ]; then
-              echo "| Hot (H1, H2) | H2 pass; H1 deferred until CI builds are signed |"
+              echo "| Hot | hot_uriScheme pass; $hot_defer |"
             elif [ -f /tmp/h2-runtime-missing ]; then
-              echo "| Hot (H1, H2) | H2 not run: the runner has no simulator on the expected runtime (measure H2 on the new runtime, then update H2_EXPECT_RUNTIME); H1 deferred until CI builds are signed |"
+              echo "| Hot | hot_uriScheme not run: $no_runtime ($hot_retake); $hot_defer |"
             elif [ "${{ steps.h2.outcome }}" = "failure" ]; then
-              echo "| Hot (H1, H2) | H2 fail, see failures below; H1 deferred until CI builds are signed |"
+              echo "| Hot | hot_uriScheme fail, see failures below; $hot_defer |"
             else
-              echo "| Hot (H1, H2) | H2 not run; H1 deferred until CI builds are signed |"
+              echo "| Hot | hot_uriScheme not run; $hot_defer |"
             fi
-            echo "| Negative / guards (N1–N4) | not implemented |"
+            echo "| Negative and guards | not implemented |"
             echo
             if [ "${{ steps.validate.outcome }}" = "success" ] && [ "${{ steps.h2.outcome }}" = "success" ]; then
               echo "Result: **PASS**"
@@ -222,7 +231,7 @@ jobs:
               echo '```'
               cat /tmp/l1-output.txt /tmp/h2-output.txt 2>/dev/null | grep '^FAILED:' || echo "(no FAILED lines; see the job log)"
               echo '```'
-              # Only the N1 capture is rendered; H2 captures stay off the page.
+              # Only the install capture is rendered; hot_uriScheme captures stay off the page.
               if [ "${{ steps.validate.outcome }}" != "success" ]; then
                 echo
                 echo "<details><summary>Captured wire log</summary>"
@@ -248,8 +257,8 @@ jobs:
           path: branchlogs.txt
           retention-days: 7
 
-      # After the upload, so an H2-only failure uploads nothing.
-      - name: Fail the job if H2 failed
+      # After the upload, so a hot_uriScheme-only failure uploads nothing.
+      - name: Fail the job if hot_uriScheme failed
         if: steps.h2.outcome == 'failure'
         run: exit 1
 

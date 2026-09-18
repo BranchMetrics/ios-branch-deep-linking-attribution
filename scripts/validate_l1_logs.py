@@ -211,55 +211,57 @@ ATTRIBUTION_LEVEL_NONE = "NONE"
 #   max_counts      endpoint -> most requests allowed, for an endpoint absent
 #                   from counts.
 #
-# `install` and `deeplink` are not test-plan scenarios — they are the runs
-# the harness drives today. Plan scenarios use their plan ID (C1, W1, N4).
+# `cold_https`, `cold_firstInstall`, `warm_uriScheme`, `hot_uriScheme` and
+# `attribution_none` are test-plan scenarios. `install` and `deeplink` are not
+# in the plan: they are the runs the harness drives today.
 SCENARIO_CONTRACTS = {
-    # N1 organic_open: a launch with no link. The test plan also asks that the
-    # open carry no link data; that is a field-level assertion, and this layer
-    # is bounded at counts and required-field presence, so N1 is not fully
-    # covered here. The endpoint half is.
-    "N1": {
+    # install: the harness uninstalls first (run_l1_instrumented.sh), so no
+    # `randomizedBundleToken` persists and `Branch.m:2226` decides install
+    # rather than open. The plan's organic_open is not contracted on this line.
+    "install": {
         "counts": {"/v3/events/open": 1, "/v3/deeplink": 0},
         "order": (),
         "fields": {},
     },
-    # N3 attribution_none: a link resolved while the consumer-protection level
+    # attribution_none: a link resolved while the consumer-protection level
     # is NONE. BNCServerRequestOperation drops every request at that level
     # except BranchRequestDeepLink, so the resolution goes out and the
     # attributed open does not. The test plan also asks that identifiers be
     # cleared, which is a field-level assertion this layer does not make.
-    "N3": {
+    "attribution_none": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 0},
         "order": (),
         "fields": {},
     },
-    # C1 cold_https: a Universal Link delivered into a freshly launched
+    # cold_https: a Universal Link delivered into a freshly launched
     # process. Two opens is correct, not a duplicate: the launch fires one
     # carrying no link field, then the resolution's attributed open carries
     # `link_data`. Requiring one would fail a healthy SDK. The plan also asks
     # that the resolution carry the link; that is a field-level assertion this
-    # layer does not make, as with N1 and N3.
-    "C1": {
+    # layer does not make, as with attribution_none.
+    "cold_https": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 2},
         "order": (("/v3/deeplink", "/v3/events/open"),),
         # Both opens carry the token: the app was already installed, so the
         # launch open has one and the attributed open has one. This is what
-        # separates C1 from C3 -- the counts and order are identical.
+        # separates cold_https from cold_firstInstall -- the counts and
+        # order are identical.
         "fields": {"/v3/events/open": {"randomized_bundle_token": 2}},
     },
-    # C3 cold_firstInstall: the same launch on a device with no prior install.
+    # cold_firstInstall: the same launch on a device with no prior install.
     # There is no install endpoint on this line -- install is decided client
     # side by randomizedBundleToken == nil and posts to /v3/events/open like
     # any other. So the install shows up as the one open of the two that
     # carries no token, and that count is the only wire signal separating this
-    # scenario from C1.
-    "C3": {
+    # scenario from cold_https.
+    "cold_firstInstall": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 2},
         "order": (("/v3/deeplink", "/v3/events/open"),),
         "fields": {"/v3/events/open": {"randomized_bundle_token": 1}},
     },
-    # H2 hot_uriScheme: a scheme URL opened into the foregrounded app, counted on the delivery delta (--pre).
-    "H2": {
+    # hot_uriScheme: a scheme URL opened into the foregrounded app, counted on
+    # the delivery delta (--pre).
+    "hot_uriScheme": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 1},
         "order": (("/v3/deeplink", "/v3/events/open"),),
         # The URL on the resolve is what separates a real scheme delivery from the TestBed test hook;
@@ -269,9 +271,11 @@ SCENARIO_CONTRACTS = {
             "/v3/events/open": {"link_data": 1},
         },
     },
-    # W2 warm_uriScheme: a scheme URL opened into the backgrounded app, counted on the delivery delta (--pre).
-    # A warm delivery can add a plain open without link_data, so opens are bounded, not exact; an install is an open without the token.
-    "W2": {
+    # warm_uriScheme: a scheme URL opened into the backgrounded app, counted on
+    # the delivery delta (--pre). A warm delivery can add a plain open without
+    # link_data, so opens are bounded rather than exact, and an install is an
+    # open without the token.
+    "warm_uriScheme": {
         "counts": {"/v3/deeplink": 1},
         "order": (("/v3/deeplink", "/v3/events/open"),),
         "fields": {"/v3/deeplink": {"external_intent_uri": 1}},
