@@ -28,16 +28,16 @@ def _validate(fixture_name, scenario):
         return v.validate_entries(entries, v.contract_for(scenario))
 
 
-class H2ContractTests(unittest.TestCase):
-    """H2 hot_uriScheme: one resolve, then exactly one open."""
+class HotUriSchemeContractTests(unittest.TestCase):
+    """hot_uriScheme: one resolve, then exactly one open."""
 
     def test_the_hot_capture_passes(self):
         # Delivery delta of a scheme URL opened into a foregrounded TestBed.
-        self.assertEqual(_validate("h2_hot_urischeme.txt", "H2"), [])
+        self.assertEqual(_validate("hot_uriScheme.txt", "hot_uriScheme"), [])
 
     def test_a_second_open_fails(self):
         # Cold link launch after reinstall: the chained open plus a plain one.
-        errors = _validate("h2_duplicate_open.txt", "H2")
+        errors = _validate("hot_uriScheme_duplicate_open.txt", "hot_uriScheme")
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("captured 2", errors[0])
 
@@ -62,7 +62,9 @@ class CaptureDeltaTests(unittest.TestCase):
 
     def _main(self, post, pre):
         saved_argv = sys.argv
-        sys.argv = ["validate_l1_logs.py", post, "--scenario", "H2", "--pre", pre]
+        sys.argv = [
+            "validate_l1_logs.py", post, "--scenario", "hot_uriScheme", "--pre", pre
+        ]
         out = io.StringIO()
         try:
             with redirect_stdout(out):
@@ -74,24 +76,24 @@ class CaptureDeltaTests(unittest.TestCase):
 
     def test_launch_traffic_before_the_snapshot_is_not_counted(self):
         # The launch open sits in the snapshot; counted, it is a second open.
-        pre_bytes = _fixture_bytes("h2_launch_pre.txt")
+        pre_bytes = _fixture_bytes("hot_uriScheme_launch_pre.txt")
         pre = self._write("pre.txt", pre_bytes)
-        post = self._write("post.txt", pre_bytes + _fixture_bytes("h2_hot_urischeme.txt"))
+        post = self._write("post.txt", pre_bytes + _fixture_bytes("hot_uriScheme.txt"))
         code, output = self._main(post, pre)
         self.assertEqual(code, 0, output)
         self.assertIn("--- VALIDATION PASSED (2/2 requests valid) ---", output)
 
     def test_a_snapshot_that_is_not_a_prefix_fails(self):
         # A relaunch deletes and restarts the log, so the snapshot no longer leads it.
-        pre = self._write("pre.txt", _fixture_bytes("h2_launch_pre.txt"))
-        post = self._write("post.txt", _fixture_bytes("h2_hot_urischeme.txt"))
+        pre = self._write("pre.txt", _fixture_bytes("hot_uriScheme_launch_pre.txt"))
+        post = self._write("post.txt", _fixture_bytes("hot_uriScheme.txt"))
         code, output = self._main(post, pre)
         self.assertEqual(code, 1)
         self.assertIn("FAILED: --pre capture is not a byte prefix of the capture", output)
 
     def test_an_empty_snapshot_fails(self):
         pre = self._write("pre.txt", b"")
-        post = self._write("post.txt", _fixture_bytes("h2_hot_urischeme.txt"))
+        post = self._write("post.txt", _fixture_bytes("hot_uriScheme.txt"))
         code, output = self._main(post, pre)
         self.assertEqual(code, 1)
         self.assertIn("FAILED: --pre capture is empty", output)
