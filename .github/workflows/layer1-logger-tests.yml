@@ -106,6 +106,27 @@ jobs:
           OUTPUT_LOG: branchlogs.txt
         run: ./scripts/run_l1_instrumented.sh
 
+      # hot_uriScheme on the same device. The driver reinstalls the TestBed,
+      # so the install capture above is already copied out. Only receipt lines
+      # are printed; the captures stay in /tmp/h2 and are never uploaded.
+      - name: Capture hot_uriScheme
+        id: h2capture
+        continue-on-error: true
+        env:
+          DERIVED_DATA_DIR: ./DerivedData
+          SIM_NAME: ${{ steps.sim.outputs.name }}
+          BUNDLE_ID: io.branch.sdk.Branch-TestBed
+          OUTPUT_DIR: /tmp/h2
+          H2_EXPECT_RUNTIME: iOS-18-5
+        run: |
+          rc=0
+          ./scripts/run_h2_hot.sh > /tmp/h2-driver.txt 2>&1 || rc=$?
+          grep -E '^(RUNTIME=|consent key: |settled after |openurl attempt |pid unchanged$|ERROR: )' /tmp/h2-driver.txt || true
+          if grep -q '^ERROR: no available .* on runtime ' /tmp/h2-driver.txt; then
+            touch /tmp/h2-runtime-missing
+          fi
+          [ "$rc" -eq 0 ] || { echo "ERROR: driver exited $rc"; exit "$rc"; }
+
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
@@ -129,6 +150,36 @@ jobs:
           set -o pipefail
           python3 scripts/validate_l1_logs.py branchlogs.txt --scenario install 2>&1 | tee /tmp/l1-output.txt
 
+      # The wire contract counts the delivery delta, and the marker checker
+      # proves the app stayed foreground across it. Both print payloads or
+      # counts, so only their verdict lines reach the log.
+      - name: Validate hot_uriScheme
+        id: h2
+        continue-on-error: true
+        env:
+          OUTPUT_DIR: /tmp/h2
+        run: |
+          tag="[hot_uriScheme]"
+          if [ "${{ steps.h2capture.outcome }}" != "success" ]; then
+            echo "FAILED: $tag driver failed; see the capture step log" | tee /tmp/h2-output.txt
+            exit 1
+          fi
+          post="$OUTPUT_DIR/wire-hot_uriScheme.post.txt"
+          pre="$OUTPUT_DIR/wire-hot_uriScheme.pre.txt"
+          rc=0
+          python3 scripts/validate_l1_logs.py "$post" --scenario hot_uriScheme --pre "$pre" \
+            > /tmp/h2-validate.txt 2>&1 || rc=1
+          python3 scripts/check_foreground_markers.py "$post" --pre "$pre" \
+            > /tmp/h2-markers.txt 2>&1 || rc=1
+          {
+            grep -E '^(FAILED:|--- VALIDATION)' /tmp/h2-validate.txt || true
+            grep -E '^(FAILED:|pre: |delta: )' /tmp/h2-markers.txt || true
+          } | sed "s/^FAILED: /FAILED: $tag /" | tee /tmp/h2-output.txt
+          if [ "$rc" -ne 0 ] && ! grep -q '^FAILED:' /tmp/h2-output.txt; then
+            echo "FAILED: $tag a checker exited without a verdict" | tee -a /tmp/h2-output.txt
+          fi
+          exit "$rc"
+
       # What the gate actually asserted, on the PR page rather than buried in
       # the job log.
       - name: Write run summary
@@ -149,31 +200,46 @@ jobs:
             echo
             echo "Scenario coverage:"
             echo
-            echo "No scenario is authored yet, so the endpoint table above is the only assertion this gate makes."
+            echo "The endpoint table counts the install capture."
+            echo "install and hot_uriScheme are the contracts this gate asserts."
             echo
             echo "| scenario group | status |"
             echo "| --- | --- |"
             echo "| Cold | not implemented |"
             echo "| Warm | not implemented |"
-            echo "| Hot | not implemented |"
+            hot_defer="hot_https_foreground deferred until CI builds are signed"
+            no_runtime="the runner has no simulator on the expected runtime"
+            hot_retake="update H2_EXPECT_RUNTIME"
+            if [ "${{ steps.h2.outcome }}" = "success" ]; then
+              echo "| Hot | hot_uriScheme pass; $hot_defer |"
+            elif [ -f /tmp/h2-runtime-missing ]; then
+              echo "| Hot | hot_uriScheme not run: $no_runtime ($hot_retake); $hot_defer |"
+            elif [ "${{ steps.h2.outcome }}" = "failure" ]; then
+              echo "| Hot | hot_uriScheme fail, see failures below; $hot_defer |"
+            else
+              echo "| Hot | hot_uriScheme not run; $hot_defer |"
+            fi
             echo "| Negative and guards | not implemented |"
             echo
-            if [ "${{ steps.validate.outcome }}" = "success" ]; then
+            if [ "${{ steps.validate.outcome }}" = "success" ] && [ "${{ steps.h2.outcome }}" = "success" ]; then
               echo "Result: **PASS**"
             else
               echo "Result: **FAIL**"
               echo
               echo '```'
-              grep '^FAILED:' /tmp/l1-output.txt || echo "(no FAILED lines; see the job log)"
+              cat /tmp/l1-output.txt /tmp/h2-output.txt 2>/dev/null | grep '^FAILED:' || echo "(no FAILED lines; see the job log)"
               echo '```'
-              echo
-              echo "<details><summary>Captured wire log</summary>"
-              echo
-              echo '```'
-              if [ -s branchlogs.txt ]; then head -c 40000 branchlogs.txt; echo; else echo "(branchlogs.txt is empty or missing)"; fi
-              echo '```'
-              echo
-              echo "</details>"
+              # Only the install capture is rendered; hot_uriScheme captures stay off the page.
+              if [ "${{ steps.validate.outcome }}" != "success" ]; then
+                echo
+                echo "<details><summary>Captured wire log</summary>"
+                echo
+                echo '```'
+                if [ -s branchlogs.txt ]; then head -c 40000 branchlogs.txt; echo; else echo "(branchlogs.txt is empty or missing)"; fi
+                echo '```'
+                echo
+                echo "</details>"
+              fi
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 
@@ -188,6 +254,11 @@ jobs:
           name: ios-wire-logs
           path: branchlogs.txt
           retention-days: 7
+
+      # After the upload, so a hot_uriScheme-only failure uploads nothing.
+      - name: Fail the job if hot_uriScheme failed
+        if: steps.h2.outcome == 'failure'
+        run: exit 1
 
       - name: Teardown simulator
         if: always()
