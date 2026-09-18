@@ -18,6 +18,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// an `NSUserActivity` and passed to the delegate's
 /// `application:continueUserActivity:restorationHandler:`.
 ///
+/// Delivery waits for `BranchDidStartSessionNotification` so the link always
+/// follows the launch open, with a ten-second fallback. It used to fire on a
+/// fixed delay, which made the order machine-dependent.
+///
 /// Exercises the SDK's handling of a link, not the OS delivering one: an
 /// unsigned simulator build has no route for real Universal Link handoff.
 + (void)installIfRequested:(UIApplication *)application;

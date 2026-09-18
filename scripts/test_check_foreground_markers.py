@@ -1,5 +1,5 @@
-"""Tests for the H2 foreground marker checker, run against marker lines from
-TestBed captures.
+"""Tests for the hot_uriScheme foreground marker checker, run against marker
+lines from TestBed captures.
 
 Run from the repo root:
 
@@ -28,7 +28,7 @@ def _fixture_bytes(name):
 
 
 class ForegroundMarkerTests(unittest.TestCase):
-    """H2 delivery reached a foregrounded app: one openURL, no lifecycle transition."""
+    """hot_uriScheme reached a foregrounded app: one openURL, no transition."""
 
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
@@ -57,15 +57,16 @@ class ForegroundMarkerTests(unittest.TestCase):
 
     def test_the_hot_capture_passes(self):
         code, output, failed = self._main(
-            _fixture_bytes("h2_markers_hot.pre.txt"), _fixture_bytes("h2_markers_hot.post.txt")
+            _fixture_bytes("hot_uriScheme_markers.pre.txt"),
+            _fixture_bytes("hot_uriScheme_markers.post.txt"),
         )
         self.assertEqual((code, failed), (0, []), output)
 
     def test_a_transition_fails(self):
         # Preferences in front, then the URL: the app resigns, backgrounds and reactivates.
         code, output, failed = self._main(
-            _fixture_bytes("h2_markers_transition.pre.txt"),
-            _fixture_bytes("h2_markers_transition.post.txt"),
+            _fixture_bytes("hot_uriScheme_markers_transition.pre.txt"),
+            _fixture_bytes("hot_uriScheme_markers_transition.post.txt"),
         )
         self.assertEqual(code, 1)
         self.assertEqual(len(failed), 3, output)
@@ -75,14 +76,15 @@ class ForegroundMarkerTests(unittest.TestCase):
     def test_a_snapshot_without_markers_fails_liveness(self):
         # Without it, a TestBed that writes no markers would pass on zero transitions.
         pre = b"placeholder log entry\n"
-        hot = _fixture_bytes("h2_markers_hot.post.txt")[len(_fixture_bytes("h2_markers_hot.pre.txt")):]
+        pre_len = len(_fixture_bytes("hot_uriScheme_markers.pre.txt"))
+        hot = _fixture_bytes("hot_uriScheme_markers.post.txt")[pre_len:]
         code, output, failed = self._main(pre, pre + hot)
         self.assertEqual(code, 1)
         self.assertEqual(len(failed), 1, output)
         self.assertIn("'applicationDidBecomeActive' marker before delivery, found 0", failed[0])
 
     def test_nothing_delivered_fails(self):
-        pre = _fixture_bytes("h2_markers_hot.pre.txt")
+        pre = _fixture_bytes("hot_uriScheme_markers.pre.txt")
         code, output, failed = self._main(pre, pre)
         self.assertEqual(code, 1)
         self.assertEqual(failed, ["FAILED: Expected exactly 1 'openURL' marker after delivery, found 0."], output)

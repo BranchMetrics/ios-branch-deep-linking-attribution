@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 #
-# H2 hot_uriScheme driver for the iOS Branch SDK TestBed.
+# hot_uriScheme driver for the iOS Branch SDK TestBed.
 #
 # Launches the TestBed, snapshots branchlogs.txt once the launch settles, opens
 # a scheme URL into the foregrounded app with `simctl openurl`, and snapshots
 # again. Validate with:
 #
-#   validate_l1_logs.py "$OUTPUT_DIR/wire-h2.post.txt" --scenario H2 \
-#       --pre "$OUTPUT_DIR/wire-h2.pre.txt"
+#   validate_l1_logs.py "$OUTPUT_DIR/wire-hot_uriScheme.post.txt" \
+#       --scenario hot_uriScheme --pre "$OUTPUT_DIR/wire-hot_uriScheme.pre.txt"
 #
 # Required env:
 #   H2_EXPECT_RUNTIME  - runtime the device must be on, for example iOS-18-5
@@ -117,8 +117,8 @@ wait_grown() {
 }
 
 mkdir -p "$OUTPUT_DIR"
-pre="$OUTPUT_DIR/wire-h2.pre.txt"
-post="$OUTPUT_DIR/wire-h2.post.txt"
+pre="$OUTPUT_DIR/wire-hot_uriScheme.pre.txt"
+post="$OUTPUT_DIR/wire-hot_uriScheme.post.txt"
 
 # 5. Launch and settle.
 xcrun simctl launch "$udid" "$BUNDLE_ID" >/dev/null
