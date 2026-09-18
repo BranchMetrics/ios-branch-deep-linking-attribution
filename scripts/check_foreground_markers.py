@@ -1,0 +1,104 @@
+"""
+Foreground receipt for hot_uriScheme, read from TestBed lifecycle markers.
+
+One `/v3/events/open` on the delivery delta does not prove the app stayed
+foreground: a transition whose foreground open was suppressed also sends one.
+The TestBed writes `[TestBedLifecycle] <name>` lines into branchlogs.txt, and
+this checker asserts the delivery reached a foregrounded app:
+
+- the snapshot taken before delivery (--pre) holds at least one
+  applicationDidBecomeActive, so markers are being written;
+- the bytes appended after it hold exactly one openURL and no
+  applicationWillResignActive, applicationDidEnterBackground or
+  applicationDidBecomeActive.
+
+Usage:
+
+    check_foreground_markers.py wire-hot_uriScheme.post.txt \
+        --pre wire-hot_uriScheme.pre.txt
+"""
+
+import argparse
+import os
+import re
+import sys
+from collections import Counter
+
+from validate_l1_logs import capture_delta
+
+MARKER_RE = re.compile(rb"\[TestBedLifecycle\] (\w+)")
+
+LIVENESS = "applicationDidBecomeActive"
+DELIVERY = "openURL"
+TRANSITIONS = (
+    "applicationWillResignActive",
+    "applicationDidEnterBackground",
+    "applicationDidBecomeActive",
+)
+MARKERS = (DELIVERY,) + TRANSITIONS
+
+
+def count_markers(data):
+    """Count each marker name in `data` (bytes)."""
+    return Counter(name.decode("ascii") for name in MARKER_RE.findall(data))
+
+
+def check_markers(pre_counts, delta_counts):
+    """Return one error string per broken rule."""
+    errors = []
+    if pre_counts[LIVENESS] < 1:
+        errors.append(
+            f"Expected at least 1 '{LIVENESS}' marker before delivery, found 0; "
+            "the TestBed is not writing markers."
+        )
+    if delta_counts[DELIVERY] != 1:
+        errors.append(
+            f"Expected exactly 1 '{DELIVERY}' marker after delivery, found {delta_counts[DELIVERY]}."
+        )
+    for name in TRANSITIONS:
+        if delta_counts[name]:
+            errors.append(
+                f"Expected 0 '{name}' markers after delivery, found {delta_counts[name]}; "
+                "the app left the foreground."
+            )
+    return errors
+
+
+def format_counts(label, counts):
+    return f"{label}: " + " ".join(f"{name}={counts[name]}" for name in MARKERS)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__.strip().splitlines()[0])
+    parser.add_argument("log_file", help="capture taken after delivery")
+    parser.add_argument(
+        "--pre",
+        metavar="SNAPSHOT",
+        required=True,
+        help="copy of the capture taken before delivery",
+    )
+    args = parser.parse_args()
+
+    for path in (args.pre, args.log_file):
+        if not os.path.exists(path):
+            print(f"FAILED: Log file not found at {path}")
+            sys.exit(1)
+    try:
+        delta = capture_delta(args.pre, args.log_file)
+    except ValueError as e:
+        print(f"FAILED: {e}")
+        sys.exit(1)
+    with open(args.pre, "rb") as f:
+        pre_counts = count_markers(f.read())
+    delta_counts = count_markers(delta)
+
+    print(format_counts("pre", pre_counts))
+    print(format_counts("delta", delta_counts))
+    errors = check_markers(pre_counts, delta_counts)
+    for error in errors:
+        print(f"FAILED: {error}")
+    sys.exit(1 if errors else 0)
+
+
+if __name__ == "__main__":
+    main()

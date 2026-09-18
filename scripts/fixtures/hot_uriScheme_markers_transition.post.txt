@@ -1,0 +1,6 @@
+[TestBedLifecycle] applicationDidBecomeActive
+[TestBedLifecycle] openURL
+[TestBedLifecycle] applicationWillResignActive
+[TestBedLifecycle] applicationDidEnterBackground
+[TestBedLifecycle] openURL
+[TestBedLifecycle] applicationDidBecomeActive
