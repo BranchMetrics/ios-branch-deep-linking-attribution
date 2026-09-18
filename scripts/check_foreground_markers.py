@@ -1,5 +1,5 @@
 """
-Foreground receipt for H2 hot_uriScheme, read from TestBed lifecycle markers.
+Foreground receipt for hot_uriScheme, read from TestBed lifecycle markers.
 
 One `/v3/events/open` on the delivery delta does not prove the app stayed
 foreground: a transition whose foreground open was suppressed also sends one.
@@ -14,7 +14,8 @@ this checker asserts the delivery reached a foregrounded app:
 
 Usage:
 
-    check_foreground_markers.py wire-h2.post.txt --pre wire-h2.pre.txt
+    check_foreground_markers.py wire-hot_uriScheme.post.txt \
+        --pre wire-hot_uriScheme.pre.txt
 """
 
 import argparse
