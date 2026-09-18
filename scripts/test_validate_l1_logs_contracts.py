@@ -23,7 +23,7 @@ FIXTURE_DIR = os.path.join(THIS_DIR, "fixtures")
 
 
 REPO_ROOT = os.path.dirname(THIS_DIR)
-# The URL the H2 fixture was captured with.
+# The URL the hot_uriScheme fixture was captured with.
 FIXTURE_URL = "branchtest://probe?run=D1"
 
 
@@ -38,26 +38,30 @@ def _validate(fixture_name, scenario, drop=None):
         return v.validate_entries(entries, v.contract_for(scenario))
 
 
-class H2ContractTests(unittest.TestCase):
-    """H2 hot_uriScheme: one resolve, then exactly one open."""
+class HotUriSchemeContractTests(unittest.TestCase):
+    """hot_uriScheme: one resolve, then exactly one open."""
 
     def test_the_hot_capture_passes(self):
         # Delivery delta of a scheme URL opened into a foregrounded TestBed.
-        self.assertEqual(_validate("h2_hot_urischeme.txt", "H2"), [])
+        self.assertEqual(_validate("hot_uriScheme.txt", "hot_uriScheme"), [])
 
     def test_a_second_open_fails(self):
         # Cold link launch after reinstall: the chained open plus a plain one.
-        errors = _validate("h2_duplicate_open.txt", "H2")
+        errors = _validate("hot_uriScheme_duplicate_open.txt", "hot_uriScheme")
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("captured 2", errors[0])
 
     def test_a_resolve_without_external_intent_uri_fails(self):
-        errors = _validate("h2_hot_urischeme.txt", "H2", drop=("/v3/deeplink", "external_intent_uri"))
+        errors = _validate(
+            "hot_uriScheme.txt", "hot_uriScheme", drop=("/v3/deeplink", "external_intent_uri")
+        )
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("'/v3/deeplink' request(s) to carry 'external_intent_uri'", errors[0])
 
     def test_an_open_without_link_data_fails(self):
-        errors = _validate("h2_hot_urischeme.txt", "H2", drop=("/v3/events/open", "link_data"))
+        errors = _validate(
+            "hot_uriScheme.txt", "hot_uriScheme", drop=("/v3/events/open", "link_data")
+        )
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("'/v3/events/open' request(s) to carry 'link_data'", errors[0])
 
@@ -66,7 +70,7 @@ class DeliveredUrlTests(unittest.TestCase):
     """`--url` ties the resolve and the open to the URL the driver delivered."""
 
     def _entries(self):
-        return v.parse_branch_logs(os.path.join(FIXTURE_DIR, "h2_hot_urischeme.txt"))
+        return v.parse_branch_logs(os.path.join(FIXTURE_DIR, "hot_uriScheme.txt"))
 
     def test_the_delivered_url_passes(self):
         self.assertEqual(v.assert_delivered_url(self._entries(), FIXTURE_URL), [])
@@ -78,8 +82,8 @@ class DeliveredUrlTests(unittest.TestCase):
         self.assertIn("'/v3/events/open'", errors[1])
 
 
-class H2WiringTests(unittest.TestCase):
-    """The H2 checks only protect anything while the workflow and the TestBed still run them."""
+class HotUriSchemeWiringTests(unittest.TestCase):
+    """These checks protect nothing unless the workflow and the TestBed run them."""
 
     def _read(self, *parts):
         with open(os.path.join(REPO_ROOT, *parts)) as f:
@@ -87,8 +91,11 @@ class H2WiringTests(unittest.TestCase):
 
     def test_the_workflow_runs_both_checkers_on_the_delta(self):
         workflow = self._read(".github", "workflows", "layer1-logger-tests.yml")
-        self.assertIn('validate_l1_logs.py "$OUTPUT_DIR/wire-h2.post.txt" --scenario H2 --pre "$OUTPUT_DIR/wire-h2.pre.txt" --url "$H2_URL"', workflow)
-        self.assertIn('check_foreground_markers.py "$OUTPUT_DIR/wire-h2.post.txt" --pre "$OUTPUT_DIR/wire-h2.pre.txt"', workflow)
+        self.assertIn('post="$OUTPUT_DIR/wire-hot_uriScheme.post.txt"', workflow)
+        self.assertIn('pre="$OUTPUT_DIR/wire-hot_uriScheme.pre.txt"', workflow)
+        self.assertIn('validate_l1_logs.py "$post" --scenario hot_uriScheme', workflow)
+        self.assertIn('--pre "$pre" --url "$H2_URL"', workflow)
+        self.assertIn('check_foreground_markers.py "$post" --pre "$pre"', workflow)
         self.assertEqual(workflow.count("H2_URL: branchtest://open?scenario=H2"), 2)
 
     def test_the_testbed_delivers_urls_only_through_the_marked_app_delegate_method(self):
@@ -119,7 +126,9 @@ class CaptureDeltaTests(unittest.TestCase):
 
     def _main(self, post, pre, url=None):
         saved_argv = sys.argv
-        sys.argv = ["validate_l1_logs.py", post, "--scenario", "H2", "--pre", pre]
+        sys.argv = [
+            "validate_l1_logs.py", post, "--scenario", "hot_uriScheme", "--pre", pre
+        ]
         if url is not None:
             sys.argv += ["--url", url]
         out = io.StringIO()
@@ -133,17 +142,17 @@ class CaptureDeltaTests(unittest.TestCase):
 
     def test_launch_traffic_before_the_snapshot_is_not_counted(self):
         # The launch open sits in the snapshot; counted, it is a second open.
-        pre_bytes = _fixture_bytes("h2_launch_pre.txt")
+        pre_bytes = _fixture_bytes("hot_uriScheme_launch_pre.txt")
         pre = self._write("pre.txt", pre_bytes)
-        post = self._write("post.txt", pre_bytes + _fixture_bytes("h2_hot_urischeme.txt"))
+        post = self._write("post.txt", pre_bytes + _fixture_bytes("hot_uriScheme.txt"))
         code, output = self._main(post, pre)
         self.assertEqual(code, 0, output)
         self.assertIn("--- VALIDATION PASSED (2/2 requests valid) ---", output)
 
     def test_a_delta_for_another_url_fails(self):
-        pre_bytes = _fixture_bytes("h2_launch_pre.txt")
+        pre_bytes = _fixture_bytes("hot_uriScheme_launch_pre.txt")
         pre = self._write("pre.txt", pre_bytes)
-        post = self._write("post.txt", pre_bytes + _fixture_bytes("h2_hot_urischeme.txt"))
+        post = self._write("post.txt", pre_bytes + _fixture_bytes("hot_uriScheme.txt"))
         self.assertEqual(self._main(post, pre, url=FIXTURE_URL)[0], 0)
         code, output = self._main(post, pre, url="branchtest://open?scenario=H2")
         self.assertEqual(code, 1)
@@ -151,15 +160,15 @@ class CaptureDeltaTests(unittest.TestCase):
 
     def test_a_snapshot_that_is_not_a_prefix_fails(self):
         # A relaunch deletes and restarts the log, so the snapshot no longer leads it.
-        pre = self._write("pre.txt", _fixture_bytes("h2_launch_pre.txt"))
-        post = self._write("post.txt", _fixture_bytes("h2_hot_urischeme.txt"))
+        pre = self._write("pre.txt", _fixture_bytes("hot_uriScheme_launch_pre.txt"))
+        post = self._write("post.txt", _fixture_bytes("hot_uriScheme.txt"))
         code, output = self._main(post, pre)
         self.assertEqual(code, 1)
         self.assertIn("FAILED: --pre capture is not a byte prefix of the capture", output)
 
     def test_an_empty_snapshot_fails(self):
         pre = self._write("pre.txt", b"")
-        post = self._write("post.txt", _fixture_bytes("h2_hot_urischeme.txt"))
+        post = self._write("post.txt", _fixture_bytes("hot_uriScheme.txt"))
         code, output = self._main(post, pre)
         self.assertEqual(code, 1)
         self.assertIn("FAILED: --pre capture is empty", output)
