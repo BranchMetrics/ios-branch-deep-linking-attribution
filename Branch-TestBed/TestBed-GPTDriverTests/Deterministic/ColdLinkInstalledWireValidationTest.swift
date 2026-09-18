@@ -2,16 +2,16 @@
 //  ColdLinkInstalledWireValidationTest.swift
 //  TestBed-GPTDriverTests
 //
-//  C1: a Universal Link into a freshly launched process on a device that
-//  already has the app. Establishes that install itself rather than inheriting
-//  one from a previous harness invocation.
+//  cold_https: a Universal Link into a freshly launched process on a device
+//  that already has the app. Establishes that install itself rather than
+//  inheriting one from a previous harness invocation.
 //
 //  Why it does its own install: the first version read the install left behind
-//  by the C3 run. That made the scenario depend on the previous xcodebuild
-//  invocation having written BNCPreferences before its process was torn down,
-//  and on the reinstall migrating the container. Measured over five runs it
-//  held four times and failed once, which is the shape of a flake that returns
-//  on a loaded runner long after anyone remembers why.
+//  by the cold_firstInstall run. That made the scenario depend on the previous
+//  xcodebuild invocation having written BNCPreferences before its process was
+//  torn down, and on the reinstall migrating the container. Measured over five
+//  runs it held four times and failed once, which is the shape of a flake that
+//  returns on a loaded runner long after anyone remembers why.
 //
 //  Launching twice inside one test does not make the write instant, but it
 //  removes the reinstall, the container migration and xcodebuild's teardown

@@ -90,9 +90,10 @@ jobs:
       # deletes branchlogs.txt on every launch, so one run cannot hold two.
       #
       # Each scenario wipes first and establishes whatever state it needs, so
-      # the steps are independent and reordering them is safe. C1 launches the
-      # app twice inside its own test: once to install, once entered by a link.
-      - name: Capture N1 organic open
+      # the steps are independent and reordering them is safe. cold_https
+      # launches the app twice inside its own test: once to install, once
+      # entered by a link.
+      - name: Capture install, a launch with no link
         env:
           DERIVED_DATA_DIR: ./DerivedData
           SIM_NAME: ${{ steps.sim.outputs.name }}
@@ -102,9 +103,9 @@ jobs:
           BUNDLE_ID: io.branch.sdk.Branch-TestBed
         run: |
           ONLY_TESTING=TestBed-GPTDriverTests/L1WireValidationTest \
-          OUTPUT_LOG=wire-n1.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
+          OUTPUT_LOG=wire-install.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
 
-      - name: Capture C3 cold first install with a link
+      - name: Capture cold_firstInstall, a link with no prior install
         env:
           DERIVED_DATA_DIR: ./DerivedData
           SIM_NAME: ${{ steps.sim.outputs.name }}
@@ -114,9 +115,9 @@ jobs:
           BUNDLE_ID: io.branch.sdk.Branch-TestBed
         run: |
           ONLY_TESTING=TestBed-GPTDriverTests/ColdLinkWireValidationTest \
-          OUTPUT_LOG=wire-c3.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
+          OUTPUT_LOG=wire-cold_firstInstall.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
 
-      - name: Capture C1 cold launch with a link, app already installed
+      - name: Capture cold_https, a link on a device that already has the app
         env:
           DERIVED_DATA_DIR: ./DerivedData
           SIM_NAME: ${{ steps.sim.outputs.name }}
@@ -126,7 +127,7 @@ jobs:
           BUNDLE_ID: io.branch.sdk.Branch-TestBed
         run: |
           ONLY_TESTING=TestBed-GPTDriverTests/ColdLinkInstalledWireValidationTest \
-          OUTPUT_LOG=wire-c1.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
+          OUTPUT_LOG=wire-cold_https.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -155,9 +156,9 @@ jobs:
             fi
             echo "::endgroup::"
           }
-          check N1 wire-n1.txt
-          check C3 wire-c3.txt
-          check C1 wire-c1.txt
+          check install wire-install.txt
+          check cold_firstInstall wire-cold_firstInstall.txt
+          check cold_https wire-cold_https.txt
           exit $rc
 
       # What the gate actually asserted, on the PR page rather than buried in
@@ -168,7 +169,7 @@ jobs:
           {
             echo "### Layer 1 — SDK wire validation"
             echo
-            cat wire-n1.txt wire-c3.txt wire-c1.txt 2>/dev/null \
+            cat wire-install.txt wire-cold_firstInstall.txt wire-cold_https.txt 2>/dev/null \
               | grep -o 'Got https://[^ ]*' \
               | sed 's|.*api2.branch.io||' | sort | uniq -c > /tmp/l1-endpoints.txt || true
             if [ -s /tmp/l1-endpoints.txt ]; then
@@ -184,14 +185,14 @@ jobs:
             echo "| scenario group | status |"
             echo "| --- | --- |"
             if [ "${{ steps.validate.outcome }}" = "success" ]; then
-              echo "| Cold (C1, C3) | 2 pass |"
-              echo "| Negative / guards (N1–N4) | N1 pass, N2–N4 not implemented |"
+              echo "| Cold | cold_https and cold_firstInstall pass |"
+              echo "| Negative and guards | install passes, the rest not implemented |"
             else
-              echo "| Cold (C1, C3) | see failures below |"
-              echo "| Negative / guards (N1–N4) | see failures below |"
+              echo "| Cold | see failures below |"
+              echo "| Negative and guards | see failures below |"
             fi
-            echo "| Warm (W1–W2) | not implemented |"
-            echo "| Hot (H1–H2) | not implemented |"
+            echo "| Warm | not implemented |"
+            echo "| Hot | not implemented |"
             echo
             if [ "${{ steps.validate.outcome }}" = "success" ]; then
               echo "Result: **PASS**"
@@ -205,7 +206,8 @@ jobs:
               echo "<details><summary>Captured wire log</summary>"
               echo
               echo '```'
-              cat wire-n1.txt wire-c3.txt wire-c1.txt > /tmp/l1-all.txt 2>/dev/null || true
+              cat wire-install.txt wire-cold_firstInstall.txt wire-cold_https.txt \
+                > /tmp/l1-all.txt 2>/dev/null || true
               if [ -s /tmp/l1-all.txt ]; then head -c 40000 /tmp/l1-all.txt; echo; else echo "(no capture was produced)"; fi
               echo '```'
               echo
@@ -223,9 +225,9 @@ jobs:
         with:
           name: ios-wire-logs
           path: |
-            wire-n1.txt
-            wire-c3.txt
-            wire-c1.txt
+            wire-install.txt
+            wire-cold_firstInstall.txt
+            wire-cold_https.txt
           retention-days: 7
 
       - name: Teardown simulator

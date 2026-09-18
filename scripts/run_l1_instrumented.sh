@@ -21,16 +21,16 @@
 #   BUNDLE_ID            - TestBed app bundle id (default io.branch.sdk.Branch-TestBed)
 #   OUTPUT_LOG           - destination for the pulled file (default branchlogs.txt)
 #   UNINSTALL_FIRST      - 1 (default) wipes the app before running, so the SDK
-#                          treats the launch as a first install. 0 leaves the
-#                          prior install in place, which is the only way to
-#                          drive a launch on an already-installed device —
-#                          C1 and C3 share a driver and differ only in this.
+#                          treats the launch as a first install. 0 keeps the
+#                          prior install, the only way to drive a launch on an
+#                          already-installed device: cold_https and
+#                          cold_firstInstall share a driver and differ in this.
 #
 # Notes:
 #   * The uninstall is what makes a run a first install. On this line that is
-#     not a separate endpoint: install and open both post to /v3/events/open
-#     and are told apart by the install one carrying no randomized_bundle_token.
-#     Set UNINSTALL_FIRST=0 to keep the prior install and drive the other case.
+#     not a separate endpoint: install and open both post to /v3/events/open,
+#     and Branch.m:2226 tells them apart with
+#     `BOOL isInstall = !self.preferenceHelper.randomizedBundleToken;`.
 #   * `xcodebuild test-without-building` exits non-zero on test failure; we
 #     trap to ensure we still attempt to pull the log file for diagnostics.
 
