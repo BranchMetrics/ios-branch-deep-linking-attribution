@@ -195,23 +195,24 @@ ATTRIBUTION_LEVEL_NONE = "NONE"
 #           between the two does not violate it.
 #
 # `install` and `deeplink` are not test-plan scenarios — they are the runs
-# the harness drives today. Plan scenarios use their plan ID (C1, W1, N4).
+# the harness drives today. Plan scenarios carry the test plan's own name.
 SCENARIO_CONTRACTS = {
-    # N1 organic_open: a launch with no link. The test plan also asks that the
+    # install: the run the harness drives, since run_l1_instrumented.sh
+    # uninstalls the bundle before every run. The test plan also asks that the
     # open carry no link data; that is a field-level assertion, and this layer
-    # is bounded at counts and required-field presence, so N1 is not fully
-    # covered here. The endpoint half is.
-    "N1": {
+    # is bounded at counts and required-field presence, so only the endpoint
+    # half is covered here.
+    "install": {
         "counts": {"/v3/events/open": 1, "/v3/deeplink": 0},
         "order": (),
     },
-    # N3 attribution_none: a link resolved while the consumer-protection level
+    # attribution_none: a link resolved while the consumer-protection level
     # is NONE. Resolution is exempt from the NONE gate and the attributed open
     # is not, so the resolution goes out and the open does not. Only those two
     # endpoints are counted, so other traffic such as link creation is outside
     # this contract. The test plan also asks that identifiers be cleared, which
     # is a field-level assertion this layer does not make.
-    "N3": {
+    "attribution_none": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 0},
         "order": (),
     },
