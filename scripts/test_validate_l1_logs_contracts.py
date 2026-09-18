@@ -24,7 +24,7 @@ FIXTURE_DIR = os.path.join(THIS_DIR, "fixtures")
 
 
 REPO_ROOT = os.path.dirname(THIS_DIR)
-# The URL the H2 fixture was captured with.
+# The URL the hot_uriScheme fixture was captured with.
 FIXTURE_URL = "branchtest://probe?run=D1"
 
 
@@ -39,57 +39,62 @@ def _validate(fixture_name, scenario, drop=None):
         return v.validate_entries(entries, v.contract_for(scenario))
 
 
-class H2ContractTests(unittest.TestCase):
-    """H2 hot_uriScheme: one resolve, then exactly one open."""
+class HotUriSchemeContractTests(unittest.TestCase):
+    """hot_uriScheme: one resolve, then exactly one open."""
 
     def test_the_hot_capture_passes(self):
         # Delivery delta of a scheme URL opened into a foregrounded TestBed.
-        self.assertEqual(_validate("h2_hot_urischeme.txt", "H2"), [])
+        self.assertEqual(_validate("hot_uriScheme.txt", "hot_uriScheme"), [])
 
     def test_a_second_open_fails(self):
         # Cold link launch after reinstall: the chained open plus a plain one.
-        errors = _validate("h2_duplicate_open.txt", "H2")
+        errors = _validate("hot_uriScheme_duplicate_open.txt", "hot_uriScheme")
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("captured 2", errors[0])
 
     def test_a_resolve_without_external_intent_uri_fails(self):
-        errors = _validate("h2_hot_urischeme.txt", "H2", drop=("/v3/deeplink", "external_intent_uri"))
+        errors = _validate(
+            "hot_uriScheme.txt", "hot_uriScheme", drop=("/v3/deeplink", "external_intent_uri")
+        )
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("'/v3/deeplink' request(s) to carry 'external_intent_uri'", errors[0])
 
     def test_an_open_without_link_data_fails(self):
-        errors = _validate("h2_hot_urischeme.txt", "H2", drop=("/v3/events/open", "link_data"))
+        errors = _validate(
+            "hot_uriScheme.txt", "hot_uriScheme", drop=("/v3/events/open", "link_data")
+        )
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("'/v3/events/open' request(s) to carry 'link_data'", errors[0])
 
 
-# The URL the W2 fixture was captured with.
-W2_URL = "branchtest://open?scenario=W2"
+# The URL the warm_uriScheme fixture was captured with.
+WARM_URL = "branchtest://open?scenario=W2"
 OPEN = "/v3/events/open"
 
 
-def _w2_entries():
+def _warm_entries():
     # Resolve, the link-carrying open, then the plain duplicate open.
-    return v.parse_branch_logs(os.path.join(FIXTURE_DIR, "w2_warm_urischeme.txt"))
+    return v.parse_branch_logs(os.path.join(FIXTURE_DIR, "warm_uriScheme.txt"))
 
 
 def _validate_w2(entries):
     with redirect_stdout(io.StringIO()):
-        return v.validate_entries(entries, v.contract_for("W2"))
+        return v.validate_entries(entries, v.contract_for("warm_uriScheme"))
 
 
-class W2ContractTests(unittest.TestCase):
-    """W2 warm_uriScheme: one resolve, one link-carrying open, at most two opens, no install."""
+class WarmUriSchemeContractTests(unittest.TestCase):
+    """warm_uriScheme: one resolve, one link-carrying open, at most two opens,
+    no install."""
 
-    def test_the_w2_wire_capture_passes(self):
+    def test_the_warm_wire_capture_passes(self):
         # Two opens: the known warm duplicate, which an exact open count would fail.
-        self.assertEqual(_validate_w2(_w2_entries()), [])
+        self.assertEqual(_validate_w2(_warm_entries()), [])
 
     def test_one_open_also_passes(self):
-        self.assertEqual(_validate_w2(_w2_entries()[:-1]), [])
+        self.assertEqual(_validate_w2(_warm_entries()[:-1]), [])
 
     def test_a_second_link_carrying_open_fails(self):
-        entries = _w2_entries()
+        entries = _warm_entries()
         entries[2]["request"]["link_data"] = {}
         self.assertEqual(
             _validate_w2(entries),
@@ -97,7 +102,7 @@ class W2ContractTests(unittest.TestCase):
         )
 
     def test_an_install_shaped_open_fails(self):
-        entries = _w2_entries()
+        entries = _warm_entries()
         entries[2]["request"].pop("randomized_bundle_token")
         self.assertEqual(
             _validate_w2(entries),
@@ -105,12 +110,13 @@ class W2ContractTests(unittest.TestCase):
         )
 
     def test_a_third_open_fails(self):
-        entries = _w2_entries()
+        entries = _warm_entries()
         entries.append(copy.deepcopy(entries[2]))
         self.assertEqual(_validate_w2(entries), ["Expected at most 2 '/v3/events/open' request(s), captured 3."])
 
     def test_new_rule_kinds_cannot_pass_vacuously(self):
-        self.assertTrue({"carrying", "carried_by_all", "max_counts"} <= set(v.SCENARIO_CONTRACTS["W2"]))
+        warm = v.SCENARIO_CONTRACTS["warm_uriScheme"]
+        self.assertTrue({"carrying", "carried_by_all", "max_counts"} <= set(warm))
         for name, contract in v.SCENARIO_CONTRACTS.items():
             counts = contract["counts"]
             carrying = contract.get("carrying", {})
@@ -131,15 +137,15 @@ class DeliveredUrlTests(unittest.TestCase):
     """`--url` ties the resolve and the open to the URL the driver delivered."""
 
     def _entries(self):
-        return v.parse_branch_logs(os.path.join(FIXTURE_DIR, "h2_hot_urischeme.txt"))
+        return v.parse_branch_logs(os.path.join(FIXTURE_DIR, "hot_uriScheme.txt"))
 
     def test_an_open_without_link_data_is_not_checked_for_the_url(self):
-        self.assertEqual(v.assert_delivered_url(_w2_entries(), W2_URL), [])
+        self.assertEqual(v.assert_delivered_url(_warm_entries(), WARM_URL), [])
 
     def test_a_link_carrying_open_with_another_url_fails(self):
-        entries = _w2_entries()
+        entries = _warm_entries()
         entries[1]["request"]["link_data"]["+non_branch_link"] = "branchtest://open?scenario=H2"
-        errors = v.assert_delivered_url(entries, W2_URL)
+        errors = v.assert_delivered_url(entries, WARM_URL)
         self.assertEqual(len(errors), 1, errors)
         self.assertIn(f"'{OPEN}'", errors[0])
 
@@ -153,26 +159,38 @@ class DeliveredUrlTests(unittest.TestCase):
         self.assertIn("'/v3/events/open'", errors[1])
 
 
-class H2WiringTests(unittest.TestCase):
-    """The H2 checks only protect anything while the workflow and the TestBed still run them."""
+class HotUriSchemeWiringTests(unittest.TestCase):
+    """These checks protect nothing unless the workflow and the TestBed run them."""
 
     def _read(self, *parts):
         with open(os.path.join(REPO_ROOT, *parts)) as f:
             return f.read()
 
+    def _step(self, workflow, name):
+        # Both validate steps now bind the capture path the same way, so an
+        # assertion against the whole file no longer says which one it matched.
+        return workflow.split(f"- name: {name}\n", 1)[-1].split("\n      - name: ", 1)[0]
+
     def test_the_workflow_runs_both_checkers_on_the_delta(self):
         workflow = self._read(".github", "workflows", "layer1-logger-tests.yml")
-        self.assertIn('validate_l1_logs.py "$OUTPUT_DIR/wire-h2.post.txt" --scenario H2 --pre "$OUTPUT_DIR/wire-h2.pre.txt" --url "$H2_URL"', workflow)
-        self.assertIn('check_foreground_markers.py "$OUTPUT_DIR/wire-h2.post.txt" --pre "$OUTPUT_DIR/wire-h2.pre.txt"', workflow)
+        step = self._step(workflow, "Validate hot_uriScheme")
+        self.assertIn('post="$OUTPUT_DIR/wire-hot_uriScheme.post.txt"', step)
+        self.assertIn('pre="$OUTPUT_DIR/wire-hot_uriScheme.pre.txt"', step)
+        self.assertIn('validate_l1_logs.py "$post" --scenario hot_uriScheme', step)
+        self.assertIn('--pre "$pre" --url "$H2_URL"', step)
+        self.assertIn('check_foreground_markers.py "$post" --pre "$pre"', step)
         self.assertEqual(workflow.count("H2_URL: branchtest://open?scenario=H2"), 2)
 
-    def test_the_workflow_runs_both_checkers_on_the_w2_delta(self):
+    def test_the_workflow_runs_both_checkers_on_the_warm_delta(self):
         workflow = self._read(".github", "workflows", "layer1-logger-tests.yml")
-        self.assertIn('validate_l1_logs.py "$OUTPUT_DIR/wire-w2.post.txt" --scenario W2 --pre "$OUTPUT_DIR/wire-w2.pre.txt" --url "$H2_URL"', workflow)
-        self.assertIn('check_foreground_markers.py "$OUTPUT_DIR/wire-w2.post.txt" --pre "$OUTPUT_DIR/wire-w2.pre.txt" --scenario W2', workflow)
+        step = self._step(workflow, "Validate warm_uriScheme")
+        self.assertIn('post="$OUTPUT_DIR/wire-warm_uriScheme.post.txt"', step)
+        self.assertIn('pre="$OUTPUT_DIR/wire-warm_uriScheme.pre.txt"', step)
+        self.assertIn('validate_l1_logs.py "$post" --scenario warm_uriScheme', step)
+        self.assertIn('--pre "$pre" --url "$H2_URL"', step)
+        self.assertIn('--scenario warm_uriScheme > /tmp/w2-markers.txt', step)
         self.assertIn('WARM: "1"', workflow)
         # Without the capture-outcome check a relaunch caught by the driver would still be validated.
-        step = workflow.split("- name: Validate W2\n", 1)[-1].split("\n      - name: ", 1)[0]
         self.assertIn("steps.w2capture.outcome", step)
 
     def test_the_testbed_delivers_urls_only_through_the_marked_app_delegate_method(self):
@@ -203,7 +221,9 @@ class CaptureDeltaTests(unittest.TestCase):
 
     def _main(self, post, pre, url=None):
         saved_argv = sys.argv
-        sys.argv = ["validate_l1_logs.py", post, "--scenario", "H2", "--pre", pre]
+        sys.argv = [
+            "validate_l1_logs.py", post, "--scenario", "hot_uriScheme", "--pre", pre
+        ]
         if url is not None:
             sys.argv += ["--url", url]
         out = io.StringIO()
@@ -217,17 +237,17 @@ class CaptureDeltaTests(unittest.TestCase):
 
     def test_launch_traffic_before_the_snapshot_is_not_counted(self):
         # The launch open sits in the snapshot; counted, it is a second open.
-        pre_bytes = _fixture_bytes("h2_launch_pre.txt")
+        pre_bytes = _fixture_bytes("hot_uriScheme_launch_pre.txt")
         pre = self._write("pre.txt", pre_bytes)
-        post = self._write("post.txt", pre_bytes + _fixture_bytes("h2_hot_urischeme.txt"))
+        post = self._write("post.txt", pre_bytes + _fixture_bytes("hot_uriScheme.txt"))
         code, output = self._main(post, pre)
         self.assertEqual(code, 0, output)
         self.assertIn("--- VALIDATION PASSED (2/2 requests valid) ---", output)
 
     def test_a_delta_for_another_url_fails(self):
-        pre_bytes = _fixture_bytes("h2_launch_pre.txt")
+        pre_bytes = _fixture_bytes("hot_uriScheme_launch_pre.txt")
         pre = self._write("pre.txt", pre_bytes)
-        post = self._write("post.txt", pre_bytes + _fixture_bytes("h2_hot_urischeme.txt"))
+        post = self._write("post.txt", pre_bytes + _fixture_bytes("hot_uriScheme.txt"))
         self.assertEqual(self._main(post, pre, url=FIXTURE_URL)[0], 0)
         code, output = self._main(post, pre, url="branchtest://open?scenario=H2")
         self.assertEqual(code, 1)
@@ -235,15 +255,15 @@ class CaptureDeltaTests(unittest.TestCase):
 
     def test_a_snapshot_that_is_not_a_prefix_fails(self):
         # A relaunch deletes and restarts the log, so the snapshot no longer leads it.
-        pre = self._write("pre.txt", _fixture_bytes("h2_launch_pre.txt"))
-        post = self._write("post.txt", _fixture_bytes("h2_hot_urischeme.txt"))
+        pre = self._write("pre.txt", _fixture_bytes("hot_uriScheme_launch_pre.txt"))
+        post = self._write("post.txt", _fixture_bytes("hot_uriScheme.txt"))
         code, output = self._main(post, pre)
         self.assertEqual(code, 1)
         self.assertIn("FAILED: --pre capture is not a byte prefix of the capture", output)
 
     def test_an_empty_snapshot_fails(self):
         pre = self._write("pre.txt", b"")
-        post = self._write("post.txt", _fixture_bytes("h2_hot_urischeme.txt"))
+        post = self._write("post.txt", _fixture_bytes("hot_uriScheme.txt"))
         code, output = self._main(post, pre)
         self.assertEqual(code, 1)
         self.assertIn("FAILED: --pre capture is empty", output)
