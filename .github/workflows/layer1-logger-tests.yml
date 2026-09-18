@@ -193,7 +193,9 @@ jobs:
         run: python3 -m unittest discover -s scripts -p "test_*.py" -v
 
       # continue-on-error so the summary below still runs on a failure — the
-      # job is failed explicitly at the end. Each capture is judged against the
+      # job is failed explicitly at the end.
+      #
+      # The scenario is required on this line: a capture is judged against the
       # contract for the run that produced it.
       - name: Validate wire logs
         id: validate

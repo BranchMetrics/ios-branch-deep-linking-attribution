@@ -322,7 +322,7 @@ class InstallContractTests(unittest.TestCase):
             any("after" in e for e in errors), f"Expected an order error: {errors}"
         )
 
-    def test_install_does_not_assert_the_absence_of_link_data(self):
+    def test_install_does_not_assert_the_absence_of_link_data_in_the_open(self):
         # Recorded, not hidden: the plan also wants the open to carry no link
         # data. That is a field-level assertion this layer does not make.
         self.assertEqual(v.contract_for("install")["counts"].get("/v3/deeplink"), 0)
@@ -338,32 +338,29 @@ class AttributionNoneContractTests(unittest.TestCase):
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 
     def test_an_open_at_none_level_fails(self):
-        # The regression attribution_none exists to catch: an open must not
-        # be sent at NONE.
-        errors, _ = _run_validation(
-            "attribution_none_deeplink.txt", v.contract_for("attribution_none")
-        )
+        # The regression this scenario exists to catch: an open must not be
+        # sent at NONE.
+        contract = v.contract_for("attribution_none")
+        errors, _ = _run_validation("attribution_none_deeplink.txt", contract)
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("must not be captured", errors[0])
         self.assertIn("/v3/events/open", errors[0])
 
     def test_the_old_global_rule_would_have_failed_this_correct_capture(self):
         # The retired MANDATORY_ENDPOINT required an open in every capture.
-        # install still does, and attribution_none's capture is correct without
-        # one, which is why a single global rule could not serve both.
+        # install still does, and this capture is correct without one, which is
+        # why a single global rule could not serve both scenarios.
         errors, _ = _run_validation("attribution_none.txt", v.contract_for("install"))
         self.assertTrue(
             any("/v3/events/open" in e for e in errors),
             f"Expected the open requirement to fire: {errors}",
         )
 
-    def test_attribution_none_does_not_assert_that_identifiers_were_cleared(self):
+    def test_the_contract_does_not_assert_that_identifiers_were_cleared(self):
         # Recorded, not hidden: that is a field-level assertion, and this layer
         # is bounded at counts and required-field presence.
-        self.assertEqual(
-            set(v.contract_for("attribution_none")["counts"]),
-            {"/v3/deeplink", "/v3/events/open"},
-        )
+        counts = v.contract_for("attribution_none")["counts"]
+        self.assertEqual(set(counts), {"/v3/deeplink", "/v3/events/open"})
 
 
 class ColdHttpsContractTests(unittest.TestCase):

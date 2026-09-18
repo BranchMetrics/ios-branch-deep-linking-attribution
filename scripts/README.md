@@ -42,7 +42,7 @@ which endpoints must not appear, and the order between them. There is no global
 rule any more — a scenario that requires an open says so in its contract.
 
 ```bash
-# install: a launch with no link resolved
+# install: the run the harness drives, one open, no link resolved
 ./scripts/run_l1_instrumented.sh
 python3 scripts/validate_l1_logs.py branchlogs.txt --scenario install
 
