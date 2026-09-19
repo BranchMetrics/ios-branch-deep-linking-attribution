@@ -21,6 +21,8 @@
 			</array>
 		</dict>
 	</dict>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>This identifier will be used to verify Branch attribution and deep-link measurement in this test build.</string>
 	<key>branch_key</key>
 	<dict>
 		<key>live</key>

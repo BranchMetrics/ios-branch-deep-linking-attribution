@@ -27,6 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSDictionary *)dataForOpenWithURLString:(nullable NSString *)urlString;
 - (NSDictionary *)dataForDeepLinkWithURLString:(nullable NSString *)urlString;
 - (NSDictionary *)dataForRequestOpenWithURLString:(nullable NSString *)urlString;
+- (void)addDeviceTrustParams:(NSMutableDictionary *)json;
+- (void)addSignatureAndNonceParams:(NSMutableDictionary *)json;
 
 // Event data is passed in
 - (NSDictionary *)dataForEventWithEventDictionary:(NSMutableDictionary *)dictionary;
