@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -16,9 +16,13 @@
 		C119B02C27ADC92A00E8C7BF /* iOSReleaseTest.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = C119B02B27ADC8FB00E8C7BF /* iOSReleaseTest.entitlements */; };
 		E71D371D29A5707800A0FDEF /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E71D371C29A5707800A0FDEF /* BranchSDK */; };
 		E71D371F29A570D500A0FDEF /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E71D371E29A570D500A0FDEF /* BranchSDK */; };
+		E7369C2D2FF42349008487FA /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E7369C2C2FF42349008487FA /* BranchSDK */; };
+		E7369C302FF423A6008487FA /* BranchSecureSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E7369C2F2FF423A6008487FA /* BranchSecureSDK */; };
+		E7369C332FF42458008487FA /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E7369C322FF42458008487FA /* BranchSDK */; };
 		E77DEAF22E9FFEE300EDEAB4 /* TestObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DEAF12E9FFEE300EDEAB4 /* TestObserver.swift */; };
 		E7939C0429749D3C00B90B82 /* iOSReleaseTestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7939C0329749D3C00B90B82 /* iOSReleaseTestTests.swift */; };
 		E7A0C3052989AB200024497D /* BranchSDKTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A0C3042989AB200024497D /* BranchSDKTest.swift */; };
+		E7B54E4A2FF4249A0025D6B2 /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E7B54E492FF4249A0025D6B2 /* BranchSDK */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,7 +57,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7B54E4A2FF4249A0025D6B2 /* BranchSDK in Frameworks */,
 				E71D371D29A5707800A0FDEF /* BranchSDK in Frameworks */,
+				E7369C332FF42458008487FA /* BranchSDK in Frameworks */,
+				E7369C2D2FF42349008487FA /* BranchSDK in Frameworks */,
+				E7369C302FF423A6008487FA /* BranchSecureSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -148,6 +156,10 @@
 			name = iOSReleaseTest;
 			packageProductDependencies = (
 				E71D371C29A5707800A0FDEF /* BranchSDK */,
+				E7369C2C2FF42349008487FA /* BranchSDK */,
+				E7369C2F2FF423A6008487FA /* BranchSecureSDK */,
+				E7369C322FF42458008487FA /* BranchSDK */,
+				E7B54E492FF4249A0025D6B2 /* BranchSDK */,
 			);
 			productName = iOSReleaseTest;
 			productReference = C119B01427ADC85C00E8C7BF /* iOSReleaseTest.app */;
@@ -202,6 +214,10 @@
 				Base,
 			);
 			mainGroup = C119B00B27ADC85C00E8C7BF;
+			packageReferences = (
+				E7369C2E2FF423A6008487FA /* XCLocalSwiftPackageReference "../../../branch-fraud-defense" */,
+				E7B54E482FF4249A0025D6B2 /* XCLocalSwiftPackageReference "../../../iOS-branch-deep-linking-attribution-securesdk" */,
+			);
 			productRefGroup = C119B01527ADC85C00E8C7BF /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -406,13 +422,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/../Source/iOSReleaseTest/iOSReleaseTest.entitlements";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = R63EM248DP;
+				DEVELOPMENT_TEAM = R63EM248DP;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(PROJECT_DIR)/../Source/iOSReleaseTest/Info.plist";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier will be used to verify Branch attribution and deep-link measurement in this test build.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -426,7 +442,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.link-simulator";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Branch Link Simulator";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -439,13 +454,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/../Source/iOSReleaseTest/iOSReleaseTest.entitlements";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = R63EM248DP;
+				DEVELOPMENT_TEAM = R63EM248DP;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(PROJECT_DIR)/../Source/iOSReleaseTest/Info.plist";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier will be used to verify Branch attribution and deep-link measurement in this test build.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -459,7 +474,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.link-simulator";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Branch Link Simulator";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -548,12 +562,39 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		E7369C2E2FF423A6008487FA /* XCLocalSwiftPackageReference "../../../branch-fraud-defense" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../../branch-fraud-defense";
+		};
+		E7B54E482FF4249A0025D6B2 /* XCLocalSwiftPackageReference "../../../iOS-branch-deep-linking-attribution-securesdk" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../../iOS-branch-deep-linking-attribution-securesdk";
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		E71D371C29A5707800A0FDEF /* BranchSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BranchSDK;
 		};
 		E71D371E29A570D500A0FDEF /* BranchSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BranchSDK;
+		};
+		E7369C2C2FF42349008487FA /* BranchSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BranchSDK;
+		};
+		E7369C2F2FF423A6008487FA /* BranchSecureSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BranchSecureSDK;
+		};
+		E7369C322FF42458008487FA /* BranchSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BranchSDK;
+		};
+		E7B54E492FF4249A0025D6B2 /* BranchSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BranchSDK;
 		};

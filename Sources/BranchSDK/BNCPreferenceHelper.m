@@ -436,6 +436,14 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     return [self readBoolFromDefaults:@"_appleAttributionTokenChecked"];
 }
 
+- (void)setDeviceTrustChecked:(BOOL)deviceTrustChecked {
+    [self writeBoolToDefaults:@"_deviceTrustChecked" value:deviceTrustChecked];
+}
+
+- (BOOL)deviceTrustChecked {
+    return [self readBoolFromDefaults:@"_deviceTrustChecked"];
+}
+
 - (void)setHasOptedInBefore:(BOOL)hasOptedInBefore {
     [self writeBoolToDefaults:@"_hasOptedInBefore" value:hasOptedInBefore];
 }

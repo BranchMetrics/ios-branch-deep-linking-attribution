@@ -146,7 +146,7 @@
 }
 
 - (NSString *)metaCampaignIDsForEndpoint:(NSString *)endpoint {
-    if (([endpoint containsString:@"/v2/event"]) || ([endpoint containsString:@"/v1/open"])) {
+    if (([endpoint containsString:@"/v3/events"]) || ([endpoint containsString:@"/v1/open"])) {
         BNCUrlQueryParameter *metaCampaignIDs = self.urlQueryParameters[BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS];
         if (metaCampaignIDs.value != nil && [metaCampaignIDs isWithinValidityWindow]) {
             return self.urlQueryParameters[BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS].value;
@@ -156,7 +156,7 @@
 }
 
 - (NSString *)gclidValueForEndpoint:(NSString *)endpoint {
-    if (([endpoint containsString:@"/v2/event"]) || ([endpoint containsString:@"/v1/open"])) {
+    if (([endpoint containsString:@"/v3/events"]) || ([endpoint containsString:@"/v1/open"])) {
         return self.urlQueryParameters[BRANCH_REQUEST_KEY_GCLID].value;
     }
     return nil;
@@ -165,7 +165,7 @@
 - (NSDictionary *)gbraidValuesForEndpoint:(NSString *)endpoint {
     NSMutableDictionary *returnedParams = [NSMutableDictionary new];
 
-    if (([endpoint containsString:@"/v2/event"]) || ([endpoint containsString:@"/v1/open"])) {
+    if (([endpoint containsString:@"/v3/events"]) || ([endpoint containsString:@"/v1/open"])) {
 
         BNCUrlQueryParameter *gbraid = self.urlQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID];
         if (gbraid.value != nil && [gbraid isWithinValidityWindow]) {
@@ -188,7 +188,7 @@
 }
 
 - (NSString *)sccidValueForEndpoint:(NSString *)endpoint {
-    if (([endpoint containsString:@"/v2/event"]) || ([endpoint containsString:@"/v1/open"]) || ([endpoint containsString:@"/v1/install"]) ) {
+    if (([endpoint containsString:@"/v3/events"]) || ([endpoint containsString:@"/v1/open"]) || ([endpoint containsString:@"/v1/install"]) ) {
         return self.urlQueryParameters[BRANCH_REQUEST_KEY_SCCID].value;
     }
     return nil;

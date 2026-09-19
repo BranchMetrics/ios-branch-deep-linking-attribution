@@ -21,6 +21,7 @@
 #import "BranchLastAttributedTouchData.h"
 #import "BranchDeepLinkingController.h"
 #import "BranchDelegate.h"
+#import "BranchSecureSDKProvider.h"
 
 #if !TARGET_OS_TV
 // tvOS does not support these features
@@ -275,6 +276,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 + (BOOL)branchKeyIsSet;
 
 @property (weak, nullable) NSObject<BranchDelegate>* delegate;
+
+@property (weak, nullable) id<BranchSecureSDKProvider> fraudDefenseHandler;
 
 //@property (strong, nonatomic, nullable) BranchEvent *testEvent;
 
