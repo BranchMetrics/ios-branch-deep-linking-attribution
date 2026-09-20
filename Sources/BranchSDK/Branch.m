@@ -543,9 +543,9 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 - (void)setFraudDefenseHandler:(id<BranchSecureSDKProvider>)fraudDefenseHandler {
     NSString *branchKey = self.class.branchKey;
     if (!branchKey) {
-        _fraudDefenseHandler = fraudDefenseHandler;
         [[BranchLogger shared] logError:@"Branch key not resolved when setting fraudDefenseHandler; secure SDK will not be initialized." error:nil];
     } else {
+        _fraudDefenseHandler = fraudDefenseHandler;
         [fraudDefenseHandler initializeBranchSecureSDKWithBranchKey:branchKey];
     }
 }
