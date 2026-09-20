@@ -72,7 +72,7 @@
         self.pasteboard = [BNCPasteboard sharedInstance];
         self.requestUUID = requestUUID;
         self.requestCreationTimeStamp = requestTimeStamp;
-        self.fraudDefenseHandler = [Branch getInstance].fraudDefenseHandler;
+        self.fraudDefenseHandler = [Branch sharedInstance].fraudDefenseHandler;
     }
     return self;
 }
@@ -85,7 +85,6 @@
     if (!self.preferenceHelper.deviceTrustChecked) {
         NSDictionary *fraudDefenseParams = [self.fraudDefenseHandler addDeviceTrustParams:json];
         if (fraudDefenseParams.count > 0) {
-            self.preferenceHelper.deviceTrustChecked = YES;
             [json addEntriesFromDictionary:fraudDefenseParams];
         }
     } else {
