@@ -31,4 +31,8 @@
 /// Returns { signature_b64, smart_nonce }, or empty dict if HMAC secret not yet available.
 - (NSDictionary *_Nonnull)addSignatureAndNonceForParams:(NSDictionary *_Nonnull)params;
 
+/// Releases the claim taken by -addDeviceTrustParams:. Call this once the request that carried
+/// the initialization_context has been answered, whether acknowledged or failed terminally.
+- (void)releaseAttestationClaim;
+
 @end
