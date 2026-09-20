@@ -76,6 +76,9 @@
     } else
     if (error) {
         [BranchOpenRequest releaseOpenResponseLock];
+        if (self.requestParams[BRANCH_REQUEST_KEY_DEVICE_TRUST_ATTESTATION_OBJECT]) {
+            [[Branch sharedInstance].fraudDefenseHandler releaseAttestationClaim];
+        }
         if (self.callback) {
             self.callback(NO, error);
         }
@@ -84,6 +87,7 @@
 
     if (self.requestParams[BRANCH_REQUEST_KEY_DEVICE_TRUST_ATTESTATION_OBJECT]) {
         preferenceHelper.deviceTrustChecked = YES;
+        [[Branch sharedInstance].fraudDefenseHandler releaseAttestationClaim];
     }
 
     NSDictionary *data = response.data;

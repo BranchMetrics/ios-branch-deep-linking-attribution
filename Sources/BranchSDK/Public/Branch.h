@@ -279,7 +279,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 /// Held weakly: the assigned object (e.g. BranchSecureSDK's own singleton) must retain
 /// itself for the process lifetime, or fraud defense silently turns off when it is deallocated.
-@property (weak, nullable) id<BranchSecureSDKProvider> fraudDefenseHandler;
+@property (nonatomic, weak, nullable) id<BranchSecureSDKProvider> fraudDefenseHandler;
 
 //@property (strong, nonatomic, nullable) BranchEvent *testEvent;
 
