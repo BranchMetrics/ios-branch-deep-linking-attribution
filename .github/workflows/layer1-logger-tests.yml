@@ -86,6 +86,24 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY=""
 
+      # Universal Link scenarios need the entitlement to actually land in the
+      # built app; this step catches the build silently stripping it.
+      - name: Assert the TestBed carries associated domains
+        run: |
+          set -euo pipefail
+          BIN="./DerivedData/Build/Products/Debug-iphonesimulator/Branch-TestBed.app/Branch-TestBed"
+          if [ ! -f "$BIN" ]; then
+            echo "::error::TestBed binary not found at $BIN; the build step may have moved or failed"
+            exit 1
+          fi
+          STRINGS_OUT="$(strings -a "$BIN")"
+          COUNT="$(grep -c com.apple.developer.associated-domains <<< "$STRINGS_OUT" || true)"
+          echo "associated-domains entitlement entries in the TestBed binary: $COUNT (routing is not verified by this step)"
+          if ! [ "$COUNT" -gt 0 ] 2>/dev/null; then
+            echo "::error::TestBed was built without the associated-domains entitlement; Universal Link scenarios cannot run"
+            exit 1
+          fi
+
       - name: Run L1 instrumentation
         env:
           DERIVED_DATA_DIR: ./DerivedData
