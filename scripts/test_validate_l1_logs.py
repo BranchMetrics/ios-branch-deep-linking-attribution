@@ -172,9 +172,10 @@ class AssertionEngineTests(unittest.TestCase):
         self.assertEqual(len(v.assert_contract(_capture("/alpha", "/beta"), contract)), 3)
 
     def test_the_seeded_deeplink_contract_accepts_the_real_capture_shape(self):
-        # Measured on device: open, deeplink, open.
+        # Measured on device 2026-09-21, with the AppDelegate launch resolve:
+        # deeplink, open, deeplink, open.
         errors = v.assert_contract(
-            _capture("/v3/events/open", "/v3/deeplink", "/v3/events/open"),
+            _capture("/v3/deeplink", "/v3/events/open", "/v3/deeplink", "/v3/events/open"),
             v.contract_for("deeplink"),
         )
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
@@ -453,9 +454,10 @@ class ScenarioEnforcementTests(unittest.TestCase):
         )
 
     def test_deeplink_scenario_passes_on_the_measured_capture_shape(self):
-        # open, deeplink, open — measured on device. The launch open precedes
-        # the resolution, so an order rule of "first after first" would fail
-        # this correct capture.
+        # deeplink, open, deeplink, open — measured on device 2026-09-21 with
+        # the AppDelegate launch resolve. The launch resolve and its open
+        # precede the button-tap resolve, so an order rule of "first after
+        # first" would fail this correct capture.
         errors, _ = _run_validation("deeplink_scenario.txt", v.contract_for("deeplink"))
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 

@@ -229,8 +229,14 @@ SCENARIO_CONTRACTS = {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 0},
         "order": (),
     },
+    # deeplink: driven by TestBed-GPTDriverTests/DeepLinkWireValidationTest,
+    # which taps "Request DeepLink" after launch. MEASURED on this branch
+    # 2026-09-21, after the AppDelegate launch resolve added for EMT-4313:
+    # the launch-time requestDeepLinkDataWithLaunchOptions: call resolves and
+    # opens once on its own, before the button tap resolves and opens again.
+    # Four requests total: deeplink, open, deeplink, open.
     "deeplink": {
-        "counts": {"/v3/deeplink": 1},
+        "counts": {"/v3/deeplink": 2, "/v3/events/open": 2},
         "order": (("/v3/deeplink", "/v3/events/open"),),
     },
 }
