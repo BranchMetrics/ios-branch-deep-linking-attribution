@@ -61,13 +61,13 @@ cannot silently validate a capture against nothing.
 The `4.0.0-beta` line does **not** emit `/v1/install` or `/v1/open`.
 Install and open both post to `/v3/events/open`:
 
-| what happens            | endpoint              |
-| ----------------------- | --------------------- |
-| install (fresh install) | `/v3/events/open`     |
-| open (cold and warm)    | `/v3/events/open`     |
-| deep link resolution    | `/v3/deeplink`        |
+| what happens            | endpoint             |
+| ----------------------- | -------------------- |
+| install (fresh install) | `/v3/events/open`    |
+| open (cold and warm)    | `/v3/events/open`    |
+| deep link resolution    | `/v3/deeplink`       |
 | event                   | `/v3/events/standard` |
-| link creation           | `/v1/url`             |
+| link creation           | `/v1/url`            |
 
 `/v3/events/open` is mandatory: every session posts one, so a capture
 without it is a broken capture and fails the run. `/v3/deeplink` is only
