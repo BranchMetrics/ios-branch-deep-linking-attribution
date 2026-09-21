@@ -75,6 +75,8 @@ jobs:
           ./scripts/getSimulator
           echo "name=$(cat ./iphoneSim)" >> "$GITHUB_OUTPUT"
 
+      # Ad-hoc signing embeds the entitlements without a certificate. The overrides
+      # apply to every target, including the UI test runner the project leaves unsigned.
       - name: Build TestBed for testing
         run: |
           xcodebuild build-for-testing \
@@ -82,9 +84,12 @@ jobs:
             -scheme TestBed-GPTDriverTests \
             -derivedDataPath ./DerivedData \
             -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.name }},OS=latest" \
-            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_ALLOWED=YES \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY=""
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGN_STYLE=Manual \
+            DEVELOPMENT_TEAM="" \
+            PROVISIONING_PROFILE_SPECIFIER=""
 
       # Universal Link scenarios need the entitlement to actually land in the
       # built app; this step catches the build silently stripping it.
