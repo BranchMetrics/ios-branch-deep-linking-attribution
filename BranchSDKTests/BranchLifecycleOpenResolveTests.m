@@ -125,6 +125,23 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 
 @end
 
+#pragma mark - Delegate spy
+
+// -sendOpen calls this unconditionally, before any attribution or tracking check, so it is the
+// only observable signal that -sendOpen ran at all when both the request queue and the wire
+// stay empty either way (an attribution-level-None open is dropped again inside
+// BNCServerRequestOperation -start, so enqueue and wire assertions alone cannot tell whether
+// -shouldSendDeferredForegroundOpen kept -sendOpen from being called in the first place).
+@interface BranchLifecycleOpenResolveDelegateSpy : NSObject <BranchDelegate>
+@property (atomic, assign) BOOL willStartSessionCalled;
+@end
+
+@implementation BranchLifecycleOpenResolveDelegateSpy
+- (void)branch:(Branch *)branch willStartSessionWithURL:(NSURL *)url {
+    self.willStartSessionCalled = YES;
+}
+@end
+
 #pragma mark - Tests
 
 @interface BranchLifecycleOpenResolveTests : XCTestCase
@@ -145,6 +162,7 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 @property (nonatomic, copy) NSString *savedUXType;
 @property (nonatomic, strong) NSDate *savedURLLoadMs;
 @property (nonatomic, assign) BOOL savedDropURLOpen;
+@property (nonatomic, assign) BOOL savedAutomaticOpenTrackingDisabled;
 @end
 
 @implementation BranchLifecycleOpenResolveTests
@@ -175,6 +193,7 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     self.savedUXType = preferenceHelper.uxType;
     self.savedURLLoadMs = preferenceHelper.urlLoadMs;
     self.savedDropURLOpen = preferenceHelper.dropURLOpen;
+    self.savedAutomaticOpenTrackingDisabled = [Branch automaticOpenTrackingDisabled];
 
     preferenceHelper.sessionParams = nil;
     preferenceHelper.referringURL = nil;
@@ -233,6 +252,14 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     preferenceHelper.urlLoadMs = self.savedURLLoadMs;
     preferenceHelper.dropURLOpen = self.savedDropURLOpen;
 
+    // Precondition guarantees this was NO going in; resumeSession is the only way back to that
+    // state short of waiting out a timer.
+    if (self.savedAutomaticOpenTrackingDisabled) {
+        [Branch disableNextForegroundForTimeInterval:0];
+    } else {
+        [Branch resumeSession];
+    }
+
     // The open callback chain finishes on main. Spin before handing the singleton back, so a
     // block still pending cannot enqueue into the real queue.
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
@@ -241,6 +268,7 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     [self waitForIsolationQueue:@"pending isolation-queue work before restoring the shared queue"];
 
     [self.branch setValue:[BNCServerRequestQueue getInstance] forKey:@"requestQueue"];
+    self.branch.delegate = nil;
 
     // A foreground open check still in the queue is a leak.
     XCTAssertEqualObjects([self enqueuedNonRequestClassNames], @[],
@@ -670,6 +698,106 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     // empty and sent a second open only under a different interleaving.
     XCTAssertTrue(deferredCheck.isCancelled,
                   @"The chained open must cancel the deferred check rather than race it.");
+}
+
+// Guard (i). -shouldSendDeferredForegroundOpen is called twice: once before the dispatch to the
+// isolation queue, once inside it. The isolation queue is held exactly as in
+// -testDeferredOpenWaitsForTheIsolationQueue, but here to open a window after the first call has
+// already passed with Full, so only the re-read inside the isolation queue can observe None.
+- (void)testAttributionLevelNoneAtTheDeferredReReadSendsNoOpen {
+    self.stub.deepLinkMode = BranchResolveStubModeOrganicPayload;
+
+    // -sendOpen drops an attribution-level-None open on its own, and BNCServerRequestOperation
+    // -start drops one a level deeper still, so neither the queue nor the wire can tell whether
+    // -shouldSendDeferredForegroundOpen ever let -sendOpen run. The spy can: it fires from the
+    // top of -sendOpen, before either of those.
+    BranchLifecycleOpenResolveDelegateSpy *delegateSpy = [BranchLifecycleOpenResolveDelegateSpy new];
+    self.branch.delegate = delegateSpy;
+
+    [self enqueueOrganicResolve];
+    [self foreground];
+
+    NSOperation *deferredCheck = [self deferredForegroundOpenCheck];
+    XCTAssertNotNil(deferredCheck,
+                    @"Precondition: the foreground must have deferred its open behind the resolve.");
+
+    dispatch_semaphore_t release = dispatch_semaphore_create(0);
+    XCTestExpectation *held = [[XCTestExpectation alloc] initWithDescription:@"the isolation queue to be held"];
+    __block long holdResult = -1;
+    [self.branch dispatchToIsolationQueue:^{
+        [held fulfill];
+        holdResult = dispatch_semaphore_wait(release, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20 * NSEC_PER_SEC)));
+    }];
+    XCTAssertEqual([XCTWaiter waitForExpectations:@[held] timeout:5.0], XCTWaiterResultCompleted,
+                   @"Precondition: the isolation queue must be held before the resolve runs.");
+
+    self.testQueue.operationQueue.suspended = NO;
+    [self waitForCondition:^BOOL{ return deferredCheck.isFinished; }
+               description:@"the resolve and the first deferred check to run"
+                   timeout:15.0];
+
+    // The first check ran with Full and queued its re-read behind the hold above. Flip to None
+    // now, so only that re-read can see it.
+    [BNCPreferenceHelper sharedInstance].attributionLevel = BranchAttributionLevelNone;
+
+    dispatch_semaphore_signal(release);
+    [self waitForIsolationQueue:@"the deferred re-read to run"];
+
+    XCTAssertEqual(holdResult, 0L, @"The hold must have ended by signal, not by timeout.");
+    XCTAssertFalse(delegateSpy.willStartSessionCalled,
+                   @"The re-read must not call -sendOpen once attribution has gone to None.");
+    XCTAssertFalse([[self enqueuedRequestClassNames] containsObject:@"BranchRequestOpen"],
+                   @"The re-read must not enqueue an open once attribution has gone to None.");
+
+    [self drainQueue];
+
+    XCTAssertEqualObjects([self postedEndpoints], @[kDeepLinkEndpoint],
+                          @"No open may reach the wire once the re-read observes attribution None.");
+}
+
+// Guard (j). Same window as above, on the other check the re-read makes: automatic open
+// tracking flipped off between the two calls to -shouldSendDeferredForegroundOpen.
+- (void)testAutomaticOpenTrackingDisabledAtTheDeferredReReadSendsNoOpen {
+    self.stub.deepLinkMode = BranchResolveStubModeOrganicPayload;
+
+    [self enqueueOrganicResolve];
+    [self foreground];
+
+    NSOperation *deferredCheck = [self deferredForegroundOpenCheck];
+    XCTAssertNotNil(deferredCheck,
+                    @"Precondition: the foreground must have deferred its open behind the resolve.");
+
+    dispatch_semaphore_t release = dispatch_semaphore_create(0);
+    XCTestExpectation *held = [[XCTestExpectation alloc] initWithDescription:@"the isolation queue to be held"];
+    __block long holdResult = -1;
+    [self.branch dispatchToIsolationQueue:^{
+        [held fulfill];
+        holdResult = dispatch_semaphore_wait(release, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20 * NSEC_PER_SEC)));
+    }];
+    XCTAssertEqual([XCTWaiter waitForExpectations:@[held] timeout:5.0], XCTWaiterResultCompleted,
+                   @"Precondition: the isolation queue must be held before the resolve runs.");
+
+    self.testQueue.operationQueue.suspended = NO;
+    [self waitForCondition:^BOOL{ return deferredCheck.isFinished; }
+               description:@"the resolve and the first deferred check to run"
+                   timeout:15.0];
+
+    // The first check ran with tracking enabled and queued its re-read behind the hold above.
+    // Disable it now, via the public API, so only that re-read can see it. Timeout 0: no timer
+    // to race the assertions below.
+    [Branch disableNextForegroundForTimeInterval:0];
+
+    dispatch_semaphore_signal(release);
+    [self waitForIsolationQueue:@"the deferred re-read to run"];
+
+    XCTAssertEqual(holdResult, 0L, @"The hold must have ended by signal, not by timeout.");
+    XCTAssertFalse([[self enqueuedRequestClassNames] containsObject:@"BranchRequestOpen"],
+                   @"The re-read must not enqueue an open once automatic open tracking is disabled.");
+
+    [self drainQueue];
+
+    XCTAssertEqualObjects([self postedEndpoints], @[kDeepLinkEndpoint],
+                          @"No open may reach the wire once the re-read observes tracking disabled.");
 }
 
 @end
