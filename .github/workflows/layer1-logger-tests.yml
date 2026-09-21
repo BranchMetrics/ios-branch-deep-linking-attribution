@@ -143,7 +143,7 @@ jobs:
             echo
             echo "Scenario coverage:"
             echo
-            echo "No scenario is authored yet, so the endpoint table above is the only assertion this gate makes."
+            echo "The install scenario is authored along with the endpoint table assertion."
             echo
             echo "| scenario group | status |"
             echo "| --- | --- |"
