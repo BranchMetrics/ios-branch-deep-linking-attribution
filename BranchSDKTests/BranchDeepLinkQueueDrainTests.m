@@ -188,8 +188,8 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
 // enqueue an organic open into the queue under test and be counted as this test's traffic.
 //
 // Absorbed into a throwaway suspended queue so it reaches neither the network nor this test. The
-// barrier is a dispatch_sync onto the same serial queue: once it returns, every block dispatched
-// before it has run to completion.
+// barrier dispatches a marker block onto the same serial queue and polls for it from the run loop:
+// once the marker has run, every block dispatched before it has run to completion.
 - (void)absorbPendingIsolationQueueWork {
     BNCServerRequestQueue *absorbingQueue = [BNCServerRequestQueue new];
     absorbingQueue.operationQueue.suspended = YES;
