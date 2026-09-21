@@ -271,29 +271,75 @@ class AttributionNoneContractTests(unittest.TestCase):
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 
     def test_an_open_at_none_level_fails(self):
-        # The regression this scenario exists to catch: an open must not be
-        # sent at NONE.
-        contract = v.contract_for("attribution_none")
-        errors, _ = _run_validation("attribution_none_deeplink.txt", contract)
+        # The regression attribution_none exists to catch: an open must not
+        # be sent at NONE.
+        errors, _ = _run_validation(
+            "attribution_none_deeplink.txt", v.contract_for("attribution_none")
+        )
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("must not be captured", errors[0])
         self.assertIn("/v3/events/open", errors[0])
 
     def test_the_old_global_rule_would_have_failed_this_correct_capture(self):
         # The retired MANDATORY_ENDPOINT required an open in every capture.
-        # install still does, and this capture is correct without one, which is
-        # why a single global rule could not serve both scenarios.
+        # install still does, and attribution_none's capture is correct without
+        # one, which is why a single global rule could not serve both.
         errors, _ = _run_validation("attribution_none.txt", v.contract_for("install"))
         self.assertTrue(
             any("/v3/events/open" in e for e in errors),
             f"Expected the open requirement to fire: {errors}",
         )
 
-    def test_the_contract_does_not_assert_that_identifiers_were_cleared(self):
+    def test_attribution_none_does_not_assert_that_identifiers_were_cleared(self):
         # Recorded, not hidden: that is a field-level assertion, and this layer
         # is bounded at counts and required-field presence.
-        counts = v.contract_for("attribution_none")["counts"]
-        self.assertEqual(set(counts), {"/v3/deeplink", "/v3/events/open"})
+        self.assertEqual(
+            set(v.contract_for("attribution_none")["counts"]),
+            {"/v3/deeplink", "/v3/events/open"},
+        )
+
+
+class ColdHttpsContractTests(unittest.TestCase):
+    """cold_https: a Universal Link delivered into a freshly launched
+    process. Fixtures derived from a real capture measured 2026-08-28 on an
+    iPhone 16e, with the device and account identifiers replaced."""
+
+    def test_the_cold_link_capture_passes(self):
+        errors, _ = _run_validation("cold_https.txt", v.contract_for("cold_https"))
+        self.assertEqual(errors, [], f"Unexpected errors: {errors}")
+
+    def test_a_resolution_with_no_attributed_open_fails(self):
+        # The regression cold_https exists to catch: the link resolves and
+        # the open that attributes it never follows. Both halves fire.
+        errors, _ = _run_validation(
+            "cold_https_no_attributed_open.txt", v.contract_for("cold_https")
+        )
+        self.assertTrue(
+            any("Expected 2 '/v3/events/open'" in e for e in errors), errors
+        )
+        self.assertTrue(any("after" in e for e in errors), errors)
+
+    def test_two_opens_is_the_contract_not_a_duplicate(self):
+        # The launch open and the attributed open are both correct. The
+        # ticket originally asked for one, which would fail a healthy SDK.
+        self.assertEqual(v.contract_for("cold_https")["counts"]["/v3/events/open"], 2)
+
+    def test_the_two_opens_are_distinguishable_by_payload(self):
+        # Not asserted by the contract, which is bounded at counts and order.
+        # Pinned here so a future field-level contract has its discriminator:
+        # only the attributed open carries link data.
+        entries = v.parse_branch_logs(_fixture("cold_https.txt"))
+        opens = [e for e in entries if e["uri"] == "/v3/events/open"]
+        self.assertEqual(len(opens), 2)
+        self.assertNotIn("link_data", opens[0]["request"])
+        self.assertIn("link_data", opens[1]["request"])
+
+    def test_cold_https_does_not_assert_that_the_resolution_carries_the_link(self):
+        # Recorded, not hidden: field-level, same boundary as attribution_none.
+        self.assertEqual(
+            set(v.contract_for("cold_https")["counts"]),
+            {"/v3/deeplink", "/v3/events/open"},
+        )
 
 
 class HappyPathTests(unittest.TestCase):

@@ -194,14 +194,15 @@ ATTRIBUTION_LEVEL_NONE = "NONE"
 #   order   (earlier, later) pairs. Relative, not adjacency: a request
 #           between the two does not violate it.
 #
-# `install` and `deeplink` are not test-plan scenarios — they are the runs
-# the harness drives today. Plan scenarios carry the test plan's own name.
+# `cold_https` and `attribution_none` are test-plan scenarios. `install` and
+# `deeplink` are not in the plan: they are the runs the harness drives today.
 SCENARIO_CONTRACTS = {
-    # install: the run the harness drives, since run_l1_instrumented.sh
-    # uninstalls the bundle before every run. The test plan also asks that the
-    # open carry no link data; that is a field-level assertion, and this layer
-    # is bounded at counts and required-field presence, so only the endpoint
-    # half is covered here.
+    # install: the harness uninstalls first (run_l1_instrumented.sh), so no
+    # `randomizedBundleToken` persists and `Branch.m:2226` decides install
+    # rather than open. The test plan also asks that the open carry no link
+    # data; that is a field-level assertion, and this layer is bounded at
+    # counts and required-field presence, so only the endpoint half is
+    # covered here.
     "install": {
         "counts": {"/v3/events/open": 1, "/v3/deeplink": 0},
         "order": (),
@@ -215,6 +216,16 @@ SCENARIO_CONTRACTS = {
     "attribution_none": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 0},
         "order": (),
+    },
+    # cold_https: a Universal Link delivered into a freshly launched
+    # process. Two opens is correct, not a duplicate: the launch fires one
+    # carrying no link field, then the resolution's attributed open carries
+    # `link_data`. Requiring one would fail a healthy SDK. The plan also asks
+    # that the resolution carry the link; that is a field-level assertion this
+    # layer does not make, as with attribution_none.
+    "cold_https": {
+        "counts": {"/v3/deeplink": 1, "/v3/events/open": 2},
+        "order": (("/v3/deeplink", "/v3/events/open"),),
     },
     "deeplink": {
         "counts": {"/v3/deeplink": 1},
