@@ -148,7 +148,7 @@ jobs:
           SIM_NAME: ${{ steps.sim.outputs.name }}
           BUNDLE_ID: io.branch.sdk.Branch-TestBed
           OUTPUT_DIR: /tmp/h2
-          H2_EXPECT_RUNTIME: iOS-18-5
+          H2_EXPECT_RUNTIME: iOS-99-9
         run: |
           # A marker left by an earlier run would carve out this one too, and
           # it would read as "not run" while asserting nothing.
