@@ -150,6 +150,9 @@ jobs:
           OUTPUT_DIR: /tmp/h2
           H2_EXPECT_RUNTIME: iOS-18-5
         run: |
+          # A marker left by an earlier run would carve out this one too, and
+          # it would read as "not run" while asserting nothing.
+          rm -f /tmp/h2-runtime-missing
           rc=0
           ./scripts/run_h2_hot.sh > /tmp/h2-driver.txt 2>&1 || rc=$?
           grep -E '^(RUNTIME=|consent key: |settled after |openurl attempt |pid unchanged$|ERROR: )' /tmp/h2-driver.txt || true
@@ -200,6 +203,12 @@ jobs:
           OUTPUT_DIR: /tmp/h2
         run: |
           tag="[hot_uriScheme]"
+          # An image without the pinned runtime is not an SDK failure. The
+          # capture step leaves this marker for that one driver error only.
+          if [ -f /tmp/h2-runtime-missing ]; then
+            echo "$tag not run: no simulator on the expected runtime" | tee /tmp/h2-output.txt
+            exit 0
+          fi
           if [ "${{ steps.h2capture.outcome }}" != "success" ]; then
             echo "FAILED: $tag driver failed; see the capture step log" | tee /tmp/h2-output.txt
             exit 1
@@ -254,10 +263,10 @@ jobs:
             hot_defer="hot_https_foreground deferred until CI builds are signed"
             no_runtime="the runner has no simulator on the expected runtime"
             hot_retake="update H2_EXPECT_RUNTIME"
-            if [ "${{ steps.h2.outcome }}" = "success" ]; then
-              echo "| Hot | hot_uriScheme pass; $hot_defer |"
-            elif [ -f /tmp/h2-runtime-missing ]; then
+            if [ -f /tmp/h2-runtime-missing ]; then
               echo "| Hot | hot_uriScheme not run: $no_runtime ($hot_retake); $hot_defer |"
+            elif [ "${{ steps.h2.outcome }}" = "success" ]; then
+              echo "| Hot | hot_uriScheme pass; $hot_defer |"
             elif [ "${{ steps.h2.outcome }}" = "failure" ]; then
               echo "| Hot | hot_uriScheme fail, see failures below; $hot_defer |"
             else
@@ -265,7 +274,11 @@ jobs:
             fi
             echo
             if [ "${{ steps.validate.outcome }}" = "success" ] && [ "${{ steps.h2.outcome }}" = "success" ]; then
-              echo "Result: **PASS**"
+              if [ -f /tmp/h2-runtime-missing ]; then
+                echo "Result: **PASS** (hot_uriScheme not run)"
+              else
+                echo "Result: **PASS**"
+              fi
             else
               echo "Result: **FAIL**"
               echo
