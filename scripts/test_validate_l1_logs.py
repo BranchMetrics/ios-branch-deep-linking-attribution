@@ -321,7 +321,7 @@ class InstallContractTests(unittest.TestCase):
             any("after" in e for e in errors), f"Expected an order error: {errors}"
         )
 
-    def test_install_does_not_assert_the_absence_of_link_data(self):
+    def test_install_does_not_assert_the_absence_of_link_data_in_the_open(self):
         # Recorded, not hidden: the plan also wants the open to carry no link
         # data. That is a field-level assertion this layer does not make.
         self.assertEqual(v.contract_for("install")["counts"].get("/v3/deeplink"), 0)

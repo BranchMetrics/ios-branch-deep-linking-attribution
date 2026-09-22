@@ -24,10 +24,7 @@
 
     NSLog(@"[TestHook] -testDeepLinkURL received: %@", testDeepLinkURL);
 
-    // Deliver once the launch session has started, never on a timer. A fixed
-    // delay makes the order machine-dependent: on a slow first install the
-    // link wins, the queue already holds a request, and `installOrOpenInQueue`
-    // suppresses the launch open. The capture then differs from a fast machine's.
+    // Deliver once the launch session has started, never on a timer.
     __block BOOL delivered = NO;
     __block id observer = nil;
     dispatch_block_t deliver = ^{
