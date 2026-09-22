@@ -120,6 +120,9 @@ jobs:
           H2_EXPECT_RUNTIME: iOS-18-5
           H2_URL: branchtest://open?scenario=H2
         run: |
+          # A marker left by an earlier run would carve out this one too, and
+          # it would read as "not run" while asserting nothing.
+          rm -f /tmp/h2-runtime-missing
           rc=0
           ./scripts/run_h2_hot.sh > /tmp/h2-driver.txt 2>&1 || rc=$?
           grep -E '^(RUNTIME=|consent key: |settled after |openurl attempt |pid unchanged$|ERROR: )' /tmp/h2-driver.txt || true
@@ -143,6 +146,8 @@ jobs:
           WARM: "1"
           CAPTURE_NAME: wire-warm_uriScheme
         run: |
+          # Same reason as the hot step: a stale marker disarms this gate.
+          rm -f /tmp/w2-runtime-missing
           rc=0
           ./scripts/run_h2_hot.sh > /tmp/w2-driver.txt 2>&1 || rc=$?
           grep -E '^(RUNTIME=|consent key: |settled after |openurl attempt |backgrounded, pid unchanged$|pid unchanged$|ERROR: )' /tmp/w2-driver.txt || true
@@ -185,6 +190,12 @@ jobs:
           H2_URL: branchtest://open?scenario=H2
         run: |
           tag="[hot_uriScheme]"
+          # An image without the pinned runtime is not an SDK failure. The
+          # capture step leaves this marker for that one driver error only.
+          if [ -f /tmp/h2-runtime-missing ]; then
+            echo "$tag not run: no simulator on the expected runtime" | tee /tmp/h2-output.txt
+            exit 0
+          fi
           if [ "${{ steps.h2capture.outcome }}" != "success" ]; then
             echo "FAILED: $tag driver failed; see the capture step log" | tee /tmp/h2-output.txt
             exit 1
@@ -215,6 +226,11 @@ jobs:
           H2_URL: branchtest://open?scenario=W2
         run: |
           tag="[warm_uriScheme]"
+          # Same carve-out as the hot step: the marker means the image, not the SDK.
+          if [ -f /tmp/w2-runtime-missing ]; then
+            echo "$tag not run: no simulator on the expected runtime" | tee /tmp/w2-output.txt
+            exit 0
+          fi
           if [ "${{ steps.w2capture.outcome }}" != "success" ]; then
             echo "FAILED: $tag driver failed; see the capture step log" | tee /tmp/w2-output.txt
             exit 1
@@ -266,19 +282,19 @@ jobs:
             hot_retake="measure hot_uriScheme on the new runtime, then update H2_EXPECT_RUNTIME"
             warm_defer="warm_https_onNewIntent not implemented"
             warm_retake="measure warm_uriScheme on the new runtime, then update H2_EXPECT_RUNTIME"
-            if [ "${{ steps.w2.outcome }}" = "success" ]; then
-              echo "| Warm | warm_uriScheme pass (at most 2 opens until the SDK fix); $warm_defer |"
-            elif [ -f /tmp/w2-runtime-missing ]; then
+            if [ -f /tmp/w2-runtime-missing ]; then
               echo "| Warm | warm_uriScheme not run: $no_runtime ($warm_retake); $warm_defer |"
+            elif [ "${{ steps.w2.outcome }}" = "success" ]; then
+              echo "| Warm | warm_uriScheme pass (at most 2 opens until the SDK fix); $warm_defer |"
             elif [ "${{ steps.w2.outcome }}" = "failure" ]; then
               echo "| Warm | warm_uriScheme fail, see failures below; $warm_defer |"
             else
               echo "| Warm | warm_uriScheme not run; $warm_defer |"
             fi
-            if [ "${{ steps.h2.outcome }}" = "success" ]; then
-              echo "| Hot | hot_uriScheme pass; $hot_defer |"
-            elif [ -f /tmp/h2-runtime-missing ]; then
+            if [ -f /tmp/h2-runtime-missing ]; then
               echo "| Hot | hot_uriScheme not run: $no_runtime ($hot_retake); $hot_defer |"
+            elif [ "${{ steps.h2.outcome }}" = "success" ]; then
+              echo "| Hot | hot_uriScheme pass; $hot_defer |"
             elif [ "${{ steps.h2.outcome }}" = "failure" ]; then
               echo "| Hot | hot_uriScheme fail, see failures below; $hot_defer |"
             else
@@ -287,7 +303,10 @@ jobs:
             echo "| Negative and guards | not implemented |"
             echo
             if [ "${{ steps.validate.outcome }}" = "success" ] && [ "${{ steps.h2.outcome }}" = "success" ] && [ "${{ steps.w2.outcome }}" = "success" ]; then
-              echo "Result: **PASS**"
+              skipped=""
+              if [ -f /tmp/h2-runtime-missing ]; then skipped="hot_uriScheme"; fi
+              if [ -f /tmp/w2-runtime-missing ]; then skipped="${skipped:+$skipped and }warm_uriScheme"; fi
+              echo "Result: **PASS**${skipped:+ ($skipped not run)}"
             else
               echo "Result: **FAIL**"
               echo
