@@ -113,7 +113,7 @@ wait_grown() {
         sleep 1
         elapsed=$((elapsed + 1))
     done
-    fail "branchlogs.txt did not grow past the pre snapshot within ${SETTLE_MAX_S}s; the URL was not delivered"
+    fail "branchlogs.txt did not grow past the pre snapshot within ${SETTLE_MAX_S}s"
 }
 
 mkdir -p "$OUTPUT_DIR"

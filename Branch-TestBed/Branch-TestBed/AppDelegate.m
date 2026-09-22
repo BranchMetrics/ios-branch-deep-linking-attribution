@@ -334,6 +334,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
          annotation:(id)annotation {
 
     NSLog(@"application:openURL:sourceApplication:annotation: invoked with URL: %@", [url description]);
+    [self logLifecycleMarker:@"openURL"];
     [[Branch sharedInstance] requestDeepLinkDataWithURL:url sourceApplication:sourceApplication annotation:annotation];
 
     // Process non-Branch URIs here...
@@ -358,6 +359,13 @@ continueUserActivity:(NSUserActivity *)userActivity
     // Process non-Branch userActivities here...
     return YES;
 }
+
+- (void)applicationWillResignActive:(UIApplication *)application { [self logLifecycleMarker:@"applicationWillResignActive"]; }
+- (void)applicationDidEnterBackground:(UIApplication *)application { [self logLifecycleMarker:@"applicationDidEnterBackground"]; }
+- (void)applicationDidBecomeActive:(UIApplication *)application { [self logLifecycleMarker:@"applicationDidBecomeActive"]; }
+
+// Writes an L1 lifecycle marker to branchlogs.txt; the leading newline ends an unterminated SDK log entry.
+- (void)logLifecycleMarker:(NSString *)name { [self processLogMessage:[NSString stringWithFormat:@"\n[TestBedLifecycle] %@\n", name]]; }
 
 - (void)setBranchLogFile {
     NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
