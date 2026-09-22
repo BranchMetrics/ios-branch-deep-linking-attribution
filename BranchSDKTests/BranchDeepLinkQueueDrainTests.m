@@ -18,7 +18,6 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <UIKit/UIKit.h>
 #import "Branch.h"
 #import "BranchConfiguration.h"
 #import "BranchConstants.h"
@@ -29,6 +28,7 @@
 #import "BNCServerResponse.h"
 #import "BranchOpenRequest.h"
 #import "BranchRequestOpen.h"
+#import "BranchLifecycleTestIsolation.h"
 
 // Test-only reset for the +initialize: reinitialization guard (file-private in Branch.m).
 @interface Branch(Test)
@@ -120,7 +120,7 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
     // open that is then indistinguishable from the one under test. Detached for the duration and
     // restored in -tearDown; the tests call the handlers directly, so nothing under test relies on
     // the wiring.
-    [self detachLifecycleObservers];
+    [self detachLifecycleObserversFromBranch:self.branch];
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     self.savedSessionParams = preferenceHelper.sessionParams;
@@ -146,7 +146,7 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
                                     preferenceHelper:preferenceHelper];
     self.drainingQueue.operationQueue.suspended = YES;
 
-    [self absorbPendingIsolationQueueWork];
+    [self absorbPendingIsolationQueueWorkForBranch:self.branch];
     [self.branch setValue:self.drainingQueue forKey:@"requestQueue"];
 
     // Every assertion below counts queue contents and posted URLs, so a request that is not this
@@ -174,51 +174,10 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
 
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
 
-    [self reattachLifecycleObservers];
+    [self reattachLifecycleObserversToBranch:self.branch];
 
     self.branch = nil;
     [super tearDown];
-}
-
-#pragma mark - Isolating the shared singleton
-
-// Branch is a process-wide singleton, and -setUp installs a private request queue into it. A block
-// already sitting on its shared isolation queue -- an earlier test's lifecycle call, a -sendOpen --
-// reads branch.requestQueue when it runs rather than when it was dispatched, so it would otherwise
-// enqueue an organic open into the queue under test and be counted as this test's traffic.
-//
-// Absorbed into a throwaway suspended queue so it reaches neither the network nor this test. The
-// barrier is a dispatch_sync onto the same serial queue: once it returns, every block dispatched
-// before it has run to completion.
-- (void)absorbPendingIsolationQueueWork {
-    BNCServerRequestQueue *absorbingQueue = [BNCServerRequestQueue new];
-    absorbingQueue.operationQueue.suspended = YES;
-    [self.branch setValue:absorbingQueue forKey:@"requestQueue"];
-
-    [self waitForIsolationQueue];
-
-    [absorbingQueue.operationQueue cancelAllOperations];
-}
-
-- (void)detachLifecycleObservers {
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center removeObserver:self.branch name:UIApplicationWillResignActiveNotification object:nil];
-    [center removeObserver:self.branch name:UIApplicationDidBecomeActiveNotification object:nil];
-}
-
-// Restores exactly the two registrations -[Branch initWithInterface:queue:cache:preferenceHelper:key:]
-// makes. That initializer runs once per process behind a dispatch_once, so the singleton never
-// re-registers them itself and leaving them detached would silently disarm every later test.
-- (void)reattachLifecycleObservers {
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:self.branch
-               selector:@selector(applicationWillResignActive)
-                   name:UIApplicationWillResignActiveNotification
-                 object:nil];
-    [center addObserver:self.branch
-               selector:@selector(applicationDidBecomeActive)
-                   name:UIApplicationDidBecomeActiveNotification
-                 object:nil];
 }
 
 #pragma mark - Helpers
@@ -258,7 +217,18 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
     dispatch_queue_t isolationQueue = [self.branch valueForKey:@"isolationQueue"];
     XCTAssertNotNil(isolationQueue,
                     @"Precondition: the isolation queue must be reachable, or this barrier proves nothing.");
-    dispatch_sync(isolationQueue, ^{});
+    // Must not block main: isolation-queue blocks can hop to main (-loadUserAgent).
+    // Spins the run loop, so isolation work enqueued during the wait is not covered.
+    __block BOOL isolationQueueDrained = NO;
+    NSObject *drainLock = [NSObject new];
+    dispatch_async(isolationQueue, ^{
+        @synchronized (drainLock) { isolationQueueDrained = YES; }
+    });
+    [self waitForCondition:^BOOL{
+        @synchronized (drainLock) { return isolationQueueDrained; }
+    }
+               description:@"the isolation queue to drain"
+                   timeout:15.0];
 }
 
 - (NSArray<NSString *> *)postedURLs {

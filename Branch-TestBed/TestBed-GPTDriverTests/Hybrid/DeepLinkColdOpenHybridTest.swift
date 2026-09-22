@@ -39,17 +39,16 @@ final class DeepLinkColdOpenHybridTest: BaseGptDriverTest {
         // PHASE 2: terminate and relaunch with the deep link URL baked
         // into launch arguments. Reusing the same XCUIApplication
         // instance keeps the GptDriver's nativeApp reference valid.
-        // The AppDelegate `#if DEBUG` hook picks the arg up and
-        // delivers a synthetic continueUserActivity after ~1.5s —
-        // enough for Branch.initialize(_:) to register its deep link
-        // handler.
+        // The AppDelegate `#if DEBUG` hook picks the arg up and delivers a
+        // synthetic continueUserActivity once BranchDidStartSessionNotification
+        // fires (a ten-second fallback if it never does).
         app.terminate()
         app.launchArguments += ["-testDeepLinkURL", generatedUrl]
         app.launch()
 
-        // Give the AppDelegate hook its 1.5s delay plus Branch SDK
-        // round-trip time to resolve the link metadata.
-        wait(timeout: 5)
+        // Cover the hook's ten-second fallback plus Branch SDK round-trip
+        // time to resolve the link metadata.
+        wait(timeout: 12)
 
         // PHASE 3: verify the deep link was resolved.
         //

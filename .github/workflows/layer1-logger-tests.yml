@@ -18,9 +18,13 @@ on:
       - "Branch-TestBed/**"
       - ".github/workflows/layer1-logger-tests.yml"
       - "scripts/validate_l1_logs.py"
+      - "scripts/check_foreground_markers.py"
       - "scripts/test_validate_l1_logs.py"
+      - "scripts/test_validate_l1_logs_contracts.py"
+      - "scripts/test_check_foreground_markers.py"
       - "scripts/fixtures/**"
       - "scripts/run_l1_instrumented.sh"
+      - "scripts/run_h2_hot.sh"
   pull_request:
     branches:
       - "4.0.0-beta.*"
@@ -33,9 +37,13 @@ on:
       - "Branch-TestBed/**"
       - ".github/workflows/layer1-logger-tests.yml"
       - "scripts/validate_l1_logs.py"
+      - "scripts/check_foreground_markers.py"
       - "scripts/test_validate_l1_logs.py"
+      - "scripts/test_validate_l1_logs_contracts.py"
+      - "scripts/test_check_foreground_markers.py"
       - "scripts/fixtures/**"
       - "scripts/run_l1_instrumented.sh"
+      - "scripts/run_h2_hot.sh"
   workflow_dispatch:
 
 permissions:
@@ -109,17 +117,48 @@ jobs:
             exit 1
           fi
 
-      - name: Run L1 instrumentation
+      # Three scenarios, three captures. Each needs its own run: the app
+      # deletes branchlogs.txt on every launch, so one run cannot hold two.
+      #
+      # Each scenario wipes first and establishes whatever state it needs, so
+      # the steps are independent and reordering them is safe. cold_https
+      # launches the app twice inside its own test: once to install, once
+      # entered by a link.
+      - name: Capture install, a launch with no link
         env:
           DERIVED_DATA_DIR: ./DerivedData
           SIM_NAME: ${{ steps.sim.outputs.name }}
           SIM_OS: latest
           PROJECT_PATH: Branch-TestBed/Branch-TestBed.xcodeproj
           SCHEME: TestBed-GPTDriverTests
-          ONLY_TESTING: TestBed-GPTDriverTests/L1WireValidationTest
           BUNDLE_ID: io.branch.sdk.Branch-TestBed
-          OUTPUT_LOG: branchlogs.txt
-        run: ./scripts/run_l1_instrumented.sh
+        run: |
+          ONLY_TESTING=TestBed-GPTDriverTests/L1WireValidationTest \
+          OUTPUT_LOG=wire-install.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
+
+      - name: Capture cold_firstInstall, a link with no prior install
+        env:
+          DERIVED_DATA_DIR: ./DerivedData
+          SIM_NAME: ${{ steps.sim.outputs.name }}
+          SIM_OS: latest
+          PROJECT_PATH: Branch-TestBed/Branch-TestBed.xcodeproj
+          SCHEME: TestBed-GPTDriverTests
+          BUNDLE_ID: io.branch.sdk.Branch-TestBed
+        run: |
+          ONLY_TESTING=TestBed-GPTDriverTests/ColdLinkWireValidationTest \
+          OUTPUT_LOG=wire-cold_firstInstall.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
+
+      - name: Capture cold_https, a link on a device that already has the app
+        env:
+          DERIVED_DATA_DIR: ./DerivedData
+          SIM_NAME: ${{ steps.sim.outputs.name }}
+          SIM_OS: latest
+          PROJECT_PATH: Branch-TestBed/Branch-TestBed.xcodeproj
+          SCHEME: TestBed-GPTDriverTests
+          BUNDLE_ID: io.branch.sdk.Branch-TestBed
+        run: |
+          ONLY_TESTING=TestBed-GPTDriverTests/ColdLinkInstalledWireValidationTest \
+          OUTPUT_LOG=wire-cold_https.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -127,22 +166,31 @@ jobs:
           python-version: "3.x"
 
       # Self-test first: a regression in the validator would otherwise surface
-      # as a false PASS on the real capture.
+      # as a false PASS on the real captures.
       - name: Run L1 validator unit tests
-        run: python3 -m unittest scripts.test_validate_l1_logs -v
+        run: python3 -m unittest discover -s scripts -p "test_*.py" -v
 
       # continue-on-error so the summary below still runs on a failure — the
-      # job is failed explicitly at the end.
-      #
-      # The scenario is required on this line: a capture is judged against the
-      # contract for the run that produced it. This job drives the default
-      # harness run, which is N1 organic_open — one open, no deep link.
+      # job is failed explicitly at the end. Each capture is judged against the
+      # contract for the run that produced it.
       - name: Validate wire logs
         id: validate
         continue-on-error: true
         run: |
           set -o pipefail
-          python3 scripts/validate_l1_logs.py branchlogs.txt --scenario N1 2>&1 | tee /tmp/l1-output.txt
+          rc=0
+          check () {
+            echo "::group::$1"
+            if ! python3 scripts/validate_l1_logs.py "$2" --scenario "$1" 2>&1 \
+                 | sed "s/^FAILED:/FAILED: [$1]/" | tee -a /tmp/l1-output.txt; then
+              rc=1
+            fi
+            echo "::endgroup::"
+          }
+          check install wire-install.txt
+          check cold_firstInstall wire-cold_firstInstall.txt
+          check cold_https wire-cold_https.txt
+          exit $rc
 
       # What the gate actually asserted, on the PR page rather than buried in
       # the job log.
@@ -152,7 +200,8 @@ jobs:
           {
             echo "### Layer 1 — SDK wire validation"
             echo
-            grep -o 'Got https://[^ ]*' branchlogs.txt 2>/dev/null \
+            cat wire-install.txt wire-cold_firstInstall.txt wire-cold_https.txt 2>/dev/null \
+              | grep -o 'Got https://[^ ]*' \
               | sed 's|.*api2.branch.io||' | sort | uniq -c > /tmp/l1-endpoints.txt || true
             if [ -s /tmp/l1-endpoints.txt ]; then
               echo "| endpoint | requests |"
@@ -164,14 +213,17 @@ jobs:
             echo
             echo "Scenario coverage:"
             echo
-            echo "No scenario is authored yet, so the endpoint table above is the only assertion this gate makes."
-            echo
             echo "| scenario group | status |"
             echo "| --- | --- |"
-            echo "| Cold (C1–C3) | not implemented |"
-            echo "| Warm (W1–W2) | not implemented |"
-            echo "| Hot (H1–H2) | not implemented |"
-            echo "| Negative / guards (N1–N4) | not implemented |"
+            if [ "${{ steps.validate.outcome }}" = "success" ]; then
+              echo "| Cold | cold_https and cold_firstInstall pass |"
+              echo "| Negative and guards | install passes, the rest not implemented |"
+            else
+              echo "| Cold | see failures below |"
+              echo "| Negative and guards | see failures below |"
+            fi
+            echo "| Warm | not implemented |"
+            echo "| Hot | not implemented |"
             echo
             if [ "${{ steps.validate.outcome }}" = "success" ]; then
               echo "Result: **PASS**"
@@ -185,7 +237,9 @@ jobs:
               echo "<details><summary>Captured wire log</summary>"
               echo
               echo '```'
-              if [ -s branchlogs.txt ]; then head -c 40000 branchlogs.txt; echo; else echo "(branchlogs.txt is empty or missing)"; fi
+              cat wire-install.txt wire-cold_firstInstall.txt wire-cold_https.txt \
+                > /tmp/l1-all.txt 2>/dev/null || true
+              if [ -s /tmp/l1-all.txt ]; then head -c 40000 /tmp/l1-all.txt; echo; else echo "(no capture was produced)"; fi
               echo '```'
               echo
               echo "</details>"
@@ -201,7 +255,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ios-wire-logs
-          path: branchlogs.txt
+          path: |
+            wire-install.txt
+            wire-cold_firstInstall.txt
+            wire-cold_https.txt
           retention-days: 7
 
       - name: Teardown simulator
