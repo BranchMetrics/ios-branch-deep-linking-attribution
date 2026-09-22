@@ -130,6 +130,11 @@ void ForceCategoriesToLoad(void) {
 
 #pragma mark - Branch
 
+@interface BNCServerRequestQueue (DeferredForegroundOpen)
+- (BOOL)addDeferredForegroundOpenCheck:(dispatch_block_t)block;
+- (BOOL)hasUnfinishedInitRequest;
+@end
+
 @interface Branch() <BranchDeepLinkingControllerCompletionDelegate> {
     NSInteger _networkCount;
 }
@@ -1656,6 +1661,13 @@ static NSString *bnc_branchKey = nil;
         }
     }
 
+    // A live nil-URL resolve may not chain an open; decide once it finishes.
+    if ([self.requestQueue addDeferredForegroundOpenCheck:^{
+        [self sendDeferredForegroundOpen];
+    }]) {
+        return;
+    }
+
     dispatch_async(self.isolationQueue, ^(){
         //  if necessary, creates a new organic open
         BOOL installOrOpenInQueue = [self.requestQueue containsInstallOrOpen];
@@ -1668,6 +1680,37 @@ static NSString *bnc_branchKey = nil;
             [self sendOpen];
         }
     });
+}
+
+// Sent from the isolation queue like the base open; both sides re-read.
+- (void)sendDeferredForegroundOpen {
+    if (![self shouldSendDeferredForegroundOpen]) return;
+
+    dispatch_async(self.isolationQueue, ^(){
+        if (![self shouldSendDeferredForegroundOpen]) return;
+        [self sendOpen];
+    });
+}
+
+- (BOOL)shouldSendDeferredForegroundOpen {
+    @synchronized ([Branch class]) {
+        if (bnc_disableAutomaticOpenTracking) {
+            [[BranchLogger shared] logVerbose:@"Deferred foreground open: automatic open tracking is disabled, skipping" error:nil];
+            return NO;
+        }
+    }
+
+    if ([self.requestQueue hasUnfinishedInitRequest]) {
+        [[BranchLogger shared] logVerbose:@"Deferred foreground open: init traffic is still in the queue, skipping" error:nil];
+        return NO;
+    }
+
+    if ([Branch attributionLevelNone]) {
+        [[BranchLogger shared] logVerbose:@"Deferred foreground open: attribution level is NONE, skipping" error:nil];
+        return NO;
+    }
+
+    return YES;
 }
 
 - (void)applicationWillResignActive {
