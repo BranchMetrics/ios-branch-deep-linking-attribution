@@ -243,13 +243,19 @@ SCENARIO_CONTRACTS = {
         "fields": {},
     },
     # cold_https: a Universal Link delivered into a freshly launched
-    # process. Two opens is correct, not a duplicate: the launch fires one
-    # carrying no link field, then the resolution's attributed open carries
-    # `link_data`. Requiring one would fail a healthy SDK. The plan also asks
-    # that the resolution carry the link; that is a field-level assertion this
-    # layer does not make, as with attribution_none.
+    # process on a device that already has the app. RE-MEASURED on this
+    # branch 2026-09-22, after the AppDelegate launch resolve added for
+    # EMT-4313: the launch-time requestDeepLinkDataWithLaunchOptions: call
+    # resolves and opens once on its own (no link, since launchOptions
+    # carries none), then the Universal Link's own resolution and its
+    # attributed open follow. Four requests total: deeplink, open, deeplink,
+    # open. The previous contract, one resolve and two opens, was measured
+    # before that call existed. Two opens is still correct on its own terms,
+    # not a duplicate: only the second carries `link_data`. The plan also
+    # asks that the resolution carry the link; that is a field-level
+    # assertion this layer does not make, as with attribution_none.
     "cold_https": {
-        "counts": {"/v3/deeplink": 1, "/v3/events/open": 2},
+        "counts": {"/v3/deeplink": 2, "/v3/events/open": 2},
         "order": (("/v3/deeplink", "/v3/events/open"),),
         # Both opens carry the token: the app was already installed, so the
         # launch open has one and the attributed open has one. This is what
@@ -258,13 +264,15 @@ SCENARIO_CONTRACTS = {
         "fields": {"/v3/events/open": {"randomized_bundle_token": 2}},
     },
     # cold_firstInstall: the same launch on a device with no prior install.
-    # There is no install endpoint on this line -- install is decided client
-    # side by randomizedBundleToken == nil and posts to /v3/events/open like
-    # any other. So the install shows up as the one open of the two that
-    # carries no token, and that count is the only wire signal separating this
-    # scenario from cold_https.
+    # RE-MEASURED on this branch 2026-09-22 for the same reason as
+    # cold_https: the launch resolve adds a second deeplink/open pair, ahead
+    # of the link-driven one. There is no install endpoint on this line --
+    # install is decided client side by randomizedBundleToken == nil and
+    # posts to /v3/events/open like any other. So the install shows up as
+    # the one open of the two that carries no token, and that count is the
+    # only wire signal separating this scenario from cold_https.
     "cold_firstInstall": {
-        "counts": {"/v3/deeplink": 1, "/v3/events/open": 2},
+        "counts": {"/v3/deeplink": 2, "/v3/events/open": 2},
         "order": (("/v3/deeplink", "/v3/events/open"),),
         "fields": {"/v3/events/open": {"randomized_bundle_token": 1}},
     },

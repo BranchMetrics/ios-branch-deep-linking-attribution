@@ -365,7 +365,9 @@ class AttributionNoneContractTests(unittest.TestCase):
 class ColdHttpsContractTests(unittest.TestCase):
     """cold_https: a Universal Link into a freshly launched process on a
     device that already has the app. Fixture is a real capture measured
-    2026-08-28 on an iPhone 16e, identifiers replaced."""
+    2026-08-28 on an iPhone 16e, identifiers replaced, with the launch-resolve
+    deeplink/open pair this line now emits (EMT-4313) prepended from a
+    2026-09-22 re-measurement on the same simulator."""
 
     def test_the_cold_link_capture_passes(self):
         errors, _ = _run_validation("cold_https.txt", v.contract_for("cold_https"))
