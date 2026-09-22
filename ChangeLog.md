@@ -14,6 +14,7 @@ v.4.0.0-alpha.0
     * - (void)initSessionWithSceneOptions:(nullable UISceneConnectionOptions *)options scene:(UIScene *)scene registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback;
     * Deprecated API  -  (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options  registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback __attribute__((deprecated(("Use `initSessionWithSceneOptions:scene:registerDeepLinkHandler:` instead."))));
 - SPM Repo Cleanup - Removed all Extra files
+- Fixed bug - `getLatestReferringParams` kept returning a previously resolved link after the app backgrounded and reopened organically. The params are now cleared at process start, and when the app enters the background with no link resolution or open in flight. A transient interruption that does not background the app, such as a system alert or Control Center, keeps them.
 
 v.3.14.0
 — Added APIs `disableNextForegroundForTimeInterval:`, `disableNextForeground` and `resumeSession` to disable and resume automatic tracking of `OPEN` events. These are experimental APIs. Please refer to warning message in API documentation/comments.
