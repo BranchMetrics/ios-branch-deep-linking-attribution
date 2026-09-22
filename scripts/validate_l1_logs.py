@@ -193,9 +193,18 @@ ATTRIBUTION_LEVEL_NONE = "NONE"
 #           An endpoint absent from counts is unconstrained.
 #   order   (earlier, later) pairs. Relative, not adjacency: a request
 #           between the two does not violate it.
+#   fields  endpoint -> field -> exact number of that endpoint's requests
+#           carrying the field. Same counting as `counts`, one level down;
+#           0 forbids. Presence only, never a value comparison — `is_present`
+#           is the whole test, so this stays the layer it claims to be.
+#           It exists because an endpoint count cannot see a request changing
+#           character: on 4.0 and 6.0 the install is a `/v3/events/open` like
+#           any other, and EMT-4027 shipped with nothing on the surface ever
+#           being an install. Counts were identical throughout.
 #
-# `cold_https` and `attribution_none` are test-plan scenarios. `install` and
-# `deeplink` are not in the plan: they are the runs the harness drives today.
+# `cold_https`, `cold_firstInstall` and `attribution_none` are test-plan
+# scenarios. `install` and `deeplink` are not in the plan: they are the runs
+# the harness drives today.
 SCENARIO_CONTRACTS = {
     # install: the harness uninstalls first (run_l1_instrumented.sh), so no
     # `randomizedBundleToken` persists and `Branch.m:2226` decides install
@@ -206,6 +215,7 @@ SCENARIO_CONTRACTS = {
     "install": {
         "counts": {"/v3/events/open": 1, "/v3/deeplink": 0},
         "order": (),
+        "fields": {},
     },
     # attribution_none: a link resolved while the consumer-protection level
     # is NONE. Resolution is exempt from the NONE gate and the attributed open
@@ -216,6 +226,7 @@ SCENARIO_CONTRACTS = {
     "attribution_none": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 0},
         "order": (),
+        "fields": {},
     },
     # cold_https: a Universal Link delivered into a freshly launched
     # process. Two opens is correct, not a duplicate: the launch fires one
@@ -226,10 +237,27 @@ SCENARIO_CONTRACTS = {
     "cold_https": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 2},
         "order": (("/v3/deeplink", "/v3/events/open"),),
+        # Both opens carry the token: the app was already installed, so the
+        # launch open has one and the attributed open has one. This is what
+        # separates cold_https from cold_firstInstall -- the counts and
+        # order are identical.
+        "fields": {"/v3/events/open": {"randomized_bundle_token": 2}},
+    },
+    # cold_firstInstall: the same launch on a device with no prior install.
+    # There is no install endpoint on this line -- install is decided client
+    # side by randomizedBundleToken == nil and posts to /v3/events/open like
+    # any other. So the install shows up as the one open of the two that
+    # carries no token, and that count is the only wire signal separating this
+    # scenario from cold_https.
+    "cold_firstInstall": {
+        "counts": {"/v3/deeplink": 1, "/v3/events/open": 2},
+        "order": (("/v3/deeplink", "/v3/events/open"),),
+        "fields": {"/v3/events/open": {"randomized_bundle_token": 1}},
     },
     "deeplink": {
         "counts": {"/v3/deeplink": 1},
         "order": (("/v3/deeplink", "/v3/events/open"),),
+        "fields": {},
     },
 }
 
@@ -318,6 +346,25 @@ def assert_contract(entries, contract):
     for earlier, later in contract["order"]:
         if not occurs_after(uris, earlier, later):
             errors.append(f"Expected a '{later}' request after a '{earlier}' one.")
+
+    for endpoint, fields in sorted(contract.get("fields", {}).items()):
+        matching = [e for e in entries if e["uri"] == endpoint]
+        for field, expected in sorted(fields.items()):
+            actual = sum(
+                1 for e in matching if is_present(lookup_field(e["request"], field))
+            )
+            if actual == expected:
+                continue
+            if expected == 0:
+                errors.append(
+                    f"No '{endpoint}' request may carry '{field}', "
+                    f"but {actual} of {len(matching)} did."
+                )
+            else:
+                errors.append(
+                    f"Expected {expected} of the '{endpoint}' request(s) to carry "
+                    f"'{field}', but {actual} of {len(matching)} did."
+                )
 
     return errors
 

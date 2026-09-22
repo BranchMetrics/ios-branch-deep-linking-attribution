@@ -7,8 +7,9 @@
 //
 //  The link is delivered by the AppDelegate's `-testDeepLinkURL` hook, which
 //  wraps it in an NSUserActivity and calls `application:continueUserActivity:`
-//  1.5s after launch. That is the same entry point Safari handoff uses and the
-//  SDK cannot distinguish the two.
+//  once BranchDidStartSessionNotification fires (a ten-second fallback if it
+//  never does). That is the same entry point Safari handoff uses and the SDK
+//  cannot distinguish the two.
 //
 //  WHAT THIS DOES NOT PROVE: that the OS delivers the link. Real Universal Link
 //  handoff needs a signed build carrying `com.apple.developer.associated-domains`,
@@ -30,8 +31,8 @@ final class ColdLinkWireValidationTest: XCTestCase {
     /// Resolved server-side, so a failure here is more likely the fixture than the SDK.
     private let fixtureLink = "https://bnctestbed.app.link/7HTLJ2jXi3b"
 
-    /// Covers the hook's 1.5s delay plus the resolve and attribution round trips.
-    private let settleSeconds: TimeInterval = 12.0
+    /// Covers the hook's ten-second fallback plus the resolve and open round trips.
+    private let settleSeconds: TimeInterval = 15.0
 
     override func setUpWithError() throws {
         continueAfterFailure = true

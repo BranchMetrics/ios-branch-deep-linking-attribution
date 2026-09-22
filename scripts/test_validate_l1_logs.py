@@ -81,11 +81,33 @@ class ScenarioContractModelTests(unittest.TestCase):
     """The contract carries every endpoint name, so the checks can stay
     platform- and API-version-agnostic. Not yet wired into validation."""
 
-    def test_every_contract_declares_counts_and_order(self):
+    def test_every_contract_declares_counts_order_and_fields(self):
         for name, contract in v.SCENARIO_CONTRACTS.items():
             self.assertEqual(
-                set(contract), {"counts", "order"}, f"contract '{name}'"
+                set(contract), {"counts", "order", "fields"}, f"contract '{name}'"
             )
+
+    def test_field_counts_are_non_negative_integers(self):
+        for name, contract in v.SCENARIO_CONTRACTS.items():
+            for endpoint, fields in contract["fields"].items():
+                for field, count in fields.items():
+                    self.assertIsInstance(count, int, f"{name}:{endpoint}:{field}")
+                    self.assertGreaterEqual(count, 0, f"{name}:{endpoint}:{field}")
+
+    def test_every_fields_endpoint_is_also_in_counts(self):
+        # A typo here would otherwise assert nothing: no request matches the
+        # misspelled endpoint, so the count is 0 and a `0` rule passes vacuously.
+        for name, contract in v.SCENARIO_CONTRACTS.items():
+            for endpoint in contract["fields"]:
+                self.assertIn(endpoint, contract["counts"], f"contract '{name}'")
+
+    def test_a_field_count_cannot_exceed_its_endpoint_count(self):
+        for name, contract in v.SCENARIO_CONTRACTS.items():
+            for endpoint, fields in contract["fields"].items():
+                for field, count in fields.items():
+                    self.assertLessEqual(
+                        count, contract["counts"][endpoint], f"{name}:{endpoint}:{field}"
+                    )
 
     def test_counts_are_non_negative_integers(self):
         for name, contract in v.SCENARIO_CONTRACTS.items():
@@ -178,6 +200,50 @@ class AssertionEngineTests(unittest.TestCase):
             v.contract_for("deeplink"),
         )
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
+
+
+class FieldPresenceEngineTests(unittest.TestCase):
+    """`fields` counts how many of an endpoint's requests carry a field.
+    Presence only — `is_present` is the whole test."""
+
+    def _entries(self, *payloads):
+        return [
+            {"uri": "/e", "url": "https://h/e", "request": p} for p in payloads
+        ]
+
+    def _contract(self, fields):
+        return {"counts": {}, "order": (), "fields": {"/e": fields}}
+
+    def test_exact_field_count_satisfied(self):
+        entries = self._entries({"tok": "a"}, {})
+        self.assertEqual(v.assert_contract(entries, self._contract({"tok": 1})), [])
+
+    def test_too_many_carriers_fails(self):
+        entries = self._entries({"tok": "a"}, {"tok": "b"})
+        errors = v.assert_contract(entries, self._contract({"tok": 1}))
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("2 of 2 did", errors[0])
+
+    def test_zero_forbids_the_field(self):
+        entries = self._entries({"tok": "a"}, {})
+        errors = v.assert_contract(entries, self._contract({"tok": 0}))
+        self.assertIn("may carry", errors[0])
+
+    def test_empty_string_does_not_count_as_carrying(self):
+        # is_present treats "" as absent; the field rule must agree, or a
+        # cleared identifier would read as present.
+        entries = self._entries({"tok": ""}, {})
+        self.assertEqual(v.assert_contract(entries, self._contract({"tok": 0})), [])
+
+    def test_the_v2_shape_is_resolved(self):
+        # lookup_field reaches under user_data, so a v2 payload is not a miss.
+        entries = self._entries({"user_data": {"tok": "a"}})
+        self.assertEqual(v.assert_contract(entries, self._contract({"tok": 1})), [])
+
+    def test_other_endpoints_are_not_counted(self):
+        entries = self._entries({"tok": "a"})
+        entries.append({"uri": "/other", "url": "https://h/other", "request": {"tok": "b"}})
+        self.assertEqual(v.assert_contract(entries, self._contract({"tok": 1})), [])
 
 
 class EnginePortabilityTests(unittest.TestCase):
@@ -300,9 +366,9 @@ class AttributionNoneContractTests(unittest.TestCase):
 
 
 class ColdHttpsContractTests(unittest.TestCase):
-    """cold_https: a Universal Link delivered into a freshly launched
-    process. Fixtures derived from a real capture measured 2026-08-28 on an
-    iPhone 16e, with the device and account identifiers replaced."""
+    """cold_https: a Universal Link into a freshly launched process on a
+    device that already has the app. Fixture is a real capture measured
+    2026-08-28 on an iPhone 16e, identifiers replaced."""
 
     def test_the_cold_link_capture_passes(self):
         errors, _ = _run_validation("cold_https.txt", v.contract_for("cold_https"))
@@ -334,11 +400,63 @@ class ColdHttpsContractTests(unittest.TestCase):
         self.assertNotIn("link_data", opens[0]["request"])
         self.assertIn("link_data", opens[1]["request"])
 
+    def test_both_opens_carry_the_token_when_the_app_was_already_installed(self):
+        # The half that separates cold_https from cold_firstInstall. Without
+        # it the two contracts are the same object in different names.
+        fields = v.contract_for("cold_https")["fields"]
+        self.assertEqual(fields["/v3/events/open"]["randomized_bundle_token"], 2)
+
     def test_cold_https_does_not_assert_that_the_resolution_carries_the_link(self):
-        # Recorded, not hidden: field-level, same boundary as attribution_none.
-        self.assertEqual(
-            set(v.contract_for("cold_https")["counts"]),
-            {"/v3/deeplink", "/v3/events/open"},
+        # Recorded, not hidden: asserting the link URL would be a value
+        # comparison, and this layer stops at presence.
+        self.assertNotIn("/v3/deeplink", v.contract_for("cold_https")["fields"])
+
+
+class ColdFirstInstallContractTests(unittest.TestCase):
+    """cold_firstInstall: the same launch with no prior install. There is no
+    install endpoint on this line -- install posts to /v3/events/open like any
+    other request -- so the install is the one open of the two carrying no
+    randomized_bundle_token."""
+
+    def test_the_first_install_capture_passes(self):
+        errors, _ = _run_validation(
+            "cold_firstInstall.txt", v.contract_for("cold_firstInstall")
+        )
+        self.assertEqual(errors, [], f"Unexpected errors: {errors}")
+
+    def test_an_install_open_carrying_a_token_fails(self):
+        # The EMT-4027 shape: nothing on the surface is ever an install, so the
+        # first open looks like any other. Counts and order stay identical --
+        # this field rule is the only thing that sees it.
+        errors, _ = _run_validation(
+            "cold_firstInstall_install_open_carries_token.txt",
+            v.contract_for("cold_firstInstall"),
+        )
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("randomized_bundle_token", errors[0])
+        self.assertIn("2 of 2 did", errors[0])
+
+    def test_counts_and_order_alone_cannot_tell_the_two_cold_scenarios_apart(self):
+        # Why the fields key exists. Strip it and the two contracts are equal,
+        # so either fixture would satisfy either scenario.
+        https = v.contract_for("cold_https")
+        first = v.contract_for("cold_firstInstall")
+        self.assertEqual(https["counts"], first["counts"])
+        self.assertEqual(https["order"], first["order"])
+        self.assertNotEqual(https["fields"], first["fields"])
+
+    def test_the_two_scenarios_reject_each_other_fixtures(self):
+        https_as_first, _ = _run_validation(
+            "cold_https.txt", v.contract_for("cold_firstInstall")
+        )
+        first_as_https, _ = _run_validation(
+            "cold_firstInstall.txt", v.contract_for("cold_https")
+        )
+        self.assertTrue(
+            https_as_first, "cold_firstInstall accepted an already-installed capture"
+        )
+        self.assertTrue(
+            first_as_https, "cold_https accepted a first-install capture"
         )
 
 
