@@ -207,15 +207,29 @@ ATTRIBUTION_LEVEL_NONE = "NONE"
 # test-plan scenarios. `install` and `deeplink` are not in the plan: they are
 # the runs the harness drives today.
 SCENARIO_CONTRACTS = {
-    # install: the harness uninstalls first (run_l1_instrumented.sh), so no
-    # `randomizedBundleToken` persists and `Branch.m:2226` decides install
-    # rather than open. The test plan also asks that the open carry no link
-    # data; that is a field-level assertion, and this layer is bounded at
-    # counts and required-field presence, so only the endpoint half is
-    # covered here.
+    # install: the run the harness actually drives. run_l1_instrumented.sh
+    # uninstalls the bundle before every run, so every capture is a first
+    # install, never an organic open. MEASURED on this branch, with the
+    # AppDelegate launch resolve added for EMT-4313: one resolve, then one
+    # open.
+    #
+    # These are WHOLE-RUN counts. The order is measured, not guaranteed: the
+    # queue creates no explicit dependency between the two requests, and
+    # applicationDidBecomeActive skips its open entirely when the queue still
+    # holds the resolve, since containsInstallOrOpen counts
+    # BranchRequestDeepLink. A capture without the open would therefore be a
+    # count failure, not an ordering one.
+    #
+    # organic_open is deliberately NOT contracted here. It is a launch with
+    # no link on a device that already has the app, which this harness cannot
+    # produce, and the two design sources disagree on what it should emit:
+    # the design page says no resolve and one open, while the September
+    # integration document, which describes the code rather than deciding it,
+    # says one resolve and no open. Authoring it before that is settled would
+    # freeze whichever one the harness happens to produce.
     "install": {
-        "counts": {"/v3/events/open": 1, "/v3/deeplink": 0},
-        "order": (),
+        "counts": {"/v3/deeplink": 1, "/v3/events/open": 1},
+        "order": (("/v3/deeplink", "/v3/events/open"),),
         "fields": {},
     },
     # attribution_none: a link resolved while the consumer-protection level
@@ -230,13 +244,19 @@ SCENARIO_CONTRACTS = {
         "fields": {},
     },
     # cold_https: a Universal Link delivered into a freshly launched
-    # process. Two opens is correct, not a duplicate: the launch fires one
-    # carrying no link field, then the resolution's attributed open carries
-    # `link_data`. Requiring one would fail a healthy SDK. The plan also asks
-    # that the resolution carry the link; that is a field-level assertion this
-    # layer does not make, as with attribution_none.
+    # process on a device that already has the app. RE-MEASURED on this
+    # branch 2026-09-22, after the AppDelegate launch resolve added for
+    # EMT-4313: the launch-time requestDeepLinkDataWithLaunchOptions: call
+    # resolves and opens once on its own (no link, since launchOptions
+    # carries none), then the Universal Link's own resolution and its
+    # attributed open follow. Four requests total: deeplink, open, deeplink,
+    # open. The previous contract, one resolve and two opens, was measured
+    # before that call existed. Two opens is still correct on its own terms,
+    # not a duplicate: only the second carries `link_data`. The plan also
+    # asks that the resolution carry the link; that is a field-level
+    # assertion this layer does not make, as with attribution_none.
     "cold_https": {
-        "counts": {"/v3/deeplink": 1, "/v3/events/open": 2},
+        "counts": {"/v3/deeplink": 2, "/v3/events/open": 2},
         "order": (("/v3/deeplink", "/v3/events/open"),),
         # Both opens carry the token: the app was already installed, so the
         # launch open has one and the attributed open has one. This is what
@@ -245,13 +265,15 @@ SCENARIO_CONTRACTS = {
         "fields": {"/v3/events/open": {"randomized_bundle_token": 2}},
     },
     # cold_firstInstall: the same launch on a device with no prior install.
-    # There is no install endpoint on this line -- install is decided client
-    # side by randomizedBundleToken == nil and posts to /v3/events/open like
-    # any other. So the install shows up as the one open of the two that
-    # carries no token, and that count is the only wire signal separating this
-    # scenario from cold_https.
+    # RE-MEASURED on this branch 2026-09-22 for the same reason as
+    # cold_https: the launch resolve adds a second deeplink/open pair, ahead
+    # of the link-driven one. There is no install endpoint on this line --
+    # install is decided client side by randomizedBundleToken == nil and
+    # posts to /v3/events/open like any other. So the install shows up as
+    # the one open of the two that carries no token, and that count is the
+    # only wire signal separating this scenario from cold_https.
     "cold_firstInstall": {
-        "counts": {"/v3/deeplink": 1, "/v3/events/open": 2},
+        "counts": {"/v3/deeplink": 2, "/v3/events/open": 2},
         "order": (("/v3/deeplink", "/v3/events/open"),),
         "fields": {"/v3/events/open": {"randomized_bundle_token": 1}},
     },
@@ -262,8 +284,14 @@ SCENARIO_CONTRACTS = {
         "order": (("/v3/deeplink", "/v3/events/open"),),
         "fields": {},
     },
+    # deeplink: driven by TestBed-GPTDriverTests/DeepLinkWireValidationTest,
+    # which taps "Request DeepLink" after launch. MEASURED on this branch
+    # 2026-09-21, after the AppDelegate launch resolve added for EMT-4313:
+    # the launch-time requestDeepLinkDataWithLaunchOptions: call resolves and
+    # opens once on its own, before the button tap resolves and opens again.
+    # Four requests total: deeplink, open, deeplink, open.
     "deeplink": {
-        "counts": {"/v3/deeplink": 1},
+        "counts": {"/v3/deeplink": 2, "/v3/events/open": 2},
         "order": (("/v3/deeplink", "/v3/events/open"),),
         "fields": {},
     },

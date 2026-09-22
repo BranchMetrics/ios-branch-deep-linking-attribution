@@ -194,9 +194,10 @@ class AssertionEngineTests(unittest.TestCase):
         self.assertEqual(len(v.assert_contract(_capture("/alpha", "/beta"), contract)), 3)
 
     def test_the_seeded_deeplink_contract_accepts_the_real_capture_shape(self):
-        # Measured on device: open, deeplink, open.
+        # Measured on device 2026-09-21, with the AppDelegate launch resolve:
+        # deeplink, open, deeplink, open.
         errors = v.assert_contract(
-            _capture("/v3/events/open", "/v3/deeplink", "/v3/events/open"),
+            _capture("/v3/deeplink", "/v3/events/open", "/v3/deeplink", "/v3/events/open"),
             v.contract_for("deeplink"),
         )
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
@@ -264,9 +265,13 @@ class RetryCollapseTests(unittest.TestCase):
     Counting attempts would fail an exact-count contract on a flaky network."""
 
     def test_retried_request_counts_once(self):
+        # The fixture carries the launch deeplink plus three attempts of one
+        # open; collapse must leave the deeplink and exactly one open.
         entries = v.parse_branch_logs(_fixture("retried_open.txt"))
-        self.assertEqual(len(entries), 1)
-        self.assertEqual(entries[0]["request"][v.RETRY_COUNT_FIELD], 0)
+        self.assertEqual(len(entries), 2)
+        opens = [e for e in entries if e["uri"] == "/v3/events/open"]
+        self.assertEqual(len(opens), 1)
+        self.assertEqual(opens[0]["request"][v.RETRY_COUNT_FIELD], 0)
 
     def test_retried_capture_satisfies_an_exact_count_contract(self):
         entries = v.parse_branch_logs(_fixture("retried_open.txt"))
@@ -291,12 +296,13 @@ class RetryCollapseTests(unittest.TestCase):
 
 
 class InstallContractTests(unittest.TestCase):
-    """install, the worked example: one open, no deep link. Each test
-    below proves an assertion type FAILS on a violating capture — a contract
-    only demonstrated passing is a contract that cannot fail."""
+    """install: the run the harness actually drives, one resolve then one
+    open. Each test below proves an assertion type FAILS on a violating
+    capture, since a contract only demonstrated passing is a contract that
+    cannot fail."""
 
     def test_a_clean_install_capture_passes(self):
-        errors, _ = _run_validation("happy_path.txt", v.contract_for("install"))
+        errors, _ = _run_validation("install.txt", v.contract_for("install"))
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 
     def test_wrong_count_fails(self):
@@ -306,12 +312,6 @@ class InstallContractTests(unittest.TestCase):
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("Expected 1", errors[0])
         self.assertIn("captured 2", errors[0])
-
-    def test_forbidden_endpoint_present_fails(self):
-        errors, _ = _run_validation("deeplink.txt", v.contract_for("install"))
-        self.assertEqual(len(errors), 1, errors)
-        self.assertIn("must not be captured", errors[0])
-        self.assertIn("/v3/deeplink", errors[0])
 
     def test_wrong_order_fails(self):
         # deeplink.txt is open then deeplink, with no open after it, so the
@@ -324,7 +324,7 @@ class InstallContractTests(unittest.TestCase):
     def test_install_does_not_assert_the_absence_of_link_data_in_the_open(self):
         # Recorded, not hidden: the plan also wants the open to carry no link
         # data. That is a field-level assertion this layer does not make.
-        self.assertEqual(v.contract_for("install")["counts"].get("/v3/deeplink"), 0)
+        self.assertEqual(set(v.contract_for("install")), {"counts", "order", "fields"})
 
 
 class AttributionNoneContractTests(unittest.TestCase):
@@ -337,38 +337,37 @@ class AttributionNoneContractTests(unittest.TestCase):
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 
     def test_an_open_at_none_level_fails(self):
-        # The regression attribution_none exists to catch: an open must not
-        # be sent at NONE.
-        errors, _ = _run_validation(
-            "attribution_none_deeplink.txt", v.contract_for("attribution_none")
-        )
+        # The regression this scenario exists to catch: an open must not be
+        # sent at NONE.
+        contract = v.contract_for("attribution_none")
+        errors, _ = _run_validation("attribution_none_deeplink.txt", contract)
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("must not be captured", errors[0])
         self.assertIn("/v3/events/open", errors[0])
 
     def test_the_old_global_rule_would_have_failed_this_correct_capture(self):
         # The retired MANDATORY_ENDPOINT required an open in every capture.
-        # install still does, and attribution_none's capture is correct without
-        # one, which is why a single global rule could not serve both.
+        # install still does, and this capture is correct without one, which is
+        # why a single global rule could not serve both scenarios.
         errors, _ = _run_validation("attribution_none.txt", v.contract_for("install"))
         self.assertTrue(
             any("/v3/events/open" in e for e in errors),
             f"Expected the open requirement to fire: {errors}",
         )
 
-    def test_attribution_none_does_not_assert_that_identifiers_were_cleared(self):
+    def test_the_contract_does_not_assert_that_identifiers_were_cleared(self):
         # Recorded, not hidden: that is a field-level assertion, and this layer
         # is bounded at counts and required-field presence.
-        self.assertEqual(
-            set(v.contract_for("attribution_none")["counts"]),
-            {"/v3/deeplink", "/v3/events/open"},
-        )
+        counts = v.contract_for("attribution_none")["counts"]
+        self.assertEqual(set(counts), {"/v3/deeplink", "/v3/events/open"})
 
 
 class ColdHttpsContractTests(unittest.TestCase):
     """cold_https: a Universal Link into a freshly launched process on a
     device that already has the app. Fixture is a real capture measured
-    2026-08-28 on an iPhone 16e, identifiers replaced."""
+    2026-08-28 on an iPhone 16e, identifiers replaced, with the launch-resolve
+    deeplink/open pair this line now emits (EMT-4313) prepended from a
+    2026-09-22 re-measurement on the same simulator."""
 
     def test_the_cold_link_capture_passes(self):
         errors, _ = _run_validation("cold_https.txt", v.contract_for("cold_https"))
@@ -618,17 +617,18 @@ class ScenarioEnforcementTests(unittest.TestCase):
         )
 
     def test_deeplink_scenario_passes_on_the_measured_capture_shape(self):
-        # open, deeplink, open — measured on device. The launch open precedes
-        # the resolution, so an order rule of "first after first" would fail
-        # this correct capture.
+        # deeplink, open, deeplink, open — measured on device 2026-09-21 with
+        # the AppDelegate launch resolve. The launch resolve and its open
+        # precede the button-tap resolve, so an order rule of "first after
+        # first" would fail this correct capture.
         errors, _ = _run_validation("deeplink_scenario.txt", v.contract_for("deeplink"))
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 
-    def test_the_same_capture_passes_install_and_fails_deeplink(self):
+    def test_the_same_capture_passes_install_and_fails_attribution_none(self):
         # The point of per-scenario contracts: one global rule cannot express
         # this, and before this change the install capture could not fail.
-        passing, _ = _run_validation("happy_path.txt", v.contract_for("install"))
-        failing, _ = _run_validation("happy_path.txt", v.contract_for("deeplink"))
+        passing, _ = _run_validation("install.txt", v.contract_for("install"))
+        failing, _ = _run_validation("install.txt", v.contract_for("attribution_none"))
         self.assertEqual(passing, [])
         self.assertTrue(failing)
 

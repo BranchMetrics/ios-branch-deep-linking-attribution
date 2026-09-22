@@ -150,6 +150,10 @@ jobs:
       # continue-on-error so the summary below still runs on a failure — the
       # job is failed explicitly at the end. Each capture is judged against the
       # contract for the run that produced it.
+      #
+      # The install scenario is authored on this line: run_l1_instrumented.sh
+      # uninstalls the bundle before every run, so the install capture always
+      # exercises a first install, one resolve from the launch then one open.
       - name: Validate wire logs
         id: validate
         continue-on-error: true
@@ -189,6 +193,8 @@ jobs:
             fi
             echo
             echo "Scenario coverage:"
+            echo
+            echo "The install scenario is authored along with the endpoint table assertion."
             echo
             echo "| scenario group | status |"
             echo "| --- | --- |"
