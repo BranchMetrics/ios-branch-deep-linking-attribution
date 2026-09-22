@@ -120,11 +120,39 @@ jobs:
           H2_EXPECT_RUNTIME: iOS-18-5
           H2_URL: branchtest://open?scenario=H2
         run: |
+          # A marker left by an earlier run would carve out this one too, and
+          # it would read as "not run" while asserting nothing.
+          rm -f /tmp/h2-runtime-missing
           rc=0
           ./scripts/run_h2_hot.sh > /tmp/h2-driver.txt 2>&1 || rc=$?
           grep -E '^(RUNTIME=|consent key: |settled after |openurl attempt |pid unchanged$|ERROR: )' /tmp/h2-driver.txt || true
           if grep -q '^ERROR: no available .* on runtime ' /tmp/h2-driver.txt; then
             touch /tmp/h2-runtime-missing
+          fi
+          [ "$rc" -eq 0 ] || { echo "ERROR: driver exited $rc"; exit "$rc"; }
+
+      # The same driver in warm mode: the app is backgrounded with Preferences
+      # before the pre snapshot, so the delivery reaches a live, background process.
+      - name: Capture warm_uriScheme
+        id: w2capture
+        continue-on-error: true
+        env:
+          DERIVED_DATA_DIR: ./DerivedData
+          SIM_NAME: ${{ steps.sim.outputs.name }}
+          BUNDLE_ID: io.branch.sdk.Branch-TestBed
+          OUTPUT_DIR: /tmp/w2
+          H2_EXPECT_RUNTIME: iOS-18-5
+          H2_URL: branchtest://open?scenario=W2
+          WARM: "1"
+          CAPTURE_NAME: wire-warm_uriScheme
+        run: |
+          # Same reason as the hot step: a stale marker disarms this gate.
+          rm -f /tmp/w2-runtime-missing
+          rc=0
+          ./scripts/run_h2_hot.sh > /tmp/w2-driver.txt 2>&1 || rc=$?
+          grep -E '^(RUNTIME=|consent key: |settled after |openurl attempt |backgrounded, pid unchanged$|pid unchanged$|ERROR: )' /tmp/w2-driver.txt || true
+          if grep -q '^ERROR: no available .* on runtime ' /tmp/w2-driver.txt; then
+            touch /tmp/w2-runtime-missing
           fi
           [ "$rc" -eq 0 ] || { echo "ERROR: driver exited $rc"; exit "$rc"; }
 
@@ -162,6 +190,12 @@ jobs:
           H2_URL: branchtest://open?scenario=H2
         run: |
           tag="[hot_uriScheme]"
+          # An image without the pinned runtime is not an SDK failure. The
+          # capture step leaves this marker for that one driver error only.
+          if [ -f /tmp/h2-runtime-missing ]; then
+            echo "$tag not run: no simulator on the expected runtime" | tee /tmp/h2-output.txt
+            exit 0
+          fi
           if [ "${{ steps.h2capture.outcome }}" != "success" ]; then
             echo "FAILED: $tag driver failed; see the capture step log" | tee /tmp/h2-output.txt
             exit 1
@@ -179,6 +213,41 @@ jobs:
           } | sed "s/^FAILED: /FAILED: $tag /" | tee /tmp/h2-output.txt
           if [ "$rc" -ne 0 ] && ! grep -q '^FAILED:' /tmp/h2-output.txt; then
             echo "FAILED: $tag a checker exited without a verdict" | tee -a /tmp/h2-output.txt
+          fi
+          exit "$rc"
+
+      # The warm contract bounds the open count and the checker reads the last
+      # transition marker in pre, which is what tells a warm delivery from a hot one.
+      - name: Validate warm_uriScheme
+        id: w2
+        continue-on-error: true
+        env:
+          OUTPUT_DIR: /tmp/w2
+          H2_URL: branchtest://open?scenario=W2
+        run: |
+          tag="[warm_uriScheme]"
+          # Same carve-out as the hot step: the marker means the image, not the SDK.
+          if [ -f /tmp/w2-runtime-missing ]; then
+            echo "$tag not run: no simulator on the expected runtime" | tee /tmp/w2-output.txt
+            exit 0
+          fi
+          if [ "${{ steps.w2capture.outcome }}" != "success" ]; then
+            echo "FAILED: $tag driver failed; see the capture step log" | tee /tmp/w2-output.txt
+            exit 1
+          fi
+          post="$OUTPUT_DIR/wire-warm_uriScheme.post.txt"
+          pre="$OUTPUT_DIR/wire-warm_uriScheme.pre.txt"
+          rc=0
+          python3 scripts/validate_l1_logs.py "$post" --scenario warm_uriScheme \
+            --pre "$pre" --url "$H2_URL" > /tmp/w2-validate.txt 2>&1 || rc=1
+          python3 scripts/check_foreground_markers.py "$post" --pre "$pre" \
+            --scenario warm_uriScheme > /tmp/w2-markers.txt 2>&1 || rc=1
+          {
+            grep -E '^(FAILED:|--- VALIDATION)' /tmp/w2-validate.txt || true
+            grep -E '^(FAILED:|pre: |delta: |pre last transition: )' /tmp/w2-markers.txt || true
+          } | sed "s/^FAILED: /FAILED: $tag /" | tee /tmp/w2-output.txt
+          if [ "$rc" -ne 0 ] && ! grep -q '^FAILED:' /tmp/w2-output.txt; then
+            echo "FAILED: $tag a checker exited without a verdict" | tee -a /tmp/w2-output.txt
           fi
           exit "$rc"
 
@@ -203,19 +272,29 @@ jobs:
             echo "Scenario coverage:"
             echo
             echo "The endpoint table counts the install capture."
-            echo "install and hot_uriScheme are the contracts this gate asserts."
+            echo "install, hot_uriScheme and warm_uriScheme are the contracts this gate asserts."
             echo
             echo "| scenario group | status |"
             echo "| --- | --- |"
             echo "| Cold | not implemented |"
-            echo "| Warm | not implemented |"
-            hot_defer="hot_https_foreground deferred until CI builds are signed"
             no_runtime="the runner has no simulator on the expected runtime"
+            hot_defer="hot_https_foreground deferred until CI builds are signed"
             hot_retake="measure hot_uriScheme on the new runtime, then update H2_EXPECT_RUNTIME"
-            if [ "${{ steps.h2.outcome }}" = "success" ]; then
-              echo "| Hot | hot_uriScheme pass; $hot_defer |"
-            elif [ -f /tmp/h2-runtime-missing ]; then
+            warm_defer="warm_https_onNewIntent not implemented"
+            warm_retake="measure warm_uriScheme on the new runtime, then update H2_EXPECT_RUNTIME"
+            if [ -f /tmp/w2-runtime-missing ]; then
+              echo "| Warm | warm_uriScheme not run: $no_runtime ($warm_retake); $warm_defer |"
+            elif [ "${{ steps.w2.outcome }}" = "success" ]; then
+              echo "| Warm | warm_uriScheme pass (at most 2 opens until the SDK fix); $warm_defer |"
+            elif [ "${{ steps.w2.outcome }}" = "failure" ]; then
+              echo "| Warm | warm_uriScheme fail, see failures below; $warm_defer |"
+            else
+              echo "| Warm | warm_uriScheme not run; $warm_defer |"
+            fi
+            if [ -f /tmp/h2-runtime-missing ]; then
               echo "| Hot | hot_uriScheme not run: $no_runtime ($hot_retake); $hot_defer |"
+            elif [ "${{ steps.h2.outcome }}" = "success" ]; then
+              echo "| Hot | hot_uriScheme pass; $hot_defer |"
             elif [ "${{ steps.h2.outcome }}" = "failure" ]; then
               echo "| Hot | hot_uriScheme fail, see failures below; $hot_defer |"
             else
@@ -223,13 +302,16 @@ jobs:
             fi
             echo "| Negative and guards | not implemented |"
             echo
-            if [ "${{ steps.validate.outcome }}" = "success" ] && [ "${{ steps.h2.outcome }}" = "success" ]; then
-              echo "Result: **PASS**"
+            if [ "${{ steps.validate.outcome }}" = "success" ] && [ "${{ steps.h2.outcome }}" = "success" ] && [ "${{ steps.w2.outcome }}" = "success" ]; then
+              skipped=""
+              if [ -f /tmp/h2-runtime-missing ]; then skipped="hot_uriScheme"; fi
+              if [ -f /tmp/w2-runtime-missing ]; then skipped="${skipped:+$skipped and }warm_uriScheme"; fi
+              echo "Result: **PASS**${skipped:+ ($skipped not run)}"
             else
               echo "Result: **FAIL**"
               echo
               echo '```'
-              cat /tmp/l1-output.txt /tmp/h2-output.txt 2>/dev/null | grep '^FAILED:' || echo "(no FAILED lines; see the job log)"
+              cat /tmp/l1-output.txt /tmp/h2-output.txt /tmp/w2-output.txt 2>/dev/null | grep '^FAILED:' || echo "(no FAILED lines; see the job log)"
               echo '```'
               # Only the install capture is rendered; hot_uriScheme captures stay off the page.
               if [ "${{ steps.validate.outcome }}" != "success" ]; then
@@ -249,6 +331,9 @@ jobs:
         if: steps.validate.outcome == 'failure'
         run: exit 1
 
+      # Fires only for the blocking steps above; hot_uriScheme and warm_uriScheme
+      # run continue-on-error, so neither publishes a capture on its own. Do not
+      # widen this condition to cover those steps.
       - name: Upload wire logs on failure
         if: failure() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
         uses: actions/upload-artifact@v4
@@ -257,9 +342,14 @@ jobs:
           path: branchlogs.txt
           retention-days: 7
 
-      # After the upload, so a hot_uriScheme-only failure uploads nothing.
+      # After the upload, so a hot_uriScheme-only or warm_uriScheme-only failure
+      # uploads nothing.
       - name: Fail the job if hot_uriScheme failed
         if: steps.h2.outcome == 'failure'
+        run: exit 1
+
+      - name: Fail the job if warm_uriScheme failed
+        if: steps.w2.outcome == 'failure'
         run: exit 1
 
       - name: Teardown simulator
