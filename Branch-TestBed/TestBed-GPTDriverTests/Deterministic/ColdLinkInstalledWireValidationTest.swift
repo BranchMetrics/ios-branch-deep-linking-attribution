@@ -17,6 +17,12 @@
 //  removes the reinstall, the container migration and xcodebuild's teardown
 //  from between the two launches, and puts the wait under this test's control.
 //
+//  The pre-terminate settle must outlast the install's full round trip plus
+//  `BNCPreferenceHelper`'s async disk write, since the second launch is a new
+//  process: only what reached disk survives `terminate()`. 20s matches the
+//  ceiling `L1WireValidationTest` already proves safe for the same
+//  single-request install round trip on this runner.
+//
 //  The capture is the second launch: -[AppDelegate setBranchLogFile] deletes
 //  branchlogs.txt on every launch, so the first one leaves nothing behind.
 //
@@ -46,7 +52,7 @@ final class ColdLinkInstalledWireValidationTest: XCTestCase {
             app.wait(for: .runningForeground, timeout: 30),
             "TestBed app failed to reach runningForeground on the install launch"
         )
-        settle(seconds: 10)
+        settle(seconds: 20)
         app.terminate()
 
         // Second launch: the same app, now installed, entered by a link.
