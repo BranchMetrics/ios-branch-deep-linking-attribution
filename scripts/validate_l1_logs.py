@@ -193,14 +193,24 @@ ATTRIBUTION_LEVEL_NONE = "NONE"
 #           An endpoint absent from counts is unconstrained.
 #   order   (earlier, later) pairs. Relative, not adjacency: a request
 #           between the two does not violate it.
+#   fields  endpoint -> field -> exact number of that endpoint's requests
+#           carrying the field. Same counting as `counts`, one level down;
+#           0 forbids. Presence only, never a value comparison — `is_present`
+#           is the whole test, so this stays the layer it claims to be.
+#           It exists because an endpoint count cannot see a request changing
+#           character: on 4.0 and 6.0 the install is a `/v3/events/open` like
+#           any other, and EMT-4027 shipped with nothing on the surface ever
+#           being an install. Counts were identical throughout.
 #
-# `install` and `deeplink` are not test-plan scenarios — they are the runs
-# the harness drives today. Plan scenarios carry the test plan's own name.
+# `cold_https`, `cold_firstInstall` and `attribution_none` are test-plan
+# scenarios. `install` and `deeplink` are not in the plan: they are the runs
+# the harness drives today.
 SCENARIO_CONTRACTS = {
     # install: the run the harness actually drives. run_l1_instrumented.sh
     # uninstalls the bundle before every run, so every capture is a first
-    # install, never an organic open. MEASURED on this branch: one resolve,
-    # then one open.
+    # install, never an organic open. MEASURED on this branch, with the
+    # AppDelegate launch resolve added for EMT-4313: one resolve, then one
+    # open.
     #
     # These are WHOLE-RUN counts. The order is measured, not guaranteed: the
     # queue creates no explicit dependency between the two requests, and
@@ -219,15 +229,44 @@ SCENARIO_CONTRACTS = {
     "install": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 1},
         "order": (("/v3/deeplink", "/v3/events/open"),),
+        "fields": {},
     },
     # attribution_none: a link resolved while the consumer-protection level
-    # is NONE. BNCServerRequestOperation drops every request at that level
-    # except BranchRequestDeepLink, so the resolution goes out and the
-    # attributed open does not. The test plan also asks that identifiers be
-    # cleared, which is a field-level assertion this layer does not make.
+    # is NONE. Resolution is exempt from the NONE gate and the attributed open
+    # is not, so the resolution goes out and the open does not. Only those two
+    # endpoints are counted, so other traffic such as link creation is outside
+    # this contract. The test plan also asks that identifiers be cleared, which
+    # is a field-level assertion this layer does not make.
     "attribution_none": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 0},
         "order": (),
+        "fields": {},
+    },
+    # cold_https: a Universal Link delivered into a freshly launched
+    # process. Two opens is correct, not a duplicate: the launch fires one
+    # carrying no link field, then the resolution's attributed open carries
+    # `link_data`. Requiring one would fail a healthy SDK. The plan also asks
+    # that the resolution carry the link; that is a field-level assertion this
+    # layer does not make, as with attribution_none.
+    "cold_https": {
+        "counts": {"/v3/deeplink": 1, "/v3/events/open": 2},
+        "order": (("/v3/deeplink", "/v3/events/open"),),
+        # Both opens carry the token: the app was already installed, so the
+        # launch open has one and the attributed open has one. This is what
+        # separates cold_https from cold_firstInstall -- the counts and
+        # order are identical.
+        "fields": {"/v3/events/open": {"randomized_bundle_token": 2}},
+    },
+    # cold_firstInstall: the same launch on a device with no prior install.
+    # There is no install endpoint on this line -- install is decided client
+    # side by randomizedBundleToken == nil and posts to /v3/events/open like
+    # any other. So the install shows up as the one open of the two that
+    # carries no token, and that count is the only wire signal separating this
+    # scenario from cold_https.
+    "cold_firstInstall": {
+        "counts": {"/v3/deeplink": 1, "/v3/events/open": 2},
+        "order": (("/v3/deeplink", "/v3/events/open"),),
+        "fields": {"/v3/events/open": {"randomized_bundle_token": 1}},
     },
     # deeplink: driven by TestBed-GPTDriverTests/DeepLinkWireValidationTest,
     # which taps "Request DeepLink" after launch. MEASURED on this branch
@@ -238,6 +277,7 @@ SCENARIO_CONTRACTS = {
     "deeplink": {
         "counts": {"/v3/deeplink": 2, "/v3/events/open": 2},
         "order": (("/v3/deeplink", "/v3/events/open"),),
+        "fields": {},
     },
 }
 
@@ -326,6 +366,25 @@ def assert_contract(entries, contract):
     for earlier, later in contract["order"]:
         if not occurs_after(uris, earlier, later):
             errors.append(f"Expected a '{later}' request after a '{earlier}' one.")
+
+    for endpoint, fields in sorted(contract.get("fields", {}).items()):
+        matching = [e for e in entries if e["uri"] == endpoint]
+        for field, expected in sorted(fields.items()):
+            actual = sum(
+                1 for e in matching if is_present(lookup_field(e["request"], field))
+            )
+            if actual == expected:
+                continue
+            if expected == 0:
+                errors.append(
+                    f"No '{endpoint}' request may carry '{field}', "
+                    f"but {actual} of {len(matching)} did."
+                )
+            else:
+                errors.append(
+                    f"Expected {expected} of the '{endpoint}' request(s) to carry "
+                    f"'{field}', but {actual} of {len(matching)} did."
+                )
 
     return errors
 
