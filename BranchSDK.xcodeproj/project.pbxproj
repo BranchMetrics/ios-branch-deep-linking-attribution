@@ -526,6 +526,9 @@
 		E71E39722DD3A92900110F59 /* BNCInAppBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = E71E396D2DD3A92900110F59 /* BNCInAppBrowser.h */; };
 		E71E39732DD3A92900110F59 /* BNCInAppBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = E71E396E2DD3A92900110F59 /* BNCInAppBrowser.m */; };
 		E71E39742DD3A92900110F59 /* BNCInAppBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = E71E396D2DD3A92900110F59 /* BNCInAppBrowser.h */; };
+		E72B6F012FD1F1500085F54E /* BranchSecureSDKProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = E72B6F002FD1F1500085F54E /* BranchSecureSDKProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E72B6F022FD1F1500085F54E /* BranchSecureSDKProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = E72B6F002FD1F1500085F54E /* BranchSecureSDKProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E72B6F032FD1F1500085F54E /* BranchSecureSDKProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = E72B6F002FD1F1500085F54E /* BranchSecureSDKProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E74E43862E2F55E5000DC427 /* BNCServerRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = E74E43852E2F55E5000DC427 /* BNCServerRequestOperation.h */; };
 		E74E43872E2F55E5000DC427 /* BNCServerRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = E74E43852E2F55E5000DC427 /* BNCServerRequestOperation.h */; };
 		E74E43882E2F55E5000DC427 /* BNCServerRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = E74E43852E2F55E5000DC427 /* BNCServerRequestOperation.h */; };
@@ -756,6 +759,7 @@
 		E52E5B092CC79E5C00F553EE /* BranchFileLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchFileLogger.m; sourceTree = "<group>"; };
 		E71E396D2DD3A92900110F59 /* BNCInAppBrowser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCInAppBrowser.h; sourceTree = "<group>"; };
 		E71E396E2DD3A92900110F59 /* BNCInAppBrowser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCInAppBrowser.m; sourceTree = "<group>"; };
+		E72B6F002FD1F1500085F54E /* BranchSecureSDKProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchSecureSDKProvider.h; sourceTree = "<group>"; };
 		E74E43852E2F55E5000DC427 /* BNCServerRequestOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCServerRequestOperation.h; sourceTree = "<group>"; };
 		E74E438D2E2F56AC000DC427 /* BNCServerRequestOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCServerRequestOperation.m; sourceTree = "<group>"; };
 		E7CA74EB2E1B4F75002EFB40 /* BranchSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BranchSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -866,7 +870,7 @@
 			children = (
 				5FCDD36B2B7AC6A100EAF29F /* BranchSDK */,
 				5FF2AFDD28E7C1F200393216 /* Framework */,
-				5FF2AFDB28E7BF5500393216 /* Scripts */,
+				5FF2AFDB28E7BF5500393216 /* scripts */,
 				E7CA74EC2E1B4F75002EFB40 /* BranchSDKTests */,
 				E7CA75602E1B59F5002EFB40 /* BranchSDKTestsHostApp */,
 				E7CA75B72E1B994B002EFB40 /* Frameworks */,
@@ -976,6 +980,7 @@
 		5FCDD3982B7AC6A100EAF29F /* Public */ = {
 			isa = PBXGroup;
 			children = (
+				E72B6F002FD1F1500085F54E /* BranchSecureSDKProvider.h */,
 				E7FAF69F2E26E497006C167F /* BranchConstants.h */,
 				5FCDD3A42B7AC6A100EAF29F /* BNCCallbacks.h */,
 				5FCDD3A02B7AC6A100EAF29F /* BNCCurrency.h */,
@@ -1074,7 +1079,7 @@
 			path = Private;
 			sourceTree = "<group>";
 		};
-		5FF2AFDB28E7BF5500393216 /* Scripts */ = {
+		5FF2AFDB28E7BF5500393216 /* scripts */ = {
 			isa = PBXGroup;
 			children = (
 				5FF2AFDC28E7BF8A00393216 /* build_xcframework.sh */,
@@ -1082,7 +1087,7 @@
 				5F73EC0128EDEAC200608601 /* build_static_xcframework.sh */,
 				5F73EC0028EDEAC200608601 /* build_static_xcframework_noidfa.sh */,
 			);
-			path = Scripts;
+			path = scripts;
 			sourceTree = "<group>";
 		};
 		5FF2AFDD28E7C1F200393216 /* Framework */ = {
@@ -1173,6 +1178,7 @@
 				5FCDD5342B7AC6A300EAF29F /* BNCContentDiscoveryManager.h in Headers */,
 				5FCDD5282B7AC6A300EAF29F /* NSString+Branch.h in Headers */,
 				5FCDD4FB2B7AC6A200EAF29F /* BranchShortUrlSyncRequest.h in Headers */,
+				E72B6F022FD1F1500085F54E /* BranchSecureSDKProvider.h in Headers */,
 				5FCDD55B2B7AC6A300EAF29F /* BNCReferringURLUtility.h in Headers */,
 				5FCDD5372B7AC6A300EAF29F /* BNCDeviceInfo.h in Headers */,
 				5FCDD53D2B7AC6A300EAF29F /* BranchContentDiscoverer.h in Headers */,
@@ -1270,6 +1276,7 @@
 				3B2490AF2FAD18A8001CDB7F /* BNCConfig.h in Headers */,
 				5FCDD5352B7AC6A300EAF29F /* BNCContentDiscoveryManager.h in Headers */,
 				5FCDD5292B7AC6A300EAF29F /* NSString+Branch.h in Headers */,
+				E72B6F012FD1F1500085F54E /* BranchSecureSDKProvider.h in Headers */,
 				5FCDD4FC2B7AC6A200EAF29F /* BranchShortUrlSyncRequest.h in Headers */,
 				5FCDD55C2B7AC6A300EAF29F /* BNCReferringURLUtility.h in Headers */,
 				5FCDD5382B7AC6A300EAF29F /* BNCDeviceInfo.h in Headers */,
@@ -1365,6 +1372,7 @@
 				3B2490B32FAD18A8001CDB7F /* BNCConfig.h in Headers */,
 				5FCDD5362B7AC6A300EAF29F /* BNCContentDiscoveryManager.h in Headers */,
 				5FCDD52A2B7AC6A300EAF29F /* NSString+Branch.h in Headers */,
+				E72B6F032FD1F1500085F54E /* BranchSecureSDKProvider.h in Headers */,
 				5FCDD4FD2B7AC6A200EAF29F /* BranchShortUrlSyncRequest.h in Headers */,
 				5FCDD55D2B7AC6A300EAF29F /* BNCReferringURLUtility.h in Headers */,
 				5FCDD5392B7AC6A300EAF29F /* BNCDeviceInfo.h in Headers */,

@@ -21,6 +21,7 @@
 #import "BranchLastAttributedTouchData.h"
 #import "BranchDeepLinkingController.h"
 #import "BranchDelegate.h"
+#import "BranchSecureSDKProvider.h"
 
 #if !TARGET_OS_TV
 // tvOS does not support these features
@@ -275,6 +276,10 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 + (BOOL)branchKeyIsSet;
 
 @property (weak, nullable) NSObject<BranchDelegate>* delegate;
+
+/// Held weakly: the assigned object (e.g. BranchSecureSDK's own singleton) must retain
+/// itself for the process lifetime, or fraud defense silently turns off when it is deallocated.
+@property (nonatomic, weak, nullable) id<BranchSecureSDKProvider> fraudDefenseHandler;
 
 //@property (strong, nonatomic, nullable) BranchEvent *testEvent;
 

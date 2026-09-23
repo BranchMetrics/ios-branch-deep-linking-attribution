@@ -52,6 +52,7 @@
 @property (nonatomic, strong, readwrite) NSString *requestUUID;
 @property (nonatomic, strong, readwrite) NSString *odmInfo;
 @property (nonatomic, strong, readwrite) NSString *appleAttributionToken;
+@property (nonatomic, weak, readwrite) id<BranchSecureSDKProvider> fraudDefenseHandler;
 
 @end
 
@@ -71,8 +72,31 @@
         self.pasteboard = [BNCPasteboard sharedInstance];
         self.requestUUID = requestUUID;
         self.requestCreationTimeStamp = requestTimeStamp;
+        self.fraudDefenseHandler = [Branch sharedInstance].fraudDefenseHandler;
     }
     return self;
+}
+
+- (void)addDeviceTrustParams:(NSMutableDictionary *)json {
+    if (!self.fraudDefenseHandler) {
+        return;
+    }
+
+    if (!self.preferenceHelper.deviceTrustChecked) {
+        NSDictionary *fraudDefenseParams = [self.fraudDefenseHandler addDeviceTrustParams:json];
+        if (fraudDefenseParams.count > 0) {
+            [json addEntriesFromDictionary:fraudDefenseParams];
+        }
+    } else {
+        [self addSignatureAndNonceParams:json];
+    }
+}
+
+- (void)addSignatureAndNonceParams:(NSMutableDictionary *)json {
+    if (self.fraudDefenseHandler) {
+        NSDictionary *fraudDefenseParams = [self.fraudDefenseHandler addSignatureAndNonceForParams:json];
+        [json addEntriesFromDictionary:fraudDefenseParams];
+    }
 }
 
 - (void) loadDataFromThirdPartyAPIs {
@@ -171,6 +195,8 @@
     // Add Operation Metrics for Install only.
     [self addOperationalMetrics:json];
 
+    [self addDeviceTrustParams:json];
+
     return json;
 }
 
@@ -233,46 +259,49 @@
 
     // Add Enhanced Web UX params
     [self addWebUXParams:json];
-    
+
+    [self addDeviceTrustParams:json];
+
     return json;
 }
 
 - (NSDictionary *)dataForDeepLinkWithURLString:(NSString *)urlString {
     NSMutableDictionary *json = [[self dataForRequestOpenWithURLString:urlString] mutableCopy];
     json[@"ios_app_link_url"] = urlString;
+    [self addSignatureAndNonceParams:json];
     return json;
 }
 
 - (NSDictionary *)dataForRequestOpenWithURLString:(NSString *)urlString {
-    
+
     NSMutableDictionary *json = [NSMutableDictionary new];
-    
+
     [self loadDataFromThirdPartyAPIs];
-    
+
     // All requests
     [self addDefaultRequestDataToJSON:json];
-        
+
     // All POST requests
     [self addInstrumentationToJSON:json];
-    
+
     // Install, Open and Event
     [self addMetadataWithSKANMaxTimeToJSON:json];
-    
+
     // Open and Event
     [self addSKANWindowToJSON:json];
-    
+
     // All POST requests other than Events
     [self addSDKVersionToJSON:json];
     [self addV1DictionaryToJSON:json];
-    
+
     // Install and Open
     [self addDeveloperUserIDToJSON:json];
     [self addSystemObserverDataToJSON:json];
     [self addPreferenceHelperDataToJSON:json];
     [self addPartnerParametersToJSON:json];
     [self addTimestampsToJSON:json];
-    
-    
+
+
     // Check if the urlString is a valid URL to ensure it's a universal link, not the external intent uri
     if (urlString) {
         NSURL *url = [NSURL URLWithString:urlString];
@@ -282,28 +311,30 @@
             [self safeSetValue:urlString forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:json];
         }
     }
-    
+
     // Usually sent with install, but retry on open if it didn't get sent
     [self addAppleAttributionTokenToJSON:json];
-    
+
     // Only for opens
     [self addOpenTokensToJSON:json];
     [self addLocalURLToOpenJSON:json];
-    
+
     // TODO: refactor to simply request values for open
     [self addReferringURLsToJSON:json forEndpoint:@"/v1/open"];
-    
+
     // Add DMA Compliance Params for Google
     [self addDMAConsentParamsToJSON:json];
-    
+
     [self addConsumerProtectionAttributionLevel:json];
-    
+
     // Add ODM Data if available
     [self addODMInfoToJSON:json];
 
     // Add Enhanced Web UX params
     [self addWebUXParams:json];
     
+    [self addDeviceTrustParams:json];
+
     return json;
 }
 
@@ -333,11 +364,11 @@
     [self addV2DictionaryToJSON:json];
     
     // TODO: refactor to simply request values for event
-    // Endpoint *key*, not a URL — BNCReferringURLUtility matches on it to attach gclid/gbraid/sccid.
-    // Wire path moved to v3/events; this must not follow unless those matchers move too.
-    [self addReferringURLsToJSON:json forEndpoint:@"/v2/event"];
     
-    
+    [self addReferringURLsToJSON:json forEndpoint:@"/v3/events"];
+
+    [self addSignatureAndNonceParams:json];
+
     return json;
 }
 
@@ -362,6 +393,8 @@
     
     // TODO: These are optional fields in the server code. Can we drop these as well?
     [self addShortURLTokensToJSON:json isSpotlightRequest:isSpotlightRequest];
+    
+    [self addSignatureAndNonceParams:json];
     
     return json;
 }
@@ -389,6 +422,8 @@
 
     // TODO: probably remove this, this is a data pull request and likely does nothing.
     [self addMetadataToJSON:json];
+    
+    [self addSignatureAndNonceParams:json];
     
     return json;
 }
@@ -631,6 +666,7 @@
         BNCReferringURLUtility *utility = [BNCReferringURLUtility new];
         NSDictionary *urlQueryParams = [utility referringURLQueryParamsForEndpoint:endpoint];
         [json bnc_safeAddEntriesFromDictionary:urlQueryParams];
+
     }
 }
 
