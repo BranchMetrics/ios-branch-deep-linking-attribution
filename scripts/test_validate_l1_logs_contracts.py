@@ -42,6 +42,20 @@ class HotUriSchemeContractTests(unittest.TestCase):
         self.assertIn("captured 2", errors[0])
 
 
+class HotHttpsForegroundContractTests(unittest.TestCase):
+    """hot_https_foreground: one resolve, then exactly one open."""
+
+    def test_the_hot_capture_passes(self):
+        # Delivery delta of a Universal Link opened into a foregrounded TestBed.
+        self.assertEqual(_validate("hot_https_foreground.txt", "hot_https_foreground"), [])
+
+    def test_a_cold_capture_fails(self):
+        # A cold launch carries an extra unattributed open the hot contract forbids.
+        errors = _validate("cold_https.txt", "hot_https_foreground")
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("captured 2", errors[0])
+
+
 def _fixture_bytes(name):
     with open(os.path.join(FIXTURE_DIR, name), "rb") as f:
         return f.read()
