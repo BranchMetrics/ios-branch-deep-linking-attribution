@@ -18,6 +18,20 @@
 #import "Private/BNCServerRequestOperation.h"
 #import "Branch.h"
 
+// Runs a foreground open check after the resolves it depends on finish.
+@interface BNCForegroundOpenCheckOperation : NSOperation
+@property (copy, nonatomic) dispatch_block_t block;
+@end
+
+@implementation BNCForegroundOpenCheckOperation
+
+- (void)main {
+    dispatch_block_t block = self.block;
+    if (block) block();
+}
+
+@end
+
 @interface BNCServerRequestQueue ()
 @property (strong, nonatomic) NSOperationQueue *operationQueue;
 @property (strong, nonatomic) BNCServerInterface *serverInterface;
@@ -65,6 +79,11 @@
     operation.preferenceHelper = self.preferenceHelper;
     operation.queuePriority = priority;
 
+    // Cancels pending foreground open checks when an install or open is enqueued.
+    if ([self isInstallOrOpenRequest:request]) {
+        [self cancelDeferredForegroundOpenChecks];
+    }
+
     [self addInitDependencyIfNeeded:operation];
     [self.operationQueue addOperation:operation];
 
@@ -85,9 +104,64 @@
 // BranchOpenRequest, not subclasses, so a BranchOpenRequest-only test reports no init in flight for
 // every 4.0 session. Same enumeration as BNCServerRequestOperation -start.
 - (BOOL)isInitRequest:(BNCServerRequest *)request {
-    return [request isKindOfClass:[BranchOpenRequest class]] ||
-           [request isKindOfClass:[BranchRequestOpen class]] ||
+    return [self isInstallOrOpenRequest:request] ||
            [request isKindOfClass:[BranchRequestDeepLink class]];
+}
+
+// YES for an install or open request.
+- (BOOL)isInstallOrOpenRequest:(BNCServerRequest *)request {
+    return [request isKindOfClass:[BranchOpenRequest class]] ||
+           [request isKindOfClass:[BranchRequestOpen class]];
+}
+
+// -isInitRequest: over operations neither finished nor cancelled.
+- (BOOL)hasUnfinishedInitRequest {
+    for (NSOperation *op in self.operationQueue.operations) {
+        if (![op isKindOfClass:[BNCServerRequestOperation class]]) continue;
+        if (op.isFinished || op.isCancelled) continue;
+        if ([self isInitRequest:((BNCServerRequestOperation *)op).request]) return YES;
+    }
+    return NO;
+}
+
+// Adds a check that runs after every live nil-URL resolve. NO when an install or open is live, or no such resolve is. Main thread only.
+- (BOOL)addDeferredForegroundOpenCheck:(dispatch_block_t)block {
+    NSAssert([NSThread isMainThread], @"The foreground open check must be added on the main thread.");
+    NSMutableArray<NSOperation *> *liveResolves = [NSMutableArray array];
+
+    for (NSOperation *op in self.operationQueue.operations) {
+        if (![op isKindOfClass:[BNCServerRequestOperation class]]) continue;
+        if (op.isFinished || op.isCancelled) continue;
+
+        BNCServerRequest *request = ((BNCServerRequestOperation *)op).request;
+        if ([self isInstallOrOpenRequest:request]) {
+            return NO;
+        }
+        if ([request isKindOfClass:[BranchRequestDeepLink class]] &&
+            ((BranchRequestDeepLink *)request).urlString.length == 0) {
+            [liveResolves addObject:op];
+        }
+    }
+
+    if (liveResolves.count == 0) return NO;
+
+    BNCForegroundOpenCheckOperation *check = [BNCForegroundOpenCheckOperation new];
+    check.block = block;
+    for (NSOperation *resolve in liveResolves) {
+        [check addDependency:resolve];
+    }
+    [self.operationQueue addOperation:check];
+
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Deferred the foreground open behind %lu resolve(s).", (unsigned long)liveResolves.count] error:nil];
+    return YES;
+}
+
+- (void)cancelDeferredForegroundOpenChecks {
+    for (NSOperation *op in self.operationQueue.operations) {
+        if ([op isKindOfClass:[BNCForegroundOpenCheckOperation class]]) {
+            [op cancel];
+        }
+    }
 }
 
 - (void)addInitDependencyIfNeeded:(BNCServerRequestOperation *)operation {
@@ -109,6 +183,9 @@
 }
 
 - (void)cancelPendingDeepLinkRequests {
+    // Before the resolves, so cancelling them cannot release a check.
+    [self cancelDeferredForegroundOpenChecks];
+
     for (NSOperation *op in self.operationQueue.operations) {
         if ([op isKindOfClass:[BNCServerRequestOperation class]]) {
             BNCServerRequestOperation *reqOp = (BNCServerRequestOperation *)op;

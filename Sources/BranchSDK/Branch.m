@@ -130,6 +130,11 @@ void ForceCategoriesToLoad(void) {
 
 #pragma mark - Branch
 
+@interface BNCServerRequestQueue (DeferredForegroundOpen)
+- (BOOL)addDeferredForegroundOpenCheck:(dispatch_block_t)block;
+- (BOOL)hasUnfinishedInitRequest;
+@end
+
 @interface Branch() <BranchDeepLinkingControllerCompletionDelegate> {
     NSInteger _networkCount;
 }
@@ -149,6 +154,8 @@ void ForceCategoriesToLoad(void) {
 @property (strong, nonatomic) NSMutableArray *allowedSchemeList;
 @property (strong, nonatomic) BNCURLFilter *urlFilter;
 @property (strong, nonatomic, readwrite) BNCURLFilter *userURLFilter;
+// Test seam for the application state; nil reads UIApplication.sharedApplication.
+@property (strong, nonatomic, nullable) id application;
 
 @property (strong, nonatomic) BNCServerAPI *serverAPI;
 
@@ -424,6 +431,12 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
         addObserver:self
         selector:@selector(applicationWillResignActive)
         name:UIApplicationWillResignActiveNotification
+        object:nil];
+
+    [notificationCenter
+        addObserver:self
+        selector:@selector(applicationDidEnterBackground)
+        name:UIApplicationDidEnterBackgroundNotification
         object:nil];
 
     [notificationCenter
@@ -1580,10 +1593,12 @@ static NSString *bnc_branchKey = nil;
                 preferenceHelper.randomizedBundleToken = nil;
                 preferenceHelper.userUrl = nil;
                 preferenceHelper.installParams = nil;
-                preferenceHelper.sessionParams = nil;
 
                 [[BNCServerRequestQueue getInstance] clearQueue];
             }
+
+            // Clears sessionParams once per process, before the first open, regardless of a key change.
+            preferenceHelper.sessionParams = nil;
 
             if(!preferenceHelper.firstAppLaunchTime){
                 preferenceHelper.firstAppLaunchTime = [NSDate date];
@@ -1646,6 +1661,13 @@ static NSString *bnc_branchKey = nil;
         }
     }
 
+    // A live nil-URL resolve may not chain an open; decide once it finishes.
+    if ([self.requestQueue addDeferredForegroundOpenCheck:^{
+        [self sendDeferredForegroundOpen];
+    }]) {
+        return;
+    }
+
     dispatch_async(self.isolationQueue, ^(){
         //  if necessary, creates a new organic open
         BOOL installOrOpenInQueue = [self.requestQueue containsInstallOrOpen];
@@ -1660,6 +1682,37 @@ static NSString *bnc_branchKey = nil;
     });
 }
 
+// Sent from the isolation queue like the base open; both sides re-read.
+- (void)sendDeferredForegroundOpen {
+    if (![self shouldSendDeferredForegroundOpen]) return;
+
+    dispatch_async(self.isolationQueue, ^(){
+        if (![self shouldSendDeferredForegroundOpen]) return;
+        [self sendOpen];
+    });
+}
+
+- (BOOL)shouldSendDeferredForegroundOpen {
+    @synchronized ([Branch class]) {
+        if (bnc_disableAutomaticOpenTracking) {
+            [[BranchLogger shared] logVerbose:@"Deferred foreground open: automatic open tracking is disabled, skipping" error:nil];
+            return NO;
+        }
+    }
+
+    if ([self.requestQueue hasUnfinishedInitRequest]) {
+        [[BranchLogger shared] logVerbose:@"Deferred foreground open: init traffic is still in the queue, skipping" error:nil];
+        return NO;
+    }
+
+    if ([Branch attributionLevelNone]) {
+        [[BranchLogger shared] logVerbose:@"Deferred foreground open: attribution level is NONE, skipping" error:nil];
+        return NO;
+    }
+
+    return YES;
+}
+
 - (void)applicationWillResignActive {
     [[BranchLogger shared] logVerbose:@"applicationWillResignActive" error:nil];
 
@@ -1668,6 +1721,23 @@ static NSString *bnc_branchKey = nil;
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationWillResignActive"] error:nil];
             [BranchOpenRequest setWaitNeededForOpenResponseLock];
         }
+    });
+}
+
+- (void)applicationDidEnterBackground {
+    [[BranchLogger shared] logVerbose:@"applicationDidEnterBackground" error:nil];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        Class UIApplicationClass = NSClassFromString(@"UIApplication");
+        UIApplication *application = self.application ?: [UIApplicationClass sharedApplication];
+        if ([Branch automaticOpenTrackingDisabled] ||
+            application.applicationState != UIApplicationStateBackground ||
+            [self.requestQueue containsInstallOrOpen]) {
+            return;
+        }
+        // Not mid-write: an operation stays in the queue until finishOperation, after its main-thread write.
+        // Not before a callback: main-queue FIFO keeps this behind any callback a finished resolution queued.
+        self.preferenceHelper.sessionParams = nil;
     });
 }
 

@@ -209,17 +209,21 @@ ATTRIBUTION_LEVEL_NONE = "NONE"
 SCENARIO_CONTRACTS = {
     # install: the harness uninstalls first (run_l1_instrumented.sh), so no
     # `randomizedBundleToken` persists and `Branch.m:2226` decides install
-    # rather than open. The plan's organic_open is not contracted on this line.
+    # rather than open. The test plan also asks that the open carry no link
+    # data; that is a field-level assertion, and this layer is bounded at
+    # counts and required-field presence, so only the endpoint half is
+    # covered here.
     "install": {
         "counts": {"/v3/events/open": 1, "/v3/deeplink": 0},
         "order": (),
         "fields": {},
     },
     # attribution_none: a link resolved while the consumer-protection level
-    # is NONE. BNCServerRequestOperation drops every request at that level
-    # except BranchRequestDeepLink, so the resolution goes out and the
-    # attributed open does not. The test plan also asks that identifiers be
-    # cleared, which is a field-level assertion this layer does not make.
+    # is NONE. Resolution is exempt from the NONE gate and the attributed open
+    # is not, so the resolution goes out and the open does not. Only those two
+    # endpoints are counted, so other traffic such as link creation is outside
+    # this contract. The test plan also asks that identifiers be cleared, which
+    # is a field-level assertion this layer does not make.
     "attribution_none": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 0},
         "order": (),

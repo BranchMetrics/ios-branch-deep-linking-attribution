@@ -69,20 +69,25 @@ final class MyFeatureHybridTest: BaseGptDriverTest {
 NSString *testDeepLinkURL = [[NSUserDefaults standardUserDefaults] stringForKey:@"testDeepLinkURL"];
 if (testDeepLinkURL.length > 0) {
     NSURL *url = [NSURL URLWithString:testDeepLinkURL];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)),
-                   dispatch_get_main_queue(), ^{
+    // Deliver once BranchDidStartSessionNotification fires; a ten-second
+    // fallback covers a session that never starts.
+    [[NSNotificationCenter defaultCenter]
+        addObserverForName:BranchDidStartSessionNotification
+                    object:nil
+                     queue:[NSOperationQueue mainQueue]
+                usingBlock:^(NSNotification *note) {
         NSUserActivity *activity = [[NSUserActivity alloc]
             initWithActivityType:NSUserActivityTypeBrowsingWeb];
         activity.webpageURL = url;
         [self application:application
              continueUserActivity:activity
                restorationHandler:^(NSArray * _Nullable r) {}];
-    });
+    }];
 }
 #endif
 ```
 
-The hook reads a `-testDeepLinkURL <url>` launch argument and, if present, constructs an `NSUserActivity` of type `NSUserActivityTypeBrowsingWeb` and calls `application:continueUserActivity:` after a 1.5s delay (enough for `Branch.initialize(_:)` to register its handler). The Branch SDK resolution path is **byte-for-byte identical** to a real Safari Universal Link handoff — the SDK has no way to tell the synthetic delivery apart from the real thing.
+The hook reads a `-testDeepLinkURL <url>` launch argument and, if present, waits for `BranchDidStartSessionNotification` (a ten-second fallback if it never fires) before constructing an `NSUserActivity` of type `NSUserActivityTypeBrowsingWeb` and calling `application:continueUserActivity:`. The Branch SDK resolution path is **byte-for-byte identical** to a real Safari Universal Link handoff — the SDK has no way to tell the synthetic delivery apart from the real thing.
 
 **Why this is necessary on simulator:** Universal Link handoff via Safari requires the app to be code-signed with the `com.apple.developer.associated-domains` entitlement embedded in the signature. Tests run unsigned via `CODE_SIGNING_ALLOWED=NO`, so the `swcutil` daemon never associates the app with `bnctestbed.test-app.link` and Safari does not hand off. The hook bypasses Safari entirely while still exercising the full SDK code path.
 

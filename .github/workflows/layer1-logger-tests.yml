@@ -94,17 +94,48 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY=""
 
-      - name: Run L1 instrumentation
+      # Three scenarios, three captures. Each needs its own run: the app
+      # deletes branchlogs.txt on every launch, so one run cannot hold two.
+      #
+      # Each scenario wipes first and establishes whatever state it needs, so
+      # the steps are independent and reordering them is safe. cold_https
+      # launches the app twice inside its own test: once to install, once
+      # entered by a link.
+      - name: Capture install, a launch with no link
         env:
           DERIVED_DATA_DIR: ./DerivedData
           SIM_NAME: ${{ steps.sim.outputs.name }}
           SIM_OS: latest
           PROJECT_PATH: Branch-TestBed/Branch-TestBed.xcodeproj
           SCHEME: TestBed-GPTDriverTests
-          ONLY_TESTING: TestBed-GPTDriverTests/L1WireValidationTest
           BUNDLE_ID: io.branch.sdk.Branch-TestBed
-          OUTPUT_LOG: branchlogs.txt
-        run: ./scripts/run_l1_instrumented.sh
+        run: |
+          ONLY_TESTING=TestBed-GPTDriverTests/L1WireValidationTest \
+          OUTPUT_LOG=wire-install.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
+
+      - name: Capture cold_firstInstall, a link with no prior install
+        env:
+          DERIVED_DATA_DIR: ./DerivedData
+          SIM_NAME: ${{ steps.sim.outputs.name }}
+          SIM_OS: latest
+          PROJECT_PATH: Branch-TestBed/Branch-TestBed.xcodeproj
+          SCHEME: TestBed-GPTDriverTests
+          BUNDLE_ID: io.branch.sdk.Branch-TestBed
+        run: |
+          ONLY_TESTING=TestBed-GPTDriverTests/ColdLinkWireValidationTest \
+          OUTPUT_LOG=wire-cold_firstInstall.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
+
+      - name: Capture cold_https, a link on a device that already has the app
+        env:
+          DERIVED_DATA_DIR: ./DerivedData
+          SIM_NAME: ${{ steps.sim.outputs.name }}
+          SIM_OS: latest
+          PROJECT_PATH: Branch-TestBed/Branch-TestBed.xcodeproj
+          SCHEME: TestBed-GPTDriverTests
+          BUNDLE_ID: io.branch.sdk.Branch-TestBed
+        run: |
+          ONLY_TESTING=TestBed-GPTDriverTests/ColdLinkInstalledWireValidationTest \
+          OUTPUT_LOG=wire-cold_https.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
 
       # hot_uriScheme on the same device. The driver reinstalls the TestBed,
       # so the install capture above is already copied out. Only receipt lines
@@ -120,6 +151,9 @@ jobs:
           H2_EXPECT_RUNTIME: iOS-18-5
           H2_URL: branchtest://open?scenario=H2
         run: |
+          # A marker left by an earlier run would carve out this one too, and
+          # it would read as "not run" while asserting nothing.
+          rm -f /tmp/h2-runtime-missing
           rc=0
           ./scripts/run_h2_hot.sh > /tmp/h2-driver.txt 2>&1 || rc=$?
           grep -E '^(RUNTIME=|consent key: |settled after |openurl attempt |pid unchanged$|ERROR: )' /tmp/h2-driver.txt || true
@@ -134,22 +168,31 @@ jobs:
           python-version: "3.x"
 
       # Self-test first: a regression in the validator would otherwise surface
-      # as a false PASS on the real capture.
+      # as a false PASS on the real captures.
       - name: Run L1 validator unit tests
         run: python3 -m unittest discover -s scripts -p "test_*.py" -v
 
       # continue-on-error so the summary below still runs on a failure — the
-      # job is failed explicitly at the end.
-      #
-      # The scenario is required on this line: a capture is judged against the
-      # contract for the run that produced it. This job drives the default
-      # harness run, which is install: one open, no deep link.
+      # job is failed explicitly at the end. Each capture is judged against the
+      # contract for the run that produced it.
       - name: Validate wire logs
         id: validate
         continue-on-error: true
         run: |
           set -o pipefail
-          python3 scripts/validate_l1_logs.py branchlogs.txt --scenario install 2>&1 | tee /tmp/l1-output.txt
+          rc=0
+          check () {
+            echo "::group::$1"
+            if ! python3 scripts/validate_l1_logs.py "$2" --scenario "$1" 2>&1 \
+                 | sed "s/^FAILED:/FAILED: [$1]/" | tee -a /tmp/l1-output.txt; then
+              rc=1
+            fi
+            echo "::endgroup::"
+          }
+          check install wire-install.txt
+          check cold_firstInstall wire-cold_firstInstall.txt
+          check cold_https wire-cold_https.txt
+          exit $rc
 
       # The wire contract counts the delivery delta, and the marker checker
       # proves the app stayed foreground across it. Both print payloads or
@@ -162,6 +205,12 @@ jobs:
           H2_URL: branchtest://open?scenario=H2
         run: |
           tag="[hot_uriScheme]"
+          # An image without the pinned runtime is not an SDK failure. The
+          # capture step leaves this marker for that one driver error only.
+          if [ -f /tmp/h2-runtime-missing ]; then
+            echo "$tag not run: no simulator on the expected runtime" | tee /tmp/h2-output.txt
+            exit 0
+          fi
           if [ "${{ steps.h2capture.outcome }}" != "success" ]; then
             echo "FAILED: $tag driver failed; see the capture step log" | tee /tmp/h2-output.txt
             exit 1
@@ -190,7 +239,8 @@ jobs:
           {
             echo "### Layer 1 — SDK wire validation"
             echo
-            grep -o 'Got https://[^ ]*' branchlogs.txt 2>/dev/null \
+            cat wire-install.txt wire-cold_firstInstall.txt wire-cold_https.txt 2>/dev/null \
+              | grep -o 'Got https://[^ ]*' \
               | sed 's|.*api2.branch.io||' | sort | uniq -c > /tmp/l1-endpoints.txt || true
             if [ -s /tmp/l1-endpoints.txt ]; then
               echo "| endpoint | requests |"
@@ -202,42 +252,51 @@ jobs:
             echo
             echo "Scenario coverage:"
             echo
-            echo "The endpoint table counts the install capture."
-            echo "install and hot_uriScheme are the contracts this gate asserts."
-            echo
             echo "| scenario group | status |"
             echo "| --- | --- |"
-            echo "| Cold | not implemented |"
+            if [ "${{ steps.validate.outcome }}" = "success" ]; then
+              echo "| Cold | cold_https and cold_firstInstall pass |"
+              echo "| Negative and guards | install passes, the rest not implemented |"
+            else
+              echo "| Cold | see failures below |"
+              echo "| Negative and guards | see failures below |"
+            fi
             echo "| Warm | not implemented |"
             hot_defer="hot_https_foreground deferred until CI builds are signed"
             no_runtime="the runner has no simulator on the expected runtime"
             hot_retake="measure hot_uriScheme on the new runtime, then update H2_EXPECT_RUNTIME"
-            if [ "${{ steps.h2.outcome }}" = "success" ]; then
-              echo "| Hot | hot_uriScheme pass; $hot_defer |"
-            elif [ -f /tmp/h2-runtime-missing ]; then
+            if [ -f /tmp/h2-runtime-missing ]; then
               echo "| Hot | hot_uriScheme not run: $no_runtime ($hot_retake); $hot_defer |"
+            elif [ "${{ steps.h2.outcome }}" = "success" ]; then
+              echo "| Hot | hot_uriScheme pass; $hot_defer |"
             elif [ "${{ steps.h2.outcome }}" = "failure" ]; then
               echo "| Hot | hot_uriScheme fail, see failures below; $hot_defer |"
             else
               echo "| Hot | hot_uriScheme not run; $hot_defer |"
             fi
-            echo "| Negative and guards | not implemented |"
             echo
             if [ "${{ steps.validate.outcome }}" = "success" ] && [ "${{ steps.h2.outcome }}" = "success" ]; then
-              echo "Result: **PASS**"
+              if [ -f /tmp/h2-runtime-missing ]; then
+                echo "Result: **PASS** (hot_uriScheme not run)"
+              else
+                echo "Result: **PASS**"
+              fi
             else
               echo "Result: **FAIL**"
               echo
               echo '```'
               cat /tmp/l1-output.txt /tmp/h2-output.txt 2>/dev/null | grep '^FAILED:' || echo "(no FAILED lines; see the job log)"
               echo '```'
-              # Only the install capture is rendered; hot_uriScheme captures stay off the page.
+              # Only the run_l1_instrumented captures are rendered; the
+              # hot_uriScheme captures stay in /tmp/h2 and off the page.
               if [ "${{ steps.validate.outcome }}" != "success" ]; then
                 echo
                 echo "<details><summary>Captured wire log</summary>"
                 echo
                 echo '```'
-                if [ -s branchlogs.txt ]; then head -c 40000 branchlogs.txt; echo; else echo "(branchlogs.txt is empty or missing)"; fi
+                cat wire-install.txt wire-cold_firstInstall.txt wire-cold_https.txt \
+                  > /tmp/l1-all.txt 2>/dev/null || true
+                if [ -s /tmp/l1-all.txt ]; then head -c 40000 /tmp/l1-all.txt; echo; else echo "(no capture was produced)"; fi
                 echo '```'
                 echo
                 echo "</details>"
@@ -254,7 +313,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ios-wire-logs
-          path: branchlogs.txt
+          path: |
+            wire-install.txt
+            wire-cold_firstInstall.txt
+            wire-cold_https.txt
           retention-days: 7
 
       # After the upload, so a hot_uriScheme-only failure uploads nothing.
