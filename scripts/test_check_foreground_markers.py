@@ -127,6 +127,17 @@ class HotHttpsForegroundMarkerTests(unittest.TestCase):
         )
         self.assertEqual((code, failed), (0, []), output)
 
+    def test_a_safari_fallback_fails(self):
+        # Catches the driver exiting green on a Safari fallback: 0 continueUserActivity,
+        # the app backgrounds instead of receiving the link.
+        code, output, failed = self._main(
+            _fixture_bytes("hot_https_foreground_markers_safari_fallback.pre.txt"),
+            _fixture_bytes("hot_https_foreground_markers_safari_fallback.post.txt"),
+        )
+        self.assertEqual(code, 1)
+        self.assertEqual(len(failed), 3, output)
+        self.assertTrue(any("'continueUserActivity'" in line for line in failed), output)
+
 
 if __name__ == "__main__":
     unittest.main()
