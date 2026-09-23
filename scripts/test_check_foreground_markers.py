@@ -44,7 +44,7 @@ class ForegroundMarkerTests(unittest.TestCase):
         pre = self._write("pre.txt", pre_bytes)
         post = self._write("post.txt", post_bytes)
         saved_argv = sys.argv
-        sys.argv = ["check_foreground_markers.py", post, "--pre", pre]
+        sys.argv = ["check_foreground_markers.py", post, "--pre", pre, "--scenario", "hot_uriScheme"]
         out = io.StringIO()
         try:
             with redirect_stdout(out):

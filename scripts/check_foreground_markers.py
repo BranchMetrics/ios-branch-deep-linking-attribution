@@ -15,7 +15,7 @@ this checker asserts the delivery reached a foregrounded app:
 Usage:
 
     check_foreground_markers.py wire-hot_uriScheme.post.txt \
-        --pre wire-hot_uriScheme.pre.txt
+        --pre wire-hot_uriScheme.pre.txt --scenario hot_uriScheme
 """
 
 import argparse
@@ -29,13 +29,15 @@ from validate_l1_logs import capture_delta
 MARKER_RE = re.compile(rb"\[TestBedLifecycle\] (\w+)")
 
 LIVENESS = "applicationDidBecomeActive"
-DELIVERY = "openURL"
+MARKER_FOR_SCENARIO = {
+    "hot_uriScheme": "openURL",
+    "hot_https_foreground": "continueUserActivity",
+}
 TRANSITIONS = (
     "applicationWillResignActive",
     "applicationDidEnterBackground",
     "applicationDidBecomeActive",
 )
-MARKERS = (DELIVERY,) + TRANSITIONS
 
 
 def count_markers(data):
@@ -43,7 +45,7 @@ def count_markers(data):
     return Counter(name.decode("ascii") for name in MARKER_RE.findall(data))
 
 
-def check_markers(pre_counts, delta_counts):
+def check_markers(pre_counts, delta_counts, delivery):
     """Return one error string per broken rule."""
     errors = []
     if pre_counts[LIVENESS] < 1:
@@ -51,9 +53,9 @@ def check_markers(pre_counts, delta_counts):
             f"Expected at least 1 '{LIVENESS}' marker before delivery, found 0; "
             "the TestBed is not writing markers."
         )
-    if delta_counts[DELIVERY] != 1:
+    if delta_counts[delivery] != 1:
         errors.append(
-            f"Expected exactly 1 '{DELIVERY}' marker after delivery, found {delta_counts[DELIVERY]}."
+            f"Expected exactly 1 '{delivery}' marker after delivery, found {delta_counts[delivery]}."
         )
     for name in TRANSITIONS:
         if delta_counts[name]:
@@ -64,8 +66,9 @@ def check_markers(pre_counts, delta_counts):
     return errors
 
 
-def format_counts(label, counts):
-    return f"{label}: " + " ".join(f"{name}={counts[name]}" for name in MARKERS)
+def format_counts(label, counts, delivery):
+    markers = (delivery,) + TRANSITIONS
+    return f"{label}: " + " ".join(f"{name}={counts[name]}" for name in markers)
 
 
 def main():
@@ -77,7 +80,14 @@ def main():
         required=True,
         help="copy of the capture taken before delivery",
     )
+    parser.add_argument(
+        "--scenario",
+        choices=sorted(MARKER_FOR_SCENARIO),
+        required=True,
+        help="which scenario produced this capture; selects its delivery marker",
+    )
     args = parser.parse_args()
+    delivery = MARKER_FOR_SCENARIO[args.scenario]
 
     for path in (args.pre, args.log_file):
         if not os.path.exists(path):
@@ -92,9 +102,9 @@ def main():
         pre_counts = count_markers(f.read())
     delta_counts = count_markers(delta)
 
-    print(format_counts("pre", pre_counts))
-    print(format_counts("delta", delta_counts))
-    errors = check_markers(pre_counts, delta_counts)
+    print(format_counts("pre", pre_counts, delivery))
+    print(format_counts("delta", delta_counts, delivery))
+    errors = check_markers(pre_counts, delta_counts, delivery)
     for error in errors:
         print(f"FAILED: {error}")
     sys.exit(1 if errors else 0)
