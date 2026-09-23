@@ -82,9 +82,10 @@ class ScenarioContractModelTests(unittest.TestCase):
     platform- and API-version-agnostic. Not yet wired into validation."""
 
     def test_every_contract_declares_counts_order_and_fields(self):
+        optional = {"carrying", "carried_by_all", "max_counts"}
         for name, contract in v.SCENARIO_CONTRACTS.items():
             self.assertEqual(
-                set(contract), {"counts", "order", "fields"}, f"contract '{name}'"
+                set(contract) - optional, {"counts", "order", "fields"}, f"contract '{name}'"
             )
 
     def test_field_counts_are_non_negative_integers(self):
