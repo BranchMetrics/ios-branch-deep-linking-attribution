@@ -354,6 +354,7 @@ continueUserActivity:(NSUserActivity *)userActivity
     // Add `branch_universal_link_domains` to .plist (String or Array) for custom domain(s).
 
 
+    [self logLifecycleMarker:@"continueUserActivity"];
     [[Branch sharedInstance] requestDeepLinkDataWithUserActivity:userActivity];
 
     // Process non-Branch userActivities here...

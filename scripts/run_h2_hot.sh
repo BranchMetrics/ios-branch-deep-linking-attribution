@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
 #
-# hot_uriScheme driver for the iOS Branch SDK TestBed.
+# hot_uriScheme / hot_https_foreground driver for the iOS Branch SDK TestBed.
 #
 # Launches the TestBed, snapshots branchlogs.txt once the launch settles, opens
 # a scheme URL into the foregrounded app with `simctl openurl`, and snapshots
 # again. Validate with:
 #
-#   validate_l1_logs.py "$OUTPUT_DIR/wire-hot_uriScheme.post.txt" \
-#       --scenario hot_uriScheme --pre "$OUTPUT_DIR/wire-hot_uriScheme.pre.txt"
+#   validate_l1_logs.py "$OUTPUT_DIR/wire-$HOT_SCENARIO.post.txt" \
+#       --scenario "$HOT_SCENARIO" --pre "$OUTPUT_DIR/wire-$HOT_SCENARIO.pre.txt"
 #
 # Required env:
 #   H2_EXPECT_RUNTIME  - runtime the device must be on, for example iOS-18-5
 # Optional env:
+#   HOT_SCENARIO       - hot_uriScheme or hot_https_foreground (default hot_uriScheme)
 #   DERIVED_DATA_DIR   - build-for-testing output (default ./DerivedData)
 #   SIM_NAME           - simulator device name (default "iPhone 16 Plus")
 #   SIM_UDID           - select this device instead of matching SIM_NAME
@@ -34,12 +35,18 @@ SETTLE_S="${SETTLE_S:-10}"
 SETTLE_MAX_S="${SETTLE_MAX_S:-120}"
 OPENURL_MAX_S="${OPENURL_MAX_S:-120}"
 H2_URL="${H2_URL:-branchtest://open?scenario=H2}"
+HOT_SCENARIO="${HOT_SCENARIO:-hot_uriScheme}"
 
 # The consent SpringBoard otherwise asks for on the first `simctl openurl` of the scheme.
 APPROVAL_DOMAIN="com.apple.launchservices.schemeapproval"
 APPROVAL_KEY="com.apple.CoreSimulator.CoreSimulatorBridge-->${H2_URL%%:*}"
 
 fail() { echo "ERROR: $*"; exit 1; }
+
+case "$HOT_SCENARIO" in
+    hot_uriScheme|hot_https_foreground) ;;
+    *) fail "unknown HOT_SCENARIO: $HOT_SCENARIO (expected hot_uriScheme or hot_https_foreground)" ;;
+esac
 
 # 1. Device on exactly H2_EXPECT_RUNTIME. The same name can exist on several runtimes.
 selection=$(xcrun simctl list devices available -j | python3 -c '
@@ -68,13 +75,16 @@ approval=$(xcrun simctl spawn "$udid" defaults read "$APPROVAL_DOMAIN" "$APPROVA
 [ "$approval" = "$BUNDLE_ID" ] || fail "consent key did not read back"
 echo "consent key: set"
 
-# 4. Fresh install of the single built TestBed.
+# 4. Install the single built TestBed. hot_uriScheme reinstalls fresh every
+#    run; hot_https_foreground installs in place, keeping app data.
 shopt -s nullglob
 apps=("$DERIVED_DATA_DIR"/Build/Products/*-iphonesimulator/Branch-TestBed.app)
 shopt -u nullglob
 [ "${#apps[@]}" -eq 1 ] || fail "expected one Branch-TestBed.app under $DERIVED_DATA_DIR/Build/Products, found ${#apps[@]}"
 xcrun simctl terminate "$udid" "$BUNDLE_ID" 2>/dev/null || true
-xcrun simctl uninstall "$udid" "$BUNDLE_ID" 2>/dev/null || true
+if [ "$HOT_SCENARIO" = "hot_uriScheme" ]; then
+    xcrun simctl uninstall "$udid" "$BUNDLE_ID" 2>/dev/null || true
+fi
 xcrun simctl install "$udid" "${apps[0]}"
 
 log_path() {
@@ -117,8 +127,8 @@ wait_grown() {
 }
 
 mkdir -p "$OUTPUT_DIR"
-pre="$OUTPUT_DIR/wire-hot_uriScheme.pre.txt"
-post="$OUTPUT_DIR/wire-hot_uriScheme.post.txt"
+pre="$OUTPUT_DIR/wire-$HOT_SCENARIO.pre.txt"
+post="$OUTPUT_DIR/wire-$HOT_SCENARIO.post.txt"
 
 # 5. Launch and settle.
 xcrun simctl launch "$udid" "$BUNDLE_ID" >/dev/null
@@ -156,3 +166,8 @@ post_pid=$(app_pid)
 [[ $post_pid =~ ^[0-9]+$ ]] || fail "TestBed is not running after delivery"
 [ "$post_pid" = "$pid" ] || fail "relaunched"
 echo "pid unchanged"
+
+# 9. hot_https_foreground only: gate on the TestBed's lifecycle markers.
+if [ "$HOT_SCENARIO" = "hot_https_foreground" ]; then
+    python3 "$(dirname "$0")/check_foreground_markers.py" "$post" --pre "$pre" --scenario "$HOT_SCENARIO"
+fi

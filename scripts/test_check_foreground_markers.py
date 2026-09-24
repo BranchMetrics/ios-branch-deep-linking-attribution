@@ -1,5 +1,5 @@
-"""Tests for the hot_uriScheme foreground marker checker, run against marker
-lines from TestBed captures.
+"""Tests for the hot_uriScheme and hot_https_foreground marker checker, run
+against marker lines from TestBed captures.
 
 Run from the repo root:
 
@@ -44,7 +44,7 @@ class ForegroundMarkerTests(unittest.TestCase):
         pre = self._write("pre.txt", pre_bytes)
         post = self._write("post.txt", post_bytes)
         saved_argv = sys.argv
-        sys.argv = ["check_foreground_markers.py", post, "--pre", pre]
+        sys.argv = ["check_foreground_markers.py", post, "--pre", pre, "--scenario", "hot_uriScheme"]
         out = io.StringIO()
         try:
             with redirect_stdout(out):
@@ -88,6 +88,57 @@ class ForegroundMarkerTests(unittest.TestCase):
         code, output, failed = self._main(pre, pre)
         self.assertEqual(code, 1)
         self.assertEqual(failed, ["FAILED: Expected exactly 1 'openURL' marker after delivery, found 0."], output)
+
+
+class HotHttpsForegroundMarkerTests(unittest.TestCase):
+    """hot_https_foreground reached a foregrounded app: one continueUserActivity, no transition."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmp)
+
+    def _write(self, name, data):
+        path = os.path.join(self.tmp, name)
+        with open(path, "wb") as f:
+            f.write(data)
+        return path
+
+    def _main(self, pre_bytes, post_bytes):
+        pre = self._write("pre.txt", pre_bytes)
+        post = self._write("post.txt", post_bytes)
+        saved_argv = sys.argv
+        sys.argv = [
+            "check_foreground_markers.py", post, "--pre", pre, "--scenario", "hot_https_foreground"
+        ]
+        out = io.StringIO()
+        try:
+            with redirect_stdout(out):
+                with self.assertRaises(SystemExit) as ctx:
+                    c.main()
+        finally:
+            sys.argv = saved_argv
+        failed = [line for line in out.getvalue().splitlines() if line.startswith("FAILED:")]
+        return ctx.exception.code, out.getvalue(), failed
+
+    def test_the_hot_capture_passes(self):
+        code, output, failed = self._main(
+            _fixture_bytes("hot_https_foreground_markers.pre.txt"),
+            _fixture_bytes("hot_https_foreground_markers.post.txt"),
+        )
+        self.assertEqual((code, failed), (0, []), output)
+
+    def test_a_safari_fallback_fails(self):
+        # Catches the driver exiting green on a Safari fallback: 0 continueUserActivity,
+        # the app backgrounds instead of receiving the link.
+        code, output, failed = self._main(
+            _fixture_bytes("hot_https_foreground_markers_safari_fallback.pre.txt"),
+            _fixture_bytes("hot_https_foreground_markers_safari_fallback.post.txt"),
+        )
+        self.assertEqual(code, 1)
+        self.assertTrue(
+            any("'continueUserActivity'" in line and "found 0" in line for line in failed), output
+        )
+        self.assertTrue(any("'applicationWillResignActive'" in line for line in failed), output)
 
 
 if __name__ == "__main__":
