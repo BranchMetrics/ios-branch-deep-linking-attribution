@@ -260,7 +260,7 @@ jobs:
               echo "| Negative and guards | see failures below |"
             fi
             echo "| Warm | not implemented |"
-            hot_defer="hot_https_foreground deferred until CI builds are signed"
+            hot_defer="hot_https_foreground not run: a GitHub runner does not route Universal Links to the simulator"
             no_runtime="the runner has no simulator on the expected runtime"
             hot_retake="update H2_EXPECT_RUNTIME"
             if [ -f /tmp/h2-runtime-missing ]; then
