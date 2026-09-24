@@ -22,8 +22,18 @@ import validate_l1_logs as v  # noqa: E402
 FIXTURE_DIR = os.path.join(THIS_DIR, "fixtures")
 
 
-def _validate(fixture_name, scenario):
+REPO_ROOT = os.path.dirname(THIS_DIR)
+# The URL the hot_uriScheme fixture was captured with.
+FIXTURE_URL = "branchtest://probe?run=D1"
+
+
+def _validate(fixture_name, scenario, drop=None):
     entries = v.parse_branch_logs(os.path.join(FIXTURE_DIR, fixture_name))
+    if drop is not None:
+        uri, field = drop
+        for entry in entries:
+            if entry["uri"] == uri:
+                entry["request"].pop(field, None)
     with redirect_stdout(io.StringIO()):
         return v.validate_entries(entries, v.contract_for(scenario))
 
@@ -40,6 +50,60 @@ class HotUriSchemeContractTests(unittest.TestCase):
         errors = _validate("hot_uriScheme_duplicate_open.txt", "hot_uriScheme")
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("captured 2", errors[0])
+
+    def test_a_resolve_without_external_intent_uri_fails(self):
+        errors = _validate(
+            "hot_uriScheme.txt", "hot_uriScheme", drop=("/v3/deeplink", "external_intent_uri")
+        )
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("'/v3/deeplink' request(s) to carry 'external_intent_uri'", errors[0])
+
+    def test_an_open_without_link_data_fails(self):
+        errors = _validate(
+            "hot_uriScheme.txt", "hot_uriScheme", drop=("/v3/events/open", "link_data")
+        )
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("'/v3/events/open' request(s) to carry 'link_data'", errors[0])
+
+
+class DeliveredUrlTests(unittest.TestCase):
+    """`--url` ties the resolve and the open to the URL the driver delivered."""
+
+    def _entries(self):
+        return v.parse_branch_logs(os.path.join(FIXTURE_DIR, "hot_uriScheme.txt"))
+
+    def test_the_delivered_url_passes(self):
+        self.assertEqual(v.assert_delivered_url(self._entries(), FIXTURE_URL), [])
+
+    def test_a_different_url_fails_on_both_requests(self):
+        errors = v.assert_delivered_url(self._entries(), "branchtest://open?scenario=H2")
+        self.assertEqual(len(errors), 2, errors)
+        self.assertIn("'/v3/deeplink'", errors[0])
+        self.assertIn("'/v3/events/open'", errors[1])
+
+
+class HotUriSchemeWiringTests(unittest.TestCase):
+    """These checks protect nothing unless the workflow and the TestBed run them."""
+
+    def _read(self, *parts):
+        with open(os.path.join(REPO_ROOT, *parts)) as f:
+            return f.read()
+
+    def test_the_workflow_runs_both_checkers_on_the_delta(self):
+        workflow = self._read(".github", "workflows", "layer1-logger-tests.yml")
+        self.assertIn('post="$OUTPUT_DIR/wire-hot_uriScheme.post.txt"', workflow)
+        self.assertIn('pre="$OUTPUT_DIR/wire-hot_uriScheme.pre.txt"', workflow)
+        self.assertIn('validate_l1_logs.py "$post" --scenario hot_uriScheme', workflow)
+        self.assertIn('--pre "$pre" --url "$H2_URL"', workflow)
+        self.assertIn('check_foreground_markers.py "$post" --pre "$pre"', workflow)
+        self.assertEqual(workflow.count("H2_URL: branchtest://open?scenario=H2"), 2)
+
+    def test_the_testbed_delivers_urls_only_through_the_marked_app_delegate_method(self):
+        # A scene manifest or openURL:options: would bypass the openURL marker.
+        self.assertNotIn("UIApplicationSceneManifest", self._read("Branch-TestBed", "Branch-TestBed", "Branch-TestBed-Info.plist"))
+        app_delegate = self._read("Branch-TestBed", "Branch-TestBed", "AppDelegate.m")
+        self.assertEqual(app_delegate.count("openURL:(NSURL *)"), 1)
+        self.assertEqual(app_delegate.count('logLifecycleMarker:@"openURL"'), 1)
 
 
 def _fixture_bytes(name):
@@ -60,11 +124,13 @@ class CaptureDeltaTests(unittest.TestCase):
             f.write(data)
         return path
 
-    def _main(self, post, pre):
+    def _main(self, post, pre, url=None):
         saved_argv = sys.argv
         sys.argv = [
             "validate_l1_logs.py", post, "--scenario", "hot_uriScheme", "--pre", pre
         ]
+        if url is not None:
+            sys.argv += ["--url", url]
         out = io.StringIO()
         try:
             with redirect_stdout(out):
@@ -82,6 +148,15 @@ class CaptureDeltaTests(unittest.TestCase):
         code, output = self._main(post, pre)
         self.assertEqual(code, 0, output)
         self.assertIn("--- VALIDATION PASSED (2/2 requests valid) ---", output)
+
+    def test_a_delta_for_another_url_fails(self):
+        pre_bytes = _fixture_bytes("hot_uriScheme_launch_pre.txt")
+        pre = self._write("pre.txt", pre_bytes)
+        post = self._write("post.txt", pre_bytes + _fixture_bytes("hot_uriScheme.txt"))
+        self.assertEqual(self._main(post, pre, url=FIXTURE_URL)[0], 0)
+        code, output = self._main(post, pre, url="branchtest://open?scenario=H2")
+        self.assertEqual(code, 1)
+        self.assertIn("to carry the delivered URL branchtest://open?scenario=H2", output)
 
     def test_a_snapshot_that_is_not_a_prefix_fails(self):
         # A relaunch deletes and restarts the log, so the snapshot no longer leads it.
