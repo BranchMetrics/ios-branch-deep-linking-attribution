@@ -1,5 +1,6 @@
 """
-Foreground receipt for hot_uriScheme, read from TestBed lifecycle markers.
+Foreground receipt for hot_uriScheme and hot_https_foreground, read from TestBed
+lifecycle markers.
 
 One `/v3/events/open` on the delivery delta does not prove the app stayed
 foreground: a transition whose foreground open was suppressed also sends one.
@@ -8,7 +9,8 @@ this checker asserts the delivery reached a foregrounded app:
 
 - the snapshot taken before delivery (--pre) holds at least one
   applicationDidBecomeActive, so markers are being written;
-- the bytes appended after it hold exactly one openURL and no
+- the bytes appended after it hold exactly one delivery marker (openURL for
+  hot_uriScheme, continueUserActivity for hot_https_foreground) and no
   applicationWillResignActive, applicationDidEnterBackground or
   applicationDidBecomeActive.
 
@@ -29,6 +31,9 @@ from validate_l1_logs import capture_delta
 MARKER_RE = re.compile(rb"\[TestBedLifecycle\] (\w+)")
 
 LIVENESS = "applicationDidBecomeActive"
+# Logged by the TestBed delegate method, so it proves the method ran after
+# delivery, not that the activity carried a Branch link; validate_l1_logs.py
+# asserts that from the wire contract.
 MARKER_FOR_SCENARIO = {
     "hot_uriScheme": "openURL",
     "hot_https_foreground": "continueUserActivity",

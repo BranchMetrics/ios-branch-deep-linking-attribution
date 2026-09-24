@@ -1,5 +1,5 @@
-"""Tests for the hot_uriScheme foreground marker checker, run against marker
-lines from TestBed captures.
+"""Tests for the hot_uriScheme and hot_https_foreground marker checker, run
+against marker lines from TestBed captures.
 
 Run from the repo root:
 
@@ -135,8 +135,10 @@ class HotHttpsForegroundMarkerTests(unittest.TestCase):
             _fixture_bytes("hot_https_foreground_markers_safari_fallback.post.txt"),
         )
         self.assertEqual(code, 1)
-        self.assertEqual(len(failed), 3, output)
-        self.assertTrue(any("'continueUserActivity'" in line for line in failed), output)
+        self.assertTrue(
+            any("'continueUserActivity'" in line and "found 0" in line for line in failed), output
+        )
+        self.assertTrue(any("'applicationWillResignActive'" in line for line in failed), output)
 
 
 if __name__ == "__main__":
