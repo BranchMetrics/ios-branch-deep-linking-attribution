@@ -348,20 +348,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 }
 
 - (BOOL)application:(UIApplication *)application
-            openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation {
-
-    NSLog(@"application:openURL:sourceApplication:annotation: invoked with URL: %@", [url description]);
-    // H2 counts this marker (scripts/check_foreground_markers.py); move it with any new URL entry point.
-    [self logLifecycleMarker:@"openURL"];
-    [[Branch sharedInstance] requestDeepLinkDataWithURL:url sourceApplication:sourceApplication annotation:annotation];
-
-    // Process non-Branch URIs here...
-    return YES;
-}
-
-- (BOOL)application:(UIApplication *)application
 continueUserActivity:(NSUserActivity *)userActivity
  restorationHandler:(void(^)(NSArray<id<UIUserActivityRestoring>>*restorableObjects))restorationHandler {
 
@@ -379,21 +365,6 @@ continueUserActivity:(NSUserActivity *)userActivity
 
     // Process non-Branch userActivities here...
     return YES;
-}
-
-- (void)applicationWillResignActive:(UIApplication *)application { [self logLifecycleMarker:@"applicationWillResignActive"]; }
-- (void)applicationDidEnterBackground:(UIApplication *)application {
-    [self logLifecycleMarker:@"applicationDidEnterBackground"];
-    // Two main-queue hops land after the SDK's background clear; UIKit calls this delegate before posting the notification the SDK clears on, so one hop is not enough.
-    dispatch_async(dispatch_get_main_queue(), ^{
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self logLatestReferringParams];
-        });
-    });
-}
-- (void)applicationDidBecomeActive:(UIApplication *)application {
-    [self logLifecycleMarker:@"applicationDidBecomeActive"];
-    [self logLatestReferringParams];
 }
 
 // Writes an L1 lifecycle marker to branchlogs.txt; the leading newline ends an unterminated SDK log entry.
