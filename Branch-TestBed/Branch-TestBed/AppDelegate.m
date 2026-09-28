@@ -44,6 +44,10 @@
                  response:(NSDictionary *)response
                     error:(NSError *)error
         requestServiceURL:(NSString *)requestServiceURL;
+/// The app runs one non-multiscene UIWindowScene (see SceneDelegate), so there is exactly one
+/// window to find. Used only by the two dead `handleDeepLink…` methods below, which no wiring
+/// currently calls; kept correct so a future caller does not silently read a nil `self.window`.
+@property (nonatomic, readonly) UIWindow *bnc_keyWindow;
 @end
 
 AppDelegate* appDelegate = nil;
@@ -281,6 +285,20 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     }];
 }
 
+- (UIWindow *)bnc_keyWindow {
+    for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
+        if ([scene isKindOfClass:[UIWindowScene class]]) {
+            UIWindowScene *windowScene = (UIWindowScene *)scene;
+            for (UIWindow *window in windowScene.windows) {
+                if (window.isKeyWindow) {
+                    return window;
+                }
+            }
+        }
+    }
+    return nil;
+}
+
 - (void) handleDeepLinkParams:(NSDictionary*)params error:(NSError*)error {
     if (error) {
         NSLog(@"Branch TestBed: Error deep linking: %@.", error.localizedDescription);
@@ -292,7 +310,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     if ([params[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] boolValue]) {
 
         UINavigationController *navigationController =
-            (UINavigationController *)self.window.rootViewController;
+            (UINavigationController *)self.bnc_keyWindow.rootViewController;
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LogOutputViewController *logOutputViewController =
             [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
@@ -319,7 +337,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     NSString *deeplinkText = object.contentMetadata.customMetadata[@"deeplink_text"];
     if (object.contentMetadata.customMetadata[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK].boolValue) {
         UINavigationController *navigationController =
-            (UINavigationController *)self.window.rootViewController;
+            (UINavigationController *)self.bnc_keyWindow.rootViewController;
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LogOutputViewController *logOutputViewController =
             [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
