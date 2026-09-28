@@ -92,7 +92,7 @@ TestBed-GPTDriverTests/
 ## Dependencies
 
 - Swift Package: `gptd-swift` (≥ 1.9.1, up to next major). Declared in the parent `Branch-TestBed.xcodeproj`.
-- iOS 14.0+ (the minimum platform declared by `gptd-swift`). The host app `Branch-TestBed` still targets iOS 12, so running these tests requires a simulator with iOS ≥ 14.
+- iOS 14.0+ (the minimum platform declared by `gptd-swift`). The host app `Branch-TestBed` targets iOS 15.0, so running these tests requires a simulator with iOS 15 or later.
 - Runs on simulator only (code signing disabled).
 
 ## Secret management
