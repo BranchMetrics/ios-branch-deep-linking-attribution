@@ -897,19 +897,30 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
         NSLog(@"Received QR Code Image: %@", qrCode);
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            
-            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 200, 282)];
+
+            UIImageView *imageView = [[UIImageView alloc] init];
             imageView.contentMode = UIViewContentModeScaleAspectFit;
+            imageView.translatesAutoresizingMaskIntoConstraints = NO;
             [imageView setImage:qrCode];
-            UIAlertView *alertView = [[UIAlertView alloc]  initWithTitle:@"Your QR Code"
-                                                                 message:@""
-                                                                delegate:self
-                                                       cancelButtonTitle:@"Dismiss"
-                                                       otherButtonTitles:nil];
-            
-            [alertView setValue:imageView forKey:@"accessoryView"];
-            [alertView show];
-            
+
+            UIAlertController *alertController =
+                [UIAlertController alertControllerWithTitle:@"Your QR Code"
+                                                     message:@"\n\n\n\n\n\n\n\n\n\n"
+                                              preferredStyle:UIAlertControllerStyleAlert];
+            [alertController.view addSubview:imageView];
+            [NSLayoutConstraint activateConstraints:@[
+                [imageView.centerXAnchor constraintEqualToAnchor:alertController.view.centerXAnchor],
+                [imageView.topAnchor constraintEqualToAnchor:alertController.view.topAnchor constant:60],
+                [imageView.widthAnchor constraintEqualToConstant:200],
+                [imageView.heightAnchor constraintEqualToConstant:200]
+            ]];
+
+            UIAlertAction *dismissAction = [UIAlertAction actionWithTitle:@"Dismiss"
+                                                                      style:UIAlertActionStyleCancel
+                                                                    handler:nil];
+            [alertController addAction:dismissAction];
+            [self presentViewController:alertController animated:YES completion:nil];
+
             [activityIndicator stopAnimating];
         });
     }];
