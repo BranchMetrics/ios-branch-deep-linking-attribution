@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 Branch iOS SDK on the **`4.0.0-beta.*` rewrite line**. One Objective-C library, `BranchSDK`, for
-iOS 12+ and tvOS 12+, shipped via SPM, CocoaPods, Carthage and prebuilt XCFrameworks. There is
+iOS 15+ and tvOS 15+, shipped via SPM, CocoaPods, Carthage and prebuilt XCFrameworks. There is
 no Swift under `Sources/` on this branch.
 
 **This is not `master`.** The request queue, the session model, the wire endpoints and parts of
