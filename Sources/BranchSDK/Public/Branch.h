@@ -965,7 +965,8 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 - (nullable BranchLinkProperties *)getLatestReferringBranchLinkProperties;
 
 /**
- Get the parameters used the most recent time this user was referred (can be empty).
+ Get the parameters of the link that opened the current foreground session (can be empty).
+ Cleared when the app enters the background with no link resolution or open in flight, unless automatic open tracking is disabled.
  */
 - (nullable NSDictionary *)getLatestReferringParams;
 
