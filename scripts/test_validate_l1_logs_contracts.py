@@ -166,14 +166,32 @@ class HotUriSchemeWiringTests(unittest.TestCase):
         with open(os.path.join(REPO_ROOT, *parts)) as f:
             return f.read()
 
+    def _step(self, workflow, name):
+        # Both validate steps now bind the capture path the same way, so an
+        # assertion against the whole file no longer says which one it matched.
+        return workflow.split(f"- name: {name}\n", 1)[-1].split("\n      - name: ", 1)[0]
+
     def test_the_workflow_runs_both_checkers_on_the_delta(self):
         workflow = self._read(".github", "workflows", "layer1-logger-tests.yml")
-        self.assertIn('post="$OUTPUT_DIR/wire-hot_uriScheme.post.txt"', workflow)
-        self.assertIn('pre="$OUTPUT_DIR/wire-hot_uriScheme.pre.txt"', workflow)
-        self.assertIn('validate_l1_logs.py "$post" --scenario hot_uriScheme', workflow)
-        self.assertIn('--pre "$pre" --url "$H2_URL"', workflow)
-        self.assertIn('check_foreground_markers.py "$post" --pre "$pre"', workflow)
+        step = self._step(workflow, "Validate hot_uriScheme")
+        self.assertIn('post="$OUTPUT_DIR/wire-hot_uriScheme.post.txt"', step)
+        self.assertIn('pre="$OUTPUT_DIR/wire-hot_uriScheme.pre.txt"', step)
+        self.assertIn('validate_l1_logs.py "$post" --scenario hot_uriScheme', step)
+        self.assertIn('--pre "$pre" --url "$H2_URL"', step)
+        self.assertIn('check_foreground_markers.py "$post" --pre "$pre"', step)
         self.assertEqual(workflow.count("H2_URL: branchtest://open?scenario=H2"), 2)
+
+    def test_the_workflow_runs_both_checkers_on_the_warm_delta(self):
+        workflow = self._read(".github", "workflows", "layer1-logger-tests.yml")
+        step = self._step(workflow, "Validate warm_uriScheme")
+        self.assertIn('post="$OUTPUT_DIR/wire-warm_uriScheme.post.txt"', step)
+        self.assertIn('pre="$OUTPUT_DIR/wire-warm_uriScheme.pre.txt"', step)
+        self.assertIn('validate_l1_logs.py "$post" --scenario warm_uriScheme', step)
+        self.assertIn('--pre "$pre" --url "$H2_URL"', step)
+        self.assertIn('--scenario warm_uriScheme > /tmp/w2-markers.txt', step)
+        self.assertIn('WARM: "1"', workflow)
+        # Without the capture-outcome check a relaunch caught by the driver would still be validated.
+        self.assertIn("steps.w2capture.outcome", step)
 
     def test_the_testbed_delivers_urls_only_through_the_marked_app_delegate_method(self):
         # A scene manifest or openURL:options: would bypass the openURL marker.
