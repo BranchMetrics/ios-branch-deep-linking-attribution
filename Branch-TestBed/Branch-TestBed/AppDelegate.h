@@ -11,4 +11,5 @@
 @property NSString* PrevCommandLogFileName;
 - (void) processLogMessage:(NSString*)message;
 - (void) setLogFile:(NSString*)fileName;
+- (void) logLifecycleMarker:(NSString *)name;
 @end

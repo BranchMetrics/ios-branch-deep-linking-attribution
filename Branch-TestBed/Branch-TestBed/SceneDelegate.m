@@ -2,13 +2,17 @@
 //  SceneDelegate.m
 //  Branch-TestBed
 //
-//  Owns the window under the UIKit scene life cycle (Xcode 27 / iOS 27 require
-//  UIApplicationSceneManifest). Cold-launch deep link data arrives in
-//  `connectionOptions` here, not in AppDelegate's `didFinishLaunchingWithOptions:`.
+//  Owns the window under the UIKit scene life cycle. Cold-launch deep link
+//  data arrives in `connectionOptions` here, not in AppDelegate's
+//  `didFinishLaunchingWithOptions:`. Emits the same `[TestBedLifecycle]`
+//  markers AppDelegate used to write, via `appDelegate`'s `logLifecycleMarker:`.
 //
 
 #import "SceneDelegate.h"
+#import "AppDelegate.h"
 @import BranchSDK;
+
+extern AppDelegate *appDelegate;
 
 @implementation SceneDelegate
 
@@ -28,16 +32,22 @@ willConnectToSession:(UISceneSession *)session
     self.window.rootViewController = rootViewController;
     [self.window makeKeyAndVisible];
 
-    // Resolves any URL/user-activity carried in connectionOptions (cold launch),
-    // and is a no-op that still starts the session when there is none.
-    [[Branch sharedInstance] requestDeepLinkDataWithSceneOptions:connectionOptions
-                                                            scene:scene
-                                                         callback:nil];
+    // Reaches the scene API only when a URL or activity is present, so a
+    // no-link cold start makes no deep-link request.
+    if (connectionOptions.URLContexts.count) {
+        [appDelegate logLifecycleMarker:@"openURL"];
+    }
+    if (connectionOptions.userActivities.count || connectionOptions.URLContexts.count) {
+        [[Branch sharedInstance] requestDeepLinkDataWithSceneOptions:connectionOptions
+                                                                scene:scene
+                                                             callback:nil];
+    }
 }
 
 // Warm open via a custom URL scheme, e.g. `xcrun simctl openurl <udid> "branchtest://..."`
 // while the scene is already connected.
 - (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts {
+    [appDelegate logLifecycleMarker:@"openURL"];
     [[Branch sharedInstance] requestDeepLinkDataWithScene:scene openURLContexts:URLContexts];
 }
 
@@ -45,5 +55,9 @@ willConnectToSession:(UISceneSession *)session
 - (void)scene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity {
     [[Branch sharedInstance] requestDeepLinkDataWithScene:scene continueUserActivity:userActivity];
 }
+
+- (void)sceneWillResignActive:(UIScene *)scene { [appDelegate logLifecycleMarker:@"applicationWillResignActive"]; }
+- (void)sceneDidEnterBackground:(UIScene *)scene { [appDelegate logLifecycleMarker:@"applicationDidEnterBackground"]; }
+- (void)sceneDidBecomeActive:(UIScene *)scene { [appDelegate logLifecycleMarker:@"applicationDidBecomeActive"]; }
 
 @end
