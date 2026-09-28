@@ -44,9 +44,7 @@
                  response:(NSDictionary *)response
                     error:(NSError *)error
         requestServiceURL:(NSString *)requestServiceURL;
-/// The app runs one non-multiscene UIWindowScene (see SceneDelegate), so there is exactly one
-/// window to find. Used only by the two dead `handleDeepLink…` methods below, which no wiring
-/// currently calls; kept correct so a future caller does not silently read a nil `self.window`.
+/// The key window, for `handleDeepLinkParams:error:` and `handleDeepLinkObject:linkProperties:error:` below.
 @property (nonatomic, readonly) UIWindow *bnc_keyWindow;
 @end
 
