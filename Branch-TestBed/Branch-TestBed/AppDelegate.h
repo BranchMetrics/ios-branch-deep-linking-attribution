@@ -7,7 +7,6 @@
 //
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
-@property (strong, nonatomic) UIWindow *window;
 @property NSString* logFileName;
 @property NSString* PrevCommandLogFileName;
 - (void) processLogMessage:(NSString*)message;

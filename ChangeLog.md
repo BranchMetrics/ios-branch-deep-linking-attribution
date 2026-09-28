@@ -16,6 +16,7 @@ v.4.0.0-alpha.0
 - SPM Repo Cleanup - Removed all Extra files
 - Fixed bug - `getLatestReferringParams` kept returning a previously resolved link after the app backgrounded and reopened organically. The params are now cleared at process start, and when the app enters the background with no link resolution or open in flight. A transient interruption that does not background the app, such as a system alert or Control Center, keeps them.
 - Raised the minimum iOS and tvOS deployment target to 15.0 (`BranchSDK.xcodeproj`, `Package.swift`, `BranchSDK.podspec`). Xcode 27 refuses to build the Xcode project or a CocoaPods integration below 15.0. An SPM integration already builds at 15.0 under Xcode 27 whatever `Package.swift` declares, so there the change records the floor rather than fixing a build.
+- Branch-TestBed adopts the UIKit scene life cycle (`UIApplicationSceneManifest` + `SceneDelegate`), required for the app to launch under Xcode 27 / iOS 27 (`UIApplicationEvaluateRuntimeIssueForNoSceneLifecycleAdoption`).
 
 v.3.14.0
 — Added APIs `disableNextForegroundForTimeInterval:`, `disableNextForeground` and `resumeSession` to disable and resume automatic tracking of `OPEN` events. These are experimental APIs. Please refer to warning message in API documentation/comments.
