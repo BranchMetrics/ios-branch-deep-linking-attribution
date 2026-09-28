@@ -62,32 +62,9 @@ final class MyFeatureHybridTest: BaseGptDriverTest {
 
 ## Deep link tests — launch argument hook
 
-`DeepLinkColdOpenHybridTest`, `DeepLinkWarmOpenHybridTest`, and `BrowserExperienceHybridTest` simulate Safari → app Universal Link handoff via a test-only hook in `Branch-TestBed/Branch-TestBed/AppDelegate.m`:
+`DeepLinkColdOpenHybridTest`, `DeepLinkWarmOpenHybridTest`, and `BrowserExperienceHybridTest` simulate Safari → app Universal Link handoff via a test-only hook in `Branch-TestBed/Branch-TestBed/TestBedDeepLinkTestHook.m` (`+[TestBedDeepLinkTestHook installIfRequested:]`), installed from `AppDelegate.m`'s `application:didFinishLaunchingWithOptions:` inside `#if DEBUG`.
 
-```objc
-#if DEBUG
-NSString *testDeepLinkURL = [[NSUserDefaults standardUserDefaults] stringForKey:@"testDeepLinkURL"];
-if (testDeepLinkURL.length > 0) {
-    NSURL *url = [NSURL URLWithString:testDeepLinkURL];
-    // Deliver once BranchDidStartSessionNotification fires; a ten-second
-    // fallback covers a session that never starts.
-    [[NSNotificationCenter defaultCenter]
-        addObserverForName:BranchDidStartSessionNotification
-                    object:nil
-                     queue:[NSOperationQueue mainQueue]
-                usingBlock:^(NSNotification *note) {
-        NSUserActivity *activity = [[NSUserActivity alloc]
-            initWithActivityType:NSUserActivityTypeBrowsingWeb];
-        activity.webpageURL = url;
-        [self application:application
-             continueUserActivity:activity
-               restorationHandler:^(NSArray * _Nullable r) {}];
-    }];
-}
-#endif
-```
-
-The hook reads a `-testDeepLinkURL <url>` launch argument and, if present, waits for `BranchDidStartSessionNotification` (a ten-second fallback if it never fires) before constructing an `NSUserActivity` of type `NSUserActivityTypeBrowsingWeb` and calling `application:continueUserActivity:`. The Branch SDK resolution path is **byte-for-byte identical** to a real Safari Universal Link handoff — the SDK has no way to tell the synthetic delivery apart from the real thing.
+The hook reads a `-testDeepLinkURL <url>` launch argument from `NSUserDefaults` and, if present, builds an `NSUserActivity` of type `NSUserActivityTypeBrowsingWeb` from that URL. It delivers the activity through the app delegate's `application:continueUserActivity:restorationHandler:`, once `BranchDidStartSessionNotification` fires or after a ten-second fallback if the session never starts, whichever comes first; delivery happens exactly once. The Branch SDK resolution path is **byte-for-byte identical** to a real Safari Universal Link handoff, so the SDK has no way to tell the synthetic delivery apart from the real thing.
 
 **Why this is necessary on simulator:** Universal Link handoff via Safari requires the app to be code-signed with the `com.apple.developer.associated-domains` entitlement embedded in the signature. Tests run unsigned via `CODE_SIGNING_ALLOWED=NO`, so the `swcutil` daemon never associates the app with `bnctestbed.test-app.link` and Safari does not hand off. The hook bypasses Safari entirely while still exercising the full SDK code path.
 
@@ -98,8 +75,8 @@ The hook reads a `-testDeepLinkURL <url>` launch argument and, if present, waits
 1. Generate a real Branch link via the existing TestBed UI and extract the URL via `driver.extract`.
 2. `app.terminate()` (cold) or `XCUIDevice.shared.press(.home)` (warm).
 3. Set `app.launchArguments += ["-testDeepLinkURL", generatedUrl]` and call `app.launch()` again.
-4. Wait ~5 seconds for the AppDelegate hook to fire and Branch SDK to resolve the link.
-5. Verify Branch's `handleDeepLinkParams` auto-pushed `LogOutputViewController` (signaled by the navigation bar titled "Logs") and that the visible JSON contains expected metadata keys (`~channel`, `~feature`, `+match_guaranteed`, `+clicked_branch_link`, etc.).
+4. Wait ~5 seconds for the `TestBedDeepLinkTestHook` to fire and Branch SDK to resolve the link.
+5. Verify a log output screen appeared (a navigation bar titled "Logs") and that the visible JSON contains expected metadata keys (`~channel`, `~feature`, `+match_guaranteed`, `+clicked_branch_link`, etc.).
 
 ## StoreKit / IAP tests
 
@@ -124,7 +101,7 @@ The real `MobileBoost.local.xcconfig` is gitignored by the `*.local.xcconfig` ru
 | `precondition failed: MOBILEBOOST_API_KEY not configured` | No `MobileBoost.local.xcconfig` and no env var | Copy the template and fill in your key, or `export MOBILEBOOST_API_KEY=…` before `xcodebuild` |
 | Linker error `_kTestBedBtn…` undefined | `TestBedIdentifiers.m` not linked into the test target | Verify it's listed in Compile Sources of `TestBed-GPTDriverTests`; the xcodeproj gem script adds it automatically |
 | `module map file 'ObjCExceptionCatcher.modulemap' not found` | Building with `-target` instead of `-scheme` | Always use `-scheme TestBed-GPTDriverTests` for builds; SPM dependency resolution requires a scheme |
-| Deep link test never sees the LogOutput screen | The AppDelegate `#if DEBUG` hook is missing or the launch argument is misspelled | Verify `Branch-TestBed/AppDelegate.m` still has the `testDeepLinkURL` block, and check that the test passes `["-testDeepLinkURL", url]` (exactly that key, dash-prefixed) |
+| Deep link test never sees the LogOutput screen | The `TestBedDeepLinkTestHook` `#if DEBUG` hook is missing or the launch argument is misspelled | Verify `Branch-TestBed/Branch-TestBed/TestBedDeepLinkTestHook.m` still has the `testDeepLinkURL` block and that `AppDelegate.m` still calls `[TestBedDeepLinkTestHook installIfRequested:application]`, and check that the test passes `["-testDeepLinkURL", url]` (exactly that key, dash-prefixed) |
 | SwiftFormat and SwiftLint disagree on trailing commas | Default-config mismatch between the two tools | This directory has a local `.swiftformat` that disables `trailingCommas` — if you see the conflict, that file is the fix |
 | Tests run but session shows `failed` on dashboard even though `XCTAssert` passed | Forgot that session status is auto-set in tearDown | Remove any manual `driver.setSessionSucceeded()` calls from test bodies — they're redundant and fragile |
 
