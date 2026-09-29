@@ -23,6 +23,7 @@
 #   SETTLE_MAX_S       - give up settling after this many seconds (default 120)
 #   LINK_MAX_S         - budget for the link to resolve and chain an open (default 60)
 #   BG_MAX_S           - budget for the background marker (default 30)
+#   BG_REPORT_MAX_S    - budget for the background-side report after the marker (default 15)
 #   RETURN_MAX_S       - budget for the return marker and its report (default 30)
 #   NS_URL             - fixture link to deliver (default the bnctestbed.app.link fixture)
 
@@ -38,6 +39,7 @@ SETTLE_S="${SETTLE_S:-10}"
 SETTLE_MAX_S="${SETTLE_MAX_S:-120}"
 LINK_MAX_S="${LINK_MAX_S:-60}"
 BG_MAX_S="${BG_MAX_S:-30}"
+BG_REPORT_MAX_S="${BG_REPORT_MAX_S:-15}"
 RETURN_MAX_S="${RETURN_MAX_S:-30}"
 NS_URL="${NS_URL:-https://bnctestbed.app.link/7HTLJ2jXi3b}"
 
@@ -102,10 +104,7 @@ wait_settled() {
     fail "branchlogs.txt did not settle within ${SETTLE_MAX_S}s"
 }
 
-# Waits for the delivered link's own chain: a /v3/deeplink request, a succeeded
-# chained /v3/events/open response after it, then a report carrying this run's
-# own +clicked_branch_link after that (logBranchRequest: writes the report
-# right after each response, so the report always trails its response).
+# Waits for the delivered link's chain: /v3/deeplink, a chained /v3/events/open, then a report carrying this run's +clicked_branch_link.
 wait_link_resolved() {
     local path elapsed=0 deeplink_line open_line
     while [ "$elapsed" -lt "$LINK_MAX_S" ]; do
@@ -127,20 +126,37 @@ wait_link_resolved() {
     fail "no resolved link with a chained /v3/events/open within ${LINK_MAX_S}s"
 }
 
-# Waits for the TestBed's own background marker. The SDK's own verbose
-# applicationDidEnterBackground log is below the TestBed's Debug threshold
-# (BranchLogLevelVerbose < BranchLogLevelDebug in AppDelegate.m) and never
-# reaches branchlogs.txt, so only the TestBed's marker is observable here.
-wait_background_marker() {
+# Waits for the TestBed's background marker, then for the background-side report the two main-queue hops in applicationDidEnterBackground: write after it.
+wait_background_report() {
     local path elapsed=0
     while [ "$elapsed" -lt "$BG_MAX_S" ]; do
         if path=$(log_path) && [ -f "$path" ] && grep -q '\[TestBedLifecycle\] applicationDidEnterBackground' "$path"; then
-            return 0
+            break
         fi
         sleep 1
         elapsed=$((elapsed + 1))
     done
-    fail "no applicationDidEnterBackground marker within ${BG_MAX_S}s"
+    [ "$elapsed" -lt "$BG_MAX_S" ] || fail "no applicationDidEnterBackground marker within ${BG_MAX_S}s"
+
+    local marker_line report
+    marker_line=$(grep -n '\[TestBedLifecycle\] applicationDidEnterBackground' "$path" | tail -1 | cut -d: -f1)
+    elapsed=0
+    while [ "$elapsed" -lt "$BG_REPORT_MAX_S" ]; do
+        if path=$(log_path) && [ -f "$path" ]; then
+            report=$(tail -n +"$((marker_line + 1))" "$path" | grep '\[TestBedLifecycle\] latestReferringParams' | tail -1) || report=""
+            if [ -n "$report" ]; then
+                if grep -q '"+clicked_branch_link":true' <<<"$report"; then
+                    echo "clear did not run at background"
+                else
+                    echo "clear observed at background"
+                fi
+                return 0
+            fi
+        fi
+        sleep 1
+        elapsed=$((elapsed + 1))
+    done
+    fail "no latestReferringParams report after the background marker within ${BG_REPORT_MAX_S}s"
 }
 
 # Waits for the return's own activation marker and a report after it, past pre_size bytes.
@@ -184,9 +200,9 @@ pid=$(app_pid)
 [[ $pid =~ ^[0-9]+$ ]] || fail "TestBed is not running after the link"
 echo "link resolved, pid=$pid"
 
-# 6. Background for real, wait for the TestBed's own marker, snapshot before the return.
+# 6. Background for real, wait for the marker and the background-side report, snapshot before the return.
 xcrun simctl launch "$udid" com.apple.Preferences >/dev/null
-wait_background_marker
+wait_background_report
 bg_epoch=$SECONDS
 cp "$(log_path)" "$pre"
 pre_size=$(stat -f %z "$pre")
