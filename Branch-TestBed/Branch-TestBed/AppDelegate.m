@@ -366,7 +366,15 @@ continueUserActivity:(NSUserActivity *)userActivity
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application { [self logLifecycleMarker:@"applicationWillResignActive"]; }
-- (void)applicationDidEnterBackground:(UIApplication *)application { [self logLifecycleMarker:@"applicationDidEnterBackground"]; }
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+    [self logLifecycleMarker:@"applicationDidEnterBackground"];
+    // Two main-queue hops land after the SDK's background clear; UIKit calls this delegate before posting the notification the SDK clears on, so one hop is not enough.
+    dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self logLatestReferringParams];
+        });
+    });
+}
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     [self logLifecycleMarker:@"applicationDidBecomeActive"];
     [self logLatestReferringParams];
