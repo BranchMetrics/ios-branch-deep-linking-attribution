@@ -49,6 +49,7 @@
 @end
 
 static NSString * const kSpotlightBranchLinkURL = @"https://example.app.link/spotlight-cold-scene-link";
+static NSString * const kSpotlightNonBranchIdentifier = @"spotlight-item-not-a-branch-link";
 
 @interface BranchSceneConnectionOptionsTests : XCTestCase
 @property (nonatomic, strong) Branch *branch;
@@ -87,6 +88,19 @@ static NSString * const kSpotlightBranchLinkURL = @"https://example.app.link/spo
 
 #pragma mark - Helpers
 
+// The host app's default scene can still be connecting when the first test method in a run
+// starts executing, so a single unconditional read of -connectedScenes can race it. Polling
+// avoids a spurious precondition failure that has nothing to do with the code under test.
+- (UIScene *)waitForConnectedScene {
+    NSPredicate *predicate = [NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        return [UIApplication sharedApplication].connectedScenes.anyObject != nil;
+    }];
+    XCTNSPredicateExpectation *expectation = [[XCTNSPredicateExpectation alloc] initWithPredicate:predicate object:self];
+    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation] timeout:5.0];
+    XCTAssertEqual(result, XCTWaiterResultCompleted, @"Timed out waiting for the test host app to connect a scene.");
+    return [UIApplication sharedApplication].connectedScenes.anyObject;
+}
+
 // This project loads BNCServerRequestOperation from two images at once, so Class-pointer
 // identity is unreliable here; name-based matching is not.
 - (NSArray<BNCServerRequest *> *)enqueuedRequestsOfClassNamed:(NSString *)className {
@@ -110,8 +124,7 @@ static NSString * const kSpotlightBranchLinkURL = @"https://example.app.link/spo
 // means a CSSearchableItemActionType activity is never passed to
 // -processUserActivity:sceneIdentifier:filtered:, and nothing is enqueued. Red today.
 - (void)testSpotlightActivityWithBranchLinkOnColdSceneConnectEnqueuesExactlyOneDeepLinkRequest {
-    UIScene *scene = [UIApplication sharedApplication].connectedScenes.anyObject;
-    XCTAssertNotNil(scene, @"Precondition: the test host app must have a connected scene.");
+    UIScene *scene = [self waitForConnectedScene];
 
     NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:CSSearchableItemActionType];
     activity.userInfo = @{ CSSearchableItemActivityIdentifier: kSpotlightBranchLinkURL };
@@ -128,6 +141,35 @@ static NSString * const kSpotlightBranchLinkURL = @"https://example.app.link/spo
     BranchRequestDeepLink *resolve = (BranchRequestDeepLink *)enqueued.firstObject;
     XCTAssertEqualObjects(resolve.urlString, kSpotlightBranchLinkURL,
                           @"The enqueued request must carry the Spotlight activity's Branch link.");
+}
+
+// A Spotlight activity whose identifier is not a Branch link still has to be recorded and
+// resolved, the same as -requestDeepLinkDataWithScene:continueUserActivity: already does for the
+// identical activity (Branch.m:2245-2249): the identifier goes to
+// preferenceHelper.spotlightIdentifier and a deferred, nil-URL lookup is enqueued rather than the
+// activity being dropped outright. Red today for the same reason as the Branch-link case above:
+// the NSUserActivityTypeBrowsingWeb-only check means -processUserActivity: is never called.
+- (void)testSpotlightActivityWithNonBranchIdentifierRecordsIdentifierAndEnqueuesNilURLLookup {
+    UIScene *scene = [self waitForConnectedScene];
+
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:CSSearchableItemActionType];
+    activity.userInfo = @{ CSSearchableItemActivityIdentifier: kSpotlightNonBranchIdentifier };
+
+    BNCTestSceneConnectionOptions *options = [BNCTestSceneConnectionOptions alloc]; // no -init; see the class comment above.
+    options.stubbedUserActivities = [NSSet setWithObject:activity];
+
+    [self.branch requestDeepLinkDataWithSceneOptions:options scene:scene callback:nil];
+
+    XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].spotlightIdentifier, kSpotlightNonBranchIdentifier,
+                          @"A non-Branch Spotlight identifier on a cold scene connect must still be recorded.");
+
+    NSArray<BNCServerRequest *> *enqueued = [self enqueuedRequestsOfClassNamed:@"BranchRequestDeepLink"];
+    XCTAssertEqual(enqueued.count, (NSUInteger)1,
+                  @"A non-Branch Spotlight activity on a cold scene connect must still enqueue the deferred, nil-URL lookup. Enqueued: %@", enqueued);
+
+    BranchRequestDeepLink *resolve = (BranchRequestDeepLink *)enqueued.firstObject;
+    XCTAssertNil(resolve.urlString,
+                @"A non-Branch Spotlight activity carries no URL to resolve, matching -requestDeepLinkDataWithScene:continueUserActivity:'s nil-URL lookup.");
 }
 
 @end
