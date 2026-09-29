@@ -34,29 +34,9 @@ jobs:
   # stable in practice (spec.md Open question 2).
   verify-xcode27:
     runs-on: xcode-27
-    # BranchSDKTests itself finishes fast and clean (690/0, ~150-170s), but
-    # the "Run unit tests" step then produces no further output for a
-    # consistent ~10 minutes before xcodebuild finally returns: 9m42s (run
-    # 1, force-cancelled by the then-20-minute job timeout before it could
-    # finish on its own; GitHub's "Cleaning up orphan processes" step had to
-    # kill xcodebuild, SWBBuildService and DTServiceHub by pid), 10m10s (run
-    # 2, timeout alone widened to 35), 10m07s (run 3, same 35-minute
-    # timeout, simulator pre-booted via `simctl boot`/`bootstatus` plus
-    # explicit -resultBundlePath/-enableCodeCoverage NO/-parallel-testing-
-    # enabled NO added to rule out implicit-default ambiguity). Neither the
-    # pre-boot nor the explicit flags moved the gap at all (10m10s vs.
-    # 10m07s is noise), so both were reverted rather than kept as unproven
-    # complexity; the flags stay since they cost nothing and do rule out
-    # coverage/parallel-testing as the cause. The same step is ~9s on
-    # macos-15 / Xcode 16.4, and ~2 minutes locally on a real Xcode 27
-    # install (SDK author's own measurement), so this is CI-runner-specific,
-    # not a code-level thread leak, and the ~10-minute figure recurring
-    # across three independent runs reads as a fixed internal
-    # service-handshake or diagnostics-collection timeout inside this
-    # specific xcode-27 preview image's toolchain, not something fixable
-    # from this workflow file. 35 minutes (vs. 20 for `verify`) is the
-    # actual, working stopgap: every run above completed successfully
-    # within it, at ~17-18 minutes total.
+    # 35 (vs. 20 for `verify`): this leg does three extra generic builds
+    # before the test run, and -collect-test-diagnostics never below still
+    # leaves headroom for the preview image's own variance.
     timeout-minutes: 35
     continue-on-error: true
     concurrency:
@@ -103,6 +83,11 @@ jobs:
           SIM_NAME="$(cat ./iphoneSim)"
           rm -rf ./TestResults.xcresult
           DESTINATION="platform=iOS Simulator,name=$SIM_NAME,OS=latest"
+          # -collect-test-diagnostics never: this image's post-test
+          # diagnostics collection from the simulator times out (a fixed
+          # 600s) rather than completing, so skip it. -enableCodeCoverage
+          # NO/-parallel-testing-enabled NO make explicit what the test
+          # plan already sets implicitly.
           xcodebuild test \
             -project BranchSDK.xcodeproj \
             -scheme BranchSDKTests \
