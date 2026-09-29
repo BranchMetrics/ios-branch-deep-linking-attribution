@@ -25,6 +25,9 @@ on:
       - "scripts/fixtures/**"
       - "scripts/run_l1_instrumented.sh"
       - "scripts/run_h2_hot.sh"
+      - "scripts/check_no_stickiness.py"
+      - "scripts/test_check_no_stickiness.py"
+      - "scripts/run_no_stickiness.sh"
   pull_request:
     branches:
       - "4.0.0-beta.*"
@@ -44,6 +47,9 @@ on:
       - "scripts/fixtures/**"
       - "scripts/run_l1_instrumented.sh"
       - "scripts/run_h2_hot.sh"
+      - "scripts/check_no_stickiness.py"
+      - "scripts/test_check_no_stickiness.py"
+      - "scripts/run_no_stickiness.sh"
   workflow_dispatch:
 
 permissions:
@@ -187,6 +193,33 @@ jobs:
           fi
           [ "$rc" -eq 0 ] || { echo "ERROR: driver exited $rc"; exit "$rc"; }
 
+      # The driver bundles the checker (script docstring) and exits with its
+      # verdict, so this step's own outcome already is the pass/fail signal.
+      - name: Capture no_stickiness
+        id: nscapture
+        continue-on-error: true
+        env:
+          DERIVED_DATA_DIR: ./DerivedData
+          SIM_NAME: ${{ steps.sim.outputs.name }}
+          BUNDLE_ID: io.branch.sdk.Branch-TestBed
+          OUTPUT_DIR: /tmp/ns
+          NS_EXPECT_RUNTIME: iOS-18-5
+        run: |
+          # Same reason as hot/warm: a stale marker disarms this gate.
+          rm -f /tmp/ns-runtime-missing /tmp/ns-pid-changed
+          rc=0
+          ./scripts/run_no_stickiness.sh > /tmp/ns-driver.txt 2>&1 || rc=$?
+          grep -E '^(RUNTIME=|link resolved, |background-to-return gap: |pid unchanged$|0 /v3/deeplink since the return$|ERROR: )' /tmp/ns-driver.txt || true
+          grep -E '^clear (observed|did not run) at background$' /tmp/ns-driver.txt || true
+          grep -E '^(PASSED: no_stickiness|FAILED: )' /tmp/ns-driver.txt || true
+          if grep -q '^ERROR: no available .* on runtime ' /tmp/ns-driver.txt; then
+            touch /tmp/ns-runtime-missing
+          fi
+          if grep -q '^ERROR: relaunched: pid was' /tmp/ns-driver.txt; then
+            touch /tmp/ns-pid-changed
+          fi
+          [ "$rc" -eq 0 ] || { echo "ERROR: driver exited $rc"; exit "$rc"; }
+
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
@@ -295,6 +328,34 @@ jobs:
           fi
           exit "$rc"
 
+      # The checker already ran inside the capture step; this step only
+      # classifies the result into the three-state contract (spec Piece 2).
+      - name: Validate no_stickiness
+        id: ns
+        continue-on-error: true
+        run: |
+          tag="[no_stickiness]"
+          if [ -f /tmp/ns-runtime-missing ]; then
+            echo "result=not_run" >> "$GITHUB_OUTPUT"
+            echo "$tag not run: no simulator on the expected runtime" | tee /tmp/ns-output.txt
+            exit 0
+          fi
+          if [ "${{ steps.nscapture.outcome }}" = "success" ]; then
+            echo "result=pass" >> "$GITHUB_OUTPUT"
+            echo "$tag pass" > /tmp/ns-output.txt
+            exit 0
+          fi
+          # A killed background process leaves a new PID with no crash report;
+          # that marker with no report is the runner, anything else is real.
+          if [ -f /tmp/ns-pid-changed ] && ! ls ~/Library/Logs/DiagnosticReports/Branch-TestBed* >/dev/null 2>&1; then
+            echo "result=not_run" >> "$GITHUB_OUTPUT"
+            echo "$tag not run: the runner killed the backgrounded process" | tee /tmp/ns-output.txt
+            exit 0
+          fi
+          echo "result=fail" >> "$GITHUB_OUTPUT"
+          echo "FAILED: $tag driver failed; see the capture step log" | tee /tmp/ns-output.txt
+          exit 1
+
       # What the gate actually asserted, on the PR page rather than buried in
       # the job log.
       - name: Write run summary
@@ -320,15 +381,24 @@ jobs:
             echo
             echo "| scenario group | status |"
             echo "| --- | --- |"
+            no_runtime="the runner has no simulator on the expected runtime"
+            if [ "${{ steps.ns.outputs.result }}" = "pass" ]; then
+              ns_text="no_stickiness pass"
+            elif [ "${{ steps.ns.outputs.result }}" = "fail" ]; then
+              ns_text="no_stickiness fail, see failures below"
+            elif [ -f /tmp/ns-runtime-missing ]; then
+              ns_text="no_stickiness not run: $no_runtime"
+            else
+              ns_text="no_stickiness not run: the runner killed the backgrounded process"
+            fi
             if [ "${{ steps.validate.outcome }}" = "success" ]; then
               echo "| Cold | cold_https and cold_firstInstall pass |"
-              echo "| Negative and guards | install passes, the rest not implemented |"
+              echo "| Negative and guards | install passes, $ns_text, the rest not implemented |"
             else
               echo "| Cold | see failures below |"
-              echo "| Negative and guards | see failures below |"
+              echo "| Negative and guards | $ns_text, the rest not implemented |"
             fi
             hot_defer="hot_https_foreground not run: a GitHub runner does not route Universal Links to the simulator"
-            no_runtime="the runner has no simulator on the expected runtime"
             hot_retake="measure hot_uriScheme on the new runtime, then update H2_EXPECT_RUNTIME"
             warm_defer="warm_https_onNewIntent not implemented"
             warm_retake="measure warm_uriScheme on the new runtime, then update H2_EXPECT_RUNTIME"
@@ -351,16 +421,17 @@ jobs:
               echo "| Hot | hot_uriScheme not run; $hot_defer |"
             fi
             echo
-            if [ "${{ steps.validate.outcome }}" = "success" ] && [ "${{ steps.h2.outcome }}" = "success" ] && [ "${{ steps.w2.outcome }}" = "success" ]; then
+            if [ "${{ steps.validate.outcome }}" = "success" ] && [ "${{ steps.h2.outcome }}" = "success" ] && [ "${{ steps.w2.outcome }}" = "success" ] && [ "${{ steps.ns.outcome }}" = "success" ]; then
               skipped=""
               if [ -f /tmp/h2-runtime-missing ]; then skipped="hot_uriScheme"; fi
               if [ -f /tmp/w2-runtime-missing ]; then skipped="${skipped:+$skipped and }warm_uriScheme"; fi
+              if [ "${{ steps.ns.outputs.result }}" = "not_run" ]; then skipped="${skipped:+$skipped and }no_stickiness"; fi
               echo "Result: **PASS**${skipped:+ ($skipped not run)}"
             else
               echo "Result: **FAIL**"
               echo
               echo '```'
-              cat /tmp/l1-output.txt /tmp/h2-output.txt /tmp/w2-output.txt 2>/dev/null | grep '^FAILED:' || echo "(no FAILED lines; see the job log)"
+              cat /tmp/l1-output.txt /tmp/h2-output.txt /tmp/w2-output.txt /tmp/ns-output.txt 2>/dev/null | grep '^FAILED:' || echo "(no FAILED lines; see the job log)"
               echo '```'
               # Only the run_l1_instrumented captures are rendered; the
               # hot_uriScheme captures stay in /tmp/h2 and off the page.
@@ -405,6 +476,10 @@ jobs:
 
       - name: Fail the job if warm_uriScheme failed
         if: steps.w2.outcome == 'failure'
+        run: exit 1
+
+      - name: Fail the job if no_stickiness failed
+        if: steps.ns.outcome == 'failure'
         run: exit 1
 
       - name: Teardown simulator
