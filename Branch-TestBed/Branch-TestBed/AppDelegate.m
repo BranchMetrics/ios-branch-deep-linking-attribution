@@ -367,10 +367,21 @@ continueUserActivity:(NSUserActivity *)userActivity
 
 - (void)applicationWillResignActive:(UIApplication *)application { [self logLifecycleMarker:@"applicationWillResignActive"]; }
 - (void)applicationDidEnterBackground:(UIApplication *)application { [self logLifecycleMarker:@"applicationDidEnterBackground"]; }
-- (void)applicationDidBecomeActive:(UIApplication *)application { [self logLifecycleMarker:@"applicationDidBecomeActive"]; }
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    [self logLifecycleMarker:@"applicationDidBecomeActive"];
+    [self logLatestReferringParams];
+}
 
 // Writes an L1 lifecycle marker to branchlogs.txt; the leading newline ends an unterminated SDK log entry.
 - (void)logLifecycleMarker:(NSString *)name { [self processLogMessage:[NSString stringWithFormat:@"\n[TestBedLifecycle] %@\n", name]]; }
+
+// Writes the accessor's current value to branchlogs.txt as compact single-line JSON.
+- (void)logLatestReferringParams {
+    NSDictionary *params = [[Branch sharedInstance] getLatestReferringParams] ?: @{};
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:params options:NSJSONWritingSortedKeys error:nil];
+    NSString *jsonString = jsonData ? [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding] : @"{}";
+    [self processLogMessage:[NSString stringWithFormat:@"\n[TestBedLifecycle] latestReferringParams %@\n", jsonString]];
+}
 
 - (void)setBranchLogFile {
     NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
@@ -457,6 +468,7 @@ void APPLogHookFunction(NSDate*_Nonnull timestamp, BranchLogLevel level, NSStrin
     if (response) {
         NSString *responseLine = [NSString stringWithFormat:@"[BranchLog] Got Response for request (%@): %@", requestServiceURL, response];
         [self processLogMessage:[responseLine stringByAppendingString:@"\n"]];
+        [self logLatestReferringParams];
     }
 }
 
