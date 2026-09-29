@@ -107,4 +107,5 @@ jobs:
             -testPlan BranchSDKTests \
             -resultBundlePath ./TestResults.xcresult \
             -enableCodeCoverage NO \
-            -parallel-testing-enabled NO | xcpretty && exit ${PIPESTATUS[0]}
+            -parallel-testing-enabled NO \
+            -collect-test-diagnostics never | xcpretty && exit ${PIPESTATUS[0]}
