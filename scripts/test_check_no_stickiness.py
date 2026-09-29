@@ -59,6 +59,14 @@ class NoStickinessTests(unittest.TestCase):
         self.assertIn("+clicked_branch_link", output)
         self.assertNotIn("bnctestbed.app.link", output)
 
+    def test_link_never_resolved_fails(self):
+        """A run whose link never resolved fails, never passes as a clean return."""
+        code, output = self._main(
+            "no_stickiness_unresolved.pre.txt", "no_stickiness_unresolved.post.txt"
+        )
+        self.assertEqual(code, 1, output)
+        self.assertEqual(output.strip(), "FAILED: link never resolved")
+
     def test_no_report_after_return_fails(self):
         """No latestReferringParams line at all after the return fails, never passes."""
         code, output = self._main("no_stickiness_no_report.pre.txt", "no_stickiness_no_report.post.txt")
