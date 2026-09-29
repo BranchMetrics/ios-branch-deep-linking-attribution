@@ -10,6 +10,12 @@
 //  connectionOptions.userActivities entry whose activityType is NSUserActivityTypeBrowsingWeb. A
 //  CSSearchableItemActionType activity (a Spotlight tap) falls through that check unhandled.
 //
+//  Also covers the three other NSUserActivity entry points
+//  (-requestDeepLinkDataWithScene:continueUserActivity:, -requestDeepLinkDataWithUserActivity:,
+//  -continueUserActivity:sceneIdentifier:): each enqueues the activity's webpageURL, which is
+//  never set for a Spotlight activity, so a Spotlight activity whose identifier is itself a
+//  Branch link was enqueued with no URL on every one of the four.
+//
 
 #import <XCTest/XCTest.h>
 #import <UIKit/UIKit.h>
@@ -191,6 +197,112 @@ static NSString * const kBrowsingWebBranchLinkURL = @"https://example.app.link/b
     NSArray<BNCServerRequest *> *enqueued = [self enqueuedRequestsOfClassNamed:@"BranchRequestDeepLink"];
     XCTAssertEqual(enqueued.count, (NSUInteger)1,
                   @"A web-browsing activity carrying a Branch link on a cold scene connect must enqueue exactly one deep link request. Enqueued: %@", enqueued);
+
+    BranchRequestDeepLink *resolve = (BranchRequestDeepLink *)enqueued.firstObject;
+    XCTAssertEqualObjects(resolve.urlString, kBrowsingWebBranchLinkURL,
+                          @"The enqueued request must carry the web-browsing activity's Branch link.");
+}
+
+#pragma mark - Tests: the three other NSUserActivity entry points
+
+// The warm scene path already resolves a Spotlight activity (unlike the cold path above before its
+// fix), but only bookkeeping-wise: it enqueues activity.webpageURL, nil for every Spotlight
+// activity, so a Branch-link identifier was silently dropped here too.
+- (void)testSpotlightActivityWithBranchLinkViaWarmSceneContinueUserActivityEnqueuesExactlyOneDeepLinkRequest {
+    UIScene *scene = [self waitForConnectedScene];
+
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:CSSearchableItemActionType];
+    activity.userInfo = @{ CSSearchableItemActivityIdentifier: kSpotlightBranchLinkURL };
+
+    [self.branch requestDeepLinkDataWithScene:scene continueUserActivity:activity];
+
+    NSArray<BNCServerRequest *> *enqueued = [self enqueuedRequestsOfClassNamed:@"BranchRequestDeepLink"];
+    XCTAssertEqual(enqueued.count, (NSUInteger)1,
+                  @"A Spotlight activity carrying a Branch link via the warm scene path must enqueue exactly one deep link request. Enqueued: %@", enqueued);
+
+    BranchRequestDeepLink *resolve = (BranchRequestDeepLink *)enqueued.firstObject;
+    XCTAssertEqualObjects(resolve.urlString, kSpotlightBranchLinkURL,
+                          @"The enqueued request must carry the Spotlight activity's Branch link.");
+}
+
+// Guard: the warm scene path's existing web-browsing behaviour is unchanged.
+- (void)testWebBrowsingActivityViaWarmSceneContinueUserActivityEnqueuesExactlyOneDeepLinkRequest {
+    UIScene *scene = [self waitForConnectedScene];
+
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
+    activity.webpageURL = [NSURL URLWithString:kBrowsingWebBranchLinkURL];
+
+    [self.branch requestDeepLinkDataWithScene:scene continueUserActivity:activity];
+
+    NSArray<BNCServerRequest *> *enqueued = [self enqueuedRequestsOfClassNamed:@"BranchRequestDeepLink"];
+    XCTAssertEqual(enqueued.count, (NSUInteger)1,
+                  @"A web-browsing activity via the warm scene path must enqueue exactly one deep link request. Enqueued: %@", enqueued);
+
+    BranchRequestDeepLink *resolve = (BranchRequestDeepLink *)enqueued.firstObject;
+    XCTAssertEqualObjects(resolve.urlString, kBrowsingWebBranchLinkURL,
+                          @"The enqueued request must carry the web-browsing activity's Branch link.");
+}
+
+// The legacy app-delegate path (application:continueUserActivity:restorationHandler:) has the same
+// webpageURL-only gap as the warm scene path above.
+- (void)testSpotlightActivityWithBranchLinkViaRequestDeepLinkDataWithUserActivityEnqueuesExactlyOneDeepLinkRequest {
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:CSSearchableItemActionType];
+    activity.userInfo = @{ CSSearchableItemActivityIdentifier: kSpotlightBranchLinkURL };
+
+    [self.branch requestDeepLinkDataWithUserActivity:activity];
+
+    NSArray<BNCServerRequest *> *enqueued = [self enqueuedRequestsOfClassNamed:@"BranchRequestDeepLink"];
+    XCTAssertEqual(enqueued.count, (NSUInteger)1,
+                  @"A Spotlight activity carrying a Branch link via -requestDeepLinkDataWithUserActivity: must enqueue exactly one deep link request. Enqueued: %@", enqueued);
+
+    BranchRequestDeepLink *resolve = (BranchRequestDeepLink *)enqueued.firstObject;
+    XCTAssertEqualObjects(resolve.urlString, kSpotlightBranchLinkURL,
+                          @"The enqueued request must carry the Spotlight activity's Branch link.");
+}
+
+// Guard: -requestDeepLinkDataWithUserActivity:'s existing web-browsing behaviour is unchanged.
+- (void)testWebBrowsingActivityViaRequestDeepLinkDataWithUserActivityEnqueuesExactlyOneDeepLinkRequest {
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
+    activity.webpageURL = [NSURL URLWithString:kBrowsingWebBranchLinkURL];
+
+    [self.branch requestDeepLinkDataWithUserActivity:activity];
+
+    NSArray<BNCServerRequest *> *enqueued = [self enqueuedRequestsOfClassNamed:@"BranchRequestDeepLink"];
+    XCTAssertEqual(enqueued.count, (NSUInteger)1,
+                  @"A web-browsing activity via -requestDeepLinkDataWithUserActivity: must enqueue exactly one deep link request. Enqueued: %@", enqueued);
+
+    BranchRequestDeepLink *resolve = (BranchRequestDeepLink *)enqueued.firstObject;
+    XCTAssertEqualObjects(resolve.urlString, kBrowsingWebBranchLinkURL,
+                          @"The enqueued request must carry the web-browsing activity's Branch link.");
+}
+
+// -continueUserActivity:sceneIdentifier: (the tvOS scene branch and the public BOOL-returning
+// entry point) has the same webpageURL-only gap as the other three.
+- (void)testSpotlightActivityWithBranchLinkViaContinueUserActivitySceneIdentifierEnqueuesExactlyOneDeepLinkRequest {
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:CSSearchableItemActionType];
+    activity.userInfo = @{ CSSearchableItemActivityIdentifier: kSpotlightBranchLinkURL };
+
+    [self.branch continueUserActivity:activity sceneIdentifier:nil];
+
+    NSArray<BNCServerRequest *> *enqueued = [self enqueuedRequestsOfClassNamed:@"BranchRequestDeepLink"];
+    XCTAssertEqual(enqueued.count, (NSUInteger)1,
+                  @"A Spotlight activity carrying a Branch link via -continueUserActivity:sceneIdentifier: must enqueue exactly one deep link request. Enqueued: %@", enqueued);
+
+    BranchRequestDeepLink *resolve = (BranchRequestDeepLink *)enqueued.firstObject;
+    XCTAssertEqualObjects(resolve.urlString, kSpotlightBranchLinkURL,
+                          @"The enqueued request must carry the Spotlight activity's Branch link.");
+}
+
+// Guard: -continueUserActivity:sceneIdentifier:'s existing web-browsing behaviour is unchanged.
+- (void)testWebBrowsingActivityViaContinueUserActivitySceneIdentifierEnqueuesExactlyOneDeepLinkRequest {
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
+    activity.webpageURL = [NSURL URLWithString:kBrowsingWebBranchLinkURL];
+
+    [self.branch continueUserActivity:activity sceneIdentifier:nil];
+
+    NSArray<BNCServerRequest *> *enqueued = [self enqueuedRequestsOfClassNamed:@"BranchRequestDeepLink"];
+    XCTAssertEqual(enqueued.count, (NSUInteger)1,
+                  @"A web-browsing activity via -continueUserActivity:sceneIdentifier: must enqueue exactly one deep link request. Enqueued: %@", enqueued);
 
     BranchRequestDeepLink *resolve = (BranchRequestDeepLink *)enqueued.firstObject;
     XCTAssertEqualObjects(resolve.urlString, kBrowsingWebBranchLinkURL,
