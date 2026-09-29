@@ -24,7 +24,9 @@
 #import "BranchConfiguration.h"
 #import "BranchConstants.h"
 #import "BNCPreferenceHelper.h"
+#import "BNCServerInterface.h"
 #import "BNCServerRequestQueue.h"
+#import "BNCServerResponse.h"
 #import "BranchRequestDeepLink.h"
 
 // Test-only reset for the +initialize: reinitialization guard (file-private in Branch.m).
@@ -32,9 +34,11 @@
 + (void)resetInitializationGuardForTesting;
 @end
 
-// Lets a test suspend the queue and inspect what was enqueued before it can hit the network.
+// Lets a test suspend the queue and inspect what was enqueued before it can hit the network, and
+// read the shared queue's branchKey to configure a disposable one the same way.
 @interface BNCServerRequestQueue (SceneConnectionOptionsTest)
 @property (strong, nonatomic) NSOperationQueue *operationQueue;
+@property (copy, nonatomic) NSString *branchKey;
 @end
 
 // UISceneConnectionOptions has no public initializer: both +new and -init are NS_UNAVAILABLE
@@ -57,11 +61,79 @@
 static NSString * const kSpotlightBranchLinkURL = @"https://example.app.link/spotlight-cold-scene-link";
 static NSString * const kSpotlightNonBranchIdentifier = @"spotlight-item-not-a-branch-link";
 static NSString * const kBrowsingWebBranchLinkURL = @"https://example.app.link/browsing-web-cold-scene-link";
+static NSString * const kThirdActivityType = @"com.branch.test.custom-handoff-activity";
+
+static NSString * const kDeepLinkEndpoint = @"/v3/deeplink";
+static NSString * const kOpenEndpoint = @"/v3/events/open";
+
+// An organic (no ~referring_link) /v3/deeplink payload. Used deliberately for the endpoint-level
+// test below: if that resolve's own open still reaches the wire, it can only be because
+// -attemptToSendOpen took its self.urlString.length > 0 branch (BranchRequestDeepLink.m:280-289),
+// which is exactly the mechanism the enqueue-carries-the-link fix feeds.
+static NSString * const kOrganicDeepLinkPayloadJSON =
+    @"{\"+clicked_branch_link\":false,\"+is_first_session\":false}";
+
+// Records every request posted, in order, and answers /v3/deeplink with the organic payload above;
+// every other endpoint gets the session credentials a real open response returns.
+@interface BranchSceneConnectionOptionsStubServerInterface : BNCServerInterface
+- (NSArray<NSString *> *)postedURLs;
+@end
+
+@implementation BranchSceneConnectionOptionsStubServerInterface {
+    NSMutableArray<NSString *> *_postedURLs;
+}
+
+- (instancetype)init {
+    if ((self = [super init])) {
+        _postedURLs = [NSMutableArray array];
+    }
+    return self;
+}
+
+- (void)postRequest:(NSDictionary *)post
+                url:(NSString *)url
+                key:(NSString *)key
+           callback:(BNCServerCallback)callback {
+    @synchronized (self) {
+        [_postedURLs addObject:url ?: @""];
+    }
+
+    BNCServerResponse *response = [BNCServerResponse new];
+    response.statusCode = @200;
+    if ([url containsString:kDeepLinkEndpoint]) {
+        response.data = @{ BRANCH_RESPONSE_KEY_SESSION_DATA: kOrganicDeepLinkPayloadJSON };
+    } else {
+        response.data = @{
+            BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: @"bundle_token",
+            BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN: @"device_token"
+        };
+    }
+
+    if (callback) {
+        callback(response, nil);
+    }
+}
+
+- (NSArray<NSString *> *)postedURLs {
+    @synchronized (self) {
+        return [_postedURLs copy];
+    }
+}
+
+@end
 
 @interface BranchSceneConnectionOptionsTests : XCTestCase
 @property (nonatomic, strong) Branch *branch;
 @property (nonatomic, strong) BNCServerRequestQueue *fakeQueue;
 @property (nonatomic, copy) NSString *savedSpotlightIdentifier;
+// Only the endpoint-level test lets a real queue drain and an open actually run, which writes
+// these. Snapshotting them for every test (not only that one) keeps this list in one place and
+// costs the other tests nothing, since they never let their queue run at all.
+@property (nonatomic, copy) NSString *savedSessionParams;
+@property (nonatomic, copy) NSString *savedAttributionLevel;
+@property (nonatomic, copy) NSString *savedReferringURL;
+@property (nonatomic, copy) NSString *savedBundleToken;
+@property (nonatomic, copy) NSString *savedDeviceToken;
 @end
 
 @implementation BranchSceneConnectionOptionsTests
@@ -74,8 +146,23 @@ static NSString * const kBrowsingWebBranchLinkURL = @"https://example.app.link/b
     BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB"];
     self.branch = [Branch initialize:config];
 
-    self.savedSpotlightIdentifier = [BNCPreferenceHelper sharedInstance].spotlightIdentifier;
-    [BNCPreferenceHelper sharedInstance].spotlightIdentifier = nil;
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    self.savedSpotlightIdentifier = preferenceHelper.spotlightIdentifier;
+    self.savedSessionParams = preferenceHelper.sessionParams;
+    self.savedAttributionLevel = preferenceHelper.attributionLevel;
+    self.savedReferringURL = preferenceHelper.referringURL;
+    self.savedBundleToken = preferenceHelper.randomizedBundleToken;
+    self.savedDeviceToken = preferenceHelper.randomizedDeviceToken;
+
+    preferenceHelper.spotlightIdentifier = nil;
+    preferenceHelper.sessionParams = nil;
+    preferenceHelper.referringURL = nil;
+    // Deterministic regardless of ambient state: sendOpen is a no-op at level None, and reading
+    // isInstall as !randomizedBundleToken would otherwise take the install path on whichever test
+    // happens to run first.
+    preferenceHelper.attributionLevel = BranchAttributionLevelFull;
+    preferenceHelper.randomizedBundleToken = @"scene_connection_options_bundle_token";
+    preferenceHelper.randomizedDeviceToken = @"scene_connection_options_device_token";
 
     // A disposable, permanently-suspended queue. Requests enqueued during a test can be read
     // back without touching the network. Never cancel or resume it -- cancelling a suspended,
@@ -88,7 +175,19 @@ static NSString * const kBrowsingWebBranchLinkURL = @"https://example.app.link/b
 - (void)tearDown {
     [self.branch setValue:[BNCServerRequestQueue getInstance] forKey:@"requestQueue"];
     self.fakeQueue = nil;
-    [BNCPreferenceHelper sharedInstance].spotlightIdentifier = self.savedSpotlightIdentifier;
+
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    preferenceHelper.spotlightIdentifier = self.savedSpotlightIdentifier;
+    preferenceHelper.sessionParams = self.savedSessionParams;
+    preferenceHelper.attributionLevel = self.savedAttributionLevel;
+    preferenceHelper.referringURL = self.savedReferringURL;
+    preferenceHelper.randomizedBundleToken = self.savedBundleToken;
+    preferenceHelper.randomizedDeviceToken = self.savedDeviceToken;
+
+    // Drains any already-scheduled async block (the endpoint-level test's open callback) against
+    // this clean baseline.
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
+
     self.branch = nil;
     [super tearDown];
 }
@@ -120,6 +219,20 @@ static NSString * const kBrowsingWebBranchLinkURL = @"https://example.app.link/b
         }
     }
     return requests;
+}
+
+- (NSArray<NSString *> *)postedEndpointsFromURLs:(NSArray<NSString *> *)urls {
+    NSMutableArray<NSString *> *endpoints = [NSMutableArray array];
+    for (NSString *url in urls) {
+        if ([url containsString:kDeepLinkEndpoint]) {
+            [endpoints addObject:kDeepLinkEndpoint];
+        } else if ([url containsString:kOpenEndpoint]) {
+            [endpoints addObject:kOpenEndpoint];
+        } else {
+            [endpoints addObject:url];
+        }
+    }
+    return endpoints;
 }
 
 #pragma mark - Tests
@@ -307,6 +420,73 @@ static NSString * const kBrowsingWebBranchLinkURL = @"https://example.app.link/b
     BranchRequestDeepLink *resolve = (BranchRequestDeepLink *)enqueued.firstObject;
     XCTAssertEqualObjects(resolve.urlString, kBrowsingWebBranchLinkURL,
                           @"The enqueued request must carry the web-browsing activity's Branch link.");
+}
+
+#pragma mark - Tests: endpoint level and a third activity type
+
+// Closes the loop from enqueue to the wire: a Spotlight activity's Branch link, once enqueued
+// with the fix above, reaches the resolve's own open via -attemptToSendOpen's
+// self.urlString.length > 0 branch (BranchRequestDeepLink.m:280-289) -- proved here by answering
+// /v3/deeplink with an ORGANIC payload (no ~referring_link) and still seeing exactly one open.
+// Mirrors how BranchLifecycleOpenResolveTests.m:528-551 drives a real queue against a stub
+// transport and asserts on postedEndpoints, adapted for a resolve that chains its own open
+// directly rather than one queued behind a lifecycle foreground.
+- (void)testSpotlightActivityWithBranchLinkOnColdSceneConnectPostsDeepLinkThenOpen {
+    UIScene *scene = [self waitForConnectedScene];
+
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:CSSearchableItemActionType];
+    activity.userInfo = @{ CSSearchableItemActivityIdentifier: kSpotlightBranchLinkURL };
+
+    BNCTestSceneConnectionOptions *options = [BNCTestSceneConnectionOptions alloc]; // no -init; see the class comment above.
+    options.stubbedUserActivities = [NSSet setWithObject:activity];
+
+    BranchSceneConnectionOptionsStubServerInterface *stub = [BranchSceneConnectionOptionsStubServerInterface new];
+    BNCServerRequestQueue *drainingQueue = [BNCServerRequestQueue new];
+    [drainingQueue configureWithServerInterface:stub
+                                       branchKey:[BNCServerRequestQueue getInstance].branchKey
+                                preferenceHelper:[BNCPreferenceHelper sharedInstance]];
+    // Suspended until the activity is handed in, so the interleaving is deterministic.
+    drainingQueue.operationQueue.suspended = YES;
+    [self.branch setValue:drainingQueue forKey:@"requestQueue"];
+
+    [self.branch requestDeepLinkDataWithSceneOptions:options scene:scene callback:nil];
+
+    drainingQueue.operationQueue.suspended = NO;
+    NSPredicate *predicate = [NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        return drainingQueue.operationQueue.operations.count == 0;
+    }];
+    XCTNSPredicateExpectation *expectation = [[XCTNSPredicateExpectation alloc] initWithPredicate:predicate object:self];
+    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation] timeout:15.0];
+    XCTAssertEqual(result, XCTWaiterResultCompleted, @"Timed out waiting for the request queue to drain.");
+    // -attemptToSendOpen enqueues the open from inside -processResponse:, before the resolve
+    // itself finishes, so the queue never dips to empty between the resolve leaving and the open
+    // arriving; a second, short spin is still worth taking to let its posted URL land.
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+
+    XCTAssertEqualObjects([self postedEndpointsFromURLs:[stub postedURLs]], (@[kDeepLinkEndpoint, kOpenEndpoint]),
+                          @"A Spotlight activity's Branch link must resolve, then send exactly one attributed open, in that order. Posted: %@", [stub postedURLs]);
+}
+
+// A third activity type, neither web-browsing nor Spotlight, must not crash and must still
+// enqueue the existing deferred, nil-URL lookup: the same behaviour the other three entry points
+// already have for anything -processUserActivity: does not recognise.
+- (void)testThirdActivityTypeOnColdSceneConnectEnqueuesNilURLLookupWithoutCrashing {
+    UIScene *scene = [self waitForConnectedScene];
+
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:kThirdActivityType];
+
+    BNCTestSceneConnectionOptions *options = [BNCTestSceneConnectionOptions alloc]; // no -init; see the class comment above.
+    options.stubbedUserActivities = [NSSet setWithObject:activity];
+
+    [self.branch requestDeepLinkDataWithSceneOptions:options scene:scene callback:nil];
+
+    NSArray<BNCServerRequest *> *enqueued = [self enqueuedRequestsOfClassNamed:@"BranchRequestDeepLink"];
+    XCTAssertEqual(enqueued.count, (NSUInteger)1,
+                  @"A third activity type on a cold scene connect must still enqueue the deferred, nil-URL lookup. Enqueued: %@", enqueued);
+
+    BranchRequestDeepLink *resolve = (BranchRequestDeepLink *)enqueued.firstObject;
+    XCTAssertNil(resolve.urlString,
+                @"A third activity type carries neither a webpage URL nor a Spotlight identifier to resolve.");
 }
 
 @end
