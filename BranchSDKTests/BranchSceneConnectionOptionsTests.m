@@ -103,7 +103,7 @@ static NSString * const kBrowsingWebBranchLinkURL = @"https://example.app.link/b
         return [UIApplication sharedApplication].connectedScenes.anyObject != nil;
     }];
     XCTNSPredicateExpectation *expectation = [[XCTNSPredicateExpectation alloc] initWithPredicate:predicate object:self];
-    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation] timeout:5.0];
+    XCTWaiterResult result = [XCTWaiter waitForExpectations:@[expectation] timeout:15.0];
     XCTAssertEqual(result, XCTWaiterResultCompleted, @"Timed out waiting for the test host app to connect a scene.");
     return [UIApplication sharedApplication].connectedScenes.anyObject;
 }

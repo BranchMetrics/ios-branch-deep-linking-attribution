@@ -543,7 +543,11 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Convenience overload for `scene:willConnectToSession:options:`.
 
  Extracts the Branch URL from `connectionOptions` and calls `requestDeepLinkData:callback:` with it.
- Pass nil for `connectionOptions` or an empty options object for cold starts with no incoming link.
+ Handles a Universal Link (`NSUserActivityTypeBrowsingWeb`), a Spotlight activity, and a URL scheme
+ or Universal Link delivered via `URLContexts`. A Spotlight activity whose identifier is itself a
+ Branch link resolves that link; a Spotlight activity with a non-Branch identifier is recorded and
+ resolves without a URL of its own. Pass nil for `connectionOptions` or an empty options object for
+ cold starts with no incoming link.
 
  Available on iOS 13.0+ and macCatalyst 13.1+.
  */
