@@ -23,3 +23,60 @@ jobs:
             -scheme BranchSDKTests \
             -destination "$DESTINATION" \
             -testPlan BranchSDKTests | xcpretty && exit ${PIPESTATUS[0]}
+
+  # EMT-4476. Sibling of `verify`, not a replacement: proves the beta line
+  # builds and passes on Xcode 27 without touching the Xcode 16.x leg above.
+  # Non-blocking: `xcode-27` is a GitHub-documented preview runner image
+  # (actions/runner-images#14404, still open, capacity/queueing caveats, no
+  # committed GA date). `continue-on-error` keeps a preview-image failure
+  # from failing this workflow's own run; this job is also not added as a
+  # required branch-protection check. Promote once the label has proven
+  # stable in practice (spec.md Open question 2).
+  verify-xcode27:
+    runs-on: xcode-27
+    timeout-minutes: 20
+    continue-on-error: true
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+      - name: Select Xcode 27.0
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "27.0"
+      - name: Build BranchSDK for iOS Simulator (generic)
+        run: |
+          xcodebuild build \
+            -project BranchSDK.xcodeproj \
+            -scheme BranchSDK \
+            -destination "generic/platform=iOS Simulator" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" | xcpretty && exit ${PIPESTATUS[0]}
+      - name: Build BranchSDK for iOS device (generic, unsigned)
+        run: |
+          xcodebuild build \
+            -project BranchSDK.xcodeproj \
+            -scheme BranchSDK \
+            -destination "generic/platform=iOS" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" | xcpretty && exit ${PIPESTATUS[0]}
+      - name: Build BranchSDK-tvOS for tvOS Simulator (generic)
+        run: |
+          xcodebuild build \
+            -project BranchSDK.xcodeproj \
+            -scheme BranchSDK-tvOS \
+            -destination "generic/platform=tvOS Simulator" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" | xcpretty && exit ${PIPESTATUS[0]}
+      - name: Run unit tests
+        run: |
+          echo "branch=${{ github.ref }}" >> $GITHUB_OUTPUT
+          ./scripts/getSimulator
+          DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
+          xcodebuild test \
+            -project BranchSDK.xcodeproj \
+            -scheme BranchSDKTests \
+            -destination "$DESTINATION" \
+            -testPlan BranchSDKTests | xcpretty && exit ${PIPESTATUS[0]}
