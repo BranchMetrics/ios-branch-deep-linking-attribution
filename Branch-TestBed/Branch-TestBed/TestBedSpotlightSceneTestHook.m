@@ -11,8 +11,7 @@
 // UISceneConnectionOptions has no public initializer (+new and -init are both NS_UNAVAILABLE in
 // UISceneOptions.h). +alloc is not, so an instance can still be made by never sending it -init.
 // Both accessors the SDK reads are overridden below, so nothing ever reads the superclass's
-// (never-run-init) internal state. Mirrors BNCTestSceneConnectionOptions in
-// BranchSDKTests/BranchSceneConnectionOptionsTests.m.
+// (never-run-init) internal state.
 @interface TestBedFakeSceneConnectionOptions : UISceneConnectionOptions
 @property (nonatomic, strong, nullable) NSSet<NSUserActivity *> *stubbedUserActivities;
 @end

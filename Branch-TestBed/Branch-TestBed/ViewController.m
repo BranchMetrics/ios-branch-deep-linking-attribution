@@ -159,8 +159,8 @@ bool hasSetPartnerParams = false;
     [footerView addSubview:pluginButton];
 
 #if DEBUG
-    // EMT-4475 step 7: a debug-only control so a Spotlight cold-launch repro has something to
-    // index. Not part of the release UI; see -indexOnSpotlightButtonTouchUpInside: below.
+    // A debug-only control so a Spotlight cold-launch repro has something to index. Not part of
+    // the release UI; see -indexOnSpotlightButtonTouchUpInside: below.
     UIButton *spotlightIndexButton = [UIButton buttonWithType:UIButtonTypeSystem];
     spotlightIndexButton.frame = CGRectMake(20, 118, footerView.frame.size.width - 40, 44);
     [spotlightIndexButton setTitle:@"Index on Spotlight (Debug)" forState:UIControlStateNormal];
@@ -816,9 +816,12 @@ bool hasSetPartnerParams = false;
 }
 
 #if DEBUG
-// EMT-4475 step 7, debug-only: indexes a Branch item in Spotlight via
+// Debug-only: indexes a Branch item in Spotlight via
 // `-[BranchUniversalObject listOnSpotlightWithCallback:]` (Public/BranchUniversalObject.h:205) so a
-// Spotlight search result exists for a cold-launch reproduction. Logs the callback's URL/error the
+// Spotlight search result exists for a cold-launch reproduction. Leaves `locallyIndex` at its
+// default (NO): `listOnSpotlight` then identifies the item with the short link
+// `getShortUrlWithLinkProperties:` creates (`BNCSpotlightService.m:127`), the same shape
+// production indexing uses and the one the server resolves. Logs the callback's URL/error the
 // same way the SDK's own logging callbacks do (`AppDelegate processLogMessage:`), so a run is
 // observable in branchlogs.txt as well as the console. No release-build behavior: the whole control
 // and this method are compiled only in DEBUG.
@@ -828,7 +831,6 @@ bool hasSetPartnerParams = false;
     spotlightBuo.title = @"EMT-4475 Spotlight Cold-Launch Repro";
     spotlightBuo.contentDescription = @"Indexed for the EMT-4475 Spotlight cold-launch reproduction.";
     spotlightBuo.canonicalUrl = @"https://bnctestbed.app.link/emt4475spotlightrepro";
-    spotlightBuo.locallyIndex = YES;
 
     [spotlightBuo listOnSpotlightWithCallback:^(NSString * _Nullable url, NSError * _Nullable error) {
         NSString *logLine = error
