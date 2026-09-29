@@ -39,7 +39,7 @@ jobs:
     timeout-minutes: 35
     continue-on-error: true
     concurrency:
-      group: verify-xcode27-${{ github.ref }}
+      group: verify-xcode27-${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
     steps:
       - name: Check out code
@@ -84,7 +84,8 @@ jobs:
           DESTINATION="platform=iOS Simulator,name=$SIM_NAME,OS=latest"
           # -collect-test-diagnostics never: Xcode 27's post-test
           # diagnostics collection from the simulator times out (a fixed
-          # 600s) rather than completing, so skip it. -enableCodeCoverage
+          # 600s) rather than completing, so skip it. `on-failure` still
+          # hits the wait on a passing run. -enableCodeCoverage
           # NO/-parallel-testing-enabled NO make explicit what the test
           # plan already sets implicitly.
           xcodebuild test \
