@@ -137,7 +137,12 @@ bool hasSetPartnerParams = false;
         }
     }
 
-    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 120)];
+#if DEBUG
+    CGFloat footerHeight = 172;
+#else
+    CGFloat footerHeight = 120;
+#endif
+    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, footerHeight)];
 
     UIButton *notificationButton = [UIButton buttonWithType:UIButtonTypeSystem];
     notificationButton.frame = CGRectMake(20, 10, footerView.frame.size.width - 40, 44);
@@ -152,6 +157,17 @@ bool hasSetPartnerParams = false;
     [pluginButton addTarget:self action:@selector(pluginNotifyInit:) forControlEvents:UIControlEventTouchUpInside];
     pluginButton.accessibilityIdentifier = kTestBedBtnPluginNotifyInit;
     [footerView addSubview:pluginButton];
+
+#if DEBUG
+    // EMT-4475 step 7: a debug-only control so a Spotlight cold-launch repro has something to
+    // index. Not part of the release UI; see -indexOnSpotlightButtonTouchUpInside: below.
+    UIButton *spotlightIndexButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    spotlightIndexButton.frame = CGRectMake(20, 118, footerView.frame.size.width - 40, 44);
+    [spotlightIndexButton setTitle:@"Index on Spotlight (Debug)" forState:UIControlStateNormal];
+    [spotlightIndexButton addTarget:self action:@selector(indexOnSpotlightButtonTouchUpInside:) forControlEvents:UIControlEventTouchUpInside];
+    spotlightIndexButton.accessibilityIdentifier = kTestBedBtnIndexOnSpotlight;
+    [footerView addSubview:spotlightIndexButton];
+#endif
 
     self.tableView.tableFooterView = footerView;
 }
@@ -798,6 +814,37 @@ bool hasSetPartnerParams = false;
         }
     }];
 }
+
+#if DEBUG
+// EMT-4475 step 7, debug-only: indexes a Branch item in Spotlight via
+// `-[BranchUniversalObject listOnSpotlightWithCallback:]` (Public/BranchUniversalObject.h:205) so a
+// Spotlight search result exists for a cold-launch reproduction. Logs the callback's URL/error the
+// same way the SDK's own logging callbacks do (`AppDelegate processLogMessage:`), so a run is
+// observable in branchlogs.txt as well as the console. No release-build behavior: the whole control
+// and this method are compiled only in DEBUG.
+- (IBAction)indexOnSpotlightButtonTouchUpInside:(id)sender {
+    BranchUniversalObject *spotlightBuo =
+        [[BranchUniversalObject alloc] initWithCanonicalIdentifier:@"item/emt-4475-spotlight-repro"];
+    spotlightBuo.title = @"EMT-4475 Spotlight Cold-Launch Repro";
+    spotlightBuo.contentDescription = @"Indexed for the EMT-4475 Spotlight cold-launch reproduction.";
+    spotlightBuo.canonicalUrl = @"https://bnctestbed.app.link/emt4475spotlightrepro";
+    spotlightBuo.locallyIndex = YES;
+
+    [spotlightBuo listOnSpotlightWithCallback:^(NSString * _Nullable url, NSError * _Nullable error) {
+        NSString *logLine = error
+            ? [NSString stringWithFormat:@"[TestBedSpotlightIndex] listOnSpotlightWithCallback error: %@", error]
+            : [NSString stringWithFormat:@"[TestBedSpotlightIndex] listOnSpotlightWithCallback url: %@", url];
+        NSLog(@"%@", logLine);
+        [appDelegate processLogMessage:[logLine stringByAppendingString:@"\n"]];
+
+        if (error) {
+            [self showAlert:@"Spotlight indexing failed" withDescription:error.localizedDescription];
+        } else {
+            [self showAlert:@"Indexed on Spotlight" withDescription:url ?: @""];
+        }
+    }];
+}
+#endif
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"ShowLogOutput"]) {
