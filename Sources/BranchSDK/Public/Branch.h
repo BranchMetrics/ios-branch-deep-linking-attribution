@@ -518,6 +518,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Convenience method for `application:continueUserActivity:restorationHandler:` to handle Universal Links.
 
  Extracts the webpage URL from the user activity and calls `requestDeepLinkData:callback:` with it.
+ A Spotlight activity whose identifier is itself a Branch link resolves that link; a Spotlight
+ activity with a non-Branch identifier is recorded and resolves without a URL of its own.
  Logs the deep link parameters or error.
  @param userActivity The NSUserActivity from `application:continueUserActivity:restorationHandler:`.
  */
@@ -578,6 +580,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Convenience method for SceneDelegate's `scene:continueUserActivity:` to handle Universal Links.
 
  Extracts the webpage URL from the user activity and calls `requestDeepLinkData:callback:` with it.
+ A Spotlight activity whose identifier is itself a Branch link resolves that link; a Spotlight
+ activity with a non-Branch identifier is recorded and resolves without a URL of its own.
  Logs the deep link parameters or error.
 
  Available on iOS 13.0+.
