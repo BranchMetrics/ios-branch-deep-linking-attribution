@@ -910,7 +910,11 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     UIViewController *sheet = [UIViewController new];
     sheet.view.backgroundColor = [UIColor systemBackgroundColor];
     sheet.modalPresentationStyle = UIModalPresentationPageSheet;
-    sheet.sheetPresentationController.detents = @[[UISheetPresentationControllerDetent mediumDetent]];
+    sheet.sheetPresentationController.detents = @[
+        [UISheetPresentationControllerDetent mediumDetent],
+        [UISheetPresentationControllerDetent largeDetent]
+    ];
+    sheet.sheetPresentationController.prefersGrabberVisible = YES;
 
     UILabel *titleLabel = [UILabel new];
     titleLabel.text = @"Your QR Code";
@@ -927,6 +931,8 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
 
     UIButton *dismissButton = [UIButton buttonWithType:UIButtonTypeSystem];
     [dismissButton setTitle:@"Dismiss" forState:UIControlStateNormal];
+    dismissButton.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+    dismissButton.titleLabel.adjustsFontForContentSizeCategory = YES;
     [dismissButton addTarget:self
                        action:@selector(dismissQRCodeSheet)
              forControlEvents:UIControlEventTouchUpInside];
@@ -936,14 +942,27 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     stackView.alignment = UIStackViewAlignmentCenter;
     stackView.spacing = 20;
     stackView.translatesAutoresizingMaskIntoConstraints = NO;
-    [sheet.view addSubview:stackView];
+
+    // Scrolls instead of clipping when the title wraps and the stack grows
+    // taller than the medium detent at large Dynamic Type sizes.
+    UIScrollView *scrollView = [UIScrollView new];
+    scrollView.translatesAutoresizingMaskIntoConstraints = NO;
+    [scrollView addSubview:stackView];
+    [sheet.view addSubview:scrollView];
 
     UILayoutGuide *margins = sheet.view.layoutMarginsGuide;
     [NSLayoutConstraint activateConstraints:@[
-        [stackView.leadingAnchor constraintGreaterThanOrEqualToAnchor:margins.leadingAnchor],
-        [stackView.trailingAnchor constraintLessThanOrEqualToAnchor:margins.trailingAnchor],
-        [stackView.centerXAnchor constraintEqualToAnchor:sheet.view.centerXAnchor],
-        [stackView.centerYAnchor constraintEqualToAnchor:sheet.view.centerYAnchor]
+        [scrollView.topAnchor constraintEqualToAnchor:margins.topAnchor],
+        [scrollView.leadingAnchor constraintEqualToAnchor:margins.leadingAnchor],
+        [scrollView.trailingAnchor constraintEqualToAnchor:margins.trailingAnchor],
+        [scrollView.bottomAnchor constraintEqualToAnchor:margins.bottomAnchor],
+
+        [stackView.topAnchor constraintEqualToAnchor:scrollView.contentLayoutGuide.topAnchor],
+        [stackView.bottomAnchor constraintEqualToAnchor:scrollView.contentLayoutGuide.bottomAnchor],
+        [stackView.centerXAnchor constraintEqualToAnchor:scrollView.frameLayoutGuide.centerXAnchor],
+        [stackView.leadingAnchor constraintGreaterThanOrEqualToAnchor:scrollView.contentLayoutGuide.leadingAnchor],
+        [stackView.trailingAnchor constraintLessThanOrEqualToAnchor:scrollView.contentLayoutGuide.trailingAnchor],
+        [stackView.widthAnchor constraintLessThanOrEqualToAnchor:scrollView.frameLayoutGuide.widthAnchor]
     ]];
 
     [self presentViewController:sheet animated:YES completion:nil];
