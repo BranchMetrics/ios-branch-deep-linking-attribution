@@ -828,8 +828,8 @@ bool hasSetPartnerParams = false;
 - (IBAction)indexOnSpotlightButtonTouchUpInside:(id)sender {
     BranchUniversalObject *spotlightBuo =
         [[BranchUniversalObject alloc] initWithCanonicalIdentifier:@"item/emt-4475-spotlight-repro"];
-    spotlightBuo.title = @"EMT-4475 Spotlight Cold-Launch Repro";
-    spotlightBuo.contentDescription = @"Indexed for the EMT-4475 Spotlight cold-launch reproduction.";
+    spotlightBuo.title = @"Spotlight Deep Link Check";
+    spotlightBuo.contentDescription = @"Indexed by the TestBed to check Spotlight deep links.";
     spotlightBuo.canonicalUrl = @"https://bnctestbed.app.link/emt4475spotlightrepro";
 
     [spotlightBuo listOnSpotlightWithCallback:^(NSString * _Nullable url, NSError * _Nullable error) {
