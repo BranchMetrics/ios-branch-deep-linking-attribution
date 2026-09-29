@@ -34,7 +34,14 @@ jobs:
   # stable in practice (spec.md Open question 2).
   verify-xcode27:
     runs-on: xcode-27
-    timeout-minutes: 20
+    # 20 (matching `verify`) was too tight: the first measured run finished
+    # BranchSDKTests cleanly (690/0 in ~170s) but the step then hung with no
+    # further output for ~9m42s before the 20-minute job timeout force-
+    # cancelled it, well past the ~9s gap the same step shows on macos-15 /
+    # Xcode 16.4. Widened to give the post-test hang room to either resolve
+    # or be caught cleanly; not yet root-caused (likely a subprocess holding
+    # the xcpretty pipe open) and reported as a finding either way.
+    timeout-minutes: 35
     continue-on-error: true
     steps:
       - name: Check out code
