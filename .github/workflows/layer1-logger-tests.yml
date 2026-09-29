@@ -527,9 +527,8 @@ jobs:
   # Non-blocking: `xcode-27` is a GitHub-documented preview runner image
   # (actions/runner-images#14404, still open, capacity/queueing caveats,
   # no committed GA date). continue-on-error keeps a preview-image
-  # failure from failing this workflow's own run; this job is also not a
-  # required branch-protection check. Promote once the label has proven
-  # stable in practice (spec.md Open question 2).
+  # failure from failing this workflow's own run. Reconsider once the
+  # label has been stable in practice for a while.
   validate-wire-logs-xcode27:
     runs-on: xcode-27
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
