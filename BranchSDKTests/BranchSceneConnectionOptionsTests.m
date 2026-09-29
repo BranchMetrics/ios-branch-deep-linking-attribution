@@ -50,6 +50,7 @@
 
 static NSString * const kSpotlightBranchLinkURL = @"https://example.app.link/spotlight-cold-scene-link";
 static NSString * const kSpotlightNonBranchIdentifier = @"spotlight-item-not-a-branch-link";
+static NSString * const kBrowsingWebBranchLinkURL = @"https://example.app.link/browsing-web-cold-scene-link";
 
 @interface BranchSceneConnectionOptionsTests : XCTestCase
 @property (nonatomic, strong) Branch *branch;
@@ -170,6 +171,30 @@ static NSString * const kSpotlightNonBranchIdentifier = @"spotlight-item-not-a-b
     BranchRequestDeepLink *resolve = (BranchRequestDeepLink *)enqueued.firstObject;
     XCTAssertNil(resolve.urlString,
                 @"A non-Branch Spotlight activity carries no URL to resolve, matching -requestDeepLinkDataWithScene:continueUserActivity:'s nil-URL lookup.");
+}
+
+// Guard: the case that already works must keep working. A web-browsing activity carrying a
+// Branch link is the one activity type -requestDeepLinkDataWithSceneOptions:scene:callback:
+// already resolves today, and this must stay true whichever way the Spotlight gap above ends up
+// fixed. Green now.
+- (void)testWebBrowsingActivityWithBranchLinkOnColdSceneConnectEnqueuesExactlyOneDeepLinkRequest {
+    UIScene *scene = [self waitForConnectedScene];
+
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
+    activity.webpageURL = [NSURL URLWithString:kBrowsingWebBranchLinkURL];
+
+    BNCTestSceneConnectionOptions *options = [BNCTestSceneConnectionOptions alloc]; // no -init; see the class comment above.
+    options.stubbedUserActivities = [NSSet setWithObject:activity];
+
+    [self.branch requestDeepLinkDataWithSceneOptions:options scene:scene callback:nil];
+
+    NSArray<BNCServerRequest *> *enqueued = [self enqueuedRequestsOfClassNamed:@"BranchRequestDeepLink"];
+    XCTAssertEqual(enqueued.count, (NSUInteger)1,
+                  @"A web-browsing activity carrying a Branch link on a cold scene connect must enqueue exactly one deep link request. Enqueued: %@", enqueued);
+
+    BranchRequestDeepLink *resolve = (BranchRequestDeepLink *)enqueued.firstObject;
+    XCTAssertEqualObjects(resolve.urlString, kBrowsingWebBranchLinkURL,
+                          @"The enqueued request must carry the web-browsing activity's Branch link.");
 }
 
 @end
