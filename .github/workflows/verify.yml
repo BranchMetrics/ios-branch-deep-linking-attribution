@@ -34,13 +34,26 @@ jobs:
   # stable in practice (spec.md Open question 2).
   verify-xcode27:
     runs-on: xcode-27
-    # 20 (matching `verify`) was too tight: the first measured run finished
-    # BranchSDKTests cleanly (690/0 in ~170s) but the step then hung with no
-    # further output for ~9m42s before the 20-minute job timeout force-
-    # cancelled it, well past the ~9s gap the same step shows on macos-15 /
-    # Xcode 16.4. Widened to give the post-test hang room to either resolve
-    # or be caught cleanly; not yet root-caused (likely a subprocess holding
-    # the xcpretty pipe open) and reported as a finding either way.
+    # First run: BranchSDKTests finished cleanly (690/0 in ~170s), then
+    # xcodebuild itself produced no further output for ~9m42s before the
+    # 20-minute job timeout force-cancelled it; GitHub's own "Cleaning up
+    # orphan processes" step then had to kill xcodebuild, SWBBuildService
+    # and DTServiceHub by pid, i.e. xcodebuild never returned control on its
+    # own. The same step on macos-15 / Xcode 16.4 goes from "Executed N
+    # tests" to the next step in ~9s, and the SDK author reports the same
+    # invocation exits in ~2 minutes on a local Xcode 27 install — so this
+    # is CI-runner-specific, not a code-level thread leak. Matches a known
+    # class of xcodebuild/simulator-diagnostics hang in headless CI (no
+    # WindowServer session): DTServiceHub can block post-test waiting on a
+    # service handshake that a developer's logged-in GUI session already
+    # has warm. Mitigated below by pre-booting the simulator (and waiting
+    # for `bootstatus`) before xcodebuild takes over the boot-and-launch
+    # sequence itself, plus explicit -resultBundlePath/-enableCodeCoverage
+    # NO/-parallel-testing-enabled NO to remove any implicit-default
+    # ambiguity (parallel testing and coverage were already off via the
+    # test plan; passed explicitly here for certainty). 35 minutes (vs. 20
+    # for `verify`) stays as a safety net in case the pre-boot does not
+    # fully resolve it on the xcode-27 preview image.
     timeout-minutes: 35
     continue-on-error: true
     steps:
@@ -81,9 +94,22 @@ jobs:
         run: |
           echo "branch=${{ github.ref }}" >> $GITHUB_OUTPUT
           ./scripts/getSimulator
-          DESTINATION="platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest"
+          SIM_NAME="$(cat ./iphoneSim)"
+          # Pre-boot the simulator and wait for it to fully settle before
+          # xcodebuild takes over the boot-and-launch sequence itself. On
+          # this preview image, xcodebuild's own implicit boot appears to
+          # race the diagnostics-service handshake (DTServiceHub) that a
+          # developer's logged-in GUI session already has warm; giving it
+          # time up front is the standard mitigation for that class of hang.
+          xcrun simctl boot "$SIM_NAME" || true
+          xcrun simctl bootstatus "$SIM_NAME" -b
+          rm -rf ./TestResults.xcresult
+          DESTINATION="platform=iOS Simulator,name=$SIM_NAME,OS=latest"
           xcodebuild test \
             -project BranchSDK.xcodeproj \
             -scheme BranchSDKTests \
             -destination "$DESTINATION" \
-            -testPlan BranchSDKTests | xcpretty && exit ${PIPESTATUS[0]}
+            -testPlan BranchSDKTests \
+            -resultBundlePath ./TestResults.xcresult \
+            -enableCodeCoverage NO \
+            -parallel-testing-enabled NO | xcpretty && exit ${PIPESTATUS[0]}
