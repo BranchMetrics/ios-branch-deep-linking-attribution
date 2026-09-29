@@ -11,6 +11,7 @@
 #import "NavigationController.h"
 #import "ViewController.h"
 #import "TestBedDeepLinkTestHook.h"
+#import "TestBedSpotlightSceneTestHook.h"
 @import BranchSDK;
 #import <UserNotifications/UserNotifications.h>
 
@@ -162,6 +163,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
 #if DEBUG
     [TestBedDeepLinkTestHook installIfRequested:application];
+    [TestBedSpotlightSceneTestHook installIfRequested:application];
 #endif
 
 #if BRANCH_TESTBED_LINK_BUILDER_EXAMPLE
