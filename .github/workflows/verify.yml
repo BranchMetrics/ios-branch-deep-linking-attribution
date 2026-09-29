@@ -59,6 +59,9 @@ jobs:
     # within it, at ~17-18 minutes total.
     timeout-minutes: 35
     continue-on-error: true
+    concurrency:
+      group: verify-xcode27-${{ github.ref }}
+      cancel-in-progress: true
     steps:
       - name: Check out code
         uses: actions/checkout@v6
