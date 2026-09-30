@@ -100,6 +100,19 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY=""
 
+      # The no_stickiness driver delivers its link through TestBedDeepLinkTestHook, which is
+      # compiled out of a non-Debug build. Without it the run fails with the same "no resolved
+      # link" text as a Universal Link that was not routed, so check the binary here instead.
+      - name: Assert the TestBed carries the deep link test hook
+        run: |
+          set -euo pipefail
+          BIN="./DerivedData/Build/Products/Debug-iphonesimulator/Branch-TestBed.app/Branch-TestBed"
+          if ! strings -a "$BIN" | grep -qF '[TestHook]'; then
+            echo "::error::TestBed binary has no [TestHook] literal; TestBedDeepLinkTestHook is compiled out, so no_stickiness cannot deliver its link"
+            exit 1
+          fi
+          echo "TestBedDeepLinkTestHook present in the TestBed binary"
+
       # Three scenarios, three captures. Each needs its own run: the app
       # deletes branchlogs.txt on every launch, so one run cannot hold two.
       #
@@ -481,6 +494,17 @@ jobs:
       - name: Fail the job if no_stickiness failed
         if: steps.ns.outcome == 'failure'
         run: exit 1
+
+      # no_stickiness runs continue-on-error, so the upload above never sees it.
+      - name: Upload no_stickiness captures on failure
+        if: always() && steps.ns.outcome == 'failure' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-no-stickiness-logs
+          path: |
+            /tmp/ns/*
+            /tmp/ns-driver.txt
+          retention-days: 7
 
       - name: Teardown simulator
         if: always()
