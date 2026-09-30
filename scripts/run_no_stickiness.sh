@@ -2,8 +2,10 @@
 #
 # no_stickiness driver for the iOS Branch SDK TestBed.
 #
-# Delivers the fixture link warm, backgrounds the app for real, returns with
-# no URL, and snapshots branchlogs.txt right before the return. Validate with:
+# Delivers the fixture link through the TestBed's in-process deep link hook
+# (a relaunch with -testDeepLinkURL, since the hook reads it only at launch),
+# backgrounds the app for real, returns with no URL, and snapshots
+# branchlogs.txt right before the return. Validate with:
 #
 #   check_no_stickiness.py "$OUTPUT_DIR/wire-no_stickiness.post.txt" \
 #       --pre "$OUTPUT_DIR/wire-no_stickiness.pre.txt"
@@ -66,8 +68,7 @@ echo "RUNTIME=${selection#* }"
 xcrun simctl boot "$udid" 2>/dev/null || true
 xcrun simctl bootstatus "$udid" -b >/dev/null
 
-# No scheme-approval consent seeding: NS_URL is an https Universal Link, which
-# does not raise the LaunchServices scheme dialog run_h2_hot.sh seeds for.
+# No scheme-approval consent seeding: NS_URL is never opened through LaunchServices.
 
 # 3. Fresh install of the single built TestBed.
 shopt -s nullglob
@@ -193,8 +194,9 @@ grep -qE '\[BranchLog\] Got Response for request \([^)]*/v3/events/open[^)]*\)' 
 pid=$(app_pid)
 [[ $pid =~ ^[0-9]+$ ]] || fail "TestBed is not running after launch"
 
-# 5. Deliver the fixture link warm, wait for it to resolve with a chained open.
-xcrun simctl openurl "$udid" "$NS_URL" || fail "openurl failed for $NS_URL"
+# 5. Deliver the fixture link via the in-process hook (new process, same SDK entry point as a real Universal Link), wait for it to resolve with a chained open.
+xcrun simctl launch --terminate-running-process "$udid" "$BUNDLE_ID" -testDeepLinkURL "$NS_URL" >/dev/null \
+    || fail "launch with -testDeepLinkURL failed for $NS_URL"
 wait_link_resolved
 pid=$(app_pid)
 [[ $pid =~ ^[0-9]+$ ]] || fail "TestBed is not running after the link"
