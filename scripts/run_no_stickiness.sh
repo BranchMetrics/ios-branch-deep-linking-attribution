@@ -45,7 +45,14 @@ BG_REPORT_MAX_S="${BG_REPORT_MAX_S:-15}"
 RETURN_MAX_S="${RETURN_MAX_S:-30}"
 NS_URL="${NS_URL:-https://bnctestbed.app.link/7HTLJ2jXi3b}"
 
-fail() { echo "ERROR: $*"; exit 1; }
+fail() {
+    echo "ERROR: $*"
+    local src
+    if [ -n "${udid:-}" ] && src=$(log_path 2>/dev/null) && [ -f "$src" ]; then
+        mkdir -p "$OUTPUT_DIR" && cp "$src" "$OUTPUT_DIR/wire-no_stickiness.fail.txt" || true
+    fi
+    exit 1
+}
 
 # 1. Device on exactly NS_EXPECT_RUNTIME. The same name can exist on several runtimes.
 selection=$(xcrun simctl list devices available -j | python3 -c '
@@ -194,8 +201,10 @@ grep -qE '\[BranchLog\] Got Response for request \([^)]*/v3/events/open[^)]*\)' 
 pid=$(app_pid)
 [[ $pid =~ ^[0-9]+$ ]] || fail "TestBed is not running after launch"
 
-# 5. Deliver the fixture link via the in-process hook (new process, same SDK entry point as a real Universal Link), wait for it to resolve with a chained open.
-xcrun simctl launch --terminate-running-process "$udid" "$BUNDLE_ID" -testDeepLinkURL "$NS_URL" >/dev/null \
+# 5. Deliver the fixture link via the in-process hook: a new process, same SDK entry point as a
+# real Universal Link. Wait for it to resolve with a chained open.
+xcrun simctl terminate "$udid" "$BUNDLE_ID" || true
+xcrun simctl launch "$udid" "$BUNDLE_ID" -testDeepLinkURL "$NS_URL" >/dev/null \
     || fail "launch with -testDeepLinkURL failed for $NS_URL"
 wait_link_resolved
 pid=$(app_pid)
