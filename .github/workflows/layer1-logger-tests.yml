@@ -107,7 +107,8 @@ jobs:
         run: |
           set -euo pipefail
           BIN="./DerivedData/Build/Products/Debug-iphonesimulator/Branch-TestBed.app/Branch-TestBed"
-          if ! strings -a "$BIN" | grep -qF '[TestHook]'; then
+          STRINGS_OUT="$(strings -a "$BIN")"
+          if ! grep -qF '[TestHook]' <<< "$STRINGS_OUT"; then
             echo "::error::TestBed binary has no [TestHook] literal; TestBedDeepLinkTestHook is compiled out, so no_stickiness cannot deliver its link"
             exit 1
           fi
