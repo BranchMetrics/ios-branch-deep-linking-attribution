@@ -361,6 +361,7 @@ jobs:
           fi
           # A killed background process leaves a new PID with no crash report;
           # that marker with no report is the runner, anything else is real.
+          # The report check can also match crash reports from the hot/warm captures in this job; that errs toward fail, never a false not_run.
           if [ -f /tmp/ns-pid-changed ] && ! ls ~/Library/Logs/DiagnosticReports/Branch-TestBed* >/dev/null 2>&1; then
             echo "result=not_run" >> "$GITHUB_OUTPUT"
             echo "$tag not run: the runner killed the backgrounded process" | tee /tmp/ns-output.txt
