@@ -402,6 +402,8 @@ jobs:
               ns_text="no_stickiness fail, see failures below"
             elif [ -f /tmp/ns-runtime-missing ]; then
               ns_text="no_stickiness not run: $no_runtime"
+            elif [ -z "${{ steps.ns.outputs.result }}" ]; then
+              ns_text="no_stickiness not reached"
             else
               ns_text="no_stickiness not run: the runner killed the backgrounded process"
             fi
