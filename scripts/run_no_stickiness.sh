@@ -114,7 +114,7 @@ wait_settled() {
 
 # Waits for the delivered link's chain: /v3/deeplink, a chained /v3/events/open, then a report carrying this run's +clicked_branch_link.
 wait_link_resolved() {
-    local path elapsed=0 deeplink_line open_line
+    local path elapsed=0 deeplink_line open_line after_open
     while [ "$elapsed" -lt "$LINK_MAX_S" ]; do
         if path=$(log_path) && [ -f "$path" ]; then
             deeplink_line=$(grep -nE '\[BranchLog\] Got https?://[^ ]*/v3/deeplink Request:' "$path" | tail -1 | cut -d: -f1) || deeplink_line=""
@@ -122,7 +122,8 @@ wait_link_resolved() {
                 open_line=$(tail -n +"$((deeplink_line + 1))" "$path" | grep -nE '\[BranchLog\] Got Response for request \([^)]*/v3/events/open[^)]*\)' | tail -1 | cut -d: -f1) || open_line=""
                 if [ -n "$open_line" ]; then
                     open_line=$((deeplink_line + open_line))
-                    if tail -n +"$((open_line + 1))" "$path" | grep -q '\[TestBedLifecycle\] latestReferringParams.*"+clicked_branch_link":true'; then
+                    after_open=$(tail -n +"$((open_line + 1))" "$path")
+                    if grep -q '\[TestBedLifecycle\] latestReferringParams.*"+clicked_branch_link":true' <<<"$after_open"; then
                         return 0
                     fi
                 fi
