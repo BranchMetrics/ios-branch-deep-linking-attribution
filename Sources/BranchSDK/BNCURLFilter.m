@@ -20,6 +20,9 @@
 // Is YES if the list has already been updated from the server, or is overridden with a custom list.
 @property (nonatomic, assign, readwrite) BOOL hasUpdatedPatternList;
 
+// Is YES while a server update request is in flight. Prevents duplicate concurrent requests.
+@property (nonatomic, assign, readwrite) BOOL isUpdatingPatternList;
+
 @property (strong, nonatomic) NSArray<NSRegularExpression*> *ignoredURLRegex;
 @property (assign, nonatomic) NSInteger listVersion;
 
@@ -69,8 +72,14 @@
     NSString *urlString = url.absoluteString;
     if (urlString == nil || urlString.length <= 0) return nil;
     
+    // Take a snapshot so a concurrent server update can't release the array while we iterate.
+    NSArray<NSRegularExpression *> *ignoredURLRegex = nil;
+    @synchronized (self) {
+        ignoredURLRegex = self.ignoredURLRegex;
+    }
+
     NSRange range = NSMakeRange(0, urlString.length);
-    for (NSRegularExpression* regex in self.ignoredURLRegex) {
+    for (NSRegularExpression* regex in ignoredURLRegex) {
         NSUInteger matches = [regex numberOfMatchesInString:urlString options:0 range:range];
         if (matches > 0) return regex.pattern;
     }
@@ -84,38 +93,62 @@
 
 - (void)useSavedPatternList {
     NSArray *storedList = [BNCPreferenceHelper sharedInstance].savedURLPatternList;
-    if (storedList.count > 0) {
-        self.patternList = storedList;
-        self.listVersion = [BNCPreferenceHelper sharedInstance].savedURLPatternListVersion;
+    NSInteger storedVersion = [BNCPreferenceHelper sharedInstance].savedURLPatternListVersion;
+    @synchronized (self) {
+        if (storedList.count > 0) {
+            self.patternList = storedList;
+            self.listVersion = storedVersion;
+        }
+        self.ignoredURLRegex = [self compileRegexArray:self.patternList];
     }
-    self.ignoredURLRegex = [self compileRegexArray:self.patternList];
 }
 
 - (void)useCustomPatternList:(NSArray<NSString *> *)patternList {
-    if (patternList.count > 0) {
-        self.patternList = patternList;
-        self.listVersion = 0;
+    // Copy so later mutation of the caller's array can't change or corrupt the stored list.
+    NSArray<NSString *> *customPatternList = [patternList copy];
+    @synchronized (self) {
+        if (customPatternList.count > 0) {
+            self.patternList = customPatternList;
+            self.listVersion = 0;
+        }
+        self.ignoredURLRegex = [self compileRegexArray:self.patternList];
     }
-    self.ignoredURLRegex = [self compileRegexArray:self.patternList];
 }
 
 #pragma mark Server update
 
 - (void)updatePatternListFromServerWithCompletion:(void (^_Nullable) (void))completion {
-    if (self.hasUpdatedPatternList) {
-        return;
+    NSInteger listVersion = 0;
+    @synchronized (self) {
+        if (self.hasUpdatedPatternList || self.isUpdatingPatternList) {
+            return;
+        }
+        // Mark the request in flight before dispatching it, so overlapping session inits don't issue duplicates.
+        self.isUpdatingPatternList = YES;
+        listVersion = self.listVersion;
     }
 
-    NSString *urlString = [NSString stringWithFormat:@"%@/sdk/uriskiplist_v%ld.json", [BNCPreferenceHelper sharedInstance].patternListURL, (long) self.listVersion+1];
+    NSString *urlString = [NSString stringWithFormat:@"%@/sdk/uriskiplist_v%ld.json", [BNCPreferenceHelper sharedInstance].patternListURL, (long) listVersion+1];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:30.0];
 
     __block id<BNCNetworkServiceProtocol> networkService = [[Branch networkServiceClass] new];
     id<BNCNetworkOperationProtocol> operation = [networkService networkOperationWithURLRequest:request completion: ^(id<BNCNetworkOperationProtocol> operation) {
         [self processServerOperation:operation];
+        // Clear the in-flight flag on success or failure, so a failed request can be retried on a later init.
+        @synchronized (self) {
+            self.isUpdatingPatternList = NO;
+        }
         if (completion) {
             completion();
         }
     }];
+    if (!operation) {
+        // The completion will never run, so clear the in-flight flag here.
+        @synchronized (self) {
+            self.isUpdatingPatternList = NO;
+        }
+        return;
+    }
     [operation start];
 }
 
@@ -177,14 +210,20 @@
         NSDictionary *json = [self parseJSONFromData:operation.responseData];
         if (json) {
             NSNumber *version = json[@"version"];
-            
-            self.hasUpdatedPatternList = YES;
-            self.patternList = json[@"uri_skip_list"];
-            self.listVersion = [version longValue];
-            self.ignoredURLRegex = [self compileRegexArray:self.patternList];
+            NSArray<NSString *> *patternList = json[@"uri_skip_list"];
+            NSInteger listVersion = [version longValue];
+            NSArray<NSRegularExpression *> *ignoredURLRegex = [self compileRegexArray:patternList];
 
-            [BNCPreferenceHelper sharedInstance].savedURLPatternList = self.patternList;
-            [BNCPreferenceHelper sharedInstance].savedURLPatternListVersion = self.listVersion;
+            @synchronized (self) {
+                self.hasUpdatedPatternList = YES;
+                self.patternList = patternList;
+                self.listVersion = listVersion;
+                self.ignoredURLRegex = ignoredURLRegex;
+            }
+
+            // Persist the locals rather than re-reading the properties, which another thread may have changed.
+            [BNCPreferenceHelper sharedInstance].savedURLPatternList = patternList;
+            [BNCPreferenceHelper sharedInstance].savedURLPatternListVersion = listVersion;
         }
     }
 }
