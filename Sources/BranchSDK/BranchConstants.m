@@ -195,3 +195,5 @@ NSString * const FRAMEWORK_AD_SUPPORT = @"AdSupport";
 NSString * const FRAMEWORK_AD_SAFARI_SERVICES = @"SafariServices";
 NSString * const FRAMEWORK_AD_APP_ADS_ONDEVICE_CONVERSION = @"AppAdsOnDeviceConversion";
 NSString * const FRAMEWORK_AD_FIREBASE_CRASHLYTICS = @"FirebaseCrashlytics";
+
+NSString * const BRANCH_REQUEST_KEY_DEVICE_TRUST_ATTESTATION_OBJECT = @"attestationObject_b64";

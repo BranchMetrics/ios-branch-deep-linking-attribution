@@ -40,6 +40,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (copy, nonatomic) NSString *installParams;
 @property (assign, nonatomic) BOOL isDebug;
 @property (nonatomic, assign, readwrite) BOOL appleAttributionTokenChecked;
+@property (nonatomic, assign, readwrite) BOOL deviceTrustChecked;
 @property (nonatomic, assign, readwrite) BOOL hasOptedInBefore;
 @property (nonatomic, assign, readwrite) BOOL hasCalledHandleATTAuthorizationStatus;
 @property (assign, nonatomic) NSInteger retryCount;
