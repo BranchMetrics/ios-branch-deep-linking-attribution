@@ -1,0 +1,1 @@
+[TestBedLifecycle] applicationDidBecomeActive

@@ -1,5 +1,6 @@
 """
-Foreground receipt for hot_uriScheme, read from TestBed lifecycle markers.
+Foreground receipt for hot_uriScheme and hot_https_foreground, read from TestBed
+lifecycle markers.
 
 One `/v3/events/open` on the delivery delta does not prove the app stayed
 foreground: a transition whose foreground open was suppressed also sends one.
@@ -8,7 +9,8 @@ this checker asserts the delivery reached a foregrounded app:
 
 - the snapshot taken before delivery (--pre) holds at least one
   applicationDidBecomeActive, so markers are being written;
-- the bytes appended after it hold exactly one openURL and no
+- the bytes appended after it hold exactly one delivery marker (openURL for
+  hot_uriScheme, continueUserActivity for hot_https_foreground) and no
   applicationWillResignActive, applicationDidEnterBackground or
   applicationDidBecomeActive.
 
@@ -25,6 +27,8 @@ Usage:
 
     check_foreground_markers.py wire-hot_uriScheme.post.txt \
         --pre wire-hot_uriScheme.pre.txt
+    check_foreground_markers.py wire-hot_https_foreground.post.txt \
+        --pre wire-hot_https_foreground.pre.txt --scenario hot_https_foreground
     check_foreground_markers.py wire-warm_uriScheme.post.txt \
         --pre wire-warm_uriScheme.pre.txt --scenario warm_uriScheme
 """
@@ -41,12 +45,18 @@ MARKER_RE = re.compile(rb"\[TestBedLifecycle\] (\w+)")
 
 LIVENESS = "applicationDidBecomeActive"
 DELIVERY = "openURL"
+# Logged by the TestBed delegate method, so it proves the method ran after
+# delivery, not that the activity carried a Branch link.
+MARKER_FOR_SCENARIO = {
+    "hot_uriScheme": DELIVERY,
+    "hot_https_foreground": "continueUserActivity",
+    "warm_uriScheme": DELIVERY,
+}
 TRANSITIONS = (
     "applicationWillResignActive",
     "applicationDidEnterBackground",
     "applicationDidBecomeActive",
 )
-MARKERS = (DELIVERY,) + TRANSITIONS
 
 
 def count_markers(data):
@@ -64,12 +74,12 @@ def liveness_errors(pre_counts):
     ]
 
 
-def check_markers(pre_counts, delta_counts):
+def check_markers(pre_counts, delta_counts, delivery):
     """Return one error string per broken rule."""
     errors = liveness_errors(pre_counts)
-    if delta_counts[DELIVERY] != 1:
+    if delta_counts[delivery] != 1:
         errors.append(
-            f"Expected exactly 1 '{DELIVERY}' marker after delivery, found {delta_counts[DELIVERY]}."
+            f"Expected exactly 1 '{delivery}' marker after delivery, found {delta_counts[delivery]}."
         )
     for name in TRANSITIONS:
         if delta_counts[name]:
@@ -120,8 +130,9 @@ def check_warm_markers(pre_counts, pre_last, delta_counts, delta):
     return errors
 
 
-def format_counts(label, counts):
-    return f"{label}: " + " ".join(f"{name}={counts[name]}" for name in MARKERS)
+def format_counts(label, counts, delivery):
+    markers = (delivery,) + TRANSITIONS
+    return f"{label}: " + " ".join(f"{name}={counts[name]}" for name in markers)
 
 
 def main():
@@ -135,14 +146,15 @@ def main():
     )
     parser.add_argument(
         "--scenario",
-        choices=("hot_uriScheme", "warm_uriScheme"),
+        choices=sorted(MARKER_FOR_SCENARIO),
         default="hot_uriScheme",
         help=(
-            "hot_uriScheme asserts a foregrounded app (default), "
+            "hot_uriScheme (default) and hot_https_foreground assert a foregrounded app, "
             "warm_uriScheme a backgrounded one"
         ),
     )
     args = parser.parse_args()
+    delivery = MARKER_FOR_SCENARIO[args.scenario]
 
     for path in (args.pre, args.log_file):
         if not os.path.exists(path):
@@ -158,14 +170,14 @@ def main():
     pre_counts = count_markers(pre_bytes)
     delta_counts = count_markers(delta)
 
-    print(format_counts("pre", pre_counts))
-    print(format_counts("delta", delta_counts))
+    print(format_counts("pre", pre_counts, delivery))
+    print(format_counts("delta", delta_counts, delivery))
     if args.scenario == "warm_uriScheme":
         pre_last = last_transition(pre_bytes)
         print(f"pre last transition: {pre_last or 'none'}")
         errors = check_warm_markers(pre_counts, pre_last, delta_counts, delta)
     else:
-        errors = check_markers(pre_counts, delta_counts)
+        errors = check_markers(pre_counts, delta_counts, delivery)
     for error in errors:
         print(f"FAILED: {error}")
     sys.exit(1 if errors else 0)

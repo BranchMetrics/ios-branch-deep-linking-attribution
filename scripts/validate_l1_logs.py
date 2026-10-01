@@ -287,6 +287,17 @@ SCENARIO_CONTRACTS = {
         "carried_by_all": {"/v3/events/open": ("randomized_bundle_token",)},
         "max_counts": {"/v3/events/open": 2},
     },
+    # hot_https_foreground: a Universal Link opened into the foregrounded app.
+    # A simulator run verifies the SDK's handling of an inbound NSUserActivity,
+    # not AASA reachability, path matching or domain provisioning.
+    "hot_https_foreground": {
+        "counts": {"/v3/deeplink": 1, "/v3/events/open": 1, "/v1/url": 0},
+        "order": (("/v3/deeplink", "/v3/events/open"),),
+        "fields": {
+            "/v3/deeplink": {"universal_link_url": 1, "external_intent_uri": 0},
+            "/v3/events/open": {"link_data": 1},
+        },
+    },
     "deeplink": {
         "counts": {"/v3/deeplink": 1},
         "order": (("/v3/deeplink", "/v3/events/open"),),
