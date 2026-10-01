@@ -38,6 +38,7 @@ extern NSString * const kTestBedBtnConsumerProtectionLevel;
 extern NSString * const kTestBedBtnNotificationSend;
 extern NSString * const kTestBedBtnPluginNotifyInit;
 extern NSString * const kTestBedBtnRequestDeepLink;
+extern NSString * const kTestBedBtnIndexOnSpotlight;
 
 #pragma mark - Buttons (Paste Control scene)
 
