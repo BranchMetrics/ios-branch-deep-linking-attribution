@@ -47,11 +47,9 @@ final class BrowserExperienceHybridTest: BaseGptDriverTest {
 
         // PHASE 3: verify the synthetic Safari handoff was processed.
         //
-        // The Branch SDK auto-pushes a LogOutputViewController when it
-        // resolves a Universal Link with `+clicked_branch_link == true`
-        // (see AppDelegate.handleDeepLinkParams). After the synthetic
-        // handoff we expect to be on that log screen with the link
-        // metadata visible.
+        // `waitForLogOutputScreen()` waits for a navigation bar titled
+        // "Logs" to appear. After the synthetic handoff we expect to be
+        // on that log screen with the link metadata visible.
         try waitForLogOutputScreen()
 
         try driver.assertBulk([

@@ -52,12 +52,10 @@ final class DeepLinkColdOpenHybridTest: BaseGptDriverTest {
 
         // PHASE 3: verify the deep link was resolved.
         //
-        // When Branch SDK resolves a Universal Link with
-        // `+clicked_branch_link == true`, AppDelegate's
-        // `handleDeepLinkParams` automatically pushes a
-        // LogOutputViewController showing the link details. So after
-        // the cold open we expect to ALREADY be on the log output
-        // screen — no need to tap "View Latest Referring Params".
+        // `waitForLogOutputScreen()` waits for a navigation bar titled
+        // "Logs" to appear. After the cold open we expect to ALREADY be
+        // on the log output screen, no need to tap "View Latest
+        // Referring Params".
         try waitForLogOutputScreen()
 
         try driver.assertBulk([
