@@ -44,6 +44,8 @@
                  response:(NSDictionary *)response
                     error:(NSError *)error
         requestServiceURL:(NSString *)requestServiceURL;
+/// The key window, for `handleDeepLinkParams:error:` and `handleDeepLinkObject:linkProperties:error:` below.
+@property (nonatomic, readonly) UIWindow *bnc_keyWindow;
 @end
 
 AppDelegate* appDelegate = nil;
@@ -281,6 +283,20 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     }];
 }
 
+- (UIWindow *)bnc_keyWindow {
+    for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
+        if ([scene isKindOfClass:[UIWindowScene class]]) {
+            UIWindowScene *windowScene = (UIWindowScene *)scene;
+            for (UIWindow *window in windowScene.windows) {
+                if (window.isKeyWindow) {
+                    return window;
+                }
+            }
+        }
+    }
+    return nil;
+}
+
 - (void) handleDeepLinkParams:(NSDictionary*)params error:(NSError*)error {
     if (error) {
         NSLog(@"Branch TestBed: Error deep linking: %@.", error.localizedDescription);
@@ -292,7 +308,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     if ([params[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] boolValue]) {
 
         UINavigationController *navigationController =
-            (UINavigationController *)self.window.rootViewController;
+            (UINavigationController *)self.bnc_keyWindow.rootViewController;
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LogOutputViewController *logOutputViewController =
             [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
@@ -319,7 +335,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     NSString *deeplinkText = object.contentMetadata.customMetadata[@"deeplink_text"];
     if (object.contentMetadata.customMetadata[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK].boolValue) {
         UINavigationController *navigationController =
-            (UINavigationController *)self.window.rootViewController;
+            (UINavigationController *)self.bnc_keyWindow.rootViewController;
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         LogOutputViewController *logOutputViewController =
             [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
@@ -329,20 +345,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
                 deeplinkText, [[[Branch sharedInstance] getLatestReferringParams] description]];
         logOutputViewController.logOutput = logOutput;
     }
-}
-
-- (BOOL)application:(UIApplication *)application
-            openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation {
-
-    NSLog(@"application:openURL:sourceApplication:annotation: invoked with URL: %@", [url description]);
-    // H2 counts this marker (scripts/check_foreground_markers.py); move it with any new URL entry point.
-    [self logLifecycleMarker:@"openURL"];
-    [[Branch sharedInstance] requestDeepLinkDataWithURL:url sourceApplication:sourceApplication annotation:annotation];
-
-    // Process non-Branch URIs here...
-    return YES;
 }
 
 - (BOOL)application:(UIApplication *)application
@@ -363,21 +365,6 @@ continueUserActivity:(NSUserActivity *)userActivity
 
     // Process non-Branch userActivities here...
     return YES;
-}
-
-- (void)applicationWillResignActive:(UIApplication *)application { [self logLifecycleMarker:@"applicationWillResignActive"]; }
-- (void)applicationDidEnterBackground:(UIApplication *)application {
-    [self logLifecycleMarker:@"applicationDidEnterBackground"];
-    // Two main-queue hops land after the SDK's background clear; UIKit calls this delegate before posting the notification the SDK clears on, so one hop is not enough.
-    dispatch_async(dispatch_get_main_queue(), ^{
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self logLatestReferringParams];
-        });
-    });
-}
-- (void)applicationDidBecomeActive:(UIApplication *)application {
-    [self logLifecycleMarker:@"applicationDidBecomeActive"];
-    [self logLatestReferringParams];
 }
 
 // Writes an L1 lifecycle marker to branchlogs.txt; the leading newline ends an unterminated SDK log entry.
