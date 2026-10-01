@@ -15,6 +15,7 @@ v.4.0.0-alpha.0
     * Deprecated API  -  (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options  registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback __attribute__((deprecated(("Use `initSessionWithSceneOptions:scene:registerDeepLinkHandler:` instead."))));
 - SPM Repo Cleanup - Removed all Extra files
 - Fixed bug - `getLatestReferringParams` kept returning a previously resolved link after the app backgrounded and reopened organically. The params are now cleared at process start, and when the app enters the background with no link resolution or open in flight. A transient interruption that does not background the app, such as a system alert or Control Center, keeps them.
+- Fixed bug - a Spotlight activity was not resolved on a cold launch of a scene-based app via `requestDeepLinkDataWithSceneOptions:scene:callback:`, only via the warm scene, legacy app-delegate, and `continueUserActivity:sceneIdentifier:` entry points. All four entry points now also send the Branch link a Spotlight activity's identifier carries, which was previously dropped on every one of them.
 
 v.3.14.0
 — Added APIs `disableNextForegroundForTimeInterval:`, `disableNextForeground` and `resumeSession` to disable and resume automatic tracking of `OPEN` events. These are experimental APIs. Please refer to warning message in API documentation/comments.

@@ -1028,10 +1028,11 @@ static NSString *bnc_branchKey = nil;
     BOOL filtered = NO;
     BOOL handled = [self processUserActivity:userActivity sceneIdentifier:sceneIdentifier filtered:&filtered];
 
-    // As in handleDeepLink:sceneIdentifier:, the entry point owns the enqueue. webpageURL is nil for a
-    // Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
+    // As in handleDeepLink:sceneIdentifier:, the entry point owns the enqueue. nil only for a
+    // non-Branch Spotlight identifier, which enqueues a deferred data lookup rather than resolving
+    // a link.
     if (!filtered) {
-        [self requestDeepLinkData:userActivity.webpageURL.absoluteString callback:nil];
+        [self requestDeepLinkData:[self deepLinkURLStringForUserActivity:userActivity] callback:nil];
     }
 
     return handled;
@@ -1086,6 +1087,20 @@ static NSString *bnc_branchKey = nil;
     #endif
 
     return spotlightIdentifier != nil;
+}
+
+// The URL string processUserActivity:sceneIdentifier:filtered: preprocessed for userActivity: the
+// Spotlight identifier when it is itself a Branch link, otherwise the activity's webpageURL. A
+// Spotlight activity never has webpageURL set, so a non-Branch Spotlight identifier still yields
+// nil here, which enqueues a deferred data lookup rather than resolving a link.
+- (nullable NSString *)deepLinkURLStringForUserActivity:(NSUserActivity *)userActivity {
+    #if !TARGET_OS_TV
+    NSString *spotlightIdentifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
+    if ([Branch isBranchLink:spotlightIdentifier]) {
+        return spotlightIdentifier;
+    }
+    #endif
+    return userActivity.webpageURL.absoluteString;
 }
 
 // checks if URL string looks like a branch link
@@ -2071,8 +2086,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     if (filtered) return;
 
-    // nil for a Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
-    NSString *urlStr = userActivity.webpageURL.absoluteString;
+    // nil only for a non-Branch Spotlight identifier, which enqueues a deferred data lookup rather
+    // than resolving a link.
+    NSString *urlStr = [self deepLinkURLStringForUserActivity:userActivity];
 
     [self requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
@@ -2141,13 +2157,17 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // once the session is up — the work `+[Branch initialize:]` now covers.
     if (connectionOptions.userActivities.count) {
         NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject;
-        if ([activity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-            // Run the same preprocessing as the legacy continueUserActivity: path before enqueueing.
-            BOOL filtered = NO;
-            [self processUserActivity:activity sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
-            if (!filtered) {
-                [self requestDeepLinkData:activity.webpageURL.absoluteString callback:callback];
-            }
+        // Run the same preprocessing as the legacy continueUserActivity: / warm scene
+        // continueUserActivity: paths before enqueueing, whatever the activity type:
+        // -processUserActivity: itself branches on NSUserActivityTypeBrowsingWeb vs. Spotlight
+        // vs. neither, so a type check here would only re-do that decision and, for anything
+        // other than NSUserActivityTypeBrowsingWeb, drop the activity instead of handling it.
+        BOOL filtered = NO;
+        [self processUserActivity:activity sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
+        if (!filtered) {
+            // nil only for a non-Branch Spotlight identifier, which enqueues a deferred data
+            // lookup rather than resolving a link.
+            [self requestDeepLinkData:[self deepLinkURLStringForUserActivity:activity] callback:callback];
         }
     } else if (connectionOptions.URLContexts.count) {
         UIOpenURLContext *context = connectionOptions.URLContexts.allObjects.firstObject;
@@ -2194,8 +2214,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     if (filtered) return;
 
-    // nil for a Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
-    NSString *urlStr = userActivity.webpageURL.absoluteString;
+    // nil only for a non-Branch Spotlight identifier, which enqueues a deferred data lookup rather
+    // than resolving a link.
+    NSString *urlStr = [self deepLinkURLStringForUserActivity:userActivity];
 
     [self requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
         if (error == nil) {
