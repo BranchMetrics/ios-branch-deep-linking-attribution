@@ -193,12 +193,17 @@ class HotUriSchemeWiringTests(unittest.TestCase):
         # Without the capture-outcome check a relaunch caught by the driver would still be validated.
         self.assertIn("steps.w2capture.outcome", step)
 
-    def test_the_testbed_delivers_urls_only_through_the_marked_app_delegate_method(self):
-        # A scene manifest or openURL:options: would bypass the openURL marker.
-        self.assertNotIn("UIApplicationSceneManifest", self._read("Branch-TestBed", "Branch-TestBed", "Branch-TestBed-Info.plist"))
-        app_delegate = self._read("Branch-TestBed", "Branch-TestBed", "AppDelegate.m")
-        self.assertEqual(app_delegate.count("openURL:(NSURL *)"), 1)
-        self.assertEqual(app_delegate.count('logLifecycleMarker:@"openURL"'), 1)
+    def test_the_testbed_delivers_urls_only_through_the_marked_scene_delegate_method(self):
+        # Under the scene life cycle a scheme URL arrives at the scene delegate; any
+        # second entry point, or one in the app delegate, would bypass the openURL marker.
+        testbed = ("Branch-TestBed", "Branch-TestBed")
+        self.assertIn("UIApplicationSceneManifest", self._read(*testbed, "Branch-TestBed-Info.plist"))
+        app_delegate = self._read(*testbed, "AppDelegate.m")
+        self.assertEqual(app_delegate.count("openURL:(NSURL *)"), 0)
+        self.assertEqual(app_delegate.count('logLifecycleMarker:@"openURL"'), 0)
+        scene_delegate = self._read(*testbed, "SceneDelegate.m")
+        self.assertEqual(scene_delegate.count("openURLContexts:(NSSet<UIOpenURLContext *> *)"), 1)
+        self.assertEqual(scene_delegate.count('logLifecycleMarker:@"openURL"'), 2)
 
 
 class HotHttpsForegroundContractTests(unittest.TestCase):
