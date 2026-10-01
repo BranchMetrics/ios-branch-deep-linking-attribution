@@ -106,9 +106,12 @@ xcodebuild test-without-building \
     -only-testing:"$ONLY_TESTING" \
     -destination "platform=iOS Simulator,id=$SIM_UDID" \
     -derivedDataPath "$DERIVED_DATA_DIR" \
-    CODE_SIGNING_ALLOWED=NO \
+    CODE_SIGNING_ALLOWED=YES \
     CODE_SIGNING_REQUIRED=NO \
-    CODE_SIGN_IDENTITY="" || TEST_EXIT_CODE=$?
+    CODE_SIGN_IDENTITY="-" \
+    CODE_SIGN_STYLE=Manual \
+    DEVELOPMENT_TEAM="" \
+    PROVISIONING_PROFILE_SPECIFIER="" || TEST_EXIT_CODE=$?
 
 # Even if tests failed, attempt to pull the log file so the validator (and
 # upload-artifact step) can surface a useful failure reason.
