@@ -21,8 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// Delivery waits for `BranchDidStartSessionNotification` so the link always
 /// follows the launch open, with a ten-second fallback.
 ///
-/// Exercises the SDK's handling of a link, not the OS delivering one: an
-/// unsigned simulator build has no route for real Universal Link handoff.
+/// Exercises the SDK's handling of a link, not the OS delivering one (no
+/// LaunchServices or associated-domains routing). The argument is read only at
+/// launch, so a running process must be relaunched to receive a link.
 + (void)installIfRequested:(UIApplication *)application;
 
 @end
