@@ -47,17 +47,31 @@ willConnectToSession:(UISceneSession *)session
 // Warm open via a custom URL scheme, e.g. `xcrun simctl openurl <udid> "branchtest://..."`
 // while the scene is already connected.
 - (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts {
+    // hot_uriScheme and warm_uriScheme count this marker (scripts/check_foreground_markers.py); move it with any new URL entry point.
     [appDelegate logLifecycleMarker:@"openURL"];
     [[Branch sharedInstance] requestDeepLinkDataWithScene:scene openURLContexts:URLContexts];
 }
 
 // Warm open via a Universal Link while the scene is already connected.
 - (void)scene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity {
+    // hot_https_foreground counts this marker (scripts/check_foreground_markers.py).
+    [appDelegate logLifecycleMarker:@"continueUserActivity"];
     [[Branch sharedInstance] requestDeepLinkDataWithScene:scene continueUserActivity:userActivity];
 }
 
 - (void)sceneWillResignActive:(UIScene *)scene { [appDelegate logLifecycleMarker:@"applicationWillResignActive"]; }
-- (void)sceneDidEnterBackground:(UIScene *)scene { [appDelegate logLifecycleMarker:@"applicationDidEnterBackground"]; }
-- (void)sceneDidBecomeActive:(UIScene *)scene { [appDelegate logLifecycleMarker:@"applicationDidBecomeActive"]; }
+- (void)sceneDidEnterBackground:(UIScene *)scene {
+    [appDelegate logLifecycleMarker:@"applicationDidEnterBackground"];
+    // Two main-queue hops land after the SDK's background clear, so the report reads the cleared value (scripts/check_no_stickiness.py).
+    dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [appDelegate logLatestReferringParams];
+        });
+    });
+}
+- (void)sceneDidBecomeActive:(UIScene *)scene {
+    [appDelegate logLifecycleMarker:@"applicationDidBecomeActive"];
+    [appDelegate logLatestReferringParams];
+}
 
 @end

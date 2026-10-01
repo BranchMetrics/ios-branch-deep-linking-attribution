@@ -12,4 +12,5 @@
 - (void) processLogMessage:(NSString*)message;
 - (void) setLogFile:(NSString*)fileName;
 - (void) logLifecycleMarker:(NSString *)name;
+- (void) logLatestReferringParams;
 @end
