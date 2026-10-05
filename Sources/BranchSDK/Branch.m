@@ -1321,11 +1321,9 @@ static NSString *bnc_branchKey = nil;
 }
 
 - (NSDictionary *)getLatestReferringParamsSynchronous {
-    [BranchOpenRequest waitForOpenResponseLock];
     [BranchRequestDeepLink waitForDeepLinkResponseLock];
     [BranchRequestOpen waitForOpenResponseLock];
     NSDictionary *result = [self getLatestReferringParams];
-    [BranchOpenRequest releaseOpenResponseLock];
     [BranchRequestDeepLink releaseDeepLinkResponseLock];
     [BranchRequestOpen releaseOpenResponseLock];
     return result;
