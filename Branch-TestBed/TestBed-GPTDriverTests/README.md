@@ -52,9 +52,8 @@ installed scenarios this way on every push and pull request against `4.0.0-beta.
 the SDK sources, the TestBed or the L1 scripts. `scripts/README.md` documents the scenarios and
 their contracts.
 
-The scheme runs the target's tests directly, so `-only-testing` selects any class above.
-`TestPlans/L1Validation.xctestplan`, which selects only the install test, is kept but is not
-referenced by the scheme.
+The scheme runs the target's tests directly, with no test plan, so `-only-testing` selects any
+class above.
 
 The host app targets iOS 15.0 or later, so running these tests needs a simulator on iOS 15 or
 later. They run on simulator only, with code signing disabled.
