@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0CD19A4FAAC3DC790D05398E /* gptd-swift in Frameworks */ = {isa = PBXBuildFile; productRef = 84BBC5418F3C729A5F490A07 /* gptd-swift */; };
 		143A1100894AF12F8F5E4CFB /* TestBedIdentifiers.m in Sources */ = {isa = PBXBuildFile; fileRef = CC1798D4BBC4E0E40ADA9310 /* TestBedIdentifiers.m */; };
 		4683F0761B20A73F00A432E7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016731940F51400A9E103 /* AppDelegate.m */; };
 		46DC406E1B2A328900D2D203 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67BBCF271A69E49A009C7DAE /* AdSupport.framework */; };
@@ -133,8 +132,6 @@
 
 /* Begin PBXFileReference section */
 		033FC71025AC1E5800D8319E /* Branch-TestBed.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = "Branch-TestBed.xctestplan"; path = "Branch-TestBed.xcodeproj/Branch-TestBed.xctestplan"; sourceTree = "<group>"; };
-		0BDDF97F86FBDB68CC1DB17B /* MobileBoost.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = MobileBoost.xcconfig; sourceTree = "<group>"; };
-		25411D6F29809D769F33D4BE /* MobileBoost.local.xcconfig.example */ = {isa = PBXFileReference; includeInIndex = 1; path = MobileBoost.local.xcconfig.example; sourceTree = "<group>"; };
 		49114296F0B11A2DEB7FFECD /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4AB16367239E3A2700D42931 /* DispatchToIsolationQueueTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DispatchToIsolationQueueTests.m; sourceTree = "<group>"; };
 		4D1683812098C901008819E3 /* Branch-SDK-Tests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Branch-SDK-Tests-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -261,7 +258,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				59823CA134DEC90557EF7C7B /* Foundation.framework in Frameworks */,
-				0CD19A4FAAC3DC790D05398E /* gptd-swift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -388,7 +384,6 @@
 		6582C60A6E8FB0C91C7EBE0C /* TestBed-GPTDriverTests */ = {
 			isa = PBXGroup;
 			children = (
-				FE42883A925072362E7A094D /* Config */,
 				E50AA43771267258B0293FD1 /* TestBed-GPTDriverTests-Bridging-Header.h */,
 				49114296F0B11A2DEB7FFECD /* Info.plist */,
 				BE4A694F8CCA8A9DE816FD35 /* Deterministic */,
@@ -507,16 +502,6 @@
 			path = Deterministic;
 			sourceTree = "<group>";
 		};
-		FE42883A925072362E7A094D /* Config */ = {
-			isa = PBXGroup;
-			children = (
-				0BDDF97F86FBDB68CC1DB17B /* MobileBoost.xcconfig */,
-				25411D6F29809D769F33D4BE /* MobileBoost.local.xcconfig.example */,
-			);
-			name = Config;
-			path = Config;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -589,7 +574,6 @@
 			);
 			name = "TestBed-GPTDriverTests";
 			packageProductDependencies = (
-				84BBC5418F3C729A5F490A07 /* gptd-swift */,
 			);
 			productName = "TestBed-GPTDriverTests";
 			productReference = ACF0972B844F3483686EF054 /* TestBed-GPTDriverTests.xctest */;
@@ -677,7 +661,6 @@
 			packageReferences = (
 				E7AC74792DB0700D002D8C40 /* XCLocalSwiftPackageReference "../../ios-branch-deep-linking-attribution" */,
 				E732827D2E5F7D92005CACC8 /* XCRemoteSwiftPackageReference "google-ads-on-device-conversion-ios-sdk" */,
-				D0973F95A101C4673FDC92A1 /* XCRemoteSwiftPackageReference "gptd-swift" */,
 			);
 			productRefGroup = 670016611940F51400A9E103 /* Products */;
 			projectDirPath = "";
@@ -891,7 +874,6 @@
 /* Begin XCBuildConfiguration section */
 		3486B3718FE8B6C8A863A09C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0BDDF97F86FBDB68CC1DB17B /* MobileBoost.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -1217,7 +1199,6 @@
 		};
 		AA4A3EF83BDE3C4D3218FF4D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0BDDF97F86FBDB68CC1DB17B /* MobileBoost.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -1387,14 +1368,6 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		D0973F95A101C4673FDC92A1 /* XCRemoteSwiftPackageReference "gptd-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/MobileBoostHQ/gptd-swift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.9.1;
-			};
-		};
 		E732827D2E5F7D92005CACC8 /* XCRemoteSwiftPackageReference "google-ads-on-device-conversion-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/googleads/google-ads-on-device-conversion-ios-sdk";
@@ -1406,11 +1379,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		84BBC5418F3C729A5F490A07 /* gptd-swift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D0973F95A101C4673FDC92A1 /* XCRemoteSwiftPackageReference "gptd-swift" */;
-			productName = "gptd-swift";
-		};
 		E732827E2E5F7D92005CACC8 /* GoogleAdsOnDeviceConversion */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E732827D2E5F7D92005CACC8 /* XCRemoteSwiftPackageReference "google-ads-on-device-conversion-ios-sdk" */;

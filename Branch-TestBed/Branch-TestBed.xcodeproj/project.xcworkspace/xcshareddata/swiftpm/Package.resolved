@@ -20,15 +20,6 @@
       }
     },
     {
-      "identity" : "gptd-swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/MobileBoostHQ/gptd-swift",
-      "state" : {
-        "revision" : "75dd19b5c8f1662b57d21b37d036fe8003ea0e05",
-        "version" : "1.10.0"
-      }
-    },
-    {
       "identity" : "nanopb",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/nanopb.git",
