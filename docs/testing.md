@@ -9,8 +9,8 @@ where tests are hosted under `Branch-TestBed/`.
 **A test added to `Branch-TestBed/Branch-SDK-Tests/` will not run in CI on this line.** Put new
 unit tests in `BranchSDKTests/`.
 
-`Branch-TestBed/` still exists and still holds the GPTDriver E2E suite
-(`Branch-TestBed/TestBed-GPTDriverTests/`, plans `Smoke`, `Release`, `L1Validation`).
+`Branch-TestBed/` still exists and holds the keyless wire-validation harness
+(`Branch-TestBed/TestBed-GPTDriverTests/`, plan `L1Validation`) that the L1 gate drives.
 
 ## Running them
 
@@ -35,7 +35,6 @@ There is no fastlane and no `Gemfile` on this branch, and no style linter.
 | --- | --- |
 | `verify.yml` | **works.** Runs the `xcodebuild test` above on `macos-15`. The `push:` trigger has no branch filter, so it fires for any pushed branch |
 | `layer1-logger-tests.yml` | **works.** The L1 wire gate, ported to this line so it exists in the PR merge tree. Triggers on push and PR against `4.0.0-beta.*` |
-| `gptdriver-e2e.yml` | **works, two jobs.** The deterministic half runs on every push and PR on this line. The full suite drives the MobileBoost device farm, needs `MOBILEBOOST_API_KEY`, and runs only on manual dispatch or a push to `Release-*` |
 | `version-bump.yml` | **dead.** Shells out to `bundle exec fastlane`, which does not exist here |
 | `integration-tests.yml` | **dead.** Same reason |
 | `release.yml` | **dead.** Same reason |
