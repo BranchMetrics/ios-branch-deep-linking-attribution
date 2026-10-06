@@ -20,8 +20,7 @@
 //  deletes branchlogs.txt on every launch, so a second method relaunching the
 //  app would overwrite this one's log.
 //
-//  Like the other L1 drivers, deliberately not a BaseGptDriverTest subclass —
-//  L1 must run without MOBILEBOOST_API_KEY.
+//  Like the other L1 drivers, it needs no credential: L1 must run keyless.
 //
 
 import XCTest
