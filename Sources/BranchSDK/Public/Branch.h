@@ -567,6 +567,11 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 /**
  Sends a Branch Open event with attribution to our new API route.
+
+ With `BranchConfiguration.automaticOpenEvents` set to NO, this instead sends whichever open is due:
+ the attributed open held from the most recently resolved link, or an unattributed open if nothing
+ is held. At most one open is sent per call and per foreground period, except the open a still
+ unfinished link resolution owns.
  */
 - (void)sendOpen;
 
@@ -722,6 +727,9 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  This is useful for scenarios like Bio Auth Dialogs, Apple Pay Dialogs or other cases where the app may briefly go to
  background and return without needing a new session open.
 
+ This only gates the unattributed open. A deep link resolved during the window still sends, or holds,
+ its attributed open exactly as `BranchConfiguration.automaticOpenEvents` decides.
+
  @warning If the app goes to background and returns to foreground before `resumeSession` is called or the timeout expires,
  the SDK may remain in an uninitialized state until the next foreground event. Ensure `resumeSession` is called promptly
  after the expected user interaction completes.
@@ -730,6 +738,9 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 /**
  Disables automatic session open tracking for the next foreground event for the defined time interval.
+
+ This only gates the unattributed open. A deep link resolved during the window still sends, or holds,
+ its attributed open exactly as `BranchConfiguration.automaticOpenEvents` decides.
 
  @param timeout    The duration in seconds to disable automatic open tracking. After this time,
                  automatic tracking resumes. Pass 0 to disable indefinitely until `resumeSession` is called.
@@ -743,6 +754,9 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 /**
  Resumes automatic session open tracking after it was disabled by `disableNextForegroundForTimeInterval:`.
  If automatic tracking is already enabled, this method has no effect.
+
+ If `BranchConfiguration.automaticOpenEvents` is NO, this resumes only the unattributed open; an
+ attributed open it was holding stays held until `-sendOpen` or the next background.
 
  @warning If the app transitioned to background and foreground while automatic tracking was disabled,
  the SDK may be in an uninitialized state. The SDK will re-initialize on the next foreground event or

@@ -119,8 +119,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Open tracking
 
-/// When NO, Branch does not automatically send an open on foreground; call `-[Branch sendOpen]` manually.
-/// Default YES.
+/// When NO, Branch sends no automatic open — not on foreground, and not for a resolved deep link.
+/// A deep link resolve still delivers its params through the `requestDeepLinkData…` callback and
+/// still follows any `invoke_features` redirect; only the open is held. Call `-[Branch sendOpen]`
+/// to send it, attributed if a link was resolved or unattributed otherwise, or it is sent
+/// automatically when the app enters the background. On a first install, requests that need a
+/// session (events, last attributed touch data) fail until that open is sent, so send it promptly.
+/// Keys set with `-setRequestMetadataKey:value:` stay attached to later requests until cleared with
+/// a nil value. Default YES.
 @property (nonatomic, assign) BOOL automaticOpenEvents;
 
 #pragma mark - Pasteboard

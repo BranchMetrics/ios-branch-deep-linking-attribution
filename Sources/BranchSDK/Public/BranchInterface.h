@@ -79,6 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Attribution open
 
+/// Sends an open. With automatic opens off, sends the held attributed open or an unattributed one.
 - (void)sendOpen;
 
 #pragma mark - Referring params

@@ -649,25 +649,22 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
                           @"The queued open must remain the only open, as on base.");
 }
 
-// Guard (e). An organic launch whose resolve drained before the foreground: nothing chained an
-// open and the queue is empty, so the foreground must send exactly one.
+// Guard (e). An organic launch whose resolve drained before the foreground: the resolve has
+// already chained its own unattributed open, so the foreground must add nothing.
 - (void)testOrganicResolveDrainedBeforeTheForegroundSendsOneOpen {
     self.stub.deepLinkMode = BranchResolveStubModeOrganicPayload;
 
     [self enqueueOrganicResolve];
     [self drainQueue];
 
-    XCTAssertEqualObjects([self postedEndpoints], @[kDeepLinkEndpoint],
-                          @"Precondition: the resolve must not have chained an open of its own.");
+    XCTAssertEqualObjects([self postedEndpoints], (@[kDeepLinkEndpoint, kOpenEndpoint]),
+                          @"Precondition: the resolve must chain its own unattributed open.");
 
     [self foreground];
-    [self waitForCondition:^BOOL{ return [self postedOpenCount] >= 1; }
-               description:@"the foreground open to reach the wire"
-                   timeout:15.0];
     [self drainQueue];
 
     XCTAssertEqualObjects([self postedEndpoints], (@[kDeepLinkEndpoint, kOpenEndpoint]),
-                          @"A foreground with an empty queue must send exactly one open.");
+                          @"A foreground after the resolve already sent its open must add nothing.");
 }
 
 // Guard (d). A deferred link: the same nil-URL resolve, but its response carries ~referring_link,

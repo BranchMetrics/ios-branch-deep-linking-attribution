@@ -46,6 +46,10 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
+    if (self.linkDataResolver) {
+        self.linkData = self.linkDataResolver();
+    }
+
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
     NSMutableDictionary *params = [[factory dataForRequestOpenWithURLString:self.urlString] mutableCopy];
 
