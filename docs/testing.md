@@ -10,7 +10,8 @@ where tests are hosted under `Branch-TestBed/`.
 unit tests in `BranchSDKTests/`.
 
 `Branch-TestBed/` still exists and holds the keyless wire-validation harness
-(`Branch-TestBed/TestBed-GPTDriverTests/`, plan `L1Validation`) that the L1 gate drives.
+(`Branch-TestBed/TestBed-GPTDriverTests/`). The L1 gate drives it through the scheme with
+`-only-testing`, one class per run.
 
 ## Running them
 
