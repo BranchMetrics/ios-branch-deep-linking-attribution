@@ -2282,6 +2282,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 // Builds the manual -sendOpen request. Its link data is resolved when the request is built, not
 // when it is enqueued, so a resolve still in flight can still supply it.
 - (void)enqueueManualOpen {
+    NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;
+    if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)]) {
+        [self.delegate branch:self willStartSessionWithURL:URL];
+    }
+
     callbackWithStatus openCallback = ^(BOOL success, NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^ {
             if (error) {
