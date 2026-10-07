@@ -25,7 +25,6 @@
 
 @interface Branch (LifecycleOpenResolveTest)
 + (void)resetInitializationGuardForTesting;
-+ (BOOL)automaticOpenTrackingDisabled;
 - (void)applicationDidBecomeActive;
 - (void)applicationWillResignActive;
 @end
@@ -162,7 +161,6 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 @property (nonatomic, copy) NSString *savedUXType;
 @property (nonatomic, strong) NSDate *savedURLLoadMs;
 @property (nonatomic, assign) BOOL savedDropURLOpen;
-@property (nonatomic, assign) BOOL savedAutomaticOpenTrackingDisabled;
 @end
 
 @implementation BranchLifecycleOpenResolveTests
@@ -193,7 +191,6 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     self.savedUXType = preferenceHelper.uxType;
     self.savedURLLoadMs = preferenceHelper.urlLoadMs;
     self.savedDropURLOpen = preferenceHelper.dropURLOpen;
-    self.savedAutomaticOpenTrackingDisabled = [Branch automaticOpenTrackingDisabled];
 
     preferenceHelper.sessionParams = nil;
     preferenceHelper.referringURL = nil;
@@ -225,8 +222,8 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
                           @"Precondition: the queue under test must start empty.");
     XCTAssertEqualObjects(preferenceHelper.attributionLevel, BranchAttributionLevelFull,
                           @"Precondition: attribution must not be None, or the open is suppressed for an unrelated reason.");
-    XCTAssertFalse([Branch automaticOpenTrackingDisabled],
-                   @"Precondition: automatic open tracking must be on, or -applicationDidBecomeActive returns before it reads the queue.");
+    XCTAssertTrue([[self.branch valueForKey:@"automaticOpenEvents"] boolValue],
+                  @"Precondition: automaticOpenEvents must be YES, or -applicationDidBecomeActive returns before it reads the queue.");
 }
 
 - (void)tearDown {
@@ -252,13 +249,7 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     preferenceHelper.urlLoadMs = self.savedURLLoadMs;
     preferenceHelper.dropURLOpen = self.savedDropURLOpen;
 
-    // Precondition guarantees this was NO going in; resumeSession is the only way back to that
-    // state short of waiting out a timer.
-    if (self.savedAutomaticOpenTrackingDisabled) {
-        [Branch disableNextForegroundForTimeInterval:0];
-    } else {
-        [Branch resumeSession];
-    }
+    [self.branch setValue:@YES forKey:@"automaticOpenEvents"];
 
     // The open callback chain finishes on main. Spin before handing the singleton back, so a
     // block still pending cannot enqueue into the real queue.
@@ -462,7 +453,53 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
 }
 
+// Reconfigures the shared Branch singleton in place; its requestQueue stays the stubbed testQueue.
+- (void)setAutomaticOpenEventsNo {
+    [Branch resetInitializationGuardForTesting];
+    BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB"];
+    config.automaticOpenEvents = NO;
+    self.branch = [Branch initialize:config];
+}
+
+- (void)restoreDefaultAutomaticOpenEvents {
+    [Branch resetInitializationGuardForTesting];
+    BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB"];
+    self.branch = [Branch initialize:config];
+}
+
 #pragma mark - Tests
+
+- (void)testActivationWithAutomaticOpenEventsNoSendsNoOpen {
+    [self setAutomaticOpenEventsNo];
+
+    [self foreground];
+    [self drainQueue];
+
+    XCTAssertEqualObjects([self enqueuedRequestClassNames], @[],
+                          @"An activation must enqueue no open when automaticOpenEvents is NO.");
+    XCTAssertEqualObjects([self postedEndpoints], @[],
+                          @"No open may reach the wire when automaticOpenEvents is NO.");
+
+    [self restoreDefaultAutomaticOpenEvents];
+}
+
+- (void)testActivationWithAutomaticOpenEventsNoArmsNoDeferredCheck {
+    [self setAutomaticOpenEventsNo];
+    self.stub.deepLinkMode = BranchResolveStubModeError;
+
+    [self enqueueOrganicResolve];
+    [self foreground];
+
+    XCTAssertNil([self deferredForegroundOpenCheck],
+                 @"An activation must arm no deferred check when automaticOpenEvents is NO.");
+
+    [self drainQueue];
+
+    XCTAssertEqualObjects([self postedEndpoints], @[kDeepLinkEndpoint],
+                          @"Only the deep link resolve may reach the wire when automaticOpenEvents is NO.");
+
+    [self restoreDefaultAutomaticOpenEvents];
+}
 
 // The deferred open is sent from the isolation queue, so on a first launch it waits behind the
 // user-agent load there, as the base foreground open does, and its body carries user_agent.
@@ -750,51 +787,6 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 
     XCTAssertEqualObjects([self postedEndpoints], @[kDeepLinkEndpoint],
                           @"No open may reach the wire once the re-read observes attribution None.");
-}
-
-// Guard (j). Same window as above, on the other check the re-read makes: automatic open
-// tracking flipped off between the two calls to -shouldSendDeferredForegroundOpen.
-- (void)testAutomaticOpenTrackingDisabledAtTheDeferredReReadSendsNoOpen {
-    self.stub.deepLinkMode = BranchResolveStubModeOrganicPayload;
-
-    [self enqueueOrganicResolve];
-    [self foreground];
-
-    NSOperation *deferredCheck = [self deferredForegroundOpenCheck];
-    XCTAssertNotNil(deferredCheck,
-                    @"Precondition: the foreground must have deferred its open behind the resolve.");
-
-    dispatch_semaphore_t release = dispatch_semaphore_create(0);
-    XCTestExpectation *held = [[XCTestExpectation alloc] initWithDescription:@"the isolation queue to be held"];
-    __block long holdResult = -1;
-    [self.branch dispatchToIsolationQueue:^{
-        [held fulfill];
-        holdResult = dispatch_semaphore_wait(release, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20 * NSEC_PER_SEC)));
-    }];
-    XCTAssertEqual([XCTWaiter waitForExpectations:@[held] timeout:5.0], XCTWaiterResultCompleted,
-                   @"Precondition: the isolation queue must be held before the resolve runs.");
-
-    self.testQueue.operationQueue.suspended = NO;
-    [self waitForCondition:^BOOL{ return deferredCheck.isFinished; }
-               description:@"the resolve and the first deferred check to run"
-                   timeout:15.0];
-
-    // The first check ran with tracking enabled and queued its re-read behind the hold above.
-    // Disable it now, via the public API, so only that re-read can see it. Timeout 0: no timer
-    // to race the assertions below.
-    [Branch disableNextForegroundForTimeInterval:0];
-
-    dispatch_semaphore_signal(release);
-    [self waitForIsolationQueue:@"the deferred re-read to run"];
-
-    XCTAssertEqual(holdResult, 0L, @"The hold must have ended by signal, not by timeout.");
-    XCTAssertFalse([[self enqueuedRequestClassNames] containsObject:@"BranchRequestOpen"],
-                   @"The re-read must not enqueue an open once automatic open tracking is disabled.");
-
-    [self drainQueue];
-
-    XCTAssertEqualObjects([self postedEndpoints], @[kDeepLinkEndpoint],
-                          @"No open may reach the wire once the re-read observes tracking disabled.");
 }
 
 @end

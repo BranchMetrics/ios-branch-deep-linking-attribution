@@ -77,7 +77,6 @@
 		8909A6D6A78237ACCB8496D6 /* EventLoggingHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D5B75E103FE48CC35B2C2D /* EventLoggingHybridTest.swift */; };
 		959C9C6A9AF35A32CE92F363 /* QRCodeHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F998EAD60325FB9FBF63FF /* QRCodeHybridTest.swift */; };
 		9BEC6ECEF0E0BF1E734B843D /* NotificationHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D4DC04AFC52EEBC6E0120A /* NotificationHybridTest.swift */; };
-		AA12345600010000000000B1 /* BranchDisableNextForegroundTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AA12345600010000000000A1 /* BranchDisableNextForegroundTests.m */; };
 		B9F5DA27F77E0A392BD2E69A /* TestBedIdentifiers.m in Sources */ = {isa = PBXBuildFile; fileRef = CC1798D4BBC4E0E40ADA9310 /* TestBedIdentifiers.m */; };
 		A1B2C3D4000000000000A001 /* TestBedDeepLinkTestHook.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4000000000000A002 /* TestBedDeepLinkTestHook.m */; };
 		C10A6DE629A995590061A851 /* StoreKitTestCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = C10A6DE529A995590061A851 /* StoreKitTestCertificate.cer */; };
@@ -252,7 +251,6 @@
 		991B868E49743EF400DE3CA1 /* DeepLinkColdOpenHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DeepLinkColdOpenHybridTest.swift; sourceTree = "<group>"; };
 		9CB024C029C70375502663D2 /* UserIdentityHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UserIdentityHybridTest.swift; sourceTree = "<group>"; };
 		A13A03B363788986D842EB8F /* ShareLinkHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShareLinkHybridTest.swift; sourceTree = "<group>"; };
-		AA12345600010000000000A1 /* BranchDisableNextForegroundTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchDisableNextForegroundTests.m; sourceTree = "<group>"; };
 		ACF0972B844F3483686EF054 /* TestBed-GPTDriverTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TestBed-GPTDriverTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEB8091834A415F87D777F78 /* BrowserExperienceHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BrowserExperienceHybridTest.swift; sourceTree = "<group>"; };
 		C10A6DE029A97E440061A851 /* TestStoreKitConfig.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestStoreKitConfig.storekit; sourceTree = "<group>"; };
@@ -402,7 +400,6 @@
 				4D1683812098C901008819E3 /* Branch-SDK-Tests-Bridging-Header.h */,
 				C15CC9DF2ABCF8C8003CC339 /* BranchActivityItemTests.m */,
 				C17DAF7A2AC20C2000B16B1A /* BranchClassTests.m */,
-				AA12345600010000000000A1 /* BranchDisableNextForegroundTests.m */,
 				4D16839C2098C901008819E3 /* BranchEvent.Test.m */,
 				4D1683952098C901008819E3 /* BranchEvent.Test.swift */,
 				5F909B712332BEF600A774D2 /* BranchLastAttributedTouchDataTests.m */,
@@ -902,7 +899,6 @@
 				C15CC9E02ABCF8C8003CC339 /* BranchActivityItemTests.m in Sources */,
 				5F92B23423835FEB00CA909B /* BNCReachabilityTests.m in Sources */,
 				C17DAF7B2AC20C2000B16B1A /* BranchClassTests.m in Sources */,
-				AA12345600010000000000B1 /* BranchDisableNextForegroundTests.m in Sources */,
 				C12320B52808DB90007771C0 /* BranchQRCodeTests.m in Sources */,
 				5F3D671B233062FD00454FF1 /* BNCJsonLoader.m in Sources */,
 				4D1683C02098C902008819E3 /* BranchUniversalObjectTests.m in Sources */,

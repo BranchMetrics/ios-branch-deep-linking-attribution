@@ -126,7 +126,7 @@ static void BranchSessionParamsClearResetStub(NSMutableArray<NSString *> *posted
 }
 
 - (void)tearDown {
-    [Branch resumeSession];
+    [self.branch setValue:@YES forKey:@"automaticOpenEvents"];
     [self.branch setValue:nil forKey:@"application"];
     [self.branch setValue:[BNCServerRequestQueue getInstance] forKey:@"requestQueue"];
     self.stubbedQueue = nil;
@@ -275,11 +275,23 @@ static void BranchSessionParamsClearResetStub(NSMutableArray<NSString *> *posted
 }
 
 - (void)testBackgroundInManualOpenModeKeepsThePayload {
-    [Branch disableNextForegroundForTimeInterval:0];
+    [Branch resetInitializationGuardForTesting];
+    BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_abc"];
+    config.automaticOpenEvents = NO;
+    self.branch = [Branch initialize:config];
+    [self.branch setValue:self.stubbedQueue forKey:@"requestQueue"];
+    [self.branch setValue:self.application forKey:@"application"];
+
     [self launchFromLinkAndDrain];
     [self background];
     [self waitForLifecycleWork];
+    [self waitForDrain];
     XCTAssertEqualObjects(self.latestCampaign, @"beta launch", @"Manual-open mode sends no open on return, so the payload must survive.");
+
+    [Branch resetInitializationGuardForTesting];
+    self.branch = [Branch initialize:[[BranchConfiguration alloc] initWithKey:@"key_live_abc"]];
+    [self.branch setValue:self.stubbedQueue forKey:@"requestQueue"];
+    [self.branch setValue:self.application forKey:@"application"];
 }
 
 // The resolution has left the queue but its callback is still pending on main, so the clear runs; it must run after.

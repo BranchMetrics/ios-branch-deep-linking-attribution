@@ -93,10 +93,6 @@ BranchAttributionLevel const BranchAttributionLevelReduced = @"REDUCED";
 BranchAttributionLevel const BranchAttributionLevelMinimal = @"MINIMAL";
 BranchAttributionLevel const BranchAttributionLevelNone = @"NONE";
 
-static BOOL bnc_disableAutomaticOpenTracking = NO;
-static dispatch_source_t bnc_disableAutomaticOpenTimer = nil;
-static NSTimeInterval const BNC_DEFAULT_DISABLE_FOREGROUND_TIMEOUT = 30.0;
-
 #ifndef CSSearchableItemActivityIdentifier
 #define CSSearchableItemActivityIdentifier @"kCSSearchableItemActivityIdentifier"
 #endif
@@ -385,9 +381,6 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     // A configured Branch has sent nothing yet, so the foreground-period marker starts clear. A no-op
     // in production, where this runs once per process; it matters when a test reconfigures the singleton.
     branch.openSentThisForegroundPeriod = NO;
-    if (!configuration.automaticOpenEvents) {
-        [Branch disableNextForegroundForTimeInterval:0];
-    }
 }
 
 - (id)initWithInterface:(BNCServerInterface *)interface
@@ -761,65 +754,6 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
-+ (void)disableNextForeground {
-    [self disableNextForegroundForTimeInterval:BNC_DEFAULT_DISABLE_FOREGROUND_TIMEOUT];
-}
-
-+ (void)disableNextForegroundForTimeInterval:(NSTimeInterval)timeout {
-    @synchronized(self) {
-        [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"disableNextForegroundForTimeInterval: %.2f seconds", timeout] error:nil];
-
-        if (bnc_disableAutomaticOpenTimer) {
-            dispatch_source_cancel(bnc_disableAutomaticOpenTimer);
-            bnc_disableAutomaticOpenTimer = nil;
-        }
-
-        bnc_disableAutomaticOpenTracking = YES;
-
-        if (timeout > 0) {
-            bnc_disableAutomaticOpenTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
-            dispatch_source_set_timer(bnc_disableAutomaticOpenTimer,
-                                      dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeout * NSEC_PER_SEC)),
-                                      DISPATCH_TIME_FOREVER,
-                                      (int64_t)(0.1 * NSEC_PER_SEC));
-            // Capture current timer to guard against a stale handler firing after a new
-            // disableNextForegroundForTimeInterval: call replaced the timer.
-            // dispatch_source_cancel prevents future events but cannot dequeue an already-dispatched handler.
-            // Use __weak to avoid a retain cycle (source → handler block → source).
-            dispatch_source_t currentTimer = bnc_disableAutomaticOpenTimer;
-            __weak dispatch_source_t weakTimer = currentTimer;
-            dispatch_source_set_event_handler(currentTimer, ^{
-                dispatch_source_t strongTimer = weakTimer;
-                @synchronized ([Branch class]) {
-                    if (strongTimer != nil && bnc_disableAutomaticOpenTimer == strongTimer) {
-                        [Branch resumeSession];
-                    }
-                }
-            });
-            dispatch_resume(bnc_disableAutomaticOpenTimer);
-        }
-    }
-}
-
-+ (void)resumeSession {
-    @synchronized(self) {
-        [[BranchLogger shared] logVerbose:@"resumeSession: re-enabling automatic open tracking" error:nil];
-
-        if (bnc_disableAutomaticOpenTimer) {
-            dispatch_source_cancel(bnc_disableAutomaticOpenTimer);
-            bnc_disableAutomaticOpenTimer = nil;
-        }
-
-        bnc_disableAutomaticOpenTracking = NO;
-    }
-}
-
-+ (BOOL)automaticOpenTrackingDisabled {
-    @synchronized (self) {
-        return bnc_disableAutomaticOpenTracking;
-    }
-}
-
 + (void)setReferrerGbraidValidityWindow:(NSTimeInterval)validityWindow{
     @synchronized(self) {
         [BNCPreferenceHelper sharedInstance].referringURLQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID][BRANCH_URL_QUERY_PARAMETERS_VALIDITY_WINDOW_KEY] = @(validityWindow);
@@ -875,7 +809,7 @@ static NSString *bnc_branchKey = nil;
         //Enable Tracking
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enabling attribution events due to Consumer Protection Attribution Level being %@.", level] error:nil];
 
-        if (resetSession && ![Branch automaticOpenTrackingDisabled]) {
+        if (resetSession && self.automaticOpenEvents) {
             [self enqueueUnattributedOpen];
         }
     }
@@ -1630,11 +1564,9 @@ static NSString *bnc_branchKey = nil;
 - (void)applicationDidBecomeActive {
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive"] error:nil];
 
-    @synchronized ([Branch class]) {
-        if (bnc_disableAutomaticOpenTracking) {
-            [[BranchLogger shared] logVerbose:@"applicationDidBecomeActive: automatic open tracking is disabled, skipping" error:nil];
-            return;
-        }
+    if (!self.automaticOpenEvents) {
+        [[BranchLogger shared] logVerbose:@"applicationDidBecomeActive: automatic open tracking is disabled, skipping" error:nil];
+        return;
     }
 
     // A live nil-URL resolve may not chain an open; decide once it finishes.
@@ -1657,14 +1589,11 @@ static NSString *bnc_branchKey = nil;
     });
 }
 
-// Shared by A (above) and B (below): whether the automatic unattributed open is still due. Returns
-// NO when automatic open tracking is off, attribution is NONE, or one open already went out this
-// foreground period.
+// Whether the automatic unattributed open is still due. Returns NO when automatic opens are off,
+// attribution is NONE, an open already went out this foreground period, or an attributed open response is held.
 - (BOOL)shouldSendAutomaticUnattributedOpen {
-    @synchronized ([Branch class]) {
-        if (bnc_disableAutomaticOpenTracking) {
-            return NO;
-        }
+    if (!self.automaticOpenEvents) {
+        return NO;
     }
 
     if ([Branch attributionLevelNone]) {
@@ -1771,7 +1700,7 @@ static NSString *bnc_branchKey = nil;
     dispatch_async(dispatch_get_main_queue(), ^{
         Class UIApplicationClass = NSClassFromString(@"UIApplication");
         UIApplication *application = self.application ?: [UIApplicationClass sharedApplication];
-        if ([Branch automaticOpenTrackingDisabled] ||
+        if (!self.automaticOpenEvents ||
             application.applicationState != UIApplicationStateBackground ||
             [self.requestQueue containsInstallOrOpen]) {
             return;
@@ -2047,7 +1976,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         self.preferenceHelper.dropURLOpen = YES;
         self.preferenceHelper.externalIntentURI = branchLink;
         self.preferenceHelper.referringURL = branchLink;
-        if (![Branch automaticOpenTrackingDisabled]) {
+        if (self.automaticOpenEvents) {
             [self enqueueUnattributedOpen];
         }
 
