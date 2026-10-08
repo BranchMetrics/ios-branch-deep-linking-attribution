@@ -414,11 +414,7 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     }
 
     if (configuration.dmaParameters) {
-        // DMA parameters are config-only: written to preferences here so BNCRequestFactory picks them up.
-        BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
-        prefs.eeaRegion = configuration.dmaParameters.eeaRegion;
-        prefs.adPersonalizationConsent = configuration.dmaParameters.adPersonalizationConsent;
-        prefs.adUserDataUsageConsent = configuration.dmaParameters.adUserDataUsageConsent;
+        [branch setDMAParameters:configuration.dmaParameters];
     }
 
     // URL collection
@@ -891,6 +887,19 @@ static NSString *bnc_branchKey = nil;
             [[BranchLogger shared] logWarning:@"Invalid anonID provided. Must be a non-nil NSString." error:nil];
         }
     }
+}
+
+- (void)setDMAParameters:(BranchDMAParameters *)dmaParameters {
+    if (!dmaParameters) {
+        [[BranchLogger shared] logWarning:@"Invalid DMA parameters provided. Must be a non-nil BranchDMAParameters." error:nil];
+        return;
+    }
+
+    self.preferenceHelper.eeaRegion = dmaParameters.eeaRegion;
+    self.preferenceHelper.adPersonalizationConsent = dmaParameters.adPersonalizationConsent;
+    self.preferenceHelper.adUserDataUsageConsent = dmaParameters.adUserDataUsageConsent;
+
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Setting DMA parameters to eeaRegion: %d, adPersonalizationConsent: %d, adUserDataUsageConsent: %d", dmaParameters.eeaRegion, dmaParameters.adPersonalizationConsent, dmaParameters.adUserDataUsageConsent] error:nil];
 }
 
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level {

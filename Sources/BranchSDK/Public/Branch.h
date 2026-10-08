@@ -16,6 +16,7 @@
 // Public classes that should be in the umbrella header
 #import "BranchInterface.h"
 #import "BranchAttributionLevel.h"
+#import "BranchDMAParameters.h"
 #import "BranchLinkProperties.h"
 #import "BranchUniversalObject.h"
 #import "BranchLastAttributedTouchData.h"
@@ -780,6 +781,13 @@ extern NSString * __nonnull const BNCSpotlightFeature;
                      If NO, the session will not be re-initialized automatically when transitioning from BranchAttributionLevelNone to other higher levels.
  */
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level resetSession:(BOOL)resetSession;
+
+/**
+ Sets the DMA parameters required by Google Conversion APIs for users in the EEA region.
+
+ @param dmaParameters The EEA region and consent values sent with subsequent requests.
+ */
+- (void)setDMAParameters:(BranchDMAParameters *)dmaParameters;
 
 /// Returns a boolean based on if the current Attribution Level is set to "NONE".
 + (BOOL) attributionLevelNone;
