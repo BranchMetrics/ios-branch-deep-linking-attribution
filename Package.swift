@@ -5,8 +5,8 @@ import PackageDescription
 let package = Package(
     name: "BranchSDK",
     platforms: [
-        .iOS(.v12),
-        .tvOS(.v12),
+        .iOS(.v15),
+        .tvOS(.v15),
     ],
     products: [
         // Main product that clients will import
