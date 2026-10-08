@@ -368,6 +368,19 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 + (nullable Branch *)initialize:(BranchConfiguration *)configuration;
 
 /**
+ Applies a new `BranchConfiguration` to the running SDK without reinitializing it.
+
+ Only the values assigned on `configuration` are applied; everything else keeps its current setting.
+ Updated values take effect on the next request or link handled. `branchKey`, `testMode`,
+ `remoteInterface`, `appClipAppGroup` and `checkPasteboardOnInstall` are fixed by `+initialize:`;
+ a different value here logs a warning and is ignored. An assigned value that fails validation logs
+ a warning and is skipped; the remaining values are still applied.
+
+ @param configuration The updated configuration. Must not be nil.
+ */
++ (void)updateConfiguration:(BranchConfiguration *)configuration;
+
+/**
  Allow Branch to handle a link opening the app, returning whether it was from a Branch link or not.
 
  @param url The url that caused the app to be opened.

@@ -542,4 +542,31 @@
     XCTAssertEqualWithAccuracy([BNCPreferenceHelper sharedInstance].timeout, 15.0, 0.001);
 }
 
+// initialize: applies every scalar, so values left at their defaults replace whatever is already set.
+- (void)testInitializeAppliesDefaultsForUnassignedValues {
+    [Branch resetInitializationGuardForTesting];
+    Branch *branch = [Branch initialize:[[BranchConfiguration alloc] initWithKey:@"key_live_abc"]];
+    XCTAssertNotNil(branch);
+
+    BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
+    prefs.timeout = 30.0;
+    prefs.retryCount = 9;
+    prefs.retryInterval = 4.0;
+    prefs.thirdPartyAPIsWaitTime = 3.0;
+    prefs.disableAdNetworkCallouts = YES;
+    prefs.limitFacebookTracking = YES;
+    [branch setValue:@NO forKey:@"automaticOpenEvents"];
+
+    [Branch resetInitializationGuardForTesting];
+    XCTAssertNotNil([Branch initialize:[[BranchConfiguration alloc] initWithKey:@"key_live_abc"]]);
+
+    XCTAssertEqualWithAccuracy(prefs.timeout, 5.5, 0.001);
+    XCTAssertEqual(prefs.retryCount, 3);
+    XCTAssertEqualWithAccuracy(prefs.retryInterval, 1.0, 0.001);
+    XCTAssertEqualWithAccuracy(prefs.thirdPartyAPIsWaitTime, 0.5, 0.001);
+    XCTAssertFalse(prefs.disableAdNetworkCallouts);
+    XCTAssertFalse(prefs.limitFacebookTracking);
+    XCTAssertTrue([[branch valueForKey:@"automaticOpenEvents"] boolValue]);
+}
+
 @end

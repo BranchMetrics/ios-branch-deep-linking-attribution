@@ -25,7 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 
  This class is a plain mutable configuration object: create it with a Branch key, set the properties you care about, then pass
  it to `+[Branch initialize:]`. Once you have called `initialize:`, mutating the configuration has no effect —
- `initialize:` reads a snapshot of the values.
+ `initialize:` reads a snapshot of the values. To change settings later, pass a configuration to
+ `+[Branch updateConfiguration:]`.
 
  Only settings that are legitimately *pre-init* decisions live here. Settings that legitimately change at
  runtime — user identity, per-session partner parameters, per-request metadata, attribution level in response
@@ -95,8 +96,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// When YES, disables callouts to ad networks for all events. Default NO.
 @property (nonatomic, assign) BOOL adNetworkCalloutsDisabled;
 
-/// Optional DMA (EEA) consent parameters. When nil, no DMA parameters are sent. These are immutable once
-/// `+[Branch initialize:]` is called; to change consent at runtime, reinitialize with a new configuration.
+/// Optional DMA (EEA) consent parameters. When nil, no DMA parameters are sent. To change consent after
+/// initialization, pass a configuration with new parameters to `+[Branch updateConfiguration:]`.
 @property (nonatomic, copy, nullable) BranchDMAParameters *dmaParameters;
 
 #pragma mark - URL collection
