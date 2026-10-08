@@ -73,7 +73,7 @@ jobs:
           # The bracket expressions match the vendor strings but not their own
           # text, so this file stays covered without excluding itself.
           if git grep -n -i -e 'mobile[b]oost' -e 'gptd[-_]swift' -e 'BaseG[p]tDriverTest' -- ':!ChangeLog.md' ; then
-            echo "::error::vendor reference found; see EMT-4519"
+            echo "::error::vendor reference found"
             exit 1
           fi
 
