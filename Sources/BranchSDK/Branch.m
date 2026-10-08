@@ -1574,8 +1574,9 @@ static NSString *bnc_branchKey = nil;
         return;
     }
 
-    // An activation after a resign, such as dismissing the ATT prompt, gets its own open so the new
-    // opted_in_status ("authorized" or "denied") reaches Branch.
+    // An activation after a resign sends another Open event to Branch's servers.
+    // One critical scenario this occurs in is dismissing the Apple App Tracking Transparency (ATT) prompt for user permissions.
+    // The second Open has the opted_in_status field set to "authorized" or "denied" and overwrites the first open when Branch's backend deduplicates them.
     if (self.resignedSinceActivation) {
         self.resignedSinceActivation = NO;
         self.openSentThisForegroundPeriod = NO;
