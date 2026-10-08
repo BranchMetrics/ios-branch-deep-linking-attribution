@@ -1575,8 +1575,7 @@ static NSString *bnc_branchKey = nil;
     }
 
     // An activation after a resign, such as dismissing the ATT prompt, gets its own open so the new
-    // opted_in_status ("authorized" or "denied") reaches Branch. Cleared here rather than on resign,
-    // since a prompt shown at launch resigns before the launch open is enqueued.
+    // opted_in_status ("authorized" or "denied") reaches Branch.
     if (self.resignedSinceActivation) {
         self.resignedSinceActivation = NO;
         self.openSentThisForegroundPeriod = NO;
