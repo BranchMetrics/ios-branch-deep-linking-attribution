@@ -41,8 +41,6 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>The TestBed requests tracking authorization to test how Branch reports the IDFA.</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
