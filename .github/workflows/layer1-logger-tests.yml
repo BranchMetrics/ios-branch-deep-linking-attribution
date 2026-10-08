@@ -16,7 +16,8 @@ on:
       - "Sources/BranchSDK/**"
       - "Sources/BranchSwiftSDK/**"
       - "Branch-TestBed/**"
-      - ".github/workflows/layer1-logger-tests.yml"
+      # .github/** so a re-added vendor workflow runs the guard step below.
+      - ".github/**"
       - "scripts/validate_l1_logs.py"
       - "scripts/check_foreground_markers.py"
       - "scripts/test_validate_l1_logs.py"
@@ -35,7 +36,8 @@ on:
       - "Sources/BranchSDK/**"
       - "Sources/BranchSwiftSDK/**"
       - "Branch-TestBed/**"
-      - ".github/workflows/layer1-logger-tests.yml"
+      # .github/** so a re-added vendor workflow runs the guard step below.
+      - ".github/**"
       - "scripts/validate_l1_logs.py"
       - "scripts/check_foreground_markers.py"
       - "scripts/test_validate_l1_logs.py"
@@ -62,6 +64,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+
+      - name: Fail if the vendor comes back
+        run: |
+          # The vendor left this line with EMT-4519. A rebase that keeps both
+          # sides of a conflict restores it silently and stays green, since the
+          # repo secret still exists for other lines. This step makes that red.
+          # The bracket expressions match the vendor strings but not their own
+          # text, so this file stays covered without excluding itself.
+          if git grep -n -i -e 'mobile[b]oost' -e 'gptd[-_]swift' -e 'BaseG[p]tDriverTest' -- ':!ChangeLog.md' ; then
+            echo "::error::vendor reference found"
+            exit 1
+          fi
 
       - name: Select Xcode (16.4 or later 16.x)
         uses: maxim-lobanov/setup-xcode@v1

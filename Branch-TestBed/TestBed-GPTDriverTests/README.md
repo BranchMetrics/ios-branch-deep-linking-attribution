@@ -1,141 +1,56 @@
 # TestBed-GPTDriverTests
 
-MobileBoost / GPTDriver hybrid test target for the Branch iOS SDK TestBed.
+Keyless wire-validation harness for the Branch iOS SDK TestBed.
 
-The target follows a hybrid philosophy: **deterministic XCUITest first, AI-assisted validation only when XCTest matchers cannot express the intent**.
+A UI Testing Bundle that drives the `Branch-TestBed` host app with plain XCUITest so the SDK
+sends real requests. The SDK's advanced log callback in the TestBed writes every outbound request
+to `branchlogs.txt` in the app's Documents directory, and the scripts in `scripts/` pull that file
+out of the simulator and validate it. No test here needs a credential or any service beyond the
+Branch API the SDK itself calls.
 
-## What is this?
+The target name is historical and will be renamed separately.
 
-A UI Testing Bundle (`TestBed-GPTDriverTests.xctest`) that drives the Branch TestBed app through end-to-end scenarios and reports results to the MobileBoost cloud dashboard. Each test case:
+## Tests
 
-1. Performs deterministic steps via `XCUIApplication` — taps buttons by `accessibilityIdentifier`, reads text fields, asserts with `XCTAssert*`.
-2. When the assertion is visual, semantic, or multi-conditional, hands off to the [`gptd-swift`](https://github.com/MobileBoostHQ/gptd-swift) SDK — `driver.execute`, `driver.assert`, `driver.assertBulk`, `driver.extract`, `driver.checkBulk`.
-3. Reports `setSessionSucceeded` / `setSessionFailed` to the MobileBoost dashboard automatically via `BaseGptDriverTest.tearDownWithError`.
+All five live in `Deterministic/`, one class per capture, because the TestBed deletes
+`branchlogs.txt` on every launch and a second launch in the same run would overwrite the first
+capture.
 
-## Quick start
+| Class | What it drives |
+| --- | --- |
+| `L1WireValidationTest` | A plain launch, waiting for the SDK to send its install request. |
+| `ColdLinkWireValidationTest` | A Universal Link delivered into a freshly launched process through the AppDelegate's `-testDeepLinkURL` hook. The delivery is synthetic; real OS handoff needs a signed build. |
+| `ColdLinkInstalledWireValidationTest` | The same link on a device that already has the app. The test performs its own install first, then relaunches and captures the second launch. |
+| `DeepLinkWireValidationTest` | Taps "Request DeepLink" so `/v3/deeplink` appears in the capture. |
+| `EventAndLinkWireCaptureTest` | Taps the link-creation control and the event controls with fixed pauses, so an external log capture can attribute each request to its control. It asserts only that each control is hittable. |
 
-```bash
-# 1. Copy the secret template
-cd Branch-TestBed/TestBed-GPTDriverTests/Config
-cp MobileBoost.local.xcconfig.example MobileBoost.local.xcconfig
+`TestScrollHelpers.swift` holds the scroll-until-visible helpers the last two use.
 
-# 2. Paste your MobileBoost API key into the new file
-#    (the file is gitignored — your key never leaves your machine)
+## Running
 
-# 3. Run the full suite
-cd ../../..
-xcodebuild test \
-  -project Branch-TestBed/Branch-TestBed.xcodeproj \
-  -scheme TestBed-GPTDriverTests \
-  -destination "platform=iOS Simulator,name=iPhone 16,OS=latest" \
-  CODE_SIGNING_ALLOWED=NO
-```
-
-To run a single class:
-
-```bash
-xcodebuild test \
-  -project Branch-TestBed/Branch-TestBed.xcodeproj \
-  -scheme TestBed-GPTDriverTests \
-  -destination "platform=iOS Simulator,name=iPhone 16,OS=latest" \
-  -only-testing:TestBed-GPTDriverTests/LinkCreationHybridTest \
-  CODE_SIGNING_ALLOWED=NO
-```
-
-Each run opens a session on the MobileBoost dashboard with the `sessionURL` available via `driver.sessionURL` inside the test.
-
-## Layout
-
-```
-TestBed-GPTDriverTests/
-├── BaseGptDriverTest.swift         — base class, driver init, link helpers
-├── TestScrollHelpers.swift         — scroll-until-visible helper for below-the-fold buttons
-├── TestBed-GPTDriverTests-Bridging-Header.h
-│                                   — imports TestBedIdentifiers.h so Swift tests see the
-│                                     same accessibilityIdentifier string constants as the
-│                                     Obj-C storyboard
-├── Info.plist                      — declares MOBILEBOOST_API_KEY = $(MOBILEBOOST_API_KEY)
-├── Config/
-│   ├── MobileBoost.xcconfig        — committed, #include? of MobileBoost.local.xcconfig
-│   ├── MobileBoost.local.xcconfig  — GITIGNORED, your real key
-│   └── MobileBoost.local.xcconfig.example
-├── Deterministic/                  — 100% XCUITest, no AI
-│   ├── LinkCreationDeterministicTest.swift
-│   ├── L1WireValidationTest.swift          ← install capture for the L1 validator
-│   ├── DeepLinkWireValidationTest.swift    ← deeplink capture; own harness run, see
-│   │                                         scripts/README.md "Scenarios"
-│   └── EventAndLinkWireCaptureTest.swift   ← ad-hoc event/link wire survey
-├── Hybrid/                         — XCUITest actions + AI validation
-│   ├── LinkCreationHybridTest.swift
-│   ├── QRCodeHybridTest.swift
-│   ├── ShareLinkHybridTest.swift
-│   ├── SessionAndLogsHybridTest.swift
-│   ├── UserIdentityHybridTest.swift
-│   ├── EventLoggingHybridTest.swift
-│   ├── DeepLinkColdOpenHybridTest.swift
-│   ├── DeepLinkWarmOpenHybridTest.swift
-│   ├── BrowserExperienceHybridTest.swift
-│   ├── NotificationHybridTest.swift         ← XCTSkip until iOS TestBed adds button
-│   ├── TrackingControlHybridTest.swift
-│   ├── ConsumerProtectionHybridTest.swift
-│   ├── ReferringParamsHybridTest.swift
-│   └── PluginNotifyHybridTest.swift         ← XCTSkip until iOS TestBed adds button
-├── AI/                             — 100% AI-driven, no identifiers
-│   └── LinkCreationAITest.swift
-├── TestPlans/
-│   ├── Smoke.xctestplan            — fast dev-loop subset (~37s)
-│   └── Release.xctestplan          — full suite (~15m), default in scheme
-└── scripts/
-    └── format-test-results.sh      — parse xcodebuild log into markdown row
-```
-
-## Dependencies
-
-- Swift Package: `gptd-swift` (≥ 1.9.1, up to next major). Declared in the parent `Branch-TestBed.xcodeproj`.
-- iOS 14.0+ (the minimum platform declared by `gptd-swift`). The host app `Branch-TestBed` still targets iOS 12, so running these tests requires a simulator with iOS ≥ 14.
-- Runs on simulator only (code signing disabled).
-
-## Secret management
-
-The API key is resolved in this order inside `BaseGptDriverTest.resolveApiKey()`:
-
-1. Process environment variable `MOBILEBOOST_API_KEY` (set by `xcodebuild MOBILEBOOST_API_KEY=xxx`)
-2. `MOBILEBOOST_API_KEY` in the test bundle's `Info.plist`, which Xcode substitutes at build time from `Config/MobileBoost.xcconfig` (which optionally `#include?`s `MobileBoost.local.xcconfig`)
-3. Empty → `precondition` failure with a clear message pointing at the example file
-
-Copy [`Config/MobileBoost.local.xcconfig.example`](./Config/MobileBoost.local.xcconfig.example) to `Config/MobileBoost.local.xcconfig` and paste your key. The example file is committed; the real file is gitignored by the `*.local.xcconfig` rule in the repo root `.gitignore`.
-
-## Test Plans
-
-Two Xcode Test Plans live in `TestPlans/` and are wired into the `TestBed-GPTDriverTests` scheme:
-
-| Plan | Tests | Wall time | When to run |
-|---|---|---|---|
-| `Smoke.xctestplan` | 5 cherry-picked fast tests | ~37s | Every PR, tight dev loop |
-| `Release.xctestplan` | Full suite (all 16 classes) | ~15m | Before merging to release branch; default plan in the scheme |
-
-To run a specific plan from the command line:
+`scripts/run_l1_instrumented.sh` runs one class per invocation with `xcodebuild
+test-without-building -only-testing:<selector>` against an existing `build-for-testing` output,
+then copies `branchlogs.txt` out of the simulator for `scripts/validate_l1_logs.py`. It defaults
+to `L1WireValidationTest`; set `ONLY_TESTING` to pick another class and `OUTPUT_LOG` to keep each
+capture separate.
 
 ```bash
-xcodebuild test \
+./scripts/getSimulator
+xcodebuild build-for-testing \
   -project Branch-TestBed/Branch-TestBed.xcodeproj \
   -scheme TestBed-GPTDriverTests \
-  -testPlan Smoke \
-  -destination "platform=iOS Simulator,name=iPhone 16,OS=latest" \
+  -derivedDataPath ./DerivedData \
+  -destination "platform=iOS Simulator,name=$(cat ./iphoneSim),OS=latest" \
   CODE_SIGNING_ALLOWED=NO
+
+SIM_NAME="$(cat ./iphoneSim)" ./scripts/run_l1_instrumented.sh
+python3 scripts/validate_l1_logs.py branchlogs.txt --scenario install
 ```
 
-## Pending TestBed features
+`.github/workflows/layer1-logger-tests.yml` runs the install, cold first-install and cold
+installed scenarios this way on every push and pull request against `4.0.0-beta.*` that touches
+the SDK sources, the TestBed or the L1 scripts. `scripts/README.md` documents the scenarios and
+their contracts.
 
-2 of the 16 tests are placeholders (`XCTSkip`) pending TestBed feature additions:
-
-| Test | Required TestBed feature |
-|---|---|
-| `NotificationHybridTest` | A "Send Notification" button + IBAction that schedules a local `UNNotificationRequest` carrying a Branch link |
-| `PluginNotifyHybridTest` | A "Simulate Plugin Notify Init" button + IBAction that calls `[[Branch getInstance] notifyNativeToInit]` |
-
-Both files contain header comments with the exact changes required to enable them.
-
-## See also
-
-- [`TESTING_GUIDE.md`](./TESTING_GUIDE.md) — writing new tests, philosophy, troubleshooting.
+The scheme runs the target's tests directly, with no test plan, so `-only-testing` selects any
+class above.
