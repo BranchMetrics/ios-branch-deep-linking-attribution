@@ -13,6 +13,7 @@
 #import "TestBedDeepLinkTestHook.h"
 @import BranchSDK;
 #import <UserNotifications/UserNotifications.h>
+#import <AppTrackingTransparency/AppTrackingTransparency.h>
 
 /// Set to 1 to compile the exhaustive `BranchConfiguration` example in
 /// `-application:didFinishLaunchingWithOptions:`.
@@ -373,7 +374,20 @@ continueUserActivity:(NSUserActivity *)userActivity
 
 - (void)applicationWillResignActive:(UIApplication *)application { [self logLifecycleMarker:@"applicationWillResignActive"]; }
 - (void)applicationDidEnterBackground:(UIApplication *)application { [self logLifecycleMarker:@"applicationDidEnterBackground"]; }
-- (void)applicationDidBecomeActive:(UIApplication *)application { [self logLifecycleMarker:@"applicationDidBecomeActive"]; }
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    [self logLifecycleMarker:@"applicationDidBecomeActive"];
+    [self requestTrackingAuthorizationIfNeeded];
+}
+
+// Shows the ATT prompt on the first activation after install. iOS only presents it while the app is active.
+- (void)requestTrackingAuthorizationIfNeeded {
+    if (@available(iOS 14, *)) {
+        if (ATTrackingManager.trackingAuthorizationStatus != ATTrackingManagerAuthorizationStatusNotDetermined) return;
+        [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+            [self logLifecycleMarker:[NSString stringWithFormat:@"ATT status %lu", (unsigned long)status]];
+        }];
+    }
+}
 
 // Writes an L1 lifecycle marker to branchlogs.txt; the leading newline ends an unterminated SDK log entry.
 - (void)logLifecycleMarker:(NSString *)name { [self processLogMessage:[NSString stringWithFormat:@"\n[TestBedLifecycle] %@\n", name]]; }

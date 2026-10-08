@@ -137,6 +137,7 @@ void ForceCategoriesToLoad(void) {
 @interface Branch() <BranchDeepLinkingControllerCompletionDelegate> {
     NSInteger _networkCount;
     BOOL _openSentThisForegroundPeriod;
+    BOOL _resignedSinceActivation;
     NSDictionary *_heldAttributedOpenResponse;
 }
 
@@ -167,9 +168,12 @@ void ForceCategoriesToLoad(void) {
 // Whether the SDK sends opens automatically, mirrored from BranchConfiguration.
 @property (nonatomic, assign) BOOL automaticOpenEvents;
 
-// Set by every open enqueue. Reset at the top of -applicationDidEnterBackground. Used to dedup the
-// automatic unattributed open against one per foreground period; it does not gate ordering.
+// Set by every open enqueue. Reset by the first activation after a resign in automatic mode and in
+// -applicationDidEnterBackground in both modes; it does not gate ordering.
 @property (nonatomic, assign) BOOL openSentThisForegroundPeriod;
+
+// Set by -applicationWillResignActive in automatic mode; consumed by the next -applicationDidBecomeActive.
+@property (nonatomic, assign) BOOL resignedSinceActivation;
 
 // Support for deferred SDK initialization. Used to support slow plugin runtime startup.
 // This is enabled by setting deferInitForPluginRuntime to true in branch.json
@@ -381,6 +385,7 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     // A configured Branch has sent nothing yet, so the foreground-period marker starts clear. A no-op
     // in production, where this runs once per process; it matters when a test reconfigures the singleton.
     branch.openSentThisForegroundPeriod = NO;
+    branch.resignedSinceActivation = NO;
 }
 
 - (id)initWithInterface:(BNCServerInterface *)interface
@@ -1569,6 +1574,14 @@ static NSString *bnc_branchKey = nil;
         return;
     }
 
+    // An activation after a resign, such as dismissing the ATT prompt, gets its own open so the new
+    // opted_in_status ("authorized" or "denied") reaches Branch. Cleared here rather than on resign,
+    // since a prompt shown at launch resigns before the launch open is enqueued.
+    if (self.resignedSinceActivation) {
+        self.resignedSinceActivation = NO;
+        self.openSentThisForegroundPeriod = NO;
+    }
+
     // A live nil-URL resolve may not chain an open; decide once it finishes.
     if ([self.requestQueue addDeferredForegroundOpenCheck:^{
         [self sendDeferredForegroundOpen];
@@ -1590,7 +1603,7 @@ static NSString *bnc_branchKey = nil;
 }
 
 // Whether the automatic unattributed open is still due. Returns NO when automatic opens are off,
-// attribution is NONE, an open already went out this foreground period, or an attributed open response is held.
+// attribution is NONE, an open already went out this activation, or an attributed open response is held.
 - (BOOL)shouldSendAutomaticUnattributedOpen {
     if (!self.automaticOpenEvents) {
         return NO;
@@ -1680,6 +1693,11 @@ static NSString *bnc_branchKey = nil;
 - (void)applicationWillResignActive {
     [[BranchLogger shared] logVerbose:@"applicationWillResignActive" error:nil];
 
+    // Automatic mode sends one open per activation; manual mode keeps its per-foreground cap.
+    if (self.automaticOpenEvents) {
+        self.resignedSinceActivation = YES;
+    }
+
     dispatch_async(self.isolationQueue, ^(){
         if (![Branch attributionLevelNone]) {
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationWillResignActive"] error:nil];
@@ -1734,6 +1752,18 @@ static NSString *bnc_branchKey = nil;
 - (void)setOpenSentThisForegroundPeriod:(BOOL)openSentThisForegroundPeriod {
     @synchronized (self) {
         _openSentThisForegroundPeriod = openSentThisForegroundPeriod;
+    }
+}
+
+- (BOOL)resignedSinceActivation {
+    @synchronized (self) {
+        return _resignedSinceActivation;
+    }
+}
+
+- (void)setResignedSinceActivation:(BOOL)resignedSinceActivation {
+    @synchronized (self) {
+        _resignedSinceActivation = resignedSinceActivation;
     }
 }
 

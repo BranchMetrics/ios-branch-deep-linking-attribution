@@ -437,6 +437,12 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     [self waitForIsolationQueue:@"the foreground handler to run"];
 }
 
+// The first activation of a launch, which has no resign before it.
+- (void)foregroundWithoutResign {
+    [self.branch applicationDidBecomeActive];
+    [self waitForIsolationQueue:@"the foreground handler to run"];
+}
+
 - (void)drainQueue {
     self.testQueue.operationQueue.suspended = NO;
     // Polling for an empty queue is safe only because a chained open is enqueued inside
@@ -697,7 +703,7 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     XCTAssertEqualObjects([self postedEndpoints], (@[kDeepLinkEndpoint, kOpenEndpoint]),
                           @"Precondition: the resolve must chain its own unattributed open.");
 
-    [self foreground];
+    [self foregroundWithoutResign];
     [self drainQueue];
 
     XCTAssertEqualObjects([self postedEndpoints], (@[kDeepLinkEndpoint, kOpenEndpoint]),

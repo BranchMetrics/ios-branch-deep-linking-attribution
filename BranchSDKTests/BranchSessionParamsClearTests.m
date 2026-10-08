@@ -223,18 +223,15 @@ static void BranchSessionParamsClearResetStub(NSMutableArray<NSString *> *posted
     XCTAssertNil(self.latestCampaign, @"The organic foreground must not read the previous link.");
 }
 
-// A resign with no background stays in the same foreground period, so it must not add a second
-// open; the launch's own open already set the marker.
 - (void)testResignAndBecomeActiveWithoutBackgroundKeepsThePayload {
     [self launchFromLinkAndDrain];
     NSUInteger opensBeforeForeground = [self postedOpenCount];
     [self.branch applicationWillResignActive];
     [self waitForLifecycleWork];
     [self.branch applicationDidBecomeActive];
-    [self waitForLifecycleWork];
+    [self waitForCondition:^BOOL{ return [self postedOpenCount] > opensBeforeForeground; }
+               description:@"the foreground's open to reach the wire"];
     [self waitForDrain];
-    XCTAssertEqual([self postedOpenCount], opensBeforeForeground,
-                   @"A resign without a background must not add a second open in the same foreground period.");
     XCTAssertEqualObjects(self.latestCampaign, @"beta launch", @"A transient interruption must not clear the payload.");
 }
 
