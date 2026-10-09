@@ -14,6 +14,7 @@
 		257BD6BD304B0B87C0BDF67C /* BaseGptDriverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8D33407DECC9492C3C644C /* BaseGptDriverTest.swift */; };
 		2FE60ACC53E3DDB95CB49E7C /* LinkCreationHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40837FC18222BFAADDC90C48 /* LinkCreationHybridTest.swift */; };
 		4683F0761B20A73F00A432E7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016731940F51400A9E103 /* AppDelegate.m */; };
+		A5462B864096CDAD1FBFF922 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2EBF70D5AC6480CEC0BB3169 /* SceneDelegate.m */; };
 		46DC406E1B2A328900D2D203 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67BBCF271A69E49A009C7DAE /* AdSupport.framework */; };
 		4AB16368239E3A2700D42931 /* DispatchToIsolationQueueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB16367239E3A2700D42931 /* DispatchToIsolationQueueTests.m */; };
 		4D1683AE2098C902008819E3 /* BNCLinkDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1683842098C901008819E3 /* BNCLinkDataTests.m */; };
@@ -239,6 +240,8 @@
 		670016711940F51400A9E103 /* Branch-TestBed-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Branch-TestBed-Prefix.pch"; sourceTree = "<group>"; };
 		670016721940F51400A9E103 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		670016731940F51400A9E103 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		37E40808613E20C43BAD1618 /* SceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
+		2EBF70D5AC6480CEC0BB3169 /* SceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
 		670016781940F51400A9E103 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		670016791940F51400A9E103 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		67163AAD1B9A036F007A8AB1 /* SafariServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
@@ -520,6 +523,8 @@
 			children = (
 				670016721940F51400A9E103 /* AppDelegate.h */,
 				670016731940F51400A9E103 /* AppDelegate.m */,
+				37E40808613E20C43BAD1618 /* SceneDelegate.h */,
+				2EBF70D5AC6480CEC0BB3169 /* SceneDelegate.m */,
 				4DBEFFF41FB114F900F7C41B /* ArrayPickerView.h */,
 				4DBEFFF51FB114F900F7C41B /* ArrayPickerView.m */,
 				63E4C4911D25E1CA00A45FD8 /* Assets.xcassets */,
@@ -862,6 +867,7 @@
 				4DBEFFF61FB114F900F7C41B /* ArrayPickerView.m in Sources */,
 				E72489D228E40D0200DCD8FD /* PasteControlViewController.m in Sources */,
 				4683F0761B20A73F00A432E7 /* AppDelegate.m in Sources */,
+				A5462B864096CDAD1FBFF922 /* SceneDelegate.m in Sources */,
 				670016701940F51400A9E103 /* main.m in Sources */,
 				63E4C48B1D25E17B00A45FD8 /* NavigationController.m in Sources */,
 				B9F5DA27F77E0A392BD2E69A /* TestBedIdentifiers.m in Sources */,
