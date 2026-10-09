@@ -795,4 +795,50 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
                           @"No open may reach the wire once the re-read observes attribution None.");
 }
 
+// Same window as above, on the other check the re-read makes: automatic open tracking turned off
+// through +updateConfiguration: between the two calls to -shouldSendDeferredForegroundOpen.
+- (void)testAutomaticOpenTrackingDisabledAtTheDeferredReReadSendsNoOpen {
+    self.stub.deepLinkMode = BranchResolveStubModeOrganicPayload;
+
+    [self enqueueOrganicResolve];
+    [self foreground];
+
+    NSOperation *deferredCheck = [self deferredForegroundOpenCheck];
+    XCTAssertNotNil(deferredCheck,
+                    @"Precondition: the foreground must have deferred its open behind the resolve.");
+
+    dispatch_semaphore_t release = dispatch_semaphore_create(0);
+    XCTestExpectation *held = [[XCTestExpectation alloc] initWithDescription:@"the isolation queue to be held"];
+    __block long holdResult = -1;
+    [self.branch dispatchToIsolationQueue:^{
+        [held fulfill];
+        holdResult = dispatch_semaphore_wait(release, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20 * NSEC_PER_SEC)));
+    }];
+    XCTAssertEqual([XCTWaiter waitForExpectations:@[held] timeout:5.0], XCTWaiterResultCompleted,
+                   @"Precondition: the isolation queue must be held before the resolve runs.");
+
+    self.testQueue.operationQueue.suspended = NO;
+    [self waitForCondition:^BOOL{ return deferredCheck.isFinished; }
+               description:@"the resolve and the first deferred check to run"
+                   timeout:15.0];
+
+    // The first check ran with tracking enabled and queued its re-read behind the hold above.
+    // Disable it now, so only that re-read can see it.
+    BranchConfiguration *update = [[BranchConfiguration alloc] initWithKey:@"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB"];
+    update.automaticOpenEvents = NO;
+    [Branch updateConfiguration:update];
+
+    dispatch_semaphore_signal(release);
+    [self waitForIsolationQueue:@"the deferred re-read to run"];
+
+    XCTAssertEqual(holdResult, 0L, @"The hold must have ended by signal, not by timeout.");
+    XCTAssertFalse([[self enqueuedRequestClassNames] containsObject:@"BranchRequestOpen"],
+                   @"The re-read must not enqueue an open once automatic open tracking is disabled.");
+
+    [self drainQueue];
+
+    XCTAssertEqualObjects([self postedEndpoints], @[kDeepLinkEndpoint],
+                          @"No open may reach the wire once the re-read observes automatic open tracking disabled.");
+}
+
 @end
