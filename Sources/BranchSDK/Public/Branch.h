@@ -16,6 +16,7 @@
 // Public classes that should be in the umbrella header
 #import "BranchInterface.h"
 #import "BranchAttributionLevel.h"
+#import "BranchDMAParameters.h"
 #import "BranchLinkProperties.h"
 #import "BranchUniversalObject.h"
 #import "BranchLastAttributedTouchData.h"
@@ -368,6 +369,19 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 + (nullable Branch *)initialize:(BranchConfiguration *)configuration;
 
 /**
+ Applies a new `BranchConfiguration` to the running SDK without reinitializing it.
+
+ Only the values assigned on `configuration` are applied; everything else keeps its current setting.
+ Updated values take effect on the next request or link handled. `branchKey`, `testMode`,
+ `remoteInterface`, `appClipAppGroup` and `checkPasteboardOnInstall` are fixed by `+initialize:`;
+ a different value here logs a warning and is ignored. An assigned value that fails validation logs
+ a warning and is skipped; the remaining values are still applied.
+
+ @param configuration The updated configuration. Must not be nil.
+ */
++ (void)updateConfiguration:(BranchConfiguration *)configuration;
+
+/**
  Allow Branch to handle a link opening the app, returning whether it was from a Branch link or not.
 
  @param url The url that caused the app to be opened.
@@ -567,6 +581,13 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 /**
  Sends a Branch Open event with attribution to our new API route.
+
+ With `BranchConfiguration.automaticOpenEvents` set to NO, this instead sends whichever open is due:
+ the attributed open held from the most recently resolved link, or an unattributed open if nothing
+ is held. At most one open is sent per call and per foreground period, except the open a still
+ unfinished link resolution owns. If the app sends none, one is sent when it enters the background.
+ A call made while attribution is NONE is sent when attribution is raised, and an activation after
+ a resign allows another open.
  */
 - (void)sendOpen;
 
@@ -717,39 +738,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  */
 - (void)setRequestMetadataKey:(NSString *)key value:(nullable NSString *)value;
 
-/**
- Disables automatic session open tracking for the next foreground event with a default timeout of 30 seconds.
- This is useful for scenarios like Bio Auth Dialogs, Apple Pay Dialogs or other cases where the app may briefly go to
- background and return without needing a new session open.
-
- @warning If the app goes to background and returns to foreground before `resumeSession` is called or the timeout expires,
- the SDK may remain in an uninitialized state until the next foreground event. Ensure `resumeSession` is called promptly
- after the expected user interaction completes.
- */
-+ (void)disableNextForeground;
-
-/**
- Disables automatic session open tracking for the next foreground event for the defined time interval.
-
- @param timeout    The duration in seconds to disable automatic open tracking. After this time,
-                 automatic tracking resumes. Pass 0 to disable indefinitely until `resumeSession` is called.
-
- @warning If the app goes to background and returns to foreground before `resumeSession` is called or the timeout expires,
- the SDK may remain in an uninitialized state until the next foreground event. Ensure `resumeSession` is called promptly
- after the expected user interaction completes.
- */
-+ (void)disableNextForegroundForTimeInterval:(NSTimeInterval)timeout;
-
-/**
- Resumes automatic session open tracking after it was disabled by `disableNextForegroundForTimeInterval:`.
- If automatic tracking is already enabled, this method has no effect.
-
- @warning If the app transitioned to background and foreground while automatic tracking was disabled,
- the SDK may be in an uninitialized state. The SDK will re-initialize on the next foreground event or
- when an API method protected by an internal safety check is called.
- */
-+ (void)resumeSession;
-
 /*
 
  Sets the time window for which referrer_graid is valid starting from now.
@@ -793,6 +781,13 @@ extern NSString * __nonnull const BNCSpotlightFeature;
                      If NO, the session will not be re-initialized automatically when transitioning from BranchAttributionLevelNone to other higher levels.
  */
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level resetSession:(BOOL)resetSession;
+
+/**
+ Sets the DMA parameters required by Google Conversion APIs for users in the EEA region.
+
+ @param dmaParameters The EEA region and consent values sent with subsequent requests.
+ */
+- (void)setDMAParameters:(BranchDMAParameters *)dmaParameters;
 
 /// Returns a boolean based on if the current Attribution Level is set to "NONE".
 + (BOOL) attributionLevelNone;

@@ -19,6 +19,10 @@
 @property (nonatomic, copy, readwrite) NSString *requestServiceURL;
 @property (nonatomic, copy, readwrite, nullable) NSDictionary *linkData;
 
+// When set, -makeRequest: calls this once and assigns the result to linkData before reading it, so
+// the link data can depend on state that is only known once an earlier request has finished.
+@property (atomic, copy, nullable) NSDictionary * _Nullable (^linkDataResolver)(void);
+
 + (void) waitForOpenResponseLock;
 + (void) releaseOpenResponseLock;
 + (void) setWaitNeededForOpenResponseLock;

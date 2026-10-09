@@ -139,7 +139,13 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // config.requestMetadata = nil;
 
     // Open tracking  (default: automaticOpenEvents YES)
-    config.automaticOpenEvents = YES;   // Branch calls sendOpen automatically on foreground
+    config.automaticOpenEvents = YES;   // Branch sends opens automatically; NO holds a resolved
+                                         // link's open for a manual -sendOpen call (see example below)
+
+    // Manual send example — set automaticOpenEvents = NO above, then send the held open yourself
+    // once any metadata from other SDKs is attached. See -handleDeepLinkParams:error: below for
+    // where the sendOpen call goes.
+    // config.automaticOpenEvents = NO;
 
     // Pasteboard  (default: checkPasteboardOnInstall NO)
     config.checkPasteboardOnInstall = YES;   // check the clipboard for a Branch Link on install
@@ -283,6 +289,11 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         NSLog(@"Branch TestBed: Error deep linking: %@.", error.localizedDescription);
         return;
     }
+
+    // Manual send example — pairs with "config.automaticOpenEvents = NO;" above. The link params
+    // are already delivered here; add metadata from other SDKs, then send the held open yourself.
+    // [[Branch sharedInstance] setRequestMetadataKey:@"adobe_id" value:[AdobeSDK getID]];
+    // [[Branch sharedInstance] sendOpen];
 
     NSLog(@"Deep linked with params: %@", params);
     NSString *deeplinkText = [params objectForKey:@"deeplink_text"];

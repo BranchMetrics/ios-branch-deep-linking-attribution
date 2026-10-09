@@ -18,11 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
  EEA region.
 
  It is immutable: construct it with all three named consent signals and hand it to
- `BranchConfiguration.dmaParameters` before calling `+[Branch initialize:]`. Naming each field at the call
- site removes the silent-argument-swap hazard of the old three-positional-boolean API.
-
- DMA parameters are part of the pre-init configuration and cannot be changed after initialization. If a
- user's consent changes at runtime, the app must reinitialize the SDK with a new configuration.
+ `BranchConfiguration.dmaParameters` before calling `+[Branch initialize:]`, or to `-[Branch setDMAParameters:]`
+ when consent changes at runtime.
  */
 @interface BranchDMAParameters : NSObject
 
