@@ -67,35 +67,22 @@
 }
 
 - (void)enqueue:(BNCServerRequest *)request withPriority:(NSOperationQueuePriority)priority {
-    if (!request) {
-        [[BranchLogger shared] logError:@"Attempted to enqueue nil request." error:nil];
-        return;
-    }
-
-    BNCServerRequestOperation *operation = [[BNCServerRequestOperation alloc] initWithRequest:request];
-
-    operation.serverInterface = self.serverInterface;
-    operation.branchKey = self.branchKey;
-    operation.preferenceHelper = self.preferenceHelper;
-    operation.queuePriority = priority;
-
-    // Cancels pending foreground open checks when an install or open is enqueued.
-    if ([self isInstallOrOpenRequest:request]) {
-        [self cancelDeferredForegroundOpenChecks];
-    }
-
-    [self addInitDependencyIfNeeded:operation];
-    [self.operationQueue addOperation:operation];
-
-    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enqueued request: %@. Current queue depth: %lu", request.requestUUID, (unsigned long)self.operationQueue.operationCount] error:nil];
+    [self enqueue:request withPriority:priority afterUnfinishedDeepLinkRequests:NO];
 }
 
 // Enqueues a request with an explicit dependency on every unfinished, uncancelled deep-link
 // resolve, so it is built only after those resolves have run their completion handlers.
-- (void)enqueue:(BNCServerRequest *)request afterUnfinishedDeepLinkRequests:(NSOperationQueuePriority)priority {
+// Returns the operation added, or nil for a nil request.
+- (NSOperation *)enqueue:(BNCServerRequest *)request afterUnfinishedDeepLinkRequests:(NSOperationQueuePriority)priority {
+    return [self enqueue:request withPriority:priority afterUnfinishedDeepLinkRequests:YES];
+}
+
+- (NSOperation *)enqueue:(BNCServerRequest *)request
+            withPriority:(NSOperationQueuePriority)priority
+afterUnfinishedDeepLinkRequests:(BOOL)afterDeepLinks {
     if (!request) {
         [[BranchLogger shared] logError:@"Attempted to enqueue nil request." error:nil];
-        return;
+        return nil;
     }
 
     BNCServerRequestOperation *operation = [[BNCServerRequestOperation alloc] initWithRequest:request];
@@ -105,11 +92,13 @@
     operation.preferenceHelper = self.preferenceHelper;
     operation.queuePriority = priority;
 
-    for (NSOperation *op in self.operationQueue.operations) {
-        if (![op isKindOfClass:[BNCServerRequestOperation class]]) continue;
-        if (op.isFinished || op.isCancelled) continue;
-        if ([((BNCServerRequestOperation *)op).request isKindOfClass:[BranchRequestDeepLink class]]) {
-            [operation addDependency:op];
+    if (afterDeepLinks) {
+        for (NSOperation *op in self.operationQueue.operations) {
+            if (![op isKindOfClass:[BNCServerRequestOperation class]]) continue;
+            if (op.isFinished || op.isCancelled) continue;
+            if ([((BNCServerRequestOperation *)op).request isKindOfClass:[BranchRequestDeepLink class]]) {
+                [operation addDependency:op];
+            }
         }
     }
 
@@ -121,7 +110,8 @@
     [self addInitDependencyIfNeeded:operation];
     [self.operationQueue addOperation:operation];
 
-    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enqueued request: %@ behind unfinished deep-link resolves. Current queue depth: %lu", request.requestUUID, (unsigned long)self.operationQueue.operationCount] error:nil];
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enqueued request: %@. Current queue depth: %lu", request.requestUUID, (unsigned long)self.operationQueue.operationCount] error:nil];
+    return operation;
 }
 
 - (NSInteger)queueDepth {
@@ -251,6 +241,18 @@
         if (![op isKindOfClass:[BNCServerRequestOperation class]]) continue;
         if (op.isFinished || op.isCancelled) continue;
         if ([self isInstallOrOpenRequest:((BNCServerRequestOperation *)op).request]) return YES;
+    }
+    return NO;
+}
+
+// YES for a manual open that has not yet read the held link; the request clears its resolver when it does.
+- (BOOL)hasPendingManualOpen {
+    for (NSOperation *op in self.operationQueue.operations) {
+        if (![op isKindOfClass:[BNCServerRequestOperation class]]) continue;
+        if (op.isFinished || op.isCancelled) continue;
+        BNCServerRequest *request = ((BNCServerRequestOperation *)op).request;
+        if ([request isKindOfClass:[BranchRequestOpen class]] &&
+            ((BranchRequestOpen *)request).linkDataResolver != nil) return YES;
     }
     return NO;
 }

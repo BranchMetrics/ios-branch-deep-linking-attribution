@@ -571,7 +571,9 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  With `BranchConfiguration.automaticOpenEvents` set to NO, this instead sends whichever open is due:
  the attributed open held from the most recently resolved link, or an unattributed open if nothing
  is held. At most one open is sent per call and per foreground period, except the open a still
- unfinished link resolution owns.
+ unfinished link resolution owns. If the app sends none, one is sent when it enters the background.
+ A call made while attribution is NONE is sent when attribution is raised, and an activation after
+ a resign allows another open.
  */
 - (void)sendOpen;
 

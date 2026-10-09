@@ -122,8 +122,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// When NO, Branch sends no automatic open — not on foreground, and not for a resolved deep link.
 /// A deep link resolve still delivers its params through the `requestDeepLinkData…` callback and
 /// still follows any `invoke_features` redirect; only the open is held. Call `-[Branch sendOpen]`
-/// to send it, attributed if a link was resolved or unattributed otherwise, or it is sent
-/// automatically when the app enters the background. On a first install, requests that need a
+/// to send it, attributed if a link was resolved or unattributed otherwise. If the app has not sent
+/// one by the time it enters the background, an open is sent then. A call made while attribution is
+/// NONE is sent when attribution is raised, and an activation after a resign, such as the App
+/// Tracking Transparency prompt, allows another open. On a first install, requests that need a
 /// session (events, last attributed touch data) fail until that open is sent, so send it promptly.
 /// Keys set with `-setRequestMetadataKey:value:` stay attached to later requests until cleared with
 /// a nil value. Default YES.
