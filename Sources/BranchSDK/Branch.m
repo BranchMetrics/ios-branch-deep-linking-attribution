@@ -169,8 +169,11 @@ void ForceCategoriesToLoad(void) {
 @property (nonatomic, copy, nullable) void (^cachedInitBlock)(void);
 @property (nonatomic, copy, readwrite) NSString *cachedURLString;
 
+@property (nonatomic, copy, nullable) callbackWithParams deepLinkHandler;
+
 // Private method used internally
 - (void)clearLinkIdentifiers;
+- (void)sendOpenAndCallDeepLinkHandler:(BOOL)callHandler;
 
 @end
 
@@ -1626,7 +1629,7 @@ static NSString *bnc_branchKey = nil;
         if (![Branch attributionLevelNone] && !installOrOpenInQueue) {
             [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive attributionLevelNone %d installOrOpenInQueue %d", [Branch attributionLevelNone], installOrOpenInQueue] error:nil];
 
-            [self sendOpen];
+            [self sendOpenAndCallDeepLinkHandler:YES];
         }
     });
 }
@@ -1919,6 +1922,20 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 #pragma mark - Branch Core Deep Linking Method
 
+// Returns the handler registered by the launch-time requestDeepLinkData APIs.
+- (callbackWithParams)storedDeepLinkHandler {
+    @synchronized (self) {
+        return self.deepLinkHandler;
+    }
+}
+
+// Registers the handler invoked for deep link results that carry no callback of their own.
+- (void)setStoredDeepLinkHandler:(callbackWithParams)handler {
+    @synchronized (self) {
+        self.deepLinkHandler = handler;
+    }
+}
+
 - (void) requestDeepLinkData:(NSString *)branchLink callback:(nullable callbackWithParams)callback {
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData called with branchLink: %@", branchLink] error:nil];
 
@@ -1949,11 +1966,12 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         // none, and nothing failed, so the answer is the SDK's own not-a-link payload rather than
         // an error or -getLatestReferringParams, which still reports the last link that did
         // resolve.
-        if (callback) {
-            dispatch_async(dispatch_get_main_queue(), ^ {
-                callback(@{ BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK : @0 }, nil);
-            });
-        }
+        dispatch_async(dispatch_get_main_queue(), ^ {
+            callbackWithParams handler = callback ?: [self storedDeepLinkHandler];
+            if (handler) {
+                handler(@{ BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK : @0 }, nil);
+            }
+        });
         return;
     }
 
@@ -1965,19 +1983,18 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     callbackWithStatus deepLinkCallback = ^(BOOL success, NSError *error) {
         // callback on main, this is generally what the client expects and maintains our previous behavior
         dispatch_async(dispatch_get_main_queue(), ^ {
+            callbackWithParams handler = callback ?: [self storedDeepLinkHandler];
             if (error) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData failed with error: %@", error] error:error];
-                // Call the user's callback with error
-                if (callback) {
-                    callback(@{}, error);
+                if (handler) {
+                    handler(@{}, error);
                 }
             } else {
                 // Get the session params (which should have the deeplink data)
                 NSDictionary *params = [self getLatestReferringParams];
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData completed with params: %@", params] error:nil];
-                // Call the user's callback with the params
-                if (callback) {
-                    callback(params ?: @{}, nil);
+                if (handler) {
+                    handler(params ?: @{}, nil);
                 }
             }
         });
@@ -1999,6 +2016,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                                     callback:(nullable callbackWithParams)callback {
     [[BranchLogger shared] logDebug:@"requestDeepLinkDataWithLaunchOptions called" error:nil];
 
+    [self setStoredDeepLinkHandler:callback];
+
     NSString *pushURL = nil;
 #if !TARGET_OS_TV
     id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
@@ -2015,7 +2034,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         return;
     }
 
-    [self requestDeepLinkData:pushURL callback:callback];
+    [self requestDeepLinkData:pushURL callback:nil];
 }
 
 // Called from application:openURL:options:
@@ -2035,15 +2054,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // The URL matched the skiplist. Preferences are recorded, but the URL itself is never sent.
     if (filtered) return;
 
-    [self requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
-        if (error == nil) {
-            if (params != nil) {
-                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
-            }
-        } else {
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData failed with error: %@", error] error:error];
-        }
-    }];
+    [self requestDeepLinkData:urlStr callback:nil];
 }
 
 // Called from the older application:openURL:sourceApplication:annotation:
@@ -2072,15 +2083,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // nil for a Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
     NSString *urlStr = userActivity.webpageURL.absoluteString;
 
-    [self requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
-        if (error == nil) {
-            if (params != nil) {
-                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
-            }
-        } else {
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData failed with error: %@", error] error:error];
-        }
-    }];
+    [self requestDeepLinkData:urlStr callback:nil];
 }
 
 // Called from application:didReceiveRemoteNotification:fetchCompletionHandler:
@@ -2099,15 +2102,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         if (filtered) return;
     }
 
-    [self requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
-        if (error == nil) {
-            if (params != nil) {
-                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
-            }
-        } else {
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData failed with error: %@", error] error:error];
-        }
-    }];
+    [self requestDeepLinkData:urlStr callback:nil];
 }
 
 #pragma mark - Branch SceneDelegate Deep Linking Convenience Methods
@@ -2144,7 +2139,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             BOOL filtered = NO;
             [self processUserActivity:activity sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
             if (!filtered) {
-                [self requestDeepLinkData:activity.webpageURL.absoluteString callback:callback];
+                [self requestDeepLinkData:activity.webpageURL.absoluteString callback:nil];
             }
         }
     } else if (connectionOptions.URLContexts.count) {
@@ -2153,7 +2148,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         BOOL filtered = NO;
         [self processDeepLinkURL:context.URL sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
         if (!filtered) {
-            [self requestDeepLinkData:context.URL.absoluteString callback:callback];
+            [self requestDeepLinkData:context.URL.absoluteString callback:nil];
         }
     }
 }
@@ -2171,15 +2166,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     if (filtered) return;
 
-    [self requestDeepLinkData:context.URL.absoluteString callback:^(NSDictionary *params, NSError *error) {
-        if (error == nil) {
-            if (params != nil) {
-                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
-            }
-        } else {
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData failed with error: %@", error] error:error];
-        }
-    }];
+    [self requestDeepLinkData:context.URL.absoluteString callback:nil];
 }
 
 // Called from scene:continueUserActivity:
@@ -2195,15 +2182,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // nil for a Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
     NSString *urlStr = userActivity.webpageURL.absoluteString;
 
-    [self requestDeepLinkData:urlStr callback:^(NSDictionary *params, NSError *error) {
-        if (error == nil) {
-            if (params != nil) {
-                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Deep Link Params: %@", params] error:nil];
-            }
-        } else {
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData failed with error: %@", error] error:error];
-        }
-    }];
+    [self requestDeepLinkData:urlStr callback:nil];
 }
 #endif
 
@@ -2211,6 +2190,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 #pragma mark - Branch Attribution Methods
 
 - (void) sendOpen {
+    [self sendOpenAndCallDeepLinkHandler:NO];
+}
+
+// Sends an open. When callHandler is YES the stored deep link handler receives the open's result.
+- (void)sendOpenAndCallDeepLinkHandler:(BOOL)callHandler {
     NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;
     if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)]) {
         [self.delegate branch:self willStartSessionWithURL:URL];
@@ -2228,13 +2212,20 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     callbackWithStatus openCallback = ^(BOOL success, NSError *error) {
         // callback on main, this is generally what the client expects and maintains our previous behavior
         dispatch_async(dispatch_get_main_queue(), ^ {
+            callbackWithParams handler = callHandler ? [self storedDeepLinkHandler] : nil;
             if (error) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen failed with error: %@", error] error:error];
                 [self handleInitFailure:error];
+                if (handler) {
+                    handler(@{}, error);
+                }
             } else {
                 [self handleInitSuccess];
                 NSDictionary *params = [self getLatestReferringParams];
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen completed with params: %@", params] error:nil];
+                if (handler) {
+                    handler(params ?: @{}, nil);
+                }
             }
         });
     };

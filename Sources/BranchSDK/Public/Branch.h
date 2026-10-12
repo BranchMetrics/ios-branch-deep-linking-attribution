@@ -445,6 +445,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
  When called with a non-nil URL, any pending (not yet executing) nil-URL deep link requests are
  cancelled so that only one callback fires per app open.
+ A non-nil callback receives this call's result only. A nil callback delivers the result to the
+ callback registered with `requestDeepLinkDataWithLaunchOptions:callback:`.
  */
 - (void)requestDeepLinkData:(nullable NSString *)branchLink callback:(nullable callbackWithParams)callback
     NS_SWIFT_NAME(requestDeepLinkData(branchLink:callback:))
@@ -458,8 +460,9 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Convenience overload for `application:didFinishLaunchingWithOptions:`.
 
  Extracts the Branch URL from `launchOptions` and calls `requestDeepLinkData:callback:` with it.
- For Universal Link and URL-scheme opens the method returns without calling the callback because
- the URL-bearing call will arrive via `continueUserActivity:` or `application:openURL:`.
+ The callback is stored and invoked for this launch, for every later deep link result and for every
+ app foreground in the process, whichever entry point delivers the link. A later call replaces it;
+ nil clears it.
  */
 - (void)requestDeepLinkDataWithLaunchOptions:(nullable NSDictionary *)options
                                     callback:(nullable callbackWithParams)callback
@@ -472,7 +475,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Runs the same URL preprocessing as the legacy deep link handler (referring-URL query parameters,
  the URL skiplist, allowed-scheme filtering and `link_click_id` extraction) and then calls
  `requestDeepLinkData:callback:` with the URL.
- Logs the deep link parameters or error.
+ Delivers the result to the callback registered with `requestDeepLinkDataWithLaunchOptions:callback:`.
  @param url The URL from `application:openURL:options:`
  */
 - (void)requestDeepLinkDataWithURL:(nullable NSURL *)url
@@ -496,7 +499,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Convenience method for `application:continueUserActivity:restorationHandler:` to handle Universal Links.
 
  Extracts the webpage URL from the user activity and calls `requestDeepLinkData:callback:` with it.
- Logs the deep link parameters or error.
+ Delivers the result to the callback registered with `requestDeepLinkDataWithLaunchOptions:callback:`.
  @param userActivity The NSUserActivity from `application:continueUserActivity:restorationHandler:`.
  */
 - (void)requestDeepLinkDataWithUserActivity:(nullable NSUserActivity *)userActivity
@@ -506,7 +509,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Convenience method for `application:didReceiveRemoteNotification:fetchCompletionHandler:` to handle push notification deep links.
 
  Extracts the Branch link from the notification payload and calls `requestDeepLinkData:callback:` with it.
- Logs the deep link parameters or error.
+ Delivers the result to the callback registered with `requestDeepLinkDataWithLaunchOptions:callback:`.
  @param userInfo The notification payload from `application:didReceiveRemoteNotification:fetchCompletionHandler:`.
  */
 - (void)requestDeepLinkDataWithUserInfo:(nullable NSDictionary *)userInfo
@@ -522,6 +525,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
  Extracts the Branch URL from `connectionOptions` and calls `requestDeepLinkData:callback:` with it.
  Pass nil for `connectionOptions` or an empty options object for cold starts with no incoming link.
+ The callback is stored the same way as in `requestDeepLinkDataWithLaunchOptions:callback:`.
 
  Available on iOS 13.0+ and macCatalyst 13.1+.
  */
@@ -537,7 +541,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Convenience method for SceneDelegate's `scene:openURLContexts:` to handle custom URI schemes.
 
  Extracts the first URL from URLContexts and calls `requestDeepLinkData:callback:` with it.
- Logs the deep link parameters or error.
+ Delivers the result to the callback registered with `requestDeepLinkDataWithLaunchOptions:callback:`.
 
  Available on iOS 13.0+.
  @param scene The UIScene from `scene:openURLContexts:`.
@@ -552,7 +556,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Convenience method for SceneDelegate's `scene:continueUserActivity:` to handle Universal Links.
 
  Extracts the webpage URL from the user activity and calls `requestDeepLinkData:callback:` with it.
- Logs the deep link parameters or error.
+ Delivers the result to the callback registered with `requestDeepLinkDataWithLaunchOptions:callback:`.
 
  Available on iOS 13.0+.
  @param scene The UIScene from `scene:continueUserActivity:`.
