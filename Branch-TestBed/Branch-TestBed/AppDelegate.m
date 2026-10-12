@@ -160,6 +160,10 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // ── Initialize ───────────────────────────────────────────────────────
     [Branch initialize:config];
+    
+    [[Branch sharedInstance] requestDeepLinkDataWithLaunchOptions:launchOptions callback:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
+        NSLog(@"%@", params);
+    }];
 
 #if DEBUG
     [TestBedDeepLinkTestHook installIfRequested:application];
