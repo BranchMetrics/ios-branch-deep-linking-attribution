@@ -6,6 +6,7 @@ Run from the repo root:
     python -m unittest discover -s scripts -p "test_*.py"
 """
 
+import copy
 import io
 import os
 import shutil
@@ -66,11 +67,87 @@ class HotUriSchemeContractTests(unittest.TestCase):
         self.assertIn("'/v3/events/open' request(s) to carry 'link_data'", errors[0])
 
 
+# The URL the warm_uriScheme fixture was captured with.
+WARM_URL = "branchtest://open?scenario=W2"
+OPEN = "/v3/events/open"
+
+
+def _warm_entries():
+    # Resolve, the link-carrying open, then the plain duplicate open.
+    return v.parse_branch_logs(os.path.join(FIXTURE_DIR, "warm_uriScheme.txt"))
+
+
+def _validate_w2(entries):
+    with redirect_stdout(io.StringIO()):
+        return v.validate_entries(entries, v.contract_for("warm_uriScheme"))
+
+
+class WarmUriSchemeContractTests(unittest.TestCase):
+    """warm_uriScheme: one resolve, one link-carrying open, at most two opens,
+    no install."""
+
+    def test_the_warm_wire_capture_passes(self):
+        # Two opens: the known warm duplicate, which an exact open count would fail.
+        self.assertEqual(_validate_w2(_warm_entries()), [])
+
+    def test_one_open_also_passes(self):
+        self.assertEqual(_validate_w2(_warm_entries()[:-1]), [])
+
+    def test_a_second_link_carrying_open_fails(self):
+        entries = _warm_entries()
+        entries[2]["request"]["link_data"] = {}
+        self.assertEqual(
+            _validate_w2(entries),
+            ["Expected 1 of the '/v3/events/open' request(s) to carry 'link_data', but 2 of 2 did."],
+        )
+
+    def test_an_install_shaped_open_fails(self):
+        entries = _warm_entries()
+        entries[2]["request"].pop("randomized_bundle_token")
+        self.assertEqual(
+            _validate_w2(entries),
+            ["Every '/v3/events/open' request must carry 'randomized_bundle_token', but 1 of 2 did not."],
+        )
+
+    def test_a_third_open_fails(self):
+        entries = _warm_entries()
+        entries.append(copy.deepcopy(entries[2]))
+        self.assertEqual(_validate_w2(entries), ["Expected at most 2 '/v3/events/open' request(s), captured 3."])
+
+    def test_new_rule_kinds_cannot_pass_vacuously(self):
+        warm = v.SCENARIO_CONTRACTS["warm_uriScheme"]
+        self.assertTrue({"carrying", "carried_by_all", "max_counts"} <= set(warm))
+        for name, contract in v.SCENARIO_CONTRACTS.items():
+            counts = contract["counts"]
+            carrying = contract.get("carrying", {})
+            bounds = contract.get("max_counts", {})
+            for endpoint, fields in carrying.items():
+                for field, count in fields.items():
+                    self.assertGreaterEqual(count, 1, f"{name}:{endpoint}:{field}")
+                    if endpoint in bounds:
+                        self.assertLessEqual(count, bounds[endpoint], f"{name}:{endpoint}:{field}")
+            for endpoint in contract.get("carried_by_all", {}):
+                self.assertTrue(counts.get(endpoint, 0) >= 1 or endpoint in carrying, f"{name}:{endpoint}")
+            for endpoint, bound in bounds.items():
+                self.assertGreaterEqual(bound, 1, f"{name}:{endpoint}")
+                self.assertNotIn(endpoint, counts, f"{name}:{endpoint}")
+
+
 class DeliveredUrlTests(unittest.TestCase):
     """`--url` ties the resolve and the open to the URL the driver delivered."""
 
     def _entries(self):
         return v.parse_branch_logs(os.path.join(FIXTURE_DIR, "hot_uriScheme.txt"))
+
+    def test_an_open_without_link_data_is_not_checked_for_the_url(self):
+        self.assertEqual(v.assert_delivered_url(_warm_entries(), WARM_URL), [])
+
+    def test_a_link_carrying_open_with_another_url_fails(self):
+        entries = _warm_entries()
+        entries[1]["request"]["link_data"]["+non_branch_link"] = "branchtest://open?scenario=H2"
+        errors = v.assert_delivered_url(entries, WARM_URL)
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn(f"'{OPEN}'", errors[0])
 
     def test_the_delivered_url_passes(self):
         self.assertEqual(v.assert_delivered_url(self._entries(), FIXTURE_URL), [])
