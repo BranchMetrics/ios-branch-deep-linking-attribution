@@ -11,6 +11,7 @@
 
 #import <XCTest/XCTest.h>
 #import "Branch.h"
+#import "Branch+Configuration.h"
 #import "BranchConfiguration.h"
 #import "BranchConstants.h"
 #import "BNCPreferenceHelper.h"
