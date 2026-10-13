@@ -260,7 +260,12 @@ SCENARIO_CONTRACTS = {
     "hot_uriScheme": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 1},
         "order": (("/v3/deeplink", "/v3/events/open"),),
-        "fields": {},
+        # The URL on the resolve is what separates a real scheme delivery from the TestBed test hook;
+        # link_data marks the open as the one attributed to it. --url checks both carry the delivered URL.
+        "fields": {
+            "/v3/deeplink": {"external_intent_uri": 1},
+            "/v3/events/open": {"link_data": 1},
+        },
     },
     "deeplink": {
         "counts": {"/v3/deeplink": 1},
@@ -552,6 +557,22 @@ def validate_entries(entries, contract):
     return errors
 
 
+def assert_delivered_url(entries, url):
+    """Check that each resolve and open carries `url`, the URL the driver delivered."""
+    errors = []
+    for entry in entries:
+        if entry["uri"] == "/v3/deeplink":
+            actual = lookup_field(entry["request"], "external_intent_uri")
+        elif entry["uri"] == "/v3/events/open":
+            link_data = lookup_field(entry["request"], "link_data")
+            actual = link_data.get("+non_branch_link") if isinstance(link_data, dict) else None
+        else:
+            continue
+        if actual != url:
+            errors.append(f"Expected '{entry['uri']}' to carry the delivered URL {url}, got {actual!r}.")
+    return errors
+
+
 def capture_delta(pre_path, post_path):
     """Return the bytes `post_path` gained after the `pre_path` snapshot.
 
@@ -591,11 +612,15 @@ def main():
         metavar="SNAPSHOT",
         help="copy of the capture taken before delivery; only bytes appended after it are validated",
     )
+    parser.add_argument(
+        "--url",
+        help="URL the driver delivered; every resolve and open must carry it",
+    )
     args = parser.parse_args()
     log_file_path = args.log_file
 
     if args.pre is None:
-        validate_file(log_file_path, args.scenario)
+        validate_file(log_file_path, args.scenario, args.url)
     else:
         for path in (args.pre, log_file_path):
             if not os.path.exists(path):
@@ -612,12 +637,12 @@ def main():
         with tempfile.NamedTemporaryFile("wb", suffix=".txt", delete=False) as f:
             f.write(delta)
         try:
-            validate_file(f.name, args.scenario)
+            validate_file(f.name, args.scenario, args.url)
         finally:
             os.remove(f.name)
 
 
-def validate_file(log_file_path, scenario):
+def validate_file(log_file_path, scenario, url=None):
     """Validate one capture file against `scenario` and exit with the result."""
     entries = parse_branch_logs(log_file_path)
 
@@ -635,6 +660,9 @@ def validate_file(log_file_path, scenario):
         pass
 
     errors = validate_entries(entries, contract_for(scenario))
+    # With no entries the capture already failed; a URL mismatch would only repeat it.
+    if url is not None and entries:
+        errors.extend(assert_delivered_url(entries, url))
 
     if errors:
         print("\n--- VALIDATION FAILED ---")
