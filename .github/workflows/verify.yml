@@ -23,3 +23,77 @@ jobs:
             -scheme BranchSDKTests \
             -destination "$DESTINATION" \
             -testPlan BranchSDKTests | xcpretty && exit ${PIPESTATUS[0]}
+
+  # EMT-4476. Sibling of `verify`, not a replacement: proves the beta line
+  # builds and passes on Xcode 27 without touching the Xcode 16.x leg above.
+  # Non-blocking: `xcode-27` is a GitHub-documented preview runner image
+  # (actions/runner-images#14404, still open, capacity/queueing caveats, no
+  # committed GA date). `continue-on-error` keeps a preview-image failure
+  # from failing this workflow's own run. Reconsider once the label has
+  # been stable in practice for a while.
+  verify-xcode27:
+    runs-on: xcode-27
+    # 35 (vs. 20 for `verify`): this leg does three extra generic builds
+    # before the test run, and -collect-test-diagnostics never below still
+    # leaves headroom for the preview image's own variance.
+    timeout-minutes: 35
+    continue-on-error: true
+    concurrency:
+      group: verify-xcode27-${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+      - name: Select Xcode 27.0
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "27.0"
+      - name: Build BranchSDK for iOS Simulator (generic)
+        run: |
+          xcodebuild build \
+            -project BranchSDK.xcodeproj \
+            -scheme BranchSDK \
+            -destination "generic/platform=iOS Simulator" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" | xcpretty && exit ${PIPESTATUS[0]}
+      - name: Build BranchSDK for iOS device (generic, unsigned)
+        run: |
+          xcodebuild build \
+            -project BranchSDK.xcodeproj \
+            -scheme BranchSDK \
+            -destination "generic/platform=iOS" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" | xcpretty && exit ${PIPESTATUS[0]}
+      - name: Build BranchSDK-tvOS for tvOS Simulator (generic)
+        run: |
+          xcodebuild build \
+            -project BranchSDK.xcodeproj \
+            -scheme BranchSDK-tvOS \
+            -destination "generic/platform=tvOS Simulator" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" | xcpretty && exit ${PIPESTATUS[0]}
+      - name: Run unit tests
+        run: |
+          echo "branch=${{ github.ref }}" >> $GITHUB_OUTPUT
+          ./scripts/getSimulator
+          SIM_NAME="$(cat ./iphoneSim)"
+          rm -rf ./TestResults.xcresult
+          DESTINATION="platform=iOS Simulator,name=$SIM_NAME,OS=latest"
+          # -collect-test-diagnostics never: Xcode 27's post-test
+          # diagnostics collection from the simulator times out (a fixed
+          # 600s) rather than completing, so skip it. `on-failure` still
+          # hits the wait on a passing run. -enableCodeCoverage
+          # NO/-parallel-testing-enabled NO make explicit what the test
+          # plan already sets implicitly.
+          xcodebuild test \
+            -project BranchSDK.xcodeproj \
+            -scheme BranchSDKTests \
+            -destination "$DESTINATION" \
+            -testPlan BranchSDKTests \
+            -resultBundlePath ./TestResults.xcresult \
+            -enableCodeCoverage NO \
+            -parallel-testing-enabled NO \
+            -collect-test-diagnostics never | xcpretty && exit ${PIPESTATUS[0]}
