@@ -42,7 +42,8 @@ which endpoints must not appear, and the order between them. There is no global
 rule any more — a scenario that requires an open says so in its contract.
 
 ```bash
-# install: the run the harness drives, one open, no link resolved
+# install: the run the harness drives, one open preceded by the nil-URL
+# deferred lookup that requestDeepLinkDataWithLaunchOptions: sends
 ./scripts/run_l1_instrumented.sh
 python3 scripts/validate_l1_logs.py branchlogs.txt --scenario install
 
@@ -51,6 +52,16 @@ ONLY_TESTING=TestBed-GPTDriverTests/DeepLinkWireValidationTest \
 OUTPUT_LOG=branchlogs-deeplink.txt \
   ./scripts/run_l1_instrumented.sh
 python3 scripts/validate_l1_logs.py branchlogs-deeplink.txt --scenario deeplink
+```
+
+```bash
+# cold_https / cold_firstInstall: a Universal Link into a cold launch. The
+# TestBed puts the link in launchOptions (TestBedDeepLinkTestHook), as iOS does,
+# so requestDeepLinkDataWithLaunchOptions: sends no nil-URL lookup. Expect one
+# /v3/deeplink; cold_https then has 1 open, cold_firstInstall 2.
+ONLY_TESTING=TestBed-GPTDriverTests/ColdLinkInstalledWireValidationTest \
+OUTPUT_LOG=wire-cold_https.txt ./scripts/run_l1_instrumented.sh
+python3 scripts/validate_l1_logs.py wire-cold_https.txt --scenario cold_https
 ```
 
 An unrecognised or missing `--scenario` exits 2, so a typo in a CI matrix
@@ -71,8 +82,9 @@ Install and open both post to `/v3/events/open`:
 
 `/v3/events/open` is mandatory: every session posts one, so a capture
 without it is a broken capture and fails the run. `/v3/deeplink` is only
-emitted when a Branch link is resolved, which the single-launch L1
-runner does not do — its absence is a printed note, not a failure.
+emitted when a Branch link is resolved, or by the nil-URL deferred lookup
+that `requestDeepLinkDataWithLaunchOptions:` sends when the launch carries no
+link. The install contract requires that one lookup before the open.
 
 ## What gets validated
 
