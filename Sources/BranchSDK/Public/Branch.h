@@ -567,6 +567,13 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 /**
  Sends a Branch Open event with attribution to our new API route.
+
+ With `BranchConfiguration.automaticOpenEvents` set to NO, this instead sends whichever open is due:
+ the attributed open held from the most recently resolved link, or an unattributed open if nothing
+ is held. At most one open is sent per call and per foreground period, except the open a still
+ unfinished link resolution owns. If the app sends none, one is sent when it enters the background.
+ A call made while attribution is NONE is sent when attribution is raised, and an activation after
+ a resign allows another open.
  */
 - (void)sendOpen;
 
@@ -716,39 +723,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  @param value Value to be included in request metadata
  */
 - (void)setRequestMetadataKey:(NSString *)key value:(nullable NSString *)value;
-
-/**
- Disables automatic session open tracking for the next foreground event with a default timeout of 30 seconds.
- This is useful for scenarios like Bio Auth Dialogs, Apple Pay Dialogs or other cases where the app may briefly go to
- background and return without needing a new session open.
-
- @warning If the app goes to background and returns to foreground before `resumeSession` is called or the timeout expires,
- the SDK may remain in an uninitialized state until the next foreground event. Ensure `resumeSession` is called promptly
- after the expected user interaction completes.
- */
-+ (void)disableNextForeground;
-
-/**
- Disables automatic session open tracking for the next foreground event for the defined time interval.
-
- @param timeout    The duration in seconds to disable automatic open tracking. After this time,
-                 automatic tracking resumes. Pass 0 to disable indefinitely until `resumeSession` is called.
-
- @warning If the app goes to background and returns to foreground before `resumeSession` is called or the timeout expires,
- the SDK may remain in an uninitialized state until the next foreground event. Ensure `resumeSession` is called promptly
- after the expected user interaction completes.
- */
-+ (void)disableNextForegroundForTimeInterval:(NSTimeInterval)timeout;
-
-/**
- Resumes automatic session open tracking after it was disabled by `disableNextForegroundForTimeInterval:`.
- If automatic tracking is already enabled, this method has no effect.
-
- @warning If the app transitioned to background and foreground while automatic tracking was disabled,
- the SDK may be in an uninitialized state. The SDK will re-initialize on the next foreground event or
- when an API method protected by an internal safety check is called.
- */
-+ (void)resumeSession;
 
 /*
 
