@@ -164,6 +164,12 @@
         }
 
         if (self.isCancelled) {
+            if ([self.request isKindOfClass:[BranchRequestOpen class]]) {
+                [BranchRequestOpen releaseOpenResponseLock];
+            }
+            if ([self.request isKindOfClass:[BranchRequestDeepLink class]]) {
+                [BranchRequestDeepLink releaseDeepLinkResponseLock];
+            }
             [self finishOperation];
             return;
         }
