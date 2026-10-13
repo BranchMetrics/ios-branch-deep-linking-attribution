@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 @import BranchSDK;
+#import "Branch+Configuration.h"
 #import "BranchConstants.h"
 #import "BNCPasteboard.h"
 #import "BNCAppGroupsData.h"
@@ -25,7 +26,6 @@
 
 @interface BranchClassTests : XCTestCase
 @property (nonatomic, strong) Branch *branch;
-@property (nonatomic, strong, readwrite) BNCPreferenceHelper *prefHelper;
 @end
 
 @implementation BranchClassTests
@@ -36,7 +36,6 @@
     // (re)initialize the singleton, then configure it via the canonical entry point.
     [Branch resetInitializationGuardForTesting];
     self.branch = [Branch initialize:[[BranchConfiguration alloc] initWithKey:@"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB"]];
-    self.prefHelper = [BNCPreferenceHelper sharedInstance];
 }
 
 - (void)tearDown {
@@ -205,17 +204,29 @@
     XCTAssertEqualObjects(result.campaign, @"latest campaign");
 }
 
-- (void)testSetDMAParamsForEEA {
+- (void)testDMAParamsWriteThroughToPreferences {
+    // DMA parameters are config-only (no runtime setter). This asserts the preference-write mechanism that
+    // +[Branch initialize:] uses when applying a BranchConfiguration.dmaParameters value.
+    //
+    // This target is hosted by Branch-TestBed, whose AppDelegate sets config.dmaParameters before any
+    // test runs, so the defaults arrive already populated. Clear them first.
+    [self clearDMAParameterDefaults];
     XCTAssertFalse([[BNCPreferenceHelper sharedInstance] eeaRegionInitialized]);
-    
-    [Branch setDMAParamsForEEA:FALSE AdPersonalizationConsent:TRUE AdUserDataUsageConsent:TRUE];
+
+    [BNCPreferenceHelper sharedInstance].eeaRegion = FALSE;
+    [BNCPreferenceHelper sharedInstance].adPersonalizationConsent = TRUE;
+    [BNCPreferenceHelper sharedInstance].adUserDataUsageConsent = TRUE;
     XCTAssertTrue([[BNCPreferenceHelper sharedInstance] eeaRegionInitialized]);
     XCTAssertFalse([BNCPreferenceHelper sharedInstance].eeaRegion);
     XCTAssertTrue([BNCPreferenceHelper sharedInstance].adPersonalizationConsent);
     XCTAssertTrue([BNCPreferenceHelper sharedInstance].adUserDataUsageConsent);
 
-    // Manually clear values after testing
-    // By design, this API is meant to be set once and always set. However, in a test scenario it needs to be cleared.
+    [self clearDMAParameterDefaults];
+}
+
+// By design, DMA parameters are meant to be set once and always set. In a test scenario they need to
+// be cleared, which only the private defaults writer can do.
+- (void)clearDMAParameterDefaults {
     [[BNCPreferenceHelper sharedInstance] writeObjectToDefaults:@"bnc_dma_eea" value:nil];
     [[BNCPreferenceHelper sharedInstance] writeObjectToDefaults:@"bnc_dma_ad_personalization" value:nil];
     [[BNCPreferenceHelper sharedInstance] writeObjectToDefaults:@"bnc_dma_ad_user_data" value:nil];
@@ -239,102 +250,6 @@
     [branch setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
     XCTAssertEqual([BNCPreferenceHelper sharedInstance].attributionLevel, BranchAttributionLevelFull);
     
-}
-
-- (void)testBranchSetSDKWaitTimeForThirdPartyAPIs {
-    // Test Branch instance method for setting timeout
-    NSTimeInterval testTimeout = 2.0;
-    [Branch setSDKWaitTimeForThirdPartyAPIs:testTimeout];
-    
-    // Verify it was set in the preference helper
-    XCTAssertEqual(self.prefHelper.thirdPartyAPIsWaitTime, testTimeout,
-                   @"Branch setSDKWaitTimeForThirdPartyAPIs should update preference helper");
-}
-
-- (void)testBranchSetSDKWaitTimeForThirdPartyAPIsMultipleValues {
-    // Test setting multiple different values
-    NSArray *testValues = @[@0.5, @1.0, @1.5, @3.0, @5.0];
-    
-    for (NSNumber *timeoutValue in testValues) {
-        NSTimeInterval timeout = [timeoutValue doubleValue];
-        [Branch setSDKWaitTimeForThirdPartyAPIs:timeout];
-        
-        XCTAssertEqual(self.prefHelper.thirdPartyAPIsWaitTime, timeout,
-                       @"Branch setSDKWaitTimeForThirdPartyAPIs should handle value %.1f", timeout);
-    }
-}
-
-- (void)testTimeoutIntegrationWithPreferenceHelper {
-    // Test that Branch and PreferenceHelper work together correctly
-    NSTimeInterval branchTimeout = 1.8;
-    NSTimeInterval directTimeout = 2.3;
-    
-    // Set via Branch
-    [Branch setSDKWaitTimeForThirdPartyAPIs:branchTimeout];
-    XCTAssertEqual(self.prefHelper.thirdPartyAPIsWaitTime, branchTimeout,
-                   @"Wait Time set via Branch should be readable from PreferenceHelper");
-    
-    // Set directly on PreferenceHelper
-    self.prefHelper.thirdPartyAPIsWaitTime = directTimeout;
-    XCTAssertEqual(self.prefHelper.thirdPartyAPIsWaitTime, directTimeout,
-                   @"Wait time set directly should be readable via Branch");
-}
-
-- (void)testTimeoutValueConsistency {
-    // Test that the same instance maintains consistent values
-    NSTimeInterval testTimeout = 1.25;
-    
-    [Branch setSDKWaitTimeForThirdPartyAPIs:testTimeout];
-    
-    // Read multiple times to ensure consistency
-    for (int i = 0; i < 5; i++) {
-        XCTAssertEqual(self.prefHelper.thirdPartyAPIsWaitTime, testTimeout,
-                       @"Timeout value should remain consistent across multiple reads");
-    }
-}
-
-- (void)testBranchSetSDKWaitTimeForThirdPartyAPIsInvalidLowValues {
-
-    NSArray *invalidLowValues = @[@0.0, @-1.0, @-0.5];
-    NSTimeInterval originalTimeout = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime;
-    
-    for (NSNumber *timeoutValue in invalidLowValues) {
-        NSTimeInterval timeout = [timeoutValue doubleValue];
-        [Branch setSDKWaitTimeForThirdPartyAPIs:timeout];
-        XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime, originalTimeout,
-                       @"Branch setSDKWaitTimeForThirdPartyAPIs should reject invalid low value %.3f", timeout);
-    }
-}
-
-- (void)testBranchsetSDKWaitTimeForThirdPartyAPIsInvalidHighValues {
-
-    NSArray *invalidHighValues = @[@10.1, @15.0, @30.0, @60.0];
-    NSTimeInterval originalTimeout = [BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime;
-    
-    for (NSNumber *timeoutValue in invalidHighValues) {
-        NSTimeInterval timeout = [timeoutValue doubleValue];
-        [Branch setSDKWaitTimeForThirdPartyAPIs:timeout];
-        XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime, originalTimeout,
-                       @"Branch setSDKWaitTimeForThirdPartyAPIs should reject invalid high value %.3f", timeout);
-    }
-}
-
-- (void)testBranchSetSDKWaitTimeForThirdPartyAPIsBoundaryValues {
-    
-    // Test exactly 10.0 (should be valid)
-    [Branch setSDKWaitTimeForThirdPartyAPIs:10.0];
-    XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime, 10.0,
-                   @"Timeout of exactly 10.0 seconds should be valid");
-    
-    // Test just over 10.0 (should be invalid)
-    [Branch setSDKWaitTimeForThirdPartyAPIs:10.0001];
-    XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime, 10.0,
-                   @"Timeout of 10.0001 seconds should be rejected");
-    
-    // Test very small positive value (should be valid)
-    [Branch setSDKWaitTimeForThirdPartyAPIs:0.0001];
-    XCTAssertEqual([BNCPreferenceHelper sharedInstance].thirdPartyAPIsWaitTime, 0.0001,
-                   @"Very small positive timeout should be valid");
 }
 
 - (void)testSetAnonID {

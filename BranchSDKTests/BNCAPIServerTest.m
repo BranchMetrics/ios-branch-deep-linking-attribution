@@ -12,6 +12,7 @@
 #import "BNCConfig.h"
 #import "BranchConstants.h"
 #import "Branch.h"
+#import "Branch+Configuration.h"
 
 @interface BNCAPIServerTest : XCTestCase
 
