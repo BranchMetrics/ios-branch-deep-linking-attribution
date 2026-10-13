@@ -21,6 +21,9 @@
 #   SETTLE_MAX_S       - give up settling after this many seconds (default 120)
 #   OPENURL_MAX_S      - retry budget for LaunchServices error 115 (default 120)
 #   H2_URL             - URL to deliver (default branchtest://open?scenario=H2)
+#   WARM               - 1 backgrounds the app with Preferences before the pre
+#                        snapshot (warm_uriScheme)
+#   CAPTURE_NAME       - snapshot file prefix (default wire-hot_uriScheme)
 
 set -euo pipefail
 
@@ -34,6 +37,8 @@ SETTLE_S="${SETTLE_S:-10}"
 SETTLE_MAX_S="${SETTLE_MAX_S:-120}"
 OPENURL_MAX_S="${OPENURL_MAX_S:-120}"
 H2_URL="${H2_URL:-branchtest://open?scenario=H2}"
+WARM="${WARM:-}"
+CAPTURE_NAME="${CAPTURE_NAME:-wire-hot_uriScheme}"
 
 # The consent SpringBoard otherwise asks for on the first `simctl openurl` of the scheme.
 APPROVAL_DOMAIN="com.apple.launchservices.schemeapproval"
@@ -88,9 +93,9 @@ app_pid() {
         | awk -v label="UIKitApplication:$BUNDLE_ID" 'index($3, label) == 1 { print $1 }'
 }
 
-# Waits until the log is non-empty and its size unchanged for SETTLE_S.
+# Waits until the log is non-empty and its size unchanged for SETTLE_S; $1 names what failed to settle.
 wait_settled() {
-    local path size last=-1 same=0 elapsed=0
+    local what="${1:-branchlogs.txt}" path size last=-1 same=0 elapsed=0
     while [ "$elapsed" -lt "$SETTLE_MAX_S" ]; do
         size=0
         if path=$(log_path) && [ -f "$path" ]; then size=$(stat -f %z "$path"); fi
@@ -100,7 +105,7 @@ wait_settled() {
         sleep 1
         elapsed=$((elapsed + 1))
     done
-    fail "branchlogs.txt did not settle within ${SETTLE_MAX_S}s"
+    fail "$what did not settle within ${SETTLE_MAX_S}s"
 }
 
 # Waits until the log is larger than $1 bytes, so a slow delivery is not snapshotted early.
@@ -116,9 +121,24 @@ wait_grown() {
     fail "branchlogs.txt did not grow past the pre snapshot within ${SETTLE_MAX_S}s"
 }
 
+# Waits until applicationDidEnterBackground is logged after the first $1 bytes.
+wait_backgrounded() {
+    local path found elapsed=0
+    while [ "$elapsed" -lt "$SETTLE_MAX_S" ]; do
+        found=0
+        if path=$(log_path) && [ -f "$path" ]; then
+            found=$(tail -c +$(($1 + 1)) "$path" | grep -c '\[TestBedLifecycle\] applicationDidEnterBackground' || true)
+        fi
+        if [ "$found" -gt 0 ]; then return 0; fi
+        sleep 1
+        elapsed=$((elapsed + 1))
+    done
+    fail "TestBed did not log applicationDidEnterBackground within ${SETTLE_MAX_S}s of launching Preferences"
+}
+
 mkdir -p "$OUTPUT_DIR"
-pre="$OUTPUT_DIR/wire-hot_uriScheme.pre.txt"
-post="$OUTPUT_DIR/wire-hot_uriScheme.post.txt"
+pre="$OUTPUT_DIR/$CAPTURE_NAME.pre.txt"
+post="$OUTPUT_DIR/$CAPTURE_NAME.post.txt"
 
 # 5. Launch and settle.
 xcrun simctl launch "$udid" "$BUNDLE_ID" >/dev/null
@@ -129,6 +149,18 @@ pid=$(app_pid)
 # 6. Snapshot. A launch that never opened is not a hot app.
 cp "$(log_path)" "$pre"
 grep -qE '\[BranchLog\] Got https?://[^ ]+/v3/events/open Request:' "$pre" || fail "launch did not settle"
+
+# 6b. Warm: background the same process, then retake pre so it holds the resign and background markers.
+if [ "$WARM" = "1" ]; then
+    xcrun simctl launch "$udid" com.apple.Preferences >/dev/null
+    wait_backgrounded "$(stat -f %z "$pre")"
+    wait_settled "backgrounding"
+    bg_pid=$(app_pid)
+    [[ $bg_pid =~ ^[0-9]+$ ]] || fail "TestBed not running after background"
+    [ "$bg_pid" = "$pid" ] || fail "relaunched during background"
+    echo "backgrounded, pid unchanged"
+    cp "$(log_path)" "$pre"
+fi
 
 # 7. Deliver, retrying while LaunchServices is still settling after boot.
 attempt=0
