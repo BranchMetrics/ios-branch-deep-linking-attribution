@@ -37,9 +37,8 @@
     The `start` method is required, as are all the getters for request, response, error, and date
     data items.
 
- 3. In your app delegate, set your network class by calling `[Branch setNetworkServiceClass:]` with
-    your network class as a parameter. This method must be called before initializing the Branch 
-    shared object.
+ 3. In your app delegate, set `remoteInterface` on your `BranchConfiguration` to your network class
+    and pass that configuration to `+[Branch initialize:]`.
 
 */
 @protocol BNCNetworkOperationProtocol <NSObject>
