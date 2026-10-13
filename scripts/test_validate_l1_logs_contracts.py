@@ -209,10 +209,11 @@ class HotHttpsForegroundContractTests(unittest.TestCase):
         self.assertEqual(_validate("hot_https_foreground.txt", "hot_https_foreground"), [])
 
     def test_a_cold_capture_fails(self):
-        # A cold launch carries an extra unattributed open the hot contract forbids.
+        # A cold launch carries a second resolve and a second, unattributed open
+        # (the launch resolve plus the link's own), which the hot contract forbids.
         errors = _validate("cold_https.txt", "hot_https_foreground")
-        self.assertEqual(len(errors), 1, errors)
-        self.assertIn("captured 2", errors[0])
+        self.assertEqual(len(errors), 2, errors)
+        self.assertTrue(all("captured 2" in e for e in errors), errors)
 
 
 def _fixture_bytes(name):
