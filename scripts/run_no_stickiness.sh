@@ -2,8 +2,10 @@
 #
 # no_stickiness driver for the iOS Branch SDK TestBed.
 #
-# Delivers the fixture link warm, backgrounds the app for real, returns with
-# no URL, and snapshots branchlogs.txt right before the return. Validate with:
+# Delivers the fixture link through the TestBed's in-process deep link hook
+# (a relaunch with -testDeepLinkURL, since the hook reads it only at launch),
+# backgrounds the app for real, returns with no URL, and snapshots
+# branchlogs.txt right before the return. Validate with:
 #
 #   check_no_stickiness.py "$OUTPUT_DIR/wire-no_stickiness.post.txt" \
 #       --pre "$OUTPUT_DIR/wire-no_stickiness.pre.txt"
@@ -43,7 +45,14 @@ BG_REPORT_MAX_S="${BG_REPORT_MAX_S:-15}"
 RETURN_MAX_S="${RETURN_MAX_S:-30}"
 NS_URL="${NS_URL:-https://bnctestbed.app.link/7HTLJ2jXi3b}"
 
-fail() { echo "ERROR: $*"; exit 1; }
+fail() {
+    echo "ERROR: $*"
+    local src
+    if [ -n "${udid:-}" ] && src=$(log_path 2>/dev/null) && [ -f "$src" ]; then
+        mkdir -p "$OUTPUT_DIR" && cp "$src" "$OUTPUT_DIR/wire-no_stickiness.fail.txt" || true
+    fi
+    exit 1
+}
 
 # 1. Device on exactly NS_EXPECT_RUNTIME. The same name can exist on several runtimes.
 selection=$(xcrun simctl list devices available -j | python3 -c '
@@ -66,8 +75,7 @@ echo "RUNTIME=${selection#* }"
 xcrun simctl boot "$udid" 2>/dev/null || true
 xcrun simctl bootstatus "$udid" -b >/dev/null
 
-# No scheme-approval consent seeding: NS_URL is an https Universal Link, which
-# does not raise the LaunchServices scheme dialog run_h2_hot.sh seeds for.
+# No scheme-approval consent seeding: NS_URL is never opened through LaunchServices.
 
 # 3. Fresh install of the single built TestBed.
 shopt -s nullglob
@@ -106,7 +114,7 @@ wait_settled() {
 
 # Waits for the delivered link's chain: /v3/deeplink, a chained /v3/events/open, then a report carrying this run's +clicked_branch_link.
 wait_link_resolved() {
-    local path elapsed=0 deeplink_line open_line
+    local path elapsed=0 deeplink_line open_line after_open
     while [ "$elapsed" -lt "$LINK_MAX_S" ]; do
         if path=$(log_path) && [ -f "$path" ]; then
             deeplink_line=$(grep -nE '\[BranchLog\] Got https?://[^ ]*/v3/deeplink Request:' "$path" | tail -1 | cut -d: -f1) || deeplink_line=""
@@ -114,7 +122,8 @@ wait_link_resolved() {
                 open_line=$(tail -n +"$((deeplink_line + 1))" "$path" | grep -nE '\[BranchLog\] Got Response for request \([^)]*/v3/events/open[^)]*\)' | tail -1 | cut -d: -f1) || open_line=""
                 if [ -n "$open_line" ]; then
                     open_line=$((deeplink_line + open_line))
-                    if tail -n +"$((open_line + 1))" "$path" | grep -q '\[TestBedLifecycle\] latestReferringParams.*"+clicked_branch_link":true'; then
+                    after_open=$(tail -n +"$((open_line + 1))" "$path")
+                    if grep -q '\[TestBedLifecycle\] latestReferringParams.*"+clicked_branch_link":true' <<<"$after_open"; then
                         return 0
                     fi
                 fi
@@ -193,8 +202,11 @@ grep -qE '\[BranchLog\] Got Response for request \([^)]*/v3/events/open[^)]*\)' 
 pid=$(app_pid)
 [[ $pid =~ ^[0-9]+$ ]] || fail "TestBed is not running after launch"
 
-# 5. Deliver the fixture link warm, wait for it to resolve with a chained open.
-xcrun simctl openurl "$udid" "$NS_URL" || fail "openurl failed for $NS_URL"
+# 5. Deliver the fixture link via the in-process hook: a new process, same SDK entry point as a
+# real Universal Link. Wait for it to resolve with a chained open.
+xcrun simctl terminate "$udid" "$BUNDLE_ID" || true
+xcrun simctl launch "$udid" "$BUNDLE_ID" -testDeepLinkURL "$NS_URL" >/dev/null \
+    || fail "launch with -testDeepLinkURL failed for $NS_URL"
 wait_link_resolved
 pid=$(app_pid)
 [[ $pid =~ ^[0-9]+$ ]] || fail "TestBed is not running after the link"
