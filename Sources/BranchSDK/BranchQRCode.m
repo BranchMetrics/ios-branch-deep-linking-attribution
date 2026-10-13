@@ -18,6 +18,10 @@
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
 
+@interface Branch (OpenWarning)
+- (void)warnIfOpenWaitsForSendOpen;
+@end
+
 @interface BranchQRCode()
 @property (nonatomic, copy, readwrite) NSString *buoTitle;
 @property (nonatomic, strong, readwrite) UIImage *qrCodeImage;
@@ -61,6 +65,8 @@
 - (void)getQRCodeAsData:(nullable BranchUniversalObject *)buo
          linkProperties:(nullable BranchLinkProperties *)lp
              completion:(void(^)(NSData * _Nullable qrCode, NSError * _Nullable error))completion {
+
+    [[Branch sharedInstance] warnIfOpenWaitsForSendOpen];
 
     NSMutableDictionary *settings = [NSMutableDictionary new];
     
