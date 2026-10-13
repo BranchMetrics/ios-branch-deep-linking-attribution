@@ -62,6 +62,17 @@
          linkProperties:(nullable BranchLinkProperties *)lp
              completion:(void(^)(NSData * _Nullable qrCode, NSError * _Nullable error))completion {
 
+    NSString *branchKey = [Branch branchKey];
+    if (!branchKey) {
+        NSString *message = @"-[BranchQRCode getQRCodeAsData:linkProperties:completion:] requires +[Branch initialize:] to have run.";
+        NSError *initError = [NSError branchErrorWithCode:BNCInitError localizedMessage:message];
+        [[BranchLogger shared] logError:message error:initError];
+        if (completion != nil) {
+            completion(nil, initError);
+        }
+        return;
+    }
+
     NSMutableDictionary *settings = [NSMutableDictionary new];
     
     if (self.codeColor) { settings[@"code_color"] = [self hexStringForColor:self.codeColor]; }
@@ -91,7 +102,7 @@
     
     parameters[@"qr_code_settings"] = settings;
     parameters[@"data"] = [buo dictionary];
-    parameters[@"branch_key"] = [Branch branchKey];
+    parameters[@"branch_key"] = branchKey;
     
     NSDate *timestamp = [NSDate date];
     parameters[BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP] = BNCWireFormatFromDate(timestamp);

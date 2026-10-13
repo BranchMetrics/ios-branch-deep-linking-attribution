@@ -186,6 +186,8 @@ void ForceCategoriesToLoad(void) {
 // Tracks whether +initialize: has already created and configured the singleton, so a second call
 // warns and no-ops rather than re-applying setter side-effects to a running SDK.
 static BOOL bnc_didInitializeWithConfiguration = NO;
+static BOOL bnc_useTestBranchKey = NO;
+static NSString *bnc_branchKey = nil;
 
 + (instancetype)sharedInstance {
     // The singleton must be configured exactly once at launch via +initialize:. Accessing it before
@@ -245,16 +247,17 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
 
         // --- Settings that must be applied before the singleton is created ---
 
-        // Test key must be resolved before the branch key is read.
-        [Branch setUseTestBranchKey:configuration.testMode];
-
         // Custom network service class is set-once and must precede singleton creation.
         if (configuration.remoteInterface) {
             [Branch setNetworkServiceClass:configuration.remoteInterface];
         }
 
-        // Set the branch key explicitly so it takes precedence over Info.plist / branch.json.
-        self.branchKey = configuration.branchKey;
+        // Set the branch key. -validate: has checked its prefix, which selects test or live.
+        bnc_branchKey = [configuration.branchKey copy];
+        bnc_useTestBranchKey = [bnc_branchKey hasPrefix:@"key_test_"];
+        if (bnc_useTestBranchKey) {
+            [[BranchLogger shared] logWarning:@"You are using your test app's Branch Key. Remember to change it to live Branch Key for production deployment." error:nil];
+        }
         [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_INIT_FUNCTION;
 
         // --- Create (or fetch) the singleton ---
@@ -396,7 +399,6 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     _contentDiscoveryManager = [[BNCContentDiscoveryManager alloc] init];
     #endif
 
-    self.class.branchKey = key;
     self.urlFilter = [BNCURLFilter new];
     [self.urlFilter useSavedPatternList];
     self.userURLFilter = nil;
@@ -526,21 +528,8 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 
 #pragma mark - Configuration methods
 
-static BOOL bnc_useTestBranchKey = NO;
-static NSString *bnc_branchKey = nil;
-
 + (void)resetBranchKey {
     bnc_branchKey = nil;
-}
-
-+ (void)setUseTestBranchKey:(BOOL)useTestKey {
-    @synchronized (self) {
-        if (bnc_branchKey && !!useTestKey != !!bnc_useTestBranchKey) {
-            [[BranchLogger shared] logError:@"Can't switch the Branch key once it's in use." error:nil];
-            return;
-        }
-        bnc_useTestBranchKey = useTestKey;
-    }
 }
 
 + (BOOL)useTestBranchKey {
@@ -549,90 +538,8 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
-+ (void)setBranchKey:(NSString *)branchKey {
-    NSError *error;
-    [self setBranchKey:branchKey error:&error];
-
-    if (error) {
-        [[BranchLogger shared] logError:@"Failed to set Branch Key" error:error];
-    }
-}
-
-+ (void)setBranchKey:(NSString*)branchKey error:(NSError **)error {
-    @synchronized (self) {
-        if (bnc_branchKey) {
-            if (branchKey &&
-                [branchKey isKindOfClass:[NSString class]] &&
-                [branchKey isEqualToString:bnc_branchKey]) {
-                return;
-            }
-
-            NSString *errorMessage = [NSString stringWithFormat:@"Branch key can only be set once."];
-            *error = [NSError branchErrorWithCode:BNCInitError localizedMessage:errorMessage];
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Branch key can only be set once."] error:*error];
-
-            return;
-        }
-
-        if (![branchKey isKindOfClass:[NSString class]]) {
-            NSString *typeName = (branchKey) ? NSStringFromClass(branchKey.class) : @"<nil>";
-
-            NSString *errorMessage = [NSString stringWithFormat:@"Invalid Branch key of type '%@'.", typeName];
-            *error = [NSError branchErrorWithCode:BNCInitError localizedMessage:errorMessage];
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Invalid Branch key of type '%@'.", typeName] error:*error];
-            return;
-        }
-
-        if ([branchKey hasPrefix:@"key_test"]) {
-            bnc_useTestBranchKey = YES;
-            [[BranchLogger shared] logWarning: @"You are using your test app's Branch Key. Remember to change it to live Branch Key for production deployment." error:nil];
-
-        } else if ([branchKey hasPrefix:@"key_live"]) {
-            bnc_useTestBranchKey = NO;
-
-        } else {
-            NSString *errorMessage = [NSString stringWithFormat:@"Invalid Branch key format. Did you add your Branch key to your Info.plist? Passed key is '%@'.", branchKey];
-            *error = [NSError branchErrorWithCode:BNCInitError localizedMessage:errorMessage];
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Invalid Branch key format. Did you add your Branch key to your Info.plist? Passed key is '%@'.", branchKey] error:*error];
-            return;
-        }
-        [BranchConfigurationController sharedInstance].branchKeySource = BRANCH_KEY_SOURCE_SET_BRANCH_KEY_API;
-        bnc_branchKey = branchKey;
-    }
-}
-
 + (NSString *)branchKey {
     @synchronized (self) {
-        if (bnc_branchKey) return bnc_branchKey;
-
-        NSString *branchKey = nil;
-        NSString *branchKeySource = @"Unknown";
-
-        BranchJsonConfig *config = BranchJsonConfig.instance;
-        BOOL usingTestInstance = bnc_useTestBranchKey || config.useTestInstance;
-        branchKey = config.branchKey ?: usingTestInstance ? config.testKey : config.liveKey;
-        [self setUseTestBranchKey:usingTestInstance];
-
-        if (branchKey) {
-            branchKeySource = BRANCH_KEY_SOURCE_CONFIG_JSON;
-        } else {
-            NSDictionary *branchDictionary = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_key"];
-            if ([branchDictionary isKindOfClass:[NSString class]]) {
-                branchKey = (NSString*) branchDictionary;
-            } else
-            if ([branchDictionary isKindOfClass:[NSDictionary class]]) {
-                branchKey =
-                    ([self useTestBranchKey]) ? branchDictionary[@"test"] : branchDictionary[@"live"];
-            }
-            if (branchKey)
-                branchKeySource = BRANCH_KEY_SOURCE_INFO_PLIST;
-        }
-
-        self.branchKey = branchKey;
-        if (!bnc_branchKey) {
-            [[BranchLogger shared] logError:@"Your Branch key is not set in your Info.plist file. See https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/#configure-xcode-project for configuration instructions." error:nil];
-        }
-        [BranchConfigurationController sharedInstance].branchKeySource = branchKeySource;
         return bnc_branchKey;
     }
 }

@@ -36,11 +36,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Identity & environment
 
-/// The Branch key (`key_live_...` or `key_test_...`). Required, must be non-empty.
+/// The Branch key. Required, must be non-empty and start with `key_live_` or `key_test_`.
+/// The prefix selects the live or test environment.
 @property (nonatomic, copy, readonly) NSString *branchKey;
-
-/// When YES, Branch uses the test key found in your `Info.plist`. Default NO.
-@property (nonatomic, assign) BOOL testMode;
 
 /// Optional custom base URL for all calls to the Branch API. Must start with `http://` or `https://`.
 @property (nonatomic, copy, nullable) NSString *apiUrl;
@@ -145,7 +143,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Designated initializer.
- @param branchKey The Branch key. Must be non-empty; validated in `-validate:`.
+ @param branchKey The Branch key. Must be non-empty and start with `key_live_` or `key_test_`;
+                  validated in `-validate:`.
  */
 - (instancetype)initWithKey:(NSString *)branchKey NS_DESIGNATED_INITIALIZER;
 
@@ -154,7 +153,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Factory helpers
 
-/// Debug preset: verbose logging and test mode enabled.
+/// Debug preset: verbose logging.
 + (instancetype)debug:(NSString *)branchKey;
 
 /// Production preset: warning-level logging.
