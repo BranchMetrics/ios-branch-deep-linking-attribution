@@ -174,6 +174,7 @@ void ForceCategoriesToLoad(void) {
 // Private method used internally
 - (void)clearLinkIdentifiers;
 - (void)sendOpenAndCallDeepLinkHandler:(BOOL)callHandler;
+- (void)requestDeepLinkData:(nullable NSString *)branchLink;
 
 @end
 
@@ -893,7 +894,7 @@ static NSString *bnc_branchKey = nil;
     // that the legacy handlers and the requestDeepLinkData* convenience methods each enqueue exactly
     // one request. A skiplisted URL is never sent to Branch.
     if (!filtered) {
-        [self requestDeepLinkData:url.absoluteString callback:nil];
+        [self requestDeepLinkData:url.absoluteString];
     }
 
     return handled;
@@ -1034,7 +1035,7 @@ static NSString *bnc_branchKey = nil;
     // As in handleDeepLink:sceneIdentifier:, the entry point owns the enqueue. webpageURL is nil for a
     // Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
     if (!filtered) {
-        [self requestDeepLinkData:userActivity.webpageURL.absoluteString callback:nil];
+        [self requestDeepLinkData:userActivity.webpageURL.absoluteString];
     }
 
     return handled;
@@ -1935,6 +1936,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         self.deepLinkHandler = handler;
     }
 }
+// Calls requestDeepLinkData:callback: with no callback.
+// Resolves branchLink with no callback of its own; the result goes to the stored deep link handler.
+- (void)requestDeepLinkData:(nullable NSString *)branchLink {
+    [self requestDeepLinkData:branchLink callback:nil];
+}
 
 - (void) requestDeepLinkData:(NSString *)branchLink callback:(nullable callbackWithParams)callback {
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData called with branchLink: %@", branchLink] error:nil];
@@ -2034,7 +2040,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         return;
     }
 
-    [self requestDeepLinkData:pushURL callback:nil];
+    [self requestDeepLinkData:pushURL];
 }
 
 // Called from application:openURL:options:
@@ -2054,7 +2060,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // The URL matched the skiplist. Preferences are recorded, but the URL itself is never sent.
     if (filtered) return;
 
-    [self requestDeepLinkData:urlStr callback:nil];
+    [self requestDeepLinkData:urlStr];
 }
 
 // Called from the older application:openURL:sourceApplication:annotation:
@@ -2083,7 +2089,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // nil for a Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
     NSString *urlStr = userActivity.webpageURL.absoluteString;
 
-    [self requestDeepLinkData:urlStr callback:nil];
+    [self requestDeepLinkData:urlStr];
 }
 
 // Called from application:didReceiveRemoteNotification:fetchCompletionHandler:
@@ -2102,7 +2108,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         if (filtered) return;
     }
 
-    [self requestDeepLinkData:urlStr callback:nil];
+    [self requestDeepLinkData:urlStr];
 }
 
 #pragma mark - Branch SceneDelegate Deep Linking Convenience Methods
@@ -2139,7 +2145,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             BOOL filtered = NO;
             [self processUserActivity:activity sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
             if (!filtered) {
-                [self requestDeepLinkData:activity.webpageURL.absoluteString callback:nil];
+                [self requestDeepLinkData:activity.webpageURL.absoluteString];
             }
         }
     } else if (connectionOptions.URLContexts.count) {
@@ -2148,7 +2154,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         BOOL filtered = NO;
         [self processDeepLinkURL:context.URL sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
         if (!filtered) {
-            [self requestDeepLinkData:context.URL.absoluteString callback:nil];
+            [self requestDeepLinkData:context.URL.absoluteString];
         }
     }
 }
@@ -2166,7 +2172,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     if (filtered) return;
 
-    [self requestDeepLinkData:context.URL.absoluteString callback:nil];
+    [self requestDeepLinkData:context.URL.absoluteString];
 }
 
 // Called from scene:continueUserActivity:
@@ -2182,7 +2188,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // nil for a Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
     NSString *urlStr = userActivity.webpageURL.absoluteString;
 
-    [self requestDeepLinkData:urlStr callback:nil];
+    [self requestDeepLinkData:urlStr];
 }
 #endif
 
