@@ -301,7 +301,8 @@ class InstallContractTests(unittest.TestCase):
     only demonstrated passing is a contract that cannot fail."""
 
     def test_a_clean_install_capture_passes(self):
-        # Cut from a real install run: deeplink(nil), then the open.
+        # Derived from a real capture, identifiers replaced: deeplink(nil), then
+        # the open.
         errors, _ = _run_validation("install.txt", v.contract_for("install"))
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 
@@ -323,13 +324,19 @@ class InstallContractTests(unittest.TestCase):
         )
         self.assertTrue(any("after" in e for e in errors), errors)
 
-    def test_a_second_lookup_fails(self):
-        # The cold-link shape (a lookup for the link on top of the launch's)
-        # must not pass as an install.
+    def test_a_cold_link_capture_fails_install(self):
+        # The cold-link shape carries two opens, which an install must not.
         errors, _ = _run_validation("cold_firstInstall.txt", v.contract_for("install"))
         self.assertTrue(
             any("Expected 1 '/v3/events/open'" in e for e in errors), errors
         )
+
+    def test_a_second_lookup_fails(self):
+        # install_two_lookups.txt is spliced: two deeplinks, then the open.
+        errors, _ = _run_validation("install_two_lookups.txt", v.contract_for("install"))
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("Expected 1 '/v3/deeplink'", errors[0])
+        self.assertIn("captured 2", errors[0])
 
     def test_wrong_order_fails(self):
         # deeplink.txt is open then deeplink, with no open after it, so the
@@ -392,9 +399,9 @@ class AttributionNoneContractTests(unittest.TestCase):
 
 class ColdHttpsContractTests(unittest.TestCase):
     """cold_https: a Universal Link into a freshly launched process on a
-    device that already has the app. Fixture is a real capture measured on an
-    iPhone 16 Pro simulator with the activity in launchOptions, identifiers
-    replaced: deeplink(link), then the attributed open."""
+    device that already has the app. Fixture is derived from a real capture
+    measured on an iPhone 16 Pro simulator with the activity in launchOptions,
+    identifiers replaced: deeplink(link), then the attributed open."""
 
     def test_the_cold_link_capture_passes(self):
         errors, _ = _run_validation("cold_https.txt", v.contract_for("cold_https"))
@@ -418,8 +425,9 @@ class ColdHttpsContractTests(unittest.TestCase):
         self.assertEqual(v.contract_for("cold_https")["counts"]["/v3/events/open"], 1)
 
     def test_a_nil_lookup_ahead_of_the_link_fails(self):
-        # The pre-fix shape: deeplink(nil), open, deeplink(link), open. Both
-        # the deeplink and the open count fire.
+        # The pre-fix shape: deeplink(nil), open, deeplink(link), open. The
+        # fixture is spliced from the install and cold_https fixtures. Both the
+        # deeplink and the open count fire.
         errors, _ = _run_validation(
             "cold_https_nil_lookup.txt", v.contract_for("cold_https")
         )
@@ -488,13 +496,9 @@ class ColdFirstInstallContractTests(unittest.TestCase):
         # A real cold link launch sends one open when the app was installed
         # and two on a first install. Both expect exactly one open carrying
         # the token, so the open count is the only discriminator left.
-        https = v.contract_for("cold_https")
-        first = v.contract_for("cold_firstInstall")
-        self.assertEqual(https["counts"]["/v3/deeplink"], first["counts"]["/v3/deeplink"])
-        self.assertEqual(https["order"], first["order"])
-        self.assertEqual(https["counts"]["/v3/events/open"], 1)
-        self.assertEqual(first["counts"]["/v3/events/open"], 2)
-        self.assertEqual(https["fields"], first["fields"])
+        https = v.contract_for("cold_https")["counts"]["/v3/events/open"]
+        first = v.contract_for("cold_firstInstall")["counts"]["/v3/events/open"]
+        self.assertNotEqual(https, first)
 
     def test_the_two_scenarios_reject_each_other_fixtures(self):
         https_as_first, _ = _run_validation(

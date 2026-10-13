@@ -58,10 +58,10 @@
 
     NSLog(@"[TestHook] -testDeepLinkURL received: %@", url);
 
-    // Mirrors a real cold Universal Link launch: iOS calls continueUserActivity:
-    // right after didFinishLaunching, with the activity already in launchOptions
-    // (see launchOptionsByAddingTestLink:). Nothing is queued ahead of the link,
-    // so there is no session start to wait for.
+    // Approximates a cold Universal Link launch: delivered after launch returns,
+    // with the activity already in launchOptions (see
+    // launchOptionsByAddingTestLink:). Nothing is queued ahead of the link, so
+    // there is no session start to wait for.
     dispatch_async(dispatch_get_main_queue(), ^{
         NSUserActivity *activity =
             [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];

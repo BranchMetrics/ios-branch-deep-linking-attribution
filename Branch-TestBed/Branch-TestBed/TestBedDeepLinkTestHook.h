@@ -3,7 +3,8 @@
 //  Branch-TestBed
 //
 //  Test-only hook that simulates a Universal Link arrival, so the
-//  DeepLink*HybridTest cases can drive a deep link from XCUITest.
+//  DeepLink*HybridTest and ColdLink*WireValidationTest cases can drive a
+//  deep link from XCUITest.
 //  DEBUG builds only.
 //
 
@@ -27,8 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// an `NSUserActivity` and passed to the delegate's
 /// `application:continueUserActivity:restorationHandler:`.
 ///
-/// Delivery is queued on the main queue right after launch, the same moment
-/// iOS calls `continueUserActivity:` on a cold Universal Link launch.
+/// Delivery is queued on the main queue and runs after launch returns,
+/// approximating a cold Universal Link launch.
 ///
 /// Exercises the SDK's handling of a link, not the OS delivering one: an
 /// unsigned simulator build has no route for real Universal Link handoff.
