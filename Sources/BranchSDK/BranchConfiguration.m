@@ -41,7 +41,6 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
     _branchKey = [branchKey copy];
 
     // Identity & environment
-    _testMode = NO;
     _apiUrl = nil;
     _safeTrackAPIUrl = nil;
     _cdnBaseUrl = nil;
@@ -111,7 +110,6 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
 + (instancetype)debug:(NSString *)branchKey {
     BranchConfiguration *config = [[self alloc] initWithKey:branchKey];
     config.logLevel = BranchLogLevelVerbose;
-    config.testMode = YES;
     return config;
 }
 
@@ -173,6 +171,12 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
 - (BOOL)validate:(NSError *_Nullable *_Nullable)error {
     if (self.branchKey.length == 0) {
         return [self failValidation:@"Branch key cannot be empty. Get your key from dashboard.branch.io/settings."
+                              error:error];
+    }
+    if (![self.branchKey hasPrefix:@"key_live_"] && ![self.branchKey hasPrefix:@"key_test_"]) {
+        return [self failValidation:[NSString stringWithFormat:
+            @"Invalid Branch key format: '%@'. The key must start with key_live_ or key_test_. "
+             "Get your key from dashboard.branch.io/settings.", self.branchKey]
                               error:error];
     }
     if (self.networkTimeout <= 0) {

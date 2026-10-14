@@ -20,12 +20,12 @@
 /// Off by default, and it must stay off for normal use: that block sets every
 /// field away from its default, and several of those values break the TestBed
 /// and the integration tests. `euEndpoint` routes to EU hosts this key is not
-/// provisioned for, `testMode` swaps in the Info.plist test key, `cdnBaseUrl`
-/// points at a host that does not exist, `addAllowedScheme:` narrows tracking
-/// from "all schemes" to one, `urlPatternsToIgnore` suppresses any URL matching
-/// its patterns before the request is built, `appClipAppGroup` names a group
-/// absent from the entitlements, and `deepLinkDebugParams` injects keys into
-/// every deep-link response the tests assert on.
+/// provisioned for, `cdnBaseUrl` points at a host that does not exist,
+/// `addAllowedScheme:` narrows tracking from "all schemes" to one,
+/// `urlPatternsToIgnore` suppresses any URL matching its patterns before the
+/// request is built, `appClipAppGroup` names a group absent from the
+/// entitlements, and `deepLinkDebugParams` injects keys into every deep-link
+/// response the tests assert on.
 #define BRANCH_TESTBED_FULL_CONFIG_EXAMPLE 0
 
 /// Set to 1 to run the `BranchLinkBuilder` example at the end of
@@ -93,9 +93,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Compiled out by default; see the comment on.
     // BRANCH_TESTBED_FULL_CONFIG_EXAMPLE at the top of this file for why.
 
-    // Identity & environment  (defaults: testMode NO, apiUrl nil, safeTrackAPIUrl nil,
-    //                          cdnBaseUrl nil, euEndpoint NO)
-    config.testMode        = YES;                         // use the test key from Info.plist
+    // Identity & environment  (defaults: apiUrl nil, safeTrackAPIUrl nil, cdnBaseUrl nil,
+    //                          euEndpoint NO). Test vs. live comes from the key prefix.
     config.apiUrl          = @"https://api2.branch.io";   // optional API base-URL override
     config.safeTrackAPIUrl = @"https://api2.branch.io";   // optional safe-track base-URL override
     config.cdnBaseUrl      = @"https://cdn.example.com";   // optional CDN pattern-list override
@@ -187,8 +186,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
 /// Working example of `BranchLinkBuilder`
 ///
-/// You do not need a `Branch` reference to make a link, and you do not need to wait for
-/// `+[Branch initialize:]` to finish; the builder resolves the SDK when a terminal runs.
+/// You do not need a `Branch` reference to make a link; the builder resolves the SDK when a
+/// terminal runs. `+[Branch initialize:]` must have run first.
 - (void)branchLinkBuilderExample {
     // Link content and behavior travel as a BranchLinkProperties, which every terminal takes as an
     // argument. The same properties object can be reused for as many links as you like.
@@ -211,8 +210,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // ── getLongURLWithLinkProperties:useAppLinkDomain: ───────────────────
     // Offline and synchronous. `controlParams` are JSON-encoded and base64'd into the URL itself,
-    // so this needs no network and returns immediately. It is also the one terminal that does not
-    // need `+[Branch initialize:]` to have run — a Branch key is enough.
+    // so this needs no network and returns immediately.
     NSString *longURL = [builder getLongURLWithLinkProperties:linkProperties useAppLinkDomain:NO];
     NSLog(@"Branch TestBed: long URL: %@", longURL);
 
