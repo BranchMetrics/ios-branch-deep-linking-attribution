@@ -325,12 +325,11 @@ class InstallContractTests(unittest.TestCase):
         )
         self.assertTrue(any("after" in e for e in errors), errors)
 
-    def test_a_cold_link_capture_fails_install(self):
-        # The cold-link shape carries two opens, which an install must not.
+    def test_install_does_not_tell_a_cold_first_install_apart(self):
+        # Recorded, not hidden: both send one resolve then one tokenless open.
+        # Only link_data on the open differs, and install asserts no fields.
         errors, _ = _run_validation("cold_firstInstall.txt", v.contract_for("install"))
-        self.assertTrue(
-            any("Expected 1 '/v3/events/open'" in e for e in errors), errors
-        )
+        self.assertEqual(errors, [], errors)
 
     def test_a_second_lookup_fails(self):
         # install_two_lookups.txt is spliced: two deeplinks, then the open.
@@ -472,8 +471,9 @@ class ColdHttpsContractTests(unittest.TestCase):
 class ColdFirstInstallContractTests(unittest.TestCase):
     """cold_firstInstall: the same launch with no prior install. There is no
     install endpoint on this line -- install posts to /v3/events/open like any
-    other request -- so the install is the one open of the two carrying no
-    randomized_bundle_token."""
+    other request -- so the install is the one open, carrying link_data and no
+    randomized_bundle_token. Fixture is the shape CI captured after the
+    launch-options fix: deeplink(link), then the install open."""
 
     def test_the_first_install_capture_passes(self):
         errors, _ = _run_validation(
@@ -481,25 +481,33 @@ class ColdFirstInstallContractTests(unittest.TestCase):
         )
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 
+    def test_one_open_is_the_contract_not_a_gap(self):
+        # The second open the old contract expected came from the nil-URL
+        # lookup the launch options now suppress. Two here would mean it came back.
+        self.assertEqual(
+            v.contract_for("cold_firstInstall")["counts"]["/v3/events/open"], 1
+        )
+
     def test_an_install_open_carrying_a_token_fails(self):
         # The EMT-4027 shape: nothing on the surface is ever an install, so the
-        # first open looks like any other. Counts and order stay identical --
-        # this field rule is the only thing that sees it.
+        # open looks like any other. Counts and order stay identical -- this
+        # field rule is the only thing that sees it.
         errors, _ = _run_validation(
             "cold_firstInstall_install_open_carries_token.txt",
             v.contract_for("cold_firstInstall"),
         )
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("randomized_bundle_token", errors[0])
-        self.assertIn("2 of 2 did", errors[0])
+        self.assertIn("1 of 1 did", errors[0])
 
-    def test_the_two_cold_scenarios_differ_by_open_count(self):
-        # A real cold link launch sends one open when the app was installed
-        # and two on a first install. Both expect exactly one open carrying
-        # the token, so the open count is the only discriminator left.
-        https = v.contract_for("cold_https")["counts"]["/v3/events/open"]
-        first = v.contract_for("cold_firstInstall")["counts"]["/v3/events/open"]
-        self.assertNotEqual(https, first)
+    def test_the_two_cold_scenarios_differ_by_the_token(self):
+        # Both send one resolve and one open, so the open count no longer
+        # tells them apart. The token on that open is the only discriminator.
+        https = v.contract_for("cold_https")
+        first = v.contract_for("cold_firstInstall")
+        self.assertEqual(https["counts"], first["counts"])
+        self.assertEqual(https["fields"]["/v3/events/open"]["randomized_bundle_token"], 1)
+        self.assertEqual(first["fields"]["/v3/events/open"]["randomized_bundle_token"], 0)
 
     def test_the_two_scenarios_reject_each_other_fixtures(self):
         https_as_first, _ = _run_validation(

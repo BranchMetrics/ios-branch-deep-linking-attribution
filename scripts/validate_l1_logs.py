@@ -256,21 +256,21 @@ SCENARIO_CONTRACTS = {
         "order": (("/v3/deeplink", "/v3/events/open"),),
         # The app was already installed, so the one open carries the token.
         # An open without one is an install-shaped launch, which is what
-        # cold_firstInstall exists for.
+        # cold_firstInstall exists for; the token is the only wire difference.
         "fields": {"/v3/events/open": {"randomized_bundle_token": 1}},
     },
     # cold_firstInstall: the same launch on a device with no prior install.
     # There is no install endpoint on this line -- install is decided client
     # side by randomizedBundleToken == nil and posts to /v3/events/open like
-    # any other. So the install shows up as the one open of the two that
-    # carries no token, and that count is the wire signal separating this
-    # scenario from cold_https. Both expect one token-carrying open; they
-    # differ by open count (2 here, 1 there), because the attributed open of a
-    # first install carries no token yet and a second open follows it with one.
+    # any other. One open, as in cold_https and for the same reason: the user
+    # activity in launchOptions suppresses the nil-URL lookup and the launch
+    # open behind it. That one open is the install, carrying `link_data` and
+    # no token, and the token's absence is what separates this scenario from
+    # cold_https.
     "cold_firstInstall": {
-        "counts": {"/v3/deeplink": 1, "/v3/events/open": 2},
+        "counts": {"/v3/deeplink": 1, "/v3/events/open": 1},
         "order": (("/v3/deeplink", "/v3/events/open"),),
-        "fields": {"/v3/events/open": {"randomized_bundle_token": 1}},
+        "fields": {"/v3/events/open": {"randomized_bundle_token": 0}},
     },
     # hot_uriScheme: a scheme URL opened into the foregrounded app, counted on
     # the delivery delta (--pre).
