@@ -141,6 +141,7 @@ void ForceCategoriesToLoad(void) {
     BOOL _resignedSinceActivation;
     NSDictionary *_heldAttributedOpenResponse;
     BOOL _openOwedAtOptIn;
+    BOOL _automaticOpenEvents;
 }
 
 // This isolation queue protects branch initialization and ensures things are processed in order.
@@ -198,6 +199,7 @@ void ForceCategoriesToLoad(void) {
 - (void)sendAutomaticUnattributedOpen;
 - (void)handleResolvedLinkResponse:(NSDictionary *)responseData;
 - (BOOL)hasHeldAttributedOpenResponse;
+- (void)sendHeldAttributedOpen;
 - (void)sendOpenAtBackground;
 - (void)warnIfOpenWaitsForSendOpen;
 
@@ -304,8 +306,17 @@ static NSString *bnc_branchKey = nil;
 // again from applyConfiguration: after singleton creation, so the branch.json enableLogging toggle
 // cannot override an explicit choice. Both paths are plain assignments, so the repeat is a no-op.
 + (void)applyLoggingConfiguration:(BranchConfiguration *)configuration {
+    [Branch applyLoggingConfiguration:configuration onlyAssignedValues:NO];
+}
+
+// When onlyAssigned is YES and logLevel is unassigned, a new loggingCallback keeps the current
+// threshold if logging is already enabled.
++ (void)applyLoggingConfiguration:(BranchConfiguration *)configuration onlyAssignedValues:(BOOL)onlyAssigned {
     if (configuration.loggingCallback) {
-        [Branch enableLoggingAtLevel:configuration.logLevel withCallback:configuration.loggingCallback];
+        BranchLogger *logger = [BranchLogger shared];
+        BOOL keepThreshold = onlyAssigned && !configuration.logLevelWasSet && logger.loggingEnabled;
+        BranchLogLevel level = keepThreshold ? logger.logLevelThreshold : configuration.logLevel;
+        [Branch enableLoggingAtLevel:level withCallback:configuration.loggingCallback];
     } else if (configuration.logLevelWasSet) {
         BranchLogger *logger = [BranchLogger shared];
         logger.loggingEnabled = YES;
@@ -315,22 +326,68 @@ static NSString *bnc_branchKey = nil;
 
 // Applies every configuration value that depends on the singleton already existing.
 + (void)applyConfiguration:(BranchConfiguration *)configuration toBranch:(Branch *)branch {
-    [Branch applyLoggingConfiguration:configuration];
-
-    // Request tracing & custom endpoints
-    if (configuration.requestTracingCallback) {
-        [Branch setCallbackForTracingRequests:configuration.requestTracingCallback];
-    }
-    if (configuration.apiUrl) {
-        [Branch setAPIUrl:configuration.apiUrl];
-    }
-    if (configuration.safeTrackAPIUrl) {
-        [Branch setSafetrackAPIURL:configuration.safeTrackAPIUrl];
-    }
-
     // Pasteboard
     if (configuration.checkPasteboardOnInstall) {
         [branch checkPasteboardOnInstall];
+    }
+
+    // App Clip
+    if (configuration.appClipAppGroup) {
+        [branch setAppClipAppGroup:configuration.appClipAppGroup];
+    }
+
+    [Branch applyUpdatableConfiguration:configuration toBranch:branch onlyAssignedValues:NO];
+
+    if (configuration.attributionLevel) {
+        branch.openOwedAtOptIn = NO;
+        @synchronized (branch) {
+            branch->_heldAttributedOpenResponse = nil;
+        }
+        [branch setConsumerProtectionAttributionLevel:configuration.attributionLevel resetSession:NO];
+    }
+
+    // A configured Branch has sent nothing yet, so the foreground-period marker starts clear. A no-op
+    // in production, where this runs once per process; it matters when a test reconfigures the singleton.
+    branch.openSentThisForegroundPeriod = NO;
+    branch.resignedSinceActivation = NO;
+    branch.openOwedAtOptIn = NO;
+}
+
+// Returns whether a value should be applied. Always YES when onlyAssigned is NO. Otherwise YES only
+// for an assigned value with no validationMessage; an invalid value logs a warning and returns NO.
++ (BOOL)shouldApplyValueWasSet:(BOOL)wasSet
+             validationMessage:(nullable NSString *)validationMessage
+            onlyAssignedValues:(BOOL)onlyAssigned {
+    if (!onlyAssigned) {
+        return YES;
+    }
+    if (!wasSet) {
+        return NO;
+    }
+    if (validationMessage) {
+        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"%@ Ignoring the updated value.", validationMessage] error:nil];
+        return NO;
+    }
+    return YES;
+}
+
+// Applies the configuration values that +updateConfiguration: may change after initialization.
+// When onlyAssigned is YES, unassigned and invalid values are skipped. Attribution level is applied
+// by each caller.
++ (void)applyUpdatableConfiguration:(BranchConfiguration *)configuration toBranch:(Branch *)branch onlyAssignedValues:(BOOL)onlyAssigned {
+    [Branch applyLoggingConfiguration:configuration onlyAssignedValues:onlyAssigned];
+
+    // Request tracing & custom endpoints. On an update, an assigned nil or empty value clears.
+    if (onlyAssigned ? configuration.requestTracingCallbackWasSet : configuration.requestTracingCallback != nil) {
+        [Branch setCallbackForTracingRequests:configuration.requestTracingCallback];
+    }
+    if (configuration.apiUrl &&
+        [Branch shouldApplyValueWasSet:YES validationMessage:[configuration apiUrlValidationMessage] onlyAssignedValues:onlyAssigned]) {
+        [Branch setAPIUrl:configuration.apiUrl];
+    }
+    if (configuration.safeTrackAPIUrl &&
+        [Branch shouldApplyValueWasSet:YES validationMessage:[configuration safeTrackAPIUrlValidationMessage] onlyAssignedValues:onlyAssigned]) {
+        [Branch setSafetrackAPIURL:configuration.safeTrackAPIUrl];
     }
 
     // Identity & environment. These mutate the BNCServerAPI / BNCPreferenceHelper singletons, whose
@@ -345,39 +402,44 @@ static NSString *bnc_branchKey = nil;
     }
 
     // Network
-    [branch setNetworkTimeout:configuration.networkTimeout];
-
-    [branch setMaxRetries:configuration.retryCount];
-
-    [branch setRetryInterval:configuration.retryInterval];
-
-    [Branch setSDKWaitTimeForThirdPartyAPIs:configuration.thirdPartyAPIsWaitTime];
+    if ([Branch shouldApplyValueWasSet:configuration.networkTimeoutWasSet
+                     validationMessage:[configuration networkTimeoutValidationMessage]
+                    onlyAssignedValues:onlyAssigned]) {
+        [branch setNetworkTimeout:configuration.networkTimeout];
+    }
+    if ([Branch shouldApplyValueWasSet:configuration.retryCountWasSet
+                     validationMessage:[configuration retryCountValidationMessage]
+                    onlyAssignedValues:onlyAssigned]) {
+        [branch setMaxRetries:configuration.retryCount];
+    }
+    if ([Branch shouldApplyValueWasSet:configuration.retryIntervalWasSet
+                     validationMessage:[configuration retryIntervalValidationMessage]
+                    onlyAssignedValues:onlyAssigned]) {
+        [branch setRetryInterval:configuration.retryInterval];
+    }
+    if ([Branch shouldApplyValueWasSet:configuration.thirdPartyAPIsWaitTimeWasSet
+                     validationMessage:[configuration thirdPartyAPIsWaitTimeValidationMessage]
+                    onlyAssignedValues:onlyAssigned]) {
+        [Branch setSDKWaitTimeForThirdPartyAPIs:configuration.thirdPartyAPIsWaitTime];
+    }
 
     // Privacy & attribution
-    [branch disableAdNetworkCallouts:configuration.adNetworkCalloutsDisabled];
-    [BNCPreferenceHelper sharedInstance].limitFacebookTracking = configuration.limitFacebookAttribution;
-
-    if (configuration.attributionLevel) {
-        branch.openOwedAtOptIn = NO;
-        @synchronized (branch) {
-            branch->_heldAttributedOpenResponse = nil;
-        }
-        [branch setConsumerProtectionAttributionLevel:configuration.attributionLevel resetSession:NO];
+    if ([Branch shouldApplyValueWasSet:configuration.adNetworkCalloutsDisabledWasSet validationMessage:nil onlyAssignedValues:onlyAssigned]) {
+        [branch disableAdNetworkCallouts:configuration.adNetworkCalloutsDisabled];
+    }
+    if ([Branch shouldApplyValueWasSet:configuration.limitFacebookAttributionWasSet validationMessage:nil onlyAssignedValues:onlyAssigned]) {
+        [BNCPreferenceHelper sharedInstance].limitFacebookTracking = configuration.limitFacebookAttribution;
     }
 
     if (configuration.dmaParameters) {
-        // DMA parameters are config-only: written to preferences here so BNCRequestFactory picks them up.
-        BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
-        prefs.eeaRegion = configuration.dmaParameters.eeaRegion;
-        prefs.adPersonalizationConsent = configuration.dmaParameters.adPersonalizationConsent;
-        prefs.adUserDataUsageConsent = configuration.dmaParameters.adUserDataUsageConsent;
+        [branch setDMAParameters:configuration.dmaParameters];
     }
 
     // URL collection
-    if (configuration.allowedSchemes.count > 0) {
+    if (onlyAssigned ? configuration.allowedSchemesWasSet : configuration.allowedSchemes.count > 0) {
         [branch setAllowedSchemes:configuration.allowedSchemes];
     }
-    if (configuration.urlPatternsToIgnore.count > 0) {
+    if (onlyAssigned ? configuration.urlPatternsToIgnoreWasSet : configuration.urlPatternsToIgnore.count > 0) {
         [branch setUrlPatternsToIgnore:configuration.urlPatternsToIgnore];
     }
 
@@ -386,23 +448,69 @@ static NSString *bnc_branchKey = nil;
         [branch setRequestMetadataKey:key value:configuration.requestMetadata[key]];
     }
 
-    // App Clip
-    if (configuration.appClipAppGroup) {
-        [branch setAppClipAppGroup:configuration.appClipAppGroup];
-    }
-
     // Debugging
-    if (configuration.deepLinkDebugParams) {
+    if (onlyAssigned ? configuration.deepLinkDebugParamsWasSet : configuration.deepLinkDebugParams != nil) {
         [branch setDeepLinkDebugMode:configuration.deepLinkDebugParams];
     }
 
     // Open tracking: when automatic open tracking is disabled the developer is responsible for -sendOpen.
-    branch.automaticOpenEvents = configuration.automaticOpenEvents;
-    // A configured Branch has sent nothing yet, so the foreground-period marker starts clear. A no-op
-    // in production, where this runs once per process; it matters when a test reconfigures the singleton.
-    branch.openSentThisForegroundPeriod = NO;
-    branch.resignedSinceActivation = NO;
-    branch.openOwedAtOptIn = NO;
+    if ([Branch shouldApplyValueWasSet:configuration.automaticOpenEventsWasSet validationMessage:nil onlyAssignedValues:onlyAssigned]) {
+        branch.automaticOpenEvents = configuration.automaticOpenEvents;
+    }
+}
+
++ (void)updateConfiguration:(BranchConfiguration *)configuration {
+    if (!configuration) {
+        NSString *errorMessage = @"A BranchConfiguration is required to update Branch.";
+        NSError *configurationError = [NSError branchErrorWithCode:BNCInvalidConfigurationError localizedMessage:errorMessage];
+        [[BranchLogger shared] logError:errorMessage error:configurationError];
+        return;
+    }
+
+    Branch *branch = nil;
+    BOOL wasAutomaticOpenEvents = NO;
+    @synchronized ([Branch class]) {
+        if (!bnc_didInitializeWithConfiguration) {
+            NSString *errorMessage = @"+[Branch updateConfiguration:] was called before +[Branch initialize:].";
+            NSError *initError = [NSError branchErrorWithCode:BNCInitError localizedMessage:errorMessage];
+            [[BranchLogger shared] logError:errorMessage error:initError];
+            return;
+        }
+
+        [Branch warnOnInitOnlyFieldsInConfiguration:configuration];
+
+        branch = [Branch getInstanceInternal:self.branchKey];
+        wasAutomaticOpenEvents = branch.automaticOpenEvents;
+        [Branch applyUpdatableConfiguration:configuration toBranch:branch onlyAssignedValues:YES];
+    }
+
+    // Applies a changed attribution level, starting a new session only when leaving NONE.
+    BranchAttributionLevel level = configuration.attributionLevel;
+    if (level && ![level isEqualToString:[BNCPreferenceHelper sharedInstance].attributionLevel]) {
+        [branch setConsumerProtectionAttributionLevel:level resetSession:[Branch attributionLevelNone]];
+    }
+
+    // Sends any held attributed open when automatic open tracking was just turned on.
+    if (!wasAutomaticOpenEvents && branch.automaticOpenEvents) {
+        [branch sendHeldAttributedOpen];
+    }
+}
+
+// Logs a warning for each initialization-only field that differs from the running SDK. None of
+// these fields are applied by +updateConfiguration:.
++ (void)warnOnInitOnlyFieldsInConfiguration:(BranchConfiguration *)configuration {
+    if (![configuration.branchKey isEqualToString:self.branchKey]) {
+        [[BranchLogger shared] logWarning:@"branchKey is set once by +[Branch initialize:]. Ignoring the updated value." error:nil];
+    }
+    if (configuration.remoteInterface && configuration.remoteInterface != [Branch networkServiceClass]) {
+        [[BranchLogger shared] logWarning:@"remoteInterface is set once by +[Branch initialize:]. Ignoring the updated value." error:nil];
+    }
+    if (configuration.appClipAppGroup && ![configuration.appClipAppGroup isEqualToString:[BNCAppGroupsData shared].appGroup]) {
+        [[BranchLogger shared] logWarning:@"appClipAppGroup is set once by +[Branch initialize:]. Ignoring the updated value." error:nil];
+    }
+    if (configuration.checkPasteboardOnInstall && ![BNCPasteboard sharedInstance].checkOnInstall) {
+        [[BranchLogger shared] logWarning:@"checkPasteboardOnInstall is set once by +[Branch initialize:]. Ignoring the updated value." error:nil];
+    }
 }
 
 - (id)initWithInterface:(BNCServerInterface *)interface
@@ -706,6 +814,19 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
             [[BranchLogger shared] logWarning:@"Invalid anonID provided. Must be a non-nil NSString." error:nil];
         }
     }
+}
+
+- (void)setDMAParameters:(BranchDMAParameters *)dmaParameters {
+    if (!dmaParameters) {
+        [[BranchLogger shared] logWarning:@"Invalid DMA parameters provided. Must be a non-nil BranchDMAParameters." error:nil];
+        return;
+    }
+
+    self.preferenceHelper.eeaRegion = dmaParameters.eeaRegion;
+    self.preferenceHelper.adPersonalizationConsent = dmaParameters.adPersonalizationConsent;
+    self.preferenceHelper.adUserDataUsageConsent = dmaParameters.adUserDataUsageConsent;
+
+    [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Setting DMA parameters to eeaRegion: %d, adPersonalizationConsent: %d, adUserDataUsageConsent: %d", dmaParameters.eeaRegion, dmaParameters.adPersonalizationConsent, dmaParameters.adUserDataUsageConsent] error:nil];
 }
 
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level {
@@ -1717,6 +1838,18 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     }
 }
 
+- (BOOL)automaticOpenEvents {
+    @synchronized (self) {
+        return _automaticOpenEvents;
+    }
+}
+
+- (void)setAutomaticOpenEvents:(BOOL)automaticOpenEvents {
+    @synchronized (self) {
+        _automaticOpenEvents = automaticOpenEvents;
+    }
+}
+
 static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     if (block) {
         if ([NSThread isMainThread]) {
@@ -2280,6 +2413,24 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 - (void)enqueueManualOpenNow {
     BranchRequestOpen *openReq = [self manualOpenRequest];
     @synchronized (self) {
+        [self enqueueManualOpenRequest:openReq];
+    }
+}
+
+// Sends the held attributed open now. Does nothing at NONE, when nothing is held, or while a manual
+// open is pending, since that open takes the held response.
+- (void)sendHeldAttributedOpen {
+    if ([Branch attributionLevelNone] ||
+        ![self hasHeldAttributedOpenResponse] ||
+        [self.requestQueue hasPendingManualOpen]) {
+        return;
+    }
+
+    BranchRequestOpen *openReq = [self manualOpenRequest];
+    @synchronized (self) {
+        if (![self hasHeldAttributedOpenResponse] || [self.requestQueue hasPendingManualOpen]) {
+            return;
+        }
         [self enqueueManualOpenRequest:openReq];
     }
 }
