@@ -20,7 +20,6 @@
 @interface Branch (BranchUpdateConfigurationTest)
 + (void)resetInitializationGuardForTesting;
 + (void)resetBranchKey;
-+ (void)setUseTestBranchKey:(BOOL)useTestKey;
 - (BranchRequestOpen *)openRequest;
 @end
 
@@ -42,7 +41,6 @@
 
 - (void)tearDown {
     [Branch resetBranchKey];
-    [Branch setUseTestBranchKey:NO];
     [Branch resetInitializationGuardForTesting];
     [self resetSharedState];
     [super tearDown];
@@ -104,7 +102,6 @@
 
 - (void)testFreshConfigurationReportsNoValuesAssigned {
     BranchConfiguration *config = [self updateConfiguration];
-    XCTAssertFalse(config.testModeWasSet);
     XCTAssertFalse(config.networkTimeoutWasSet);
     XCTAssertFalse(config.retryCountWasSet);
     XCTAssertFalse(config.retryIntervalWasSet);
@@ -139,7 +136,6 @@
 
 - (void)testAssigningDefaultValuesMarksThemAssigned {
     BranchConfiguration *config = [self updateConfiguration];
-    config.testMode = NO;
     config.networkTimeout = config.networkTimeout;
     config.retryCount = config.retryCount;
     config.retryInterval = config.retryInterval;
@@ -148,7 +144,6 @@
     config.adNetworkCalloutsDisabled = NO;
     config.automaticOpenEvents = YES;
 
-    XCTAssertTrue(config.testModeWasSet);
     XCTAssertTrue(config.networkTimeoutWasSet);
     XCTAssertTrue(config.retryCountWasSet);
     XCTAssertTrue(config.retryIntervalWasSet);
@@ -347,26 +342,6 @@
     XCTAssertEqualObjects([Branch branchKey], @"key_live_abc");
     XCTAssertEqual([BNCPreferenceHelper sharedInstance].retryCount, 9);
     XCTAssertTrue([self warningsContain:@"branchKey is set once"]);
-}
-
-- (void)testUpdateIgnoresTestMode {
-    [self initializeWith:nil];
-
-    BranchConfiguration *update = [self updateConfiguration];
-    update.testMode = YES;
-    [Branch updateConfiguration:update];
-
-    XCTAssertFalse([Branch useTestBranchKey]);
-    XCTAssertTrue([self warningsContain:@"testMode is set once"]);
-}
-
-- (void)testUpdateDoesNotWarnAboutUnassignedTestMode {
-    XCTAssertNotNil([Branch initialize:[BranchConfiguration debug:@"key_test_abc"]]);
-    [self captureWarnings];
-
-    [Branch updateConfiguration:[[BranchConfiguration alloc] initWithKey:@"key_test_abc"]];
-
-    XCTAssertFalse([self warningsContain:@"testMode is set once"]);
 }
 
 - (void)testUpdateIgnoresCheckPasteboardOnInstall {

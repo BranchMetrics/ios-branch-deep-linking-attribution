@@ -220,35 +220,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 /// @return Returns true if the Branch test key should be used.
 + (BOOL)useTestBranchKey;
 
-/**
- Directly sets the Branch key to be used.  Branch usually reads the Branch key from your app's
- Info.plist file which is recommended and more convenient.  But the Branch key can also be set
- with this method. See the documentation at
-   https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/#configure-xcode-project
- for information about configuring your app with Branch keys.
-
- You can only set the Branch key once per app run.
-
- @param branchKey The Branch key to use.
- @param error NSError will be set if Branch encounters a key error.
-*/
-+ (void)setBranchKey:(NSString *)branchKey error:(NSError * _Nullable * _Nullable)error;
-
-/**
- Directly sets the Branch key to be used.  Branch usually reads the Branch key from your app's
- Info.plist file which is recommended and more convenient.  But the Branch key can also be set
- with this method. See the documentation at
- https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/#configure-xcode-project
- for information about configuring your app with Branch keys.
-
- You can only set the Branch key once per app run.  Any errors are logged.
-
- @param branchKey The Branch key to use.
- */
-+ (void)setBranchKey:(NSString *)branchKey;
-
-
-/// @return Returns the current Branch key.
+/// @return The key from the `BranchConfiguration` passed to `+initialize:`, or nil before initialization.
 + (nullable NSString *) branchKey;
 
 + (BOOL)branchKeyIsSet;
@@ -383,7 +355,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  levels starts no new session. Turning `automaticOpenEvents` on sends any attributed open held for
  `-sendOpen` immediately.
 
- `branchKey`, `testMode`, `remoteInterface`, `appClipAppGroup` and `checkPasteboardOnInstall` are
+ `branchKey`, `remoteInterface`, `appClipAppGroup` and `checkPasteboardOnInstall` are
  fixed by `+initialize:`; a different value here logs a warning and is ignored. An assigned value
  that fails validation logs a warning and is skipped; the remaining values are still applied.
 

@@ -27,7 +27,6 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
 @property (nonatomic, copy, readwrite) NSString *branchKey;
 @property (nonatomic, assign, readwrite) BOOL logLevelWasSet;
 @property (nonatomic, assign, readwrite) BOOL euEndpointWasSet;
-@property (nonatomic, assign, readwrite) BOOL testModeWasSet;
 @property (nonatomic, assign, readwrite) BOOL networkTimeoutWasSet;
 @property (nonatomic, assign, readwrite) BOOL retryCountWasSet;
 @property (nonatomic, assign, readwrite) BOOL retryIntervalWasSet;
@@ -53,7 +52,6 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
     _branchKey = [branchKey copy];
 
     // Identity & environment
-    _testMode = NO;
     _apiUrl = nil;
     _safeTrackAPIUrl = nil;
     _cdnBaseUrl = nil;
@@ -123,11 +121,6 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
     _euEndpointWasSet = YES;
 }
 
-- (void)setTestMode:(BOOL)testMode {
-    _testMode = testMode;
-    _testModeWasSet = YES;
-}
-
 #pragma mark - Network
 
 - (void)setNetworkTimeout:(NSTimeInterval)networkTimeout {
@@ -181,7 +174,6 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
 + (instancetype)debug:(NSString *)branchKey {
     BranchConfiguration *config = [[self alloc] initWithKey:branchKey];
     config.logLevel = BranchLogLevelVerbose;
-    config.testMode = YES;
     return config;
 }
 
@@ -265,6 +257,11 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
 - (nullable NSString *)branchKeyValidationMessage {
     if (self.branchKey.length == 0) {
         return @"Branch key cannot be empty. Get your key from dashboard.branch.io/settings.";
+    }
+    if (![self.branchKey hasPrefix:@"key_live_"] && ![self.branchKey hasPrefix:@"key_test_"]) {
+        return [NSString stringWithFormat:
+            @"Invalid Branch key format: '%@'. The key must start with key_live_ or key_test_. "
+             "Get your key from dashboard.branch.io/settings.", self.branchKey];
     }
     return nil;
 }

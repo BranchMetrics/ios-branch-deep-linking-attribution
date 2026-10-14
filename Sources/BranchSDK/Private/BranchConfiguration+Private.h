@@ -33,7 +33,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// YES once the matching property has been assigned through its setter, including an assignment of
 /// its default value. `+[Branch updateConfiguration:]` applies only the assigned values.
-@property (nonatomic, assign, readonly) BOOL testModeWasSet;
 @property (nonatomic, assign, readonly) BOOL networkTimeoutWasSet;
 @property (nonatomic, assign, readonly) BOOL retryCountWasSet;
 @property (nonatomic, assign, readonly) BOOL retryIntervalWasSet;
