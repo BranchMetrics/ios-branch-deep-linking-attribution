@@ -221,9 +221,14 @@ SCENARIO_CONTRACTS = {
     # data; that is a field-level assertion, and this layer is bounded at
     # counts and required-field presence, so only the endpoint half is
     # covered here.
+    #
+    # One `/v3/deeplink` is expected: `requestDeepLinkDataWithLaunchOptions:`
+    # is a required AppDelegate call, and with no URL or user activity in the
+    # launch options it sends the nil-URL deferred lookup ahead of the open.
+    # A launch that carries a link early-returns instead (see cold_https).
     "install": {
-        "counts": {"/v3/events/open": 1, "/v3/deeplink": 0},
-        "order": (),
+        "counts": {"/v3/events/open": 1, "/v3/deeplink": 1},
+        "order": (("/v3/deeplink", "/v3/events/open"),),
         "fields": {},
     },
     # attribution_none: a link resolved while the consumer-protection level
@@ -238,30 +243,34 @@ SCENARIO_CONTRACTS = {
         "fields": {},
     },
     # cold_https: a Universal Link delivered into a freshly launched
-    # process. Two opens is correct, not a duplicate: the launch fires one
-    # carrying no link field, then the resolution's attributed open carries
-    # `link_data`. Requiring one would fail a healthy SDK. The plan also asks
-    # that the resolution carry the link; that is a field-level assertion this
-    # layer does not make, as with attribution_none.
+    # process. One open, not two: a real cold Universal Link launch puts the
+    # user activity in launchOptions, so `requestDeepLinkDataWithLaunchOptions:`
+    # returns early and sends no nil-URL deferred lookup. That lookup and the
+    # launch open behind it are what used to make this two. What remains is
+    # the resolution and the open that attributes it, which carries
+    # `link_data`. The plan also asks that the resolution carry the link; that
+    # is a field-level assertion this layer does not make, as with
+    # attribution_none.
     "cold_https": {
-        "counts": {"/v3/deeplink": 1, "/v3/events/open": 2},
+        "counts": {"/v3/deeplink": 1, "/v3/events/open": 1},
         "order": (("/v3/deeplink", "/v3/events/open"),),
-        # Both opens carry the token: the app was already installed, so the
-        # launch open has one and the attributed open has one. This is what
-        # separates cold_https from cold_firstInstall -- the counts and
-        # order are identical.
-        "fields": {"/v3/events/open": {"randomized_bundle_token": 2}},
+        # The app was already installed, so the one open carries the token.
+        # An open without one is an install-shaped launch, which is what
+        # cold_firstInstall exists for; the token is the only wire difference.
+        "fields": {"/v3/events/open": {"randomized_bundle_token": 1}},
     },
     # cold_firstInstall: the same launch on a device with no prior install.
     # There is no install endpoint on this line -- install is decided client
     # side by randomizedBundleToken == nil and posts to /v3/events/open like
-    # any other. So the install shows up as the one open of the two that
-    # carries no token, and that count is the only wire signal separating this
-    # scenario from cold_https.
+    # any other. One open, as in cold_https and for the same reason: the user
+    # activity in launchOptions suppresses the nil-URL lookup and the launch
+    # open behind it. That one open is the install, carrying `link_data` and
+    # no token, and the token's absence is what separates this scenario from
+    # cold_https.
     "cold_firstInstall": {
-        "counts": {"/v3/deeplink": 1, "/v3/events/open": 2},
+        "counts": {"/v3/deeplink": 1, "/v3/events/open": 1},
         "order": (("/v3/deeplink", "/v3/events/open"),),
-        "fields": {"/v3/events/open": {"randomized_bundle_token": 1}},
+        "fields": {"/v3/events/open": {"randomized_bundle_token": 0}},
     },
     # hot_uriScheme: a scheme URL opened into the foregrounded app, counted on
     # the delivery delta (--pre).

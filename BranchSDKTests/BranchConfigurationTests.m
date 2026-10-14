@@ -23,15 +23,16 @@
 + (void)resetBranchKey;
 @end
 
+static NSString * const kRealBranchKey = @"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB";
+
 @interface BranchConfigurationTests : XCTestCase
 @end
 
 @implementation BranchConfigurationTests
 
-// +initialize: writes the fake key below into the process-wide branch key, which is set-once and
-// cached by +branchKey. Left in place it leaks into every later test class in this (non-parallel)
-// suite -- BranchQRCodeTests then sends "key_live_abc" to the QR endpoint and gets a 400. Reset the
-// key and the guard around each test so this class leaves the process as it found it.
+// +initialize: writes the fake key below into the process-wide branch key, which is set-once.
+// Reset the key and the guard before each test, and re-initialize with the real test key after, so
+// later test classes find the SDK initialized with a key the server accepts.
 // BranchLogger and BNCServerAPI are also singletons whose state leaks between tests unless reset.
 - (void)setUp {
     [super setUp];
@@ -44,6 +45,7 @@
 - (void)tearDown {
     [Branch resetBranchKey];
     [Branch resetInitializationGuardForTesting];
+    [Branch initialize:[[BranchConfiguration alloc] initWithKey:kRealBranchKey]];
     [self resetSharedLogger];
     [self resetSharedServerAPI];
     [super tearDown];
@@ -67,7 +69,6 @@
 - (void)testDefaults {
     BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_abc"];
     XCTAssertEqualObjects(config.branchKey, @"key_live_abc");
-    XCTAssertFalse(config.testMode);
     XCTAssertNil(config.apiUrl);
     XCTAssertNil(config.safeTrackAPIUrl);
     XCTAssertNil(config.cdnBaseUrl);
@@ -101,14 +102,12 @@
     BranchConfiguration *config = [BranchConfiguration debug:@"key_test_abc"];
     XCTAssertEqual(config.logLevel, BranchLogLevelVerbose);
     XCTAssertTrue(config.logLevelWasSet, @"The debug preset must count as an explicit log level");
-    XCTAssertTrue(config.testMode);
 }
 
 - (void)testProductionFactory {
     BranchConfiguration *config = [BranchConfiguration production:@"key_live_abc"];
     XCTAssertEqual(config.logLevel, BranchLogLevelWarning);
     XCTAssertTrue(config.logLevelWasSet);
-    XCTAssertFalse(config.testMode);
 }
 
 - (void)testComplianceFactory {
@@ -311,6 +310,34 @@
     [self assertValidationFails:config reasonContains:@"Branch key cannot be empty"];
 }
 
+- (void)testValidateRejectsKeyWithoutPrefix {
+    BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"abc"];
+    [self assertValidationFails:config reasonContains:@"Invalid Branch key format: 'abc'"];
+    [self assertValidationFails:config reasonContains:@"key_live_ or key_test_"];
+}
+
+- (void)testValidateRejectsPrefixWithoutUnderscore {
+    BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live"];
+    [self assertValidationFails:config reasonContains:@"Invalid Branch key format: 'key_live'"];
+    [self assertValidationFails:config reasonContains:@"key_live_ or key_test_"];
+}
+
+- (void)testValidateAcceptsLiveAndTestPrefixes {
+    NSError *error = nil;
+    XCTAssertTrue([[[BranchConfiguration alloc] initWithKey:@"key_live_abc"] validate:&error]);
+    XCTAssertNil(error);
+    XCTAssertTrue([[[BranchConfiguration alloc] initWithKey:@"key_test_abc"] validate:&error]);
+    XCTAssertNil(error);
+}
+
+- (void)testValidateReportsEmptyKeyBeforeFormat {
+    NSError *error = nil;
+    XCTAssertFalse([[[BranchConfiguration alloc] initWithKey:@""] validate:&error]);
+    NSString *reason = error.userInfo[NSLocalizedFailureReasonErrorKey];
+    XCTAssertTrue([reason containsString:@"Branch key cannot be empty"], @"%@", reason);
+    XCTAssertFalse([reason containsString:@"Invalid Branch key format"], @"%@", reason);
+}
+
 - (void)testValidateRejectsZeroTimeout {
     BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_abc"];
     config.networkTimeout = 0;
@@ -414,6 +441,16 @@
     }
 }
 
+- (void)testInitializeWithBadlyPrefixedKeyReturnsNilAndDoesNotConsumeTheGuard {
+    BranchConfiguration *invalid = [[BranchConfiguration alloc] initWithKey:@"abc"];
+    XCTAssertNil([Branch initialize:invalid]);
+    XCTAssertNil([Branch branchKey], @"A rejected key must not be set");
+
+    BranchConfiguration *valid = [[BranchConfiguration alloc] initWithKey:@"key_live_abc"];
+    XCTAssertNotNil([Branch initialize:valid]);
+    XCTAssertEqualObjects([Branch branchKey], @"key_live_abc");
+}
+
 - (void)testInitializeWithInvalidConfigurationDoesNotConsumeTheGuard {
     // A rejected configuration must leave the singleton uninitialized, so a corrected call still
     // applies its settings rather than hitting the reinitialization warning.
@@ -486,6 +523,35 @@
                           BRANCH_KEY_SOURCE_INIT_FUNCTION);
 }
 
+#pragma mark - Branch key
+
+- (void)testBranchKeyIsNilWithoutInitialize {
+    XCTAssertNil([Branch branchKey], @"There is no fallback key source");
+    XCTAssertFalse([Branch branchKeyIsSet]);
+}
+
+- (void)testBranchKeyEqualsConfiguredKeyAfterInitialize {
+    BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_abc"];
+    XCTAssertNotNil([Branch initialize:config]);
+    XCTAssertEqualObjects([Branch branchKey], config.branchKey);
+    XCTAssertTrue([Branch branchKeyIsSet]);
+}
+
+- (void)testTestKeyPrefixSetsUseTestBranchKey {
+    XCTAssertNotNil([Branch initialize:[[BranchConfiguration alloc] initWithKey:@"key_test_abc"]]);
+    XCTAssertTrue([Branch useTestBranchKey]);
+}
+
+- (void)testLiveKeyPrefixClearsUseTestBranchKey {
+    XCTAssertNotNil([Branch initialize:[[BranchConfiguration alloc] initWithKey:@"key_test_abc"]]);
+    XCTAssertTrue([Branch useTestBranchKey]);
+
+    [Branch resetBranchKey];
+    [Branch resetInitializationGuardForTesting];
+    XCTAssertNotNil([Branch initialize:[[BranchConfiguration alloc] initWithKey:@"key_live_abc"]]);
+    XCTAssertFalse([Branch useTestBranchKey]);
+}
+
 - (void)testSecondInitializeIsIgnoredAndReturnsSameInstance {
     [Branch resetInitializationGuardForTesting];
 
@@ -540,6 +606,33 @@
     [Branch initialize:second];
 
     XCTAssertEqualWithAccuracy([BNCPreferenceHelper sharedInstance].timeout, 15.0, 0.001);
+}
+
+// initialize: applies every scalar, so values left at their defaults replace whatever is already set.
+- (void)testInitializeAppliesDefaultsForUnassignedValues {
+    [Branch resetInitializationGuardForTesting];
+    Branch *branch = [Branch initialize:[[BranchConfiguration alloc] initWithKey:@"key_live_abc"]];
+    XCTAssertNotNil(branch);
+
+    BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
+    prefs.timeout = 30.0;
+    prefs.retryCount = 9;
+    prefs.retryInterval = 4.0;
+    prefs.thirdPartyAPIsWaitTime = 3.0;
+    prefs.disableAdNetworkCallouts = YES;
+    prefs.limitFacebookTracking = YES;
+    [branch setValue:@NO forKey:@"automaticOpenEvents"];
+
+    [Branch resetInitializationGuardForTesting];
+    XCTAssertNotNil([Branch initialize:[[BranchConfiguration alloc] initWithKey:@"key_live_abc"]]);
+
+    XCTAssertEqualWithAccuracy(prefs.timeout, 5.5, 0.001);
+    XCTAssertEqual(prefs.retryCount, 3);
+    XCTAssertEqualWithAccuracy(prefs.retryInterval, 1.0, 0.001);
+    XCTAssertEqualWithAccuracy(prefs.thirdPartyAPIsWaitTime, 0.5, 0.001);
+    XCTAssertFalse(prefs.disableAdNetworkCallouts);
+    XCTAssertFalse(prefs.limitFacebookTracking);
+    XCTAssertTrue([[branch valueForKey:@"automaticOpenEvents"] boolValue]);
 }
 
 @end
