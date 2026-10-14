@@ -14,11 +14,14 @@
 #import "BNCServerAPI.h"
 #import "BNCPasteboard.h"
 #import "BNCPartnerParameters.h"
+#import "BNCURLFilter.h"
+#import "BranchRequestOpen.h"
 
 @interface Branch (BranchUpdateConfigurationTest)
 + (void)resetInitializationGuardForTesting;
 + (void)resetBranchKey;
 + (void)setUseTestBranchKey:(BOOL)useTestKey;
+- (BranchRequestOpen *)openRequest;
 @end
 
 @interface BranchUpdateConfigurationTests : XCTestCase
@@ -109,6 +112,29 @@
     XCTAssertFalse(config.limitFacebookAttributionWasSet);
     XCTAssertFalse(config.adNetworkCalloutsDisabledWasSet);
     XCTAssertFalse(config.automaticOpenEventsWasSet);
+    XCTAssertFalse(config.requestTracingCallbackWasSet);
+    XCTAssertFalse(config.allowedSchemesWasSet);
+    XCTAssertFalse(config.urlPatternsToIgnoreWasSet);
+    XCTAssertFalse(config.deepLinkDebugParamsWasSet);
+}
+
+- (void)testAssigningNilOrEmptyMarksClearableValuesAssigned {
+    BranchConfiguration *config = [self updateConfiguration];
+    config.requestTracingCallback = nil;
+    config.allowedSchemes = @[];
+    config.urlPatternsToIgnore = nil;
+    config.deepLinkDebugParams = nil;
+
+    XCTAssertTrue(config.requestTracingCallbackWasSet);
+    XCTAssertTrue(config.allowedSchemesWasSet);
+    XCTAssertTrue(config.urlPatternsToIgnoreWasSet);
+    XCTAssertTrue(config.deepLinkDebugParamsWasSet);
+}
+
+- (void)testAddingAnAllowedSchemeMarksAllowedSchemesAssigned {
+    BranchConfiguration *config = [self updateConfiguration];
+    [config addAllowedScheme:@"myapp"];
+    XCTAssertTrue(config.allowedSchemesWasSet);
 }
 
 - (void)testAssigningDefaultValuesMarksThemAssigned {
@@ -181,6 +207,97 @@
     [Branch updateConfiguration:update];
 
     XCTAssertEqualWithAccuracy([BNCPreferenceHelper sharedInstance].timeout, 7.0, 0.001);
+}
+
+#pragma mark - Clearing values
+
+- (void)testUpdateClearsAllowedSchemesWithAnEmptyList {
+    Branch *branch = [self initializeWith:^(BranchConfiguration *config) {
+        config.allowedSchemes = @[@"myapp"];
+    }];
+
+    BranchConfiguration *keep = [self updateConfiguration];
+    keep.retryCount = 4;
+    [Branch updateConfiguration:keep];
+    XCTAssertEqualObjects([branch valueForKey:@"allowedSchemeList"], @[@"myapp"],
+                          @"An update that does not assign allowedSchemes must keep them.");
+
+    BranchConfiguration *clear = [self updateConfiguration];
+    clear.allowedSchemes = @[];
+    [Branch updateConfiguration:clear];
+    XCTAssertEqual([[branch valueForKey:@"allowedSchemeList"] count], 0);
+}
+
+- (void)testUpdateClearsUrlPatternsToIgnoreWithNil {
+    Branch *branch = [self initializeWith:^(BranchConfiguration *config) {
+        config.urlPatternsToIgnore = @[@"^https://example\\.com/secret"];
+    }];
+    NSURL *url = [NSURL URLWithString:@"https://example.com/secret/1"];
+    XCTAssertNotNil([[branch valueForKey:@"userURLFilter"] patternMatchingURL:url],
+                    @"Precondition: the custom pattern must be in effect.");
+
+    BranchConfiguration *clear = [self updateConfiguration];
+    clear.urlPatternsToIgnore = nil;
+    [Branch updateConfiguration:clear];
+
+    XCTAssertNil([[branch valueForKey:@"userURLFilter"] patternMatchingURL:url]);
+}
+
+- (void)testUpdateClearsDeepLinkDebugParamsWithNil {
+    Branch *branch = [self initializeWith:^(BranchConfiguration *config) {
+        config.deepLinkDebugParams = @{ @"$debug": @"on" };
+    }];
+
+    BranchConfiguration *keep = [self updateConfiguration];
+    keep.retryCount = 4;
+    [Branch updateConfiguration:keep];
+    XCTAssertNotNil([branch valueForKey:@"deepLinkDebugParams"],
+                    @"An update that does not assign deepLinkDebugParams must keep them.");
+
+    BranchConfiguration *clear = [self updateConfiguration];
+    clear.deepLinkDebugParams = nil;
+    [Branch updateConfiguration:clear];
+    XCTAssertNil([branch valueForKey:@"deepLinkDebugParams"]);
+}
+
+- (void)testUpdateClearsRequestTracingCallbackWithNil {
+    Branch *branch = [self initializeWith:^(BranchConfiguration *config) {
+        config.requestTracingCallback = ^(NSString *url, NSDictionary *request, NSDictionary *response, NSError *error, NSString *requestServiceURL) {};
+    }];
+    XCTAssertNotNil([branch openRequest].traceCallback, @"Precondition: the tracing callback must be set.");
+
+    BranchConfiguration *clear = [self updateConfiguration];
+    clear.requestTracingCallback = nil;
+    [Branch updateConfiguration:clear];
+
+    XCTAssertNil([branch openRequest].traceCallback);
+}
+
+#pragma mark - Logging
+
+- (void)testUpdateWithOnlyALoggingCallbackKeepsTheCurrentLogLevel {
+    [self initializeWith:^(BranchConfiguration *config) {
+        config.logLevel = BranchLogLevelDebug;
+    }];
+
+    BranchConfiguration *update = [self updateConfiguration];
+    update.loggingCallback = ^(NSString *message, BranchLogLevel logLevel, NSError *error) {};
+    [Branch updateConfiguration:update];
+
+    XCTAssertEqual([BranchLogger shared].logLevelThreshold, BranchLogLevelDebug);
+}
+
+- (void)testUpdateWithALoggingCallbackAndLogLevelAppliesTheLevel {
+    [self initializeWith:^(BranchConfiguration *config) {
+        config.logLevel = BranchLogLevelDebug;
+    }];
+
+    BranchConfiguration *update = [self updateConfiguration];
+    update.loggingCallback = ^(NSString *message, BranchLogLevel logLevel, NSError *error) {};
+    update.logLevel = BranchLogLevelWarning;
+    [Branch updateConfiguration:update];
+
+    XCTAssertEqual([BranchLogger shared].logLevelThreshold, BranchLogLevelWarning);
 }
 
 #pragma mark - Invalid values are skipped

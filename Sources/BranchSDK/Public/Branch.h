@@ -372,10 +372,20 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Applies a new `BranchConfiguration` to the running SDK without reinitializing it.
 
  Only the values assigned on `configuration` are applied; everything else keeps its current setting.
- Updated values take effect on the next request or link handled. `branchKey`, `testMode`,
- `remoteInterface`, `appClipAppGroup` and `checkPasteboardOnInstall` are fixed by `+initialize:`;
- a different value here logs a warning and is ignored. An assigned value that fails validation logs
- a warning and is skipped; the remaining values are still applied.
+ Updated values take effect on the next request or link handled. Assigning nil or an empty list to
+ `requestTracingCallback`, `allowedSchemes`, `urlPatternsToIgnore` or `deepLinkDebugParams` clears it.
+ `requestMetadata` is merged key by key and `dmaParameters` replaces the current values; neither can
+ be cleared here. `apiUrl`, `safeTrackAPIUrl`, `cdnBaseUrl` and `loggingCallback` are applied only
+ when non-nil. A new `loggingCallback` with no `logLevel` keeps the current log level.
+
+ A changed `attributionLevel` is applied as by `-setConsumerProtectionAttributionLevel:resetSession:`,
+ with `resetSession` YES only when leaving `BranchAttributionLevelNone`, so moving between two other
+ levels starts no new session. Turning `automaticOpenEvents` on sends any attributed open held for
+ `-sendOpen` immediately.
+
+ `branchKey`, `testMode`, `remoteInterface`, `appClipAppGroup` and `checkPasteboardOnInstall` are
+ fixed by `+initialize:`; a different value here logs a warning and is ignored. An assigned value
+ that fails validation logs a warning and is skipped; the remaining values are still applied.
 
  @param configuration The updated configuration. Must not be nil.
  */

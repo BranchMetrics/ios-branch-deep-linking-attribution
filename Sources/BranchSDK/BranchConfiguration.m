@@ -35,6 +35,10 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
 @property (nonatomic, assign, readwrite) BOOL limitFacebookAttributionWasSet;
 @property (nonatomic, assign, readwrite) BOOL adNetworkCalloutsDisabledWasSet;
 @property (nonatomic, assign, readwrite) BOOL automaticOpenEventsWasSet;
+@property (nonatomic, assign, readwrite) BOOL requestTracingCallbackWasSet;
+@property (nonatomic, assign, readwrite) BOOL allowedSchemesWasSet;
+@property (nonatomic, assign, readwrite) BOOL urlPatternsToIgnoreWasSet;
+@property (nonatomic, assign, readwrite) BOOL deepLinkDebugParamsWasSet;
 @property (nonatomic, strong) NSMutableArray<NSString *> *mutableAllowedSchemes;
 @property (nonatomic, strong) NSMutableArray<NSString *> *mutableUrlPatternsToIgnore;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *mutableRequestMetadata;
@@ -104,6 +108,11 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
     _logLevelWasSet = YES;
 }
 
+- (void)setRequestTracingCallback:(callbackForTracingRequests)requestTracingCallback {
+    _requestTracingCallback = [requestTracingCallback copy];
+    _requestTracingCallbackWasSet = YES;
+}
+
 #pragma mark - Identity & environment
 
 // A BOOL cannot distinguish "never set" from "set to NO", so an unset euEndpoint would leave
@@ -160,6 +169,13 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
     _automaticOpenEventsWasSet = YES;
 }
 
+#pragma mark - Debugging
+
+- (void)setDeepLinkDebugParams:(NSDictionary *)deepLinkDebugParams {
+    _deepLinkDebugParams = [deepLinkDebugParams copy];
+    _deepLinkDebugParamsWasSet = YES;
+}
+
 #pragma mark - Factory helpers
 
 + (instancetype)debug:(NSString *)branchKey {
@@ -198,6 +214,7 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
 - (void)addAllowedScheme:(NSString *)scheme {
     if (scheme) {
         [self.mutableAllowedSchemes addObject:scheme];
+        self.allowedSchemesWasSet = YES;
     }
 }
 
@@ -212,6 +229,7 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
 // collection instead of leaving a nil store, keeping the readonly-style getters non-nil.
 - (void)setAllowedSchemes:(nullable NSArray<NSString *> *)allowedSchemes {
     self.mutableAllowedSchemes = [allowedSchemes mutableCopy] ?: [NSMutableArray array];
+    self.allowedSchemesWasSet = YES;
 }
 
 - (void)setRequestMetadata:(nullable NSDictionary<NSString *, NSString *> *)requestMetadata {
@@ -220,6 +238,7 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
 
 - (void)setUrlPatternsToIgnore:(NSArray<NSString *> *)urlPatternsToIgnore {
     self.mutableUrlPatternsToIgnore = [urlPatternsToIgnore mutableCopy] ?: [NSMutableArray array];
+    self.urlPatternsToIgnoreWasSet = YES;
 }
 
 #pragma mark - Validation

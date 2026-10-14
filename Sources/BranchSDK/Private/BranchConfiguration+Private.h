@@ -41,6 +41,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, readonly) BOOL limitFacebookAttributionWasSet;
 @property (nonatomic, assign, readonly) BOOL adNetworkCalloutsDisabledWasSet;
 @property (nonatomic, assign, readonly) BOOL automaticOpenEventsWasSet;
+@property (nonatomic, assign, readonly) BOOL requestTracingCallbackWasSet;
+@property (nonatomic, assign, readonly) BOOL allowedSchemesWasSet;
+@property (nonatomic, assign, readonly) BOOL urlPatternsToIgnoreWasSet;
+@property (nonatomic, assign, readonly) BOOL deepLinkDebugParamsWasSet;
 
 /// Each returns nil when the field is valid, otherwise the message `-validate:` reports for it.
 - (nullable NSString *)networkTimeoutValidationMessage;

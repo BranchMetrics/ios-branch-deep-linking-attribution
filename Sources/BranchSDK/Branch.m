@@ -141,6 +141,7 @@ void ForceCategoriesToLoad(void) {
     BOOL _resignedSinceActivation;
     NSDictionary *_heldAttributedOpenResponse;
     BOOL _openOwedAtOptIn;
+    BOOL _automaticOpenEvents;
 }
 
 // This isolation queue protects branch initialization and ensures things are processed in order.
@@ -198,6 +199,7 @@ void ForceCategoriesToLoad(void) {
 - (void)sendAutomaticUnattributedOpen;
 - (void)handleResolvedLinkResponse:(NSDictionary *)responseData;
 - (BOOL)hasHeldAttributedOpenResponse;
+- (void)sendHeldAttributedOpen;
 - (void)sendOpenAtBackground;
 - (void)warnIfOpenWaitsForSendOpen;
 
@@ -301,8 +303,17 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
 // again from applyConfiguration: after singleton creation, so the branch.json enableLogging toggle
 // cannot override an explicit choice. Both paths are plain assignments, so the repeat is a no-op.
 + (void)applyLoggingConfiguration:(BranchConfiguration *)configuration {
+    [Branch applyLoggingConfiguration:configuration onlyAssignedValues:NO];
+}
+
+// When onlyAssigned is YES and logLevel is unassigned, a new loggingCallback keeps the current
+// threshold if logging is already enabled.
++ (void)applyLoggingConfiguration:(BranchConfiguration *)configuration onlyAssignedValues:(BOOL)onlyAssigned {
     if (configuration.loggingCallback) {
-        [Branch enableLoggingAtLevel:configuration.logLevel withCallback:configuration.loggingCallback];
+        BranchLogger *logger = [BranchLogger shared];
+        BOOL keepThreshold = onlyAssigned && !configuration.logLevelWasSet && logger.loggingEnabled;
+        BranchLogLevel level = keepThreshold ? logger.logLevelThreshold : configuration.logLevel;
+        [Branch enableLoggingAtLevel:level withCallback:configuration.loggingCallback];
     } else if (configuration.logLevelWasSet) {
         BranchLogger *logger = [BranchLogger shared];
         logger.loggingEnabled = YES;
@@ -361,10 +372,10 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
 // When onlyAssigned is YES, unassigned and invalid values are skipped. Attribution level is applied
 // by each caller.
 + (void)applyUpdatableConfiguration:(BranchConfiguration *)configuration toBranch:(Branch *)branch onlyAssignedValues:(BOOL)onlyAssigned {
-    [Branch applyLoggingConfiguration:configuration];
+    [Branch applyLoggingConfiguration:configuration onlyAssignedValues:onlyAssigned];
 
-    // Request tracing & custom endpoints
-    if (configuration.requestTracingCallback) {
+    // Request tracing & custom endpoints. On an update, an assigned nil or empty value clears.
+    if (onlyAssigned ? configuration.requestTracingCallbackWasSet : configuration.requestTracingCallback != nil) {
         [Branch setCallbackForTracingRequests:configuration.requestTracingCallback];
     }
     if (configuration.apiUrl &&
@@ -422,10 +433,10 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     }
 
     // URL collection
-    if (configuration.allowedSchemes.count > 0) {
+    if (onlyAssigned ? configuration.allowedSchemesWasSet : configuration.allowedSchemes.count > 0) {
         [branch setAllowedSchemes:configuration.allowedSchemes];
     }
-    if (configuration.urlPatternsToIgnore.count > 0) {
+    if (onlyAssigned ? configuration.urlPatternsToIgnoreWasSet : configuration.urlPatternsToIgnore.count > 0) {
         [branch setUrlPatternsToIgnore:configuration.urlPatternsToIgnore];
     }
 
@@ -435,7 +446,7 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
     }
 
     // Debugging
-    if (configuration.deepLinkDebugParams) {
+    if (onlyAssigned ? configuration.deepLinkDebugParamsWasSet : configuration.deepLinkDebugParams != nil) {
         [branch setDeepLinkDebugMode:configuration.deepLinkDebugParams];
     }
 
@@ -453,6 +464,8 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
         return;
     }
 
+    Branch *branch = nil;
+    BOOL wasAutomaticOpenEvents = NO;
     @synchronized ([Branch class]) {
         if (!bnc_didInitializeWithConfiguration) {
             NSString *errorMessage = @"+[Branch updateConfiguration:] was called before +[Branch initialize:].";
@@ -463,14 +476,20 @@ static BOOL bnc_didInitializeWithConfiguration = NO;
 
         [Branch warnOnInitOnlyFieldsInConfiguration:configuration];
 
-        Branch *branch = [Branch getInstanceInternal:self.branchKey];
+        branch = [Branch getInstanceInternal:self.branchKey];
+        wasAutomaticOpenEvents = branch.automaticOpenEvents;
         [Branch applyUpdatableConfiguration:configuration toBranch:branch onlyAssignedValues:YES];
+    }
 
-        // Applies a changed attribution level, starting a new session only when leaving NONE.
-        BranchAttributionLevel level = configuration.attributionLevel;
-        if (level && ![level isEqualToString:[BNCPreferenceHelper sharedInstance].attributionLevel]) {
-            [branch setConsumerProtectionAttributionLevel:level resetSession:[Branch attributionLevelNone]];
-        }
+    // Applies a changed attribution level, starting a new session only when leaving NONE.
+    BranchAttributionLevel level = configuration.attributionLevel;
+    if (level && ![level isEqualToString:[BNCPreferenceHelper sharedInstance].attributionLevel]) {
+        [branch setConsumerProtectionAttributionLevel:level resetSession:[Branch attributionLevelNone]];
+    }
+
+    // Sends any held attributed open when automatic open tracking was just turned on.
+    if (!wasAutomaticOpenEvents && branch.automaticOpenEvents) {
+        [branch sendHeldAttributedOpen];
     }
 }
 
@@ -1915,6 +1934,18 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
+- (BOOL)automaticOpenEvents {
+    @synchronized (self) {
+        return _automaticOpenEvents;
+    }
+}
+
+- (void)setAutomaticOpenEvents:(BOOL)automaticOpenEvents {
+    @synchronized (self) {
+        _automaticOpenEvents = automaticOpenEvents;
+    }
+}
+
 static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     if (block) {
         if ([NSThread isMainThread]) {
@@ -2478,6 +2509,24 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 - (void)enqueueManualOpenNow {
     BranchRequestOpen *openReq = [self manualOpenRequest];
     @synchronized (self) {
+        [self enqueueManualOpenRequest:openReq];
+    }
+}
+
+// Sends the held attributed open now. Does nothing at NONE, when nothing is held, or while a manual
+// open is pending, since that open takes the held response.
+- (void)sendHeldAttributedOpen {
+    if ([Branch attributionLevelNone] ||
+        ![self hasHeldAttributedOpenResponse] ||
+        [self.requestQueue hasPendingManualOpen]) {
+        return;
+    }
+
+    BranchRequestOpen *openReq = [self manualOpenRequest];
+    @synchronized (self) {
+        if (![self hasHeldAttributedOpenResponse] || [self.requestQueue hasPendingManualOpen]) {
+            return;
+        }
         [self enqueueManualOpenRequest:openReq];
     }
 }
