@@ -203,9 +203,17 @@ ATTRIBUTION_LEVEL_NONE = "NONE"
 #           any other, and EMT-4027 shipped with nothing on the surface ever
 #           being an install. Counts were identical throughout.
 #
-# `cold_https`, `cold_firstInstall`, `hot_uriScheme` and `attribution_none` are
-# test-plan scenarios. `install` and `deeplink` are not in the plan: they are
-# the runs the harness drives today.
+# Optional keys, for a scenario whose endpoint total is deliberately not exact:
+#
+#   carrying        endpoint -> field -> exact number of that endpoint's
+#                   requests carrying the field; the endpoint total stays free.
+#   carried_by_all  endpoint -> fields every request to it must carry.
+#   max_counts      endpoint -> most requests allowed, for an endpoint absent
+#                   from counts.
+#
+# `cold_https`, `cold_firstInstall`, `warm_uriScheme`, `hot_uriScheme` and
+# `attribution_none` are test-plan scenarios. `install` and `deeplink` are not
+# in the plan: they are the runs the harness drives today.
 SCENARIO_CONTRACTS = {
     # install: the harness uninstalls first (run_l1_instrumented.sh), so no
     # `randomizedBundleToken` persists and `Branch.m:2226` decides install
@@ -213,9 +221,14 @@ SCENARIO_CONTRACTS = {
     # data; that is a field-level assertion, and this layer is bounded at
     # counts and required-field presence, so only the endpoint half is
     # covered here.
+    #
+    # One `/v3/deeplink` is expected: `requestDeepLinkDataWithLaunchOptions:`
+    # is a required AppDelegate call, and with no URL or user activity in the
+    # launch options it sends the nil-URL deferred lookup ahead of the open.
+    # A launch that carries a link early-returns instead (see cold_https).
     "install": {
-        "counts": {"/v3/events/open": 1, "/v3/deeplink": 0},
-        "order": (),
+        "counts": {"/v3/events/open": 1, "/v3/deeplink": 1},
+        "order": (("/v3/deeplink", "/v3/events/open"),),
         "fields": {},
     },
     # attribution_none: a link resolved while the consumer-protection level
@@ -230,37 +243,58 @@ SCENARIO_CONTRACTS = {
         "fields": {},
     },
     # cold_https: a Universal Link delivered into a freshly launched
-    # process. Two opens is correct, not a duplicate: the launch fires one
-    # carrying no link field, then the resolution's attributed open carries
-    # `link_data`. Requiring one would fail a healthy SDK. The plan also asks
-    # that the resolution carry the link; that is a field-level assertion this
-    # layer does not make, as with attribution_none.
+    # process. One open, not two: a real cold Universal Link launch puts the
+    # user activity in launchOptions, so `requestDeepLinkDataWithLaunchOptions:`
+    # returns early and sends no nil-URL deferred lookup. That lookup and the
+    # launch open behind it are what used to make this two. What remains is
+    # the resolution and the open that attributes it, which carries
+    # `link_data`. The plan also asks that the resolution carry the link; that
+    # is a field-level assertion this layer does not make, as with
+    # attribution_none.
     "cold_https": {
-        "counts": {"/v3/deeplink": 1, "/v3/events/open": 2},
+        "counts": {"/v3/deeplink": 1, "/v3/events/open": 1},
         "order": (("/v3/deeplink", "/v3/events/open"),),
-        # Both opens carry the token: the app was already installed, so the
-        # launch open has one and the attributed open has one. This is what
-        # separates cold_https from cold_firstInstall -- the counts and
-        # order are identical.
-        "fields": {"/v3/events/open": {"randomized_bundle_token": 2}},
+        # The app was already installed, so the one open carries the token.
+        # An open without one is an install-shaped launch, which is what
+        # cold_firstInstall exists for; the token is the only wire difference.
+        "fields": {"/v3/events/open": {"randomized_bundle_token": 1}},
     },
     # cold_firstInstall: the same launch on a device with no prior install.
     # There is no install endpoint on this line -- install is decided client
     # side by randomizedBundleToken == nil and posts to /v3/events/open like
-    # any other. So the install shows up as the one open of the two that
-    # carries no token, and that count is the only wire signal separating this
-    # scenario from cold_https.
+    # any other. One open, as in cold_https and for the same reason: the user
+    # activity in launchOptions suppresses the nil-URL lookup and the launch
+    # open behind it. That one open is the install, carrying `link_data` and
+    # no token, and the token's absence is what separates this scenario from
+    # cold_https.
     "cold_firstInstall": {
-        "counts": {"/v3/deeplink": 1, "/v3/events/open": 2},
+        "counts": {"/v3/deeplink": 1, "/v3/events/open": 1},
         "order": (("/v3/deeplink", "/v3/events/open"),),
-        "fields": {"/v3/events/open": {"randomized_bundle_token": 1}},
+        "fields": {"/v3/events/open": {"randomized_bundle_token": 0}},
     },
     # hot_uriScheme: a scheme URL opened into the foregrounded app, counted on
     # the delivery delta (--pre).
     "hot_uriScheme": {
         "counts": {"/v3/deeplink": 1, "/v3/events/open": 1},
         "order": (("/v3/deeplink", "/v3/events/open"),),
-        "fields": {},
+        # The URL on the resolve is what separates a real scheme delivery from the TestBed test hook;
+        # link_data marks the open as the one attributed to it. --url checks both carry the delivered URL.
+        "fields": {
+            "/v3/deeplink": {"external_intent_uri": 1},
+            "/v3/events/open": {"link_data": 1},
+        },
+    },
+    # warm_uriScheme: a scheme URL opened into the backgrounded app, counted on
+    # the delivery delta (--pre). A warm delivery can add a plain open without
+    # link_data, so opens are bounded rather than exact, and an install is an
+    # open without the token.
+    "warm_uriScheme": {
+        "counts": {"/v3/deeplink": 1},
+        "order": (("/v3/deeplink", "/v3/events/open"),),
+        "fields": {"/v3/deeplink": {"external_intent_uri": 1}},
+        "carrying": {"/v3/events/open": {"link_data": 1}},
+        "carried_by_all": {"/v3/events/open": ("randomized_bundle_token",)},
+        "max_counts": {"/v3/events/open": 2},
     },
     "deeplink": {
         "counts": {"/v3/deeplink": 1},
@@ -351,6 +385,13 @@ def assert_contract(entries, contract):
                 f"Expected {expected} '{endpoint}' request(s), captured {actual}."
             )
 
+    for endpoint, bound in sorted(contract.get("max_counts", {}).items()):
+        actual = uris.count(endpoint)
+        if actual > bound:
+            errors.append(
+                f"Expected at most {bound} '{endpoint}' request(s), captured {actual}."
+            )
+
     for earlier, later in contract["order"]:
         if not occurs_after(uris, earlier, later):
             errors.append(f"Expected a '{later}' request after a '{earlier}' one.")
@@ -372,6 +413,30 @@ def assert_contract(entries, contract):
                 errors.append(
                     f"Expected {expected} of the '{endpoint}' request(s) to carry "
                     f"'{field}', but {actual} of {len(matching)} did."
+                )
+
+    for endpoint, fields in sorted(contract.get("carrying", {}).items()):
+        matching = [e for e in entries if e["uri"] == endpoint]
+        for field, expected in sorted(fields.items()):
+            actual = sum(
+                1 for e in matching if is_present(lookup_field(e["request"], field))
+            )
+            if actual != expected:
+                errors.append(
+                    f"Expected {expected} of the '{endpoint}' request(s) to carry "
+                    f"'{field}', but {actual} of {len(matching)} did."
+                )
+
+    for endpoint, fields in sorted(contract.get("carried_by_all", {}).items()):
+        matching = [e for e in entries if e["uri"] == endpoint]
+        for field in fields:
+            missing = sum(
+                1 for e in matching if not is_present(lookup_field(e["request"], field))
+            )
+            if missing:
+                errors.append(
+                    f"Every '{endpoint}' request must carry '{field}', "
+                    f"but {missing} of {len(matching)} did not."
                 )
 
     return errors
@@ -552,6 +617,25 @@ def validate_entries(entries, contract):
     return errors
 
 
+def assert_delivered_url(entries, url):
+    """Check that each resolve, and each open carrying link_data, carries `url`, the URL the driver delivered.
+    Skipping opens without link_data removes a failure only for contracts that do not require it on every open."""
+    errors = []
+    for entry in entries:
+        if entry["uri"] == "/v3/deeplink":
+            actual = lookup_field(entry["request"], "external_intent_uri")
+        elif entry["uri"] == "/v3/events/open":
+            link_data = lookup_field(entry["request"], "link_data")
+            if not is_present(link_data):
+                continue
+            actual = link_data.get("+non_branch_link") if isinstance(link_data, dict) else None
+        else:
+            continue
+        if actual != url:
+            errors.append(f"Expected '{entry['uri']}' to carry the delivered URL {url}, got {actual!r}.")
+    return errors
+
+
 def capture_delta(pre_path, post_path):
     """Return the bytes `post_path` gained after the `pre_path` snapshot.
 
@@ -591,11 +675,15 @@ def main():
         metavar="SNAPSHOT",
         help="copy of the capture taken before delivery; only bytes appended after it are validated",
     )
+    parser.add_argument(
+        "--url",
+        help="URL the driver delivered; every resolve and every open carrying link_data must carry it",
+    )
     args = parser.parse_args()
     log_file_path = args.log_file
 
     if args.pre is None:
-        validate_file(log_file_path, args.scenario)
+        validate_file(log_file_path, args.scenario, args.url)
     else:
         for path in (args.pre, log_file_path):
             if not os.path.exists(path):
@@ -612,12 +700,12 @@ def main():
         with tempfile.NamedTemporaryFile("wb", suffix=".txt", delete=False) as f:
             f.write(delta)
         try:
-            validate_file(f.name, args.scenario)
+            validate_file(f.name, args.scenario, args.url)
         finally:
             os.remove(f.name)
 
 
-def validate_file(log_file_path, scenario):
+def validate_file(log_file_path, scenario, url=None):
     """Validate one capture file against `scenario` and exit with the result."""
     entries = parse_branch_logs(log_file_path)
 
@@ -635,6 +723,9 @@ def validate_file(log_file_path, scenario):
         pass
 
     errors = validate_entries(entries, contract_for(scenario))
+    # With no entries the capture already failed; a URL mismatch would only repeat it.
+    if url is not None and entries:
+        errors.extend(assert_delivered_url(entries, url))
 
     if errors:
         print("\n--- VALIDATION FAILED ---")

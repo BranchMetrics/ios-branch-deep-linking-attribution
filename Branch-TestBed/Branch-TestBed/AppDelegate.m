@@ -160,6 +160,17 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // ── Initialize ───────────────────────────────────────────────────────
     [Branch initialize:config];
+    
+    // The test link is delivered through continueUserActivity: after launch, so debug builds put it in
+    // the launch options as iOS does for a cold Universal Link. Without it the SDK would also send a
+    // nil-URL lookup for the launch.
+    NSDictionary *branchLaunchOptions = launchOptions;
+#if DEBUG
+    branchLaunchOptions = [TestBedDeepLinkTestHook launchOptionsByAddingTestLink:launchOptions];
+#endif
+    [[Branch sharedInstance] requestDeepLinkDataWithLaunchOptions:branchLaunchOptions callback:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
+        NSLog(@"%@", params);
+    }];
 
 #if DEBUG
     [TestBedDeepLinkTestHook installIfRequested:application];
@@ -345,6 +356,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
          annotation:(id)annotation {
 
     NSLog(@"application:openURL:sourceApplication:annotation: invoked with URL: %@", [url description]);
+    // H2 counts this marker (scripts/check_foreground_markers.py); move it with any new URL entry point.
     [self logLifecycleMarker:@"openURL"];
     [[Branch sharedInstance] requestDeepLinkDataWithURL:url sourceApplication:sourceApplication annotation:annotation];
 
