@@ -84,8 +84,6 @@ static NSString * const kRealBranchKey = @"key_live_hcnegAumkH7Kv18M8AOHhfgiohpX
     XCTAssertNil(config.remoteInterface);
     XCTAssertEqualWithAccuracy(config.thirdPartyAPIsWaitTime, 0.5, 0.001);
     XCTAssertNil(config.attributionLevel);
-    XCTAssertFalse(config.limitFacebookAttribution);
-    XCTAssertFalse(config.adNetworkCalloutsDisabled);
     XCTAssertNil(config.dmaParameters);
     XCTAssertEqual(config.allowedSchemes.count, 0);
     XCTAssertEqual(config.urlPatternsToIgnore.count, 0);
@@ -619,8 +617,6 @@ static NSString * const kRealBranchKey = @"key_live_hcnegAumkH7Kv18M8AOHhfgiohpX
     prefs.retryCount = 9;
     prefs.retryInterval = 4.0;
     prefs.thirdPartyAPIsWaitTime = 3.0;
-    prefs.disableAdNetworkCallouts = YES;
-    prefs.limitFacebookTracking = YES;
     [branch setValue:@NO forKey:@"automaticOpenEvents"];
 
     [Branch resetInitializationGuardForTesting];
@@ -630,8 +626,6 @@ static NSString * const kRealBranchKey = @"key_live_hcnegAumkH7Kv18M8AOHhfgiohpX
     XCTAssertEqual(prefs.retryCount, 3);
     XCTAssertEqualWithAccuracy(prefs.retryInterval, 1.0, 0.001);
     XCTAssertEqualWithAccuracy(prefs.thirdPartyAPIsWaitTime, 0.5, 0.001);
-    XCTAssertFalse(prefs.disableAdNetworkCallouts);
-    XCTAssertFalse(prefs.limitFacebookTracking);
     XCTAssertTrue([[branch valueForKey:@"automaticOpenEvents"] boolValue]);
 }
 

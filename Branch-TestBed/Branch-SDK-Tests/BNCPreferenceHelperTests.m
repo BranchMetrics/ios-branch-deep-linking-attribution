@@ -38,7 +38,6 @@
     XCTAssertEqual(self.prefHelper.timeout, 5.5);
     XCTAssertEqual(self.prefHelper.retryInterval, 0);
     XCTAssertEqual(self.prefHelper.retryCount, 3);
-    XCTAssertFalse(self.prefHelper.disableAdNetworkCallouts);
 }
 
 - (void)testPreferenceSets {
@@ -332,16 +331,6 @@
     
     NSUInteger postActionDictCount = [self.prefHelper.requestMetadataDictionary count];
     XCTAssertEqual(initialDictCount, postActionDictCount);
-}
-
-- (void)testSetLimitFacebookTracking {
-    BOOL expectedValue = YES;
-    
-    [self.prefHelper setLimitFacebookTracking:expectedValue];
-    
-    BOOL storedValue = [self.prefHelper limitFacebookTracking];
-    
-    XCTAssertEqual(expectedValue, storedValue);
 }
 
 // TODO: rethink this test as these values are not set in a freshly instantiated prefHelper

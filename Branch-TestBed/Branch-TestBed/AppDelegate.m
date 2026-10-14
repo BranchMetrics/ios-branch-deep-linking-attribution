@@ -108,14 +108,11 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     config.thirdPartyAPIsWaitTime = 2.0;                 // wait up to 2s for ODM / Apple attribution token
     // config.remoteInterface = [MyCustomNetworkService class]; // must conform to BNCNetworkServiceProtocol
 
-    // Privacy & attribution  (defaults: attributionLevel nil, limitFacebookAttribution NO,
-    //                          adNetworkCalloutsDisabled NO, DMA params unset)
+    // Privacy & attribution  (defaults: attributionLevel nil, DMA params unset)
     config.attributionLevel = BranchAttributionLevelFull;
     config.dmaParameters = [BranchDMAParameters eeaRegion:YES
                                 adPersonalizationConsent:NO
                                   adUserDataUsageConsent:YES];
-    config.limitFacebookAttribution  = YES;
-    config.adNetworkCalloutsDisabled = YES;
 
     // URL collection  (default: allowedSchemes empty == all schemes allowed)
     [config addAllowedScheme:@"myapp"];                  // ← Android addWhitelistedScheme

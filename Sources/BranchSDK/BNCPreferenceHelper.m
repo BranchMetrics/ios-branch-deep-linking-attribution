@@ -162,7 +162,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         _persistPrefsQueue = [[NSOperationQueue alloc] init];
         _persistPrefsQueue.maxConcurrentOperationCount = 1;
 
-        self.disableAdNetworkCallouts = NO;
         self.useStorage = NO;
     }
     return self;
@@ -559,18 +558,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
 - (void)clearInstrumentationDictionary {
     @synchronized (self) {
         [_instrumentationDictionary removeAllObjects];
-    }
-}
-
-- (BOOL) limitFacebookTracking {
-    @synchronized (self) {
-        return [self readBoolFromDefaults:@"_limitFacebookTracking"];
-    }
-}
-
-- (void) setLimitFacebookTracking:(BOOL)limitFacebookTracking {
-    @synchronized (self) {
-        [self writeBoolToDefaults:@"_limitFacebookTracking" value:limitFacebookTracking];
     }
 }
 
