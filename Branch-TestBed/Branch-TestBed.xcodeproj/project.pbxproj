@@ -42,7 +42,6 @@
 		5F6D86D92BB5E9650068B536 /* BNCClassSerializationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6D86D82BB5E9650068B536 /* BNCClassSerializationTests.m */; };
 		5F86501A2B76DA3200364BDE /* NSMutableDictionaryBranchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F8650192B76DA3200364BDE /* NSMutableDictionaryBranchTests.m */; };
 		5F892EC5236116CD0023AEC1 /* NSErrorBranchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F892EC4236116CC0023AEC1 /* NSErrorBranchTests.m */; };
-		5F8B7B4721B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F8B7B4621B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m */; };
 		5F8BB66E278771890055D2DC /* BNCKeyChainTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F8BB66D278771890055D2DC /* BNCKeyChainTests.m */; };
 		5F909B5E23314CE900A774D2 /* BNCJSONUtilityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F73FC8023314697000EBD32 /* BNCJSONUtilityTests.m */; };
 		5F909B722332BEF600A774D2 /* BranchLastAttributedTouchDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F909B712332BEF600A774D2 /* BranchLastAttributedTouchDataTests.m */; };
@@ -200,7 +199,6 @@
 		5F892EC4236116CC0023AEC1 /* NSErrorBranchTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSErrorBranchTests.m; sourceTree = "<group>"; };
 		5F8B7B3B21B5F5CD009CE0A6 /* Branch-SDK-Unhosted-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-SDK-Unhosted-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F8B7B3F21B5F5CD009CE0A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5F8B7B4621B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_setBranchKeyTests.m; sourceTree = "<group>"; };
 		5F8BB66D278771890055D2DC /* BNCKeyChainTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCKeyChainTests.m; sourceTree = "<group>"; };
 		5F909B712332BEF600A774D2 /* BranchLastAttributedTouchDataTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchLastAttributedTouchDataTests.m; sourceTree = "<group>"; };
 		5F92B23323835FEB00CA909B /* BNCReachabilityTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCReachabilityTests.m; sourceTree = "<group>"; };
@@ -422,7 +420,6 @@
 			isa = PBXGroup;
 			children = (
 				5F67F48D228F535500067429 /* BNCEncodingUtilsTests.m */,
-				5F8B7B4621B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m */,
 				5F8B7B3F21B5F5CD009CE0A6 /* Info.plist */,
 			);
 			path = "Branch-SDK-Unhosted-Tests";
@@ -845,7 +842,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5F67F48E228F535500067429 /* BNCEncodingUtilsTests.m in Sources */,
-				5F8B7B4721B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m in Sources */,
 				5F3D671C233062FD00454FF1 /* BNCJsonLoader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
