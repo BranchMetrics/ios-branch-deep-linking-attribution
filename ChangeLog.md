@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+v.4.0.0-beta.3
+— 
+
 v.4.0.0-alpha.0
 - Removed silent SDK initialization - initSafetyCheck removed.Now following APIs will return or log BNCInitError error.
     * logEvent 
