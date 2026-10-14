@@ -183,7 +183,6 @@
 		4DF18A2F7FEBD06E1EBB8FD5 /* TestBedIdentifiers.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = TestBedIdentifiers.h; sourceTree = "<group>"; };
 		506B6E3C699AD53EFF4F5D9B /* SessionAndLogsHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SessionAndLogsHybridTest.swift; sourceTree = "<group>"; };
 		5D8D33407DECC9492C3C644C /* BaseGptDriverTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BaseGptDriverTest.swift; sourceTree = "<group>"; };
-		5F2035CB240DDE90004FDC3E /* BNCDisableAdNetworkCalloutsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCDisableAdNetworkCalloutsTests.m; sourceTree = "<group>"; };
 		5F205D022318641700C776D1 /* BNCUserAgentCollectorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCUserAgentCollectorTests.m; sourceTree = "<group>"; };
 		5F205D04231864E800C776D1 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		5F3D6719233062FD00454FF1 /* BNCJsonLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCJsonLoader.h; sourceTree = "<group>"; };
@@ -375,7 +374,6 @@
 				C15CC9DD2ABCB549003CC339 /* BNCCurrencyTests.m */,
 				5F92B241238752A500CA909B /* BNCDeviceInfoTests.m */,
 				5F437E3F237E1A560052064B /* BNCDeviceSystemTests.m */,
-				5F2035CB240DDE90004FDC3E /* BNCDisableAdNetworkCalloutsTests.m */,
 				4D16838E2098C901008819E3 /* BNCEncodingUtilsTests.m */,
 				5F3D6719233062FD00454FF1 /* BNCJsonLoader.h */,
 				5F3D671A233062FD00454FF1 /* BNCJsonLoader.m */,

@@ -424,13 +424,6 @@ static NSString *bnc_branchKey = nil;
     }
 
     // Privacy & attribution
-    if ([Branch shouldApplyValueWasSet:configuration.adNetworkCalloutsDisabledWasSet validationMessage:nil onlyAssignedValues:onlyAssigned]) {
-        [branch disableAdNetworkCallouts:configuration.adNetworkCalloutsDisabled];
-    }
-    if ([Branch shouldApplyValueWasSet:configuration.limitFacebookAttributionWasSet validationMessage:nil onlyAssignedValues:onlyAssigned]) {
-        [BNCPreferenceHelper sharedInstance].limitFacebookTracking = configuration.limitFacebookAttribution;
-    }
-
     if (configuration.dmaParameters) {
         [branch setDMAParameters:configuration.dmaParameters];
     }
@@ -746,10 +739,6 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 
 - (BOOL)isUserIdentified {
     return self.preferenceHelper.userAlias != nil;
-}
-
-- (void)disableAdNetworkCallouts:(BOOL)disableCallouts {
-    self.preferenceHelper.disableAdNetworkCallouts = disableCallouts;
 }
 
 - (void)setNetworkTimeout:(NSTimeInterval)timeout {
