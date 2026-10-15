@@ -160,14 +160,14 @@ NS_ASSUME_NONNULL_BEGIN
  Every option on `linkProperties` reaches the URL, `campaign` included. The match duration is sent
  as `duration=`, the spelling the Branch backend, the Web SDK and the Android SDK all use.
 
- This is the one terminal that does not require `+[Branch initialize:]` to have run: it needs only
- a Branch key, which it also reads from `branch.json` or the `branch_key` Info.plist entry.
+ Requires `+[Branch initialize:]` to have run. Before it has, this returns nil and logs a
+ `BNCInitError`.
 
  @param linkProperties The link's content and behavior. May be nil, in which case every option takes
         its default.
  @param useAppLinkDomain When YES, the link is built against your app.link domain instead of the
         default link domain.
- @return The long URL, or nil if the Branch key is unavailable.
+ @return The long URL, or nil if `+[Branch initialize:]` has not run.
  */
 - (nullable NSString *)getLongURLWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
                                    useAppLinkDomain:(BOOL)useAppLinkDomain

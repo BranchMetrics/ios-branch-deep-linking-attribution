@@ -1,24 +1,37 @@
 # Versioning and packaging (4.0.0-beta)
 
-## Do not run `scripts/version.sh` on this branch
+## Version numbers
 
-Current state on this branch:
+Versions are `Major.Minor.Patch` with an optional `-alpha.N`, `-beta.N` or `-rc.N` suffix, e.g.
+`4.0.0-beta.2`. Git tags use the same string, with no `v` prefix: the podspec's source tag is
+`s.version`, and the SPM repo dispatch passes the tag through unchanged.
+
+`scripts/version.sh` owns four literals:
 
 | Where | Value |
 | --- | --- |
-| `Sources/BranchSDK/BNCConfig.m` (`BNC_SDK_VERSION`) | `4.0.0-alpha.0` |
-| `BranchSDK.podspec` (`s.version`) | `4.0.0-alpha.0` |
-| `scripts/version.sh` (`version=`) | `4.0.0` |
-| `BranchSDK.xcodeproj` (`MARKETING_VERSION`) | `3.12.1` |
+| `scripts/version.sh` (`version=`) | full version, e.g. `4.0.0-beta.2` |
+| `Sources/BranchSDK/BNCConfig.m` (`BNC_SDK_VERSION`) | full version |
+| `BranchSDK.podspec` (`s.version`) | full version |
+| `BranchSDK.xcodeproj` (`MARKETING_VERSION`, `BranchSDK`, `-static` and `-tvOS` targets only) | `Major.Minor.Patch`, e.g. `4.0.0` |
 
-Running `version.sh -i` or `-u` drops the `-alpha.0` suffix, and because `prev_version` comes
-from the script's own stale literal, the `MARKETING_VERSION` rewrite matches nothing. The result
-is a repo that is *more* divergent than before.
+`MARKETING_VERSION` never carries the suffix. It becomes the framework's
+`CFBundleShortVersionString`, which App Store validation requires to be at most three integers
+(ITMS-90060), and the check runs on embedded frameworks in customer apps. The test targets'
+`MARKETING_VERSION` is not touched.
 
-`fastlane version_bump` is not an alternative either: fastlane was deleted on this line.
+```bash
+./scripts/version.sh                    # print: 4.0.0-beta.2
+./scripts/version.sh -s 4.0.0-beta.3    # set an exact version
+./scripts/version.sh -i                 # 4.0.0-beta.2 -> 4.0.0-beta.3, or 4.0.0 -> 4.0.1
+./scripts/version.sh -i -p              # 4.0.0-beta.2 -> 4.0.0
+./scripts/version.sh -c                 # check all four literals agree
+./scripts/test_version.sh               # tests for version.sh and validate_version.sh
+```
 
-Leave the version alone unless the task is specifically to reconcile it, and reconcile it by hand
-with the four values above in front of you.
+`version.sh` rejects anything outside that format, and fails if a file was not updated.
+
+`fastlane version_bump` is not an alternative: fastlane was deleted on this line.
 
 ## Distribution vehicles
 
@@ -43,8 +56,17 @@ under `Sources/BranchSDK/`.
 
 ## Release
 
-`release.yml` is currently **non-functional on this line** because it shells out to fastlane. Do
-not rely on it.
+1. On a branch, run `./scripts/version.sh -s <version>` and update `ChangeLog.md`. Merge that PR.
+   `version-bump.yml` does the same bump from CI, but it pushes straight to the branch it ran on.
+2. Optionally, check the build without publishing:
+   `gh workflow run release.yml --ref <branch> -f version=<version> -f dry_run=true`.
+3. Release: `gh workflow run release.yml --ref <branch> -f version=<version>`.
+
+`release.yml` starts with `scripts/validate_version.sh`, which fails the run unless `<version>`
+equals the version on the selected branch, all four literals agree, and the tag does not exist yet.
+It then builds the four XCFrameworks, creates the tag and a GitHub release on the workflow commit
+(marked as a pre-release when the version has a suffix), uploads the assets and triggers the SPM
+repo. CocoaPods trunk push is still a TODO in the workflow.
 
 `ChangeLog.md` is maintained by hand. `sync-readme-changelog.yml` does not touch it: on a
 published release it pushes the release body to ReadMe.io and announces in Slack.

@@ -16,6 +16,7 @@
 // Public classes that should be in the umbrella header
 #import "BranchInterface.h"
 #import "BranchAttributionLevel.h"
+#import "BranchDMAParameters.h"
 #import "BranchLinkProperties.h"
 #import "BranchUniversalObject.h"
 #import "BranchLastAttributedTouchData.h"
@@ -219,35 +220,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 /// @return Returns true if the Branch test key should be used.
 + (BOOL)useTestBranchKey;
 
-/**
- Directly sets the Branch key to be used.  Branch usually reads the Branch key from your app's
- Info.plist file which is recommended and more convenient.  But the Branch key can also be set
- with this method. See the documentation at
-   https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/#configure-xcode-project
- for information about configuring your app with Branch keys.
-
- You can only set the Branch key once per app run.
-
- @param branchKey The Branch key to use.
- @param error NSError will be set if Branch encounters a key error.
-*/
-+ (void)setBranchKey:(NSString *)branchKey error:(NSError * _Nullable * _Nullable)error;
-
-/**
- Directly sets the Branch key to be used.  Branch usually reads the Branch key from your app's
- Info.plist file which is recommended and more convenient.  But the Branch key can also be set
- with this method. See the documentation at
- https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/#configure-xcode-project
- for information about configuring your app with Branch keys.
-
- You can only set the Branch key once per app run.  Any errors are logged.
-
- @param branchKey The Branch key to use.
- */
-+ (void)setBranchKey:(NSString *)branchKey;
-
-
-/// @return Returns the current Branch key.
+/// @return The key from the `BranchConfiguration` passed to `+initialize:`, or nil before initialization.
 + (nullable NSString *) branchKey;
 
 + (BOOL)branchKeyIsSet;
@@ -368,6 +341,29 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 + (nullable Branch *)initialize:(BranchConfiguration *)configuration;
 
 /**
+ Applies a new `BranchConfiguration` to the running SDK without reinitializing it.
+
+ Only the values assigned on `configuration` are applied; everything else keeps its current setting.
+ Updated values take effect on the next request or link handled. Assigning nil or an empty list to
+ `requestTracingCallback`, `allowedSchemes`, `urlPatternsToIgnore` or `deepLinkDebugParams` clears it.
+ `requestMetadata` is merged key by key and `dmaParameters` replaces the current values; neither can
+ be cleared here. `apiUrl`, `safeTrackAPIUrl`, `cdnBaseUrl` and `loggingCallback` are applied only
+ when non-nil. A new `loggingCallback` with no `logLevel` keeps the current log level.
+
+ A changed `attributionLevel` is applied as by `-setConsumerProtectionAttributionLevel:resetSession:`,
+ with `resetSession` YES only when leaving `BranchAttributionLevelNone`, so moving between two other
+ levels starts no new session. Turning `automaticOpenEvents` on sends any attributed open held for
+ `-sendOpen` immediately.
+
+ `branchKey`, `remoteInterface`, `appClipAppGroup` and `checkPasteboardOnInstall` are
+ fixed by `+initialize:`; a different value here logs a warning and is ignored. An assigned value
+ that fails validation logs a warning and is skipped; the remaining values are still applied.
+
+ @param configuration The updated configuration. Must not be nil.
+ */
++ (void)updateConfiguration:(BranchConfiguration *)configuration;
+
+/**
  Allow Branch to handle a link opening the app, returning whether it was from a Branch link or not.
 
  @param url The url that caused the app to be opened.
@@ -445,6 +441,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
  When called with a non-nil URL, any pending (not yet executing) nil-URL deep link requests are
  cancelled so that only one callback fires per app open.
+ A non-nil callback receives this call's result only. A nil callback delivers the result to the
+ callback registered with `requestDeepLinkDataWithLaunchOptions:callback:`.
  */
 - (void)requestDeepLinkData:(nullable NSString *)branchLink callback:(nullable callbackWithParams)callback
     NS_SWIFT_NAME(requestDeepLinkData(branchLink:callback:))
@@ -458,8 +456,9 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Convenience overload for `application:didFinishLaunchingWithOptions:`.
 
  Extracts the Branch URL from `launchOptions` and calls `requestDeepLinkData:callback:` with it.
- For Universal Link and URL-scheme opens the method returns without calling the callback because
- the URL-bearing call will arrive via `continueUserActivity:` or `application:openURL:`.
+ The callback is stored and invoked for this launch, for every later deep link result and for every
+ app foreground in the process, whichever entry point delivers the link. A later call replaces it;
+ nil clears it.
  */
 - (void)requestDeepLinkDataWithLaunchOptions:(nullable NSDictionary *)options
                                     callback:(nullable callbackWithParams)callback
@@ -472,7 +471,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Runs the same URL preprocessing as the legacy deep link handler (referring-URL query parameters,
  the URL skiplist, allowed-scheme filtering and `link_click_id` extraction) and then calls
  `requestDeepLinkData:callback:` with the URL.
- Logs the deep link parameters or error.
+ Delivers the result to the callback registered with `requestDeepLinkDataWithLaunchOptions:callback:`.
  @param url The URL from `application:openURL:options:`
  */
 - (void)requestDeepLinkDataWithURL:(nullable NSURL *)url
@@ -496,7 +495,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Convenience method for `application:continueUserActivity:restorationHandler:` to handle Universal Links.
 
  Extracts the webpage URL from the user activity and calls `requestDeepLinkData:callback:` with it.
- Logs the deep link parameters or error.
+ Delivers the result to the callback registered with `requestDeepLinkDataWithLaunchOptions:callback:`.
  @param userActivity The NSUserActivity from `application:continueUserActivity:restorationHandler:`.
  */
 - (void)requestDeepLinkDataWithUserActivity:(nullable NSUserActivity *)userActivity
@@ -506,7 +505,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Convenience method for `application:didReceiveRemoteNotification:fetchCompletionHandler:` to handle push notification deep links.
 
  Extracts the Branch link from the notification payload and calls `requestDeepLinkData:callback:` with it.
- Logs the deep link parameters or error.
+ Delivers the result to the callback registered with `requestDeepLinkDataWithLaunchOptions:callback:`.
  @param userInfo The notification payload from `application:didReceiveRemoteNotification:fetchCompletionHandler:`.
  */
 - (void)requestDeepLinkDataWithUserInfo:(nullable NSDictionary *)userInfo
@@ -522,6 +521,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
  Extracts the Branch URL from `connectionOptions` and calls `requestDeepLinkData:callback:` with it.
  Pass nil for `connectionOptions` or an empty options object for cold starts with no incoming link.
+ The callback is stored the same way as in `requestDeepLinkDataWithLaunchOptions:callback:`.
 
  Available on iOS 13.0+ and macCatalyst 13.1+.
  */
@@ -537,7 +537,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Convenience method for SceneDelegate's `scene:openURLContexts:` to handle custom URI schemes.
 
  Extracts the first URL from URLContexts and calls `requestDeepLinkData:callback:` with it.
- Logs the deep link parameters or error.
+ Delivers the result to the callback registered with `requestDeepLinkDataWithLaunchOptions:callback:`.
 
  Available on iOS 13.0+.
  @param scene The UIScene from `scene:openURLContexts:`.
@@ -552,7 +552,7 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Convenience method for SceneDelegate's `scene:continueUserActivity:` to handle Universal Links.
 
  Extracts the webpage URL from the user activity and calls `requestDeepLinkData:callback:` with it.
- Logs the deep link parameters or error.
+ Delivers the result to the callback registered with `requestDeepLinkDataWithLaunchOptions:callback:`.
 
  Available on iOS 13.0+.
  @param scene The UIScene from `scene:continueUserActivity:`.
@@ -567,6 +567,13 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
 /**
  Sends a Branch Open event with attribution to our new API route.
+
+ With `BranchConfiguration.automaticOpenEvents` set to NO, this instead sends whichever open is due:
+ the attributed open held from the most recently resolved link, or an unattributed open if nothing
+ is held. At most one open is sent per call and per foreground period, except the open a still
+ unfinished link resolution owns. If the app sends none, one is sent when it enters the background.
+ A call made while attribution is NONE is sent when attribution is raised, and an activation after
+ a resign allows another open.
  */
 - (void)sendOpen;
 
@@ -686,13 +693,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 - (void)clearPartnerParameters;
 
 /**
- Disable callouts to ad networks for all events for a user; by default Branch sends callouts to ad networks.
-
- By calling this method with YES, Branch will not send any events to the ad networks specified in your Branch account.  If ad networks are not specified in your Branch account, this method will be ignored and events will still be sent.
- */
-- (void)disableAdNetworkCallouts:(BOOL)disableCallouts;
-
-/**
  For use by other Branch SDKs
 
  @param name Plugin name.  For example, Unity or React Native
@@ -716,39 +716,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  @param value Value to be included in request metadata
  */
 - (void)setRequestMetadataKey:(NSString *)key value:(nullable NSString *)value;
-
-/**
- Disables automatic session open tracking for the next foreground event with a default timeout of 30 seconds.
- This is useful for scenarios like Bio Auth Dialogs, Apple Pay Dialogs or other cases where the app may briefly go to
- background and return without needing a new session open.
-
- @warning If the app goes to background and returns to foreground before `resumeSession` is called or the timeout expires,
- the SDK may remain in an uninitialized state until the next foreground event. Ensure `resumeSession` is called promptly
- after the expected user interaction completes.
- */
-+ (void)disableNextForeground;
-
-/**
- Disables automatic session open tracking for the next foreground event for the defined time interval.
-
- @param timeout    The duration in seconds to disable automatic open tracking. After this time,
-                 automatic tracking resumes. Pass 0 to disable indefinitely until `resumeSession` is called.
-
- @warning If the app goes to background and returns to foreground before `resumeSession` is called or the timeout expires,
- the SDK may remain in an uninitialized state until the next foreground event. Ensure `resumeSession` is called promptly
- after the expected user interaction completes.
- */
-+ (void)disableNextForegroundForTimeInterval:(NSTimeInterval)timeout;
-
-/**
- Resumes automatic session open tracking after it was disabled by `disableNextForegroundForTimeInterval:`.
- If automatic tracking is already enabled, this method has no effect.
-
- @warning If the app transitioned to background and foreground while automatic tracking was disabled,
- the SDK may be in an uninitialized state. The SDK will re-initialize on the next foreground event or
- when an API method protected by an internal safety check is called.
- */
-+ (void)resumeSession;
 
 /*
 
@@ -793,6 +760,13 @@ extern NSString * __nonnull const BNCSpotlightFeature;
                      If NO, the session will not be re-initialized automatically when transitioning from BranchAttributionLevelNone to other higher levels.
  */
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level resetSession:(BOOL)resetSession;
+
+/**
+ Sets the DMA parameters required by Google Conversion APIs for users in the EEA region.
+
+ @param dmaParameters The EEA region and consent values sent with subsequent requests.
+ */
+- (void)setDMAParameters:(BranchDMAParameters *)dmaParameters;
 
 /// Returns a boolean based on if the current Attribution Level is set to "NONE".
 + (BOOL) attributionLevelNone;

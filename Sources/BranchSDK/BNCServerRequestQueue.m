@@ -67,9 +67,22 @@
 }
 
 - (void)enqueue:(BNCServerRequest *)request withPriority:(NSOperationQueuePriority)priority {
+    [self enqueue:request withPriority:priority afterUnfinishedDeepLinkRequests:NO];
+}
+
+// Enqueues a request with an explicit dependency on every unfinished, uncancelled deep-link
+// resolve, so it is built only after those resolves have run their completion handlers.
+// Returns the operation added, or nil for a nil request.
+- (NSOperation *)enqueue:(BNCServerRequest *)request afterUnfinishedDeepLinkRequests:(NSOperationQueuePriority)priority {
+    return [self enqueue:request withPriority:priority afterUnfinishedDeepLinkRequests:YES];
+}
+
+- (NSOperation *)enqueue:(BNCServerRequest *)request
+            withPriority:(NSOperationQueuePriority)priority
+afterUnfinishedDeepLinkRequests:(BOOL)afterDeepLinks {
     if (!request) {
         [[BranchLogger shared] logError:@"Attempted to enqueue nil request." error:nil];
-        return;
+        return nil;
     }
 
     BNCServerRequestOperation *operation = [[BNCServerRequestOperation alloc] initWithRequest:request];
@@ -78,6 +91,16 @@
     operation.branchKey = self.branchKey;
     operation.preferenceHelper = self.preferenceHelper;
     operation.queuePriority = priority;
+
+    if (afterDeepLinks) {
+        for (NSOperation *op in self.operationQueue.operations) {
+            if (![op isKindOfClass:[BNCServerRequestOperation class]]) continue;
+            if (op.isFinished || op.isCancelled) continue;
+            if ([((BNCServerRequestOperation *)op).request isKindOfClass:[BranchRequestDeepLink class]]) {
+                [operation addDependency:op];
+            }
+        }
+    }
 
     // Cancels pending foreground open checks when an install or open is enqueued.
     if ([self isInstallOrOpenRequest:request]) {
@@ -88,6 +111,7 @@
     [self.operationQueue addOperation:operation];
 
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enqueued request: %@. Current queue depth: %lu", request.requestUUID, (unsigned long)self.operationQueue.operationCount] error:nil];
+    return operation;
 }
 
 - (NSInteger)queueDepth {
@@ -206,6 +230,38 @@
                 return YES;
             }
         }
+    }
+    return NO;
+}
+
+// Unlike -containsInstallOrOpen, this does not count a live deep-link resolve, so it can be called
+// from within that resolve's own completion without seeing itself.
+- (BOOL)hasUnfinishedInstallOrOpen {
+    for (NSOperation *op in self.operationQueue.operations) {
+        if (![op isKindOfClass:[BNCServerRequestOperation class]]) continue;
+        if (op.isFinished || op.isCancelled) continue;
+        if ([self isInstallOrOpenRequest:((BNCServerRequestOperation *)op).request]) return YES;
+    }
+    return NO;
+}
+
+// YES for a manual open that has not yet read the held link; the request clears its resolver when it does.
+- (BOOL)hasPendingManualOpen {
+    for (NSOperation *op in self.operationQueue.operations) {
+        if (![op isKindOfClass:[BNCServerRequestOperation class]]) continue;
+        if (op.isFinished || op.isCancelled) continue;
+        BNCServerRequest *request = ((BNCServerRequestOperation *)op).request;
+        if ([request isKindOfClass:[BranchRequestOpen class]] &&
+            ((BranchRequestOpen *)request).linkDataResolver != nil) return YES;
+    }
+    return NO;
+}
+
+- (BOOL)hasUnfinishedDeepLinkRequest {
+    for (NSOperation *op in self.operationQueue.operations) {
+        if (![op isKindOfClass:[BNCServerRequestOperation class]]) continue;
+        if (op.isFinished || op.isCancelled) continue;
+        if ([((BNCServerRequestOperation *)op).request isKindOfClass:[BranchRequestDeepLink class]]) return YES;
     }
     return NO;
 }

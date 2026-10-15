@@ -51,9 +51,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (copy, nonatomic) NSString *lastSystemBuildVersion;
 @property (copy, nonatomic) NSString *browserUserAgentString;
 @property (copy, nonatomic) NSString *referringURL;
-@property (assign, nonatomic) BOOL limitFacebookTracking;
 @property (strong, nonatomic) NSDate *previousAppBuildDate;
-@property (assign, nonatomic, readwrite) BOOL disableAdNetworkCallouts;
 
 @property (nonatomic, copy, readwrite) NSString *patternListURL;
 @property (strong, nonatomic) NSArray<NSString *> *savedURLPatternList;

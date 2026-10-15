@@ -30,7 +30,7 @@
 - (void)testPropertySettersAndGetters {
     BranchConfigurationController *configController = [BranchConfigurationController sharedInstance];
     
-    NSString *keySource = BRANCH_KEY_SOURCE_SET_BRANCH_KEY_API;
+    NSString *keySource = BRANCH_KEY_SOURCE_INIT_FUNCTION;
     configController.branchKeySource = keySource;
     XCTAssertTrue([configController.branchKeySource isEqualToString:keySource]);
     
@@ -47,14 +47,14 @@
 
 - (void)testGetConfiguration {
     BranchConfigurationController *configController = [BranchConfigurationController sharedInstance];
-    configController.branchKeySource = BRANCH_KEY_SOURCE_INFO_PLIST;
+    configController.branchKeySource = BRANCH_KEY_SOURCE_INIT_FUNCTION;
     configController.deferInitForPluginRuntime = YES;
     configController.checkPasteboardOnInstall = YES;
 
     NSDictionary *configDict = [configController getConfiguration];
     XCTAssertNotNil(configDict);
 
-    XCTAssertTrue([configDict[BRANCH_REQUEST_KEY_BRANCH_KEY_SOURCE] isEqualToString:BRANCH_KEY_SOURCE_INFO_PLIST]);
+    XCTAssertTrue([configDict[BRANCH_REQUEST_KEY_BRANCH_KEY_SOURCE] isEqualToString:BRANCH_KEY_SOURCE_INIT_FUNCTION]);
     XCTAssertEqualObjects(configDict[BRANCH_REQUEST_KEY_DEFER_INIT_FOR_PLUGIN_RUNTIME], @(YES));
     XCTAssertEqualObjects(configDict[BRANCH_REQUEST_KEY_CHECK_PASTEBOARD_ON_INSTALL], @(YES));
     
@@ -71,7 +71,7 @@
 
 - (void)testInstallRequestParams {
     BranchConfigurationController *configController = [BranchConfigurationController sharedInstance];
-    configController.branchKeySource = BRANCH_KEY_SOURCE_INFO_PLIST;
+    configController.branchKeySource = BRANCH_KEY_SOURCE_INIT_FUNCTION;
     configController.deferInitForPluginRuntime = YES;
     configController.checkPasteboardOnInstall = YES;
 
@@ -83,7 +83,7 @@
     NSDictionary *configDict = installDict[BRANCH_REQUEST_KEY_OPERATIONAL_METRICS];
     XCTAssertNotNil(configDict);
 
-    XCTAssertTrue([configDict[BRANCH_REQUEST_KEY_BRANCH_KEY_SOURCE] isEqualToString:BRANCH_KEY_SOURCE_INFO_PLIST]);
+    XCTAssertTrue([configDict[BRANCH_REQUEST_KEY_BRANCH_KEY_SOURCE] isEqualToString:BRANCH_KEY_SOURCE_INIT_FUNCTION]);
     XCTAssertEqualObjects(configDict[BRANCH_REQUEST_KEY_DEFER_INIT_FOR_PLUGIN_RUNTIME], @(YES));
     XCTAssertEqualObjects(configDict[BRANCH_REQUEST_KEY_CHECK_PASTEBOARD_ON_INSTALL], @(YES));
     

@@ -1,6 +1,0 @@
-[TestBedLifecycle] applicationDidBecomeActive
-[TestBedLifecycle] latestReferringParams {}
-[TestBedLifecycle] latestReferringParams {}
-[TestBedLifecycle] latestReferringParams {}
-[TestBedLifecycle] applicationWillResignActive
-[TestBedLifecycle] applicationDidEnterBackground
