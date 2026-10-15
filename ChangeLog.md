@@ -1,7 +1,7 @@
 Branch iOS SDK Change Log
 v.4.0.0-beta.3
 
-Upgrade nstructions: https://help.branch.io/developer-hub/ios-sdk-4-integration
+Upgrade Instructions: https://help.branch.io/developer-hub/ios-sdk-4-integration
 
 - Added `BranchConfiguration` object which holds every setting that used to be a Branch setter: API and CDN URLs, EU endpoints, log level and logging callback, request tracing callback, network timeout, retry count and interval, third-party API wait time, attribution level, DMA parameters, allowed schemes, URL patterns to ignore, request metadata, pasteboard check on install, App Clip app group and deep link debug params.
 - Added new initialization API `+[Branch initialize:]` to initialize Branch SDK using `BranchConfiguration`. The `initSession…` family is removed. 
