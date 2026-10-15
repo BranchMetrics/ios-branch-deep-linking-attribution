@@ -701,13 +701,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 - (void)clearPartnerParameters;
 
 /**
- Disable callouts to ad networks for all events for a user; by default Branch sends callouts to ad networks.
-
- By calling this method with YES, Branch will not send any events to the ad networks specified in your Branch account.  If ad networks are not specified in your Branch account, this method will be ignored and events will still be sent.
- */
-- (void)disableAdNetworkCallouts:(BOOL)disableCallouts;
-
-/**
  For use by other Branch SDKs
 
  @param name Plugin name.  For example, Unity or React Native
