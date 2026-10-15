@@ -1,22 +1,53 @@
 Branch iOS SDK Change Log
+v.4.0.0-beta.3
 
+Upgrade nstructions: https://help.branch.io/developer-hub/ios-sdk-4-integration
 
-v.4.0.0-alpha.0
-- Removed silent SDK initialization - initSafetyCheck removed.Now following APIs will return or log BNCInitError error.
-    * logEvent 
-    * lastAttributedTouchData
-    * getSpotlightUrl
-    * generateShortUrl
-    * registerView  
-- Added API  `(void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level resetSession:(BOOL)resetSession` to enable/disable restting of session when attribution level is changed from `none` to other level.
-- Added NSOperation-based network request processing replacing the old manual array-and-semaphore request queue.
-- Refactoring of BranchOpenRequest and BranchEvent classes.
-- New Init Session API for Scene Based Apps -
-    * - (void)initSessionWithSceneOptions:(nullable UISceneConnectionOptions *)options scene:(UIScene *)scene registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback;
-    * Deprecated API  -  (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options  registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback __attribute__((deprecated(("Use `initSessionWithSceneOptions:scene:registerDeepLinkHandler:` instead."))));
-- SPM Repo Cleanup - Removed all Extra files
-- Fixed bug - `getLatestReferringParams` kept returning a previously resolved link after the app backgrounded and reopened organically. The params are now cleared at process start, and when the app enters the background with no link resolution or open in flight. A transient interruption that does not background the app, such as a system alert or Control Center, keeps them.
-- Raised the minimum iOS and tvOS deployment target to 15.0 (`BranchSDK.xcodeproj`, `Package.swift`, `BranchSDK.podspec`). Xcode 27 refuses to build the Xcode project or a CocoaPods integration below 15.0. An SPM integration already builds at 15.0 under Xcode 27 whatever `Package.swift` declares, so there the change records the floor rather than fixing a build.
+- Added `BranchConfiguration` object which holds every setting that used to be a Branch setter: API and CDN URLs, EU endpoints, log level and logging callback, request tracing callback, network timeout, retry count and interval, third-party API wait time, attribution level, DMA parameters, allowed schemes, URL patterns to ignore, request metadata, pasteboard check on install, App Clip app group and deep link debug params.
+- Added new initialization API `+[Branch initialize:]` to initialize Branch SDK using `BranchConfiguration`. The `initSession…` family is removed. 
+- Added `+[Branch updateConfiguration:]` to change the configuration after initialization.
+    * Removed the old setters: 
+               -- `setBranchKey:`
+               -- `setUseTestBranchKey:`
+               -- `useEUEndpoints`
+               -- `setAPIUrl:`
+               -- `setSafetrackAPIURL:`
+               -- `setNetworkTimeout:`
+               --  `setMaxRetries:`
+               -- `setRetryInterval:`
+               -- `setSDKWaitTimeForThirdPartyAPIs:`
+               -- `addAllowedScheme:`/`setAllowedSchemes:`
+               -- `setUrlPatternsToIgnore:`
+               -- `checkPasteboardOnInstall`
+               -- `setAppClipAppGroup:`
+               -- `setDeepLinkDebugMode:`  
+               -- `setCallbackForTracingRequests:`.
+    * The Branch Key is no longer read from Info.plist. Pass it to `BranchConfiguration`.
+- Removed `getInstance`, `getInstance:` and `getTestInstance`. Use `+[Branch sharedInstance]`.
+- New deep link APIs replace `initSession…`, `continueUserActivity:` and `handlePushNotification:`:
+    * `requestDeepLinkData:callback:`
+    * `requestDeepLinkDataWithLaunchOptions:callback:`
+    * `requestDeepLinkDataWithURL:` and `requestDeepLinkDataWithURL:sourceApplication:annotation:`
+    * `requestDeepLinkDataWithUserActivity:`
+    * `requestDeepLinkDataWithUserInfo:`
+    * `requestDeepLinkDataWithSceneOptions:scene:callback:`
+    * `requestDeepLinkDataWithScene:openURLContexts:` and `requestDeepLinkDataWithScene:userActivity:`
+- Added manual open control. `BranchConfiguration.automaticOpenEvents` (default YES). 
+- Added API `sendOpen`. If `BranchConfiguration.automaticOpenEvents` is set to `NO`, use this API to send OPEN events manually. 
+- Link creation is consolidated into the new `BranchLinkBuilder` class, which takes `BranchLinkProperties`. Remove all overloaded versions of following APIs -
+    * `getShortURLWithLinkProperties:`
+    * `getLongURLWithLinkProperties:`
+    * `getSpotlightURLWithParams:`
+    * `getShortURL…`
+    * `getLongURL…`, 
+    * `getLongAppLinkURL…` 
+    * `getSpotlightUrlWithParams:` 
+- Added Swift async wrappers via `NS_SWIFT_ASYNC_NAME` to APIs.
+- Replaced `setIdentity:` / `setIdentity:withCallback:` with `setUserAlias:completion:`.
+- Removed `setTrackingDisabled:` and `trackingDisabled`. Use `setConsumerProtectionAttributionLevel:` with `BranchAttributionLevelNone`, and check with `+[Branch attributionLevelNone]`. 
+- Replaced `setDMAParamsForEEA:AdPersonalizationConsent:AdUserDataUsageConsent:` with the `BranchDMAParameters` class and `setDMAParameters:`.
+- Removed `limitFacebookAttribution` and `disableAdNetworkCallouts:`.
+- Raised the minimum iOS and tvOS deployment target to 15.0 (`BranchSDK.xcodeproj`, `Package.swift`, `BranchSDK.podspec`). Xcode 27 refuses to build the Xcode project or a CocoaPods integration below 15.0.
 
 v.3.14.2
 — Fixed crash for malformed or nil strings coming from pasteboard or spotlight.
