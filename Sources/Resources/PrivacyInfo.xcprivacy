@@ -17,10 +17,6 @@
 	                   call carries no IDFA, hardware IDs or device/bundle tokens. An app
 	                   pinned to NONE may declare this false.
 
-	     - limitFacebookAttribution = YES only adds limit_facebook_tracking: true to the
-	       request body. It does not suppress device identifiers and does not change which
-	       domain is used.
-
 	     The safetrack domains below are chosen from the ATT status, not from the attribution
 	     level (BNCServerAPI -getBaseURL / -optedIntoIDFA): the SDK switches to them when ATT
 	     is "authorized". Apps that ship a non-FULL level should re-evaluate this key in

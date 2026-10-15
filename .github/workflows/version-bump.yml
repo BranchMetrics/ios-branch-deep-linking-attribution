@@ -1,14 +1,15 @@
 name: Version bump (manual)
 
 # Manually triggered
-# $ gh workflow run -f version=1.40.0 version-bump.yml
+# $ gh workflow run -f version=4.0.0-beta.3 version-bump.yml
+# $ gh workflow run -f version=prerelease version-bump.yml
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: The version to use for this bump or major, minor or patch.
+        description: The version to use for this bump (e.g. 4.0.0-beta.3), or prerelease, patch, minor or major.
         required: false
-        default: patch
+        default: prerelease
 
 jobs:
   version-bump:
@@ -16,31 +17,25 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v6
-      - name: Set up Ruby 2.7
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '2.7'
-      - name: Restore cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            vendor
-            Branch-TestBed/Pods
-          key: ${{ runner.os }}-${{ hashFiles('Gemfile.lock','Branch-TestBed/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-
-      - name: Install Ruby dependencies
-        run: |
-          bundle config set --local path vendor
-          bundle check || bundle install
       - name: Configure git
         run: |
           git config user.name "Branch SDK Team"
           git config user.email branch-sdks@branch.io
       # Does not tag
       - name: Perform version bump & commit
+        env:
+          VERSION: ${{ github.event.inputs.version }}
         run: |
-          bundle exec fastlane version_bump version:${{ github.event.inputs.version }}
+          case "$VERSION" in
+          prerelease) ./scripts/version.sh -i ;;
+          patch)      ./scripts/version.sh -i -p ;;
+          minor)      ./scripts/version.sh -i -m ;;
+          major)      ./scripts/version.sh -i -M ;;
+          *)          ./scripts/version.sh -s "$VERSION" ;;
+          esac
+          new_version=$(./scripts/version.sh)
+          git add scripts/version.sh Sources/BranchSDK/BNCConfig.m BranchSDK.podspec BranchSDK.xcodeproj/project.pbxproj
+          git commit -m "Updated version to $new_version"
       - name: Push changes
         run: |
           git push

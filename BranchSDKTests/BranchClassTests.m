@@ -56,11 +56,6 @@
     XCTAssertTrue([self.branch isUserIdentified], @"User should be identified");
 }
 
-- (void)testDisableAdNetworkCallouts {
-    [self.branch disableAdNetworkCallouts:YES];
-    XCTAssertTrue([BNCPreferenceHelper sharedInstance].disableAdNetworkCallouts, @"AdNetwork callouts should be disabled");
-}
-
 - (void)testSetNetworkTimeout {
     [self.branch setNetworkTimeout:5.0];
     XCTAssertEqual([BNCPreferenceHelper sharedInstance].timeout, 5.0, @"Network timeout should be set to 5.0");
@@ -213,8 +208,7 @@
 }
 
 - (void)testDMAParamsWriteThroughToPreferences {
-    // DMA parameters are config-only (no runtime setter). This asserts the preference-write mechanism that
-    // +[Branch initialize:] uses when applying a BranchConfiguration.dmaParameters value.
+    // Asserts the preference-write mechanism that -setDMAParameters: relies on.
     XCTAssertFalse([[BNCPreferenceHelper sharedInstance] eeaRegionInitialized]);
 
     [BNCPreferenceHelper sharedInstance].eeaRegion = FALSE;
@@ -227,6 +221,28 @@
 
     // Manually clear values after testing
     // By design, this API is meant to be set once and always set. However, in a test scenario it needs to be cleared.
+    [[BNCPreferenceHelper sharedInstance] writeObjectToDefaults:@"bnc_dma_eea" value:nil];
+    [[BNCPreferenceHelper sharedInstance] writeObjectToDefaults:@"bnc_dma_ad_personalization" value:nil];
+    [[BNCPreferenceHelper sharedInstance] writeObjectToDefaults:@"bnc_dma_ad_user_data" value:nil];
+}
+
+- (void)testSetDMAParameters {
+    [self.branch setDMAParameters:[BranchDMAParameters eeaRegion:YES
+                                        adPersonalizationConsent:NO
+                                          adUserDataUsageConsent:YES]];
+    XCTAssertTrue([[BNCPreferenceHelper sharedInstance] eeaRegionInitialized]);
+    XCTAssertTrue([BNCPreferenceHelper sharedInstance].eeaRegion);
+    XCTAssertFalse([BNCPreferenceHelper sharedInstance].adPersonalizationConsent);
+    XCTAssertTrue([BNCPreferenceHelper sharedInstance].adUserDataUsageConsent);
+
+    // A later call replaces the earlier values.
+    [self.branch setDMAParameters:[BranchDMAParameters eeaRegion:NO
+                                        adPersonalizationConsent:YES
+                                          adUserDataUsageConsent:NO]];
+    XCTAssertFalse([BNCPreferenceHelper sharedInstance].eeaRegion);
+    XCTAssertTrue([BNCPreferenceHelper sharedInstance].adPersonalizationConsent);
+    XCTAssertFalse([BNCPreferenceHelper sharedInstance].adUserDataUsageConsent);
+
     [[BNCPreferenceHelper sharedInstance] writeObjectToDefaults:@"bnc_dma_eea" value:nil];
     [[BNCPreferenceHelper sharedInstance] writeObjectToDefaults:@"bnc_dma_ad_personalization" value:nil];
     [[BNCPreferenceHelper sharedInstance] writeObjectToDefaults:@"bnc_dma_ad_user_data" value:nil];

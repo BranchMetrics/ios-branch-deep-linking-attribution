@@ -177,6 +177,12 @@
 - (NSString *)getLongURLWithLinkProperties:(BranchLinkProperties *)linkProperties
                           useAppLinkDomain:(BOOL)useAppLinkDomain {
 
+    Branch *branch = [self resolvedBranchForTerminal:@"getLongURLWithLinkProperties:useAppLinkDomain:"
+                                               error:NULL];
+    if (!branch) {
+        return nil;
+    }
+
     NSString *branchKey = [Branch branchKey];
     if (!branchKey) {
         [[BranchLogger shared] logError:@"Cannot build a long URL without a Branch key." error:nil];

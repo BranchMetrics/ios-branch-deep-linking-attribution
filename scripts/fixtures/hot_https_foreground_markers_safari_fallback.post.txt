@@ -1,3 +1,0 @@
-[TestBedLifecycle] applicationDidBecomeActive
-[TestBedLifecycle] applicationWillResignActive
-[TestBedLifecycle] applicationDidEnterBackground

@@ -19,7 +19,6 @@
     {
       "parallelizable" : false,
       "skippedTests" : [
-        "BNCDisableAdNetworkCalloutsTests",
         "BranchLinkBuilderTests\/testGetShortURLLiveSmokeTest",
         "BranchQRCodeTests\/testNormalQRCodeAsDataWithNoSettings",
         "BranchQRCodeTests\/testNormalQRCodeAsImage",
