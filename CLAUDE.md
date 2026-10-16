@@ -50,8 +50,9 @@ dead because they still shell out to fastlane: `docs/testing.md`.
 
 ## Conventions
 
-- Commit prefix `EMT-XXXX` (Jira). **PRs on this line target `4.0.0-beta.0`; check the base
-  before opening, because the repo default is `master`.**
+- Commit prefix `EMT-XXXX` (Jira). **Each beta round has its own branch (`4.0.0-beta.N`), cut
+  from the previous one when it ships. PRs target the open round, currently `4.0.0-beta.4`;
+  check the base before opening, because the repo default is `master`.**
 - Match the surrounding style: long-lived Objective-C, `@synchronized` blocks, explicit nil
   checks.
 - `Public/` headers are an API contract. This branch already carries breaking changes, so a new
