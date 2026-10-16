@@ -987,6 +987,11 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
             handled = YES;
             self.preferenceHelper.linkClickIdentifier = params[@"link_click_id"];
         }
+
+        // Check for _branch_referrer added to third-party/redirected links
+        if (params[@"_branch_referrer"]) {
+            handled = YES;
+        }
     }
 
     return handled;
@@ -1110,6 +1115,13 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 
 // checks if URL string looks like a branch link
 + (BOOL)isBranchLink:(NSString *)urlString {
+    // Callers pass values that are not guaranteed to be strings, e.g. an empty pasteboard yields
+    // nil and userActivity.userInfo is untyped. containsString: raises on a non-string receiver
+    // and NSURLComponents raises on a nil string.
+    if ((urlString == nil) || ![urlString isKindOfClass:[NSString class]] || urlString.length == 0) {
+        return NO;
+    }
+
     id branchUniversalLinkDomains = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_universal_link_domains"];
 
     // check url list in bundle
@@ -1131,6 +1143,15 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
             return YES;
         }
     }
+
+    // check for the Branch referrer param appended to third-party/redirected links
+    NSURLComponents *components = [NSURLComponents componentsWithString:urlString];
+    for (NSURLQueryItem *item in components.queryItems) {
+        if ([item.name isEqualToString:@"_branch_referrer"]) {
+            return YES;
+        }
+    }
+
     return NO;
 }
 
