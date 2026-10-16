@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# hot_uriScheme driver for the iOS Branch SDK TestBed.
+# hot_uriScheme / hot_https_foreground (and warm_uriScheme) driver for the iOS Branch SDK TestBed.
 #
 # Launches the TestBed, snapshots branchlogs.txt once the launch settles, opens
 # a scheme URL into the foregrounded app with `simctl openurl`, and snapshots
@@ -20,6 +20,7 @@
 #   SETTLE_S           - seconds the log must stay unchanged (default 10)
 #   SETTLE_MAX_S       - give up settling after this many seconds (default 120)
 #   OPENURL_MAX_S      - retry budget for LaunchServices error 115 (default 120)
+#   HOT_SCENARIO       - hot_uriScheme or hot_https_foreground (default hot_uriScheme)
 #   H2_URL             - URL to deliver (default branchtest://open?scenario=H2)
 #   WARM               - 1 backgrounds the app with Preferences before the pre
 #                        snapshot (warm_uriScheme)
@@ -38,13 +39,19 @@ SETTLE_MAX_S="${SETTLE_MAX_S:-120}"
 OPENURL_MAX_S="${OPENURL_MAX_S:-120}"
 H2_URL="${H2_URL:-branchtest://open?scenario=H2}"
 WARM="${WARM:-}"
-CAPTURE_NAME="${CAPTURE_NAME:-wire-hot_uriScheme}"
+HOT_SCENARIO="${HOT_SCENARIO:-hot_uriScheme}"
+CAPTURE_NAME="${CAPTURE_NAME:-wire-$HOT_SCENARIO}"
 
 # The consent SpringBoard otherwise asks for on the first `simctl openurl` of the scheme.
 APPROVAL_DOMAIN="com.apple.launchservices.schemeapproval"
 APPROVAL_KEY="com.apple.CoreSimulator.CoreSimulatorBridge-->${H2_URL%%:*}"
 
 fail() { echo "ERROR: $*"; exit 1; }
+
+case "$HOT_SCENARIO" in
+    hot_uriScheme|hot_https_foreground) ;;
+    *) fail "unknown HOT_SCENARIO: $HOT_SCENARIO (expected hot_uriScheme or hot_https_foreground)" ;;
+esac
 
 # 1. Device on exactly H2_EXPECT_RUNTIME. The same name can exist on several runtimes.
 selection=$(xcrun simctl list devices available -j | python3 -c '
@@ -79,7 +86,9 @@ apps=("$DERIVED_DATA_DIR"/Build/Products/*-iphonesimulator/Branch-TestBed.app)
 shopt -u nullglob
 [ "${#apps[@]}" -eq 1 ] || fail "expected one Branch-TestBed.app under $DERIVED_DATA_DIR/Build/Products, found ${#apps[@]}"
 xcrun simctl terminate "$udid" "$BUNDLE_ID" 2>/dev/null || true
-xcrun simctl uninstall "$udid" "$BUNDLE_ID" 2>/dev/null || true
+if [ "$HOT_SCENARIO" = "hot_uriScheme" ]; then
+    xcrun simctl uninstall "$udid" "$BUNDLE_ID" 2>/dev/null || true
+fi
 xcrun simctl install "$udid" "${apps[0]}"
 
 log_path() {
@@ -188,3 +197,8 @@ post_pid=$(app_pid)
 [[ $post_pid =~ ^[0-9]+$ ]] || fail "TestBed is not running after delivery"
 [ "$post_pid" = "$pid" ] || fail "relaunched"
 echo "pid unchanged"
+
+# 9. hot_https_foreground only: gate on the TestBed's lifecycle markers.
+if [ "$HOT_SCENARIO" = "hot_https_foreground" ]; then
+    python3 "$(dirname "$0")/check_foreground_markers.py" "$post" --pre "$pre" --scenario "$HOT_SCENARIO"
+fi
