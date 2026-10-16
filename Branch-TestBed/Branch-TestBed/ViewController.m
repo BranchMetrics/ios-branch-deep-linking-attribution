@@ -895,24 +895,82 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     
     [qrCode getQRCodeAsImage:buo linkProperties:lp completion:^(UIImage * _Nonnull qrCode, NSError * _Nonnull error) {
         NSLog(@"Received QR Code Image: %@", qrCode);
-        
+
         dispatch_async(dispatch_get_main_queue(), ^{
-            
-            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 200, 282)];
-            imageView.contentMode = UIViewContentModeScaleAspectFit;
-            [imageView setImage:qrCode];
-            UIAlertView *alertView = [[UIAlertView alloc]  initWithTitle:@"Your QR Code"
-                                                                 message:@""
-                                                                delegate:self
-                                                       cancelButtonTitle:@"Dismiss"
-                                                       otherButtonTitles:nil];
-            
-            [alertView setValue:imageView forKey:@"accessoryView"];
-            [alertView show];
-            
+            [self presentQRCodeSheetWithImage:qrCode];
             [activityIndicator stopAnimating];
         });
     }];
+}
+
+// Presents the QR code in a page sheet with the title, image and Dismiss
+// button stacked by a UIStackView, so the layout reflows under Dynamic Type
+// instead of overlapping when the title wraps onto a second line.
+- (void)presentQRCodeSheetWithImage:(UIImage *)qrCodeImage {
+    UIViewController *sheet = [UIViewController new];
+    sheet.view.backgroundColor = [UIColor systemBackgroundColor];
+    sheet.modalPresentationStyle = UIModalPresentationPageSheet;
+    sheet.sheetPresentationController.detents = @[
+        [UISheetPresentationControllerDetent mediumDetent],
+        [UISheetPresentationControllerDetent largeDetent]
+    ];
+    sheet.sheetPresentationController.prefersGrabberVisible = YES;
+
+    UILabel *titleLabel = [UILabel new];
+    titleLabel.text = @"Your QR Code";
+    titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
+    titleLabel.adjustsFontForContentSizeCategory = YES;
+    titleLabel.numberOfLines = 0;
+    titleLabel.textAlignment = NSTextAlignmentCenter;
+
+    UIImageView *imageView = [[UIImageView alloc] init];
+    imageView.contentMode = UIViewContentModeScaleAspectFit;
+    imageView.image = qrCodeImage;
+    [imageView.widthAnchor constraintEqualToConstant:200].active = YES;
+    [imageView.heightAnchor constraintEqualToConstant:200].active = YES;
+
+    UIButton *dismissButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [dismissButton setTitle:@"Dismiss" forState:UIControlStateNormal];
+    dismissButton.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+    dismissButton.titleLabel.adjustsFontForContentSizeCategory = YES;
+    [dismissButton addTarget:self
+                       action:@selector(dismissQRCodeSheet)
+             forControlEvents:UIControlEventTouchUpInside];
+
+    UIStackView *stackView = [[UIStackView alloc] initWithArrangedSubviews:@[titleLabel, imageView, dismissButton]];
+    stackView.axis = UILayoutConstraintAxisVertical;
+    stackView.alignment = UIStackViewAlignmentCenter;
+    stackView.spacing = 20;
+    stackView.translatesAutoresizingMaskIntoConstraints = NO;
+
+    // Scrolls instead of clipping when the title wraps and the stack grows
+    // taller than the medium detent at large Dynamic Type sizes.
+    UIScrollView *scrollView = [UIScrollView new];
+    scrollView.translatesAutoresizingMaskIntoConstraints = NO;
+    [scrollView addSubview:stackView];
+    [sheet.view addSubview:scrollView];
+
+    UILayoutGuide *margins = sheet.view.layoutMarginsGuide;
+    [NSLayoutConstraint activateConstraints:@[
+        [scrollView.topAnchor constraintEqualToAnchor:margins.topAnchor],
+        [scrollView.leadingAnchor constraintEqualToAnchor:margins.leadingAnchor],
+        [scrollView.trailingAnchor constraintEqualToAnchor:margins.trailingAnchor],
+        [scrollView.bottomAnchor constraintEqualToAnchor:margins.bottomAnchor],
+
+        [stackView.topAnchor constraintEqualToAnchor:scrollView.contentLayoutGuide.topAnchor],
+        [stackView.bottomAnchor constraintEqualToAnchor:scrollView.contentLayoutGuide.bottomAnchor],
+        [stackView.centerXAnchor constraintEqualToAnchor:scrollView.frameLayoutGuide.centerXAnchor],
+        [stackView.leadingAnchor constraintGreaterThanOrEqualToAnchor:scrollView.contentLayoutGuide.leadingAnchor],
+        [stackView.trailingAnchor constraintLessThanOrEqualToAnchor:scrollView.contentLayoutGuide.trailingAnchor],
+        [stackView.widthAnchor constraintLessThanOrEqualToAnchor:scrollView.frameLayoutGuide.widthAnchor]
+    ]];
+
+    [self presentViewController:sheet animated:YES completion:nil];
+}
+
+// Target for the QR sheet's Dismiss button.
+- (void)dismissQRCodeSheet {
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)shareLinkWithMetadata:(id)sender {

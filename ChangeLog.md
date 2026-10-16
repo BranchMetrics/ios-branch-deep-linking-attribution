@@ -1,4 +1,7 @@
 Branch iOS SDK Change Log
+v.4.0.0-beta.4
+- Branch-TestBed adopts the UIKit scene life cycle (`UIApplicationSceneManifest` + `SceneDelegate`), required for the app to launch under Xcode 27 / iOS 27 (`UIApplicationEvaluateRuntimeIssueForNoSceneLifecycleAdoption`).
+
 v.4.0.0-beta.3
 
 Upgrade instructions: https://help.branch.io/developer-hub/ios-sdk-4-integration
