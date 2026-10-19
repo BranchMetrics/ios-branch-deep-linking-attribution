@@ -20,12 +20,12 @@
 /// Off by default, and it must stay off for normal use: that block sets every
 /// field away from its default, and several of those values break the TestBed
 /// and the integration tests. `euEndpoint` routes to EU hosts this key is not
-/// provisioned for, `testMode` swaps in the Info.plist test key, `cdnBaseUrl`
-/// points at a host that does not exist, `addAllowedScheme:` narrows tracking
-/// from "all schemes" to one, `urlPatternsToIgnore` suppresses any URL matching
-/// its patterns before the request is built, `appClipAppGroup` names a group
-/// absent from the entitlements, and `deepLinkDebugParams` injects keys into
-/// every deep-link response the tests assert on.
+/// provisioned for, `cdnBaseUrl` points at a host that does not exist,
+/// `addAllowedScheme:` narrows tracking from "all schemes" to one,
+/// `urlPatternsToIgnore` suppresses any URL matching its patterns before the
+/// request is built, `appClipAppGroup` names a group absent from the
+/// entitlements, and `deepLinkDebugParams` injects keys into every deep-link
+/// response the tests assert on.
 #define BRANCH_TESTBED_FULL_CONFIG_EXAMPLE 0
 
 /// Set to 1 to run the `BranchLinkBuilder` example at the end of
@@ -93,9 +93,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Compiled out by default; see the comment on.
     // BRANCH_TESTBED_FULL_CONFIG_EXAMPLE at the top of this file for why.
 
-    // Identity & environment  (defaults: testMode NO, apiUrl nil, safeTrackAPIUrl nil,
-    //                          cdnBaseUrl nil, euEndpoint NO)
-    config.testMode        = YES;                         // use the test key from Info.plist
+    // Identity & environment  (defaults: apiUrl nil, safeTrackAPIUrl nil, cdnBaseUrl nil,
+    //                          euEndpoint NO). Test vs. live comes from the key prefix.
     config.apiUrl          = @"https://api2.branch.io";   // optional API base-URL override
     config.safeTrackAPIUrl = @"https://api2.branch.io";   // optional safe-track base-URL override
     config.cdnBaseUrl      = @"https://cdn.example.com";   // optional CDN pattern-list override
@@ -139,7 +138,13 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // config.requestMetadata = nil;
 
     // Open tracking  (default: automaticOpenEvents YES)
-    config.automaticOpenEvents = YES;   // Branch calls sendOpen automatically on foreground
+    config.automaticOpenEvents = YES;   // Branch sends opens automatically; NO holds a resolved
+                                         // link's open for a manual -sendOpen call (see example below)
+
+    // Manual send example — set automaticOpenEvents = NO above, then send the held open yourself
+    // once any metadata from other SDKs is attached. See -handleDeepLinkParams:error: below for
+    // where the sendOpen call goes.
+    // config.automaticOpenEvents = NO;
 
     // Pasteboard  (default: checkPasteboardOnInstall NO)
     config.checkPasteboardOnInstall = YES;   // check the clipboard for a Branch Link on install
@@ -154,9 +159,17 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // ── Initialize ───────────────────────────────────────────────────────
     [Branch initialize:config];
-
-    // Required. Covers the deferred check and push cold launch.
-    [[Branch sharedInstance] requestDeepLinkDataWithLaunchOptions:launchOptions callback:nil];
+    
+    // The test link is delivered through continueUserActivity: after launch, so debug builds put it in
+    // the launch options as iOS does for a cold Universal Link. Without it the SDK would also send a
+    // nil-URL lookup for the launch.
+    NSDictionary *branchLaunchOptions = launchOptions;
+#if DEBUG
+    branchLaunchOptions = [TestBedDeepLinkTestHook launchOptionsByAddingTestLink:launchOptions];
+#endif
+    [[Branch sharedInstance] requestDeepLinkDataWithLaunchOptions:branchLaunchOptions callback:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
+        NSLog(@"%@", params);
+    }];
 
 #if DEBUG
     [TestBedDeepLinkTestHook installIfRequested:application];
@@ -173,8 +186,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
 /// Working example of `BranchLinkBuilder`
 ///
-/// You do not need a `Branch` reference to make a link, and you do not need to wait for
-/// `+[Branch initialize:]` to finish; the builder resolves the SDK when a terminal runs.
+/// You do not need a `Branch` reference to make a link; the builder resolves the SDK when a
+/// terminal runs. `+[Branch initialize:]` must have run first.
 - (void)branchLinkBuilderExample {
     // Link content and behavior travel as a BranchLinkProperties, which every terminal takes as an
     // argument. The same properties object can be reused for as many links as you like.
@@ -197,8 +210,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // ── getLongURLWithLinkProperties:useAppLinkDomain: ───────────────────
     // Offline and synchronous. `controlParams` are JSON-encoded and base64'd into the URL itself,
-    // so this needs no network and returns immediately. It is also the one terminal that does not
-    // need `+[Branch initialize:]` to have run — a Branch key is enough.
+    // so this needs no network and returns immediately.
     NSString *longURL = [builder getLongURLWithLinkProperties:linkProperties useAppLinkDomain:NO];
     NSLog(@"Branch TestBed: long URL: %@", longURL);
 
@@ -286,6 +298,11 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         NSLog(@"Branch TestBed: Error deep linking: %@.", error.localizedDescription);
         return;
     }
+
+    // Manual send example — pairs with "config.automaticOpenEvents = NO;" above. The link params
+    // are already delivered here; add metadata from other SDKs, then send the held open yourself.
+    // [[Branch sharedInstance] setRequestMetadataKey:@"adobe_id" value:[AdobeSDK getID]];
+    // [[Branch sharedInstance] sendOpen];
 
     NSLog(@"Deep linked with params: %@", params);
     NSString *deeplinkText = [params objectForKey:@"deeplink_text"];

@@ -25,7 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 
  This class is a plain mutable configuration object: create it with a Branch key, set the properties you care about, then pass
  it to `+[Branch initialize:]`. Once you have called `initialize:`, mutating the configuration has no effect —
- `initialize:` reads a snapshot of the values.
+ `initialize:` reads a snapshot of the values. To change settings later, pass a configuration to
+ `+[Branch updateConfiguration:]`.
 
  Only settings that are legitimately *pre-init* decisions live here. Settings that legitimately change at
  runtime — user identity, per-session partner parameters, per-request metadata, attribution level in response
@@ -36,11 +37,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Identity & environment
 
-/// The Branch key (`key_live_...` or `key_test_...`). Required, must be non-empty.
+/// The Branch key. Required, must be non-empty and start with `key_live_` or `key_test_`.
+/// The prefix selects the live or test environment.
 @property (nonatomic, copy, readonly) NSString *branchKey;
-
-/// When YES, Branch uses the test key found in your `Info.plist`. Default NO.
-@property (nonatomic, assign) BOOL testMode;
 
 /// Optional custom base URL for all calls to the Branch API. Must start with `http://` or `https://`.
 @property (nonatomic, copy, nullable) NSString *apiUrl;
@@ -95,8 +94,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// When YES, disables callouts to ad networks for all events. Default NO.
 @property (nonatomic, assign) BOOL adNetworkCalloutsDisabled;
 
-/// Optional DMA (EEA) consent parameters. When nil, no DMA parameters are sent. These are immutable once
-/// `+[Branch initialize:]` is called; to change consent at runtime, reinitialize with a new configuration.
+/// Optional DMA (EEA) consent parameters. When nil, no DMA parameters are sent. To change consent after
+/// initialization, pass a configuration with new parameters to `+[Branch updateConfiguration:]`.
 @property (nonatomic, copy, nullable) BranchDMAParameters *dmaParameters;
 
 #pragma mark - URL collection
@@ -119,8 +118,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Open tracking
 
-/// When NO, Branch does not automatically send an open on foreground; call `-[Branch sendOpen]` manually.
-/// Default YES.
+/// When NO, Branch sends no automatic open — not on foreground, and not for a resolved deep link.
+/// A deep link resolve still delivers its params through the `requestDeepLinkData…` callback and
+/// still follows any `invoke_features` redirect; only the open is held. Call `-[Branch sendOpen]`
+/// to send it, attributed if a link was resolved or unattributed otherwise. If the app has not sent
+/// one by the time it enters the background, an open is sent then. A call made while attribution is
+/// NONE is sent when attribution is raised, and an activation after a resign, such as the App
+/// Tracking Transparency prompt, allows another open. On a first install, requests that need a
+/// session (events, last attributed touch data) fail until that open is sent, so send it promptly.
+/// Keys set with `-setRequestMetadataKey:value:` stay attached to later requests until cleared with
+/// a nil value. Default YES.
 @property (nonatomic, assign) BOOL automaticOpenEvents;
 
 #pragma mark - Pasteboard
@@ -145,7 +152,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Designated initializer.
- @param branchKey The Branch key. Must be non-empty; validated in `-validate:`.
+ @param branchKey The Branch key. Must be non-empty and start with `key_live_` or `key_test_`;
+                  validated in `-validate:`.
  */
 - (instancetype)initWithKey:(NSString *)branchKey NS_DESIGNATED_INITIALIZER;
 
@@ -154,7 +162,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Factory helpers
 
-/// Debug preset: verbose logging and test mode enabled.
+/// Debug preset: verbose logging.
 + (instancetype)debug:(NSString *)branchKey;
 
 /// Production preset: warning-level logging.

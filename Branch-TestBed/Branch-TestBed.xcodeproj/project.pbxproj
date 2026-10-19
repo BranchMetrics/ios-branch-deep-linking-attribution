@@ -42,7 +42,6 @@
 		5F6D86D92BB5E9650068B536 /* BNCClassSerializationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6D86D82BB5E9650068B536 /* BNCClassSerializationTests.m */; };
 		5F86501A2B76DA3200364BDE /* NSMutableDictionaryBranchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F8650192B76DA3200364BDE /* NSMutableDictionaryBranchTests.m */; };
 		5F892EC5236116CD0023AEC1 /* NSErrorBranchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F892EC4236116CC0023AEC1 /* NSErrorBranchTests.m */; };
-		5F8B7B4721B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F8B7B4621B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m */; };
 		5F8BB66E278771890055D2DC /* BNCKeyChainTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F8BB66D278771890055D2DC /* BNCKeyChainTests.m */; };
 		5F909B5E23314CE900A774D2 /* BNCJSONUtilityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F73FC8023314697000EBD32 /* BNCJSONUtilityTests.m */; };
 		5F909B722332BEF600A774D2 /* BranchLastAttributedTouchDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F909B712332BEF600A774D2 /* BranchLastAttributedTouchDataTests.m */; };
@@ -77,7 +76,6 @@
 		8909A6D6A78237ACCB8496D6 /* EventLoggingHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D5B75E103FE48CC35B2C2D /* EventLoggingHybridTest.swift */; };
 		959C9C6A9AF35A32CE92F363 /* QRCodeHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F998EAD60325FB9FBF63FF /* QRCodeHybridTest.swift */; };
 		9BEC6ECEF0E0BF1E734B843D /* NotificationHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D4DC04AFC52EEBC6E0120A /* NotificationHybridTest.swift */; };
-		AA12345600010000000000B1 /* BranchDisableNextForegroundTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AA12345600010000000000A1 /* BranchDisableNextForegroundTests.m */; };
 		B9F5DA27F77E0A392BD2E69A /* TestBedIdentifiers.m in Sources */ = {isa = PBXBuildFile; fileRef = CC1798D4BBC4E0E40ADA9310 /* TestBedIdentifiers.m */; };
 		A1B2C3D4000000000000A001 /* TestBedDeepLinkTestHook.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4000000000000A002 /* TestBedDeepLinkTestHook.m */; };
 		C10A6DE629A995590061A851 /* StoreKitTestCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = C10A6DE529A995590061A851 /* StoreKitTestCertificate.cer */; };
@@ -201,7 +199,6 @@
 		5F892EC4236116CC0023AEC1 /* NSErrorBranchTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSErrorBranchTests.m; sourceTree = "<group>"; };
 		5F8B7B3B21B5F5CD009CE0A6 /* Branch-SDK-Unhosted-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-SDK-Unhosted-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F8B7B3F21B5F5CD009CE0A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5F8B7B4621B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_setBranchKeyTests.m; sourceTree = "<group>"; };
 		5F8BB66D278771890055D2DC /* BNCKeyChainTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCKeyChainTests.m; sourceTree = "<group>"; };
 		5F909B712332BEF600A774D2 /* BranchLastAttributedTouchDataTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchLastAttributedTouchDataTests.m; sourceTree = "<group>"; };
 		5F92B23323835FEB00CA909B /* BNCReachabilityTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCReachabilityTests.m; sourceTree = "<group>"; };
@@ -252,7 +249,6 @@
 		991B868E49743EF400DE3CA1 /* DeepLinkColdOpenHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DeepLinkColdOpenHybridTest.swift; sourceTree = "<group>"; };
 		9CB024C029C70375502663D2 /* UserIdentityHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UserIdentityHybridTest.swift; sourceTree = "<group>"; };
 		A13A03B363788986D842EB8F /* ShareLinkHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShareLinkHybridTest.swift; sourceTree = "<group>"; };
-		AA12345600010000000000A1 /* BranchDisableNextForegroundTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchDisableNextForegroundTests.m; sourceTree = "<group>"; };
 		ACF0972B844F3483686EF054 /* TestBed-GPTDriverTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TestBed-GPTDriverTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEB8091834A415F87D777F78 /* BrowserExperienceHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BrowserExperienceHybridTest.swift; sourceTree = "<group>"; };
 		C10A6DE029A97E440061A851 /* TestStoreKitConfig.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestStoreKitConfig.storekit; sourceTree = "<group>"; };
@@ -402,7 +398,6 @@
 				4D1683812098C901008819E3 /* Branch-SDK-Tests-Bridging-Header.h */,
 				C15CC9DF2ABCF8C8003CC339 /* BranchActivityItemTests.m */,
 				C17DAF7A2AC20C2000B16B1A /* BranchClassTests.m */,
-				AA12345600010000000000A1 /* BranchDisableNextForegroundTests.m */,
 				4D16839C2098C901008819E3 /* BranchEvent.Test.m */,
 				4D1683952098C901008819E3 /* BranchEvent.Test.swift */,
 				5F909B712332BEF600A774D2 /* BranchLastAttributedTouchDataTests.m */,
@@ -425,7 +420,6 @@
 			isa = PBXGroup;
 			children = (
 				5F67F48D228F535500067429 /* BNCEncodingUtilsTests.m */,
-				5F8B7B4621B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m */,
 				5F8B7B3F21B5F5CD009CE0A6 /* Info.plist */,
 			);
 			path = "Branch-SDK-Unhosted-Tests";
@@ -848,7 +842,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5F67F48E228F535500067429 /* BNCEncodingUtilsTests.m in Sources */,
-				5F8B7B4721B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m in Sources */,
 				5F3D671C233062FD00454FF1 /* BNCJsonLoader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -902,7 +895,6 @@
 				C15CC9E02ABCF8C8003CC339 /* BranchActivityItemTests.m in Sources */,
 				5F92B23423835FEB00CA909B /* BNCReachabilityTests.m in Sources */,
 				C17DAF7B2AC20C2000B16B1A /* BranchClassTests.m in Sources */,
-				AA12345600010000000000B1 /* BranchDisableNextForegroundTests.m in Sources */,
 				C12320B52808DB90007771C0 /* BranchQRCodeTests.m in Sources */,
 				5F3D671B233062FD00454FF1 /* BNCJsonLoader.m in Sources */,
 				4D1683C02098C902008819E3 /* BranchUniversalObjectTests.m in Sources */,
