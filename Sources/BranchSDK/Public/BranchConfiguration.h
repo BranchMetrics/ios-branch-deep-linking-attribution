@@ -88,12 +88,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// Optional consumer-protection attribution level. When nil, the SDK default is used.
 @property (nonatomic, copy, nullable) BranchAttributionLevel attributionLevel;
 
-/// When YES, limits Facebook attribution/tracking. Default NO.
-@property (nonatomic, assign) BOOL limitFacebookAttribution;
-
-/// When YES, disables callouts to ad networks for all events. Default NO.
-@property (nonatomic, assign) BOOL adNetworkCalloutsDisabled;
-
 /// Optional DMA (EEA) consent parameters. When nil, no DMA parameters are sent. To change consent after
 /// initialization, pass a configuration with new parameters to `+[Branch updateConfiguration:]`.
 @property (nonatomic, copy, nullable) BranchDMAParameters *dmaParameters;

@@ -106,8 +106,6 @@
     XCTAssertFalse(config.retryCountWasSet);
     XCTAssertFalse(config.retryIntervalWasSet);
     XCTAssertFalse(config.thirdPartyAPIsWaitTimeWasSet);
-    XCTAssertFalse(config.limitFacebookAttributionWasSet);
-    XCTAssertFalse(config.adNetworkCalloutsDisabledWasSet);
     XCTAssertFalse(config.automaticOpenEventsWasSet);
     XCTAssertFalse(config.requestTracingCallbackWasSet);
     XCTAssertFalse(config.allowedSchemesWasSet);
@@ -140,16 +138,12 @@
     config.retryCount = config.retryCount;
     config.retryInterval = config.retryInterval;
     config.thirdPartyAPIsWaitTime = config.thirdPartyAPIsWaitTime;
-    config.limitFacebookAttribution = NO;
-    config.adNetworkCalloutsDisabled = NO;
     config.automaticOpenEvents = YES;
 
     XCTAssertTrue(config.networkTimeoutWasSet);
     XCTAssertTrue(config.retryCountWasSet);
     XCTAssertTrue(config.retryIntervalWasSet);
     XCTAssertTrue(config.thirdPartyAPIsWaitTimeWasSet);
-    XCTAssertTrue(config.limitFacebookAttributionWasSet);
-    XCTAssertTrue(config.adNetworkCalloutsDisabledWasSet);
     XCTAssertTrue(config.automaticOpenEventsWasSet);
 }
 
@@ -160,8 +154,6 @@
         config.networkTimeout = 10.0;
         config.retryCount = 5;
         config.thirdPartyAPIsWaitTime = 2.0;
-        config.adNetworkCalloutsDisabled = YES;
-        config.limitFacebookAttribution = YES;
         config.automaticOpenEvents = NO;
     }];
 
@@ -174,24 +166,22 @@
     XCTAssertEqualWithAccuracy(prefs.timeout, 10.0, 0.001);
     XCTAssertEqual(prefs.retryCount, 5);
     XCTAssertEqualWithAccuracy(prefs.thirdPartyAPIsWaitTime, 2.0, 0.001);
-    XCTAssertTrue(prefs.disableAdNetworkCallouts);
-    XCTAssertTrue(prefs.limitFacebookTracking);
     XCTAssertFalse([[branch valueForKey:@"automaticOpenEvents"] boolValue]);
 }
 
 - (void)testUpdateAppliesAnAssignedDefaultValue {
-    [self initializeWith:^(BranchConfiguration *config) {
+    Branch *branch = [self initializeWith:^(BranchConfiguration *config) {
         config.networkTimeout = 10.0;
-        config.adNetworkCalloutsDisabled = YES;
+        config.automaticOpenEvents = NO;
     }];
 
     BranchConfiguration *update = [self updateConfiguration];
     update.networkTimeout = 5.5;
-    update.adNetworkCalloutsDisabled = NO;
+    update.automaticOpenEvents = YES;
     [Branch updateConfiguration:update];
 
     XCTAssertEqualWithAccuracy([BNCPreferenceHelper sharedInstance].timeout, 5.5, 0.001);
-    XCTAssertFalse([BNCPreferenceHelper sharedInstance].disableAdNetworkCallouts);
+    XCTAssertTrue([[branch valueForKey:@"automaticOpenEvents"] boolValue]);
 }
 
 - (void)testUpdateBeforeInitializeAppliesNothing {

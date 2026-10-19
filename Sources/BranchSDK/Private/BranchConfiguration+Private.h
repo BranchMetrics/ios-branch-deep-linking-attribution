@@ -37,8 +37,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, readonly) BOOL retryCountWasSet;
 @property (nonatomic, assign, readonly) BOOL retryIntervalWasSet;
 @property (nonatomic, assign, readonly) BOOL thirdPartyAPIsWaitTimeWasSet;
-@property (nonatomic, assign, readonly) BOOL limitFacebookAttributionWasSet;
-@property (nonatomic, assign, readonly) BOOL adNetworkCalloutsDisabledWasSet;
 @property (nonatomic, assign, readonly) BOOL automaticOpenEventsWasSet;
 @property (nonatomic, assign, readonly) BOOL requestTracingCallbackWasSet;
 @property (nonatomic, assign, readonly) BOOL allowedSchemesWasSet;

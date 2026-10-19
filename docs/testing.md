@@ -36,12 +36,15 @@ There is no fastlane and no `Gemfile` on this branch, and no style linter.
 | `verify.yml` | **works.** Runs the `xcodebuild test` above on `macos-15`. The `push:` trigger has no branch filter, so it fires for any pushed branch |
 | `layer1-logger-tests.yml` | **works.** The L1 wire gate, ported to this line so it exists in the PR merge tree. Triggers on push and PR against `4.0.0-beta.*` |
 | `gptdriver-e2e.yml` | **works, two jobs.** The deterministic half runs on every push and PR on this line. The full suite drives the MobileBoost device farm, needs `MOBILEBOOST_API_KEY`, and runs only on manual dispatch or a push to `Release-*` |
-| `version-bump.yml` | **dead.** Shells out to `bundle exec fastlane`, which does not exist here |
-| `integration-tests.yml` | **dead.** Same reason |
-| `release.yml` | **dead.** Same reason |
+| `version-bump.yml` | **manual, no checks.** Runs `scripts/version.sh` and pushes the bump. Not a test gate |
+| `release.yml` | **manual, release only.** Validates the version with `scripts/validate_version.sh` and builds the XCFrameworks; it runs no tests. Use `dry_run=true` to stop before publishing. See `docs/releasing.md` |
+| `integration-tests.yml` | **dead.** Shells out to `bundle exec fastlane`, which does not exist here |
 
-The last three do not verify anything on this branch until they are rewritten for it. A passing
-run from one of them is not a signal.
+`integration-tests.yml` does not verify anything on this branch until it is rewritten for it. A
+passing run from it is not a signal.
+
+`scripts/test_version.sh` tests `version.sh` and `validate_version.sh` against temporary copies of
+the files they manage. No workflow runs it; run it locally after touching either script.
 
 ## Layer 1 wire validation
 
