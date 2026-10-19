@@ -34,6 +34,10 @@ def _fixture(name):
 # also asserting counts. Scenario tests pass a real contract instead.
 ANY_CAPTURE = {"counts": {}, "order": ()}
 
+# One open and nothing else, for fixtures that exercise a validator behaviour
+# rather than a scenario's wire shape.
+ONE_OPEN = {"counts": {"/v3/events/open": 1}, "order": ()}
+
 
 def _run_validation(fixture_name, contract=ANY_CAPTURE):
     """Run validate_entries on a fixture and capture stdout. Returns
@@ -195,10 +199,9 @@ class AssertionEngineTests(unittest.TestCase):
         self.assertEqual(len(v.assert_contract(_capture("/alpha", "/beta"), contract)), 3)
 
     def test_the_seeded_deeplink_contract_accepts_the_real_capture_shape(self):
-        # Measured on device 2026-09-21, with the AppDelegate launch resolve:
-        # deeplink, open, deeplink, open.
+        # Measured on device: open, deeplink, open.
         errors = v.assert_contract(
-            _capture("/v3/deeplink", "/v3/events/open", "/v3/deeplink", "/v3/events/open"),
+            _capture("/v3/events/open", "/v3/deeplink", "/v3/events/open"),
             v.contract_for("deeplink"),
         )
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
@@ -266,17 +269,13 @@ class RetryCollapseTests(unittest.TestCase):
     Counting attempts would fail an exact-count contract on a flaky network."""
 
     def test_retried_request_counts_once(self):
-        # The fixture carries the launch deeplink plus three attempts of one
-        # open; collapse must leave the deeplink and exactly one open.
         entries = v.parse_branch_logs(_fixture("retried_open.txt"))
-        self.assertEqual(len(entries), 2)
-        opens = [e for e in entries if e["uri"] == "/v3/events/open"]
-        self.assertEqual(len(opens), 1)
-        self.assertEqual(opens[0]["request"][v.RETRY_COUNT_FIELD], 0)
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(entries[0]["request"][v.RETRY_COUNT_FIELD], 0)
 
     def test_retried_capture_satisfies_an_exact_count_contract(self):
         entries = v.parse_branch_logs(_fixture("retried_open.txt"))
-        self.assertEqual(v.assert_contract(entries, v.contract_for("install")), [])
+        self.assertEqual(v.assert_contract(entries, ONE_OPEN), [])
 
     def test_first_attempt_is_kept(self):
         kept = v.collapse_retries([{"uri": "/a", "url": "u", "request": {"retryNumber": 0}}])
@@ -297,12 +296,14 @@ class RetryCollapseTests(unittest.TestCase):
 
 
 class InstallContractTests(unittest.TestCase):
-    """install: the run the harness actually drives, one resolve then one
-    open. Each test below proves an assertion type FAILS on a violating
-    capture, since a contract only demonstrated passing is a contract that
-    cannot fail."""
+    """install, the worked example: the nil-URL deferred lookup that
+    requestDeepLinkDataWithLaunchOptions: sends, then one open. Each test
+    below proves an assertion type FAILS on a violating capture — a contract
+    only demonstrated passing is a contract that cannot fail."""
 
     def test_a_clean_install_capture_passes(self):
+        # Derived from a real capture, identifiers replaced: deeplink(nil), then
+        # the open.
         errors, _ = _run_validation("install.txt", v.contract_for("install"))
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 
@@ -314,6 +315,29 @@ class InstallContractTests(unittest.TestCase):
         self.assertIn("Expected 1", errors[0])
         self.assertIn("captured 2", errors[0])
 
+    def test_missing_deferred_lookup_fails(self):
+        # An install with no lookup means the AppDelegate call went missing.
+        # Both halves fire: the count, and the open that has nothing before it.
+        errors, _ = _run_validation("happy_path.txt", v.contract_for("install"))
+        self.assertTrue(
+            any("Expected 1 '/v3/deeplink'" in e and "captured 0" in e for e in errors),
+            errors,
+        )
+        self.assertTrue(any("after" in e for e in errors), errors)
+
+    def test_install_does_not_tell_a_cold_first_install_apart(self):
+        # Recorded, not hidden: both send one resolve then one tokenless open.
+        # Only link_data on the open differs, and install asserts no fields.
+        errors, _ = _run_validation("cold_firstInstall.txt", v.contract_for("install"))
+        self.assertEqual(errors, [], errors)
+
+    def test_a_second_lookup_fails(self):
+        # install_two_lookups.txt is spliced: two deeplinks, then the open.
+        errors, _ = _run_validation("install_two_lookups.txt", v.contract_for("install"))
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("Expected 1 '/v3/deeplink'", errors[0])
+        self.assertIn("captured 2", errors[0])
+
     def test_wrong_order_fails(self):
         # deeplink.txt is open then deeplink, with no open after it, so the
         # deeplink contract's ordering rule is violated.
@@ -322,10 +346,17 @@ class InstallContractTests(unittest.TestCase):
             any("after" in e for e in errors), f"Expected an order error: {errors}"
         )
 
+    def test_open_before_the_lookup_fails_install_order(self):
+        # deeplink.txt is open, then deeplink: the right counts for a lookup
+        # but the open precedes it, so only the order rule can see it.
+        errors, _ = _run_validation("deeplink.txt", v.contract_for("install"))
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("after", errors[0])
+
     def test_install_does_not_assert_the_absence_of_link_data_in_the_open(self):
         # Recorded, not hidden: the plan also wants the open to carry no link
         # data. That is a field-level assertion this layer does not make.
-        self.assertEqual(set(v.contract_for("install")), {"counts", "order", "fields"})
+        self.assertEqual(v.contract_for("install")["counts"].get("/v3/deeplink"), 1)
 
 
 class AttributionNoneContractTests(unittest.TestCase):
@@ -338,37 +369,39 @@ class AttributionNoneContractTests(unittest.TestCase):
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 
     def test_an_open_at_none_level_fails(self):
-        # The regression this scenario exists to catch: an open must not be
-        # sent at NONE.
-        contract = v.contract_for("attribution_none")
-        errors, _ = _run_validation("attribution_none_deeplink.txt", contract)
+        # The regression attribution_none exists to catch: an open must not
+        # be sent at NONE.
+        errors, _ = _run_validation(
+            "attribution_none_deeplink.txt", v.contract_for("attribution_none")
+        )
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("must not be captured", errors[0])
         self.assertIn("/v3/events/open", errors[0])
 
     def test_the_old_global_rule_would_have_failed_this_correct_capture(self):
         # The retired MANDATORY_ENDPOINT required an open in every capture.
-        # install still does, and this capture is correct without one, which is
-        # why a single global rule could not serve both scenarios.
+        # install still does, and attribution_none's capture is correct without
+        # one, which is why a single global rule could not serve both.
         errors, _ = _run_validation("attribution_none.txt", v.contract_for("install"))
         self.assertTrue(
             any("/v3/events/open" in e for e in errors),
             f"Expected the open requirement to fire: {errors}",
         )
 
-    def test_the_contract_does_not_assert_that_identifiers_were_cleared(self):
+    def test_attribution_none_does_not_assert_that_identifiers_were_cleared(self):
         # Recorded, not hidden: that is a field-level assertion, and this layer
         # is bounded at counts and required-field presence.
-        counts = v.contract_for("attribution_none")["counts"]
-        self.assertEqual(set(counts), {"/v3/deeplink", "/v3/events/open"})
+        self.assertEqual(
+            set(v.contract_for("attribution_none")["counts"]),
+            {"/v3/deeplink", "/v3/events/open"},
+        )
 
 
 class ColdHttpsContractTests(unittest.TestCase):
     """cold_https: a Universal Link into a freshly launched process on a
-    device that already has the app. Fixture is a real capture measured
-    2026-08-28 on an iPhone 16e, identifiers replaced, with the launch-resolve
-    deeplink/open pair this line now emits (EMT-4313) prepended from a
-    2026-09-22 re-measurement on the same simulator."""
+    device that already has the app. Fixture is derived from a real capture
+    measured on an iPhone 16 Pro simulator with the activity in launchOptions,
+    identifiers replaced: deeplink(link), then the attributed open."""
 
     def test_the_cold_link_capture_passes(self):
         errors, _ = _run_validation("cold_https.txt", v.contract_for("cold_https"))
@@ -381,30 +414,53 @@ class ColdHttpsContractTests(unittest.TestCase):
             "cold_https_no_attributed_open.txt", v.contract_for("cold_https")
         )
         self.assertTrue(
-            any("Expected 2 '/v3/events/open'" in e for e in errors), errors
+            any("Expected 1 '/v3/events/open'" in e for e in errors), errors
         )
         self.assertTrue(any("after" in e for e in errors), errors)
 
-    def test_two_opens_is_the_contract_not_a_duplicate(self):
-        # The launch open and the attributed open are both correct. The
-        # ticket originally asked for one, which would fail a healthy SDK.
-        self.assertEqual(v.contract_for("cold_https")["counts"]["/v3/events/open"], 2)
+    def test_one_open_is_the_contract_not_a_gap(self):
+        # A cold Universal Link launch carries the activity in launchOptions,
+        # so no nil-URL lookup and no launch open ahead of the link's. Two
+        # opens here would mean the lookup came back.
+        self.assertEqual(v.contract_for("cold_https")["counts"]["/v3/events/open"], 1)
 
-    def test_the_two_opens_are_distinguishable_by_payload(self):
+    def test_a_nil_lookup_ahead_of_the_link_fails(self):
+        # The pre-fix shape: deeplink(nil), open, deeplink(link), open. The
+        # fixture is spliced from the install and cold_https fixtures. Both the
+        # deeplink and the open count fire.
+        errors, _ = _run_validation(
+            "cold_https_nil_lookup.txt", v.contract_for("cold_https")
+        )
+        self.assertTrue(
+            any("Expected 1 '/v3/deeplink'" in e and "captured 2" in e for e in errors),
+            errors,
+        )
+        self.assertTrue(
+            any("Expected 1 '/v3/events/open'" in e and "captured 2" in e for e in errors),
+            errors,
+        )
+
+    def test_the_one_open_is_the_attributed_one(self):
         # Not asserted by the contract, which is bounded at counts and order.
-        # Pinned here so a future field-level contract has its discriminator:
-        # only the attributed open carries link data.
+        # Pinned so a future field-level contract has its discriminator: the
+        # open that remains is the one carrying link data.
         entries = v.parse_branch_logs(_fixture("cold_https.txt"))
         opens = [e for e in entries if e["uri"] == "/v3/events/open"]
-        self.assertEqual(len(opens), 2)
-        self.assertNotIn("link_data", opens[0]["request"])
-        self.assertIn("link_data", opens[1]["request"])
+        self.assertEqual(len(opens), 1)
+        self.assertIn("link_data", opens[0]["request"])
 
-    def test_both_opens_carry_the_token_when_the_app_was_already_installed(self):
-        # The half that separates cold_https from cold_firstInstall. Without
-        # it the two contracts are the same object in different names.
+    def test_the_open_carries_the_token_when_the_app_was_already_installed(self):
+        # An already-installed launch has a bundle token to send.
         fields = v.contract_for("cold_https")["fields"]
-        self.assertEqual(fields["/v3/events/open"]["randomized_bundle_token"], 2)
+        self.assertEqual(fields["/v3/events/open"]["randomized_bundle_token"], 1)
+
+    def test_an_open_without_the_token_fails(self):
+        # The install-open shape (no token) passing as an already-installed
+        # launch is the EMT-4027 failure from the other side.
+        errors, _ = _run_validation("cold_https_open_no_token.txt", v.contract_for("cold_https"))
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("randomized_bundle_token", errors[0])
+        self.assertIn("0 of 1 did", errors[0])
 
     def test_cold_https_does_not_assert_that_the_resolution_carries_the_link(self):
         # Recorded, not hidden: asserting the link URL would be a value
@@ -415,8 +471,9 @@ class ColdHttpsContractTests(unittest.TestCase):
 class ColdFirstInstallContractTests(unittest.TestCase):
     """cold_firstInstall: the same launch with no prior install. There is no
     install endpoint on this line -- install posts to /v3/events/open like any
-    other request -- so the install is the one open of the two carrying no
-    randomized_bundle_token."""
+    other request -- so the install is the one open, carrying link_data and no
+    randomized_bundle_token. Fixture is the shape CI captured after the
+    launch-options fix: deeplink(link), then the install open."""
 
     def test_the_first_install_capture_passes(self):
         errors, _ = _run_validation(
@@ -424,26 +481,33 @@ class ColdFirstInstallContractTests(unittest.TestCase):
         )
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 
+    def test_one_open_is_the_contract_not_a_gap(self):
+        # The second open the old contract expected came from the nil-URL
+        # lookup the launch options now suppress. Two here would mean it came back.
+        self.assertEqual(
+            v.contract_for("cold_firstInstall")["counts"]["/v3/events/open"], 1
+        )
+
     def test_an_install_open_carrying_a_token_fails(self):
         # The EMT-4027 shape: nothing on the surface is ever an install, so the
-        # first open looks like any other. Counts and order stay identical --
-        # this field rule is the only thing that sees it.
+        # open looks like any other. Counts and order stay identical -- this
+        # field rule is the only thing that sees it.
         errors, _ = _run_validation(
             "cold_firstInstall_install_open_carries_token.txt",
             v.contract_for("cold_firstInstall"),
         )
         self.assertEqual(len(errors), 1, errors)
         self.assertIn("randomized_bundle_token", errors[0])
-        self.assertIn("2 of 2 did", errors[0])
+        self.assertIn("1 of 1 did", errors[0])
 
-    def test_counts_and_order_alone_cannot_tell_the_two_cold_scenarios_apart(self):
-        # Why the fields key exists. Strip it and the two contracts are equal,
-        # so either fixture would satisfy either scenario.
+    def test_the_two_cold_scenarios_differ_by_the_token(self):
+        # Both send one resolve and one open, so the open count no longer
+        # tells them apart. The token on that open is the only discriminator.
         https = v.contract_for("cold_https")
         first = v.contract_for("cold_firstInstall")
         self.assertEqual(https["counts"], first["counts"])
-        self.assertEqual(https["order"], first["order"])
-        self.assertNotEqual(https["fields"], first["fields"])
+        self.assertEqual(https["fields"]["/v3/events/open"]["randomized_bundle_token"], 1)
+        self.assertEqual(first["fields"]["/v3/events/open"]["randomized_bundle_token"], 0)
 
     def test_the_two_scenarios_reject_each_other_fixtures(self):
         https_as_first, _ = _run_validation(
@@ -618,10 +682,9 @@ class ScenarioEnforcementTests(unittest.TestCase):
         )
 
     def test_deeplink_scenario_passes_on_the_measured_capture_shape(self):
-        # deeplink, open, deeplink, open — measured on device 2026-09-21 with
-        # the AppDelegate launch resolve. The launch resolve and its open
-        # precede the button-tap resolve, so an order rule of "first after
-        # first" would fail this correct capture.
+        # open, deeplink, open — measured on device. The launch open precedes
+        # the resolution, so an order rule of "first after first" would fail
+        # this correct capture.
         errors, _ = _run_validation("deeplink_scenario.txt", v.contract_for("deeplink"))
         self.assertEqual(errors, [], f"Unexpected errors: {errors}")
 

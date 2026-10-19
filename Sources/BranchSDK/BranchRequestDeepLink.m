@@ -17,9 +17,11 @@
 #import "BNCServerAPI.h"
 #import "BNCInAppBrowser.h"
 
-// Forward declaration of private Branch method
+// Forward declaration of private Branch methods
 @interface Branch (PrivateMethods)
-- (void)sendOpen:(NSDictionary *)responseData skipCallback:(BOOL)skipCallback;
+- (void)sendAutomaticUnattributedOpen;
+- (void)handleResolvedLinkResponse:(NSDictionary *)responseData;
+- (BOOL)hasHeldAttributedOpenResponse;
 @end
 
 @implementation BranchRequestDeepLink
@@ -81,7 +83,7 @@
     if (invokeFeatures) {
         if ([self invokeFeatures:invokeFeatures]) {
             // Redirect is happening - send attribution but skip initialization callback
-            [self attemptToSendOpen:preferenceHelper response:response skipCallback:YES];
+            [self attemptToSendOpen:preferenceHelper response:response];
             return; // Return - Dont call callback since weblink is launched
         }
     }
@@ -91,7 +93,7 @@
     }
 
     // Normal flow - send attribution and allow initialization callback
-    [self attemptToSendOpen:preferenceHelper response:response skipCallback:NO];
+    [self attemptToSendOpen:preferenceHelper response:response];
 }
 
 // Normalisation mirrors BranchRequestOpen -processResponse:. The server sends "data" as a JSON
@@ -277,7 +279,7 @@ static BOOL deepLinkRequestWaitQueueIsSuspended = NO;
     }
 }
 
-- (void) attemptToSendOpen:(BNCPreferenceHelper *)preferenceHelper response:(BNCServerResponse *)response skipCallback:(BOOL)skipCallback {
+- (void) attemptToSendOpen:(BNCPreferenceHelper *)preferenceHelper response:(BNCServerResponse *)response {
     NSString *referringURL = nil;
     if (self.urlString.length > 0) {
         referringURL = self.urlString;
@@ -305,14 +307,27 @@ static BOOL deepLinkRequestWaitQueueIsSuspended = NO;
         // sent without an instance.
         Branch *branch = [Branch sharedInstance];
         if (branch) {
-            [branch sendOpen:response.data skipCallback:skipCallback];
+            [branch handleResolvedLinkResponse:response.data];
         } else {
             [[BranchLogger shared] logError:@"Resolved a deep link with no initialized Branch instance. The attributed open was not sent."
                                       error:[NSError branchErrorWithCode:BNCInitError]];
         }
     } else {
-        [[BranchLogger shared] logDebug:@"No ~referring_link on deeplink data. Not sending sendOpen network request. Clearing link identifiers to prevent reuse." error:nil];
-        [self clearLinkIdentifiers:preferenceHelper];
+        Branch *branch = [Branch sharedInstance];
+
+        // A link held for a later send still owns these identifiers; clearing them here would
+        // strip its attribution before it is sent.
+        if (![branch hasHeldAttributedOpenResponse]) {
+            [[BranchLogger shared] logDebug:@"No ~referring_link on deeplink data. Clearing link identifiers to prevent reuse and sending an unattributed open." error:nil];
+            [self clearLinkIdentifiers:preferenceHelper];
+        }
+
+        if (branch) {
+            [branch sendAutomaticUnattributedOpen];
+        } else {
+            [[BranchLogger shared] logError:@"Resolved a deep link with no initialized Branch instance. The unattributed open was not sent."
+                                      error:[NSError branchErrorWithCode:BNCInitError]];
+        }
     }
 }
 
