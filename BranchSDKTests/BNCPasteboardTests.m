@@ -10,6 +10,9 @@
 #import "BNCPasteboard.h"
 #import "Branch.h"
 #import "BranchConfiguration.h"
+#import "BNCPreferenceHelper.h"
+#import "BNCRequestFactory.h"
+#import "BranchConstants.h"
 
 @interface Branch (BNCPasteboardTest)
 // Test-only reset for the +initialize: reinitialization guard (file-private in Branch.m).
@@ -148,6 +151,82 @@
     XCTAssertNil(tmp);
 
     [self clearPasteboard];
+}
+
+- (NSDictionary *)payloadWithCheckOnInstall:(BOOL)checkOnInstall firstLaunch:(BOOL)firstLaunch deepLink:(BOOL)deepLink {
+    return [self payloadWithCheckOnInstall:checkOnInstall firstLaunch:firstLaunch deepLink:deepLink urlString:nil];
+}
+
+- (NSDictionary *)payloadWithCheckOnInstall:(BOOL)checkOnInstall firstLaunch:(BOOL)firstLaunch deepLink:(BOOL)deepLink urlString:(NSString *)urlString {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    BOOL savedCheckOnInstall = [BNCPasteboard sharedInstance].checkOnInstall;
+    NSString *savedBundleToken = preferenceHelper.randomizedBundleToken;
+    preferenceHelper.localUrl = nil;
+    preferenceHelper.randomizedBundleToken = firstLaunch ? nil : @"existing_bundle_token";
+    [BNCPasteboard sharedInstance].checkOnInstall = checkOnInstall;
+
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:[NSUUID UUID].UUIDString TimeStamp:@0];
+    NSDictionary *json = deepLink ? [factory dataForDeepLinkWithURLString:urlString] : [factory dataForRequestOpenWithURLString:urlString];
+
+    [BNCPasteboard sharedInstance].checkOnInstall = savedCheckOnInstall;
+    preferenceHelper.randomizedBundleToken = savedBundleToken;
+    return json;
+}
+
+- (void)testDeepLinkFirstLaunchSendsPasteboardLinkWhenCheckOnInstall {
+#if !TARGET_OS_TV
+    [self addBranchURLToPasteboard];
+
+    NSDictionary *json = [self payloadWithCheckOnInstall:YES firstLaunch:YES deepLink:YES];
+    XCTAssertEqualObjects(json[BRANCH_REQUEST_KEY_LOCAL_URL], self.testBranchURL.absoluteString);
+
+    [self clearPasteboard];
+#endif
+}
+
+- (void)testDeepLinkSkipsPasteboardAfterFirstLaunch {
+#if !TARGET_OS_TV
+    [self addBranchURLToPasteboard];
+
+    NSDictionary *json = [self payloadWithCheckOnInstall:YES firstLaunch:NO deepLink:YES];
+    XCTAssertNil(json[BRANCH_REQUEST_KEY_LOCAL_URL]);
+
+    [self clearPasteboard];
+#endif
+}
+
+- (void)testDeepLinkFirstLaunchFromLinkSkipsPasteboard {
+#if !TARGET_OS_TV
+    [self addBranchURLToPasteboard];
+
+    NSDictionary *json = [self payloadWithCheckOnInstall:YES firstLaunch:YES deepLink:YES urlString:@"https://bnctestbed.app.link/launch"];
+    XCTAssertNil(json[BRANCH_REQUEST_KEY_LOCAL_URL]);
+    XCTAssertEqualObjects([self getURLFromPasteboard].absoluteString, self.testBranchURL.absoluteString);
+
+    [self clearPasteboard];
+#endif
+}
+
+- (void)testDeepLinkFirstLaunchSkipsPasteboardWhenCheckOnInstallOff {
+#if !TARGET_OS_TV
+    [self addBranchURLToPasteboard];
+
+    NSDictionary *json = [self payloadWithCheckOnInstall:NO firstLaunch:YES deepLink:YES];
+    XCTAssertNil(json[BRANCH_REQUEST_KEY_LOCAL_URL]);
+
+    [self clearPasteboard];
+#endif
+}
+
+- (void)testRequestOpenFirstLaunchSkipsPasteboard {
+#if !TARGET_OS_TV
+    [self addBranchURLToPasteboard];
+
+    NSDictionary *json = [self payloadWithCheckOnInstall:YES firstLaunch:YES deepLink:NO];
+    XCTAssertNil(json[BRANCH_REQUEST_KEY_LOCAL_URL]);
+
+    [self clearPasteboard];
+#endif
 }
 
 #if 0

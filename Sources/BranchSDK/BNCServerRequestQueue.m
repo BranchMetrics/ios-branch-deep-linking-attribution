@@ -9,8 +9,6 @@
 
 #import "BNCServerRequestQueue.h"
 #import "BNCPreferenceHelper.h"
-#import "BranchInstallRequest.h"
-#import "BranchOpenRequest.h"
 #import "BranchRequestOpen.h"
 #import "BranchRequestDeepLink.h"
 #import "BranchEvent.h"
@@ -124,9 +122,7 @@ afterUnfinishedDeepLinkRequests:(BOOL)afterDeepLinks {
     return count;
 }
 
-// Init traffic is not a single class. BranchRequestOpen and BranchRequestDeepLink are siblings of
-// BranchOpenRequest, not subclasses, so a BranchOpenRequest-only test reports no init in flight for
-// every 4.0 session. Same enumeration as BNCServerRequestOperation -start.
+// YES for a BranchRequestOpen or BranchRequestDeepLink. Same enumeration as BNCServerRequestOperation -start.
 - (BOOL)isInitRequest:(BNCServerRequest *)request {
     return [self isInstallOrOpenRequest:request] ||
            [request isKindOfClass:[BranchRequestDeepLink class]];
@@ -134,8 +130,7 @@ afterUnfinishedDeepLinkRequests:(BOOL)afterDeepLinks {
 
 // YES for an install or open request.
 - (BOOL)isInstallOrOpenRequest:(BNCServerRequest *)request {
-    return [request isKindOfClass:[BranchOpenRequest class]] ||
-           [request isKindOfClass:[BranchRequestOpen class]];
+    return [request isKindOfClass:[BranchRequestOpen class]];
 }
 
 // -isInitRequest: over operations neither finished nor cancelled.
@@ -264,20 +259,6 @@ afterUnfinishedDeepLinkRequests:(BOOL)afterDeepLinks {
         if ([((BNCServerRequestOperation *)op).request isKindOfClass:[BranchRequestDeepLink class]]) return YES;
     }
     return NO;
-}
-
-- (BranchOpenRequest *)findExistingInstallOrOpen {
-    for (NSOperation *op in self.operationQueue.operations) {
-        if ([op isKindOfClass:[BNCServerRequestOperation class]]) {
-            BNCServerRequestOperation *requestOp = (BNCServerRequestOperation *)op;
-            BNCServerRequest *request = requestOp.request;
-            if ([request isKindOfClass:[BranchOpenRequest class]]) {
-                BranchOpenRequest *openRequest = (BranchOpenRequest *)request;
-                return openRequest;
-            }
-        }
-    }
-    return nil;
 }
 
 - (NSString *)description {

@@ -19,7 +19,6 @@
 #import "BNCServerInterface.h"
 #import "BNCServerRequestQueue.h"
 #import "BNCServerResponse.h"
-#import "BranchOpenRequest.h"
 #import "BranchRequestOpen.h"
 #import "BranchRequestDeepLink.h"
 
@@ -230,7 +229,6 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
     // applicationWillResignActive suspends the open lock and every resolve start suspends the
     // deep link lock. getLatestReferringParamsSynchronous waits on both, so leaving either
     // suspended hangs a later test rather than failing it.
-    [BranchOpenRequest releaseOpenResponseLock];
     [BranchRequestOpen releaseOpenResponseLock];
     [BranchRequestDeepLink releaseDeepLinkResponseLock];
 

@@ -6,8 +6,6 @@
 //
 
 #import "BNCServerRequestOperation.h"
-#import "BranchOpenRequest.h"
-#import "BranchInstallRequest.h"
 #import "BranchEvent.h"
 #import "BranchLogger.h"
 #import "NSError+Branch.h"
@@ -123,9 +121,7 @@
         }
     }
 
-    if ([self.request isKindOfClass:[BranchInstallRequest class]]) {
-        // Install requests: no session validation needed
-    } else if ([self.request isKindOfClass:[BranchOpenRequest class]] || [self.request isKindOfClass:[BranchRequestOpen class]] || [self.request isKindOfClass:[BranchRequestDeepLink class]]) {
+    if ([self.request isKindOfClass:[BranchRequestOpen class]] || [self.request isKindOfClass:[BranchRequestDeepLink class]]) {
        // If we do not have a randomized bundle token, we should receive one from the service
         // We will receive from callback in v3/deeplink
     } else {
@@ -139,10 +135,6 @@
         }
     }
 
-    if ([self.request isKindOfClass:[BranchOpenRequest class]]) {
-        [BranchOpenRequest setWaitNeededForOpenResponseLock];
-    }
-    
     if ([self.request isKindOfClass:[BranchRequestDeepLink class]]) {
         [BranchRequestDeepLink setWaitNeededForDeepLinkResponseLock];
     }

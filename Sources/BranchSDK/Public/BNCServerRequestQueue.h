@@ -9,8 +9,6 @@
 #import "BNCServerRequest.h"
 #import <Foundation/Foundation.h>
 
-@class BranchOpenRequest;
-
 @interface BNCServerRequestQueue : NSObject
 
 + (instancetype)getInstance;
@@ -23,6 +21,5 @@
 - (void)clearQueue;
 - (void)cancelPendingDeepLinkRequests;
 - (BOOL)containsInstallOrOpen;
-- (BranchOpenRequest *)findExistingInstallOrOpen;
 
 @end
