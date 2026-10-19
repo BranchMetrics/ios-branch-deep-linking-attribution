@@ -388,19 +388,16 @@ static NSString * const kEncodedKeyValueParams = @"eyJrZXkiOiJ2YWx1ZSJ9";
     [self waitForExpectations:@[shortURLCalledBack, spotlightCalledBack] timeout:5.0];
 }
 
-// The long-URL terminal needs a Branch key and the preference-helper singleton, neither of which
-// requires the Branch singleton -- so the one offline terminal stays usable before +initialize:.
-- (void)testGetLongURLDoesNotRequireTheSharedInstance {
+// The long-URL terminal requires +initialize:, like the other terminals.
+- (void)testGetLongURLReturnsNilBeforeInitialize {
     [BNCPreferenceHelper sharedInstance].userUrl = nil;
     [Branch resetInitializationGuardForTesting];
 
     BranchLinkBuilder *builder = [[BranchLinkBuilder alloc] init];
 
-    NSString *url = nil;
+    NSString *url = @"unset";
     XCTAssertNoThrow(url = [builder getLongURLWithLinkProperties:nil useAppLinkDomain:NO]);
-
-    NSString *expectedPrefix = [NSString stringWithFormat:@"https://bnc.lt/a/%@?", kTestBranchKey];
-    XCTAssertTrue([url hasPrefix:expectedPrefix], @"%@", url);
+    XCTAssertNil(url);
 }
 
 - (void)testInjectedBranchIsUsedEvenWhenSharedInstanceIsUnavailable {

@@ -1,23 +1,48 @@
 name: Build & Release (manual)
 
 # Manually triggered
-# $ gh workflow run release.yml
+# $ gh workflow run release.yml -f version=4.0.0-beta.3
+# $ gh workflow run release.yml -f version=4.0.0-beta.3 -f dry_run=true
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: Select Release type - major, minor or patch(for version upgrade).
+        description: Version to release, e.g. 4.0.0-beta.3. Must match ./scripts/version.sh on the selected branch.
         required: true
-        default: patch
-        type: choice
-        options:
-        - patch
-        - minor
-        - major
-        
+        type: string
+      dry_run:
+        description: Validate and build only. Skips the GitHub release, asset upload and SPM dispatch.
+        required: false
+        default: false
+        type: boolean
+
 jobs:
+  validate-version:
+    runs-on: macos-latest
+    outputs:
+      version: ${{ steps.validate.outputs.version }}
+      prerelease: ${{ steps.validate.outputs.prerelease }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+      - name: Validate version
+        id: validate
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+            ./scripts/validate_version.sh "$VERSION" >> $GITHUB_OUTPUT
+      - name: Check that the tag does not exist
+        env:
+          VERSION: ${{ steps.validate.outputs.version }}
+        run: |
+            if git ls-remote --exit-code --tags origin "refs/tags/$VERSION" > /dev/null; then
+                echo ">>> Error: Tag '$VERSION' already exists." 1>&2
+                exit 1
+            fi
+
   static-analysis:
     runs-on: macos-latest
+    needs: [validate-version]
     steps:
       - name: Check out code
         uses: actions/checkout@v6
@@ -172,65 +197,41 @@ jobs:
 
   release:
     runs-on: macos-latest
-    needs: [build-framework, build-static-framework, build-noidfa-framework, build-static-noidfa-framework]
+    if: ${{ !inputs.dry_run }}
+    needs: [validate-version, build-framework, build-static-framework, build-noidfa-framework, build-static-noidfa-framework]
+    env:
+      VERSION: ${{ needs.validate-version.outputs.version }}
+      PRERELEASE: ${{ needs.validate-version.outputs.prerelease }}
     steps:
       - name: Check out code
         uses: actions/checkout@v6
-      - name: Set up Ruby 2.7
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '2.7'
-      # The CocoaPods dependencies are only used by the
-      # Branch-TestBed.xcworkspace (for unit tests).
-      # Bring in the Ruby deps from the cache for quick availability of
-      # pod command. Not using cached Pods folder.
-      - name: Restore cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            vendor
-            Branch-TestBed/Pods
-          key: ${{ runner.os }}-${{ hashFiles('Gemfile.lock','Branch-TestBed/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-
-      - name: Install Ruby dependencies
-        run: |
-          bundle config set --local path vendor
-          bundle check || bundle install
       - name: Download build artifacts
         uses: actions/download-artifact@v5
       - name: Publish to CocoaPods
         run: |
           # TODO: Authenticate using repo secret
-          # bundle exec pod trunk push Branch.podspec
+          # pod trunk push BranchSDK.podspec
           echo "TODO: This 👆"
       # 3. Create GitHub release. Also creates a tag.
-      - name: Get current version
-        id: get-version
-        run: |
-          bundle exec fastlane current_version
-          echo "Current version is $(cat fastlane/.version)."
-          echo "version=$(cat fastlane/.version)" >> $GITHUB_OUTPUT
       - name: Create GitHub Release
         uses: actions/github-script@v7
         with:
           script: |
             const createRelease = require('./.github/custom-scripts/create-release');
-            const tagName = '${{ steps.get-version.outputs.version }}';
-            const sha = '${{ steps.commit-checksums.outputs.sha }}';
             await createRelease({
               core,
               context,
               github,
-              sha,
-              version: tagName,
+              sha: context.sha,
+              version: process.env.VERSION,
+              prerelease: process.env.PRERELEASE === 'true',
             });
       - name: Upload Release Assets
         uses: actions/github-script@v7
         with:
           script: |
             const uploadAsset = require('./.github/custom-scripts/upload-asset');
-            const tagName = '${{ steps.get-version.outputs.version }}';
+            const tagName = process.env.VERSION;
 
             const { data } = await github.rest.repos.getReleaseByTag({
               owner: context.repo.owner,
@@ -342,5 +343,5 @@ jobs:
       - name: Trigger workflow in iOS Branch SDK spm repo for updating code and creating release
         run: |
             curl -X POST https://api.github.com/repos/BranchMetrics/ios-branch-sdk-spm/dispatches -H 'Accept: application/vnd.github.everest-preview+json' -u "branchlet:${{ secrets.BRANCHLET_ACCESS_TOKEN_PUBLIC}}" --data '{"event_type": "Trigger Workflow", "client_payload":
-                   { "tag":"${{steps.get-version.outputs.version}}"}}'
+                   { "tag":"'"$VERSION"'"}}'
  

@@ -403,12 +403,6 @@
         json[BRANCH_REQUEST_KEY_RANDOMIZED_DEVICE_TOKEN] = self.preferenceHelper.randomizedDeviceToken;
     }
     json[BRANCH_REQUEST_KEY_RANDOMIZED_BUNDLE_TOKEN] = self.preferenceHelper.randomizedBundleToken;
-    
-    // TODO: remove if deprecated
-    // tmp location, it's only on opens like the tokens but it will probably be deleted
-    if (self.preferenceHelper.limitFacebookTracking) {
-        json[@"limit_facebook_tracking"] = (__bridge NSNumber*) kCFBooleanTrue;
-    }
 }
 
 - (void)addShortURLTokensToJSON:(NSMutableDictionary *)json isSpotlightRequest:(BOOL)isSpotlightRequest {
@@ -670,12 +664,7 @@
     NSMutableDictionary *dictionary = [NSMutableDictionary new];
     @synchronized (self.deviceInfo) {
         [self.deviceInfo checkAdvertisingIdentifier];
-        
-        BOOL disableAdNetworkCallouts = self.preferenceHelper.disableAdNetworkCallouts;
-        if (disableAdNetworkCallouts) {
-            dictionary[@"disable_ad_network_callouts"] = [NSNumber numberWithBool:disableAdNetworkCallouts];
-        }
-        
+
         if (self.preferenceHelper.isDebug) {
             dictionary[@"unidentified_device"] = @(YES);
         } else {
@@ -697,9 +686,6 @@
 
         [dictionary bnc_safeSetObject:self.deviceInfo.optedInStatus forKey:@"opted_in_status"];
 
-        if (self.preferenceHelper.limitFacebookTracking) {
-            dictionary[@"limit_facebook_tracking"] = @(YES);
-        }
         [dictionary bnc_safeSetObject:self.deviceInfo.brandName forKey:@"brand"];
         [dictionary bnc_safeSetObject:self.deviceInfo.modelName forKey:@"model"];
         [dictionary bnc_safeSetObject:self.deviceInfo.osName forKey:@"os"];
@@ -801,11 +787,6 @@
         [self safeSetValue:self.deviceInfo.applicationVersion forKey:@"app_version" onDict:dict];
         [self safeSetValue:self.deviceInfo.pluginName forKey:@"plugin_name" onDict:dict];
         [self safeSetValue:self.deviceInfo.pluginVersion forKey:@"plugin_version" onDict:dict];
-        
-        BOOL disableAdNetworkCallouts = self.preferenceHelper.disableAdNetworkCallouts;
-        if (disableAdNetworkCallouts) {
-            [dict setObject:[NSNumber numberWithBool:disableAdNetworkCallouts] forKey:@"disable_ad_network_callouts"];
-        }
     }
 }
 

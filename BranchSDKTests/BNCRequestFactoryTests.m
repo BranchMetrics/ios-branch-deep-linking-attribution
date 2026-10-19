@@ -226,9 +226,30 @@
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
     NSDictionary *json = [factory dataForLATDWithDataDictionary:@{}.mutableCopy];
     XCTAssertNotNil(json);
-    
+
     XCTAssertTrue(self.requestCreationTimeStamp  == [json objectForKey:BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP]);
     XCTAssertTrue([self.requestUUID isEqualToString:[json objectForKey:BRANCH_REQUEST_KEY_REQUEST_UUID]]);
+}
+
+- (void)testPayloadsOmitRemovedFacebookAndAdNetworkKeys {
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
+    NSDictionary<NSString *, NSDictionary *> *payloads = @{
+        @"install": [factory dataForInstallWithURLString:@"https://branch.io"],
+        @"open": [factory dataForOpenWithURLString:@"https://branch.io"],
+        @"requestOpen": [factory dataForRequestOpenWithURLString:@"https://branch.io"],
+        @"deeplink": [factory dataForDeepLinkWithURLString:@"https://branch.io"],
+        @"event": [factory dataForEventWithEventDictionary:[@{@"name": @"ADD_TO_CART"} mutableCopy]],
+        @"shortURL": [factory dataForShortURLWithLinkDataDictionary:@{}.mutableCopy isSpotlightRequest:NO],
+        @"latd": [factory dataForLATDWithDataDictionary:@{}.mutableCopy],
+    };
+
+    [payloads enumerateKeysAndObjectsUsingBlock:^(NSString *name, NSDictionary *json, BOOL *stop) {
+        NSDictionary *userData = json[@"user_data"];
+        XCTAssertNil(json[@"limit_facebook_tracking"], @"%@", name);
+        XCTAssertNil(json[@"disable_ad_network_callouts"], @"%@", name);
+        XCTAssertNil(userData[@"limit_facebook_tracking"], @"%@", name);
+        XCTAssertNil(userData[@"disable_ad_network_callouts"], @"%@", name);
+    }];
 }
 
 @end
