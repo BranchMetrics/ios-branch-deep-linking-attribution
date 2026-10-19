@@ -4,8 +4,8 @@
 //
 //  Owns the window under the UIKit scene life cycle. Cold-launch deep link
 //  data arrives in `connectionOptions` here, not in AppDelegate's
-//  `didFinishLaunchingWithOptions:`. Emits the same `[TestBedLifecycle]`
-//  markers AppDelegate used to write, via `appDelegate`'s `logLifecycleMarker:`.
+//  `didFinishLaunchingWithOptions:`. The `[TestBedLifecycle]` markers are still
+//  written by AppDelegate's `logLifecycleMarker:`; the scene callbacks forward to it.
 //
 
 #import "SceneDelegate.h"
@@ -54,24 +54,25 @@ willConnectToSession:(UISceneSession *)session
 
 // Warm open via a Universal Link while the scene is already connected.
 - (void)scene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity {
-    // hot_https_foreground counts this marker (scripts/check_foreground_markers.py).
-    [appDelegate logLifecycleMarker:@"continueUserActivity"];
     [[Branch sharedInstance] requestDeepLinkDataWithScene:scene continueUserActivity:userActivity];
 }
 
-- (void)sceneWillResignActive:(UIScene *)scene { [appDelegate logLifecycleMarker:@"applicationWillResignActive"]; }
-- (void)sceneDidEnterBackground:(UIScene *)scene {
-    [appDelegate logLifecycleMarker:@"applicationDidEnterBackground"];
-    // Two main-queue hops land after the SDK's background clear, so the report reads the cleared value (scripts/check_no_stickiness.py).
-    dispatch_async(dispatch_get_main_queue(), ^{
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [appDelegate logLatestReferringParams];
-        });
-    });
+// Under the scene life cycle UIKit calls these instead of the app delegate's
+// `applicationWillResignActive:`, `applicationDidEnterBackground:` and
+// `applicationDidBecomeActive:`. The SDK still observes the UIApplication
+// notifications for those transitions (Branch.m), not the scene callbacks, and
+// the L1 marker checks count the markers those app delegate methods write. So
+// the scene callbacks only forward to the app delegate methods, which stay.
+- (void)sceneWillResignActive:(UIScene *)scene {
+    [appDelegate applicationWillResignActive:[UIApplication sharedApplication]];
 }
+
+- (void)sceneDidEnterBackground:(UIScene *)scene {
+    [appDelegate applicationDidEnterBackground:[UIApplication sharedApplication]];
+}
+
 - (void)sceneDidBecomeActive:(UIScene *)scene {
-    [appDelegate logLifecycleMarker:@"applicationDidBecomeActive"];
-    [appDelegate logLatestReferringParams];
+    [appDelegate applicationDidBecomeActive:[UIApplication sharedApplication]];
 }
 
 @end

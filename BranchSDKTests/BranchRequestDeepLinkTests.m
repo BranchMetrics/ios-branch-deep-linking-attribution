@@ -66,6 +66,10 @@ static NSString * const kResolvedLinkPayloadJSON =
 // a non-init request when the session credentials are missing, so leaving one behind lets
 // later tests reach the network they would otherwise have skipped.
 @property (nonatomic, copy) NSString *savedSpotlightIdentifier;
+@property (nonatomic, copy) NSString *savedUniversalLinkURL;
+@property (nonatomic, copy) NSString *savedExternalIntentURI;
+@property (nonatomic, assign) BOOL savedDropURLOpen;
+@property (nonatomic, copy) id savedDeepLinkHandler;
 @end
 
 @implementation BranchRequestDeepLinkTests
@@ -83,8 +87,13 @@ static NSString * const kResolvedLinkPayloadJSON =
     self.savedAttributionLevel = preferenceHelper.attributionLevel;
     self.savedUserURLFilter = [self.branch valueForKey:@"userURLFilter"];
     self.savedSpotlightIdentifier = preferenceHelper.spotlightIdentifier;
+    self.savedUniversalLinkURL = preferenceHelper.universalLinkUrl;
+    self.savedExternalIntentURI = preferenceHelper.externalIntentURI;
+    self.savedDropURLOpen = preferenceHelper.dropURLOpen;
+    self.savedDeepLinkHandler = [self.branch valueForKey:@"deepLinkHandler"];
 
     preferenceHelper.sessionParams = nil;
+    preferenceHelper.dropURLOpen = NO;
     preferenceHelper.referringURL = nil;
     // Deterministic regardless of ambient state: sendOpen is a no-op at level None.
     preferenceHelper.attributionLevel = BranchAttributionLevelFull;
@@ -106,6 +115,7 @@ static NSString * const kResolvedLinkPayloadJSON =
 - (void)tearDown {
     [self.branch setValue:[BNCServerRequestQueue getInstance] forKey:@"requestQueue"];
     [self.branch setValue:self.savedUserURLFilter forKey:@"userURLFilter"];
+    [self.branch setValue:self.savedDeepLinkHandler forKey:@"deepLinkHandler"];
     self.fakeQueue = nil;
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
@@ -113,6 +123,9 @@ static NSString * const kResolvedLinkPayloadJSON =
     preferenceHelper.referringURL = nil;
     preferenceHelper.attributionLevel = self.savedAttributionLevel;
     preferenceHelper.spotlightIdentifier = self.savedSpotlightIdentifier;
+    preferenceHelper.universalLinkUrl = self.savedUniversalLinkURL;
+    preferenceHelper.externalIntentURI = self.savedExternalIntentURI;
+    preferenceHelper.dropURLOpen = self.savedDropURLOpen;
 
     // Drain any already-scheduled async block against this clean baseline.
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
@@ -303,6 +316,99 @@ static NSString * const kResolvedLinkPayloadJSON =
 
     XCTAssertNil([self firstEnqueuedRequestOfClassNamed:@"BranchRequestDeepLink"],
                  @"A URL matching the default skiplist must not be sent to /v3/deeplink.");
+}
+
+#pragma mark - Stored deep link handler delivery
+
+// A universal link arriving through the AppDelegate entry point carries no callback of its own.
+// Its resolved params must reach the handler registered at launch.
+- (void)testUserActivityEntryPointDeliversResolvedParamsToLaunchHandler {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"launch handler invoked"];
+    __block NSDictionary *receivedParams = nil;
+    __block NSError *receivedError = nil;
+
+    // The universal-link launch key makes this call register the handler without enqueuing a lookup.
+    [self.branch requestDeepLinkDataWithLaunchOptions:@{ UIApplicationLaunchOptionsUserActivityDictionaryKey: @{} }
+                                             callback:^(NSDictionary *params, NSError *error) {
+        receivedParams = params;
+        receivedError = error;
+        [expectation fulfill];
+    }];
+    XCTAssertNil([self firstEnqueuedRequestOfClassNamed:@"BranchRequestDeepLink"],
+                 @"Precondition: registering the handler must not enqueue a resolution of its own.");
+
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
+    activity.webpageURL = [NSURL URLWithString:kResolvedLinkURL];
+    [self.branch requestDeepLinkDataWithUserActivity:activity];
+
+    BranchRequestDeepLink *enqueued =
+        (BranchRequestDeepLink *)[self firstEnqueuedRequestOfClassNamed:@"BranchRequestDeepLink"];
+    XCTAssertNotNil(enqueued, @"The user activity entry point must enqueue a deep link resolution.");
+    XCTAssertEqualObjects(enqueued.urlString, kResolvedLinkURL);
+
+    [enqueued processResponse:[self resolvedDeepLinkResponse] error:nil];
+    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+
+    XCTAssertNil(receivedError);
+    XCTAssertTrue([receivedParams[BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK] boolValue],
+                  @"The launch handler must receive the resolved params for an entry point with no callback.");
+    XCTAssertEqualObjects(receivedParams[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK], kResolvedLinkURL);
+}
+
+// A failed resolution from the URL scheme entry point must report its error to the launch handler.
+- (void)testURLEntryPointDeliversResolutionErrorToLaunchHandler {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"launch handler invoked"];
+    __block NSDictionary *receivedParams = nil;
+    __block NSError *receivedError = nil;
+
+    // The URL launch key makes this call register the handler without enqueuing a lookup.
+    NSURL *schemeURL = [NSURL URLWithString:@"branchtest://open"];
+    [self.branch requestDeepLinkDataWithLaunchOptions:@{ UIApplicationLaunchOptionsURLKey: schemeURL }
+                                             callback:^(NSDictionary *params, NSError *error) {
+        receivedParams = params;
+        receivedError = error;
+        [expectation fulfill];
+    }];
+    XCTAssertNil([self firstEnqueuedRequestOfClassNamed:@"BranchRequestDeepLink"],
+                 @"Precondition: registering the handler must not enqueue a resolution of its own.");
+
+    [self.branch requestDeepLinkDataWithURL:schemeURL];
+
+    BranchRequestDeepLink *enqueued =
+        (BranchRequestDeepLink *)[self firstEnqueuedRequestOfClassNamed:@"BranchRequestDeepLink"];
+    XCTAssertNotNil(enqueued, @"The URL entry point must enqueue a deep link resolution.");
+
+    NSError *failure = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorTimedOut userInfo:nil];
+    [enqueued processResponse:nil error:failure];
+    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+
+    XCTAssertEqualObjects(receivedError, failure,
+                          @"The launch handler must receive the resolution error for an entry point with no callback.");
+    XCTAssertEqualObjects(receivedParams, @{});
+}
+
+// An explicit callback takes the result; the launch handler must not also fire for it.
+- (void)testExplicitCallbackTakesPrecedenceOverLaunchHandler {
+    __block BOOL launchHandlerInvoked = NO;
+    [self.branch requestDeepLinkDataWithLaunchOptions:@{ UIApplicationLaunchOptionsUserActivityDictionaryKey: @{} }
+                                             callback:^(NSDictionary *params, NSError *error) {
+        launchHandlerInvoked = YES;
+    }];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"explicit callback invoked"];
+    [self.branch requestDeepLinkData:kResolvedLinkURL callback:^(NSDictionary *params, NSError *error) {
+        [expectation fulfill];
+    }];
+
+    BranchRequestDeepLink *enqueued =
+        (BranchRequestDeepLink *)[self firstEnqueuedRequestOfClassNamed:@"BranchRequestDeepLink"];
+    XCTAssertNotNil(enqueued, @"requestDeepLinkData: must enqueue a deep link resolution request.");
+
+    [enqueued processResponse:[self resolvedDeepLinkResponse] error:nil];
+    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+
+    XCTAssertFalse(launchHandlerInvoked,
+                   @"A result owed to an explicit callback must not also be delivered to the launch handler.");
 }
 
 @end
