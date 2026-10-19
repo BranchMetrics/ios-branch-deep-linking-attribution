@@ -27,6 +27,9 @@ Read this before porting anything across the two lines.
    are per install and per device, not per foreground.
 6. **No fastlane.** Tests run directly through `xcodebuild` against a first-class
    `BranchSDKTests/` target.
+7. **Minimum iOS is 15.0, not 12.0.** Raised for Xcode 27, which rejects a deployment target
+   below 15.0 for both simulator and device (`master` still targets 12.0). tvOS is 15.0 too, the
+   same Xcode 27 floor. `BranchSDK.xcodeproj`, `Package.swift`, `BranchSDK.podspec`.
 
 ## How the session state came out
 

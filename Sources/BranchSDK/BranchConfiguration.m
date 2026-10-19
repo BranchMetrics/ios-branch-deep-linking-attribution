@@ -31,8 +31,6 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
 @property (nonatomic, assign, readwrite) BOOL retryCountWasSet;
 @property (nonatomic, assign, readwrite) BOOL retryIntervalWasSet;
 @property (nonatomic, assign, readwrite) BOOL thirdPartyAPIsWaitTimeWasSet;
-@property (nonatomic, assign, readwrite) BOOL limitFacebookAttributionWasSet;
-@property (nonatomic, assign, readwrite) BOOL adNetworkCalloutsDisabledWasSet;
 @property (nonatomic, assign, readwrite) BOOL automaticOpenEventsWasSet;
 @property (nonatomic, assign, readwrite) BOOL requestTracingCallbackWasSet;
 @property (nonatomic, assign, readwrite) BOOL allowedSchemesWasSet;
@@ -73,8 +71,6 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
 
     // Privacy & attribution
     _attributionLevel = nil;
-    _limitFacebookAttribution = NO;
-    _adNetworkCalloutsDisabled = NO;
     _dmaParameters = nil;
 
     // Collections
@@ -141,18 +137,6 @@ static const NSTimeInterval BranchConfigurationMaxThirdPartyAPIsWaitTime = 10;
 - (void)setThirdPartyAPIsWaitTime:(NSTimeInterval)thirdPartyAPIsWaitTime {
     _thirdPartyAPIsWaitTime = thirdPartyAPIsWaitTime;
     _thirdPartyAPIsWaitTimeWasSet = YES;
-}
-
-#pragma mark - Privacy & attribution
-
-- (void)setLimitFacebookAttribution:(BOOL)limitFacebookAttribution {
-    _limitFacebookAttribution = limitFacebookAttribution;
-    _limitFacebookAttributionWasSet = YES;
-}
-
-- (void)setAdNetworkCalloutsDisabled:(BOOL)adNetworkCalloutsDisabled {
-    _adNetworkCalloutsDisabled = adNetworkCalloutsDisabled;
-    _adNetworkCalloutsDisabledWasSet = YES;
 }
 
 #pragma mark - Open tracking
