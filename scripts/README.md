@@ -42,7 +42,8 @@ which endpoints must not appear, and the order between them. There is no global
 rule any more — a scenario that requires an open says so in its contract.
 
 ```bash
-# install: the run the harness drives, one resolve then one open
+# install: the run the harness drives, one open preceded by the nil-URL
+# deferred lookup that requestDeepLinkDataWithLaunchOptions: sends
 ./scripts/run_l1_instrumented.sh
 python3 scripts/validate_l1_logs.py branchlogs.txt --scenario install
 
@@ -53,6 +54,16 @@ OUTPUT_LOG=branchlogs-deeplink.txt \
 python3 scripts/validate_l1_logs.py branchlogs-deeplink.txt --scenario deeplink
 ```
 
+```bash
+# cold_https / cold_firstInstall: a Universal Link into a cold launch. The
+# TestBed puts the link in launchOptions (TestBedDeepLinkTestHook), as iOS does,
+# so requestDeepLinkDataWithLaunchOptions: sends no nil-URL lookup. Expect one
+# /v3/deeplink; cold_https then has 1 open, cold_firstInstall 2.
+ONLY_TESTING=TestBed-GPTDriverTests/ColdLinkInstalledWireValidationTest \
+OUTPUT_LOG=wire-cold_https.txt ./scripts/run_l1_instrumented.sh
+python3 scripts/validate_l1_logs.py wire-cold_https.txt --scenario cold_https
+```
+
 An unrecognised or missing `--scenario` exits 2, so a typo in a CI matrix
 cannot silently validate a capture against nothing.
 
@@ -61,19 +72,19 @@ cannot silently validate a capture against nothing.
 The `4.0.0-beta` line does **not** emit `/v1/install` or `/v1/open`.
 Install and open both post to `/v3/events/open`:
 
-| what happens            | endpoint              |
-| ----------------------- | --------------------- |
-| install (fresh install) | `/v3/events/open`     |
-| open (cold and warm)    | `/v3/events/open`     |
-| deep link resolution    | `/v3/deeplink`        |
+| what happens            | endpoint             |
+| ----------------------- | -------------------- |
+| install (fresh install) | `/v3/events/open`    |
+| open (cold and warm)    | `/v3/events/open`    |
+| deep link resolution    | `/v3/deeplink`       |
 | event                   | `/v3/events/standard` |
-| link creation           | `/v1/url`             |
+| link creation           | `/v1/url`            |
 
 `/v3/events/open` is mandatory: every session posts one, so a capture
-without it is a broken capture and fails the run. `/v3/deeplink` is also
-mandatory on every launch capture: the AppDelegate resolves at launch
-unconditionally (EMT-4313), so the single-launch L1 runner always emits
-one.
+without it is a broken capture and fails the run. `/v3/deeplink` is only
+emitted when a Branch link is resolved, or by the nil-URL deferred lookup
+that `requestDeepLinkDataWithLaunchOptions:` sends when the launch carries no
+link. The install contract requires that one lookup before the open.
 
 ## What gets validated
 
