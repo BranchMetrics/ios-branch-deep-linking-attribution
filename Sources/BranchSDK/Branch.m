@@ -21,9 +21,7 @@
 #import "BNCServerResponse.h"
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
-#import "BranchInstallRequest.h"
 #import "BranchJsonConfig.h"
-#import "BranchOpenRequest.h"
 #import "BranchUniversalObject.h"
 #import "NSMutableDictionary+Branch.h"
 #import "NSString+Branch.h"
@@ -538,8 +536,6 @@ static NSString *bnc_branchKey = nil;
     [self.urlFilter useSavedPatternList];
     self.userURLFilter = nil;
 
-    [BranchOpenRequest setWaitNeededForOpenResponseLock];
-
     // Register for notifications
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter
@@ -845,8 +841,6 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
         // (via the branch.json cppLevel path), so operate on self rather than re-entering the accessor.
         [self clearNetworkQueue];
         [self.linkCache clear];
-        // Release the lock in case it's locked:
-        [BranchOpenRequest releaseOpenResponseLock];
     } else {
         //Enable Tracking
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Enabling attribution events due to Consumer Protection Attribution Level being %@.", level] error:nil];
@@ -1766,13 +1760,6 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     [[BranchLogger shared] logVerbose:@"applicationWillResignActive" error:nil];
 
     self.resignedSinceActivation = YES;
-
-    dispatch_async(self.isolationQueue, ^(){
-        if (![Branch attributionLevelNone]) {
-            [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationWillResignActive"] error:nil];
-            [BranchOpenRequest setWaitNeededForOpenResponseLock];
-        }
-    });
 }
 
 - (void)applicationDidEnterBackground {
@@ -2067,7 +2054,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 + (void) clearAll {
     [[BNCServerRequestQueue getInstance] clearQueue];
-    [BranchOpenRequest releaseOpenResponseLock];
     [BranchRequestDeepLink releaseDeepLinkResponseLock];
     [BranchRequestOpen releaseOpenResponseLock];
     [BNCPreferenceHelper clearAll];
@@ -2567,9 +2553,7 @@ static BOOL bnc_didWarnOpenWaitsForSendOpen = NO;
         });
     };
 
-    // A launch with no randomized bundle token has never completed an open, so it is a first
-    // launch. This is the same criterion -initializeSessionAndCallCallback: uses to choose
-    // between BranchOpenRequest and BranchInstallRequest.
+    // A launch with no randomized bundle token has never completed an open, so it is a first launch.
     BOOL isInstall = !self.preferenceHelper.randomizedBundleToken;
     BranchRequestOpen *openReq = [[BranchRequestOpen alloc] initWithCallback:openCallback isInstall:isInstall];
     openReq.urlString = nil;
