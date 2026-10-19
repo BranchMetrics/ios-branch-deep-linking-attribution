@@ -93,10 +93,28 @@
 }
 
 - (void)addSignatureAndNonceParams:(NSMutableDictionary *)json {
-    if (self.fraudDefenseHandler) {
-        NSDictionary *fraudDefenseParams = [self.fraudDefenseHandler addSignatureAndNonceForParams:json];
-        [json addEntriesFromDictionary:fraudDefenseParams];
+    if (!self.fraudDefenseHandler) {
+        return;
     }
+
+    // The backend learns the HMAC secret only from an acknowledged initialization_context. Until
+    // then any signature is over a key it does not hold, so send no secure context at all. This is
+    // what keeps /v3/deeplink unsigned at attribution level NONE, where no open ever attests.
+    if (!self.preferenceHelper.deviceTrustChecked) {
+        [[BranchLogger shared] logVerbose:@"Device trust not yet acknowledged; skipping request signature." error:nil];
+        return;
+    }
+
+    NSDictionary *fraudDefenseParams = [self.fraudDefenseHandler addSignatureAndNonceForParams:json];
+    [json addEntriesFromDictionary:fraudDefenseParams];
+}
+
++ (BOOL)paramsCarryInitializationContext:(NSDictionary *)params {
+    id secureContext = params[BRANCH_REQUEST_KEY_SECURE_CONTEXT];
+    if (![secureContext isKindOfClass:[NSDictionary class]]) {
+        return NO;
+    }
+    return ((NSDictionary *)secureContext)[BRANCH_REQUEST_KEY_SECURE_CONTEXT_INITIALIZATION] != nil;
 }
 
 - (void) loadDataFromThirdPartyAPIs {

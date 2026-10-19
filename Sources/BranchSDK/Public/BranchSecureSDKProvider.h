@@ -24,11 +24,13 @@
 - (void)initializeBranchSecureSDKWithBranchKey:(NSString * _Nonnull)branchKey;
 
 /// Layer 1: performs device attestation using the given params as input to the attestation hash.
-/// Returns { attestationObject_b64, ecdhPublicKey_b64, attestKeyId, challenge_id }.
+/// Returns { branch_sdk_secure_context: { context_key, initialization_context: { … } } }, or an
+/// empty dict when no attestation was produced.
 - (NSDictionary *_Nonnull)addDeviceTrustParams:(NSDictionary *_Nonnull)params;
 
 /// Layer 2 + 3: generates a smart nonce (Layer 3) and HMAC-SHA256 signature (Layer 2) over params.
-/// Returns { signature_b64, smart_nonce }, or empty dict if HMAC secret not yet available.
+/// Returns { branch_sdk_secure_context: { context_key, activity_context: { request_signature, nonce } } },
+/// or an empty dict if the HMAC secret is not yet available.
 - (NSDictionary *_Nonnull)addSignatureAndNonceForParams:(NSDictionary *_Nonnull)params;
 
 /// Releases the claim taken by -addDeviceTrustParams:. Call this once the request that carried

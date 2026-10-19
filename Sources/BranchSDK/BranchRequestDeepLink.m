@@ -69,10 +69,6 @@
         return;
     }
 
-    if (self.requestParams[BRANCH_REQUEST_KEY_DEVICE_TRUST_ATTESTATION_OBJECT]) {
-        preferenceHelper.deviceTrustChecked = YES;
-    }
-
     NSDictionary *data = response.data;
     
     [BranchRequestDeepLink releaseDeepLinkResponseLock];

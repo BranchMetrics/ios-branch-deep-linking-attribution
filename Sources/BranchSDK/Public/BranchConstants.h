@@ -199,5 +199,7 @@ extern NSString * const FRAMEWORK_AD_SAFARI_SERVICES;
 extern NSString * const FRAMEWORK_AD_APP_ADS_ONDEVICE_CONVERSION;
 extern NSString * const FRAMEWORK_AD_FIREBASE_CRASHLYTICS;
 
-// Present in a request's JSON only when BranchSecureSDKProvider addDeviceTrustParams: added attestation data.
-extern NSString * const BRANCH_REQUEST_KEY_DEVICE_TRUST_ATTESTATION_OBJECT;
+// The envelope BranchSecureSDKProvider merges into a request's JSON, and its Layer 1 block. A request
+// carries initialization_context only when -addDeviceTrustParams: produced an attestation.
+extern NSString * const BRANCH_REQUEST_KEY_SECURE_CONTEXT;
+extern NSString * const BRANCH_REQUEST_KEY_SECURE_CONTEXT_INITIALIZATION;

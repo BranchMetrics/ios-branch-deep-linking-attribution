@@ -30,6 +30,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addDeviceTrustParams:(NSMutableDictionary *)json;
 - (void)addSignatureAndNonceParams:(NSMutableDictionary *)json;
 
+// YES when a request body built by this factory carries branch_sdk_secure_context.initialization_context.
++ (BOOL)paramsCarryInitializationContext:(nullable NSDictionary *)params;
+
 // Event data is passed in
 - (NSDictionary *)dataForEventWithEventDictionary:(NSMutableDictionary *)dictionary;
 
