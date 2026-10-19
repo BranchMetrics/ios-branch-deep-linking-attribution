@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 Branch iOS SDK on the **`4.0.0-beta.*` rewrite line**. One Objective-C library, `BranchSDK`, for
-iOS 12+ and tvOS 12+, shipped via SPM, CocoaPods, Carthage and prebuilt XCFrameworks. There is
+iOS 15+ and tvOS 15+, shipped via SPM, CocoaPods, Carthage and prebuilt XCFrameworks. There is
 no Swift under `Sources/` on this branch.
 
 **This is not `master`.** The request queue, the session model, the wire endpoints and parts of
@@ -25,8 +25,9 @@ dead because they still shell out to fastlane: `docs/testing.md`.
 
 ## Rules that are easy to get wrong
 
-- **Do not run `scripts/version.sh` on this branch.** The four version literals do not currently
-  agree, and the script cannot reconcile them. See `docs/releasing.md` before touching any of them.
+- **Change the version only with `scripts/version.sh`** (`-s 4.0.0-beta.3`, `-i`). It keeps four
+  literals in step, and `MARKETING_VERSION` must stay `Major.Minor.Patch` with no `-beta.N`
+  suffix. See `docs/releasing.md`.
 - **`BranchOpenRequest` is not `BranchRequestOpen`.** Both post to `/v3/events/open` and they are
   wired into different flows. Check which one you are editing.
 - **Attribution level `NONE` drops a request inside `BNCServerRequestOperation`**, before the
@@ -43,13 +44,15 @@ dead because they still shell out to fastlane: `docs/testing.md`.
   A hard ordering guarantee needs an explicit `addDependency:`.
 - **Any AdSupport/IDFA touch must be `BRANCH_EXCLUDE_IDFA_CODE`-guarded**, and a new iOS-only API
   needs `#if !TARGET_OS_TV`. The podspec's tvOS exclusion covers CocoaPods only.
-- **`release.yml`, `integration-tests.yml` and `version-bump.yml` do not run on this line.** They
-  shell out to fastlane, which does not exist here, so a passing run is not a signal.
+- **`integration-tests.yml` does not run on this line.** It shells out to fastlane, which does not
+  exist here, so a passing run is not a signal. `release.yml` and `version-bump.yml` work, but
+  neither runs tests.
 
 ## Conventions
 
-- Commit prefix `EMT-XXXX` (Jira). **PRs on this line target `4.0.0-beta.0`; check the base
-  before opening, because the repo default is `master`.**
+- Commit prefix `EMT-XXXX` (Jira). **Each beta round has its own branch (`4.0.0-beta.N`), cut
+  from the previous one when it ships. PRs target the open round, currently `4.0.0-beta.4`;
+  check the base before opening, because the repo default is `master`.**
 - Match the surrounding style: long-lived Objective-C, `@synchronized` blocks, explicit nil
   checks.
 - `Public/` headers are an API contract. This branch already carries breaking changes, so a new

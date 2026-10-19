@@ -10,12 +10,55 @@
 #import "Branch.h"
 #import "BranchQRCode.h"
 #import "BNCQRCodeCache.h"
+#import "BranchConfiguration.h"
+#import "NSError+Branch.h"
+
+@interface Branch (BranchQRCodeTest)
++ (void)resetInitializationGuardForTesting;
++ (void)resetBranchKey;
+@end
 
 @interface BranchQRCodeTests : XCTestCase
 
 @end
 
 @implementation BranchQRCodeTests
+
+// The QR code request reads the key set by +initialize:, so every test starts from the real key.
+- (void)setUp {
+    [super setUp];
+    [self initializeBranch];
+}
+
+- (void)tearDown {
+    [self initializeBranch];
+    [super tearDown];
+}
+
+- (void)initializeBranch {
+    [Branch resetBranchKey];
+    [Branch resetInitializationGuardForTesting];
+    BranchConfiguration *config = [[BranchConfiguration alloc] initWithKey:@"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB"];
+    [Branch initialize:config];
+}
+
+- (void)testQRCodeBeforeInitializeReportsInitError {
+    [Branch resetBranchKey];
+    [Branch resetInitializationGuardForTesting];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"QR code completion"];
+    BranchQRCode *qrCode = [BranchQRCode new];
+    [qrCode getQRCodeAsData:[BranchUniversalObject new]
+             linkProperties:[BranchLinkProperties new]
+                 completion:^(NSData * _Nullable qrCode, NSError * _Nullable error) {
+        XCTAssertNil(qrCode);
+        XCTAssertEqualObjects(error.domain, [NSError bncErrorDomain]);
+        XCTAssertEqual(error.code, BNCInitError);
+        [expectation fulfill];
+    }];
+
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+}
 
 - (void)testNormalQRCodeDataWithAllSettings {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Fetching QR Code"];

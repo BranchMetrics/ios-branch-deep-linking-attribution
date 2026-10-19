@@ -10,10 +10,6 @@
 #import "BranchJsonConfig.h"
 
 NSString * _Nonnull const BranchJsonConfigDebugModeOption = @"debugMode";
-NSString * _Nonnull const BranchJsonConfigBranchKeyOption = @"branchKey";
-NSString * _Nonnull const BranchJsonConfigLiveKeyOption = @"liveKey";
-NSString * _Nonnull const BranchJsonConfigTestKeyOption = @"testKey";
-NSString * _Nonnull const BranchJsonConfigUseTestInstanceOption = @"useTestInstance";
 NSString * _Nonnull const BranchJsonConfigDeferInitForPluginRuntimeOption = @"deferInitForPluginRuntime";
 NSString * _Nonnull const BranchJsonConfigEnableLogging = @"enableLogging";
 NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPasteboardOnInstall";
@@ -119,12 +115,6 @@ NSString * _Nonnull const BranchJsonConfigCPPLevel = @"consumerProtectionAttribu
     return number.boolValue;
 }
 
-- (BOOL)useTestInstance
-{
-    NSNumber *number = self[BranchJsonConfigUseTestInstanceOption];
-    return number.boolValue;
-}
-
 - (BOOL)deferInitForPluginRuntime
 {
     NSNumber *number = self[BranchJsonConfigDeferInitForPluginRuntimeOption];
@@ -141,21 +131,6 @@ NSString * _Nonnull const BranchJsonConfigCPPLevel = @"consumerProtectionAttribu
 {
     NSNumber *number = self[BranchJsonConfigCheckPasteboardOnInstall];
     return number.boolValue;
-}
-
-- (NSString *)branchKey
-{
-    return self[BranchJsonConfigBranchKeyOption];
-}
-
-- (NSString *)liveKey
-{
-    return self[BranchJsonConfigLiveKeyOption];
-}
-
-- (NSString *)testKey
-{
-    return self[BranchJsonConfigTestKeyOption];
 }
 
 - (NSString *)apiUrl
