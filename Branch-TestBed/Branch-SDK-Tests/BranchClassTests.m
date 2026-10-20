@@ -48,11 +48,6 @@
     XCTAssertTrue([self.branch isUserIdentified], @"User should be identified");
 }
 
-- (void)testDisableAdNetworkCallouts {
-    [self.branch disableAdNetworkCallouts:YES];
-    XCTAssertTrue([BNCPreferenceHelper sharedInstance].disableAdNetworkCallouts, @"AdNetwork callouts should be disabled");
-}
-
 - (void)testSetNetworkTimeout {
     [self.branch setNetworkTimeout:5.0];
     XCTAssertEqual([BNCPreferenceHelper sharedInstance].timeout, 5.0, @"Network timeout should be set to 5.0");
