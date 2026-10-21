@@ -193,6 +193,7 @@ void ForceCategoriesToLoad(void) {
 - (void)enqueueUnattributedOpen;
 - (void)enqueueUnattributedOpenCallingHandler:(BOOL)callHandler;
 - (void)enqueueAttributedOpenWithResponseData:(NSDictionary *)responseData;
+- (void)enqueueOpenRequest:(BranchRequestOpen *)openReq;
 - (BOOL)shouldSendAutomaticUnattributedOpen;
 - (void)sendAutomaticUnattributedOpen;
 - (void)handleResolvedLinkResponse:(NSDictionary *)responseData;
@@ -2573,9 +2574,7 @@ static BOOL bnc_didWarnOpenWaitsForSendOpen = NO;
     }
 
     BranchRequestOpen *openReq = [self openRequestCallingHandler:callHandler];
-    self.openSentThisForegroundPeriod = YES;
-    [[BranchLogger shared] logDebug: @"Branch sendOpen network request queued." error:nil];
-    [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
+    [self enqueueOpenRequest:openReq];
 }
 
 // Sends the attributed open for a resolved link. An install reaches this path too: a first launch
@@ -2592,6 +2591,11 @@ static BOOL bnc_didWarnOpenWaitsForSendOpen = NO;
     BranchRequestOpen *openReq = [self openRequest];
     openReq.linkData = responseData;
 
+    [self enqueueOpenRequest:openReq];
+}
+
+// Marks the open as sent for this foreground period and enqueues it at high priority.
+- (void)enqueueOpenRequest:(BranchRequestOpen *)openReq {
     self.openSentThisForegroundPeriod = YES;
     [[BranchLogger shared] logDebug: @"Branch sendOpen network request queued." error:nil];
     [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
