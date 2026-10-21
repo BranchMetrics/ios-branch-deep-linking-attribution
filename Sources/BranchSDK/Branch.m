@@ -847,7 +847,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
         BOOL openDue = wasNone && (self.openOwedAtOptIn || [self hasHeldAttributedOpenResponse]);
         if (openDue) {
             self.openOwedAtOptIn = NO;
-            [self enqueueManualOpenNow];
+            [self enqueueManualOpenIf:nil];
         } else if (resetSession && self.automaticOpenEvents) {
             [self enqueueUnattributedOpen];
         }
@@ -2348,22 +2348,22 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         return;
     }
 
-    if ([self skipReasonForManualOpen]) {
-        [[BranchLogger shared] logWarning:[self skipReasonForManualOpen] error:nil];
+    NSString *skipReason = [self skipReasonForManualOpen];
+    if (skipReason) {
+        [[BranchLogger shared] logWarning:skipReason error:nil];
         return;
     }
 
-    // Built outside the lock because it calls the delegate; the guards are checked again under the
-    // lock so a concurrent background open cannot also take the held response.
-    BranchRequestOpen *openReq = [self manualOpenRequest];
-    @synchronized (self) {
-        NSString *reason = [self skipReasonForManualOpen];
-        if (reason) {
-            [[BranchLogger shared] logWarning:reason error:nil];
-            return;
+    // The guards are checked again under the lock so a concurrent background open cannot also take
+    // the held response.
+    [self enqueueManualOpenIf:^BOOL {
+        NSString *recheckReason = [self skipReasonForManualOpen];
+        if (recheckReason) {
+            [[BranchLogger shared] logWarning:recheckReason error:nil];
+            return NO;
         }
-        [self enqueueManualOpenRequest:openReq];
-    }
+        return YES;
+    }];
 }
 
 // Why a manual -sendOpen would be ignored right now, or nil when it should be sent.
@@ -2407,10 +2407,15 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     return [self.requestQueue enqueue:openReq afterUnfinishedDeepLinkRequests:NSOperationQueuePriorityHigh];
 }
 
-- (void)enqueueManualOpenNow {
+// Builds a manual open and enqueues it under the lock, unless isDue is non-nil and returns NO there.
+// The request is built outside the lock because that calls the delegate.
+- (NSOperation *)enqueueManualOpenIf:(BOOL (^)(void))isDue {
     BranchRequestOpen *openReq = [self manualOpenRequest];
     @synchronized (self) {
-        [self enqueueManualOpenRequest:openReq];
+        if (isDue && !isDue()) {
+            return nil;
+        }
+        return [self enqueueManualOpenRequest:openReq];
     }
 }
 
@@ -2423,13 +2428,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         return;
     }
 
-    BranchRequestOpen *openReq = [self manualOpenRequest];
-    @synchronized (self) {
-        if (![self hasHeldAttributedOpenResponse] || [self.requestQueue hasPendingManualOpen]) {
-            return;
-        }
-        [self enqueueManualOpenRequest:openReq];
-    }
+    [self enqueueManualOpenIf:^BOOL {
+        return [self hasHeldAttributedOpenResponse] && ![self.requestQueue hasPendingManualOpen];
+    }];
 }
 
 // Whether the background open is due: a response is held, or manual mode has sent no open this
@@ -2477,13 +2478,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         backgroundTaskID = [application beginBackgroundTaskWithExpirationHandler:endBackgroundTaskIfNeeded];
     }
 
-    BranchRequestOpen *openReq = [self manualOpenRequest];
-    NSOperation *operation = nil;
-    @synchronized (self) {
-        if ([self openDueAtBackground]) {
-            operation = [self enqueueManualOpenRequest:openReq];
-        }
-    }
+    NSOperation *operation = [self enqueueManualOpenIf:^BOOL {
+        return [self openDueAtBackground];
+    }];
 
     if (!operation) {
         endBackgroundTaskIfNeeded();
