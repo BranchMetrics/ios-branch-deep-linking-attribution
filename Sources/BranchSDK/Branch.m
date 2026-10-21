@@ -351,40 +351,42 @@ static NSString *bnc_branchKey = nil;
     branch.openOwedAtOptIn = NO;
 }
 
-// Returns whether a value should be applied. Always YES when onlyAssigned is NO. Otherwise YES only
-// for an assigned value with no validationMessage; an invalid value logs a warning and returns NO.
-+ (BOOL)shouldApplyValueWasSet:(BOOL)wasSet
-             validationMessage:(nullable NSString *)validationMessage
-            onlyAssignedValues:(BOOL)onlyAssigned {
-    if (!onlyAssigned) {
-        return YES;
-    }
-    if (!wasSet) {
-        return NO;
-    }
-    if (validationMessage) {
-        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"%@ Ignoring the updated value.", validationMessage] error:nil];
-        return NO;
-    }
-    return YES;
-}
-
 // Applies the configuration values that +updateConfiguration: may change after initialization.
 // When onlyAssigned is YES, unassigned and invalid values are skipped. Attribution level is applied
 // by each caller.
 + (void)applyUpdatableConfiguration:(BranchConfiguration *)configuration toBranch:(Branch *)branch onlyAssignedValues:(BOOL)onlyAssigned {
+    // Returns whether a value should be applied. Always YES when onlyAssigned is NO. Otherwise YES only
+    // for an assigned value with no validationMessage; an invalid value logs a warning and returns NO.
+    BOOL (^shouldApply)(BOOL, NSString * _Nullable) = ^BOOL(BOOL wasSet, NSString * _Nullable validationMessage) {
+        if (!onlyAssigned) {
+            return YES;
+        }
+        if (!wasSet) {
+            return NO;
+        }
+        if (validationMessage) {
+            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"%@ Ignoring the updated value.", validationMessage] error:nil];
+            return NO;
+        }
+        return YES;
+    };
+
+    // Returns whether a clearable value should be applied. When onlyAssigned is NO, YES only if hasValue;
+    // otherwise YES if wasSet, so an assigned nil or empty value clears.
+    BOOL (^shouldApplyOrClear)(BOOL, BOOL) = ^BOOL(BOOL wasSet, BOOL hasValue) {
+        return onlyAssigned ? wasSet : hasValue;
+    };
+
     [Branch applyLoggingConfiguration:configuration onlyAssignedValues:onlyAssigned];
 
     // Request tracing & custom endpoints. On an update, an assigned nil or empty value clears.
-    if (onlyAssigned ? configuration.requestTracingCallbackWasSet : configuration.requestTracingCallback != nil) {
+    if (shouldApplyOrClear(configuration.requestTracingCallbackWasSet, configuration.requestTracingCallback != nil)) {
         [Branch setCallbackForTracingRequests:configuration.requestTracingCallback];
     }
-    if (configuration.apiUrl &&
-        [Branch shouldApplyValueWasSet:YES validationMessage:[configuration apiUrlValidationMessage] onlyAssignedValues:onlyAssigned]) {
+    if (configuration.apiUrl && shouldApply(YES, [configuration apiUrlValidationMessage])) {
         [Branch setAPIUrl:configuration.apiUrl];
     }
-    if (configuration.safeTrackAPIUrl &&
-        [Branch shouldApplyValueWasSet:YES validationMessage:[configuration safeTrackAPIUrlValidationMessage] onlyAssignedValues:onlyAssigned]) {
+    if (configuration.safeTrackAPIUrl && shouldApply(YES, [configuration safeTrackAPIUrlValidationMessage])) {
         [Branch setSafetrackAPIURL:configuration.safeTrackAPIUrl];
     }
 
@@ -400,24 +402,16 @@ static NSString *bnc_branchKey = nil;
     }
 
     // Network
-    if ([Branch shouldApplyValueWasSet:configuration.networkTimeoutWasSet
-                     validationMessage:[configuration networkTimeoutValidationMessage]
-                    onlyAssignedValues:onlyAssigned]) {
+    if (shouldApply(configuration.networkTimeoutWasSet, [configuration networkTimeoutValidationMessage])) {
         [branch setNetworkTimeout:configuration.networkTimeout];
     }
-    if ([Branch shouldApplyValueWasSet:configuration.retryCountWasSet
-                     validationMessage:[configuration retryCountValidationMessage]
-                    onlyAssignedValues:onlyAssigned]) {
+    if (shouldApply(configuration.retryCountWasSet, [configuration retryCountValidationMessage])) {
         [branch setMaxRetries:configuration.retryCount];
     }
-    if ([Branch shouldApplyValueWasSet:configuration.retryIntervalWasSet
-                     validationMessage:[configuration retryIntervalValidationMessage]
-                    onlyAssignedValues:onlyAssigned]) {
+    if (shouldApply(configuration.retryIntervalWasSet, [configuration retryIntervalValidationMessage])) {
         [branch setRetryInterval:configuration.retryInterval];
     }
-    if ([Branch shouldApplyValueWasSet:configuration.thirdPartyAPIsWaitTimeWasSet
-                     validationMessage:[configuration thirdPartyAPIsWaitTimeValidationMessage]
-                    onlyAssignedValues:onlyAssigned]) {
+    if (shouldApply(configuration.thirdPartyAPIsWaitTimeWasSet, [configuration thirdPartyAPIsWaitTimeValidationMessage])) {
         [Branch setSDKWaitTimeForThirdPartyAPIs:configuration.thirdPartyAPIsWaitTime];
     }
 
@@ -427,10 +421,10 @@ static NSString *bnc_branchKey = nil;
     }
 
     // URL collection
-    if (onlyAssigned ? configuration.allowedSchemesWasSet : configuration.allowedSchemes.count > 0) {
+    if (shouldApplyOrClear(configuration.allowedSchemesWasSet, configuration.allowedSchemes.count > 0)) {
         [branch setAllowedSchemes:configuration.allowedSchemes];
     }
-    if (onlyAssigned ? configuration.urlPatternsToIgnoreWasSet : configuration.urlPatternsToIgnore.count > 0) {
+    if (shouldApplyOrClear(configuration.urlPatternsToIgnoreWasSet, configuration.urlPatternsToIgnore.count > 0)) {
         [branch setUrlPatternsToIgnore:configuration.urlPatternsToIgnore];
     }
 
@@ -440,12 +434,12 @@ static NSString *bnc_branchKey = nil;
     }
 
     // Debugging
-    if (onlyAssigned ? configuration.deepLinkDebugParamsWasSet : configuration.deepLinkDebugParams != nil) {
+    if (shouldApplyOrClear(configuration.deepLinkDebugParamsWasSet, configuration.deepLinkDebugParams != nil)) {
         [branch setDeepLinkDebugMode:configuration.deepLinkDebugParams];
     }
 
     // Open tracking: when automatic open tracking is disabled the developer is responsible for -sendOpen.
-    if ([Branch shouldApplyValueWasSet:configuration.automaticOpenEventsWasSet validationMessage:nil onlyAssignedValues:onlyAssigned]) {
+    if (shouldApply(configuration.automaticOpenEventsWasSet, nil)) {
         branch.automaticOpenEvents = configuration.automaticOpenEvents;
     }
 }
@@ -773,6 +767,11 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     }
 }
 
+// Whether this instance's preference helper has attribution level NONE.
+- (BOOL)isAttributionLevelNone {
+    return [self.preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone];
+}
+
 + (void)setReferrerGbraidValidityWindow:(NSTimeInterval)validityWindow{
     @synchronized(self) {
         [BNCPreferenceHelper sharedInstance].referringURLQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID][BRANCH_URL_QUERY_PARAMETERS_VALIDITY_WINDOW_KEY] = @(validityWindow);
@@ -819,7 +818,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 }
 
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level resetSession:(BOOL)resetSession {
-    BOOL wasNone = [self.preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone];
+    BOOL wasNone = [self isAttributionLevelNone];
     self.preferenceHelper.attributionLevel = level;
 
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Setting Consumer Protection Attribution Level to %@", level] error:nil];
@@ -1622,6 +1621,12 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 
 #pragma mark - Application State Change methods
 
+// Returns the application test seam, or UIApplication.sharedApplication when it is nil.
+- (UIApplication *)currentUIApplication {
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    return self.application ?: [UIApplicationClass sharedApplication];
+}
+
 - (void)applicationDidBecomeActive {
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive"] error:nil];
 
@@ -1705,9 +1710,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
         return;
     }
 
-    Class UIApplicationClass = NSClassFromString(@"UIApplication");
-    UIApplication *application = self.application ?: [UIApplicationClass sharedApplication];
-    if (application.applicationState == UIApplicationStateBackground &&
+    if ([self currentUIApplication].applicationState == UIApplicationStateBackground &&
         ![self.requestQueue hasPendingManualOpen]) {
         [self enqueueAttributedOpenWithResponseData:responseData];
         return;
@@ -1772,10 +1775,8 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     self.openSentThisForegroundPeriod = NO;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        Class UIApplicationClass = NSClassFromString(@"UIApplication");
-        UIApplication *application = self.application ?: [UIApplicationClass sharedApplication];
         if (!self.automaticOpenEvents ||
-            application.applicationState != UIApplicationStateBackground ||
+            [self currentUIApplication].applicationState != UIApplicationStateBackground ||
             [self.requestQueue containsInstallOrOpen]) {
             return;
         }
@@ -2341,7 +2342,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         return;
     }
 
-    if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
+    if ([self isAttributionLevelNone]) {
         [[BranchLogger shared] logDebug:@"Branch Attribution Level set to NONE. Branch sendOpen network request deferred until attribution is enabled." error:nil];
         self.openOwedAtOptIn = YES;
         return;
@@ -2460,8 +2461,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         return;
     }
 
-    Class UIApplicationClass = NSClassFromString(@"UIApplication");
-    UIApplication *application = self.application ?: [UIApplicationClass sharedApplication];
+    UIApplication *application = [self currentUIApplication];
 
     NSObject *taskLock = [NSObject new];
     __block UIBackgroundTaskIdentifier backgroundTaskID = UIBackgroundTaskInvalid;
@@ -2569,7 +2569,7 @@ static BOOL bnc_didWarnOpenWaitsForSendOpen = NO;
 - (void)enqueueUnattributedOpenCallingHandler:(BOOL)callHandler {
     [[BranchLogger shared] logDebug:@"sendOpen called" error:nil];
 
-    if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
+    if ([self isAttributionLevelNone]) {
         [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented. Clearing link identifiers to prevent reuse." error:nil];
         [self clearLinkIdentifiers];
         return;
@@ -2586,7 +2586,7 @@ static BOOL bnc_didWarnOpenWaitsForSendOpen = NO;
 - (void)enqueueAttributedOpenWithResponseData:(NSDictionary *)responseData {
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen called with responseData: %@", responseData] error:nil];
 
-    if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
+    if ([self isAttributionLevelNone]) {
         [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request deferred until attribution is enabled." error:nil];
         [self holdAttributedOpenResponse:responseData];
         return;
