@@ -204,6 +204,8 @@ class HotUriSchemeWiringTests(unittest.TestCase):
         scene_delegate = self._read(*testbed, "SceneDelegate.m")
         self.assertEqual(scene_delegate.count("openURLContexts:(NSSet<UIOpenURLContext *> *)"), 1)
         self.assertEqual(scene_delegate.count('logLifecycleMarker:@"openURL"'), 2)
+        # hot_https_foreground's delivery marker; the app delegate's copy is not called under scenes.
+        self.assertEqual(scene_delegate.count('logLifecycleMarker:@"continueUserActivity"'), 1)
 
 
 class HotHttpsForegroundContractTests(unittest.TestCase):

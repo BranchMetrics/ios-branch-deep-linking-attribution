@@ -54,6 +54,8 @@ willConnectToSession:(UISceneSession *)session
 
 // Warm open via a Universal Link while the scene is already connected.
 - (void)scene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity {
+    // hot_https_foreground counts this marker (scripts/check_foreground_markers.py).
+    [appDelegate logLifecycleMarker:@"continueUserActivity"];
     [[Branch sharedInstance] requestDeepLinkDataWithScene:scene continueUserActivity:userActivity];
 }
 
