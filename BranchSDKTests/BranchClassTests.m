@@ -23,12 +23,9 @@
 @interface Branch(Test)
 // Test-only reset for the +initialize: reinitialization guard (file-private in Branch.m).
 + (void)resetInitializationGuardForTesting;
-// Expose the private preprocessing helpers shared by the legacy handlers and the
-// requestDeepLinkData* convenience methods.
-- (BOOL)processDeepLinkURL:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier;
-- (BOOL)processUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier;
-- (BOOL)processDeepLinkURL:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier filtered:(BOOL *)filtered;
-- (BOOL)processUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier filtered:(BOOL *)filtered;
+// Expose the private preprocessing helpers used by the requestDeepLinkData* convenience methods.
+- (BOOL)processDeepLinkURL:(NSURL *)url filtered:(BOOL *)filtered;
+- (BOOL)processUserActivity:(NSUserActivity *)userActivity filtered:(BOOL *)filtered;
 @end
 
 @interface BranchClassTests : XCTestCase
@@ -270,9 +267,8 @@
 
 #pragma mark - Deep Link Preprocessing
 
-// The requestDeepLinkData* convenience methods must run the same preprocessing as the legacy
-// handleDeepLink: / continueUserActivity: handlers. These tests assert that the shared helpers
-// populate the preferenceHelper the same way, so none of the previous checks are skipped.
+// These tests assert that the preprocessing helpers and the requestDeepLinkData* convenience methods
+// populate the preferenceHelper from an incoming URL or user activity.
 
 - (void)clearDeepLinkPreferences {
     BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
@@ -289,7 +285,7 @@
     [self clearDeepLinkPreferences];
     NSURL *url = [NSURL URLWithString:@"myapp://open?link_click_id=abc123"];
 
-    [self.branch processDeepLinkURL:url sceneIdentifier:nil];
+    [self.branch processDeepLinkURL:url filtered:NULL];
 
     BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
     XCTAssertEqualObjects(prefs.externalIntentURI, url.absoluteString);
@@ -301,7 +297,7 @@
     [self clearDeepLinkPreferences];
     NSURL *url = [NSURL URLWithString:@"https://example.app.link/abc"];
 
-    [self.branch processDeepLinkURL:url sceneIdentifier:nil];
+    [self.branch processDeepLinkURL:url filtered:NULL];
 
     BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
     XCTAssertEqualObjects(prefs.universalLinkUrl, url.absoluteString);
@@ -325,7 +321,7 @@
     activity.webpageURL = [NSURL URLWithString:@"https://example.app.link/xyz"];
     activity.referrerURL = [NSURL URLWithString:@"https://referrer.example.com"];
 
-    [self.branch processUserActivity:activity sceneIdentifier:nil];
+    [self.branch processUserActivity:activity filtered:NULL];
 
     BNCPreferenceHelper *prefs = [BNCPreferenceHelper sharedInstance];
     XCTAssertEqualObjects(prefs.initialReferrer, @"https://referrer.example.com");
@@ -365,7 +361,7 @@
     NSURL *url = [NSURL URLWithString:@"myapp://oauth?link_click_id=shouldNotBeSent"];
 
     BOOL filtered = NO;
-    BOOL handled = [self.branch processDeepLinkURL:url sceneIdentifier:nil filtered:&filtered];
+    BOOL handled = [self.branch processDeepLinkURL:url filtered:&filtered];
 
     XCTAssertTrue(filtered, @"A skiplisted URL must be reported as filtered so callers do not send it");
     XCTAssertFalse(handled);
@@ -383,7 +379,7 @@
     NSURL *url = [NSURL URLWithString:@"myapp://open?link_click_id=abc123"];
 
     BOOL filtered = NO;
-    BOOL handled = [self.branch processDeepLinkURL:url sceneIdentifier:nil filtered:&filtered];
+    BOOL handled = [self.branch processDeepLinkURL:url filtered:&filtered];
 
     XCTAssertFalse(filtered, @"A Branch link must not be reported as filtered");
     XCTAssertTrue(handled);
@@ -396,7 +392,7 @@
     NSURL *url = [NSURL URLWithString:@"myapp://open"];
 
     BOOL filtered = NO;
-    BOOL handled = [self.branch processDeepLinkURL:url sceneIdentifier:nil filtered:&filtered];
+    BOOL handled = [self.branch processDeepLinkURL:url filtered:&filtered];
 
     // Not a Branch link, but not skiplisted either — the caller still runs a deferred data lookup.
     XCTAssertFalse(filtered);
@@ -410,7 +406,7 @@
     activity.webpageURL = [NSURL URLWithString:@"https://example.com/oauth/callback"];
 
     BOOL filtered = NO;
-    [self.branch processUserActivity:activity sceneIdentifier:nil filtered:&filtered];
+    [self.branch processUserActivity:activity filtered:&filtered];
 
     XCTAssertTrue(filtered);
     XCTAssertTrue([BNCPreferenceHelper sharedInstance].dropURLOpen);
@@ -426,7 +422,7 @@
     activity.webpageURL = [NSURL URLWithString:@"https://example.app.link/xyz"];
 
     BOOL filtered = NO;
-    BOOL handled = [self.branch processUserActivity:activity sceneIdentifier:nil filtered:&filtered];
+    BOOL handled = [self.branch processUserActivity:activity filtered:&filtered];
 
     XCTAssertFalse(filtered);
     XCTAssertTrue(handled);

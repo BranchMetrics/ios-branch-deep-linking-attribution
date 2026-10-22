@@ -509,7 +509,7 @@ bool hasSetPartnerParams = false;
 
 - (IBAction) openBranchLinkInApp:(id)sender {
     NSURL *URL = [NSURL URLWithString:@"https://bnctestbed.app.link/izPBY2xCqF"];
-    [[Branch sharedInstance] handleDeepLink:URL];
+    [[Branch sharedInstance] requestDeepLinkDataWithURL:URL];
 }
 
 #pragma mark - Commerce Events

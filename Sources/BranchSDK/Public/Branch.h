@@ -363,74 +363,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  */
 + (void)updateConfiguration:(BranchConfiguration *)configuration;
 
-/**
- Allow Branch to handle a link opening the app, returning whether it was from a Branch link or not.
-
- @param url The url that caused the app to be opened.
- */
-- (BOOL)handleDeepLink:(nullable NSURL *)url;
-
-- (BOOL)handleDeepLink:(nullable NSURL *)url sceneIdentifier:(nullable NSString *)sceneIdentifier;
-
-/**
- Have Branch end the current deep link session and start a new session with the provided URL.
-
- @param url     The URL to use to start the new session.
- @return        Returns true if the passed URL can be handled by Branch.
- */
-
--(BOOL)handleDeepLinkWithNewSession:(nullable NSURL *)url;
-
-/**
- Allow Branch to handle restoration from an NSUserActivity, returning whether or not it was
- from a Branch link.
-
- @param userActivity The NSUserActivity that caused the app to be opened.
- */
-
-- (BOOL)continueUserActivity:(nullable NSUserActivity *)userActivity;
-
-- (BOOL)continueUserActivity:(nullable NSUserActivity *)userActivity sceneIdentifier:(nullable NSString *)sceneIdentifier;
-
-/**
- Call this method from inside your app delegate's `application:openURL:sourceApplication:annotation:`
- method so that Branch can open the passed URL. This method is for pre-iOS 9 compatibility: If you don't need
- pre-iOS 9 compatibility, override your app delegate's `application:openURL:options:` method instead and use
- the Branch `application:openURL:options:` to open the URL.
-
- @warning Pre-iOS 9 compatibility only.
-
- @param application         The application that was passed to your app delegate.
- @param url                 The URL that was passed to your app delegate.
- @param sourceApplication   The sourceApplication that was passed to your app delegate.
- @param annotation          The annotation that was passed to your app delegate.
- @return                    Returns `YES` if Branch handled the passed URL.
- */
-- (BOOL)application:(nullable UIApplication *)application
-            openURL:(nullable NSURL *)url
-  sourceApplication:(nullable NSString *)sourceApplication
-         annotation:(nullable id)annotation;
-
-- (BOOL)sceneIdentifier:(nullable NSString *)sceneIdentifier
-                openURL:(nullable NSURL *)url
-      sourceApplication:(nullable NSString *)sourceApplication
-             annotation:(nullable id)annotation;
-
-/**
- Call this method from inside your app delegate's `application:openURL:options:` method so that Branch can
- open the passed URL.
-
- This is the preferred Branch method to call inside your `application:openURL:options:` method.
-
- @param application         The application that was passed to your app delegate.
- @param url                 The URL that was passed to your app delegate.
- @param options             The options dictionary that was passed to your app delegate.
- @return                    Returns `YES` if Branch handled the passed URL.
- */
-- (BOOL)application:(nullable UIApplication *)application
-            openURL:(nullable NSURL *)url
-            options:(nullable NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options;
-
 ///--------------------------------
 /// @name Push Notification Support
 ///--------------------------------
@@ -468,9 +400,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 /**
  Convenience method for `application:openURL:options:` to handle custom URI schemes.
 
- Runs the same URL preprocessing as the legacy deep link handler (referring-URL query parameters,
- the URL skiplist, allowed-scheme filtering and `link_click_id` extraction) and then calls
- `requestDeepLinkData:callback:` with the URL.
+ Applies referring-URL query parameters, the URL skiplist, allowed-scheme filtering and
+ `link_click_id` extraction, then calls `requestDeepLinkData:callback:` with the URL.
  Delivers the result to the callback registered with `requestDeepLinkDataWithLaunchOptions:callback:`.
  @param url The URL from `application:openURL:options:`
  */
