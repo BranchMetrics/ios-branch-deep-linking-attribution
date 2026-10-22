@@ -4,7 +4,7 @@
 //
 //  Single source of truth for accessibilityIdentifier values used across
 //  the TestBed UI. Referenced from Main.storyboard and from the
-//  TestBed-GPTDriverTests hybrid test target.
+//  TestBed-GPTDriverTests UI test target.
 //
 
 #import <Foundation/Foundation.h>

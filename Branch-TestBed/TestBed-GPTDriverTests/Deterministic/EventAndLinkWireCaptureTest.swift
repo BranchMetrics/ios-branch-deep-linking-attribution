@@ -15,9 +15,8 @@
 //  made, which endpoint it hit, or what it contained — that is the
 //  job of the log analysis this test feeds.
 //
-//  Like L1WireValidationTest, this deliberately does NOT inherit from
-//  BaseGptDriverTest: it must run without MOBILEBOOST_API_KEY, since
-//  wire capture is a measurement task and not an AI-driven test.
+//  Like L1WireValidationTest, this needs no credential and must run
+//  keyless, since wire capture is a measurement task.
 //
 //  Three of the six controls open a UIAlertControllerStyleActionSheet
 //  rather than firing a request directly (commerce / content /

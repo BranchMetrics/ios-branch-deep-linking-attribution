@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# hot_uriScheme driver for the iOS Branch SDK TestBed.
+# hot_uriScheme / hot_https_foreground (and warm_uriScheme) driver for the iOS Branch SDK TestBed.
 #
 # Launches the TestBed, snapshots branchlogs.txt once the launch settles, opens
 # a scheme URL into the foregrounded app with `simctl openurl`, and snapshots
@@ -20,6 +20,7 @@
 #   SETTLE_S           - seconds the log must stay unchanged (default 10)
 #   SETTLE_MAX_S       - give up settling after this many seconds (default 120)
 #   OPENURL_MAX_S      - retry budget for LaunchServices error 115 (default 120)
+#   HOT_SCENARIO       - hot_uriScheme or hot_https_foreground (default hot_uriScheme)
 #   H2_URL             - URL to deliver (default branchtest://open?scenario=H2)
 #   WARM               - 1 backgrounds the app with Preferences before the pre
 #                        snapshot (warm_uriScheme)
@@ -38,13 +39,19 @@ SETTLE_MAX_S="${SETTLE_MAX_S:-120}"
 OPENURL_MAX_S="${OPENURL_MAX_S:-120}"
 H2_URL="${H2_URL:-branchtest://open?scenario=H2}"
 WARM="${WARM:-}"
-CAPTURE_NAME="${CAPTURE_NAME:-wire-hot_uriScheme}"
+HOT_SCENARIO="${HOT_SCENARIO:-hot_uriScheme}"
+CAPTURE_NAME="${CAPTURE_NAME:-wire-$HOT_SCENARIO}"
 
 # The consent SpringBoard otherwise asks for on the first `simctl openurl` of the scheme.
 APPROVAL_DOMAIN="com.apple.launchservices.schemeapproval"
 APPROVAL_KEY="com.apple.CoreSimulator.CoreSimulatorBridge-->${H2_URL%%:*}"
 
 fail() { echo "ERROR: $*"; exit 1; }
+
+case "$HOT_SCENARIO" in
+    hot_uriScheme|hot_https_foreground) ;;
+    *) fail "unknown HOT_SCENARIO: $HOT_SCENARIO (expected hot_uriScheme or hot_https_foreground)" ;;
+esac
 
 # 1. Device on exactly H2_EXPECT_RUNTIME. The same name can exist on several runtimes.
 selection=$(xcrun simctl list devices available -j | python3 -c '
@@ -79,7 +86,9 @@ apps=("$DERIVED_DATA_DIR"/Build/Products/*-iphonesimulator/Branch-TestBed.app)
 shopt -u nullglob
 [ "${#apps[@]}" -eq 1 ] || fail "expected one Branch-TestBed.app under $DERIVED_DATA_DIR/Build/Products, found ${#apps[@]}"
 xcrun simctl terminate "$udid" "$BUNDLE_ID" 2>/dev/null || true
-xcrun simctl uninstall "$udid" "$BUNDLE_ID" 2>/dev/null || true
+if [ "$HOT_SCENARIO" = "hot_uriScheme" ]; then
+    xcrun simctl uninstall "$udid" "$BUNDLE_ID" 2>/dev/null || true
+fi
 xcrun simctl install "$udid" "${apps[0]}"
 
 log_path() {
@@ -98,7 +107,7 @@ wait_settled() {
     local what="${1:-branchlogs.txt}" path size last=-1 same=0 elapsed=0
     while [ "$elapsed" -lt "$SETTLE_MAX_S" ]; do
         size=0
-        if path=$(log_path) && [ -f "$path" ]; then size=$(stat -f %z "$path"); fi
+        if path=$(log_path) && [ -f "$path" ]; then size=$(stat -f %z "$path" 2>/dev/null) || size=0; fi
         if [ "$size" -gt 0 ] && [ "$size" = "$last" ]; then same=$((same + 1)); else same=0; fi
         last=$size
         if [ "$same" -ge "$SETTLE_S" ]; then echo "settled after ${elapsed}s"; return 0; fi
@@ -113,7 +122,7 @@ wait_grown() {
     local path size elapsed=0
     while [ "$elapsed" -lt "$SETTLE_MAX_S" ]; do
         size=0
-        if path=$(log_path) && [ -f "$path" ]; then size=$(stat -f %z "$path"); fi
+        if path=$(log_path) && [ -f "$path" ]; then size=$(stat -f %z "$path" 2>/dev/null) || size=0; fi
         if [ "$size" -gt "$1" ]; then return 0; fi
         sleep 1
         elapsed=$((elapsed + 1))
@@ -140,7 +149,8 @@ mkdir -p "$OUTPUT_DIR"
 pre="$OUTPUT_DIR/$CAPTURE_NAME.pre.txt"
 post="$OUTPUT_DIR/$CAPTURE_NAME.post.txt"
 
-# 5. Launch and settle.
+# 5. Remove a log left by a previous run, then launch and settle.
+if stale=$(log_path); then rm -f "$stale"; fi
 xcrun simctl launch "$udid" "$BUNDLE_ID" >/dev/null
 wait_settled
 pid=$(app_pid)
@@ -188,3 +198,8 @@ post_pid=$(app_pid)
 [[ $post_pid =~ ^[0-9]+$ ]] || fail "TestBed is not running after delivery"
 [ "$post_pid" = "$pid" ] || fail "relaunched"
 echo "pid unchanged"
+
+# 9. hot_https_foreground only: gate on the TestBed's lifecycle markers.
+if [ "$HOT_SCENARIO" = "hot_https_foreground" ]; then
+    python3 "$(dirname "$0")/check_foreground_markers.py" "$post" --pre "$pre" --scenario "$HOT_SCENARIO"
+fi
