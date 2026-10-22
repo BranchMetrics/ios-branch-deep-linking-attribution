@@ -49,6 +49,22 @@ on:
       - "scripts/run_l1_instrumented.sh"
       - "scripts/run_h2_hot.sh"
   workflow_dispatch:
+    inputs:
+      runner:
+        description: Runner label for the Xcode 27 job
+        type: choice
+        default: xcode-27
+        options:
+          - xcode-27
+          - xcode-27-xlarge
+          - macos-26
+          - macos-26-xlarge
+          - macos-15
+          - macos-15-xlarge
+      xcode_version:
+        description: Xcode version for the Xcode 27 job, must exist on the chosen runner
+        type: string
+        default: "27.0"
 
 permissions:
   contents: read
@@ -460,7 +476,7 @@ jobs:
   # failure from failing this workflow's own run. Reconsider once the
   # label has been stable in practice for a while.
   validate-wire-logs-xcode27:
-    runs-on: xcode-27
+    runs-on: ${{ inputs.runner || 'xcode-27' }}
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
     timeout-minutes: 30
     continue-on-error: true
@@ -472,10 +488,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Select Xcode 27.0
+      - name: Select Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: "27.0"
+          xcode-version: ${{ inputs.xcode_version || '27.0' }}
 
       - name: Show toolchain
         run: |
