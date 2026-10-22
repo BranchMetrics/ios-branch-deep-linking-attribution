@@ -107,7 +107,7 @@ wait_settled() {
     local what="${1:-branchlogs.txt}" path size last=-1 same=0 elapsed=0
     while [ "$elapsed" -lt "$SETTLE_MAX_S" ]; do
         size=0
-        if path=$(log_path) && [ -f "$path" ]; then size=$(stat -f %z "$path"); fi
+        if path=$(log_path) && [ -f "$path" ]; then size=$(stat -f %z "$path" 2>/dev/null) || size=0; fi
         if [ "$size" -gt 0 ] && [ "$size" = "$last" ]; then same=$((same + 1)); else same=0; fi
         last=$size
         if [ "$same" -ge "$SETTLE_S" ]; then echo "settled after ${elapsed}s"; return 0; fi
@@ -122,7 +122,7 @@ wait_grown() {
     local path size elapsed=0
     while [ "$elapsed" -lt "$SETTLE_MAX_S" ]; do
         size=0
-        if path=$(log_path) && [ -f "$path" ]; then size=$(stat -f %z "$path"); fi
+        if path=$(log_path) && [ -f "$path" ]; then size=$(stat -f %z "$path" 2>/dev/null) || size=0; fi
         if [ "$size" -gt "$1" ]; then return 0; fi
         sleep 1
         elapsed=$((elapsed + 1))
@@ -149,7 +149,8 @@ mkdir -p "$OUTPUT_DIR"
 pre="$OUTPUT_DIR/$CAPTURE_NAME.pre.txt"
 post="$OUTPUT_DIR/$CAPTURE_NAME.post.txt"
 
-# 5. Launch and settle.
+# 5. Remove a log left by a previous run, then launch and settle.
+if stale=$(log_path); then rm -f "$stale"; fi
 xcrun simctl launch "$udid" "$BUNDLE_ID" >/dev/null
 wait_settled
 pid=$(app_pid)

@@ -16,7 +16,8 @@ on:
       - "Sources/BranchSDK/**"
       - "Sources/BranchSwiftSDK/**"
       - "Branch-TestBed/**"
-      - ".github/workflows/layer1-logger-tests.yml"
+      # .github/** so a re-added vendor workflow runs the guard step below.
+      - ".github/**"
       - "scripts/validate_l1_logs.py"
       - "scripts/check_foreground_markers.py"
       - "scripts/test_validate_l1_logs.py"
@@ -29,8 +30,10 @@ on:
       - "scripts/test_check_no_stickiness.py"
       - "scripts/run_no_stickiness.sh"
   pull_request:
-    branches:
-      - "4.0.0-beta.*"
+    # No base filter: this gate runs on a PR against any base, so a PR
+    # stacked on a feature branch (not directly on 4.0.0-beta.*) still gets
+    # it. The paths filter below and the draft-skip on the job still apply.
+    #
     # Duplicated rather than shared via a YAML anchor: GitHub Actions does not
     # guarantee anchor support, and a silently dead trigger is the worst
     # failure mode for a gate.
@@ -38,7 +41,8 @@ on:
       - "Sources/BranchSDK/**"
       - "Sources/BranchSwiftSDK/**"
       - "Branch-TestBed/**"
-      - ".github/workflows/layer1-logger-tests.yml"
+      # .github/** so a re-added vendor workflow runs the guard step below.
+      - ".github/**"
       - "scripts/validate_l1_logs.py"
       - "scripts/check_foreground_markers.py"
       - "scripts/test_validate_l1_logs.py"
@@ -68,6 +72,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+
+      - name: Fail if the vendor comes back
+        run: |
+          # The vendor left this line with EMT-4519. A rebase that keeps both
+          # sides of a conflict restores it silently and stays green, since the
+          # repo secret still exists for other lines. This step makes that red.
+          # The bracket expressions match the vendor strings but not their own
+          # text, so this file stays covered without excluding itself.
+          if git grep -n -i -e 'mobile[b]oost' -e 'gptd[-_]swift' -e 'BaseG[p]tDriverTest' -- ':!ChangeLog.md' ; then
+            echo "::error::vendor reference found"
+            exit 1
+          fi
 
       - name: Select Xcode (16.4 or later 16.x)
         uses: maxim-lobanov/setup-xcode@v1
