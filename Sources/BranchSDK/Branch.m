@@ -247,7 +247,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     // queue up async data loading
     [self loadApplicationData];
     [self loadUserAgent];
-    
+
     BranchJsonConfig *config = BranchJsonConfig.instance;
     self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
     [BranchConfigurationController sharedInstance].deferInitForPluginRuntime = self.deferInitForPluginRuntime;
@@ -1082,13 +1082,18 @@ static NSString *bnc_branchKey = nil;
 #pragma mark - async data collection
 
 - (void)loadUserAgent {
-    #if !TARGET_OS_TV
-    dispatch_async(self.isolationQueue, ^(){
-        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-        [[BNCUserAgentCollector instance] loadUserAgentWithCompletion:^(NSString * _Nullable userAgent) {
-            dispatch_semaphore_signal(semaphore);
-        }];
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+#if !TARGET_OS_TV
+    // Fire-and-forget warmup so the user agent is cached for share link generation. Previously
+    // this was called on isolationQueue synchronoulsy which was causing delay in deep linking.
+    // Now no semaphore wait here: user_agent is not sent on the init path, so this must
+    // never block initSession. WKWebView collection runs async on the main queue and
+    // signals no one, keeping cold start unaffected.
+    // Note: There is a very rare edge case possible if link generation related code is called within 1 second
+    // of the first ever cold launch after the app is installed(which is impossible in real use cases)
+    // user agent can be nil - which is fine to be nil for the first v1/url request.
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(){
+        [[BNCUserAgentCollector instance] loadUserAgentWithCompletion:nil];
     });
     #endif
 }

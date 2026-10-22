@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import BranchSDK
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -13,9 +14,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-        
-        
+
+        Branch.enableLogging()
+      //  Branch.setUseTestBranchKey(true)
+
+        let initStart = CFAbsoluteTimeGetCurrent()
+        print("[BranchPerf] initSession: called at \(initStart)")
+
+        Branch.getInstance().initSession(launchOptions: launchOptions) { params, error in
+            let elapsed = (CFAbsoluteTimeGetCurrent() - initStart) * 1000.0
+            print("[BranchPerf] initSession callback: received after \(String(format: "%.2f", elapsed)) ms")
+            if let error = error {
+                print("[BranchPerf] initSession callback: error = \(error.localizedDescription)")
+            } else {
+                print("[BranchPerf] initSession callback: success, params = \(params ?? [:])")
+            }
+        }
+
         return true
     }
 

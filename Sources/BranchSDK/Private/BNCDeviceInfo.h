@@ -53,7 +53,6 @@
 @property (nonatomic, copy, readwrite) NSString *locale;
 @property (nonatomic, copy, readwrite) NSString *country; //!< The iso2 Country name (us, in,etc).
 @property (nonatomic, copy, readwrite) NSString *language; //!< The iso2 language code (en, ml).
-- (NSString *)userAgentString;
 
 @property (nonatomic, copy, readwrite) NSString *applicationVersion;
 @property (nonatomic, copy, readwrite) NSString *pluginName;

@@ -14,10 +14,6 @@
 #import "BNCReachability.h"
 #import "BNCDeviceSystem.h"
 
-#if !TARGET_OS_TV
-// tvOS does not support webkit
-#import "BNCUserAgentCollector.h"
-#endif
 
 #if __has_feature(modules)
 @import UIKit;
@@ -103,15 +99,6 @@
 
 - (NSString *)connectionType {
     return [[BNCReachability shared] reachabilityStatus];
-}
-
-- (NSString *)userAgentString {
-    #if !TARGET_OS_TV
-    return [BNCUserAgentCollector instance].userAgent;
-    #else
-    // tvOS has no web browser or webview
-    return @"";
-    #endif
 }
 
 // IDFA should never be cached
