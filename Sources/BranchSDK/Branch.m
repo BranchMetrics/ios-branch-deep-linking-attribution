@@ -352,42 +352,38 @@ static NSString *bnc_branchKey = nil;
     branch.openOwedAtOptIn = NO;
 }
 
+// Returns whether a value should be applied. Always YES when onlyAssigned is NO. Otherwise YES only
+// for an assigned value with no validationMessage; an invalid value logs a warning and returns NO.
++ (BOOL)shouldApplyValueWasSet:(BOOL)wasSet
+             validationMessage:(nullable NSString *)validationMessage
+            onlyAssignedValues:(BOOL)onlyAssigned {
+    if (!onlyAssigned) {
+        return YES;
+    }
+    if (!wasSet) {
+        return NO;
+    }
+    if (validationMessage) {
+        [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"%@ Ignoring the updated value.", validationMessage] error:nil];
+        return NO;
+    }
+    return YES;
+}
+
 // Applies the configuration values that +updateConfiguration: may change after initialization.
 // When onlyAssigned is YES, unassigned and invalid values are skipped. Attribution level is applied
 // by each caller.
 + (void)applyUpdatableConfiguration:(BranchConfiguration *)configuration toBranch:(Branch *)branch onlyAssignedValues:(BOOL)onlyAssigned {
-    // Returns whether a value should be applied. Always YES when onlyAssigned is NO. Otherwise YES only
-    // for an assigned value with no validationMessage; an invalid value logs a warning and returns NO.
-    BOOL (^shouldApply)(BOOL, NSString * _Nullable) = ^BOOL(BOOL wasSet, NSString * _Nullable validationMessage) {
-        if (!onlyAssigned) {
-            return YES;
-        }
-        if (!wasSet) {
-            return NO;
-        }
-        if (validationMessage) {
-            [[BranchLogger shared] logWarning:[NSString stringWithFormat:@"%@ Ignoring the updated value.", validationMessage] error:nil];
-            return NO;
-        }
-        return YES;
-    };
-
-    // Returns whether a clearable value should be applied. When onlyAssigned is NO, YES only if hasValue;
-    // otherwise YES if wasSet, so an assigned nil or empty value clears.
-    BOOL (^shouldApplyOrClear)(BOOL, BOOL) = ^BOOL(BOOL wasSet, BOOL hasValue) {
-        return onlyAssigned ? wasSet : hasValue;
-    };
-
     [Branch applyLoggingConfiguration:configuration onlyAssignedValues:onlyAssigned];
 
     // Request tracing & custom endpoints. On an update, an assigned nil or empty value clears.
-    if (shouldApplyOrClear(configuration.requestTracingCallbackWasSet, configuration.requestTracingCallback != nil)) {
+    if (onlyAssigned ? configuration.requestTracingCallbackWasSet : configuration.requestTracingCallback != nil) {
         [Branch setCallbackForTracingRequests:configuration.requestTracingCallback];
     }
-    if (configuration.apiUrl && shouldApply(YES, [configuration apiUrlValidationMessage])) {
+    if (configuration.apiUrl && [Branch shouldApplyValueWasSet:YES validationMessage:[configuration apiUrlValidationMessage] onlyAssignedValues:onlyAssigned]) {
         [Branch setAPIUrl:configuration.apiUrl];
     }
-    if (configuration.safeTrackAPIUrl && shouldApply(YES, [configuration safeTrackAPIUrlValidationMessage])) {
+    if (configuration.safeTrackAPIUrl && [Branch shouldApplyValueWasSet:YES validationMessage:[configuration safeTrackAPIUrlValidationMessage] onlyAssignedValues:onlyAssigned]) {
         [Branch setSafetrackAPIURL:configuration.safeTrackAPIUrl];
     }
 
@@ -403,16 +399,16 @@ static NSString *bnc_branchKey = nil;
     }
 
     // Network
-    if (shouldApply(configuration.networkTimeoutWasSet, [configuration networkTimeoutValidationMessage])) {
+    if ([Branch shouldApplyValueWasSet:configuration.networkTimeoutWasSet validationMessage:[configuration networkTimeoutValidationMessage] onlyAssignedValues:onlyAssigned]) {
         [branch setNetworkTimeout:configuration.networkTimeout];
     }
-    if (shouldApply(configuration.retryCountWasSet, [configuration retryCountValidationMessage])) {
+    if ([Branch shouldApplyValueWasSet:configuration.retryCountWasSet validationMessage:[configuration retryCountValidationMessage] onlyAssignedValues:onlyAssigned]) {
         [branch setMaxRetries:configuration.retryCount];
     }
-    if (shouldApply(configuration.retryIntervalWasSet, [configuration retryIntervalValidationMessage])) {
+    if ([Branch shouldApplyValueWasSet:configuration.retryIntervalWasSet validationMessage:[configuration retryIntervalValidationMessage] onlyAssignedValues:onlyAssigned]) {
         [branch setRetryInterval:configuration.retryInterval];
     }
-    if (shouldApply(configuration.thirdPartyAPIsWaitTimeWasSet, [configuration thirdPartyAPIsWaitTimeValidationMessage])) {
+    if ([Branch shouldApplyValueWasSet:configuration.thirdPartyAPIsWaitTimeWasSet validationMessage:[configuration thirdPartyAPIsWaitTimeValidationMessage] onlyAssignedValues:onlyAssigned]) {
         [Branch setSDKWaitTimeForThirdPartyAPIs:configuration.thirdPartyAPIsWaitTime];
     }
 
@@ -422,10 +418,10 @@ static NSString *bnc_branchKey = nil;
     }
 
     // URL collection
-    if (shouldApplyOrClear(configuration.allowedSchemesWasSet, configuration.allowedSchemes.count > 0)) {
+    if (onlyAssigned ? configuration.allowedSchemesWasSet : configuration.allowedSchemes.count > 0) {
         [branch setAllowedSchemes:configuration.allowedSchemes];
     }
-    if (shouldApplyOrClear(configuration.urlPatternsToIgnoreWasSet, configuration.urlPatternsToIgnore.count > 0)) {
+    if (onlyAssigned ? configuration.urlPatternsToIgnoreWasSet : configuration.urlPatternsToIgnore.count > 0) {
         [branch setUrlPatternsToIgnore:configuration.urlPatternsToIgnore];
     }
 
@@ -435,12 +431,12 @@ static NSString *bnc_branchKey = nil;
     }
 
     // Debugging
-    if (shouldApplyOrClear(configuration.deepLinkDebugParamsWasSet, configuration.deepLinkDebugParams != nil)) {
+    if (onlyAssigned ? configuration.deepLinkDebugParamsWasSet : configuration.deepLinkDebugParams != nil) {
         [branch setDeepLinkDebugMode:configuration.deepLinkDebugParams];
     }
 
     // Open tracking: when automatic open tracking is disabled the developer is responsible for -sendOpen.
-    if (shouldApply(configuration.automaticOpenEventsWasSet, nil)) {
+    if ([Branch shouldApplyValueWasSet:configuration.automaticOpenEventsWasSet validationMessage:nil onlyAssignedValues:onlyAssigned]) {
         branch.automaticOpenEvents = configuration.automaticOpenEvents;
     }
 }
