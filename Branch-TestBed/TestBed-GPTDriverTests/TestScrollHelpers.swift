@@ -2,7 +2,7 @@
 //  TestScrollHelpers.swift
 //  TestBed-GPTDriverTests
 //
-//  Small XCUITest helpers shared across hybrid tests. XCUITest has
+//  Small XCUITest helpers shared by the Deterministic wire tests. XCUITest has
 //  no built-in "scroll until visible" primitive — elements below
 //  the fold must be scrolled into view before they become hittable.
 //  These helpers do that by swiping up on the first table (or
