@@ -27,8 +27,10 @@ on:
       - "scripts/run_l1_instrumented.sh"
       - "scripts/run_h2_hot.sh"
   pull_request:
-    branches:
-      - "4.0.0-beta.*"
+    # No base filter: this gate runs on a PR against any base, so a PR
+    # stacked on a feature branch (not directly on 4.0.0-beta.*) still gets
+    # it. The paths filter below and the draft-skip on the job still apply.
+    #
     # Duplicated rather than shared via a YAML anchor: GitHub Actions does not
     # guarantee anchor support, and a silently dead trigger is the worst
     # failure mode for a gate.
