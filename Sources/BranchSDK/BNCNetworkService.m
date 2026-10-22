@@ -90,7 +90,16 @@
 
 - (void) setDefaultTimeoutInterval:(NSTimeInterval)defaultTimeoutInterval {
     @synchronized (self) {
-        _defaultTimeoutInterval = MAX(defaultTimeoutInterval, 0.0);
+        NSTimeInterval newTimeout = MAX(defaultTimeoutInterval, 0.0);
+        if (_defaultTimeoutInterval != newTimeout) {
+            _defaultTimeoutInterval = newTimeout;
+            // Invalidate the cached session so it gets recreated with the new timeout
+            // Use finishTasksAndInvalidate to allow in-flight requests to complete
+            if (_session) {
+                [_session finishTasksAndInvalidate];
+                _session = nil;
+            }
+        }
     }
 }
 
