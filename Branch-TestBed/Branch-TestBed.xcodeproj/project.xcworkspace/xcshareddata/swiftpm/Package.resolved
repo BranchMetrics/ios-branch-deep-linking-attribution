@@ -1,5 +1,5 @@
 {
-  "originHash" : "bb99ce17c563a1c551806f1d8b2d31aef8e86c9f5237904897126d663a729026",
+  "originHash" : "bf3fe443d2349d81f7be27114be6380a364f2f6144593ceae9eac25dd8e8d72a",
   "pins" : [
     {
       "identity" : "google-ads-on-device-conversion-ios-sdk",
@@ -35,6 +35,24 @@
       "state" : {
         "revision" : "b7e1104502eca3a213b46303391ca4d3bc8ddec1",
         "version" : "2.30910.0"
+      }
+    },
+    {
+      "identity" : "pactswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/surpher/PactSwift",
+      "state" : {
+        "branch" : "main",
+        "revision" : "0746420a5ea9198294916e86db3c305cb5c0f169"
+      }
+    },
+    {
+      "identity" : "pactswiftserver",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/surpher/PactSwiftServer.git",
+      "state" : {
+        "revision" : "12ecc92092ecd3640dcc2dcb98ce6b3d1f2d76f7",
+        "version" : "0.4.7"
       }
     }
   ],
