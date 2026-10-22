@@ -242,6 +242,8 @@ static NSString *bnc_branchKey = nil;
     }
 }
 
+#pragma mark - SDK Initialization Functions
+
 + (Branch *)initialize:(BranchConfiguration *)configuration {
     if (!configuration) {
         NSString *errorMessage = @"A BranchConfiguration is required to initialize Branch.";
@@ -758,17 +760,6 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     [self.preferenceHelper setRequestMetadataKey:key value:value];
 }
 
-+ (BOOL)attributionLevelNone {
-    @synchronized (self) {
-        return [[BNCPreferenceHelper sharedInstance].attributionLevel isEqualToString:BranchAttributionLevelNone];
-    }
-}
-
-// Whether this instance's preference helper has attribution level NONE.
-- (BOOL)isAttributionLevelNone {
-    return [self.preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone];
-}
-
 + (void)setReferrerGbraidValidityWindow:(NSTimeInterval)validityWindow{
     @synchronized(self) {
         [BNCPreferenceHelper sharedInstance].referringURLQueryParameters[BRANCH_REQUEST_KEY_REFERRER_GBRAID][BRANCH_URL_QUERY_PARAMETERS_VALIDITY_WINDOW_KEY] = @(validityWindow);
@@ -815,7 +806,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 }
 
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level resetSession:(BOOL)resetSession {
-    BOOL wasNone = [self isAttributionLevelNone];
+    BOOL wasNone = self.preferenceHelper.attributionLevelNone;
     self.preferenceHelper.attributionLevel = level;
 
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Setting Consumer Protection Attribution Level to %@", level] error:nil];
@@ -851,6 +842,12 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     }
 }
 
++ (BOOL)attributionLevelNone {
+    @synchronized (self) {
+        return [BNCPreferenceHelper sharedInstance].attributionLevelNone;
+    }
+}
+
 + (void) setCallbackForTracingRequests: (callbackForTracingRequests) callback {
     bnc_tracingCallback = callback;
 }
@@ -867,6 +864,8 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     self.userURLFilter = [[BNCURLFilter alloc] init];
     [self.userURLFilter useCustomPatternList:urlsToIgnore];
 }
+
+#pragma mark - Internal Deep Link Data Processing
 
 // Populates the preferenceHelper from an incoming URL without enqueueing a request. Returns YES for a
 // Branch link; `filtered` is set to YES when the URL matched the skiplist and must not be sent.
@@ -906,6 +905,47 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     } else {
         return [self handleSchemeDeepLink_private:url];
     }
+}
+
+// Populates the preferenceHelper from an incoming NSUserActivity without enqueueing a request. Returns
+// YES for a Branch link or Spotlight identifier; `filtered` behaves as in processDeepLinkURL:filtered:.
+- (BOOL)processUserActivity:(NSUserActivity *)userActivity filtered:(BOOL *)filtered {
+    if (filtered) {
+        *filtered = NO;
+    }
+
+    if (userActivity.referrerURL) {
+        self.preferenceHelper.initialReferrer = userActivity.referrerURL.absoluteString;
+    }
+
+    [[BranchLogger shared] logVerbose:userActivity.debugDescription error:nil];
+    // Check to see if a browser activity needs to be handled
+    if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
+        return [self processDeepLinkURL:userActivity.webpageURL filtered:filtered];
+    }
+
+    NSString *spotlightIdentifier = nil;
+
+    #if !TARGET_OS_TV
+    // Check to see if a spotlight activity needs to be handled
+    spotlightIdentifier = [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
+    NSURL *webURL = userActivity.webpageURL;
+
+    if ([Branch isBranchLink:userActivity.userInfo[CSSearchableItemActivityIdentifier]]) {
+        return [self processDeepLinkURL:[NSURL URLWithString:userActivity.userInfo[CSSearchableItemActivityIdentifier]] filtered:filtered];
+    } else if (webURL != nil && [Branch isBranchLink:[webURL absoluteString]]) {
+        return [self processDeepLinkURL:webURL filtered:filtered];
+    } else if (spotlightIdentifier) {
+        self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
+    } else {
+        NSString *nonBranchSpotlightIdentifier = [self.contentDiscoveryManager standardSpotlightIdentifierFromActivity:userActivity];
+        if (nonBranchSpotlightIdentifier) {
+            self.preferenceHelper.spotlightIdentifier = nonBranchSpotlightIdentifier;
+        }
+    }
+    #endif
+
+    return spotlightIdentifier != nil;
 }
 
 - (BOOL)handleSchemeDeepLink_private:(NSURL*)url {
@@ -953,7 +993,6 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     return handled;
 }
 
-
 - (BOOL)handleUniversalDeepLink_private:(NSString*)urlString {
     if (urlString.length) {
         self.preferenceHelper.universalLinkUrl = urlString;
@@ -964,46 +1003,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     return [Branch isBranchLink:urlString];
 }
 
-// Populates the preferenceHelper from an incoming NSUserActivity without enqueueing a request. Returns
-// YES for a Branch link or Spotlight identifier; `filtered` behaves as in processDeepLinkURL:filtered:.
-- (BOOL)processUserActivity:(NSUserActivity *)userActivity filtered:(BOOL *)filtered {
-    if (filtered) {
-        *filtered = NO;
-    }
-
-    if (userActivity.referrerURL) {
-        self.preferenceHelper.initialReferrer = userActivity.referrerURL.absoluteString;
-    }
-
-    [[BranchLogger shared] logVerbose:userActivity.debugDescription error:nil];
-    // Check to see if a browser activity needs to be handled
-    if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-        return [self processDeepLinkURL:userActivity.webpageURL filtered:filtered];
-    }
-
-    NSString *spotlightIdentifier = nil;
-
-    #if !TARGET_OS_TV
-    // Check to see if a spotlight activity needs to be handled
-    spotlightIdentifier = [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
-    NSURL *webURL = userActivity.webpageURL;
-
-    if ([Branch isBranchLink:userActivity.userInfo[CSSearchableItemActivityIdentifier]]) {
-        return [self processDeepLinkURL:[NSURL URLWithString:userActivity.userInfo[CSSearchableItemActivityIdentifier]] filtered:filtered];
-    } else if (webURL != nil && [Branch isBranchLink:[webURL absoluteString]]) {
-        return [self processDeepLinkURL:webURL filtered:filtered];
-    } else if (spotlightIdentifier) {
-        self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
-    } else {
-        NSString *nonBranchSpotlightIdentifier = [self.contentDiscoveryManager standardSpotlightIdentifierFromActivity:userActivity];
-        if (nonBranchSpotlightIdentifier) {
-            self.preferenceHelper.spotlightIdentifier = nonBranchSpotlightIdentifier;
-        }
-    }
-    #endif
-
-    return spotlightIdentifier != nil;
-}
+#pragma mark - Check For Branch Link
 
 // checks if URL string looks like a branch link
 + (BOOL)isBranchLink:(NSString *)urlString {
@@ -1047,7 +1047,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     return NO;
 }
 
-#pragma mark - async data collection
+#pragma mark - Async Data Collection
 
 - (void)loadUserAgent {
     #if !TARGET_OS_TV
@@ -1167,7 +1167,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 }
 
 
-#pragma mark - Identity methods
+#pragma mark - Identity Methods
 
 - (void)setUserAlias:(NSString *)userAlias completion:(callbackWithParams)completion {
     if (userAlias) {
@@ -1213,6 +1213,8 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 - (void)sendServerRequestWithoutSession:(BNCServerRequest*)request {
     [self sendServerRequest:request];
 }
+
+#pragma mark - Retrieve Referral Data
 
 - (BranchUniversalObject *)getFirstReferringBranchUniversalObject {
     NSDictionary *params = [self getFirstReferringParams];
@@ -2244,7 +2246,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         return;
     }
 
-    if ([self isAttributionLevelNone]) {
+    if (self.preferenceHelper.attributionLevelNone) {
         [[BranchLogger shared] logDebug:@"Branch Attribution Level set to NONE. Branch sendOpen network request deferred until attribution is enabled." error:nil];
         self.openOwedAtOptIn = YES;
         return;
@@ -2468,7 +2470,7 @@ static BOOL bnc_didWarnOpenWaitsForSendOpen = NO;
 - (void)enqueueUnattributedOpenCallingHandler:(BOOL)callHandler {
     [[BranchLogger shared] logDebug:@"sendOpen called" error:nil];
 
-    if ([self isAttributionLevelNone]) {
+    if (self.preferenceHelper.attributionLevelNone) {
         [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented. Clearing link identifiers to prevent reuse." error:nil];
         [self clearLinkIdentifiers];
         return;
@@ -2483,7 +2485,7 @@ static BOOL bnc_didWarnOpenWaitsForSendOpen = NO;
 - (void)enqueueAttributedOpenWithResponseData:(NSDictionary *)responseData {
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen called with responseData: %@", responseData] error:nil];
 
-    if ([self isAttributionLevelNone]) {
+    if (self.preferenceHelper.attributionLevelNone) {
         [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request deferred until attribution is enabled." error:nil];
         [self holdAttributedOpenResponse:responseData];
         return;
