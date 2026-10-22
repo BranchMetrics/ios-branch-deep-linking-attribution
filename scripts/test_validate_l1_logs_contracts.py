@@ -206,6 +206,23 @@ class HotUriSchemeWiringTests(unittest.TestCase):
         self.assertEqual(scene_delegate.count('logLifecycleMarker:@"openURL"'), 2)
 
 
+class HotHttpsForegroundContractTests(unittest.TestCase):
+    """hot_https_foreground: one resolve, then exactly one open."""
+
+    def test_the_hot_capture_passes(self):
+        # Delivery delta of a Universal Link opened into a foregrounded TestBed.
+        self.assertEqual(_validate("hot_https_foreground.txt", "hot_https_foreground"), [])
+
+    def test_an_extra_open_fails(self):
+        # A launch open ahead of the resolution's attributed open is one open
+        # too many. The wire alone cannot tell a cold Universal Link from a hot
+        # one since a cold launch also sends one resolve and one open; the
+        # lifecycle markers (check_foreground_markers.py) separate those.
+        errors = _validate("hot_https_foreground_extra_open.txt", "hot_https_foreground")
+        self.assertEqual(len(errors), 1, errors)
+        self.assertIn("captured 2", errors[0])
+
+
 def _fixture_bytes(name):
     with open(os.path.join(FIXTURE_DIR, name), "rb") as f:
         return f.read()
