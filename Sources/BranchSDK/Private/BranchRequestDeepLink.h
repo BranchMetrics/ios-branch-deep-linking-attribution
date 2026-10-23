@@ -19,12 +19,11 @@
 @property (nonatomic, copy, readwrite) NSString *requestServiceURL;
 @property (nonatomic, copy, readwrite) NSString *uri;
 
-+ (void) waitForDeepLinkResponseLock;
-+ (void) releaseDeepLinkResponseLock;
-+ (void) setWaitNeededForDeepLinkResponseLock;
++ (void)waitForDeepLinkResponseLock;
++ (void)releaseDeepLinkResponseLock;
++ (void)setWaitNeededForDeepLinkResponseLock;
 
 - (id)initWithCallback:(callbackWithStatus)callback;
-- (id)initWithCallback:(callbackWithStatus)callback isInstall:(BOOL)isInstall;
 - (void)clearLinkIdentifiers:(BNCPreferenceHelper *)preferenceHelper;
 
 @end

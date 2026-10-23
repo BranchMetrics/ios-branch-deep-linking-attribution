@@ -24,11 +24,8 @@ static NSString* const kDomainIdentifier = @"io.branch.sdk.spotlight";
 
 #pragma mark - BNCSpotlightService
 
-@interface BNCSpotlightService()<NSUserActivityDelegate> {
-    dispatch_queue_t    _workQueue;
-}
+@interface BNCSpotlightService()<NSUserActivityDelegate>
 @property (strong, nonatomic) NSMutableDictionary *userInfo;
-@property (strong, readonly, nonatomic) dispatch_queue_t workQueue;
 @end
 
 #pragma mark - BNCSpotlightService
@@ -280,14 +277,6 @@ static NSString* const kDomainIdentifier = @"io.branch.sdk.spotlight";
         }];
     });
     #undef IndexingNotAvailable
-}
-
-- (dispatch_queue_t) workQueue {
-    @synchronized (self) {
-        if (!_workQueue)
-            _workQueue = dispatch_queue_create("io.branch.sdk.spotlight.indexing", DISPATCH_QUEUE_CONCURRENT);
-        return _workQueue;
-    }
 }
 
 - (void)indexUsingNSUserActivity:(NSDictionary *)params {

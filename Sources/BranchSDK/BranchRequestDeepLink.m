@@ -142,7 +142,7 @@
     
     if (uxType) {
         NSURL *webLinkRedirectUrl = [NSURL URLWithString:invokeFeatures[BRANCH_RESPONSE_KEY_WEB_LINK_REDIRECT_URL]];
-        if (webLinkRedirectUrl) {
+        if ([BranchRequestDeepLink isWebURL:webLinkRedirectUrl]) {
             if ([uxType isEqualToString:WEB_UX_IN_APP_WEBVIEW]) {
                 id inAppBrowser = nil;
 #if !TARGET_OS_TV
@@ -181,6 +181,12 @@
     return FALSE;
 }
 
+// Returns YES when url has an http or https scheme.
++ (BOOL)isWebURL:(NSURL *)url {
+    NSString *scheme = url.scheme.lowercaseString;
+    return [scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"];
+}
+
 - (void)openURLInDefaultBrowser:(NSURL *)url{
     
     if (!url) return;
@@ -212,10 +218,6 @@
     }
 }
 
-- (NSString *)getActionName {
-    return @"deepLink";
-}
-
 - (instancetype)initWithCoder:(NSCoder *)decoder {
     self = [super initWithCoder:decoder];
     if (!self) return self;
@@ -245,14 +247,14 @@ static dispatch_queue_t deepLinkRequestWaitQueue = NULL;
 static BOOL deepLinkRequestWaitQueueIsSuspended = NO;
 
 
-+ (void) initialize {
++ (void)initialize {
     if (self != [BranchRequestDeepLink self])
         return;
     deepLinkRequestWaitQueue =
         dispatch_queue_create("io.branch.sdk.deeplinkqueue", DISPATCH_QUEUE_CONCURRENT);
 }
 
-+ (void) setWaitNeededForDeepLinkResponseLock {
++ (void)setWaitNeededForDeepLinkResponseLock {
     @synchronized (self) {
         if (!deepLinkRequestWaitQueueIsSuspended) {
             [[BranchLogger shared] logVerbose:@"Suspended for deepLinkRequestWaitQueue." error:nil];
@@ -262,7 +264,7 @@ static BOOL deepLinkRequestWaitQueueIsSuspended = NO;
     }
 }
 
-+ (void) waitForDeepLinkResponseLock {
++ (void)waitForDeepLinkResponseLock {
     [[BranchLogger shared] logVerbose:@"Waiting for deepLinkRequestWaitQueue." error:nil];
     dispatch_sync(deepLinkRequestWaitQueue, ^ {
         [[BranchLogger shared] logVerbose:@"Finished waitForDeepLinkResponseLock." error:nil];
@@ -279,7 +281,7 @@ static BOOL deepLinkRequestWaitQueueIsSuspended = NO;
     }
 }
 
-- (void) attemptToSendOpen:(BNCPreferenceHelper *)preferenceHelper response:(BNCServerResponse *)response {
+- (void)attemptToSendOpen:(BNCPreferenceHelper *)preferenceHelper response:(BNCServerResponse *)response {
     NSString *referringURL = nil;
     if (self.urlString.length > 0) {
         referringURL = self.urlString;

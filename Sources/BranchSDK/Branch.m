@@ -7,11 +7,10 @@
 //
 
 #import "Branch.h"
+#import "BNCCrashlyticsWrapper.h"
 #import "BranchConfiguration.h"
 #import "BranchConfiguration+Private.h"
 #import "BNCConfig.h"
-#import "BNCCrashlyticsWrapper.h"
-#import "BNCDeepLinkViewControllerInstance.h"
 #import "BNCEncodingUtils.h"
 #import "BNCLinkData.h"
 #import "BNCNetworkService.h"
@@ -50,7 +49,6 @@
 #import "BNCUserAgentCollector.h"
 #import "BNCSpotlightService.h"
 #import "BNCContentDiscoveryManager.h"
-#import "BranchContentDiscoverer.h"
 #import "BNCODMInfoCollector.h"
 #endif
 
@@ -71,12 +69,10 @@ NSString * const BRANCH_INIT_KEY_PHONE_NUMBER = @"+phone_number";
 NSString * const BRANCH_INIT_KEY_IS_FIRST_SESSION = @"+is_first_session";
 NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
 static NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
-static NSString * const BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY = @"deferInitForPluginRuntime";
 
 NSString * const BNCCanonicalIdList = @"$canonical_identifier_list";
 NSString * const BNCPurchaseAmount = @"$amount";
 NSString * const BNCPurchaseCurrency = @"$currency";
-NSString * const BNCRegisterViewEvent = @"View";
 NSString * const BNCAddToWishlistEvent = @"Add to Wishlist";
 NSString * const BNCAddToCartEvent = @"Add to Cart";
 NSString * const BNCPurchaseInitiatedEvent = @"Purchase Started";
@@ -112,7 +108,7 @@ void ForceCategoriesToLoad(void) {
 
 @implementation BranchLink
 
-+ (BranchLink*) linkWithUniversalObject:(BranchUniversalObject*)universalObject
++ (BranchLink*)linkWithUniversalObject:(BranchUniversalObject*)universalObject
                              properties:(BranchLinkProperties*)linkProperties {
     BranchLink *link = [[BranchLink alloc] init];
     link.universalObject = universalObject;
@@ -124,7 +120,7 @@ void ForceCategoriesToLoad(void) {
 
 #pragma mark - Branch
 
-@interface BNCServerRequestQueue (DeferredForegroundOpen)
+@interface BNCServerRequestQueue (BranchInternal)
 - (BOOL)addDeferredForegroundOpenCheck:(dispatch_block_t)block;
 - (BOOL)hasUnfinishedInitRequest;
 - (BOOL)hasUnfinishedInstallOrOpen;
@@ -133,7 +129,7 @@ void ForceCategoriesToLoad(void) {
 - (NSOperation *)enqueue:(BNCServerRequest *)request afterUnfinishedDeepLinkRequests:(NSOperationQueuePriority)priority;
 @end
 
-@interface Branch() <BranchDeepLinkingControllerCompletionDelegate> {
+@interface Branch() {
     NSInteger _networkCount;
     BOOL _openSentThisForegroundPeriod;
     BOOL _resignedSinceActivation;
@@ -151,8 +147,6 @@ void ForceCategoriesToLoad(void) {
 @property (assign, nonatomic) NSInteger networkCount;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
-@property (strong, nonatomic) NSMutableDictionary *deepLinkControllers;
-@property (weak,   nonatomic) UIViewController *deepLinkPresentingController;
 @property (strong, nonatomic) NSDictionary *deepLinkDebugParams;
 @property (strong, nonatomic) NSMutableArray *allowedSchemeList;
 @property (strong, nonatomic) BNCURLFilter *urlFilter;
@@ -179,12 +173,6 @@ void ForceCategoriesToLoad(void) {
 // Set when an open was requested while attribution was NONE; sent when attribution leaves NONE.
 @property (nonatomic, assign) BOOL openOwedAtOptIn;
 
-// Support for deferred SDK initialization. Used to support slow plugin runtime startup.
-// This is enabled by setting deferInitForPluginRuntime to true in branch.json
-@property (nonatomic, assign, readwrite) BOOL deferInitForPluginRuntime;
-@property (nonatomic, copy, nullable) void (^cachedInitBlock)(void);
-@property (nonatomic, copy, readwrite) NSString *cachedURLString;
-
 @property (nonatomic, copy, nullable) callbackWithParams deepLinkHandler;
 
 // Private method used internally
@@ -193,6 +181,7 @@ void ForceCategoriesToLoad(void) {
 - (void)enqueueUnattributedOpen;
 - (void)enqueueUnattributedOpenCallingHandler:(BOOL)callHandler;
 - (void)enqueueAttributedOpenWithResponseData:(NSDictionary *)responseData;
+- (void)enqueueOpenRequest:(BranchRequestOpen *)openReq;
 - (BOOL)shouldSendAutomaticUnattributedOpen;
 - (void)sendAutomaticUnattributedOpen;
 - (void)handleResolvedLinkResponse:(NSDictionary *)responseData;
@@ -204,8 +193,6 @@ void ForceCategoriesToLoad(void) {
 @end
 
 @implementation Branch
-
-#pragma mark - Public methods
 
 #pragma mark - Shared Instance Accessor
 
@@ -240,6 +227,8 @@ static NSString *bnc_branchKey = nil;
         bnc_didInitializeWithConfiguration = NO;
     }
 }
+
+#pragma mark - SDK Initialization Functions
 
 + (Branch *)initialize:(BranchConfiguration *)configuration {
     if (!configuration) {
@@ -296,6 +285,7 @@ static NSString *bnc_branchKey = nil;
         [Branch applyConfiguration:configuration toBranch:branch];
     }
 
+    [Branch addBranchSDKVersionToCrashlyticsReport];
     return branch;
 }
 
@@ -338,9 +328,7 @@ static NSString *bnc_branchKey = nil;
 
     if (configuration.attributionLevel) {
         branch.openOwedAtOptIn = NO;
-        @synchronized (branch) {
-            branch->_heldAttributedOpenResponse = nil;
-        }
+        [branch takeHeldAttributedOpenResponse];
         [branch setConsumerProtectionAttributionLevel:configuration.attributionLevel resetSession:NO];
     }
 
@@ -379,12 +367,10 @@ static NSString *bnc_branchKey = nil;
     if (onlyAssigned ? configuration.requestTracingCallbackWasSet : configuration.requestTracingCallback != nil) {
         [Branch setCallbackForTracingRequests:configuration.requestTracingCallback];
     }
-    if (configuration.apiUrl &&
-        [Branch shouldApplyValueWasSet:YES validationMessage:[configuration apiUrlValidationMessage] onlyAssignedValues:onlyAssigned]) {
+    if (configuration.apiUrl && [Branch shouldApplyValueWasSet:YES validationMessage:[configuration apiUrlValidationMessage] onlyAssignedValues:onlyAssigned]) {
         [Branch setAPIUrl:configuration.apiUrl];
     }
-    if (configuration.safeTrackAPIUrl &&
-        [Branch shouldApplyValueWasSet:YES validationMessage:[configuration safeTrackAPIUrlValidationMessage] onlyAssignedValues:onlyAssigned]) {
+    if (configuration.safeTrackAPIUrl && [Branch shouldApplyValueWasSet:YES validationMessage:[configuration safeTrackAPIUrlValidationMessage] onlyAssignedValues:onlyAssigned]) {
         [Branch setSafetrackAPIURL:configuration.safeTrackAPIUrl];
     }
 
@@ -400,24 +386,16 @@ static NSString *bnc_branchKey = nil;
     }
 
     // Network
-    if ([Branch shouldApplyValueWasSet:configuration.networkTimeoutWasSet
-                     validationMessage:[configuration networkTimeoutValidationMessage]
-                    onlyAssignedValues:onlyAssigned]) {
+    if ([Branch shouldApplyValueWasSet:configuration.networkTimeoutWasSet validationMessage:[configuration networkTimeoutValidationMessage] onlyAssignedValues:onlyAssigned]) {
         [branch setNetworkTimeout:configuration.networkTimeout];
     }
-    if ([Branch shouldApplyValueWasSet:configuration.retryCountWasSet
-                     validationMessage:[configuration retryCountValidationMessage]
-                    onlyAssignedValues:onlyAssigned]) {
+    if ([Branch shouldApplyValueWasSet:configuration.retryCountWasSet validationMessage:[configuration retryCountValidationMessage] onlyAssignedValues:onlyAssigned]) {
         [branch setMaxRetries:configuration.retryCount];
     }
-    if ([Branch shouldApplyValueWasSet:configuration.retryIntervalWasSet
-                     validationMessage:[configuration retryIntervalValidationMessage]
-                    onlyAssignedValues:onlyAssigned]) {
+    if ([Branch shouldApplyValueWasSet:configuration.retryIntervalWasSet validationMessage:[configuration retryIntervalValidationMessage] onlyAssignedValues:onlyAssigned]) {
         [branch setRetryInterval:configuration.retryInterval];
     }
-    if ([Branch shouldApplyValueWasSet:configuration.thirdPartyAPIsWaitTimeWasSet
-                     validationMessage:[configuration thirdPartyAPIsWaitTimeValidationMessage]
-                    onlyAssignedValues:onlyAssigned]) {
+    if ([Branch shouldApplyValueWasSet:configuration.thirdPartyAPIsWaitTimeWasSet validationMessage:[configuration thirdPartyAPIsWaitTimeValidationMessage] onlyAssignedValues:onlyAssigned]) {
         [Branch setSDKWaitTimeForThirdPartyAPIs:configuration.thirdPartyAPIsWaitTime];
     }
 
@@ -524,7 +502,6 @@ static NSString *bnc_branchKey = nil;
     _processing_sema = dispatch_semaphore_create(1);
     _networkCount = 0;
     _automaticOpenEvents = YES;
-    _deepLinkControllers = [[NSMutableDictionary alloc] init];
     _allowedSchemeList = [[NSMutableArray alloc] init];
     _serverAPI = [BNCServerAPI sharedInstance];
 
@@ -561,10 +538,6 @@ static NSString *bnc_branchKey = nil;
     [self loadUserAgent];
 
     BranchJsonConfig *config = BranchJsonConfig.instance;
-    self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
-    [BranchConfigurationController sharedInstance].deferInitForPluginRuntime = self.deferInitForPluginRuntime;
-
-
     if (config.apiUrl) {
         [Branch setAPIUrl:config.apiUrl];
     }
@@ -597,6 +570,10 @@ static NSString *bnc_branchKey = nil;
     return self;
 }
 
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 static Class bnc_networkServiceClass = NULL;
 static callbackForTracingRequests bnc_tracingCallback = nil;
 
@@ -624,7 +601,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     }
 }
 
-#pragma mark - BrachActivityItemProvider methods
+#pragma mark - BranchActivityItemProvider methods
 #if !TARGET_OS_TV
 
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params {
@@ -733,10 +710,6 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     [self validateSDKIntegrationCore];
 }
 
-- (BOOL)isUserIdentified {
-    return self.preferenceHelper.userAlias != nil;
-}
-
 - (void)setNetworkTimeout:(NSTimeInterval)timeout {
     self.preferenceHelper.timeout = timeout;
 }
@@ -765,12 +738,6 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 
 - (void)setRequestMetadataKey:(NSString *)key value:(NSString *)value {
     [self.preferenceHelper setRequestMetadataKey:key value:value];
-}
-
-+ (BOOL)attributionLevelNone {
-    @synchronized (self) {
-        return [[BNCPreferenceHelper sharedInstance].attributionLevel isEqualToString:BranchAttributionLevelNone];
-    }
 }
 
 + (void)setReferrerGbraidValidityWindow:(NSTimeInterval)validityWindow{
@@ -819,7 +786,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 }
 
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level resetSession:(BOOL)resetSession {
-    BOOL wasNone = [self.preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone];
+    BOOL wasNone = self.preferenceHelper.attributionLevelNone;
     self.preferenceHelper.attributionLevel = level;
 
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Setting Consumer Protection Attribution Level to %@", level] error:nil];
@@ -848,14 +815,20 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
         BOOL openDue = wasNone && (self.openOwedAtOptIn || [self hasHeldAttributedOpenResponse]);
         if (openDue) {
             self.openOwedAtOptIn = NO;
-            [self enqueueManualOpenNow];
+            [self enqueueManualOpenIf:nil];
         } else if (resetSession && self.automaticOpenEvents) {
             [self enqueueUnattributedOpen];
         }
     }
 }
 
-+ (void) setCallbackForTracingRequests: (callbackForTracingRequests) callback {
++ (BOOL)attributionLevelNone {
+    @synchronized (self) {
+        return [BNCPreferenceHelper sharedInstance].attributionLevelNone;
+    }
+}
+
++ (void)setCallbackForTracingRequests: (callbackForTracingRequests) callback {
     bnc_tracingCallback = callback;
 }
 
@@ -872,43 +845,15 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     [self.userURLFilter useCustomPatternList:urlsToIgnore];
 }
 
-// This is currently the same as handleDeeplink
-- (BOOL)handleDeepLinkWithNewSession:(NSURL *)url {
-    return [self handleDeepLink:url sceneIdentifier:nil];
+- (void)registerPluginName:(NSString *)name version:(NSString *)version {
+    [[BNCDeviceInfo getInstance] registerPluginName:name version:version];
 }
 
-- (BOOL)handleDeepLink:(NSURL *)url {
-    return [self handleDeepLink:url sceneIdentifier:nil];
-}
+#pragma mark - Internal Deep Link Data Processing
 
-- (BOOL)handleDeepLink:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier {
-    BOOL filtered = NO;
-    BOOL handled = [self processDeepLinkURL:url sceneIdentifier:sceneIdentifier filtered:&filtered];
-
-    // processDeepLinkURL: only populates the preferenceHelper; the entry point owns the enqueue so
-    // that the legacy handlers and the requestDeepLinkData* convenience methods each enqueue exactly
-    // one request. A skiplisted URL is never sent to Branch.
-    if (!filtered) {
-        [self requestDeepLinkData:url.absoluteString];
-    }
-
-    return handled;
-}
-
-- (BOOL)processDeepLinkURL:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier {
-    return [self processDeepLinkURL:url sceneIdentifier:sceneIdentifier filtered:NULL];
-}
-
-// Populates the preferenceHelper with everything a deep link request needs from an incoming URL:
-// referring-URL query parameters, URL skiplist / dropURLOpen handling, custom-scheme intent URIs and
-// link_click_id extraction, and universal link URLs. This is the single source of truth shared by the
-// legacy handleDeepLink: entry points and the requestDeepLinkData* convenience methods so that none of
-// these checks are skipped regardless of which API the integrator adopts. It never enqueues a request
-// itself — that is the caller's job.
-// Returns YES if the URL was recognized as a Branch link. On return `filtered` is YES only when the
-// URL matched the skiplist, which is the one case where the caller must not send the URL to Branch. A
-// NO return on its own just means "not a Branch link", which still warrants a deferred data lookup.
-- (BOOL)processDeepLinkURL:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier filtered:(BOOL *)filtered {
+// Populates the preferenceHelper from an incoming URL without enqueueing a request. Returns YES for a
+// Branch link; `filtered` is set to YES when the URL matched the skiplist and must not be sent.
+- (BOOL)processDeepLinkURL:(NSURL *)url filtered:(BOOL *)filtered {
     if (filtered) {
         *filtered = NO;
     }
@@ -940,13 +885,54 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 
     NSString *scheme = [url scheme];
     if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
-        return [self handleUniversalDeepLink_private:url.absoluteString sceneIdentifier:sceneIdentifier];
+        return [self handleUniversalDeepLink_private:url.absoluteString];
     } else {
-        return [self handleSchemeDeepLink_private:url sceneIdentifier:sceneIdentifier];
+        return [self handleSchemeDeepLink_private:url];
     }
 }
 
-- (BOOL)handleSchemeDeepLink_private:(NSURL*)url sceneIdentifier:(NSString *)sceneIdentifier {
+// Populates the preferenceHelper from an incoming NSUserActivity without enqueueing a request. Returns
+// YES for a Branch link or Spotlight identifier; `filtered` behaves as in processDeepLinkURL:filtered:.
+- (BOOL)processUserActivity:(NSUserActivity *)userActivity filtered:(BOOL *)filtered {
+    if (filtered) {
+        *filtered = NO;
+    }
+
+    if (userActivity.referrerURL) {
+        self.preferenceHelper.initialReferrer = userActivity.referrerURL.absoluteString;
+    }
+
+    [[BranchLogger shared] logVerbose:userActivity.debugDescription error:nil];
+    // Check to see if a browser activity needs to be handled
+    if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
+        return [self processDeepLinkURL:userActivity.webpageURL filtered:filtered];
+    }
+
+    NSString *spotlightIdentifier = nil;
+
+    #if !TARGET_OS_TV
+    // Check to see if a spotlight activity needs to be handled
+    spotlightIdentifier = [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
+    NSURL *webURL = userActivity.webpageURL;
+
+    if ([Branch isBranchLink:userActivity.userInfo[CSSearchableItemActivityIdentifier]]) {
+        return [self processDeepLinkURL:[NSURL URLWithString:userActivity.userInfo[CSSearchableItemActivityIdentifier]] filtered:filtered];
+    } else if (webURL != nil && [Branch isBranchLink:[webURL absoluteString]]) {
+        return [self processDeepLinkURL:webURL filtered:filtered];
+    } else if (spotlightIdentifier) {
+        self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
+    } else {
+        NSString *nonBranchSpotlightIdentifier = [self.contentDiscoveryManager standardSpotlightIdentifierFromActivity:userActivity];
+        if (nonBranchSpotlightIdentifier) {
+            self.preferenceHelper.spotlightIdentifier = nonBranchSpotlightIdentifier;
+        }
+    }
+    #endif
+
+    return spotlightIdentifier != nil;
+}
+
+- (BOOL)handleSchemeDeepLink_private:(NSURL*)url {
     BOOL handled = NO;
     self.preferenceHelper.referringURL = nil;
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"Set referringURL to %@", self.preferenceHelper.referringURL] error:nil];
@@ -991,30 +977,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     return handled;
 }
 
-
-- (BOOL)application:(UIApplication *)application
-            openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation {
-    return [self handleDeepLink:url sceneIdentifier:nil];
-}
-
-- (BOOL)sceneIdentifier:(NSString *)sceneIdentifier
-                openURL:(NSURL *)url
-      sourceApplication:(NSString *)sourceApplication
-             annotation:(id)annotation {
-    return [self  handleDeepLink:url sceneIdentifier:sceneIdentifier];
-}
-
-- (BOOL)application:(UIApplication *)application
-            openURL:(NSURL *)url
-            options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
-    NSString *source = options[UIApplicationOpenURLOptionsSourceApplicationKey];
-    NSString *annotation = options[UIApplicationOpenURLOptionsAnnotationKey];
-    return [self application:application openURL:url sourceApplication:source annotation:annotation];
-}
-
-- (BOOL)handleUniversalDeepLink_private:(NSString*)urlString sceneIdentifier:(NSString *)sceneIdentifier {
+- (BOOL)handleUniversalDeepLink_private:(NSString*)urlString {
     if (urlString.length) {
         self.preferenceHelper.universalLinkUrl = urlString;
         self.preferenceHelper.referringURL = urlString;
@@ -1024,76 +987,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     return [Branch isBranchLink:urlString];
 }
 
-- (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
-    return [self continueUserActivity:userActivity sceneIdentifier:nil];
-}
-
-- (BOOL)continueUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier {
-    BOOL filtered = NO;
-    BOOL handled = [self processUserActivity:userActivity sceneIdentifier:sceneIdentifier filtered:&filtered];
-
-    // As in handleDeepLink:sceneIdentifier:, the entry point owns the enqueue. nil only for a
-    // non-Branch Spotlight identifier, which enqueues a deferred data lookup rather than resolving
-    // a link.
-    if (!filtered) {
-        [self requestDeepLinkData:[self deepLinkURLStringForUserActivity:userActivity]];
-    }
-
-    return handled;
-}
-
-- (BOOL)processUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier {
-    return [self processUserActivity:userActivity sceneIdentifier:sceneIdentifier filtered:NULL];
-}
-
-// Populates the preferenceHelper from an incoming NSUserActivity: the initial referrer, browsing-web
-// universal links, and Spotlight identifiers (both Branch and non-Branch). URL-bearing activities are
-// funneled through processDeepLinkURL: so the referring-URL, skiplist and link_click_id checks run
-// on every path. This is the single source of truth shared by the legacy continueUserActivity: entry
-// points and the requestDeepLinkData* convenience methods. It never enqueues a request itself — that
-// is the caller's job.
-// Returns YES if a Branch link or Spotlight identifier was recognized. `filtered` follows the same
-// contract as processDeepLinkURL:sceneIdentifier:filtered:.
-- (BOOL)processUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier filtered:(BOOL *)filtered {
-    if (filtered) {
-        *filtered = NO;
-    }
-
-    if (userActivity.referrerURL) {
-        self.preferenceHelper.initialReferrer = userActivity.referrerURL.absoluteString;
-    }
-
-    [[BranchLogger shared] logVerbose:userActivity.debugDescription error:nil];
-    // Check to see if a browser activity needs to be handled
-    if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-        return [self processDeepLinkURL:userActivity.webpageURL sceneIdentifier:sceneIdentifier filtered:filtered];
-    }
-
-    NSString *spotlightIdentifier = nil;
-
-    #if !TARGET_OS_TV
-    // Check to see if a spotlight activity needs to be handled
-    spotlightIdentifier = [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
-    NSURL *webURL = userActivity.webpageURL;
-
-    if ([Branch isBranchLink:userActivity.userInfo[CSSearchableItemActivityIdentifier]]) {
-        return [self processDeepLinkURL:[NSURL URLWithString:userActivity.userInfo[CSSearchableItemActivityIdentifier]] sceneIdentifier:sceneIdentifier filtered:filtered];
-    } else if (webURL != nil && [Branch isBranchLink:[webURL absoluteString]]) {
-        return [self processDeepLinkURL:webURL sceneIdentifier:sceneIdentifier filtered:filtered];
-    } else if (spotlightIdentifier) {
-        self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
-    } else {
-        NSString *nonBranchSpotlightIdentifier = [self.contentDiscoveryManager standardSpotlightIdentifierFromActivity:userActivity];
-        if (nonBranchSpotlightIdentifier) {
-            self.preferenceHelper.spotlightIdentifier = nonBranchSpotlightIdentifier;
-        }
-    }
-    #endif
-
-    return spotlightIdentifier != nil;
-}
-
-// The URL string processUserActivity:sceneIdentifier:filtered: preprocessed for userActivity: the
+// The URL string processUserActivity:filtered: preprocessed for userActivity: the
 // Spotlight identifier when it is itself a Branch link, otherwise the activity's webpageURL. A
 // Spotlight activity never has webpageURL set, so a non-Branch Spotlight identifier still yields
 // nil here, which enqueues a deferred data lookup rather than resolving a link.
@@ -1106,6 +1000,8 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     #endif
     return userActivity.webpageURL.absoluteString;
 }
+
+#pragma mark - Check For Branch Link
 
 // checks if URL string looks like a branch link
 + (BOOL)isBranchLink:(NSString *)urlString {
@@ -1149,7 +1045,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     return NO;
 }
 
-#pragma mark - async data collection
+#pragma mark - Async Data Collection
 
 - (void)loadUserAgent {
     #if !TARGET_OS_TV
@@ -1174,7 +1070,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 }
 
 
-#pragma mark - Apple Search Ad Check
+#pragma mark - Apple Attribution & Privacy
 
 - (void)checkPasteboardOnInstall {
     [BNCPasteboard sharedInstance].checkOnInstall = YES;
@@ -1248,28 +1144,15 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 
 #pragma mark - Pre-initialization support
 
-- (void) dispatchToIsolationQueue:(dispatch_block_t) initBlock {
+- (void)dispatchToIsolationQueue:(dispatch_block_t) initBlock {
     dispatch_async(self.isolationQueue, initBlock);
 }
 
-#pragma mark - Deep Link Controller methods
+#pragma mark - Identity Methods
 
-- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key {
-    self.deepLinkControllers[key] = controller;
+- (BOOL)isUserIdentified {
+    return self.preferenceHelper.userAlias != nil;
 }
-
-- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key withPresentation:(BNCViewControllerPresentationOption)option{
-
-    BNCDeepLinkViewControllerInstance* deepLinkModal = [[BNCDeepLinkViewControllerInstance alloc] init];
-
-    deepLinkModal.viewController = controller;
-    deepLinkModal.option         = option;
-
-    self.deepLinkControllers[key] = deepLinkModal;
-}
-
-
-#pragma mark - Identity methods
 
 - (void)setUserAlias:(NSString *)userAlias completion:(callbackWithParams)completion {
     if (userAlias) {
@@ -1304,17 +1187,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     }
 }
 
-- (void)sendServerRequest:(BNCServerRequest*)request {
-    [self warnIfOpenWaitsForSendOpen];
-    dispatch_async(self.isolationQueue, ^(){
-        [self.requestQueue enqueue:request];
-    });
-}
-
-// deprecated, use sendServerRequest
-- (void)sendServerRequestWithoutSession:(BNCServerRequest*)request {
-    [self sendServerRequest:request];
-}
+#pragma mark - Retrieve Referral Data
 
 - (BranchUniversalObject *)getFirstReferringBranchUniversalObject {
     NSDictionary *params = [self getFirstReferringParams];
@@ -1619,23 +1492,13 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     self.preferenceHelper.urlLoadMs = nil;
 }
 
-#pragma mark - BranchUniversalObject methods
-
-- (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback {
-    dispatch_async(self.isolationQueue, ^(){
-        BranchUniversalObject *buo = [[BranchUniversalObject alloc] init];
-        buo.contentMetadata.customMetadata = (id) params;
-        [[BranchEvent standardEvent:BranchStandardEventViewItem withContentItem:buo] logEvent];
-        if (callback) {
-            // callback on main, this is generally what the client expects and maintains our previous behavior
-            dispatch_async(dispatch_get_main_queue(), ^ {
-                callback(@{}, nil);
-            });
-        }
-    });
-}
-
 #pragma mark - Application State Change methods
+
+// Returns the application test seam, or UIApplication.sharedApplication when it is nil.
+- (UIApplication *)currentUIApplication {
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    return self.application ?: [UIApplicationClass sharedApplication];
+}
 
 - (void)applicationDidBecomeActive {
     [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive"] error:nil];
@@ -1672,105 +1535,6 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     });
 }
 
-// Whether the automatic unattributed open is still due. Returns NO when automatic opens are off,
-// attribution is NONE, an open already went out this activation, or an attributed open response is held.
-- (BOOL)shouldSendAutomaticUnattributedOpen {
-    if (!self.automaticOpenEvents) {
-        return NO;
-    }
-
-    if ([Branch attributionLevelNone]) {
-        return NO;
-    }
-
-    if (self.openSentThisForegroundPeriod) {
-        return NO;
-    }
-
-    if ([self hasHeldAttributedOpenResponse]) {
-        return NO;
-    }
-
-    return YES;
-}
-
-// Sends the organic open for a resolve that found no link. Re-reads on the isolation queue and
-// backs off if an install or open is already queued, so a resolve racing a foreground activation
-// cannot add a second open.
-- (void)sendAutomaticUnattributedOpen {
-    if (![self shouldSendAutomaticUnattributedOpen] || [self.requestQueue hasUnfinishedInstallOrOpen]) return;
-
-    dispatch_async(self.isolationQueue, ^(){
-        if (![self shouldSendAutomaticUnattributedOpen] || [self.requestQueue hasUnfinishedInstallOrOpen]) return;
-        [self enqueueUnattributedOpen];
-    });
-}
-
-// Sends the attributed open for a resolve that found a link, or holds it in memory for a later
-// send. Holds while attribution is NONE, and in manual mode while the app is foregrounded or a
-// manual open is waiting to take it; otherwise sends immediately.
-- (void)handleResolvedLinkResponse:(NSDictionary *)responseData {
-    if ([Branch attributionLevelNone]) {
-        [self holdAttributedOpenResponse:responseData];
-        return;
-    }
-
-    if (self.automaticOpenEvents) {
-        [self enqueueAttributedOpenWithResponseData:responseData];
-        return;
-    }
-
-    Class UIApplicationClass = NSClassFromString(@"UIApplication");
-    UIApplication *application = self.application ?: [UIApplicationClass sharedApplication];
-    if (application.applicationState == UIApplicationStateBackground &&
-        ![self.requestQueue hasPendingManualOpen]) {
-        [self enqueueAttributedOpenWithResponseData:responseData];
-        return;
-    }
-
-    [self holdAttributedOpenResponse:responseData];
-}
-
-// Stores the response for the next open, replacing anything already held.
-- (void)holdAttributedOpenResponse:(NSDictionary *)responseData {
-    @synchronized (self) {
-        if (_heldAttributedOpenResponse) {
-            [[BranchLogger shared] logDebug:@"A newly resolved link replaced the attributed open already held." error:nil];
-        }
-        _heldAttributedOpenResponse = [responseData copy];
-    }
-}
-
-- (BOOL)hasHeldAttributedOpenResponse {
-    @synchronized (self) {
-        return _heldAttributedOpenResponse != nil;
-    }
-}
-
-// Sent from the isolation queue like the base open; both sides re-read.
-- (void)sendDeferredForegroundOpen {
-    if (![self shouldSendDeferredForegroundOpen]) return;
-
-    dispatch_async(self.isolationQueue, ^(){
-        if (![self shouldSendDeferredForegroundOpen]) return;
-        [self enqueueUnattributedOpenCallingHandler:YES];
-    });
-}
-
-- (BOOL)shouldSendDeferredForegroundOpen {
-    if (![self shouldSendAutomaticUnattributedOpen]) {
-        [[BranchLogger shared] logVerbose:@"Deferred foreground open: no automatic unattributed open is due, skipping" error:nil];
-        return NO;
-    }
-
-    if ([self.requestQueue hasUnfinishedInitRequest]) {
-        [[BranchLogger shared] logVerbose:@"Deferred foreground open: init traffic is still in the queue, skipping" error:nil];
-        return NO;
-    }
-
-    return YES;
-}
-
 - (void)applicationWillResignActive {
     [[BranchLogger shared] logVerbose:@"applicationWillResignActive" error:nil];
 
@@ -1787,10 +1551,8 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     self.openSentThisForegroundPeriod = NO;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        Class UIApplicationClass = NSClassFromString(@"UIApplication");
-        UIApplication *application = self.application ?: [UIApplicationClass sharedApplication];
         if (!self.automaticOpenEvents ||
-            application.applicationState != UIApplicationStateBackground ||
+            [self currentUIApplication].applicationState != UIApplicationStateBackground ||
             [self.requestQueue containsInstallOrOpen]) {
             return;
         }
@@ -1800,9 +1562,9 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     });
 }
 
-#pragma mark - Queue management
+#pragma mark - Synchronized Accessors
 
-- (NSInteger) networkCount {
+- (NSInteger)networkCount {
     @synchronized (self) {
         return _networkCount;
     }
@@ -1862,14 +1624,18 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     }
 }
 
-static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
-    if (block) {
-        if ([NSThread isMainThread]) {
-            block();
-        } else {
-            dispatch_sync(dispatch_get_main_queue(), block);
-        }
-    }
+#pragma mark - Queue management
+
+- (void)sendServerRequest:(BNCServerRequest*)request {
+    [self warnIfOpenWaitsForSendOpen];
+    dispatch_async(self.isolationQueue, ^(){
+        [self.requestQueue enqueue:request];
+    });
+}
+
+// deprecated, use sendServerRequest
+- (void)sendServerRequestWithoutSession:(BNCServerRequest*)request {
+    [self sendServerRequest:request];
 }
 
 - (void)clearNetworkQueue {
@@ -1880,37 +1646,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 #pragma mark - Session Initialization
-
-// Defers block until notifyNativeToInit is called.
-- (BOOL)deferInitBlock:(void (^)(void))block {
-    BOOL deferred = NO;
-    @synchronized (self) {
-        if (self.deferInitForPluginRuntime) {
-            [[BranchLogger shared] logDebug:@"Deferring SDK init until notifyNativeToInit is called" error:nil];
-            self.cachedInitBlock = block;
-            deferred = YES;
-        }
-    }
-
-    // handle default non-deferred state
-    if (!deferred && block) {
-        block();
-    }
-    return deferred;
-}
-
-// Releases deferred init block
-- (void)notifyNativeToInit {
-    @synchronized (self) {
-        [[BranchLogger shared] logDebug:@"Unlocking Deferred SDK init" error:nil];
-        self.deferInitForPluginRuntime = NO;
-    }
-
-    if (self.cachedInitBlock) {
-        self.cachedInitBlock();
-    }
-    self.cachedInitBlock = nil;
-}
 
 - (void)handleInitSuccess {
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
@@ -1981,97 +1716,16 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     self.preferenceHelper.referringURL = nil;
 }
 
-- (void)removeViewControllerFromRootNavigationController:(UIViewController*)branchSharingController {
-
-    NSMutableArray* viewControllers =
-        [NSMutableArray arrayWithArray: [(UINavigationController*)self.deepLinkPresentingController viewControllers]];
-
-    if ([viewControllers lastObject] == branchSharingController) {
-
-        [(UINavigationController*)self.deepLinkPresentingController popViewControllerAnimated:YES];
-    }else {
-        [viewControllers removeObject:branchSharingController];
-        ((UINavigationController*)self.deepLinkPresentingController).viewControllers = viewControllers;
-    }
-}
-
-- (void)presentSharingViewController:(UIViewController <BranchDeepLinkingController> *)branchSharingController {
-    if ([self.deepLinkPresentingController presentedViewController]) {
-        [self.deepLinkPresentingController dismissViewControllerAnimated:NO completion:^{
-            [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
-        }];
-    }
-    else {
-        [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
-    }
-}
-
 - (void)handleInitFailure:(NSError *)error {
     [self sendOpenNotificationWithLinkParameters:@{} error:error];
 }
 
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (void)registerPluginName:(NSString *)name version:(NSString *)version {
-    [[BNCDeviceInfo getInstance] registerPluginName:name version:version];
-}
-
-#pragma mark - BranchDeepLinkingControllerCompletionDelegate methods
-
-- (void)deepLinkingControllerCompletedFrom:(UIViewController *)viewController {
-    [self.deepLinkControllers enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-
-        if([obj isKindOfClass:[BNCDeepLinkViewControllerInstance class]]) {
-            BNCDeepLinkViewControllerInstance* deepLinkInstance = (BNCDeepLinkViewControllerInstance*) obj;
-
-            if (deepLinkInstance.viewController == viewController) {
-
-                switch (deepLinkInstance.option) {
-                    case BNCViewControllerOptionPresent:
-                        [viewController dismissViewControllerAnimated:YES completion:nil];
-                        break;
-
-                    default:
-                        [self removeViewControllerFromRootNavigationController:viewController];
-                        break;
-                }
-            }
-
-        } else {
-            //Support for old API
-            if ((UIViewController*)obj == viewController)
-                [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:nil];
-        }
-
-    }];
-}
-
 #pragma mark - Crashlytics reporting enhancements
 
-+ (void)logLowMemoryToCrashlytics {
-    [NSNotificationCenter.defaultCenter
-        addObserverForName:UIApplicationDidReceiveMemoryWarningNotification
-        object:nil
-        queue:NSOperationQueue.mainQueue
-        usingBlock:^(NSNotification *notification) {
-            BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
-            [crashlytics setCustomValue:@YES forKey:BRANCH_CRASHLYTICS_LOW_MEMORY_KEY];
-        }
-    ];
-}
-
+// Adds the SDK version to the app's Crashlytics reports when Crashlytics is linked.
 + (void)addBranchSDKVersionToCrashlyticsReport {
     BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
     [crashlytics setCustomValue:BNC_SDK_VERSION forKey:BRANCH_CRASHLYTICS_SDK_VERSION_KEY];
-}
-
-+ (void) clearAll {
-    [[BNCServerRequestQueue getInstance] clearQueue];
-    [BranchRequestDeepLink releaseDeepLinkResponseLock];
-    [BranchRequestOpen releaseOpenResponseLock];
-    [BNCPreferenceHelper clearAll];
 }
 
 #pragma mark - Branch Core Deep Linking Method
@@ -2089,19 +1743,16 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         self.deepLinkHandler = handler;
     }
 }
-// Calls requestDeepLinkData:callback: with no callback.
+
 // Resolves branchLink with no callback of its own; the result goes to the stored deep link handler.
 - (void)requestDeepLinkData:(nullable NSString *)branchLink {
     [self requestDeepLinkData:branchLink callback:nil];
 }
 
-- (void) requestDeepLinkData:(NSString *)branchLink callback:(nullable callbackWithParams)callback {
+- (void)requestDeepLinkData:(NSString *)branchLink callback:(nullable callbackWithParams)callback {
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData called with branchLink: %@", branchLink] error:nil];
 
-    // Same question handleDeepLink: asks, asked before anything is cancelled or enqueued: a URL
-    // the skiplist or the host app told us to ignore must not reach /v3/deeplink. It is also
-    // asked before -cancelPendingDeepLinkRequests, so an ignored URL cannot discard a resolution
-    // already in flight for a link we are allowed to resolve.
+    // Drops a skiplisted URL before cancelling pending deep link requests or enqueueing one.
     NSString *ignoredPattern = nil;
     if (branchLink.length > 0) {
         NSURL *url = [NSURL URLWithString:branchLink];
@@ -2113,9 +1764,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     if (ignoredPattern) {
         [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData will not resolve a URL matching ignored pattern %@", ignoredPattern] error:nil];
 
-        // handleDeepLink: records the URL and completes the session unattributed rather than
-        // dropping it silently. -sendOpen is how this line completes a session, so the SDK lands
-        // in the same state whichever entry point the filtered URL arrived through.
+        // Records the URL and completes the session with an unattributed open.
         self.preferenceHelper.dropURLOpen = YES;
         self.preferenceHelper.externalIntentURI = branchLink;
         self.preferenceHelper.referringURL = branchLink;
@@ -2206,11 +1855,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     if (!urlStr.length) return;
 
-    // Run the same preprocessing as the legacy handleDeepLink: path so referring-URL query params,
-    // the URL skiplist / dropURLOpen check, allowed-scheme filtering and link_click_id extraction are
-    // applied before the request is enqueued.
+    // Populates the preferenceHelper from the URL before enqueueing.
     BOOL filtered = NO;
-    [self processDeepLinkURL:url sceneIdentifier:nil filtered:&filtered];
+    [self processDeepLinkURL:url filtered:&filtered];
 
     // The URL matched the skiplist. Preferences are recorded, but the URL itself is never sent.
     if (filtered) return;
@@ -2223,8 +1870,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 - (void)requestDeepLinkDataWithURL:(NSURL *)url
                  sourceApplication:(NSString *)sourceApplication
                         annotation:(id)annotation {
-    // sourceApplication and annotation are accepted for call-site parity with the AppDelegate method.
-    // The legacy application:openURL:sourceApplication:annotation: did not use them either.
+    // sourceApplication and annotation are accepted for call-site parity and are not used.
     [self requestDeepLinkDataWithURL:url];
 }
 
@@ -2232,12 +1878,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 // Supports Universal Links
 - (void)requestDeepLinkDataWithUserActivity:(NSUserActivity *)userActivity {
 
-    // Run the same preprocessing as the legacy continueUserActivity: path so the initial referrer,
-    // universal link URL, referring-URL query params, skiplist and link_click_id checks are applied
-    // before the request is enqueued. This runs before webpageURL is read because a Spotlight activity
-    // carries its Branch link in userInfo, not in webpageURL.
+    // Populates the preferenceHelper from the activity, including a Spotlight link carried in userInfo.
     BOOL filtered = NO;
-    [self processUserActivity:userActivity sceneIdentifier:nil filtered:&filtered];
+    [self processUserActivity:userActivity filtered:&filtered];
 
     if (filtered) return;
 
@@ -2259,7 +1902,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     NSURL *url = [NSURL URLWithString:urlStr];
     if (url) {
         BOOL filtered = NO;
-        [self processDeepLinkURL:url sceneIdentifier:nil filtered:&filtered];
+        [self processDeepLinkURL:url filtered:&filtered];
 
         if (filtered) return;
     }
@@ -2296,13 +1939,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // once the session is up — the work `+[Branch initialize:]` now covers.
     if (connectionOptions.userActivities.count) {
         NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject;
-        // Run the same preprocessing as the legacy continueUserActivity: / warm scene
-        // continueUserActivity: paths before enqueueing, whatever the activity type:
-        // -processUserActivity: itself branches on NSUserActivityTypeBrowsingWeb vs. Spotlight
-        // vs. neither, so a type check here would only re-do that decision and, for anything
-        // other than NSUserActivityTypeBrowsingWeb, drop the activity instead of handling it.
+        // Populates the preferenceHelper from an activity of any type before enqueueing.
         BOOL filtered = NO;
-        [self processUserActivity:activity sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
+        [self processUserActivity:activity filtered:&filtered];
         if (!filtered) {
             // nil only for a non-Branch Spotlight identifier, which enqueues a deferred data
             // lookup rather than resolving a link.
@@ -2310,14 +1949,15 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         }
     } else if (connectionOptions.URLContexts.count) {
         UIOpenURLContext *context = connectionOptions.URLContexts.allObjects.firstObject;
-        // Run the same preprocessing as the legacy handleDeepLink: path before enqueueing.
+        // Populates the preferenceHelper from the URL before enqueueing.
         BOOL filtered = NO;
-        [self processDeepLinkURL:context.URL sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
+        [self processDeepLinkURL:context.URL filtered:&filtered];
         if (!filtered) {
             [self requestDeepLinkData:context.URL.absoluteString];
         }
     }
 }
+#endif
 
 // Called from scene:openURLContexts:
 - (void)requestDeepLinkDataWithScene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)urlContexts {
@@ -2326,9 +1966,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     if (!context) return;
 
-    // Run the same preprocessing as the legacy handleDeepLink: path before enqueueing.
+    // Populates the preferenceHelper from the URL before enqueueing.
     BOOL filtered = NO;
-    [self processDeepLinkURL:context.URL sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
+    [self processDeepLinkURL:context.URL filtered:&filtered];
 
     if (filtered) return;
 
@@ -2338,10 +1978,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 // Called from scene:continueUserActivity:
 - (void)requestDeepLinkDataWithScene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity {
 
-    // Run the same preprocessing as the legacy continueUserActivity: path before enqueueing. This runs
-    // before webpageURL is read because a Spotlight activity carries its Branch link in userInfo.
+    // Populates the preferenceHelper from the activity, including a Spotlight link carried in userInfo.
     BOOL filtered = NO;
-    [self processUserActivity:userActivity sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
+    [self processUserActivity:userActivity filtered:&filtered];
 
     if (filtered) return;
 
@@ -2351,40 +1990,91 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     [self requestDeepLinkData:urlStr];
 }
-#endif
 
 
 #pragma mark - Branch Attribution Methods
 
-- (void) sendOpen {
+- (void)sendOpen {
     if (self.automaticOpenEvents) {
         [self enqueueUnattributedOpen];
         return;
     }
 
-    if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
+    if (self.preferenceHelper.attributionLevelNone) {
         [[BranchLogger shared] logDebug:@"Branch Attribution Level set to NONE. Branch sendOpen network request deferred until attribution is enabled." error:nil];
         self.openOwedAtOptIn = YES;
         return;
     }
 
-    if ([self skipReasonForManualOpen]) {
-        [[BranchLogger shared] logWarning:[self skipReasonForManualOpen] error:nil];
+    NSString *skipReason = [self skipReasonForManualOpen];
+    if (skipReason) {
+        [[BranchLogger shared] logWarning:skipReason error:nil];
         return;
     }
 
-    // Built outside the lock because it calls the delegate; the guards are checked again under the
-    // lock so a concurrent background open cannot also take the held response.
-    BranchRequestOpen *openReq = [self manualOpenRequest];
-    @synchronized (self) {
-        NSString *reason = [self skipReasonForManualOpen];
-        if (reason) {
-            [[BranchLogger shared] logWarning:reason error:nil];
-            return;
+    // The guards are checked again under the lock so a concurrent background open cannot also take
+    // the held response.
+    [self enqueueManualOpenIf:^BOOL {
+        NSString *recheckReason = [self skipReasonForManualOpen];
+        if (recheckReason) {
+            [[BranchLogger shared] logWarning:recheckReason error:nil];
+            return NO;
         }
-        [self enqueueManualOpenRequest:openReq];
+        return YES;
+    }];
+}
+
+#pragma mark - Held Attributed Open
+
+// Sends the attributed open for a resolve that found a link, or holds it in memory for a later
+// send. Holds while attribution is NONE, and in manual mode while the app is foregrounded or a
+// manual open is waiting to take it; otherwise sends immediately.
+- (void)handleResolvedLinkResponse:(NSDictionary *)responseData {
+    if ([Branch attributionLevelNone]) {
+        [self holdAttributedOpenResponse:responseData];
+        return;
+    }
+
+    if (self.automaticOpenEvents) {
+        [self enqueueAttributedOpenWithResponseData:responseData];
+        return;
+    }
+
+    if ([self currentUIApplication].applicationState == UIApplicationStateBackground &&
+        ![self.requestQueue hasPendingManualOpen]) {
+        [self enqueueAttributedOpenWithResponseData:responseData];
+        return;
+    }
+
+    [self holdAttributedOpenResponse:responseData];
+}
+
+// Stores the response for the next open, replacing anything already held.
+- (void)holdAttributedOpenResponse:(NSDictionary *)responseData {
+    @synchronized (self) {
+        if (_heldAttributedOpenResponse) {
+            [[BranchLogger shared] logDebug:@"A newly resolved link replaced the attributed open already held." error:nil];
+        }
+        _heldAttributedOpenResponse = [responseData copy];
     }
 }
+
+- (BOOL)hasHeldAttributedOpenResponse {
+    @synchronized (self) {
+        return _heldAttributedOpenResponse != nil;
+    }
+}
+
+// Returns the held response and clears it.
+- (NSDictionary *)takeHeldAttributedOpenResponse {
+    @synchronized (self) {
+        NSDictionary *held = _heldAttributedOpenResponse;
+        _heldAttributedOpenResponse = nil;
+        return held;
+    }
+}
+
+#pragma mark - Manual Open
 
 // Why a manual -sendOpen would be ignored right now, or nil when it should be sent.
 - (NSString *)skipReasonForManualOpen {
@@ -2406,18 +2096,23 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 // is enqueued, so a resolve still in flight can supply it.
 - (BranchRequestOpen *)manualOpenRequest {
     BranchRequestOpen *openReq = [self openRequest];
-
     __weak Branch *weakSelf = self;
     openReq.linkDataResolver = ^NSDictionary * {
-        Branch *strongSelf = weakSelf;
-        if (!strongSelf) return nil;
-        @synchronized (strongSelf) {
-            NSDictionary *held = strongSelf->_heldAttributedOpenResponse;
-            strongSelf->_heldAttributedOpenResponse = nil;
-            return held;
-        }
+        return [weakSelf takeHeldAttributedOpenResponse];
     };
     return openReq;
+}
+
+// Builds a manual open and enqueues it under the lock, unless isDue is non-nil and returns NO there.
+// The request is built outside the lock because that calls the delegate.
+- (NSOperation *)enqueueManualOpenIf:(BOOL (^)(void))isDue {
+    BranchRequestOpen *openReq = [self manualOpenRequest];
+    @synchronized (self) {
+        if (isDue && !isDue()) {
+            return nil;
+        }
+        return [self enqueueManualOpenRequest:openReq];
+    }
 }
 
 // Enqueues a manual open behind every unfinished deep-link resolve.
@@ -2425,13 +2120,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     self.openSentThisForegroundPeriod = YES;
     [[BranchLogger shared] logDebug: @"Branch sendOpen network request queued." error:nil];
     return [self.requestQueue enqueue:openReq afterUnfinishedDeepLinkRequests:NSOperationQueuePriorityHigh];
-}
-
-- (void)enqueueManualOpenNow {
-    BranchRequestOpen *openReq = [self manualOpenRequest];
-    @synchronized (self) {
-        [self enqueueManualOpenRequest:openReq];
-    }
 }
 
 // Sends the held attributed open now. Does nothing at NONE, when nothing is held, or while a manual
@@ -2443,14 +2131,36 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         return;
     }
 
-    BranchRequestOpen *openReq = [self manualOpenRequest];
-    @synchronized (self) {
-        if (![self hasHeldAttributedOpenResponse] || [self.requestQueue hasPendingManualOpen]) {
-            return;
-        }
-        [self enqueueManualOpenRequest:openReq];
+    [self enqueueManualOpenIf:^BOOL {
+        return [self hasHeldAttributedOpenResponse] && ![self.requestQueue hasPendingManualOpen];
+    }];
+}
+
+static BOOL bnc_didWarnOpenWaitsForSendOpen = NO;
+
+// Test-only: lets the once-per-process warning fire again.
++ (void)resetOpenWaitWarningForTesting {
+    @synchronized ([Branch class]) {
+        bnc_didWarnOpenWaitsForSendOpen = NO;
     }
 }
+
+// Logs once per process when manual mode requests an event, LATD or QR code before this period's open.
+- (void)warnIfOpenWaitsForSendOpen {
+    if (self.automaticOpenEvents || self.openSentThisForegroundPeriod ||
+        [self.requestQueue hasPendingManualOpen]) {
+        return;
+    }
+
+    @synchronized ([Branch class]) {
+        if (bnc_didWarnOpenWaitsForSendOpen) return;
+        bnc_didWarnOpenWaitsForSendOpen = YES;
+    }
+
+    [[BranchLogger shared] logWarning:@"Branch logEvent, LATD or QR code was requested before sendOpen. On the first launch after install, events fail with BNCInitError until the open is sent; later they reach Branch before the open." error:nil];
+}
+
+#pragma mark - Background Open
 
 // Whether the background open is due: a response is held, or manual mode has sent no open this
 // foreground period. Never due while a manual open is still waiting to start.
@@ -2481,8 +2191,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         return;
     }
 
-    Class UIApplicationClass = NSClassFromString(@"UIApplication");
-    UIApplication *application = self.application ?: [UIApplicationClass sharedApplication];
+    UIApplication *application = [self currentUIApplication];
 
     NSObject *taskLock = [NSObject new];
     __block UIBackgroundTaskIdentifier backgroundTaskID = UIBackgroundTaskInvalid;
@@ -2498,13 +2207,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         backgroundTaskID = [application beginBackgroundTaskWithExpirationHandler:endBackgroundTaskIfNeeded];
     }
 
-    BranchRequestOpen *openReq = [self manualOpenRequest];
-    NSOperation *operation = nil;
-    @synchronized (self) {
-        if ([self openDueAtBackground]) {
-            operation = [self enqueueManualOpenRequest:openReq];
-        }
-    }
+    NSOperation *operation = [self enqueueManualOpenIf:^BOOL {
+        return [self openDueAtBackground];
+    }];
 
     if (!operation) {
         endBackgroundTaskIfNeeded();
@@ -2517,29 +2222,109 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
-static BOOL bnc_didWarnOpenWaitsForSendOpen = NO;
+#pragma mark - Automatic Open
 
-// Test-only: lets the once-per-process warning fire again.
-+ (void)resetOpenWaitWarningForTesting {
-    @synchronized ([Branch class]) {
-        bnc_didWarnOpenWaitsForSendOpen = NO;
+// Whether the automatic unattributed open is still due. Returns NO when automatic opens are off,
+// attribution is NONE, an open already went out this activation, or an attributed open response is held.
+- (BOOL)shouldSendAutomaticUnattributedOpen {
+    if (!self.automaticOpenEvents) {
+        return NO;
     }
+
+    if ([Branch attributionLevelNone]) {
+        return NO;
+    }
+
+    if (self.openSentThisForegroundPeriod) {
+        return NO;
+    }
+
+    if ([self hasHeldAttributedOpenResponse]) {
+        return NO;
+    }
+
+    return YES;
 }
 
-// Logs once per process when manual mode requests an event, LATD or QR code before this period's open.
-- (void)warnIfOpenWaitsForSendOpen {
-    if (self.automaticOpenEvents || self.openSentThisForegroundPeriod ||
-        [self.requestQueue hasPendingManualOpen]) {
+// Sends the organic open for a resolve that found no link. Re-reads on the isolation queue and
+// backs off if an install or open is already queued, so a resolve racing a foreground activation
+// cannot add a second open.
+- (void)sendAutomaticUnattributedOpen {
+    if (![self shouldSendAutomaticUnattributedOpen] || [self.requestQueue hasUnfinishedInstallOrOpen]) return;
+
+    dispatch_async(self.isolationQueue, ^(){
+        if (![self shouldSendAutomaticUnattributedOpen] || [self.requestQueue hasUnfinishedInstallOrOpen]) return;
+        [self enqueueUnattributedOpen];
+    });
+}
+
+// Sent from the isolation queue like the base open; both sides re-read.
+- (void)sendDeferredForegroundOpen {
+    if (![self shouldSendDeferredForegroundOpen]) return;
+
+    dispatch_async(self.isolationQueue, ^(){
+        if (![self shouldSendDeferredForegroundOpen]) return;
+        [self enqueueUnattributedOpenCallingHandler:YES];
+    });
+}
+
+- (BOOL)shouldSendDeferredForegroundOpen {
+    if (![self shouldSendAutomaticUnattributedOpen]) {
+        [[BranchLogger shared] logVerbose:@"Deferred foreground open: no automatic unattributed open is due, skipping" error:nil];
+        return NO;
+    }
+
+    if ([self.requestQueue hasUnfinishedInitRequest]) {
+        [[BranchLogger shared] logVerbose:@"Deferred foreground open: init traffic is still in the queue, skipping" error:nil];
+        return NO;
+    }
+
+    return YES;
+}
+
+- (void)enqueueUnattributedOpen {
+    [self enqueueUnattributedOpenCallingHandler:NO];
+}
+
+// Enqueues the organic open. When callHandler is YES the stored deep link handler receives its result.
+- (void)enqueueUnattributedOpenCallingHandler:(BOOL)callHandler {
+    [[BranchLogger shared] logDebug:@"sendOpen called" error:nil];
+
+    if (self.preferenceHelper.attributionLevelNone) {
+        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented. Clearing link identifiers to prevent reuse." error:nil];
+        [self clearLinkIdentifiers];
         return;
     }
 
-    @synchronized ([Branch class]) {
-        if (bnc_didWarnOpenWaitsForSendOpen) return;
-        bnc_didWarnOpenWaitsForSendOpen = YES;
+    BranchRequestOpen *openReq = [self openRequestCallingHandler:callHandler];
+    [self enqueueOpenRequest:openReq];
+}
+
+// Sends the attributed open for a resolved link. An install reaches this path too: a first launch
+// attributed to a clicked link resolves first and spawns its open here.
+- (void)enqueueAttributedOpenWithResponseData:(NSDictionary *)responseData {
+    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen called with responseData: %@", responseData] error:nil];
+
+    if (self.preferenceHelper.attributionLevelNone) {
+        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request deferred until attribution is enabled." error:nil];
+        [self holdAttributedOpenResponse:responseData];
+        return;
     }
 
-    [[BranchLogger shared] logWarning:@"Branch logEvent, LATD or QR code was requested before sendOpen. On the first launch after install, events fail with BNCInitError until the open is sent; later they reach Branch before the open." error:nil];
+    BranchRequestOpen *openReq = [self openRequest];
+    openReq.linkData = responseData;
+
+    [self enqueueOpenRequest:openReq];
 }
+
+// Marks the open as sent for this foreground period and enqueues it at high priority.
+- (void)enqueueOpenRequest:(BranchRequestOpen *)openReq {
+    self.openSentThisForegroundPeriod = YES;
+    [[BranchLogger shared] logDebug: @"Branch sendOpen network request queued." error:nil];
+    [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
+}
+
+#pragma mark - Open Request Construction
 
 // Notifies the delegate and builds an open request with the shared completion handling.
 - (BranchRequestOpen *)openRequest {
@@ -2580,45 +2365,6 @@ static BOOL bnc_didWarnOpenWaitsForSendOpen = NO;
     openReq.urlString = nil;
     openReq.traceCallback = bnc_tracingCallback;
     return openReq;
-}
-
-- (void)enqueueUnattributedOpen {
-    [self enqueueUnattributedOpenCallingHandler:NO];
-}
-
-// Enqueues the organic open. When callHandler is YES the stored deep link handler receives its result.
-- (void)enqueueUnattributedOpenCallingHandler:(BOOL)callHandler {
-    [[BranchLogger shared] logDebug:@"sendOpen called" error:nil];
-
-    if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
-        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request prevented. Clearing link identifiers to prevent reuse." error:nil];
-        [self clearLinkIdentifiers];
-        return;
-    }
-
-    BranchRequestOpen *openReq = [self openRequestCallingHandler:callHandler];
-    self.openSentThisForegroundPeriod = YES;
-    [[BranchLogger shared] logDebug: @"Branch sendOpen network request queued." error:nil];
-    [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
-}
-
-// Sends the attributed open for a resolved link. An install reaches this path too: a first launch
-// attributed to a clicked link resolves first and spawns its open here.
-- (void)enqueueAttributedOpenWithResponseData:(NSDictionary *)responseData {
-    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen called with responseData: %@", responseData] error:nil];
-
-    if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
-        [[BranchLogger shared] logDebug: @"Branch Attribution Level set to NONE. Branch sendOpen network request deferred until attribution is enabled." error:nil];
-        [self holdAttributedOpenResponse:responseData];
-        return;
-    }
-
-    BranchRequestOpen *openReq = [self openRequest];
-    openReq.linkData = responseData;
-
-    self.openSentThisForegroundPeriod = YES;
-    [[BranchLogger shared] logDebug: @"Branch sendOpen network request queued." error:nil];
-    [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];
 }
 
 @end

@@ -23,9 +23,9 @@
 // the link data can depend on state that is only known once an earlier request has finished.
 @property (atomic, copy, nullable) NSDictionary * _Nullable (^linkDataResolver)(void);
 
-+ (void) waitForOpenResponseLock;
-+ (void) releaseOpenResponseLock;
-+ (void) setWaitNeededForOpenResponseLock;
++ (void)waitForOpenResponseLock;
++ (void)releaseOpenResponseLock;
++ (void)setWaitNeededForOpenResponseLock;
 
 - (id)initWithCallback:(callbackWithStatus)callback;
 - (id)initWithCallback:(callbackWithStatus)callback isInstall:(BOOL)isInstall;

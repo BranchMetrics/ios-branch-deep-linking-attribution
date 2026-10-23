@@ -8,5 +8,5 @@
 
 @import BranchSDK;
 
-@interface NavigationController : UINavigationController <BranchDeepLinkingController>
+@interface NavigationController : UINavigationController
 @end

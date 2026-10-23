@@ -25,11 +25,8 @@ static NSString* const kUTTypeGeneric = @"public.content";
 #define CSSearchableItemActivityIdentifier @"kCSSearchableItemActivityIdentifier"
 #endif
 
-@interface BNCContentDiscoveryManager (){
-    dispatch_queue_t    _workQueue;
-}
+@interface BNCContentDiscoveryManager ()
 
-@property (strong, readonly) dispatch_queue_t workQueue;
 @property (strong, atomic) BNCSpotlightService* spotlight;
 
 @end
@@ -313,28 +310,6 @@ static NSString* const kUTTypeGeneric = @"public.content";
                  expirationDate:nil
                        callback:nil
               spotlightCallback:spotlightCallback];
-}
-
--(void) indexObject:(BranchUniversalObject *)universalObject
-       onCompletion:(void (^)(BranchUniversalObject *, NSString*, NSError *))completion {
-    
-    [self indexContentWithTitle:universalObject.title
-                    description:universalObject.description
-                    canonicalId:universalObject.canonicalUrl
-              publiclyIndexable:universalObject.locallyIndex
-                           type:universalObject.contentMetadata.contentSchema
-                   thumbnailUrl:[NSURL URLWithString: universalObject.imageUrl]
-                       keywords:[NSSet setWithArray:universalObject.keywords]
-                       userInfo:universalObject.contentMetadata.customMetadata expirationDate:nil
-                       callback:nil
-              spotlightCallback:^(NSString * _Nullable url, NSString * _Nullable spotlightIdentifier, NSError * _Nullable error) {
-                  
-                  if (error) {
-                      completion(universalObject,url,error);
-                  } else {
-                      completion(universalObject,url,error);
-                  }
-              }];
 }
 
 //This is the final one, which figures out which callback to use, if any

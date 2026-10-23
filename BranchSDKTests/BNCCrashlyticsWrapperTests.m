@@ -8,6 +8,13 @@
 
 #import <XCTest/XCTest.h>
 #import "BNCCrashlyticsWrapper.h"
+#import "Branch.h"
+#import "BranchConfiguration.h"
+#import "BNCConfig.h"
+
+@interface Branch (BNCCrashlyticsWrapperTest)
++ (void)resetInitializationGuardForTesting;
+@end
 
 #pragma mark Crashlytics SDK Stand-In
 
@@ -63,6 +70,16 @@
     [wrapper setCustomValue:value forKey:key];
     
     XCTAssertEqual([[FIRCrashlytics crashlytics] getCustomValueForKey:key], value);
+}
+
+// +initialize: writes the SDK version to Crashlytics.
+- (void)testInitializeAddsSDKVersionToCrashlytics {
+    [FIRCrashlytics crashlytics].values = nil;
+
+    [Branch resetInitializationGuardForTesting];
+    [Branch initialize:[[BranchConfiguration alloc] initWithKey:@"key_live_hcnegAumkH7Kv18M8AOHhfgiohpXq5tB"]];
+
+    XCTAssertEqualObjects([[FIRCrashlytics crashlytics] getCustomValueForKey:@"io.branch.sdk.version"], BNC_SDK_VERSION);
 }
 
 @end

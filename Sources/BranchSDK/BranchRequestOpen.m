@@ -53,7 +53,8 @@
     }
 
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
-    NSMutableDictionary *params = [[factory dataForRequestOpenWithURLString:self.urlString] mutableCopy];
+    NSDictionary *payload = self.isInstall ? [factory dataForRequestInstallWithURLString:self.urlString] : [factory dataForRequestOpenWithURLString:self.urlString];
+    NSMutableDictionary *params = [payload mutableCopy];
 
     // Add link_data if we have linkData from the deeplink response
     if (self.linkData && [self.linkData objectForKey:@"data"]) {
@@ -107,6 +108,33 @@
     }
     NSDictionary *data = response.data;
 
+    [self persistUserData:data preferenceHelper:preferenceHelper];
+    [self persistRandomizedBundleToken:data preferenceHelper:preferenceHelper];
+
+    // Saves the referring URL and both tokens for the full app, so it runs before the URL is cleared.
+    if (self.isInstall) {
+        [[BNCAppGroupsData shared] saveAppClipData];
+    }
+
+    NSString *sessionData = [self sessionDataFromResponseData:data preferenceHelper:preferenceHelper error:error];
+    [self persistSessionData:sessionData preferenceHelper:preferenceHelper];
+
+    NSString *referringURL = [self referringURLFromSessionData:sessionData];
+    [self clearLinkIdentifiers:preferenceHelper referringURL:referringURL];
+
+    [BranchRequestOpen releaseOpenResponseLock];
+
+#if !TARGET_OS_TV
+    [[BNCSKAdNetwork sharedInstance] updateFromOpenResponse:data isInstall:self.isInstall];
+#endif
+
+    if (self.callback) {
+        self.callback(YES, nil);
+    }
+}
+
+// Stores the developer identity, randomized device token, user URL and build date from the response.
+- (void)persistUserData:(NSDictionary *)data preferenceHelper:(BNCPreferenceHelper *)preferenceHelper {
     // Handle possibly mis-parsed identity.
     id userIdentity = data[BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY];
     if ([userIdentity isKindOfClass:[NSNumber class]]) {
@@ -128,7 +156,12 @@
     }
     preferenceHelper.userAlias = userIdentity;
     preferenceHelper.previousAppBuildDate = [BNCApplication currentApplication].currentBuildDate;
+}
 
+// Returns the response's session data as a JSON string, with the pending spotlight identifier merged in.
+- (NSString *)sessionDataFromResponseData:(NSDictionary *)data
+                         preferenceHelper:(BNCPreferenceHelper *)preferenceHelper
+                                    error:(NSError *)error {
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
     if (sessionData == nil || [sessionData isKindOfClass:[NSString class]]) {
     } else
@@ -144,8 +177,6 @@
         sessionData = nil;
     }
 
-    // Update session params
-
     if (preferenceHelper.spotlightIdentifier) {
         NSMutableDictionary *sessionDataDict =
         [NSMutableDictionary dictionaryWithDictionary: [BNCEncodingUtils decodeJsonStringToDictionary:sessionData]];
@@ -154,6 +185,11 @@
         sessionData = [BNCEncodingUtils encodeDictionaryToJsonString:sessionDataDict];
     }
 
+    return sessionData;
+}
+
+// Stores sessionData as the session params, and as the install params for an install from a link click.
+- (void)persistSessionData:(NSString *)sessionData preferenceHelper:(BNCPreferenceHelper *)preferenceHelper {
     // Write the slot only when this response actually carries session data. The 4.0 open posts to
     // /v3/events/open, whose response has no "data" key at all — link-driven or organic — so
     // writing whatever the response says always wrote nil and erased what a deep link resolution
@@ -176,7 +212,10 @@
             preferenceHelper.installParams = sessionData;
         }
     }
+}
 
+// Returns the request's URL, or the referring link in sessionData when the request has no URL.
+- (NSString *)referringURLFromSessionData:(NSString *)sessionData {
     NSString *referringURL = nil;
     if (self.urlString.length > 0) {
         referringURL = self.urlString;
@@ -189,7 +228,11 @@
             }
         }
     }
+    return referringURL;
+}
 
+// Clears the link identifiers and sets referringURL as the referring URL.
+- (void)clearLinkIdentifiers:(BNCPreferenceHelper *)preferenceHelper referringURL:(NSString *)referringURL {
     // Clear link identifiers so they don't get reused on the next open
     preferenceHelper.linkClickIdentifier = nil;
     preferenceHelper.spotlightIdentifier = nil;
@@ -200,7 +243,10 @@
     preferenceHelper.dropURLOpen = NO;
     preferenceHelper.uxType = nil;
     preferenceHelper.urlLoadMs = nil;
+}
 
+// Stores the randomized bundle token from the response, if it carries one.
+- (void)persistRandomizedBundleToken:(NSDictionary *)data preferenceHelper:(BNCPreferenceHelper *)preferenceHelper {
     NSString *string = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN]);
     if (!string) {
         // fallback to deprecated name. The old name was easily confused with the setIdentity, hence the name change.
@@ -210,88 +256,6 @@
     if (string) {
         preferenceHelper.randomizedBundleToken = string;
     }
-
-    [BranchRequestOpen releaseOpenResponseLock];
-
-    if (self.isInstall) {
-        [[BNCAppGroupsData shared] saveAppClipData];
-    }
-
-#if !TARGET_OS_TV
-    if ([data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP] isKindOfClass:NSNumber.class]) {
-        NSNumber *invokeRegister = (NSNumber *)data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP];
-        preferenceHelper.invokeRegisterApp = invokeRegister.boolValue;
-        if (invokeRegister.boolValue && self.isInstall) {
-            if (@available(iOS 16.1, macCatalyst 16.1, *)){
-                NSString *defaultCoarseConValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:@{}];
-                [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:0 coarseValue:defaultCoarseConValue
-                    lockWindow:NO completionHandler:^(NSError * _Nullable error) {
-                    if (error) {
-                        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
-                    } else {
-                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful for INSTALL Event"] error:nil];
-                    }
-                }];
-            } else if (@available(iOS 15.4, macCatalyst 15.4, *)){
-                [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:0 completionHandler:^(NSError * _Nullable error) {
-                    if (error) {
-                        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
-                    } else {
-                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful for INSTALL Event"] error:nil];
-                    }
-                }];
-            }
-            else {
-                [[BNCSKAdNetwork sharedInstance] registerAppForAdNetworkAttribution];
-            }
-        }
-    } else {
-        preferenceHelper.invokeRegisterApp = NO;
-    }
-
-
-    if (data && [data[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE] isKindOfClass:NSNumber.class] && !self.isInstall) {
-        NSNumber *conversionValue = (NSNumber *)data[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
-        // Regardless of SKAN opted-in in dashboard, we always get conversionValue, so adding check to find out if install/open response had "invoke_register_app" true
-        if (conversionValue && preferenceHelper.invokeRegisterApp ) {
-            if (@available(iOS 16.1, macCatalyst 16.1, *)){
-                NSString* coarseConversionValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:data] ;
-                BOOL lockWin = [[BNCSKAdNetwork sharedInstance] getLockedStatusFromDataResponse:data];
-                BOOL shouldCallUpdatePostback = [[BNCSKAdNetwork sharedInstance] shouldCallPostbackForDataResponse:data];
-
-                [[BranchLogger shared] logDebug: [NSString stringWithFormat:@"SKAN 4.0 params - conversionValue:%@ coarseValue:%@, locked:%d, shouldCallPostback:%d, currentWindow:%d, firstAppLaunchTime: %@", conversionValue, coarseConversionValue, lockWin, shouldCallUpdatePostback, (int)preferenceHelper.skanCurrentWindow, preferenceHelper.firstAppLaunchTime] error:nil];
-
-                if(shouldCallUpdatePostback){
-                    [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue: conversionValue.longValue coarseValue:coarseConversionValue lockWindow:lockWin completionHandler:^(NSError * _Nullable error) {
-                        if (error) {
-                            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
-                        } else {
-                            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue] error:nil];
-                        }
-                    }];
-                }
-            } else if (@available(iOS 15.4, macCatalyst 15.4, *)) {
-                [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:conversionValue.intValue completionHandler: ^(NSError *error){
-                    if (error) {
-                        [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
-                    } else {
-                        [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue] error:nil];
-                    }
-                }];
-            } else {
-                [[BNCSKAdNetwork sharedInstance] updateConversionValue:conversionValue.integerValue];
-            }
-        }
-    }
-#endif
-
-    if (self.callback) {
-        self.callback(YES, nil);
-    }
-}
-
-- (NSString *)getActionName {
-    return @"open";
 }
 
 - (instancetype)initWithCoder:(NSCoder *)decoder {
@@ -323,14 +287,14 @@ static dispatch_queue_t openRequestWaitQueue = NULL;
 static BOOL openRequestWaitQueueIsSuspended = NO;
 
 
-+ (void) initialize {
++ (void)initialize {
     if (self != [BranchRequestOpen self])
         return;
     openRequestWaitQueue =
         dispatch_queue_create("io.branch.sdk.openqueue", DISPATCH_QUEUE_CONCURRENT);
 }
 
-+ (void) setWaitNeededForOpenResponseLock {
++ (void)setWaitNeededForOpenResponseLock {
     @synchronized (self) {
         if (!openRequestWaitQueueIsSuspended) {
             [[BranchLogger shared] logVerbose:@"Suspended for openRequestWaitQueue." error:nil];
@@ -340,14 +304,14 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
     }
 }
 
-+ (void) waitForOpenResponseLock {
++ (void)waitForOpenResponseLock {
     [[BranchLogger shared] logVerbose:@"Waiting for openRequestWaitQueue." error:nil];
     dispatch_sync(openRequestWaitQueue, ^ {
         [[BranchLogger shared] logVerbose:@"Finished waitForOpenResponseLock." error:nil];
     });
 }
 
-+ (void) releaseOpenResponseLock {
++ (void)releaseOpenResponseLock {
     @synchronized (self) {
         if (openRequestWaitQueueIsSuspended) {
             [[BranchLogger shared] logVerbose:@"Resuming openRequestWaitQueue." error:nil];
