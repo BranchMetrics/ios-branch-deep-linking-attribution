@@ -77,7 +77,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) BOOL adUserDataUsageConsent;
 
 @property (nonatomic, assign) NSString *attributionLevel;
-@property (nonatomic, assign) BOOL attributionLevelNone;
+@property (nonatomic, readonly) BOOL attributionLevelNone;
 
 @property (copy, nonatomic) NSString *uxType;
 @property (strong, nonatomic) NSDate *urlLoadMs;

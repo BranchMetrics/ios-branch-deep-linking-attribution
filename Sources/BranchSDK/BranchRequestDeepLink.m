@@ -142,7 +142,7 @@
     
     if (uxType) {
         NSURL *webLinkRedirectUrl = [NSURL URLWithString:invokeFeatures[BRANCH_RESPONSE_KEY_WEB_LINK_REDIRECT_URL]];
-        if (webLinkRedirectUrl) {
+        if ([BranchRequestDeepLink isWebURL:webLinkRedirectUrl]) {
             if ([uxType isEqualToString:WEB_UX_IN_APP_WEBVIEW]) {
                 id inAppBrowser = nil;
 #if !TARGET_OS_TV
@@ -179,6 +179,12 @@
         }
     }
     return FALSE;
+}
+
+// Returns YES when url has an http or https scheme.
++ (BOOL)isWebURL:(NSURL *)url {
+    NSString *scheme = url.scheme.lowercaseString;
+    return [scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"];
 }
 
 - (void)openURLInDefaultBrowser:(NSURL *)url{
