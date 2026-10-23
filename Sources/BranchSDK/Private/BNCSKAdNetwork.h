@@ -47,8 +47,6 @@ typedef NS_ENUM(NSInteger, BranchSkanWindow) {
 
 - (void)updateConversionValueFromResponse:(NSDictionary *)responseData;
 
-- (void)registerAndUpdateConversionFromResponse:(NSDictionary *)data isInstall:(BOOL)isInstall;
-
 @end
 
 NS_ASSUME_NONNULL_END

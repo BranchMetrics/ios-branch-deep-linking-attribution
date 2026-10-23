@@ -348,26 +348,6 @@ NSURL *BranchValidationErrorReference(BranchValidationError error) {
     #endif
 }
 
-//MARK: Not in use until development of Integration Validator Phase 2 Changes
-- (void) showNextStep {
-    NSString *message =
-        @"\nGreat! Remove the 'validateSDKIntegration' line in your app.\n\n"
-         "Next check your deep link routing.\n\n"
-         "Append '?bnc_validate=true' to any of your app's Branch links and "
-         "click on it on your mobile device (not the Simulator!) to start the test.\n\n"
-         "For instance, to validate a link like:\n"
-         "https://<yourapp>.app.link/NdJ6nFzRbK\n\n"
-         "click on:\n"
-         "https://<yourapp>.app.link/NdJ6nFzRbK?bnc_validate=true";
-    
-    NSLog(@"----------------------------------------------------------------------------");
-    NSLog(@"Branch Integration Next Steps:");
-    NSLog(@"%@", message);
-    NSLog(@"----------------------------------------------------------------------------");
-
-    [self showAlertWithTitle:@"Next Step" message:message];
-}
-
 - (void) showAlertWithTitle:(NSString*)title message:(NSString*)message {
     BNCPerformBlockOnMainThreadAsync(^{
         UIAlertController *alertController =

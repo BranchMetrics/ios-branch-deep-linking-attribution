@@ -137,7 +137,7 @@ bool hasSetPartnerParams = false;
         }
     }
 
-    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 120)];
+    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 64)];
 
     UIButton *notificationButton = [UIButton buttonWithType:UIButtonTypeSystem];
     notificationButton.frame = CGRectMake(20, 10, footerView.frame.size.width - 40, 44);
@@ -145,13 +145,6 @@ bool hasSetPartnerParams = false;
     [notificationButton addTarget:self action:@selector(sendNotification:) forControlEvents:UIControlEventTouchUpInside];
     notificationButton.accessibilityIdentifier = kTestBedBtnNotificationSend;
     [footerView addSubview:notificationButton];
-
-    UIButton *pluginButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    pluginButton.frame = CGRectMake(20, 64, footerView.frame.size.width - 40, 44);
-    [pluginButton setTitle:@"Simulate Plugin Notify Init" forState:UIControlStateNormal];
-    [pluginButton addTarget:self action:@selector(pluginNotifyInit:) forControlEvents:UIControlEventTouchUpInside];
-    pluginButton.accessibilityIdentifier = kTestBedBtnPluginNotifyInit;
-    [footerView addSubview:pluginButton];
 
     self.tableView.tableFooterView = footerView;
 }
@@ -980,11 +973,6 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
             [center addNotificationRequest:request withCompletionHandler:nil];
         }
     }];
-}
-
-- (IBAction)pluginNotifyInit:(id)sender {
-    [[Branch sharedInstance] notifyNativeToInit];
-    [self showAlert:@"notifyNativeToInit called" withDescription:@"The SDK should now complete initialization."];
 }
 
 @end

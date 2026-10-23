@@ -212,10 +212,6 @@
     }
 }
 
-- (NSString *)getActionName {
-    return @"deepLink";
-}
-
 - (instancetype)initWithCoder:(NSCoder *)decoder {
     self = [super initWithCoder:decoder];
     if (!self) return self;

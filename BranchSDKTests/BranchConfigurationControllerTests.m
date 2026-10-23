@@ -34,11 +34,6 @@
     configController.branchKeySource = keySource;
     XCTAssertTrue([configController.branchKeySource isEqualToString:keySource]);
     
-    configController.deferInitForPluginRuntime = YES;
-    XCTAssertTrue(configController.deferInitForPluginRuntime);
-    configController.deferInitForPluginRuntime = NO;
-    XCTAssertFalse(configController.deferInitForPluginRuntime);
-    
     configController.checkPasteboardOnInstall = YES;
     XCTAssertTrue(configController.checkPasteboardOnInstall);
     configController.checkPasteboardOnInstall = NO;
@@ -48,14 +43,12 @@
 - (void)testGetConfiguration {
     BranchConfigurationController *configController = [BranchConfigurationController sharedInstance];
     configController.branchKeySource = BRANCH_KEY_SOURCE_INIT_FUNCTION;
-    configController.deferInitForPluginRuntime = YES;
     configController.checkPasteboardOnInstall = YES;
 
     NSDictionary *configDict = [configController getConfiguration];
     XCTAssertNotNil(configDict);
 
     XCTAssertTrue([configDict[BRANCH_REQUEST_KEY_BRANCH_KEY_SOURCE] isEqualToString:BRANCH_KEY_SOURCE_INIT_FUNCTION]);
-    XCTAssertEqualObjects(configDict[BRANCH_REQUEST_KEY_DEFER_INIT_FOR_PLUGIN_RUNTIME], @(YES));
     XCTAssertEqualObjects(configDict[BRANCH_REQUEST_KEY_CHECK_PASTEBOARD_ON_INSTALL], @(YES));
     
     NSDictionary *frameworks = configDict[BRANCH_REQUEST_KEY_LINKED_FRAMEORKS];
@@ -72,7 +65,6 @@
 - (void)testInstallRequestParams {
     BranchConfigurationController *configController = [BranchConfigurationController sharedInstance];
     configController.branchKeySource = BRANCH_KEY_SOURCE_INIT_FUNCTION;
-    configController.deferInitForPluginRuntime = YES;
     configController.checkPasteboardOnInstall = YES;
 
     NSString* requestUUID = [[NSUUID UUID ] UUIDString];
@@ -84,7 +76,6 @@
     XCTAssertNotNil(configDict);
 
     XCTAssertTrue([configDict[BRANCH_REQUEST_KEY_BRANCH_KEY_SOURCE] isEqualToString:BRANCH_KEY_SOURCE_INIT_FUNCTION]);
-    XCTAssertEqualObjects(configDict[BRANCH_REQUEST_KEY_DEFER_INIT_FOR_PLUGIN_RUNTIME], @(YES));
     XCTAssertEqualObjects(configDict[BRANCH_REQUEST_KEY_CHECK_PASTEBOARD_ON_INSTALL], @(YES));
     
     NSDictionary *frameworks = configDict[BRANCH_REQUEST_KEY_LINKED_FRAMEORKS];

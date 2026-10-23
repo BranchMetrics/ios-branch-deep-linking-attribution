@@ -7,11 +7,10 @@
 //
 
 #import "Branch.h"
+#import "BNCCrashlyticsWrapper.h"
 #import "BranchConfiguration.h"
 #import "BranchConfiguration+Private.h"
 #import "BNCConfig.h"
-#import "BNCCrashlyticsWrapper.h"
-#import "BNCDeepLinkViewControllerInstance.h"
 #import "BNCEncodingUtils.h"
 #import "BNCLinkData.h"
 #import "BNCNetworkService.h"
@@ -50,7 +49,6 @@
 #import "BNCUserAgentCollector.h"
 #import "BNCSpotlightService.h"
 #import "BNCContentDiscoveryManager.h"
-#import "BranchContentDiscoverer.h"
 #import "BNCODMInfoCollector.h"
 #endif
 
@@ -71,7 +69,7 @@ NSString * const BRANCH_INIT_KEY_PHONE_NUMBER = @"+phone_number";
 NSString * const BRANCH_INIT_KEY_IS_FIRST_SESSION = @"+is_first_session";
 NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
 static NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
-static NSString * const BRANCH_DEFER_INIT_FOR_PLUGIN_RUNTIME_KEY = @"deferInitForPluginRuntime";
+static NSString * const BRANCH_CRASHLYTICS_SDK_VERSION_KEY = @"io.branch.sdk.version";
 
 NSString * const BNCCanonicalIdList = @"$canonical_identifier_list";
 NSString * const BNCPurchaseAmount = @"$amount";
@@ -133,7 +131,7 @@ void ForceCategoriesToLoad(void) {
 - (NSOperation *)enqueue:(BNCServerRequest *)request afterUnfinishedDeepLinkRequests:(NSOperationQueuePriority)priority;
 @end
 
-@interface Branch() <BranchDeepLinkingControllerCompletionDelegate> {
+@interface Branch() {
     NSInteger _networkCount;
     BOOL _openSentThisForegroundPeriod;
     BOOL _resignedSinceActivation;
@@ -151,8 +149,6 @@ void ForceCategoriesToLoad(void) {
 @property (assign, nonatomic) NSInteger networkCount;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
-@property (strong, nonatomic) NSMutableDictionary *deepLinkControllers;
-@property (weak,   nonatomic) UIViewController *deepLinkPresentingController;
 @property (strong, nonatomic) NSDictionary *deepLinkDebugParams;
 @property (strong, nonatomic) NSMutableArray *allowedSchemeList;
 @property (strong, nonatomic) BNCURLFilter *urlFilter;
@@ -178,12 +174,6 @@ void ForceCategoriesToLoad(void) {
 
 // Set when an open was requested while attribution was NONE; sent when attribution leaves NONE.
 @property (nonatomic, assign) BOOL openOwedAtOptIn;
-
-// Support for deferred SDK initialization. Used to support slow plugin runtime startup.
-// This is enabled by setting deferInitForPluginRuntime to true in branch.json
-@property (nonatomic, assign, readwrite) BOOL deferInitForPluginRuntime;
-@property (nonatomic, copy, nullable) void (^cachedInitBlock)(void);
-@property (nonatomic, copy, readwrite) NSString *cachedURLString;
 
 @property (nonatomic, copy, nullable) callbackWithParams deepLinkHandler;
 
@@ -297,6 +287,7 @@ static NSString *bnc_branchKey = nil;
         [Branch applyConfiguration:configuration toBranch:branch];
     }
 
+    [Branch addBranchSDKVersionToCrashlyticsReport];
     return branch;
 }
 
@@ -513,7 +504,6 @@ static NSString *bnc_branchKey = nil;
     _processing_sema = dispatch_semaphore_create(1);
     _networkCount = 0;
     _automaticOpenEvents = YES;
-    _deepLinkControllers = [[NSMutableDictionary alloc] init];
     _allowedSchemeList = [[NSMutableArray alloc] init];
     _serverAPI = [BNCServerAPI sharedInstance];
 
@@ -550,10 +540,6 @@ static NSString *bnc_branchKey = nil;
     [self loadUserAgent];
 
     BranchJsonConfig *config = BranchJsonConfig.instance;
-    self.deferInitForPluginRuntime = config.deferInitForPluginRuntime;
-    [BranchConfigurationController sharedInstance].deferInitForPluginRuntime = self.deferInitForPluginRuntime;
-
-
     if (config.apiUrl) {
         [Branch setAPIUrl:config.apiUrl];
     }
@@ -1150,23 +1136,6 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     dispatch_async(self.isolationQueue, initBlock);
 }
 
-#pragma mark - Deep Link Controller methods
-
-- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key {
-    self.deepLinkControllers[key] = controller;
-}
-
-- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key withPresentation:(BNCViewControllerPresentationOption)option{
-
-    BNCDeepLinkViewControllerInstance* deepLinkModal = [[BNCDeepLinkViewControllerInstance alloc] init];
-
-    deepLinkModal.viewController = controller;
-    deepLinkModal.option         = option;
-
-    self.deepLinkControllers[key] = deepLinkModal;
-}
-
-
 #pragma mark - Identity Methods
 
 - (BOOL)isUserIdentified {
@@ -1682,37 +1651,6 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 
 #pragma mark - Session Initialization
 
-// Defers block until notifyNativeToInit is called.
-- (BOOL)deferInitBlock:(void (^)(void))block {
-    BOOL deferred = NO;
-    @synchronized (self) {
-        if (self.deferInitForPluginRuntime) {
-            [[BranchLogger shared] logDebug:@"Deferring SDK init until notifyNativeToInit is called" error:nil];
-            self.cachedInitBlock = block;
-            deferred = YES;
-        }
-    }
-
-    // handle default non-deferred state
-    if (!deferred && block) {
-        block();
-    }
-    return deferred;
-}
-
-// Releases deferred init block
-- (void)notifyNativeToInit {
-    @synchronized (self) {
-        [[BranchLogger shared] logDebug:@"Unlocking Deferred SDK init" error:nil];
-        self.deferInitForPluginRuntime = NO;
-    }
-
-    if (self.cachedInitBlock) {
-        self.cachedInitBlock();
-    }
-    self.cachedInitBlock = nil;
-}
-
 - (void)handleInitSuccess {
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
 
@@ -1786,64 +1724,9 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     [self sendOpenNotificationWithLinkParameters:@{} error:error];
 }
 
-#pragma mark - BranchDeepLinkingControllerCompletionDelegate methods
-
-- (void)deepLinkingControllerCompletedFrom:(UIViewController *)viewController {
-    [self.deepLinkControllers enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-
-        if([obj isKindOfClass:[BNCDeepLinkViewControllerInstance class]]) {
-            BNCDeepLinkViewControllerInstance* deepLinkInstance = (BNCDeepLinkViewControllerInstance*) obj;
-
-            if (deepLinkInstance.viewController == viewController) {
-
-                switch (deepLinkInstance.option) {
-                    case BNCViewControllerOptionPresent:
-                        [viewController dismissViewControllerAnimated:YES completion:nil];
-                        break;
-
-                    default:
-                        [self removeViewControllerFromRootNavigationController:viewController];
-                        break;
-                }
-            }
-
-        } else {
-            //Support for old API
-            if ((UIViewController*)obj == viewController)
-                [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:nil];
-        }
-
-    }];
-}
-
-- (void)removeViewControllerFromRootNavigationController:(UIViewController*)branchSharingController {
-
-    NSMutableArray* viewControllers =
-        [NSMutableArray arrayWithArray: [(UINavigationController*)self.deepLinkPresentingController viewControllers]];
-
-    if ([viewControllers lastObject] == branchSharingController) {
-
-        [(UINavigationController*)self.deepLinkPresentingController popViewControllerAnimated:YES];
-    }else {
-        [viewControllers removeObject:branchSharingController];
-        ((UINavigationController*)self.deepLinkPresentingController).viewControllers = viewControllers;
-    }
-}
-
 #pragma mark - Crashlytics reporting enhancements
 
-+ (void)logLowMemoryToCrashlytics {
-    [NSNotificationCenter.defaultCenter
-        addObserverForName:UIApplicationDidReceiveMemoryWarningNotification
-        object:nil
-        queue:NSOperationQueue.mainQueue
-        usingBlock:^(NSNotification *notification) {
-            BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
-            [crashlytics setCustomValue:@YES forKey:BRANCH_CRASHLYTICS_LOW_MEMORY_KEY];
-        }
-    ];
-}
-
+// Adds the SDK version to the app's Crashlytics reports when Crashlytics is linked.
 + (void)addBranchSDKVersionToCrashlyticsReport {
     BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
     [crashlytics setCustomValue:BNC_SDK_VERSION forKey:BRANCH_CRASHLYTICS_SDK_VERSION_KEY];

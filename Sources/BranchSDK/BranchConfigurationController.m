@@ -31,8 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSDictionary *)featureFlagsInfo {
     return @{
-        BRANCH_REQUEST_KEY_CHECK_PASTEBOARD_ON_INSTALL: @(self.checkPasteboardOnInstall),
-        BRANCH_REQUEST_KEY_DEFER_INIT_FOR_PLUGIN_RUNTIME: @(self.deferInitForPluginRuntime)
+        BRANCH_REQUEST_KEY_CHECK_PASTEBOARD_ON_INSTALL: @(self.checkPasteboardOnInstall)
     };
 }
 

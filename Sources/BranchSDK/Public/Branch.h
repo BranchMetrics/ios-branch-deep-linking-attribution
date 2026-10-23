@@ -20,7 +20,6 @@
 #import "BranchLinkProperties.h"
 #import "BranchUniversalObject.h"
 #import "BranchLastAttributedTouchData.h"
-#import "BranchDeepLinkingController.h"
 #import "BranchDelegate.h"
 
 #if !TARGET_OS_TV
@@ -912,16 +911,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 - (void) clearNetworkQueue;
 
 #pragma mark - Session Initialization
-
-/**
- DO NOT USE unless you are implementing deferred initialization for plugins.
-
- Platforms such as React Native and Unity, have slow runtime startups. This results in early lifecycle events before client code can run.
- When `deferInitForPlugin` is true in `branch.json`, `+[Branch initialize:]` will cache itself until this method is called.
- 
- Note that while init is deferred, other calls to the Branch SDK may result in errors. For that reason, do not use this feature for general SDK init deferral.
- */
-- (void)notifyNativeToInit;
 
 /**
  This is the block that is called each time a new Branch session is started. It is no longer set

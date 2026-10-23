@@ -17,7 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BranchConfigurationController : NSObject
 
 @property (nonatomic, copy) NSString *branchKeySource;
-@property (assign, nonatomic) BOOL deferInitForPluginRuntime;
 @property (assign, nonatomic) BOOL checkPasteboardOnInstall;
 
 + (instancetype)sharedInstance;

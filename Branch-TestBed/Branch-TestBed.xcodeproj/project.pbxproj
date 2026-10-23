@@ -72,7 +72,6 @@
 		6700167A1940F51400A9E103 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016791940F51400A9E103 /* ViewController.m */; };
 		67F270891BA9FCFF002546A7 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		805069B9222DE6DBB702BA55 /* ConsumerProtectionHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DF86E2AC9715ADCA6FC0D57 /* ConsumerProtectionHybridTest.swift */; };
-		884BEA1B0B010B65568A9135 /* PluginNotifyHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E744D97C008B4DBA0445A4F /* PluginNotifyHybridTest.swift */; };
 		8909A6D6A78237ACCB8496D6 /* EventLoggingHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D5B75E103FE48CC35B2C2D /* EventLoggingHybridTest.swift */; };
 		959C9C6A9AF35A32CE92F363 /* QRCodeHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F998EAD60325FB9FBF63FF /* QRCodeHybridTest.swift */; };
 		9BEC6ECEF0E0BF1E734B843D /* NotificationHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D4DC04AFC52EEBC6E0120A /* NotificationHybridTest.swift */; };
@@ -242,7 +241,6 @@
 		67BBCF271A69E49A009C7DAE /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = System/Library/Frameworks/CoreSpotlight.framework; sourceTree = SDKROOT; };
 		68C67D93BFFFC0217931CBB1 /* LinkCreationAITest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LinkCreationAITest.swift; sourceTree = "<group>"; };
-		6E744D97C008B4DBA0445A4F /* PluginNotifyHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PluginNotifyHybridTest.swift; sourceTree = "<group>"; };
 		704F26B57C08A695724807D8 /* TestScrollHelpers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TestScrollHelpers.swift; sourceTree = "<group>"; };
 		7E6B3B511AA42D0E005F45BF /* Branch-SDK-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-SDK-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		991B868E49743EF400DE3CA1 /* DeepLinkColdOpenHybridTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DeepLinkColdOpenHybridTest.swift; sourceTree = "<group>"; };
@@ -357,7 +355,6 @@
 				29BF08D3B7BD908C97F47144 /* TrackingControlHybridTest.swift */,
 				1DF86E2AC9715ADCA6FC0D57 /* ConsumerProtectionHybridTest.swift */,
 				656C68E10670CEE96DC0A93D /* ReferringParamsHybridTest.swift */,
-				6E744D97C008B4DBA0445A4F /* PluginNotifyHybridTest.swift */,
 			);
 			name = Hybrid;
 			path = Hybrid;
@@ -934,7 +931,6 @@
 				15843A0C5EBB44E872DFDF8A /* TrackingControlHybridTest.swift in Sources */,
 				805069B9222DE6DBB702BA55 /* ConsumerProtectionHybridTest.swift in Sources */,
 				E369CEFCE0B1105282B6E900 /* ReferringParamsHybridTest.swift in Sources */,
-				884BEA1B0B010B65568A9135 /* PluginNotifyHybridTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

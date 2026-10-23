@@ -121,15 +121,12 @@
                     ODCInteractionType arg1 = ODCInteractionTypeInstallation;
                     [invocation setArgument:&arg1 atIndex:2];
                     
-                    __weak typeof(self) weakSelf = self;
                     self.odmFetchCompletion = ^(NSString *info, NSError *error) {
                         
                         
                         if (error) {
                             [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"ODMConversionManager:fetchInfo Error : %@", error.localizedDescription ] error:error];
                         }
-                        
-                        __strong typeof(self) self = weakSelf;
                         
                         if (completion) {
                             completion( info, error);

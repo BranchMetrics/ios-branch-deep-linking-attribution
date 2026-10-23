@@ -340,10 +340,6 @@
 }
 #endif
 
-- (NSString *)getActionName {
-    return @"open";
-}
-
 - (instancetype)initWithCoder:(NSCoder *)decoder {
     self = [super initWithCoder:decoder];
     if (!self) return self;

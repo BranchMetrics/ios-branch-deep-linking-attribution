@@ -10,7 +10,6 @@
 #import "BranchJsonConfig.h"
 
 NSString * _Nonnull const BranchJsonConfigDebugModeOption = @"debugMode";
-NSString * _Nonnull const BranchJsonConfigDeferInitForPluginRuntimeOption = @"deferInitForPluginRuntime";
 NSString * _Nonnull const BranchJsonConfigEnableLogging = @"enableLogging";
 NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPasteboardOnInstall";
 NSString * _Nonnull const BranchJsonConfigAPIUrl = @"apiUrl";
@@ -112,12 +111,6 @@ NSString * _Nonnull const BranchJsonConfigCPPLevel = @"consumerProtectionAttribu
 - (BOOL)debugMode
 {
     NSNumber *number = self[BranchJsonConfigDebugModeOption];
-    return number.boolValue;
-}
-
-- (BOOL)deferInitForPluginRuntime
-{
-    NSNumber *number = self[BranchJsonConfigDeferInitForPluginRuntimeOption];
     return number.boolValue;
 }
 

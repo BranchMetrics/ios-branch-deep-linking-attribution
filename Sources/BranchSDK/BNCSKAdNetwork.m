@@ -253,40 +253,6 @@
     }
 }
 
-- (void (^)(NSError *))skanCompletionHandlerWithSuccessDescription:(NSString *)description {
-    return ^(NSError * _Nullable error) {
-        if (error) {
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
-        } else {
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful for %@", description] error:nil];
-        }
-    };
-}
-
-- (void)registerAndUpdateConversionFromResponse:(NSDictionary *)data isInstall:(BOOL)isInstall {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
-
-    if ([data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP] isKindOfClass:NSNumber.class]) {
-        NSNumber *invokeRegister = (NSNumber *)data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP];
-        preferenceHelper.invokeRegisterApp = invokeRegister.boolValue;
-        if (invokeRegister.boolValue && isInstall) {
-            void (^completionHandler)(NSError *) = [self skanCompletionHandlerWithSuccessDescription:@"INSTALL Event"];
-            if (@available(iOS 16.1, macCatalyst 16.1, *)){
-                NSString *defaultCoarseConValue = [self getCoarseConversionValueFromDataResponse:@{}];
-                [self updatePostbackConversionValue:0 coarseValue:defaultCoarseConValue
-                    lockWindow:NO completionHandler:completionHandler];
-            } else if (@available(iOS 15.4, macCatalyst 15.4, *)){
-                [self updatePostbackConversionValue:0 completionHandler:completionHandler];
-            }
-            else {
-                [self registerAppForAdNetworkAttribution];
-            }
-        }
-    } else {
-        preferenceHelper.invokeRegisterApp = NO;
-    }
-}
-
 - (BOOL)isSKANAllowedForAttributionLevel {
     BranchAttributionLevel level = [[BNCPreferenceHelper sharedInstance] attributionLevel];
     return !([level isEqualToString:BranchAttributionLevelMinimal] ||

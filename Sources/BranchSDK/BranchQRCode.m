@@ -281,11 +281,6 @@
 }
 #endif
 
-- (BOOL)isValidUrl:(NSString *)urlString{
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlString]];
-    return [NSURLConnection canHandleRequest:request];
-}
-
 - (NSString *)hexStringForColor:(UIColor *)color {
     CGColorSpaceModel colorSpace = CGColorSpaceGetModel(CGColorGetColorSpace(color.CGColor));
     const CGFloat *components = CGColorGetComponents(color.CGColor);

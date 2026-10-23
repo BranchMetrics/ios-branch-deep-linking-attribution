@@ -10,7 +10,6 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCEncodingUtils.h"
 #import "BranchConstants.h"
-#import "BNCConfig.h"
 #import "BranchLogger.h"
 #import "BNCRequestFactory.h"
 #import "BNCServerAPI.h"
@@ -100,18 +99,6 @@
 - (NSString *)createLongUrlForUserUrl:(NSString *)userUrl {
     NSMutableString *baseUrl = [[NSMutableString alloc] initWithFormat:@"%@?", userUrl];
     return [BranchShortUrlSyncRequest createLongUrlWithBaseUrl:baseUrl tags:self.tags alias:self.alias type:self.type matchDuration:self.matchDuration channel:self.channel feature:self.feature stage:self.stage params:self.params];
-}
-
-+ (NSString *)createLinkFromBranchKey:(NSString *)branchKey tags:(NSArray *)tags alias:(NSString *)alias type:(BranchLinkType)type matchDuration:(NSInteger)duration channel:(NSString *)channel feature:(NSString *)feature stage:(NSString *)stage params:(NSDictionary *)params {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
-    NSMutableString *baseUrl;
-    
-    if (preferenceHelper.userUrl)
-        baseUrl = [preferenceHelper sanitizedMutableBaseURL:preferenceHelper.userUrl];
-    else
-        baseUrl = [[NSMutableString alloc] initWithFormat:@"%@/a/%@?", BNC_LINK_URL, branchKey];
-
-    return [BranchShortUrlSyncRequest createLongUrlWithBaseUrl:baseUrl tags:tags alias:alias type:type matchDuration:duration channel:channel feature:feature stage:stage params:params];
 }
 
 + (NSString *)createLongUrlWithBaseUrl:(NSMutableString *)baseUrl
