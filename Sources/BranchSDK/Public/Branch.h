@@ -935,13 +935,12 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 
  Extracts the Branch URL from `launchOptions` and calls `requestDeepLinkData:callback:` with it.
  The callback is stored and invoked for this launch, for every later deep link result and for every
- app foreground in the process, whichever entry point delivers the link. A later call replaces it;
- nil clears it.
+ app foreground in the process, whichever entry point delivers the link. A later call replaces it.
  */
 - (void)requestDeepLinkDataWithLaunchOptions:(nullable NSDictionary *)options
-                                    callback:(nullable callbackWithParams)callback
+                                    callback:(callbackWithParams)callback
     NS_SWIFT_NAME(requestDeepLinkData(launchOptions:callback:))
-    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(launchOptions:));
+    NS_SWIFT_DISABLE_ASYNC;
 
 /**
  Convenience method for `application:openURL:options:` to handle custom URI schemes.
@@ -1008,10 +1007,10 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  */
 - (void)requestDeepLinkDataWithSceneOptions:(nullable UISceneConnectionOptions *)connectionOptions
                                       scene:(UIScene *)scene
-                                   callback:(nullable callbackWithParams)callback
+                                   callback:(callbackWithParams)callback
     API_AVAILABLE(ios(13.0), macCatalyst(13.1))
     NS_SWIFT_NAME(requestDeepLinkData(sceneOptions:scene:callback:))
-    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(sceneOptions:scene:));
+    NS_SWIFT_DISABLE_ASYNC;
 #endif
 
 /**
