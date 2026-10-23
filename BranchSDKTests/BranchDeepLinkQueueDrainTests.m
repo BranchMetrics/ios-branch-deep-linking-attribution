@@ -26,7 +26,6 @@
 #import "BNCServerRequestQueue.h"
 #import "BNCServerRequestOperation.h"
 #import "BNCServerResponse.h"
-#import "BranchOpenRequest.h"
 #import "BranchRequestOpen.h"
 #import "BranchLifecycleTestIsolation.h"
 
@@ -162,7 +161,6 @@ static NSMutableArray<NSString *> *sPostedURLs = nil;
 
     // applicationWillResignActive suspends this lock; leaving it suspended would hang any later
     // test that calls getLatestReferringParamsSynchronous.
-    [BranchOpenRequest releaseOpenResponseLock];
     [BranchRequestOpen releaseOpenResponseLock];
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];

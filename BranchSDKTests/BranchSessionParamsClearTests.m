@@ -16,7 +16,6 @@
 #import "BNCServerInterface.h"
 #import "BNCServerRequestQueue.h"
 #import "BNCServerResponse.h"
-#import "BranchOpenRequest.h"
 #import "BranchRequestDeepLink.h"
 #import "BranchRequestOpen.h"
 #import "BranchLifecycleTestIsolation.h"
@@ -131,7 +130,6 @@ static void BranchSessionParamsClearResetStub(NSMutableArray<NSString *> *posted
     [self.branch setValue:[BNCServerRequestQueue getInstance] forKey:@"requestQueue"];
     self.stubbedQueue = nil;
     BranchSessionParamsClearResetStub(nil);
-    [BranchOpenRequest releaseOpenResponseLock];
     [BranchRequestOpen releaseOpenResponseLock];
     [BranchRequestDeepLink releaseDeepLinkResponseLock];
     [[BNCPreferenceHelper sharedInstance] setValuesForKeysWithDictionary:self.savedPreferences];
