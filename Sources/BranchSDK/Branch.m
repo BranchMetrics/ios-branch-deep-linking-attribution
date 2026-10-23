@@ -73,7 +73,6 @@ static NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 NSString * const BNCCanonicalIdList = @"$canonical_identifier_list";
 NSString * const BNCPurchaseAmount = @"$amount";
 NSString * const BNCPurchaseCurrency = @"$currency";
-NSString * const BNCRegisterViewEvent = @"View";
 NSString * const BNCAddToWishlistEvent = @"Add to Wishlist";
 NSString * const BNCAddToCartEvent = @"Add to Cart";
 NSString * const BNCPurchaseInitiatedEvent = @"Purchase Started";
@@ -1491,22 +1490,6 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     self.preferenceHelper.dropURLOpen = NO;
     self.preferenceHelper.uxType = nil;
     self.preferenceHelper.urlLoadMs = nil;
-}
-
-#pragma mark - BranchUniversalObject methods
-
-- (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback {
-    dispatch_async(self.isolationQueue, ^(){
-        BranchUniversalObject *buo = [[BranchUniversalObject alloc] init];
-        buo.contentMetadata.customMetadata = (id) params;
-        [[BranchEvent standardEvent:BranchStandardEventViewItem withContentItem:buo] logEvent];
-        if (callback) {
-            // callback on main, this is generally what the client expects and maintains our previous behavior
-            dispatch_async(dispatch_get_main_queue(), ^ {
-                callback(@{}, nil);
-            });
-        }
-    });
 }
 
 #pragma mark - Application State Change methods

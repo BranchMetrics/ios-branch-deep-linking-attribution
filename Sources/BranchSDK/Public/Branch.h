@@ -163,7 +163,6 @@ extern NSString * __nonnull const BNCCanonicalIdList;
 extern NSString * __nonnull const BNCPurchaseAmount;
 extern NSString * __nonnull const BNCPurchaseCurrency;
 extern NSString * __nonnull const BNCCanonicalIdList;
-extern NSString * __nonnull const BNCRegisterViewEvent;
 extern NSString * __nonnull const BNCAddToWishlistEvent;
 extern NSString * __nonnull const BNCAddToCartEvent;
 extern NSString * __nonnull const BNCPurchaseInitiatedEvent;
@@ -888,20 +887,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  */
 - (void)passPasteItemProviders:(NSArray<NSItemProvider *> *)itemProviders API_AVAILABLE(ios(16), macCatalyst(16));
 #endif
-
-#pragma mark - BranchUniversalObject methods
-
-/**
- Method used by BranchUniversalObject to register a view on content
- 
- This method should only be invoked after the session opened by `+[Branch initialize:]` completes, either within the deep link callback or after a delay.
- If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the deep link callback does not fire. Again, the solution to this issue is to only invoke this method after you have called `+[Branch initialize:]`.
-
- @warning This is meant for use internally only and should not be used by apps.
- */
-- (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback
-    __attribute__((deprecated(("This API is deprecated. Please use BranchEvent:BranchStandardEventViewItem instead."))));
 
 #pragma mark - Queue management
 

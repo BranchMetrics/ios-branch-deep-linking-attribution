@@ -387,7 +387,7 @@ bool hasSetPartnerParams = false;
 
 
 - (IBAction)simulateContentAccessButtonTouchUpInsideButtonTouchUpInside:(id)sender {
-    [self.branchUniversalObject registerView];
+    [[BranchEvent standardEvent:BranchStandardEventViewItem withContentItem:self.branchUniversalObject] logEvent];
     [self showAlert:@"Content Access Registered" withDescription:@""];
 }
 
@@ -780,7 +780,7 @@ bool hasSetPartnerParams = false;
     self.branchUniversalObject.contentMetadata.customMetadata[@"deeplink_text"] =
     @"This link was generated for Spotlight registration";
     self.branchUniversalObject.locallyIndex = YES;
-    [self.branchUniversalObject registerViewWithCallback:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
+    [self.branchUniversalObject listOnSpotlightWithCallback:^(NSString * _Nullable url, NSError * _Nullable error) {
         NSLog(@"Link was registered and is locally indexed.");
         if (error == nil) {
             [self showAlert:@"Registered Link With Spotlight" withDescription:@""];
