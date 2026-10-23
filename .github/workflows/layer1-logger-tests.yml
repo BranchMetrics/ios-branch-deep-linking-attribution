@@ -51,18 +51,15 @@ on:
   workflow_dispatch:
     inputs:
       runner:
-        description: Runner label for the Xcode 27 job
+        description: Runner label, applies to the Xcode 27 job only (the Xcode 16 job ignores it)
         type: choice
         default: xcode-27
         options:
           - xcode-27
-          - xcode-27-xlarge
           - macos-26
-          - macos-26-xlarge
           - macos-15
-          - macos-15-xlarge
       xcode_version:
-        description: Xcode version for the Xcode 27 job, must exist on the chosen runner
+        description: Xcode version, applies to the Xcode 27 job only (the Xcode 16 job ignores it); must exist on the chosen image
         type: string
         default: "27.0"
 
@@ -460,28 +457,15 @@ jobs:
         if: always()
         run: xcrun simctl shutdown all || true
 
-  # EMT-4476. Sibling of validate-wire-logs above, mirrored rather than
-  # factored out: the push/pull_request `paths:` blocks earlier in this
-  # file are already duplicated instead of YAML-anchored for the same
-  # reason (see that comment) — restructuring the existing job into a
-  # shared/matrix shape is out of scope here. Three scenarios only
-  # (install, cold_firstInstall, cold_https): hot_uriScheme is not wired
-  # into this gate on any Xcode version yet (EMT-4086/#1665). Own
-  # concurrency group so a new run cannot cancel-in-progress the Xcode
-  # 16.x leg's group, or vice versa.
-  #
-  # Non-blocking: `xcode-27` is a GitHub-documented preview runner image
-  # (actions/runner-images#14404, still open, capacity/queueing caveats,
-  # no committed GA date). continue-on-error keeps a preview-image
-  # failure from failing this workflow's own run. Reconsider once the
-  # label has been stable in practice for a while.
+  # Xcode 27 sibling of validate-wire-logs; hot_uriScheme is not wired into this gate yet.
+  # Non-blocking (continue-on-error): xcode-27 is a preview runner image.
   validate-wire-logs-xcode27:
     runs-on: ${{ inputs.runner || 'xcode-27' }}
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
     timeout-minutes: 30
     continue-on-error: true
     concurrency:
-      group: l1-ios-xcode27-${{ github.workflow }}-${{ github.ref }}
+      group: l1-ios-xcode27-${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && github.run_id || github.ref }}
       cancel-in-progress: true
 
     steps:
