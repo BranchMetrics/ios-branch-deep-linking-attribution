@@ -38,9 +38,9 @@ NS_ASSUME_NONNULL_BEGIN
     NS_SWIFT_ASYNC_NAME(requestDeepLinkData(branchLink:));
 
 - (void)requestDeepLinkDataWithLaunchOptions:(nullable NSDictionary *)options
-                                    callback:(nullable callbackWithParams)callback
+                                    callback:(callbackWithParams)callback
     NS_SWIFT_NAME(requestDeepLinkData(launchOptions:callback:))
-    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(launchOptions:));
+    NS_SWIFT_DISABLE_ASYNC;
 
 - (void)requestDeepLinkDataWithURL:(nullable NSURL *)url
     NS_SWIFT_NAME(requestDeepLinkData(openURL:));
@@ -59,10 +59,10 @@ NS_ASSUME_NONNULL_BEGIN
 #if !TARGET_OS_TV
 - (void)requestDeepLinkDataWithSceneOptions:(nullable UISceneConnectionOptions *)connectionOptions
                                       scene:(UIScene *)scene
-                                   callback:(nullable callbackWithParams)callback
+                                   callback:(callbackWithParams)callback
     API_AVAILABLE(ios(13.0), macCatalyst(13.1))
     NS_SWIFT_NAME(requestDeepLinkData(sceneOptions:scene:callback:))
-    NS_SWIFT_ASYNC_NAME(requestDeepLinkData(sceneOptions:scene:));
+    NS_SWIFT_DISABLE_ASYNC;
 #endif
 
 - (void)requestDeepLinkDataWithScene:(UIScene *)scene

@@ -24,12 +24,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         //     print("Deep Link Params: \(params ?? [:]), error: \(String(describing: error))")
         // }
 
-        // Async/await variant — NS_SWIFT_ASYNC_NAME:
-        // Task {
-        //     let params = try? await Branch.sharedInstance()?.requestDeepLinkData(sceneOptions: connectionOptions, scene: scene)
-        //     print("Deep Link Params: \(params ?? [:])")
-        // }
-
         // The remaining async variants — NS_SWIFT_ASYNC_NAME. Uncomment whichever you want to run.
         // These should only be called after the deep link request above completes, so they are
         // shown here as one sequential Task.

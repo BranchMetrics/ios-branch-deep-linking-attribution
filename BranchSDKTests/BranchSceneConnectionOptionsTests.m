@@ -252,7 +252,7 @@ static NSString * const kOrganicDeepLinkPayloadJSON =
     BNCTestSceneConnectionOptions *options = [BNCTestSceneConnectionOptions alloc]; // no -init; see the class comment above.
     options.stubbedUserActivities = [NSSet setWithObject:activity];
 
-    [self.branch requestDeepLinkDataWithSceneOptions:options scene:scene callback:nil];
+    [self.branch requestDeepLinkDataWithSceneOptions:options scene:scene callback:^(NSDictionary *params, NSError *error) {}];
 
     NSArray<BNCServerRequest *> *enqueued = [self enqueuedRequestsOfClassNamed:@"BranchRequestDeepLink"];
     XCTAssertEqual(enqueued.count, (NSUInteger)1,
@@ -278,7 +278,7 @@ static NSString * const kOrganicDeepLinkPayloadJSON =
     BNCTestSceneConnectionOptions *options = [BNCTestSceneConnectionOptions alloc]; // no -init; see the class comment above.
     options.stubbedUserActivities = [NSSet setWithObject:activity];
 
-    [self.branch requestDeepLinkDataWithSceneOptions:options scene:scene callback:nil];
+    [self.branch requestDeepLinkDataWithSceneOptions:options scene:scene callback:^(NSDictionary *params, NSError *error) {}];
 
     XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].spotlightIdentifier, kSpotlightNonBranchIdentifier,
                           @"A non-Branch Spotlight identifier on a cold scene connect must still be recorded.");
@@ -305,7 +305,7 @@ static NSString * const kOrganicDeepLinkPayloadJSON =
     BNCTestSceneConnectionOptions *options = [BNCTestSceneConnectionOptions alloc]; // no -init; see the class comment above.
     options.stubbedUserActivities = [NSSet setWithObject:activity];
 
-    [self.branch requestDeepLinkDataWithSceneOptions:options scene:scene callback:nil];
+    [self.branch requestDeepLinkDataWithSceneOptions:options scene:scene callback:^(NSDictionary *params, NSError *error) {}];
 
     NSArray<BNCServerRequest *> *enqueued = [self enqueuedRequestsOfClassNamed:@"BranchRequestDeepLink"];
     XCTAssertEqual(enqueued.count, (NSUInteger)1,
@@ -416,7 +416,7 @@ static NSString * const kOrganicDeepLinkPayloadJSON =
     drainingQueue.operationQueue.suspended = YES;
     [self.branch setValue:drainingQueue forKey:@"requestQueue"];
 
-    [self.branch requestDeepLinkDataWithSceneOptions:options scene:scene callback:nil];
+    [self.branch requestDeepLinkDataWithSceneOptions:options scene:scene callback:^(NSDictionary *params, NSError *error) {}];
 
     drainingQueue.operationQueue.suspended = NO;
     NSPredicate *predicate = [NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
@@ -445,7 +445,7 @@ static NSString * const kOrganicDeepLinkPayloadJSON =
     BNCTestSceneConnectionOptions *options = [BNCTestSceneConnectionOptions alloc]; // no -init; see the class comment above.
     options.stubbedUserActivities = [NSSet setWithObject:activity];
 
-    [self.branch requestDeepLinkDataWithSceneOptions:options scene:scene callback:nil];
+    [self.branch requestDeepLinkDataWithSceneOptions:options scene:scene callback:^(NSDictionary *params, NSError *error) {}];
 
     NSArray<BNCServerRequest *> *enqueued = [self enqueuedRequestsOfClassNamed:@"BranchRequestDeepLink"];
     XCTAssertEqual(enqueued.count, (NSUInteger)1,
