@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  The BranchConfigurationController class contains SDK configuration information.
- *  .This information is sent to backend as `operational_metrics` with v1/install request.
+ *  This information is sent to backend as `operational_metrics` with the install open request.
  */
 
 @interface BranchConfigurationController : NSObject

@@ -53,7 +53,8 @@
     }
 
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:key UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
-    NSMutableDictionary *params = [[factory dataForRequestOpenWithURLString:self.urlString] mutableCopy];
+    NSDictionary *payload = self.isInstall ? [factory dataForRequestInstallWithURLString:self.urlString] : [factory dataForRequestOpenWithURLString:self.urlString];
+    NSMutableDictionary *params = [payload mutableCopy];
 
     // Add link_data if we have linkData from the deeplink response
     if (self.linkData && [self.linkData objectForKey:@"data"]) {
@@ -124,7 +125,7 @@
     }
 
 #if !TARGET_OS_TV
-    [self updateSKAdNetworkWithResponseData:data preferenceHelper:preferenceHelper];
+    [[BNCSKAdNetwork sharedInstance] updateFromOpenResponse:data isInstall:self.isInstall];
 #endif
 
     if (self.callback) {
@@ -256,89 +257,6 @@
         preferenceHelper.randomizedBundleToken = string;
     }
 }
-
-#if !TARGET_OS_TV
-// Applies the response's SKAdNetwork registration flag and conversion value.
-- (void)updateSKAdNetworkWithResponseData:(NSDictionary *)data preferenceHelper:(BNCPreferenceHelper *)preferenceHelper {
-    if ([data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP] isKindOfClass:NSNumber.class]) {
-        NSNumber *invokeRegister = (NSNumber *)data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP];
-        preferenceHelper.invokeRegisterApp = invokeRegister.boolValue;
-        if (invokeRegister.boolValue && self.isInstall) {
-            [self registerInstallWithSKAdNetwork];
-        }
-    } else {
-        preferenceHelper.invokeRegisterApp = NO;
-    }
-
-
-    if (data && [data[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE] isKindOfClass:NSNumber.class] && !self.isInstall) {
-        NSNumber *conversionValue = (NSNumber *)data[BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE];
-        // Regardless of SKAN opted-in in dashboard, we always get conversionValue, so adding check to find out if install/open response had "invoke_register_app" true
-        if (conversionValue && preferenceHelper.invokeRegisterApp ) {
-            [self updateSKAdNetworkConversionValue:conversionValue responseData:data preferenceHelper:preferenceHelper];
-        }
-    }
-}
-
-// Registers the install with SKAdNetwork using the API available on this OS version.
-- (void)registerInstallWithSKAdNetwork {
-    if (@available(iOS 16.1, macCatalyst 16.1, *)){
-        NSString *defaultCoarseConValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:@{}];
-        [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:0 coarseValue:defaultCoarseConValue
-            lockWindow:NO completionHandler:^(NSError * _Nullable error) {
-            if (error) {
-                [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
-            } else {
-                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful for INSTALL Event"] error:nil];
-            }
-        }];
-    } else if (@available(iOS 15.4, macCatalyst 15.4, *)){
-        [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:0 completionHandler:^(NSError * _Nullable error) {
-            if (error) {
-                [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
-            } else {
-                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful for INSTALL Event"] error:nil];
-            }
-        }];
-    }
-    else {
-        [[BNCSKAdNetwork sharedInstance] registerAppForAdNetworkAttribution];
-    }
-}
-
-// Sends conversionValue to SKAdNetwork using the API available on this OS version.
-- (void)updateSKAdNetworkConversionValue:(NSNumber *)conversionValue
-                            responseData:(NSDictionary *)data
-                        preferenceHelper:(BNCPreferenceHelper *)preferenceHelper {
-    if (@available(iOS 16.1, macCatalyst 16.1, *)){
-        NSString* coarseConversionValue = [[BNCSKAdNetwork sharedInstance] getCoarseConversionValueFromDataResponse:data] ;
-        BOOL lockWin = [[BNCSKAdNetwork sharedInstance] getLockedStatusFromDataResponse:data];
-        BOOL shouldCallUpdatePostback = [[BNCSKAdNetwork sharedInstance] shouldCallPostbackForDataResponse:data];
-
-        [[BranchLogger shared] logDebug: [NSString stringWithFormat:@"SKAN 4.0 params - conversionValue:%@ coarseValue:%@, locked:%d, shouldCallPostback:%d, currentWindow:%d, firstAppLaunchTime: %@", conversionValue, coarseConversionValue, lockWin, shouldCallUpdatePostback, (int)preferenceHelper.skanCurrentWindow, preferenceHelper.firstAppLaunchTime] error:nil];
-
-        if(shouldCallUpdatePostback){
-            [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue: conversionValue.longValue coarseValue:coarseConversionValue lockWindow:lockWin completionHandler:^(NSError * _Nullable error) {
-                if (error) {
-                    [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
-                } else {
-                    [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue] error:nil];
-                }
-            }];
-        }
-    } else if (@available(iOS 15.4, macCatalyst 15.4, *)) {
-        [[BNCSKAdNetwork sharedInstance] updatePostbackConversionValue:conversionValue.intValue completionHandler: ^(NSError *error){
-            if (error) {
-                [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
-            } else {
-                [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue] error:nil];
-            }
-        }];
-    } else {
-        [[BNCSKAdNetwork sharedInstance] updateConversionValue:conversionValue.integerValue];
-    }
-}
-#endif
 
 - (instancetype)initWithCoder:(NSCoder *)decoder {
     self = [super initWithCoder:decoder];
