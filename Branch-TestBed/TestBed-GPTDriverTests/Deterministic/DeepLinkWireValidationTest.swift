@@ -22,8 +22,7 @@
 //  branchlogs.txt on every launch, so a second test method relaunching
 //  the app would overwrite the previous test's capture.
 //
-//  Like L1WireValidationTest, this deliberately does NOT inherit from
-//  BaseGptDriverTest: it must run without MOBILEBOOST_API_KEY.
+//  Like L1WireValidationTest, this needs no credential and must run keyless.
 //
 
 import XCTest

@@ -15,9 +15,7 @@
 //  simulator's app container with `xcrun simctl get_app_container ... data`
 //  and runs scripts/validate_l1_logs.py against it.
 //
-//  This test deliberately does NOT inherit from BaseGptDriverTest because
-//  L1 validation must run without MOBILEBOOST_API_KEY (the API key is only
-//  required for AI-driven hybrid tests).
+//  This test needs no credential: L1 validation must run keyless.
 //
 
 import XCTest

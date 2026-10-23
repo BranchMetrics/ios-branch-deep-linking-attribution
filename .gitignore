@@ -33,6 +33,4 @@ vendor
 .bundle
 DeepLinkDemo/DeepLinkDemo.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
 
-# MobileBoost — contains API key, never commit
-mobileboost.config.json
 *.local.xcconfig

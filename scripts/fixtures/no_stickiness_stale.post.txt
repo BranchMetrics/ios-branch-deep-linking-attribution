@@ -1,0 +1,9 @@
+[TestBedLifecycle] applicationDidBecomeActive
+[TestBedLifecycle] latestReferringParams {}
+[TestBedLifecycle] latestReferringParams {}
+[TestBedLifecycle] latestReferringParams {"$deeplink_path":"routeExampleLogs","$link_title":"New Routes Testing Link","$marketing_title":"New Routes Testing Link","+click_timestamp":1790700100,"+clicked_branch_link":true,"+is_first_session":false,"+link_click_id":1000000000000000003,"+match_guaranteed":true,"~creation_source":1,"~id":2000000000000000002,"~marketing":true,"~referring_link":"https://bnctestbed.app.link/7HTLJ2jXi3b"}
+[TestBedLifecycle] applicationWillResignActive
+[TestBedLifecycle] applicationDidEnterBackground
+[TestBedLifecycle] applicationDidBecomeActive
+[TestBedLifecycle] latestReferringParams {"$deeplink_path":"routeExampleLogs","$link_title":"New Routes Testing Link","$marketing_title":"New Routes Testing Link","+click_timestamp":1790700100,"+clicked_branch_link":true,"+is_first_session":false,"+link_click_id":1000000000000000003,"+match_guaranteed":true,"~creation_source":1,"~id":2000000000000000002,"~marketing":true,"~referring_link":"https://bnctestbed.app.link/7HTLJ2jXi3b"}
+[TestBedLifecycle] latestReferringParams {"$deeplink_path":"routeExampleLogs","$link_title":"New Routes Testing Link","$marketing_title":"New Routes Testing Link","+click_timestamp":1790700100,"+clicked_branch_link":true,"+is_first_session":false,"+link_click_id":1000000000000000003,"+match_guaranteed":true,"~creation_source":1,"~id":2000000000000000002,"~marketing":true,"~referring_link":"https://bnctestbed.app.link/7HTLJ2jXi3b"}
