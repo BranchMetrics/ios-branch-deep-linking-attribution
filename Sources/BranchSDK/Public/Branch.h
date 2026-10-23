@@ -987,6 +987,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Convenience method for `application:continueUserActivity:restorationHandler:` to handle Universal Links.
 
  Extracts the webpage URL from the user activity and calls `requestDeepLinkData:callback:` with it.
+ A Spotlight activity whose identifier is itself a Branch link resolves that link; a Spotlight
+ activity with a non-Branch identifier is recorded and resolves without a URL of its own.
  Delivers the result to the callback registered with `requestDeepLinkDataWithLaunchOptions:callback:`.
  @param userActivity The NSUserActivity from `application:continueUserActivity:restorationHandler:`.
  */
@@ -1010,7 +1012,11 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Convenience overload for `scene:willConnectToSession:options:`.
 
  Extracts the Branch URL from `connectionOptions` and calls `requestDeepLinkData:callback:` with it.
- Pass nil for `connectionOptions` or an empty options object for cold starts with no incoming link.
+ Handles a Universal Link (`NSUserActivityTypeBrowsingWeb`), a Spotlight activity, and a URL scheme
+ or Universal Link delivered via `URLContexts`. A Spotlight activity whose identifier is itself a
+ Branch link resolves that link; a Spotlight activity with a non-Branch identifier is recorded and
+ resolves without a URL of its own. Pass nil for `connectionOptions` or an empty options object for
+ cold starts with no incoming link.
  The callback is stored the same way as in `requestDeepLinkDataWithLaunchOptions:callback:`.
 
  Available on iOS 13.0+ and macCatalyst 13.1+.
@@ -1042,6 +1048,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Convenience method for SceneDelegate's `scene:continueUserActivity:` to handle Universal Links.
 
  Extracts the webpage URL from the user activity and calls `requestDeepLinkData:callback:` with it.
+ A Spotlight activity whose identifier is itself a Branch link resolves that link; a Spotlight
+ activity with a non-Branch identifier is recorded and resolves without a URL of its own.
  Delivers the result to the callback registered with `requestDeepLinkDataWithLaunchOptions:callback:`.
 
  Available on iOS 13.0+.

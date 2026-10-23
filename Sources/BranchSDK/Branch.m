@@ -988,6 +988,20 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     return [Branch isBranchLink:urlString];
 }
 
+// The URL string processUserActivity:filtered: preprocessed for userActivity: the
+// Spotlight identifier when it is itself a Branch link, otherwise the activity's webpageURL. A
+// Spotlight activity never has webpageURL set, so a non-Branch Spotlight identifier still yields
+// nil here, which enqueues a deferred data lookup rather than resolving a link.
+- (nullable NSString *)deepLinkURLStringForUserActivity:(NSUserActivity *)userActivity {
+    #if !TARGET_OS_TV
+    NSString *spotlightIdentifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
+    if ([Branch isBranchLink:spotlightIdentifier]) {
+        return spotlightIdentifier;
+    }
+    #endif
+    return userActivity.webpageURL.absoluteString;
+}
+
 #pragma mark - Check For Branch Link
 
 // checks if URL string looks like a branch link
@@ -1887,8 +1901,9 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 
     if (filtered) return;
 
-    // nil for a Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
-    NSString *urlStr = userActivity.webpageURL.absoluteString;
+    // nil only for a non-Branch Spotlight identifier, which enqueues a deferred data lookup rather
+    // than resolving a link.
+    NSString *urlStr = [self deepLinkURLStringForUserActivity:userActivity];
 
     [self requestDeepLinkData:urlStr];
 }
@@ -1941,13 +1956,13 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     // once the session is up — the work `+[Branch initialize:]` now covers.
     if (connectionOptions.userActivities.count) {
         NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject;
-        if ([activity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-            // Populates the preferenceHelper from the activity before enqueueing.
-            BOOL filtered = NO;
-            [self processUserActivity:activity filtered:&filtered];
-            if (!filtered) {
-                [self requestDeepLinkData:activity.webpageURL.absoluteString];
-            }
+        // Populates the preferenceHelper from an activity of any type before enqueueing.
+        BOOL filtered = NO;
+        [self processUserActivity:activity filtered:&filtered];
+        if (!filtered) {
+            // nil only for a non-Branch Spotlight identifier, which enqueues a deferred data
+            // lookup rather than resolving a link.
+            [self requestDeepLinkData:[self deepLinkURLStringForUserActivity:activity]];
         }
     } else if (connectionOptions.URLContexts.count) {
         UIOpenURLContext *context = connectionOptions.URLContexts.allObjects.firstObject;
@@ -1986,8 +2001,9 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 
     if (filtered) return;
 
-    // nil for a Spotlight activity, which enqueues a deferred data lookup rather than resolving a link.
-    NSString *urlStr = userActivity.webpageURL.absoluteString;
+    // nil only for a non-Branch Spotlight identifier, which enqueues a deferred data lookup rather
+    // than resolving a link.
+    NSString *urlStr = [self deepLinkURLStringForUserActivity:userActivity];
 
     [self requestDeepLinkData:urlStr];
 }

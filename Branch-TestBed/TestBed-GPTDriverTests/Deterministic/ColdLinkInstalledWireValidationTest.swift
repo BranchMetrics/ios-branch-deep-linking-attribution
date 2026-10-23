@@ -26,8 +26,7 @@
 //  The capture is the second launch: -[AppDelegate setBranchLogFile] deletes
 //  branchlogs.txt on every launch, so the first one leaves nothing behind.
 //
-//  Like the other L1 drivers, deliberately not a BaseGptDriverTest subclass —
-//  L1 must run without MOBILEBOOST_API_KEY.
+//  Like the other L1 drivers, it needs no credential: L1 must run keyless.
 //
 
 import XCTest
