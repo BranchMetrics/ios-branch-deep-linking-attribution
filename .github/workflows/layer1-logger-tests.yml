@@ -49,6 +49,19 @@ on:
       - "scripts/run_l1_instrumented.sh"
       - "scripts/run_h2_hot.sh"
   workflow_dispatch:
+    inputs:
+      runner:
+        description: Runner label, applies to the Xcode 27 job only (the Xcode 16 job ignores it)
+        type: choice
+        default: xcode-27
+        options:
+          - xcode-27
+          - macos-26
+          - macos-15
+      xcode_version:
+        description: Xcode version, applies to the Xcode 27 job only (the Xcode 16 job ignores it); must exist on the chosen image
+        type: string
+        default: "27.0"
 
 permissions:
   contents: read
@@ -439,6 +452,182 @@ jobs:
       - name: Fail the job if warm_uriScheme failed
         if: steps.w2.outcome == 'failure'
         run: exit 1
+
+      - name: Teardown simulator
+        if: always()
+        run: xcrun simctl shutdown all || true
+
+  # Xcode 27 sibling of validate-wire-logs; hot_uriScheme is not wired into this gate yet.
+  # Non-blocking (continue-on-error): xcode-27 is a preview runner image.
+  validate-wire-logs-xcode27:
+    runs-on: ${{ inputs.runner || 'xcode-27' }}
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
+    timeout-minutes: 30
+    continue-on-error: true
+    concurrency:
+      group: l1-ios-xcode27-${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && github.run_id || github.ref }}
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ inputs.xcode_version || '27.0' }}
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          xcrun simctl list runtimes | tail -10
+
+      - name: Resolve simulator
+        id: sim
+        run: |
+          ./scripts/getSimulator
+          echo "name=$(cat ./iphoneSim)" >> "$GITHUB_OUTPUT"
+
+      - name: Build TestBed for testing
+        run: |
+          xcodebuild build-for-testing \
+            -project Branch-TestBed/Branch-TestBed.xcodeproj \
+            -scheme TestBed-GPTDriverTests \
+            -derivedDataPath ./DerivedData \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.name }},OS=latest" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY=""
+
+      - name: Capture install, a launch with no link
+        env:
+          DERIVED_DATA_DIR: ./DerivedData
+          SIM_NAME: ${{ steps.sim.outputs.name }}
+          SIM_OS: latest
+          PROJECT_PATH: Branch-TestBed/Branch-TestBed.xcodeproj
+          SCHEME: TestBed-GPTDriverTests
+          BUNDLE_ID: io.branch.sdk.Branch-TestBed
+        run: |
+          ONLY_TESTING=TestBed-GPTDriverTests/L1WireValidationTest \
+          OUTPUT_LOG=wire-install.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
+
+      - name: Capture cold_firstInstall, a link with no prior install
+        env:
+          DERIVED_DATA_DIR: ./DerivedData
+          SIM_NAME: ${{ steps.sim.outputs.name }}
+          SIM_OS: latest
+          PROJECT_PATH: Branch-TestBed/Branch-TestBed.xcodeproj
+          SCHEME: TestBed-GPTDriverTests
+          BUNDLE_ID: io.branch.sdk.Branch-TestBed
+        run: |
+          ONLY_TESTING=TestBed-GPTDriverTests/ColdLinkWireValidationTest \
+          OUTPUT_LOG=wire-cold_firstInstall.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
+
+      - name: Capture cold_https, a link on a device that already has the app
+        env:
+          DERIVED_DATA_DIR: ./DerivedData
+          SIM_NAME: ${{ steps.sim.outputs.name }}
+          SIM_OS: latest
+          PROJECT_PATH: Branch-TestBed/Branch-TestBed.xcodeproj
+          SCHEME: TestBed-GPTDriverTests
+          BUNDLE_ID: io.branch.sdk.Branch-TestBed
+        run: |
+          ONLY_TESTING=TestBed-GPTDriverTests/ColdLinkInstalledWireValidationTest \
+          OUTPUT_LOG=wire-cold_https.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+
+      - name: Run L1 validator unit tests
+        run: python3 -m unittest discover -s scripts -p "test_*.py" -v
+
+      - name: Validate wire logs
+        id: validate
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          rc=0
+          check () {
+            echo "::group::$1"
+            if ! python3 scripts/validate_l1_logs.py "$2" --scenario "$1" 2>&1 \
+                 | sed "s/^FAILED:/FAILED: [$1]/" | tee -a /tmp/l1-xcode27-output.txt; then
+              rc=1
+            fi
+            echo "::endgroup::"
+          }
+          check install wire-install.txt
+          check cold_firstInstall wire-cold_firstInstall.txt
+          check cold_https wire-cold_https.txt
+          exit $rc
+
+      - name: Write run summary
+        if: always()
+        run: |
+          {
+            echo "### Layer 1 — SDK wire validation (Xcode 27)"
+            echo
+            cat wire-install.txt wire-cold_firstInstall.txt wire-cold_https.txt 2>/dev/null \
+              | grep -o 'Got https://[^ ]*' \
+              | sed 's|.*api2.branch.io||' | sort | uniq -c > /tmp/l1-xcode27-endpoints.txt || true
+            if [ -s /tmp/l1-xcode27-endpoints.txt ]; then
+              echo "| endpoint | requests |"
+              echo "| --- | ---: |"
+              awk '{printf "| `%s` | %s |\n", $2, $1}' /tmp/l1-xcode27-endpoints.txt
+            else
+              echo "No wire requests were captured."
+            fi
+            echo
+            echo "Scenario coverage:"
+            echo
+            echo "| scenario group | status |"
+            echo "| --- | --- |"
+            if [ "${{ steps.validate.outcome }}" = "success" ]; then
+              echo "| Cold | cold_https and cold_firstInstall pass |"
+              echo "| Negative and guards | install passes, the rest not implemented |"
+            else
+              echo "| Cold | see failures below |"
+              echo "| Negative and guards | see failures below |"
+            fi
+            echo "| Warm | not implemented |"
+            echo "| Hot | not implemented |"
+            echo
+            if [ "${{ steps.validate.outcome }}" = "success" ]; then
+              echo "Result: **PASS**"
+            else
+              echo "Result: **FAIL**"
+              echo
+              echo '```'
+              grep '^FAILED:' /tmp/l1-xcode27-output.txt || echo "(no FAILED lines; see the job log)"
+              echo '```'
+              echo
+              echo "<details><summary>Captured wire log</summary>"
+              echo
+              echo '```'
+              cat wire-install.txt wire-cold_firstInstall.txt wire-cold_https.txt \
+                > /tmp/l1-xcode27-all.txt 2>/dev/null || true
+              if [ -s /tmp/l1-xcode27-all.txt ]; then head -c 40000 /tmp/l1-xcode27-all.txt; echo; else echo "(no capture was produced)"; fi
+              echo '```'
+              echo
+              echo "</details>"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail the job if validation failed
+        if: steps.validate.outcome == 'failure'
+        run: exit 1
+
+      - name: Upload wire logs on failure
+        if: failure() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-wire-logs-xcode27
+          path: |
+            wire-install.txt
+            wire-cold_firstInstall.txt
+            wire-cold_https.txt
+          retention-days: 7
 
       - name: Teardown simulator
         if: always()
