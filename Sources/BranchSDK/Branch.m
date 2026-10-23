@@ -1823,7 +1823,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 
 // Called from application:didFinishLaunchingWithOptions:
 - (void)requestDeepLinkDataWithLaunchOptions:(NSDictionary *)options
-                                    callback:(nullable callbackWithParams)callback {
+                                    callback:(callbackWithParams)callback {
     [[BranchLogger shared] logDebug:@"requestDeepLinkDataWithLaunchOptions called" error:nil];
 
     [self setStoredDeepLinkHandler:callback];
@@ -1916,7 +1916,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 // Called from scene:willConnectToSession:options:
 - (void)requestDeepLinkDataWithSceneOptions:(nullable UISceneConnectionOptions *)connectionOptions
                                       scene:(UIScene *)scene
-                                   callback:(nullable callbackWithParams)callback
+                                   callback:(callbackWithParams)callback
     API_AVAILABLE(ios(13.0), macCatalyst(13.1)) {
     [[BranchLogger shared] logDebug:@"requestDeepLinkDataWithSceneOptions called" error:nil];
 

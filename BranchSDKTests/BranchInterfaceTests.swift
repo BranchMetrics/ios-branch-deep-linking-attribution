@@ -33,8 +33,8 @@ private final class FakeBranch: NSObject, BranchInterface {
         callback?(stubbedLatestParams, nil)
     }
 
-    func requestDeepLinkData(launchOptions options: [AnyHashable: Any]?, callback: callbackWithParams? = nil) {
-        callback?(stubbedLatestParams, nil)
+    func requestDeepLinkData(launchOptions options: [AnyHashable: Any]?, callback: @escaping callbackWithParams) {
+        callback(stubbedLatestParams, nil)
     }
 
     func requestDeepLinkData(openURL url: URL?) {}
@@ -48,8 +48,8 @@ private final class FakeBranch: NSObject, BranchInterface {
     @available(iOS 13.0, macCatalyst 13.1, *)
     func requestDeepLinkData(sceneOptions connectionOptions: UIScene.ConnectionOptions?,
                              scene: UIScene,
-                             callback: callbackWithParams? = nil) {
-        callback?(stubbedLatestParams, nil)
+                             callback: @escaping callbackWithParams) {
+        callback(stubbedLatestParams, nil)
     }
 
     @available(iOS 13.0, *)

@@ -63,7 +63,7 @@ final class BranchSwiftNameTests: XCTestCase {
 
     /// `requestDeepLinkDataWithLaunchOptions:callback:` → `requestDeepLinkData(launchOptions:callback:)`
     func testSwiftNameRequestDeepLinkDataLaunchOptionsCallback() {
-        let method: ([AnyHashable: Any]?, (([AnyHashable: Any]?, Error?) -> Void)?) -> Void =
+        let method: ([AnyHashable: Any]?, @escaping ([AnyHashable: Any]?, Error?) -> Void) -> Void =
             branch.requestDeepLinkData(launchOptions:callback:)
         _ = method
 
@@ -75,7 +75,7 @@ final class BranchSwiftNameTests: XCTestCase {
     #if !os(tvOS)
     /// `requestDeepLinkDataWithSceneOptions:scene:callback:` → `requestDeepLinkData(sceneOptions:scene:callback:)`
     func testSwiftNameRequestDeepLinkDataSceneOptionsSceneCallback() {
-        let method: (UIScene.ConnectionOptions?, UIScene, (([AnyHashable: Any]?, Error?) -> Void)?) -> Void =
+        let method: (UIScene.ConnectionOptions?, UIScene, @escaping ([AnyHashable: Any]?, Error?) -> Void) -> Void =
             branch.requestDeepLinkData(sceneOptions:scene:callback:)
         _ = method
 
@@ -94,24 +94,6 @@ final class BranchSwiftNameTests: XCTestCase {
         _ = method
         XCTAssertTrue(branch.responds(to: NSSelectorFromString("requestDeepLinkData:callback:")))
     }
-
-    /// `requestDeepLinkDataWithLaunchOptions:callback:` → `requestDeepLinkData(launchOptions:) async throws`
-    func testAsyncNameRequestDeepLinkDataLaunchOptions() {
-        let method: ([AnyHashable: Any]?) async throws -> [AnyHashable: Any] =
-            branch.requestDeepLinkData(launchOptions:)
-        _ = method
-        XCTAssertTrue(branch.responds(to: NSSelectorFromString("requestDeepLinkDataWithLaunchOptions:callback:")))
-    }
-
-    #if !os(tvOS)
-    /// `requestDeepLinkDataWithSceneOptions:scene:callback:` → `requestDeepLinkData(sceneOptions:scene:) async throws`
-    func testAsyncNameRequestDeepLinkDataSceneOptionsScene() {
-        let method: (UIScene.ConnectionOptions?, UIScene) async throws -> [AnyHashable: Any] =
-            branch.requestDeepLinkData(sceneOptions:scene:)
-        _ = method
-        XCTAssertTrue(branch.responds(to: NSSelectorFromString("requestDeepLinkDataWithSceneOptions:scene:callback:")))
-    }
-    #endif
 
     /// `setUserAlias:completion:` → `setUserAlias(_:) async throws`
     ///
@@ -206,20 +188,13 @@ final class BranchSwiftNameTests: XCTestCase {
     /// scene delegate runs in — so a change to an imported signature breaks the build here instead
     /// of leaving behind an example that no longer compiles.
     ///
-    /// Two deviations from those examples, both forced by this target's Swift 6 language mode. The
-    /// integration app builds in Swift 5 mode, where the simpler forms shown there are accepted:
-    ///
-    /// - `Task.detached` rather than `Task { }`. The async variants return a non-Sendable
-    ///   `[AnyHashable: Any]`, which an inherited main-actor task cannot receive: *"non-sendable
-    ///   result type '[AnyHashable : Any]' cannot be sent from nonisolated context"*. A detached
-    ///   task is nonisolated, so there is no actor to send the result back to.
-    /// - The `launchOptions` variant is pinned in its callback form. Its
-    ///   `[UIApplication.LaunchOptionsKey: Any]` argument is non-Sendable and belongs to the
-    ///   main-actor region, so it cannot be captured into a detached task either — no async form of
-    ///   it is expressible from a main-actor delegate under Swift 6.
+    /// One deviation from those examples, forced by this target's Swift 6 language mode: the
+    /// `branchLink` async variant runs in `Task.detached` rather than `Task { }`. It returns a
+    /// non-Sendable `[AnyHashable: Any]`, which an inherited main-actor task cannot receive. The
+    /// integration app builds in Swift 5 mode, where `Task { }` is accepted.
     @MainActor
     func testDocumentedCallSitesTypeCheckFromMainActor() {
-        // application(_:didFinishLaunchingWithOptions:) — callback form; see the note above.
+        // application(_:didFinishLaunchingWithOptions:)
         func didFinishLaunching(launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
             Branch.sharedInstance()?.requestDeepLinkData(launchOptions: launchOptions) { params, error in
                 _ = (params, error)
@@ -239,11 +214,8 @@ final class BranchSwiftNameTests: XCTestCase {
         #if !os(tvOS)
         // scene(_:willConnectTo:options:)
         func willConnect(scene: UIScene, connectionOptions: UIScene.ConnectionOptions) {
-            Task.detached {
-                _ = try? await Branch.sharedInstance()?.requestDeepLinkData(
-                    sceneOptions: connectionOptions,
-                    scene: scene
-                )
+            Branch.sharedInstance()?.requestDeepLinkData(sceneOptions: connectionOptions, scene: scene) { params, error in
+                _ = (params, error)
             }
         }
 
