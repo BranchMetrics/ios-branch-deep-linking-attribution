@@ -109,6 +109,12 @@
     NSDictionary *data = response.data;
 
     [self persistUserData:data preferenceHelper:preferenceHelper];
+    [self persistRandomizedBundleToken:data preferenceHelper:preferenceHelper];
+
+    // Saves the referring URL and both tokens for the full app, so it runs before the URL is cleared.
+    if (self.isInstall) {
+        [[BNCAppGroupsData shared] saveAppClipData];
+    }
 
     NSString *sessionData = [self sessionDataFromResponseData:data preferenceHelper:preferenceHelper error:error];
     [self persistSessionData:sessionData preferenceHelper:preferenceHelper];
@@ -116,13 +122,7 @@
     NSString *referringURL = [self referringURLFromSessionData:sessionData];
     [self clearLinkIdentifiers:preferenceHelper referringURL:referringURL];
 
-    [self persistRandomizedBundleToken:data preferenceHelper:preferenceHelper];
-
     [BranchRequestOpen releaseOpenResponseLock];
-
-    if (self.isInstall) {
-        [[BNCAppGroupsData shared] saveAppClipData];
-    }
 
 #if !TARGET_OS_TV
     [[BNCSKAdNetwork sharedInstance] updateFromOpenResponse:data isInstall:self.isInstall];

@@ -118,9 +118,12 @@
     json[@"ios_app_link_url"] = urlString;
 
     // First launch without a launch link: no randomized bundle token yet and no urlString.
-    // Checks the pasteboard when checkPasteboardOnInstall is set.
-    if (urlString.length == 0 && !self.preferenceHelper.randomizedBundleToken && !json[BRANCH_REQUEST_KEY_LOCAL_URL]) {
-        [self addLocalURLToInstallJSON:json];
+    if (urlString.length == 0 && !self.preferenceHelper.randomizedBundleToken) {
+        // Checks the pasteboard when checkPasteboardOnInstall is set.
+        if (!json[BRANCH_REQUEST_KEY_LOCAL_URL]) {
+            [self addLocalURLToInstallJSON:json];
+        }
+        [self addAppClipDataToJSON:json];
     }
     return json;
 }

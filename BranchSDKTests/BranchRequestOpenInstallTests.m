@@ -83,6 +83,26 @@ static NSInteger sRegisterAppCallCount = 0;
 
 @end
 
+// Records what saveAppClipData would read from the preference helper. Adds no ivars, so it can be
+// swapped onto the shared instance.
+static NSString *sSavedAppClipURL = nil;
+static NSString *sSavedAppClipDeviceToken = nil;
+static NSString *sSavedAppClipBundleToken = nil;
+
+@interface BNCAppGroupsDataSaveSpy : BNCAppGroupsData
+@end
+
+@implementation BNCAppGroupsDataSaveSpy
+
+- (void)saveAppClipData {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    sSavedAppClipURL = preferenceHelper.referringURL;
+    sSavedAppClipDeviceToken = preferenceHelper.randomizedDeviceToken;
+    sSavedAppClipBundleToken = preferenceHelper.randomizedBundleToken;
+}
+
+@end
+
 // Records the request body instead of sending it.
 @interface BranchRequestOpenInstallRecordingServerInterface : BNCServerInterface
 @property (nonatomic, copy) NSDictionary *lastPost;
@@ -181,6 +201,9 @@ static NSString * const kClickedLinkPayloadJSON =
     object_setClass([BNCAppGroupsData shared], [BNCAppGroupsData class]);
     sPostbackFineValues = nil;
     sRegisterAppCallCount = 0;
+    sSavedAppClipURL = nil;
+    sSavedAppClipDeviceToken = nil;
+    sSavedAppClipBundleToken = nil;
 
     [self.branch setValue:[BNCServerRequestQueue getInstance] forKey:@"requestQueue"];
     self.fakeQueue = nil;
@@ -351,6 +374,26 @@ static NSString * const kClickedLinkPayloadJSON =
 
     XCTAssertFalse(preferenceHelper.invokeRegisterApp);
     XCTAssertEqual(sPostbackFineValues.count, 0);
+}
+
+// The install open saves the App Clip's link and both tokens, then still clears the link. The
+// response carries no session data, as /v3/events/open does.
+- (void)testInstallOpenSavesAppClipLinkBeforeClearingIt {
+    object_setClass([BNCAppGroupsData shared], [BNCAppGroupsDataSaveSpy class]);
+    [BNCPreferenceHelper sharedInstance].referringURL = kInstallLinkURL;
+
+    BNCServerResponse *response = [BNCServerResponse new];
+    response.statusCode = @200;
+    response.data = @{
+        BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN: @"device_token",
+        BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: @"bundle_token"
+    };
+    [self settleFirstLaunchOpenWithResponse:response];
+
+    XCTAssertEqualObjects(sSavedAppClipURL, kInstallLinkURL);
+    XCTAssertEqualObjects(sSavedAppClipDeviceToken, @"device_token");
+    XCTAssertEqualObjects(sSavedAppClipBundleToken, @"bundle_token");
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].referringURL);
 }
 
 @end

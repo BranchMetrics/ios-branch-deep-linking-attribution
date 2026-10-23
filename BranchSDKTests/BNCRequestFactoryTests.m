@@ -11,6 +11,7 @@
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
 #import "BNCAppGroupsData.h"
+#import "BNCPreferenceHelper.h"
 
 static NSTimeInterval const kAppClipInstallTime = 1700000000;
 
@@ -291,6 +292,44 @@ static NSTimeInterval const kAppClipInstallTime = 1700000000;
 
     XCTAssertNil(json[BRANCH_REQUEST_KEY_APP_CLIP_BUNDLE_ID]);
     XCTAssertNil(json[BRANCH_REQUEST_KEY_APP_CLIP_RANDOMIZED_DEVICE_TOKEN]);
+    XCTAssertNil(json[BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL]);
+}
+
+// Builds the deep link payload with the given bundle token, restoring the stored one afterwards.
+- (NSDictionary *)deepLinkPayloadWithSavedAppClipDataForURLString:(NSString *)urlString bundleToken:(NSString *)bundleToken {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    NSString *savedBundleToken = preferenceHelper.randomizedBundleToken;
+    preferenceHelper.randomizedBundleToken = bundleToken;
+
+    NSDictionary *json = [[self factoryWithSavedAppClipData] dataForDeepLinkWithURLString:urlString];
+
+    preferenceHelper.randomizedBundleToken = savedBundleToken;
+    return json;
+}
+
+// The first-launch lookup without a link carries the App Clip's data, so it can resolve the App Clip's link.
+- (void)testDataForDeepLinkOnFirstLaunchAddsSavedAppClipData {
+    NSDictionary *json = [self deepLinkPayloadWithSavedAppClipDataForURLString:nil bundleToken:nil];
+
+    XCTAssertEqualObjects(json[BRANCH_REQUEST_KEY_APP_CLIP_BUNDLE_ID], @"io.branch.example.Clip");
+    XCTAssertEqualObjects(json[BRANCH_REQUEST_KEY_LATEST_APP_CLIP_INSTALL_TIME], BNCWireFormatFromDate([NSDate dateWithTimeIntervalSince1970:kAppClipInstallTime]));
+    XCTAssertEqualObjects(json[BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL], @"https://example.app.link/clip");
+    XCTAssertEqualObjects(json[BRANCH_REQUEST_KEY_APP_CLIP_RANDOMIZED_DEVICE_TOKEN], @"clip_device_token");
+    XCTAssertEqualObjects(json[BRANCH_REQUEST_KEY_APP_CLIP_RANDOMIZED_BUNDLE_TOKEN], @"clip_bundle_token");
+}
+
+// A first launch opened by a link resolves that link, so the App Clip's link does not replace it.
+- (void)testDataForDeepLinkWithLaunchLinkOmitsSavedAppClipData {
+    NSDictionary *json = [self deepLinkPayloadWithSavedAppClipDataForURLString:@"https://example.app.link/launch" bundleToken:nil];
+
+    XCTAssertNil(json[BRANCH_REQUEST_KEY_APP_CLIP_BUNDLE_ID]);
+    XCTAssertEqualObjects(json[BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL], @"https://example.app.link/launch");
+}
+
+- (void)testDataForDeepLinkAfterFirstLaunchOmitsSavedAppClipData {
+    NSDictionary *json = [self deepLinkPayloadWithSavedAppClipDataForURLString:nil bundleToken:@"existing_bundle_token"];
+
+    XCTAssertNil(json[BRANCH_REQUEST_KEY_APP_CLIP_BUNDLE_ID]);
     XCTAssertNil(json[BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL]);
 }
 
