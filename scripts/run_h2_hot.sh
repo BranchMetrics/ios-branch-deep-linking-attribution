@@ -47,6 +47,7 @@ APPROVAL_DOMAIN="com.apple.launchservices.schemeapproval"
 APPROVAL_KEY="com.apple.CoreSimulator.CoreSimulatorBridge-->${H2_URL%%:*}"
 
 fail() { echo "ERROR: $*"; exit 1; }
+driver_start=$(date +%s)
 
 case "$HOT_SCENARIO" in
     hot_uriScheme|hot_https_foreground) ;;
@@ -102,6 +103,44 @@ app_pid() {
         | awk -v label="UIKitApplication:$BUNDLE_ID" 'index($3, label) == 1 { print $1 }'
 }
 
+# Prints why the TestBed went away, then fails. Never prints branchlogs.txt (wire payloads); every probe is best-effort.
+diag_fail() {
+    local report
+    echo "DIAG: launchctl rows for UIKitApplication:$BUNDLE_ID (pid status label):"
+    { xcrun simctl spawn "$udid" launchctl list 2>/dev/null \
+        | awk -v label="UIKitApplication:$BUNDLE_ID" 'index($3, label) == 1 { print "DIAG: " $0; n++ } n == 3 { exit } END { if (!n) print "DIAG: none" }'; } || true
+    echo "DIAG: simulator log since driver start, termination lines for $BUNDLE_ID:"
+    { perl -e 'alarm 60; exec @ARGV' xcrun simctl spawn "$udid" log show --style compact \
+        --start "$(date -r "$driver_start" '+%Y-%m-%d %H:%M:%S')" \
+        --predicate "(process IN {\"runningboardd\", \"launchd_sim\", \"launchd\", \"SpringBoard\"}) AND (eventMessage CONTAINS \"$BUNDLE_ID\") AND (eventMessage CONTAINS[c] \"terminat\" OR eventMessage CONTAINS[c] \"exit\" OR eventMessage CONTAINS[c] \"jetsam\" OR eventMessage CONTAINS[c] \"crash\" OR eventMessage CONTAINS[c] \"killed\")" \
+        2>/dev/null | grep -E '^[0-9]{4}-' | tail -n 8 | cut -c1-400 | sed 's/^/DIAG: /'; } || true
+    # ReportCrash writes the .ips asynchronously, so give it up to 10s to appear.
+    for _ in 1 2 3 4 5 6 7 8 9 10; do
+        report=$({ ls -t "$HOME"/Library/Logs/DiagnosticReports/Branch-TestBed*.ips 2>/dev/null | head -n 1; } || true)
+        if [ -n "$report" ] && [ "$(stat -f %m "$report" 2>/dev/null || echo 0)" -ge "$driver_start" ]; then break; fi
+        report=""
+        sleep 1
+    done
+    if [ -n "$report" ]; then
+        echo "DIAG: crash report: $(basename "$report")"
+        { python3 -c '
+import json, sys
+try:
+    with open(sys.argv[1]) as f:
+        f.readline()
+        body = json.load(f)
+except Exception as e:
+    print("DIAG: crash report unreadable: " + type(e).__name__)
+    sys.exit(0)
+for key in ("exception", "termination"):
+    print("DIAG: " + key + ": " + json.dumps(body.get(key), sort_keys=True)[:300])
+' "$report" 2>/dev/null; } || true
+    else
+        echo "DIAG: no Branch-TestBed crash report newer than this run after 10s"
+    fi
+    fail "$@"
+}
+
 # Waits until the log is non-empty and its size unchanged for SETTLE_S; $1 names what failed to settle.
 wait_settled() {
     local what="${1:-branchlogs.txt}" path size last=-1 same=0 elapsed=0
@@ -114,7 +153,7 @@ wait_settled() {
         sleep 1
         elapsed=$((elapsed + 1))
     done
-    fail "$what did not settle within ${SETTLE_MAX_S}s"
+    diag_fail "$what did not settle within ${SETTLE_MAX_S}s"
 }
 
 # Waits until the log is larger than $1 bytes, so a slow delivery is not snapshotted early.
@@ -127,7 +166,7 @@ wait_grown() {
         sleep 1
         elapsed=$((elapsed + 1))
     done
-    fail "branchlogs.txt did not grow past the pre snapshot within ${SETTLE_MAX_S}s"
+    diag_fail "branchlogs.txt did not grow past the pre snapshot within ${SETTLE_MAX_S}s"
 }
 
 # Waits until applicationDidEnterBackground is logged after the first $1 bytes.
@@ -142,7 +181,7 @@ wait_backgrounded() {
         sleep 1
         elapsed=$((elapsed + 1))
     done
-    fail "TestBed did not log applicationDidEnterBackground within ${SETTLE_MAX_S}s of launching Preferences"
+    diag_fail "TestBed did not log applicationDidEnterBackground within ${SETTLE_MAX_S}s of launching Preferences"
 }
 
 mkdir -p "$OUTPUT_DIR"
@@ -154,7 +193,7 @@ if stale=$(log_path); then rm -f "$stale"; fi
 xcrun simctl launch "$udid" "$BUNDLE_ID" >/dev/null
 wait_settled
 pid=$(app_pid)
-[[ $pid =~ ^[0-9]+$ ]] || fail "TestBed is not running after launch"
+[[ $pid =~ ^[0-9]+$ ]] || diag_fail "TestBed is not running after launch"
 
 # 6. Snapshot. A launch that never opened is not a hot app.
 cp "$(log_path)" "$pre"
@@ -166,8 +205,8 @@ if [ "$WARM" = "1" ]; then
     wait_backgrounded "$(stat -f %z "$pre")"
     wait_settled "backgrounding"
     bg_pid=$(app_pid)
-    [[ $bg_pid =~ ^[0-9]+$ ]] || fail "TestBed not running after background"
-    [ "$bg_pid" = "$pid" ] || fail "relaunched during background"
+    [[ $bg_pid =~ ^[0-9]+$ ]] || diag_fail "TestBed not running after background"
+    [ "$bg_pid" = "$pid" ] || diag_fail "relaunched during background"
     echo "backgrounded, pid unchanged"
     cp "$(log_path)" "$pre"
 fi
@@ -195,8 +234,8 @@ wait_grown "$(stat -f %z "$pre")"
 wait_settled
 cp "$(log_path)" "$post"
 post_pid=$(app_pid)
-[[ $post_pid =~ ^[0-9]+$ ]] || fail "TestBed is not running after delivery"
-[ "$post_pid" = "$pid" ] || fail "relaunched"
+[[ $post_pid =~ ^[0-9]+$ ]] || diag_fail "TestBed is not running after delivery"
+[ "$post_pid" = "$pid" ] || diag_fail "relaunched"
 echo "pid unchanged"
 
 # 9. hot_https_foreground only: gate on the TestBed's lifecycle markers.

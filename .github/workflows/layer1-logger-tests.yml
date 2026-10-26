@@ -195,7 +195,7 @@ jobs:
           rm -f /tmp/h2-runtime-missing
           rc=0
           ./scripts/run_h2_hot.sh > /tmp/h2-driver.txt 2>&1 || rc=$?
-          grep -E '^(RUNTIME=|consent key: |settled after |openurl attempt |pid unchanged$|ERROR: )' /tmp/h2-driver.txt || true
+          grep -E '^(RUNTIME=|consent key: |settled after |openurl attempt |pid unchanged$|ERROR: |DIAG: )' /tmp/h2-driver.txt || true
           if grep -q '^ERROR: no available .* on runtime ' /tmp/h2-driver.txt; then
             touch /tmp/h2-runtime-missing
           fi
@@ -220,7 +220,7 @@ jobs:
           rm -f /tmp/w2-runtime-missing
           rc=0
           ./scripts/run_h2_hot.sh > /tmp/w2-driver.txt 2>&1 || rc=$?
-          grep -E '^(RUNTIME=|consent key: |settled after |openurl attempt |backgrounded, pid unchanged$|pid unchanged$|ERROR: )' /tmp/w2-driver.txt || true
+          grep -E '^(RUNTIME=|consent key: |settled after |openurl attempt |backgrounded, pid unchanged$|pid unchanged$|ERROR: |DIAG: )' /tmp/w2-driver.txt || true
           if grep -q '^ERROR: no available .* on runtime ' /tmp/w2-driver.txt; then
             touch /tmp/w2-runtime-missing
           fi
