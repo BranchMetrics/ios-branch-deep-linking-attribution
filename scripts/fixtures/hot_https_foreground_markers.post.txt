@@ -1,0 +1,2 @@
+[TestBedLifecycle] applicationDidBecomeActive
+[TestBedLifecycle] continueUserActivity

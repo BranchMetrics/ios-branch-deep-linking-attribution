@@ -6,7 +6,7 @@
 # has already built the TestBed app via `xcodebuild build-for-testing`. This
 # script:
 #   1. Identifies / boots a target simulator.
-#   2. Runs the L1Validation test plan via `xcodebuild test-without-building`.
+#   2. Runs the class ONLY_TESTING selects via `xcodebuild test-without-building`.
 #   3. Pulls branchlogs.txt out of the simulator's TestBed app sandbox so
 #      the Python validator (validate_l1_logs.py) can parse it.
 #
@@ -93,11 +93,9 @@ else
 fi
 
 # Run the L1 test. We use test-without-building because the workflow's
-# previous step already produced the .xctestrun in DerivedData. We do
-# NOT pass -testPlan to avoid having to wire L1Validation.xctestplan
-# into the shared scheme (the scheme has a separate WIP edit in flight).
-# `-only-testing` filters to just the L1WireValidationTest class against
-# the scheme's default test plan.
+# previous step already produced the .xctestrun in DerivedData. The scheme
+# runs the target's tests directly, with no test plan, so `-only-testing`
+# picks the one class this run captures.
 echo "==> Running '$ONLY_TESTING'..."
 TEST_EXIT_CODE=0
 xcodebuild test-without-building \
