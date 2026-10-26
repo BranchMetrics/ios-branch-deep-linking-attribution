@@ -952,9 +952,8 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     }];
 }
 
-// Presents the QR code in a page sheet with the title, image and Dismiss
-// button stacked by a UIStackView, so the layout reflows under Dynamic Type
-// instead of overlapping when the title wraps onto a second line.
+// Presents the QR code in a page sheet; a UIStackView lays out the title, image
+// and Dismiss button so the layout reflows under Dynamic Type.
 - (void)presentQRCodeSheetWithImage:(UIImage *)qrCodeImage {
     UIViewController *sheet = [UIViewController new];
     sheet.view.backgroundColor = [UIColor systemBackgroundColor];
@@ -992,8 +991,7 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
     stackView.spacing = 20;
     stackView.translatesAutoresizingMaskIntoConstraints = NO;
 
-    // Scrolls instead of clipping when the title wraps and the stack grows
-    // taller than the medium detent at large Dynamic Type sizes.
+    // Scrolls when the stack outgrows the medium detent at large Dynamic Type sizes.
     UIScrollView *scrollView = [UIScrollView new];
     scrollView.translatesAutoresizingMaskIntoConstraints = NO;
     [scrollView addSubview:stackView];
