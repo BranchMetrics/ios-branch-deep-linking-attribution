@@ -36,7 +36,6 @@ extern NSString * const kTestBedBtnLogout;
 extern NSString * const kTestBedBtnGoToPasteControl;
 extern NSString * const kTestBedBtnConsumerProtectionLevel;
 extern NSString * const kTestBedBtnNotificationSend;
-extern NSString * const kTestBedBtnPluginNotifyInit;
 extern NSString * const kTestBedBtnRequestDeepLink;
 
 #pragma mark - Buttons (Paste Control scene)

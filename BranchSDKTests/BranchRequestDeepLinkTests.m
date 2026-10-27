@@ -299,8 +299,7 @@ static NSString * const kResolvedLinkPayloadJSON =
                     @"An unfiltered URL must still be resolved.");
 }
 
-// setUrlPatternsToIgnore: is consulted by handleDeepLink: but not by requestDeepLinkData:,
-// so a URL the host app explicitly asked us to ignore is still sent to /v3/deeplink.
+// A URL matching a setUrlPatternsToIgnore: pattern must not be sent to /v3/deeplink.
 - (void)testRequestDeepLinkDataDoesNotResolveUserIgnoredURL {
     [self.branch setUrlPatternsToIgnore:@[@"\\/ignore-this-path\\/"]];
 
@@ -310,7 +309,7 @@ static NSString * const kResolvedLinkPayloadJSON =
                  @"A URL matching a user ignore pattern must not be sent to /v3/deeplink.");
 }
 
-// The built-in skiplist exists to keep credential-bearing URLs off the wire. Same gap.
+// The built-in skiplist keeps credential-bearing URLs off the wire.
 - (void)testRequestDeepLinkDataDoesNotResolveDefaultSkiplistURL {
     [self.branch requestDeepLinkData:@"https://example.com/callback?access_token=abc123" callback:nil];
 

@@ -14,7 +14,12 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCServerAPI.h"
 #import "BranchConfigurationController.h"
+#import "BranchJsonConfig.h"
 #import "NSError+Branch.h"
+
+@interface BranchJsonConfig (BranchConfigurationTest)
+- (void)loadConfigFile;
+@end
 
 @interface Branch (BranchConfigurationTest)
 // Test-only reset for the +initialize: reinitialization guard (file-private in Branch.m).
@@ -627,6 +632,41 @@ static NSString * const kRealBranchKey = @"key_live_hcnegAumkH7Kv18M8AOHhfgiohpX
     XCTAssertEqualWithAccuracy(prefs.retryInterval, 1.0, 0.001);
     XCTAssertEqualWithAccuracy(prefs.thirdPartyAPIsWaitTime, 0.5, 0.001);
     XCTAssertTrue([[branch valueForKey:@"automaticOpenEvents"] boolValue]);
+}
+
+#pragma mark - branch.json
+
+// Loads json as branch.json and returns the warnings logged while parsing it.
+- (NSArray<NSString *> *)warningsLoadingBranchJson:(NSString *)json {
+    NSURL *fileURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:[NSUUID UUID].UUIDString]];
+    [[json dataUsingEncoding:NSUTF8StringEncoding] writeToURL:fileURL atomically:YES];
+
+    NSMutableArray<NSString *> *warnings = [NSMutableArray array];
+    BranchLogger *logger = [BranchLogger shared];
+    logger.loggingEnabled = YES;
+    logger.logCallback = ^(NSString *message, BranchLogLevel logLevel, NSError *error) {
+        if (logLevel == BranchLogLevelWarning) {
+            [warnings addObject:message];
+        }
+    };
+
+    BranchJsonConfig *config = [BranchJsonConfig new];
+    [config setValue:fileURL forKey:@"configFileURL"];
+    [config loadConfigFile];
+
+    [[NSFileManager defaultManager] removeItemAtURL:fileURL error:nil];
+    return warnings;
+}
+
+- (void)testBranchJsonWarnsOnRemovedDeferInitForPluginRuntime {
+    NSArray<NSString *> *warnings = [self warningsLoadingBranchJson:@"{\"deferInitForPluginRuntime\": true}"];
+    XCTAssertEqual(warnings.count, 1);
+    XCTAssertTrue([warnings.firstObject containsString:@"deferInitForPluginRuntime"]);
+}
+
+- (void)testBranchJsonWithoutDeferInitForPluginRuntimeDoesNotWarn {
+    NSArray<NSString *> *warnings = [self warningsLoadingBranchJson:@"{\"enableLogging\": true}"];
+    XCTAssertEqual(warnings.count, 0);
 }
 
 @end

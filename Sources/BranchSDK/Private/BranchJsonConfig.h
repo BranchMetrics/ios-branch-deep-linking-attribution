@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 
 extern NSString * _Nonnull const BranchJsonConfigDebugModeOption;
-extern NSString * _Nonnull const BranchJsonConfigDeferInitForPluginRuntimeOption;
 extern NSString * _Nonnull const BranchJsonConfigEnableLogging;
 extern NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall;
 extern NSString * _Nonnull const BranchJsonConfigAPIUrl;
@@ -19,7 +18,6 @@ extern NSString * _Nonnull const BranchJsonConfigAPIUrl;
 @property (class, readonly, nonnull) BranchJsonConfig *instance;
 @property (nonatomic, readonly, nullable) NSURL *configFileURL;
 @property (nonatomic, readonly, assign) BOOL debugMode;
-@property (nonatomic, readonly, assign) BOOL deferInitForPluginRuntime;
 @property (nonatomic, readonly, assign) BOOL enableLogging;
 @property (nonatomic, readonly, assign) BOOL checkPasteboardOnInstall;
 @property (nonatomic, readonly, nullable, copy) NSString *apiUrl;
