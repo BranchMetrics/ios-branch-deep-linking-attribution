@@ -26,14 +26,4 @@
 
 - (NSString *)processResponse:(BNCServerResponse *)response;
 
-+ (NSString *)createLinkFromBranchKey:(NSString *)branchKey
-                                 tags:(NSArray *)tags
-                                alias:(NSString *)alias
-                                 type:(BranchLinkType)type
-                        matchDuration:(NSInteger)duration
-                              channel:(NSString *)channel
-                              feature:(NSString *)feature
-                                stage:(NSString *)stage
-                               params:(NSDictionary *)params;
-
 @end

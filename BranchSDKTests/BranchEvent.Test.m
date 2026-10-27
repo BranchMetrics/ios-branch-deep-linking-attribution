@@ -15,7 +15,6 @@
 #import "BranchConfiguration.h"
 
 @interface Branch (BranchEventTest)
-- (void) processNextQueueItem;
 // Test-only reset for the +initialize: reinitialization guard (file-private in Branch.m).
 + (void)resetInitializationGuardForTesting;
 @end

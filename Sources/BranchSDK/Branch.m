@@ -50,7 +50,6 @@
 #import "BNCUserAgentCollector.h"
 #import "BNCSpotlightService.h"
 #import "BNCContentDiscoveryManager.h"
-#import "BranchContentDiscoverer.h"
 #import "BNCODMInfoCollector.h"
 #endif
 
@@ -183,7 +182,6 @@ void ForceCategoriesToLoad(void) {
 // This is enabled by setting deferInitForPluginRuntime to true in branch.json
 @property (nonatomic, assign, readwrite) BOOL deferInitForPluginRuntime;
 @property (nonatomic, copy, nullable) void (^cachedInitBlock)(void);
-@property (nonatomic, copy, readwrite) NSString *cachedURLString;
 
 @property (nonatomic, copy, nullable) callbackWithParams deepLinkHandler;
 
@@ -1862,16 +1860,6 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     }
 }
 
-static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
-    if (block) {
-        if ([NSThread isMainThread]) {
-            block();
-        } else {
-            dispatch_sync(dispatch_get_main_queue(), block);
-        }
-    }
-}
-
 - (void)clearNetworkQueue {
     dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
     self.networkCount = 0;
@@ -2050,28 +2038,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 #pragma mark - Crashlytics reporting enhancements
 
-+ (void)logLowMemoryToCrashlytics {
-    [NSNotificationCenter.defaultCenter
-        addObserverForName:UIApplicationDidReceiveMemoryWarningNotification
-        object:nil
-        queue:NSOperationQueue.mainQueue
-        usingBlock:^(NSNotification *notification) {
-            BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
-            [crashlytics setCustomValue:@YES forKey:BRANCH_CRASHLYTICS_LOW_MEMORY_KEY];
-        }
-    ];
-}
-
 + (void)addBranchSDKVersionToCrashlyticsReport {
     BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
     [crashlytics setCustomValue:BNC_SDK_VERSION forKey:BRANCH_CRASHLYTICS_SDK_VERSION_KEY];
-}
-
-+ (void) clearAll {
-    [[BNCServerRequestQueue getInstance] clearQueue];
-    [BranchRequestDeepLink releaseDeepLinkResponseLock];
-    [BranchRequestOpen releaseOpenResponseLock];
-    [BNCPreferenceHelper clearAll];
 }
 
 #pragma mark - Branch Core Deep Linking Method
