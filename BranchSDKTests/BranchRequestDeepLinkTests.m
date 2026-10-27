@@ -288,6 +288,44 @@ static NSString * const kResolvedLinkPayloadJSON =
     XCTAssertEqualObjects(params[@"$canonical_identifier"], @"content/12345");
 }
 
+// A server-supplied redirect is opened only when it is http or https.
+- (void)testInvokeFeaturesDoesNotOpenNonWebRedirectURL {
+    BranchRequestDeepLink *request = [[BranchRequestDeepLink alloc] initWithCallback:nil];
+    NSString *savedUXType = [BNCPreferenceHelper sharedInstance].uxType;
+
+    for (NSString *uxType in @[ WEB_UX_EXTERNAL_BROWSER, WEB_UX_IN_APP_WEBVIEW ]) {
+        for (NSString *redirect in @[ @"customscheme://path", @"javascript:alert(1)", @"file:///etc/hosts" ]) {
+            BOOL redirected = [request invokeFeatures:@{
+                BRANCH_RESPONSE_KEY_ENHANCED_WEB_LINK_UX: uxType,
+                BRANCH_RESPONSE_KEY_WEB_LINK_REDIRECT_URL: redirect
+            }];
+            XCTAssertFalse(redirected, @"%@ must not be opened for %@", redirect, uxType);
+        }
+    }
+    XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].uxType, savedUXType);
+}
+
+// A rejected redirect falls through to the normal flow, so the callback still fires.
+- (void)testNonWebRedirectURLStillCallsCallback {
+    __block BOOL callbackSucceeded = NO;
+    BranchRequestDeepLink *request = [[BranchRequestDeepLink alloc] initWithCallback:^(BOOL success, NSError *error) {
+        callbackSucceeded = success;
+    }];
+    request.urlString = kResolvedLinkURL;
+    request.uri = kResolvedLinkURL;
+
+    BNCServerResponse *response = [self responseWithData:@{
+        BRANCH_RESPONSE_KEY_SESSION_DATA: kResolvedLinkPayloadJSON,
+        BRANCH_RESPONSE_KEY_INVOKE_FEATURES: @{
+            BRANCH_RESPONSE_KEY_ENHANCED_WEB_LINK_UX: WEB_UX_EXTERNAL_BROWSER,
+            BRANCH_RESPONSE_KEY_WEB_LINK_REDIRECT_URL: @"customscheme://path"
+        }
+    }];
+    [request processResponse:response error:nil];
+
+    XCTAssertTrue(callbackSucceeded);
+}
+
 #pragma mark - EMT-4029: skiplisted URLs must not be resolved
 
 // Control: proves the harness detects a resolution request when one is genuinely made.

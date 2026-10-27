@@ -51,10 +51,10 @@
     
     [[Branch sharedInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:requestUUID TimeStamp:requestCreationTimeStamp];
-    NSDictionary *jsonInstall = [factory dataForInstallWithURLString:@"https://branch.io"];
+    NSDictionary *jsonInstall = [factory dataForRequestInstallWithURLString:@"https://branch.io"];
     XCTAssertTrue([odm isEqualToString:[jsonInstall objectForKey:@"odm_info"]]);
     
-    NSDictionary *jsonOpen = [factory dataForOpenWithURLString:@"https://branch.io"];
+    NSDictionary *jsonOpen = [factory dataForRequestOpenWithURLString:@"https://branch.io"];
     XCTAssertTrue([odm isEqualToString:[jsonOpen objectForKey:@"odm_info"]]);
     
     NSDictionary *event = @{@"name": @"ADD_TO_CART"};
@@ -62,10 +62,10 @@
     XCTAssertTrue([jsonEvent objectForKey:@"odm_info"] == nil);
     
     [[Branch sharedInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelReduced];
-    jsonInstall = [factory dataForInstallWithURLString:@"https://branch.io"];
+    jsonInstall = [factory dataForRequestInstallWithURLString:@"https://branch.io"];
     XCTAssertTrue([jsonInstall objectForKey:@"odm_info"] == nil);
     
-    jsonOpen = [factory dataForOpenWithURLString:@"https://branch.io"];
+    jsonOpen = [factory dataForRequestOpenWithURLString:@"https://branch.io"];
     XCTAssertTrue([jsonOpen objectForKey:@"odm_info"] == nil);
     
     self.prefHelper.odmInfo = nil;
@@ -83,13 +83,13 @@
     
     [[Branch sharedInstance] setConsumerProtectionAttributionLevel:BranchAttributionLevelFull];
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:requestUUID TimeStamp:requestCreationTimeStamp];
-    NSDictionary *jsonInstall = [factory dataForInstallWithURLString:@"https://branch.io"];
+    NSDictionary *jsonInstall = [factory dataForRequestInstallWithURLString:@"https://branch.io"];
     XCTAssertTrue([odm isEqualToString:[jsonInstall objectForKey:@"odm_info"]]);
     
     sleep(10);
     
     BNCRequestFactory *factory2 = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:requestUUID TimeStamp:requestCreationTimeStamp];
-    NSDictionary *jsonOpen = [factory2 dataForOpenWithURLString:@"https://branch.io"];
+    NSDictionary *jsonOpen = [factory2 dataForRequestOpenWithURLString:@"https://branch.io"];
     XCTAssertTrue(![odm isEqualToString:[jsonOpen objectForKey:@"odm_info"]]);
     
     self.prefHelper.odmInfo = nil;

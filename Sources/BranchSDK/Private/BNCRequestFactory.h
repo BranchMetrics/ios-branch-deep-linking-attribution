@@ -23,10 +23,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithBranchKey:(NSString *)key UUID:(NSString *)requestUUID TimeStamp:(NSNumber *)requestTimeStamp NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
-- (NSDictionary *)dataForInstallWithURLString:(nullable NSString *)urlString;
-- (NSDictionary *)dataForOpenWithURLString:(nullable NSString *)urlString;
 - (NSDictionary *)dataForDeepLinkWithURLString:(nullable NSString *)urlString;
 - (NSDictionary *)dataForRequestOpenWithURLString:(nullable NSString *)urlString;
+- (NSDictionary *)dataForRequestInstallWithURLString:(nullable NSString *)urlString;
 
 // Event data is passed in
 - (NSDictionary *)dataForEventWithEventDictionary:(NSMutableDictionary *)dictionary;

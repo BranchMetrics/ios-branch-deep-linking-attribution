@@ -285,6 +285,7 @@ static NSString *bnc_branchKey = nil;
         [Branch applyConfiguration:configuration toBranch:branch];
     }
 
+    [Branch addBranchSDKVersionToCrashlyticsReport];
     return branch;
 }
 
