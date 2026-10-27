@@ -228,13 +228,7 @@
         return;
     }
 
-    void (^completionHandler)(NSError *) = ^(NSError * _Nullable error) {
-        if (error) {
-            [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
-        } else {
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue] error:nil];
-        }
-    };
+    void (^completionHandler)(NSError *) = [self completionHandlerLoggingSuccess:[NSString stringWithFormat:@"Update conversion value was successful. Conversion Value - %@", conversionValue]];
 
     if (@available(iOS 16.1, macCatalyst 16.1, *)) {
         NSString *coarseConversionValue = [self getCoarseConversionValueFromDataResponse:responseData];
@@ -253,38 +247,44 @@
     }
 }
 
-- (void (^)(NSError *))skanCompletionHandlerWithSuccessDescription:(NSString *)description {
+// Stores the response's invoke_register_app flag, then registers the install or, for an open, updates the conversion value.
+- (void)updateFromOpenResponse:(NSDictionary *)responseData isInstall:(BOOL)isInstall {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    id invokeRegister = responseData[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP];
+    preferenceHelper.invokeRegisterApp = [invokeRegister isKindOfClass:NSNumber.class] && [invokeRegister boolValue];
+
+    if (isInstall) {
+        if (preferenceHelper.invokeRegisterApp) {
+            [self registerInstall];
+        }
+    } else {
+        [self updateConversionValueFromResponse:responseData];
+    }
+}
+
+// Registers the install using the newest SKAdNetwork API this OS supports.
+- (void)registerInstall {
+    void (^completionHandler)(NSError *) = [self completionHandlerLoggingSuccess:@"Update conversion value was successful for INSTALL Event"];
+
+    if (@available(iOS 16.1, macCatalyst 16.1, *)) {
+        NSString *defaultCoarseConValue = [self getCoarseConversionValueFromDataResponse:@{}];
+        [self updatePostbackConversionValue:0 coarseValue:defaultCoarseConValue lockWindow:NO completionHandler:completionHandler];
+    } else if (@available(iOS 15.4, macCatalyst 15.4, *)) {
+        [self updatePostbackConversionValue:0 completionHandler:completionHandler];
+    } else {
+        [self registerAppForAdNetworkAttribution];
+    }
+}
+
+// Returns a postback completion handler that logs the error, or successMessage on success.
+- (void (^)(NSError *))completionHandlerLoggingSuccess:(NSString *)successMessage {
     return ^(NSError * _Nullable error) {
         if (error) {
             [[BranchLogger shared] logError:[NSString stringWithFormat:@"Update conversion value failed with error - %@", [error description]] error:error];
         } else {
-            [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"Update conversion value was successful for %@", description] error:nil];
+            [[BranchLogger shared] logDebug:successMessage error:nil];
         }
     };
-}
-
-- (void)registerAndUpdateConversionFromResponse:(NSDictionary *)data isInstall:(BOOL)isInstall {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
-
-    if ([data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP] isKindOfClass:NSNumber.class]) {
-        NSNumber *invokeRegister = (NSNumber *)data[BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP];
-        preferenceHelper.invokeRegisterApp = invokeRegister.boolValue;
-        if (invokeRegister.boolValue && isInstall) {
-            void (^completionHandler)(NSError *) = [self skanCompletionHandlerWithSuccessDescription:@"INSTALL Event"];
-            if (@available(iOS 16.1, macCatalyst 16.1, *)){
-                NSString *defaultCoarseConValue = [self getCoarseConversionValueFromDataResponse:@{}];
-                [self updatePostbackConversionValue:0 coarseValue:defaultCoarseConValue
-                    lockWindow:NO completionHandler:completionHandler];
-            } else if (@available(iOS 15.4, macCatalyst 15.4, *)){
-                [self updatePostbackConversionValue:0 completionHandler:completionHandler];
-            }
-            else {
-                [self registerAppForAdNetworkAttribution];
-            }
-        }
-    } else {
-        preferenceHelper.invokeRegisterApp = NO;
-    }
 }
 
 - (BOOL)isSKANAllowedForAttributionLevel {
