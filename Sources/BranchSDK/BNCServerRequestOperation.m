@@ -122,8 +122,7 @@
     }
 
     if ([self.request isKindOfClass:[BranchRequestOpen class]] || [self.request isKindOfClass:[BranchRequestDeepLink class]]) {
-       // If we do not have a randomized bundle token, we should receive one from the service
-        // We will receive from callback in v3/deeplink
+        // Session requests may run without a randomized bundle token. It arrives with the /v3/events/open response.
     } else {
         if (!preferenceHelper.randomizedDeviceToken || !preferenceHelper.randomizedBundleToken) {
             [[BranchLogger shared] logError:[NSString stringWithFormat:@"Missing session items (device token or bundle token). Dropping request: %@", self.request.requestUUID] error:nil];
