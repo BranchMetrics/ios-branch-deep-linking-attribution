@@ -552,7 +552,7 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
 - (void)testOrganicLaunchResolveQueuedAtTheForegroundSendsOneOpen {
     self.stub.deepLinkMode = BranchResolveStubModeOrganicPayload;
 
-    [self.branch requestDeepLinkDataWithLaunchOptions:@{} callback:nil];
+    [self.branch requestDeepLinkDataWithLaunchOptions:@{} callback:^(NSDictionary *params, NSError *error) {}];
     [self awaitOneQueuedOrganicResolve];
 
     [self foreground];
