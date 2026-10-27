@@ -8,16 +8,10 @@
 
 #import <XCTest/XCTest.h>
 #import "BranchEvent.h"
-#import "BranchOpenRequest.h"
-#import "BranchInstallRequest.h"
 
 @interface BranchEvent()
 // private BranchEvent methods used to build a BranchEventRequest
 - (NSDictionary *)buildEventDictionary;
-@end
-
-@interface BranchOpenRequest()
-- (NSString *)getActionName;
 @end
 
 @interface BNCClassSerializationTests : XCTestCase
@@ -67,54 +61,6 @@
     XCTAssertTrue([request.serverURL.absoluteString isEqualToString:unarchivedRequest.serverURL.absoluteString]);
     XCTAssertTrue(request.eventDictionary.count == unarchivedRequest.eventDictionary.count);
     XCTAssertNil(unarchivedRequest.completion);
-}
-
-- (void)testBranchOpenRequestArchive {
-    BranchOpenRequest *request = [[BranchOpenRequest alloc] initWithCallback:nil];
-    request.urlString = @"https://branch.io";
-    
-    // archive the event
-    NSError *error = nil;
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:request requiringSecureCoding:YES error:&error];
-    XCTAssertNil(error);
-    XCTAssertNotNil(data);
-    
-    // unarchive the event
-    id object = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithArray:@[BranchOpenRequest.class]] fromData:data error:&error];
-    XCTAssertNil(error);
-    XCTAssertNotNil(object);
-    
-    // check object
-    XCTAssertTrue([object isKindOfClass:BranchOpenRequest.class]);
-    BranchOpenRequest *unarchivedRequest = (BranchOpenRequest *)object;
-    
-    XCTAssertTrue([request.urlString isEqualToString:unarchivedRequest.urlString]);
-    XCTAssertNil(unarchivedRequest.callback);
-    XCTAssertTrue([@"open" isEqualToString:[unarchivedRequest getActionName]]);
-}
-
-- (void)testBranchInstallRequestArchive {
-    BranchInstallRequest *request = [[BranchInstallRequest alloc] initWithCallback:nil];
-    request.urlString = @"https://branch.io";
-    
-    // archive the event
-    NSError *error = nil;
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:request requiringSecureCoding:YES error:&error];
-    XCTAssertNil(error);
-    XCTAssertNotNil(data);
-    
-    // unarchive the event
-    id object = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithArray:@[BranchInstallRequest.class]] fromData:data error:&error];
-    XCTAssertNil(error);
-    XCTAssertNotNil(object);
-    
-    // check object
-    XCTAssertTrue([object isKindOfClass:BranchInstallRequest.class]);
-    BranchInstallRequest *unarchivedRequest = (BranchInstallRequest *)object;
-    
-    XCTAssertTrue([request.urlString isEqualToString:unarchivedRequest.urlString]);
-    XCTAssertNil(unarchivedRequest.callback);
-    XCTAssertTrue([@"install" isEqualToString:[unarchivedRequest getActionName]]);
 }
 
 @end

@@ -6,8 +6,6 @@
 //
 
 #import "BNCServerRequestOperation.h"
-#import "BranchOpenRequest.h"
-#import "BranchInstallRequest.h"
 #import "BranchEvent.h"
 #import "BranchLogger.h"
 #import "NSError+Branch.h"
@@ -123,11 +121,8 @@
         }
     }
 
-    if ([self.request isKindOfClass:[BranchInstallRequest class]]) {
-        // Install requests: no session validation needed
-    } else if ([self.request isKindOfClass:[BranchOpenRequest class]] || [self.request isKindOfClass:[BranchRequestOpen class]] || [self.request isKindOfClass:[BranchRequestDeepLink class]]) {
-       // If we do not have a randomized bundle token, we should receive one from the service
-        // We will receive from callback in v3/deeplink
+    if ([self.request isKindOfClass:[BranchRequestOpen class]] || [self.request isKindOfClass:[BranchRequestDeepLink class]]) {
+        // Session requests may run without a randomized bundle token. It arrives with the /v3/events/open response.
     } else {
         if (!preferenceHelper.randomizedDeviceToken || !preferenceHelper.randomizedBundleToken) {
             [[BranchLogger shared] logError:[NSString stringWithFormat:@"Missing session items (device token or bundle token). Dropping request: %@", self.request.requestUUID] error:nil];
@@ -139,10 +134,6 @@
         }
     }
 
-    if ([self.request isKindOfClass:[BranchOpenRequest class]]) {
-        [BranchOpenRequest setWaitNeededForOpenResponseLock];
-    }
-    
     if ([self.request isKindOfClass:[BranchRequestDeepLink class]]) {
         [BranchRequestDeepLink setWaitNeededForDeepLinkResponseLock];
     }

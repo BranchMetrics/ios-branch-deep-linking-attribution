@@ -28,8 +28,9 @@ dead because they still shell out to fastlane: `docs/testing.md`.
 - **Change the version only with `scripts/version.sh`** (`-s 4.0.0-beta.3`, `-i`). It keeps four
   literals in step, and `MARKETING_VERSION` must stay `Major.Minor.Patch` with no `-beta.N`
   suffix. See `docs/releasing.md`.
-- **`BranchOpenRequest` is not `BranchRequestOpen`.** Both post to `/v3/events/open` and they are
-  wired into different flows. Check which one you are editing.
+- **Two classes establish a session: `BranchRequestOpen` and `BranchRequestDeepLink`.**
+  `BranchRequestOpen` posts to `/v3/events/open` (install or open); `BranchRequestDeepLink` posts
+  to `/v3/deeplink`. They are siblings, so any init check has to name both.
 - **Attribution level `NONE` drops a request inside `BNCServerRequestOperation`**, before the
   network layer. A request can be enqueued, report success, and never have been sent. Assert on
   the server interface, not on enqueue.
