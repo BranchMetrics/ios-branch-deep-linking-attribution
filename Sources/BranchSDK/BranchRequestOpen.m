@@ -209,6 +209,9 @@
 
     if (string) {
         preferenceHelper.randomizedBundleToken = string;
+        if (self.isInstall) {
+            preferenceHelper.pasteboardChecked = NO;
+        }
     }
 
     [BranchRequestOpen releaseOpenResponseLock];

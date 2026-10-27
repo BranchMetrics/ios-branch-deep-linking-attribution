@@ -24,18 +24,17 @@ serial, but serialized by the OS rather than by a driving loop in `Branch.m`.
 Ordering comes from `NSOperationQueuePriority` (session-critical work is enqueued `High`) plus
 dependencies attached by `addInitDependencyIfNeeded:`.
 
-**A dependency outranks priority.** `isInitRequest:` (`BNCServerRequestQueue.m:87`) counts all
-three session-establishing classes: `BranchOpenRequest`, `BranchRequestOpen` and
-`BranchRequestDeepLink`. `BranchInstallRequest` is a subclass of `BranchOpenRequest`, so the
-`isKindOfClass:` check covers it too. An init request becomes `currentInitOperation`; every
+**A dependency outranks priority.** `isInitRequest:` (`BNCServerRequestQueue.m:126`) counts both
+session-establishing classes: `BranchRequestOpen` (`/v3/events/open`, install or open) and
+`BranchRequestDeepLink` (`/v3/deeplink`). An init request becomes `currentInitOperation`; every
 non-init request enqueued while that one is live gets an `addDependency:` on it.
 
 This is deliberately **the same enumeration** the operation's session-validation step uses
-(`BNCServerRequestOperation.m:119`), and the code says so in a comment. The two agreeing is the
-invariant: a queue-side check that recognised only `BranchOpenRequest` would report "no init in
-flight" for every 4.0 session, since the other two are siblings rather than subclasses. If you
-change one enumeration, change the other, and `BranchDeepLinkQueueDrainTests` is what catches
-you.
+(`BNCServerRequestOperation.m:124`), and the code says so in a comment. The two agreeing is the
+invariant: a queue-side check that recognised only `BranchRequestOpen` would report "no init in
+flight" for every link-resolving launch, since the two are siblings rather than subclasses. If
+you change one enumeration, change the other, and `BranchDeepLinkQueueDrainTests` is what
+catches you.
 
 **The remaining sharp edge is the reference, not the grouping.** `currentInitOperation` is
 `weak` (`BNCServerRequestQueue.m:26`), so it can go nil and silently remove the gate from
@@ -95,8 +94,9 @@ locks; never call them on the main thread.
 
 ## Non-obvious invariants
 
-- **`BranchOpenRequest` is not `BranchRequestOpen`.** Both hit `/v3/events/open`, wired into
-  different flows.
+- **Two classes establish a session: `BranchRequestOpen` and `BranchRequestDeepLink`.**
+  `BranchRequestOpen` hits `/v3/events/open` (install or open); `BranchRequestDeepLink` hits
+  `/v3/deeplink`. The queue and the operation must enumerate both.
 - **The init dependency is `weak`.** `currentInitOperation` going nil silently removes the gate.
 - **Attribution `NONE` drops requests inside the operation**, before the network layer. A request
   can be enqueued, "succeed", and never have been sent. Assert on the interface, not on enqueue.
