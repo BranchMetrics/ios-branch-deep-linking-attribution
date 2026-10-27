@@ -153,13 +153,6 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
     __attribute__((deprecated(("Use `BranchUniversalObject.locallyIndex` instead."))))
     BOOL automaticallyListOnSpotlight;
 
-
-/// @name Log a User Content View Event
-
-
-- (void)registerView;
-- (void)registerViewWithCallback:(void (^_Nullable)(NSDictionary * _Nullable params, NSError * _Nullable error))callback;
-
 /// @name Short Links
 
 

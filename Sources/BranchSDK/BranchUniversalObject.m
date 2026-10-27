@@ -12,7 +12,6 @@
 #import "BranchLogger.h"
 #import "BNCEncodingUtils.h"
 #import "Branch.h"
-#import "BranchEvent.h"
 #import "BranchLinkBuilder.h"
 #import "NSMutableDictionary+Branch.h"
 
@@ -320,31 +319,6 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         self.publiclyIndex,
         self.keywords,
         self.expirationDate];
-}
-
-#pragma mark - User Event Logging
-
-- (void)registerView {
-    [self registerViewWithCallback:nil];
-}
-
-- (void)registerViewWithCallback:(callbackWithParams)callback {
-    if (!self.canonicalIdentifier && !self.title) {
-        NSString *message = @"Could not register view.";
-        NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError localizedMessage:message];
-        [[BranchLogger shared] logWarning:@"TODO: replace this error" error:error];
-        if (callback) callback([[NSDictionary alloc] init], error);
-        return;
-    }
-    
-    #if !TARGET_OS_TV
-    if (self.locallyIndex) {
-        [self listOnSpotlight];
-    }
-    #endif
-    
-    [[BranchEvent standardEvent:BranchStandardEventViewItem withContentItem:self] logEvent];
-    if (callback) callback(@{}, nil);
 }
 
 #pragma mark - Link Creation Methods
