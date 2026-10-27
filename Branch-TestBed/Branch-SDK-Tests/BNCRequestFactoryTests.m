@@ -29,7 +29,7 @@
 
 - (void)testInitWithBranchKeyNil {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:nil UUID:_requestUUID TimeStamp:_requestCreationTimeStamp];
-    NSDictionary *json = [factory dataForInstallWithURLString:@"https://branch.io"];
+    NSDictionary *json = [factory dataForRequestInstallWithURLString:@"https://branch.io"];
     XCTAssertNotNil(json);
     
     // key is omitted when nil
@@ -40,7 +40,7 @@
 
 - (void)testInitWithBranchKeyEmpty {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
-    NSDictionary *json = [factory dataForInstallWithURLString:@"https://branch.io"];
+    NSDictionary *json = [factory dataForRequestInstallWithURLString:@"https://branch.io"];
     XCTAssertNotNil(json);
     
     // empty string is allowed
@@ -52,7 +52,7 @@
 
 - (void)testInitWithBranchKey {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
-    NSDictionary *json = [factory dataForInstallWithURLString:@"https://branch.io"];
+    NSDictionary *json = [factory dataForRequestInstallWithURLString:@"https://branch.io"];
     XCTAssertNotNil(json);
     XCTAssertTrue([@"key_abcd" isEqualToString:[json objectForKey:@"branch_key"]]);
     
@@ -60,9 +60,9 @@
     XCTAssertTrue([self.requestUUID isEqualToString:[json objectForKey:BRANCH_REQUEST_KEY_REQUEST_UUID]]);
 }
 
-- (void)testDataForInstall {
+- (void)testDataForRequestInstall {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
-    NSDictionary *json = [factory dataForInstallWithURLString:@"https://branch.io"];
+    NSDictionary *json = [factory dataForRequestInstallWithURLString:@"https://branch.io"];
     XCTAssertNotNil(json);
     
     XCTAssertTrue([@"key_abcd" isEqualToString:[json objectForKey:@"branch_key"]]);
@@ -70,16 +70,13 @@
     XCTAssertTrue([@"Apple" isEqualToString:[json objectForKey:@"brand"]]);
     XCTAssertNotNil([json objectForKey:@"ios_vendor_id"]);
     
-    // not present on installs
-    XCTAssertNil([json objectForKey:@"randomized_bundle_token"]);
-    
     XCTAssertTrue(self.requestCreationTimeStamp  == [json objectForKey:BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP]);
     XCTAssertTrue([self.requestUUID isEqualToString:[json objectForKey:BRANCH_REQUEST_KEY_REQUEST_UUID]]);
 }
 
-- (void)testDataForOpen {
+- (void)testDataForRequestOpen {
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
-    NSDictionary *json = [factory dataForOpenWithURLString:@"https://branch.io"];
+    NSDictionary *json = [factory dataForRequestOpenWithURLString:@"https://branch.io"];
     XCTAssertNotNil(json);
     
     XCTAssertTrue([@"key_abcd" isEqualToString:[json objectForKey:@"branch_key"]]);

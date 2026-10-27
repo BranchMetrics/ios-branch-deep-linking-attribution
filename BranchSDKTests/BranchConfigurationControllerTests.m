@@ -70,7 +70,7 @@
     NSString* requestUUID = [[NSUUID UUID ] UUIDString];
     NSNumber* requestCreationTimeStamp = BNCWireFormatFromDate([NSDate date]);
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:requestUUID TimeStamp:requestCreationTimeStamp];
-    NSDictionary *installDict = [factory dataForInstallWithURLString:@"https://branch.io"];
+    NSDictionary *installDict = [factory dataForRequestInstallWithURLString:@"https://branch.io"];
     
     NSDictionary *configDict = installDict[BRANCH_REQUEST_KEY_OPERATIONAL_METRICS];
     XCTAssertNotNil(configDict);
