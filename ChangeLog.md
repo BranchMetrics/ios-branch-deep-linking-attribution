@@ -1,6 +1,8 @@
 Branch iOS SDK Change Log
 v.4.0.0-beta.4
 - Fixed bug - a Spotlight activity was not resolved on a cold launch of a scene-based app via `requestDeepLinkDataWithSceneOptions:scene:callback:`, only via the warm scene, legacy app-delegate, and `continueUserActivity:sceneIdentifier:` entry points. All four entry points now also send the Branch link a Spotlight activity's identifier carries, which was previously dropped on every one of them.
+- Removed `findExistingInstallOrOpen` and the `@class BranchOpenRequest` forward declaration from the public `BNCServerRequestQueue.h`. `BranchOpenRequest` and `BranchInstallRequest` are removed; sessions are established by `/v3/events/open` and `/v3/deeplink`.
+- `BranchConfiguration.checkPasteboardOnInstall` now reads the pasteboard only on a first launch with no link, and sends the pasted Branch link with the first-launch `/v3/deeplink` request.
 
 v.4.0.0-beta.3
 
