@@ -260,4 +260,31 @@ static NSString * const kClickedLinkPayloadJSON =
                           @"A later open must not overwrite the install attribution.");
 }
 
+// A later open sends the conversion value and does not register the install again.
+- (void)testSecondLaunchOpenUpdatesConversionValue {
+    [BNCPreferenceHelper sharedInstance].randomizedBundleToken = @"existing_bundle_token";
+
+    [self settleFirstLaunchOpenWithResponse:[self openResponseWithExtras:@{
+        BRANCH_RESPONSE_KEY_INVOKE_REGISTER_APP: @YES,
+        BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE: @7
+    }]];
+
+    XCTAssertEqualObjects(sPostbackFineValues, @[@7]);
+    XCTAssertEqual(sRegisterAppCallCount, 0);
+}
+
+// A response without invoke_register_app turns SKAdNetwork off until a response turns it back on.
+- (void)testOpenResponseWithoutInvokeRegisterAppClearsTheFlag {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    preferenceHelper.randomizedBundleToken = @"existing_bundle_token";
+    preferenceHelper.invokeRegisterApp = YES;
+
+    [self settleFirstLaunchOpenWithResponse:[self openResponseWithExtras:@{
+        BRANCH_RESPONSE_KEY_UPDATE_CONVERSION_VALUE: @7
+    }]];
+
+    XCTAssertFalse(preferenceHelper.invokeRegisterApp);
+    XCTAssertEqual(sPostbackFineValues.count, 0);
+}
+
 @end
