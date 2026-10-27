@@ -16,6 +16,10 @@ v.4.0.0-beta.4
     * `BNCPreferenceHelper.attributionLevelNone` is now `readonly`. Set the level with `setConsumerProtectionAttributionLevel:`.
 - Removed `findExistingInstallOrOpen` and the `@class BranchOpenRequest` forward declaration from the public `BNCServerRequestQueue.h`. `BranchOpenRequest` and `BranchInstallRequest` are removed; sessions are established by `/v3/events/open` and `/v3/deeplink`.
 - `BranchConfiguration.checkPasteboardOnInstall` now reads the pasteboard only on a first launch with no link, and sends the pasted Branch link with the first-launch `/v3/deeplink` request.
+- App Clip attribution is handed off to the full app again. When an App Clip has saved its data to the `appClipAppGroup`, the full app's install `/v3/events/open` and its first-launch `/v3/deeplink` with no link send the App Clip's bundle ID, install time, link and randomized tokens. The install open also sends `operational_metrics`.
+- Fixed bug - an App Clip's install open saved its App Clip data after the link had been cleared, so the full app received no link. The link is now saved before it is cleared.
+- A web redirect returned by the server is opened only when its URL is `http` or `https`. Any other scheme is ignored, and the deep link callback still fires.
+- `+[Branch initialize:]` now records the SDK version in Firebase Crashlytics under the key `io.branch.sdk.version` when Crashlytics is linked.
 
 v.4.0.0-beta.3
 
