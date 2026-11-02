@@ -187,11 +187,13 @@ void ForceCategoriesToLoad(void) {
 @property (nonatomic, copy, nullable) void (^cachedInitBlock)(void);
 @property (nonatomic, copy, readwrite) NSString *cachedURLString;
 
-@property (nonatomic, copy, nullable) callbackWithParams deepLinkHandler;
+@property (nonatomic, copy, nullable) callbackWithParamsAndScene deepLinkHandler;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, callbackWithParamsAndScene> *sceneDeepLinkHandlers;
 
 // Private method used internally
 - (void)clearLinkIdentifiers;
 - (void)requestDeepLinkData:(nullable NSString *)branchLink;
+- (void)requestDeepLinkData:(nullable NSString *)branchLink sceneIdentifier:(nullable NSString *)sceneIdentifier;
 - (void)enqueueUnattributedOpen;
 - (void)enqueueUnattributedOpenCallingHandler:(BOOL)callHandler;
 - (void)enqueueAttributedOpenWithResponseData:(NSDictionary *)responseData;
@@ -527,6 +529,7 @@ static NSString *bnc_branchKey = nil;
     _networkCount = 0;
     _automaticOpenEvents = YES;
     _deepLinkControllers = [[NSMutableDictionary alloc] init];
+    _sceneDeepLinkHandlers = [[NSMutableDictionary alloc] init];
     _allowedSchemeList = [[NSMutableArray alloc] init];
     _serverAPI = [BNCServerAPI sharedInstance];
 
@@ -559,6 +562,14 @@ static NSString *bnc_branchKey = nil;
         selector:@selector(applicationDidBecomeActive)
         name:UIApplicationDidBecomeActiveNotification
         object:nil];
+
+    #if !TARGET_OS_TV
+    [notificationCenter
+        addObserver:self
+        selector:@selector(sceneDidDisconnect:)
+        name:UISceneDidDisconnectNotification
+        object:nil];
+    #endif
 
     // queue up async data loading
     [self loadApplicationData];
@@ -895,7 +906,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     // that the legacy handlers and the requestDeepLinkData* convenience methods each enqueue exactly
     // one request. A skiplisted URL is never sent to Branch.
     if (!filtered) {
-        [self requestDeepLinkData:url.absoluteString];
+        [self requestDeepLinkData:url.absoluteString sceneIdentifier:sceneIdentifier];
     }
 
     return handled;
@@ -1042,7 +1053,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
     // non-Branch Spotlight identifier, which enqueues a deferred data lookup rather than resolving
     // a link.
     if (!filtered) {
-        [self requestDeepLinkData:[self deepLinkURLStringForUserActivity:userActivity]];
+        [self requestDeepLinkData:[self deepLinkURLStringForUserActivity:userActivity] sceneIdentifier:sceneIdentifier];
     }
 
     return handled;
@@ -2091,25 +2102,121 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 #pragma mark - Branch Core Deep Linking Method
 
 // Returns the handler registered by the launch-time requestDeepLinkData APIs.
-- (callbackWithParams)storedDeepLinkHandler {
+- (callbackWithParamsAndScene)storedDeepLinkHandler {
     @synchronized (self) {
         return self.deepLinkHandler;
     }
 }
 
 // Registers the handler invoked for deep link results that carry no callback of their own.
-- (void)setStoredDeepLinkHandler:(callbackWithParams)handler {
+- (void)setStoredDeepLinkHandler:(callbackWithParamsAndScene)handler {
     @synchronized (self) {
         self.deepLinkHandler = handler;
     }
 }
+
+// Returns the handler registered for sceneIdentifier, or the stored deep link handler when the scene
+// has none.
+- (callbackWithParamsAndScene)storedDeepLinkHandlerForSceneIdentifier:(NSString *)sceneIdentifier {
+    @synchronized (self) {
+        callbackWithParamsAndScene handler = sceneIdentifier.length ? self.sceneDeepLinkHandlers[sceneIdentifier] : nil;
+        return handler ?: self.deepLinkHandler;
+    }
+}
+
+// Registers handler for the scene with persistent identifier sceneIdentifier and makes it the stored
+// deep link handler. A nil handler removes the scene's registration, and clears the stored deep link
+// handler when no scene registration remains.
+- (void)setSceneDeepLinkHandler:(callbackWithParamsAndScene)handler forSceneIdentifier:(NSString *)sceneIdentifier {
+    @synchronized (self) {
+        if (sceneIdentifier.length) {
+            if (handler) {
+                self.sceneDeepLinkHandlers[sceneIdentifier] = [handler copy];
+            } else {
+                [self.sceneDeepLinkHandlers removeObjectForKey:sceneIdentifier];
+            }
+        }
+        if (handler || self.sceneDeepLinkHandlers.count == 0) {
+            self.deepLinkHandler = handler;
+        }
+    }
+}
+
+#if !TARGET_OS_TV
+// Removes the handler registered for the scene in notification.object.
+- (void)sceneDidDisconnect:(NSNotification *)notification {
+    if (![notification.object isKindOfClass:[UIScene class]]) return;
+    NSString *sceneIdentifier = ((UIScene *)notification.object).session.persistentIdentifier;
+    if (!sceneIdentifier.length) return;
+
+    @synchronized (self) {
+        [self.sceneDeepLinkHandlers removeObjectForKey:sceneIdentifier];
+    }
+}
+#endif
+
+// Returns a handler that calls callback without the scene, or nil when callback is nil.
+- (callbackWithParamsAndScene)sceneHandlerForCallback:(callbackWithParams)callback {
+    if (!callback) return nil;
+    return ^(NSDictionary *params, NSError *error, UIScene *scene) {
+        callback(params, error);
+    };
+}
+
+// Returns the connected scene whose session has the persistent identifier sceneIdentifier, or nil.
+// Call on the main thread.
+- (UIScene *)connectedSceneForIdentifier:(NSString *)sceneIdentifier {
+    if (!sceneIdentifier.length) return nil;
+
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    UIApplication *application = self.application ?: [UIApplicationClass sharedApplication];
+    for (UIScene *scene in application.connectedScenes) {
+        if ([sceneIdentifier isEqualToString:scene.session.persistentIdentifier]) {
+            return scene;
+        }
+    }
+    return nil;
+}
+
+// Delivers a deep link result to callback. When callback is nil, delivers it to the handler registered
+// for sceneIdentifier, or to the stored deep link handler when that scene has none. The handler also
+// receives the connected scene identified by sceneIdentifier. Call on the main thread.
+- (void)deliverDeepLinkParams:(NSDictionary *)params
+                        error:(NSError *)error
+                     callback:(callbackWithParams)callback
+              sceneIdentifier:(NSString *)sceneIdentifier {
+    if (callback) {
+        callback(params, error);
+        return;
+    }
+
+    callbackWithParamsAndScene handler = [self storedDeepLinkHandlerForSceneIdentifier:sceneIdentifier];
+    if (handler) {
+        handler(params, error, [self connectedSceneForIdentifier:sceneIdentifier]);
+    }
+}
+
 // Calls requestDeepLinkData:callback: with no callback.
 // Resolves branchLink with no callback of its own; the result goes to the stored deep link handler.
 - (void)requestDeepLinkData:(nullable NSString *)branchLink {
-    [self requestDeepLinkData:branchLink callback:nil];
+    [self requestDeepLinkData:branchLink callback:nil sceneIdentifier:nil];
 }
 
 - (void) requestDeepLinkData:(NSString *)branchLink callback:(nullable callbackWithParams)callback {
+    [self requestDeepLinkData:branchLink callback:callback sceneIdentifier:nil];
+}
+
+// Resolves branchLink with no callback of its own. The stored deep link handler receives the result
+// and the scene identified by sceneIdentifier.
+- (void)requestDeepLinkData:(nullable NSString *)branchLink sceneIdentifier:(nullable NSString *)sceneIdentifier {
+    [self requestDeepLinkData:branchLink callback:nil sceneIdentifier:sceneIdentifier];
+}
+
+// Resolves branchLink. callback receives the result; when it is nil, the stored deep link handler does,
+// together with the scene identified by sceneIdentifier.
+- (void)requestDeepLinkData:(NSString *)branchLink
+                   callback:(nullable callbackWithParams)callback
+            sceneIdentifier:(nullable NSString *)sceneIdentifier {
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData called with branchLink: %@", branchLink] error:nil];
 
     // Same question handleDeepLink: asks, asked before anything is cancelled or enqueued: a URL
@@ -2142,10 +2249,10 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         // an error or -getLatestReferringParams, which still reports the last link that did
         // resolve.
         dispatch_async(dispatch_get_main_queue(), ^ {
-            callbackWithParams handler = callback ?: [self storedDeepLinkHandler];
-            if (handler) {
-                handler(@{ BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK : @0 }, nil);
-            }
+            [self deliverDeepLinkParams:@{ BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK : @0 }
+                                  error:nil
+                               callback:callback
+                        sceneIdentifier:sceneIdentifier];
         });
         return;
     }
@@ -2158,19 +2265,14 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     callbackWithStatus deepLinkCallback = ^(BOOL success, NSError *error) {
         // callback on main, this is generally what the client expects and maintains our previous behavior
         dispatch_async(dispatch_get_main_queue(), ^ {
-            callbackWithParams handler = callback ?: [self storedDeepLinkHandler];
             if (error) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData failed with error: %@", error] error:error];
-                if (handler) {
-                    handler(@{}, error);
-                }
+                [self deliverDeepLinkParams:@{} error:error callback:callback sceneIdentifier:sceneIdentifier];
             } else {
                 // Get the session params (which should have the deeplink data)
                 NSDictionary *params = [self getLatestReferringParams];
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData completed with params: %@", params] error:nil];
-                if (handler) {
-                    handler(params ?: @{}, nil);
-                }
+                [self deliverDeepLinkParams:params ?: @{} error:nil callback:callback sceneIdentifier:sceneIdentifier];
             }
         });
     };
@@ -2191,8 +2293,14 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                                     callback:(nullable callbackWithParams)callback {
     [[BranchLogger shared] logDebug:@"requestDeepLinkDataWithLaunchOptions called" error:nil];
 
-    [self setStoredDeepLinkHandler:callback];
+    [self setStoredDeepLinkHandler:[self sceneHandlerForCallback:callback]];
+    [self requestDeepLinkDataForLaunchOptions:options sceneIdentifier:nil];
+}
 
+// Enqueues the launch-time request for options: the push notification link when there is one, a
+// nil-URL request when there is no link at all. Enqueues nothing when a URL scheme or Universal Link
+// is present, since that link arrives through its own call. sceneIdentifier is passed to the result.
+- (void)requestDeepLinkDataForLaunchOptions:(NSDictionary *)options sceneIdentifier:(NSString *)sceneIdentifier {
     NSString *pushURL = nil;
 #if !TARGET_OS_TV
     id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
@@ -2209,7 +2317,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         return;
     }
 
-    [self requestDeepLinkData:pushURL];
+    [self requestDeepLinkData:pushURL sceneIdentifier:sceneIdentifier];
 }
 
 // Called from application:openURL:options:
@@ -2287,51 +2395,23 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 // Called from scene:willConnectToSession:options:
 - (void)requestDeepLinkDataWithSceneOptions:(nullable UISceneConnectionOptions *)connectionOptions
                                       scene:(UIScene *)scene
-                                   callback:(nullable callbackWithParams)callback
-    API_AVAILABLE(ios(13.0), macCatalyst(13.1)) {
+                                   callback:(nullable callbackWithParamsAndScene)callback {
     [[BranchLogger shared] logDebug:@"requestDeepLinkDataWithSceneOptions called" error:nil];
 
-    // Build the synthetic launchOptions the removed BranchScene scene-init API used to build,
-    // so requestDeepLinkDataWithLaunchOptions applies the same early-return logic.
-    NSMutableDictionary *launchOptions = [[NSMutableDictionary alloc] init];
-    if (connectionOptions.userActivities.count) {
-        launchOptions[UIApplicationLaunchOptionsUserActivityDictionaryKey] = connectionOptions.userActivities.allObjects;
-    }
-    if (connectionOptions.URLContexts.count) {
-        launchOptions[UIApplicationLaunchOptionsURLKey] = connectionOptions.URLContexts.allObjects;
-    }
+    [self setSceneDeepLinkHandler:callback forSceneIdentifier:scene.session.persistentIdentifier];
 
-    // Handles the no-link cold start (enqueues a nil-URL request).
-    // Returns early without enqueueing when a URL scheme or Universal Link is present.
-    [self requestDeepLinkDataWithLaunchOptions:launchOptions callback:callback];
-
-    // Mirror BranchScene: explicitly resolve the URL from connectionOptions,
-    // equivalent to the continueUserActivity: / openURLContexts: calls BranchScene makes
-    // once the session is up — the work `+[Branch initialize:]` now covers.
-    if (connectionOptions.userActivities.count) {
-        NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject;
-        // Run the same preprocessing as the legacy continueUserActivity: / warm scene
-        // continueUserActivity: paths before enqueueing, whatever the activity type:
-        // -processUserActivity: itself branches on NSUserActivityTypeBrowsingWeb vs. Spotlight
-        // vs. neither, so a type check here would only re-do that decision and, for anything
-        // other than NSUserActivityTypeBrowsingWeb, drop the activity instead of handling it.
-        BOOL filtered = NO;
-        [self processUserActivity:activity sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
-        if (!filtered) {
-            // nil only for a non-Branch Spotlight identifier, which enqueues a deferred data
-            // lookup rather than resolving a link.
-            [self requestDeepLinkData:[self deepLinkURLStringForUserActivity:activity]];
-        }
+    // Resolves the connecting activity if there is one, else the connecting URL, else enqueues a
+    // nil-URL request for the no-link cold start.
+    NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject;
+    if (activity) {
+        [self requestDeepLinkDataWithScene:scene continueUserActivity:activity];
     } else if (connectionOptions.URLContexts.count) {
-        UIOpenURLContext *context = connectionOptions.URLContexts.allObjects.firstObject;
-        // Run the same preprocessing as the legacy handleDeepLink: path before enqueueing.
-        BOOL filtered = NO;
-        [self processDeepLinkURL:context.URL sceneIdentifier:scene.session.persistentIdentifier filtered:&filtered];
-        if (!filtered) {
-            [self requestDeepLinkData:context.URL.absoluteString];
-        }
+        [self requestDeepLinkDataWithScene:scene openURLContexts:connectionOptions.URLContexts];
+    } else {
+        [self requestDeepLinkData:nil sceneIdentifier:scene.session.persistentIdentifier];
     }
 }
+#endif
 
 // Called from scene:openURLContexts:
 - (void)requestDeepLinkDataWithScene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)urlContexts {
@@ -2346,7 +2426,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     if (filtered) return;
 
-    [self requestDeepLinkData:context.URL.absoluteString];
+    [self requestDeepLinkData:context.URL.absoluteString sceneIdentifier:scene.session.persistentIdentifier];
 }
 
 // Called from scene:continueUserActivity:
@@ -2363,9 +2443,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // than resolving a link.
     NSString *urlStr = [self deepLinkURLStringForUserActivity:userActivity];
 
-    [self requestDeepLinkData:urlStr];
+    [self requestDeepLinkData:urlStr sceneIdentifier:scene.session.persistentIdentifier];
 }
-#endif
 
 
 #pragma mark - Branch Attribution Methods
@@ -2570,19 +2649,19 @@ static BOOL bnc_didWarnOpenWaitsForSendOpen = NO;
     callbackWithStatus openCallback = ^(BOOL success, NSError *error) {
         // callback on main, this is generally what the client expects and maintains our previous behavior
         dispatch_async(dispatch_get_main_queue(), ^ {
-            callbackWithParams handler = callHandler ? [self storedDeepLinkHandler] : nil;
+            callbackWithParamsAndScene handler = callHandler ? [self storedDeepLinkHandler] : nil;
             if (error) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen failed with error: %@", error] error:error];
                 [self handleInitFailure:error];
                 if (handler) {
-                    handler(@{}, error);
+                    handler(@{}, error, nil);
                 }
             } else {
                 [self handleInitSuccess];
                 NSDictionary *params = [self getLatestReferringParams];
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen completed with params: %@", params] error:nil];
                 if (handler) {
-                    handler(params ?: @{}, nil);
+                    handler(params ?: @{}, nil, nil);
                 }
             }
         });

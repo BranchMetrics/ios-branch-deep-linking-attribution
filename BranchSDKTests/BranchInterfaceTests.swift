@@ -48,8 +48,8 @@ private final class FakeBranch: NSObject, BranchInterface {
     @available(iOS 13.0, macCatalyst 13.1, *)
     func requestDeepLinkData(sceneOptions connectionOptions: UIScene.ConnectionOptions?,
                              scene: UIScene,
-                             callback: callbackWithParams? = nil) {
-        callback?(stubbedLatestParams, nil)
+                             callback: callbackWithParamsAndScene? = nil) {
+        callback?(stubbedLatestParams, nil, scene)
     }
 
     @available(iOS 13.0, *)
