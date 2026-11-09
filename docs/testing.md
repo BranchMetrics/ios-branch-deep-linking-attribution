@@ -35,7 +35,9 @@ There is no fastlane and no `Gemfile` on this branch, and no style linter.
 | Workflow | State |
 | --- | --- |
 | `verify.yml` | **works.** Runs the `xcodebuild test` above on `macos-15`. The `push:` trigger has no branch filter, so it fires for any pushed branch |
+| `verify.yml` → `verify-xcode27` job | **works, non-blocking preview.** Same `xcodebuild test` invocation, plus a build of `BranchSDK` (iOS Simulator, iOS device) and `BranchSDK-tvOS` (tvOS Simulator), all on the `xcode-27` runner label pinned to Xcode 27.0. `xcode-27` is a GitHub-documented preview image (`actions/runner-images#14404`); the job runs `continue-on-error` so a preview-image failure does not fail this workflow's own run. Manual dispatch can choose the runner and Xcode version |
 | `layer1-logger-tests.yml` | **works.** The L1 wire gate, ported to this line so it exists in the PR merge tree. Triggers on push and PR against `4.0.0-beta.*` |
+| `layer1-logger-tests.yml` → `validate-wire-logs-xcode27` job | **works, non-blocking preview.** Same three scenarios as the Xcode 16.x job (`install`, `cold_firstInstall`, `cold_https`), on the `xcode-27` runner label pinned to Xcode 27.0. Same preview caveat and `continue-on-error` as above; only triggers where the branch matches `4.0.0-beta.*` or via `workflow_dispatch`, same as the job it mirrors. Manual dispatch can choose the runner and Xcode version |
 | `version-bump.yml` | **manual, no checks.** Runs `scripts/version.sh` and pushes the bump. Not a test gate |
 | `release.yml` | **manual, release only.** Validates the version with `scripts/validate_version.sh` and builds the XCFrameworks; it runs no tests. Use `dry_run=true` to stop before publishing. See `docs/releasing.md` |
 | `integration-tests.yml` | **dead.** Shells out to `bundle exec fastlane`, which does not exist here |
