@@ -175,7 +175,8 @@ void ForceCategoriesToLoad(void) {
 // -applicationDidEnterBackground; it does not gate ordering.
 @property (nonatomic, assign) BOOL openSentThisForegroundPeriod;
 
-// Set by -applicationWillResignActive; consumed by the next -applicationDidBecomeActive.
+// Set by -applicationWillResignActive; consumed by the next -applicationDidBecomeActive or by a deep
+// link request made before it.
 @property (nonatomic, assign) BOOL resignedSinceActivation;
 
 // Set when an open was requested while attribution was NONE; sent when attribution leaves NONE.
@@ -195,7 +196,6 @@ void ForceCategoriesToLoad(void) {
 - (void)requestDeepLinkData:(nullable NSString *)branchLink;
 - (void)requestDeepLinkData:(nullable NSString *)branchLink sceneIdentifier:(nullable NSString *)sceneIdentifier;
 - (void)enqueueUnattributedOpen;
-- (void)enqueueUnattributedOpenCallingHandler:(BOOL)callHandler;
 - (void)enqueueAttributedOpenWithResponseData:(NSDictionary *)responseData;
 - (BOOL)shouldSendAutomaticUnattributedOpen;
 - (void)sendAutomaticUnattributedOpen;
@@ -1659,10 +1659,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 
     // An activation after a resign re-arms the open for this foreground period.
     // This covers dismissing the App Tracking Transparency prompt, whose second open carries the new opted_in_status.
-    if (self.resignedSinceActivation) {
-        self.resignedSinceActivation = NO;
-        self.openSentThisForegroundPeriod = NO;
-    }
+    [self rearmForegroundPeriodIfResigned];
 
     if (!self.automaticOpenEvents) {
         [[BranchLogger shared] logVerbose:@"applicationDidBecomeActive: automatic open tracking is disabled, skipping" error:nil];
@@ -1684,7 +1681,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
         [[BranchLogger shared] logVerbose:[NSString stringWithFormat:@"applicationDidBecomeActive installOrOpenInQueue %d shouldSend %d", installOrOpenInQueue, shouldSend] error:nil];
 
         if (shouldSend) {
-            [self enqueueUnattributedOpenCallingHandler:YES];
+            [self enqueueUnattributedOpen];
         }
     });
 }
@@ -1770,7 +1767,7 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 
     dispatch_async(self.isolationQueue, ^(){
         if (![self shouldSendDeferredForegroundOpen]) return;
-        [self enqueueUnattributedOpenCallingHandler:YES];
+        [self enqueueUnattributedOpen];
     });
 }
 
@@ -1847,6 +1844,17 @@ static callbackForTracingRequests bnc_tracingCallback = nil;
 - (void)setOpenSentThisForegroundPeriod:(BOOL)openSentThisForegroundPeriod {
     @synchronized (self) {
         _openSentThisForegroundPeriod = openSentThisForegroundPeriod;
+    }
+}
+
+// Starts a new foreground period when the app has resigned since its last activation: clears
+// resignedSinceActivation and re-arms the automatic open.
+- (void)rearmForegroundPeriodIfResigned {
+    @synchronized (self) {
+        if (_resignedSinceActivation) {
+            _resignedSinceActivation = NO;
+            _openSentThisForegroundPeriod = NO;
+        }
     }
 }
 
@@ -2101,13 +2109,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 #pragma mark - Branch Core Deep Linking Method
 
-// Returns the handler registered by the launch-time requestDeepLinkData APIs.
-- (callbackWithParamsAndScene)storedDeepLinkHandler {
-    @synchronized (self) {
-        return self.deepLinkHandler;
-    }
-}
-
 // Registers the handler invoked for deep link results that carry no callback of their own.
 - (void)setStoredDeepLinkHandler:(callbackWithParamsAndScene)handler {
     @synchronized (self) {
@@ -2218,6 +2219,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                    callback:(nullable callbackWithParams)callback
             sceneIdentifier:(nullable NSString *)sceneIdentifier {
     [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"requestDeepLinkData called with branchLink: %@", branchLink] error:nil];
+
+    [self rearmForegroundPeriodIfResigned];
 
     // Same question handleDeepLink: asks, asked before anything is cancelled or enqueued: a URL
     // the skiplist or the host app told us to ignore must not reach /v3/deeplink. It is also
@@ -2636,11 +2639,6 @@ static BOOL bnc_didWarnOpenWaitsForSendOpen = NO;
 
 // Notifies the delegate and builds an open request with the shared completion handling.
 - (BranchRequestOpen *)openRequest {
-    return [self openRequestCallingHandler:NO];
-}
-
-// Builds an open request. When callHandler is YES the stored deep link handler receives the open's result.
-- (BranchRequestOpen *)openRequestCallingHandler:(BOOL)callHandler {
     NSURL *URL = (self.preferenceHelper.referringURL.length) ? [NSURL URLWithString:self.preferenceHelper.referringURL] : nil;
     if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)]) {
         [self.delegate branch:self willStartSessionWithURL:URL];
@@ -2649,20 +2647,13 @@ static BOOL bnc_didWarnOpenWaitsForSendOpen = NO;
     callbackWithStatus openCallback = ^(BOOL success, NSError *error) {
         // callback on main, this is generally what the client expects and maintains our previous behavior
         dispatch_async(dispatch_get_main_queue(), ^ {
-            callbackWithParamsAndScene handler = callHandler ? [self storedDeepLinkHandler] : nil;
             if (error) {
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen failed with error: %@", error] error:error];
                 [self handleInitFailure:error];
-                if (handler) {
-                    handler(@{}, error, nil);
-                }
             } else {
                 [self handleInitSuccess];
                 NSDictionary *params = [self getLatestReferringParams];
                 [[BranchLogger shared] logDebug:[NSString stringWithFormat:@"sendOpen completed with params: %@", params] error:nil];
-                if (handler) {
-                    handler(params ?: @{}, nil, nil);
-                }
             }
         });
     };
@@ -2677,12 +2668,8 @@ static BOOL bnc_didWarnOpenWaitsForSendOpen = NO;
     return openReq;
 }
 
+// Enqueues the organic open.
 - (void)enqueueUnattributedOpen {
-    [self enqueueUnattributedOpenCallingHandler:NO];
-}
-
-// Enqueues the organic open. When callHandler is YES the stored deep link handler receives its result.
-- (void)enqueueUnattributedOpenCallingHandler:(BOOL)callHandler {
     [[BranchLogger shared] logDebug:@"sendOpen called" error:nil];
 
     if ([_preferenceHelper.attributionLevel isEqualToString:BranchAttributionLevelNone]) {
@@ -2691,7 +2678,7 @@ static BOOL bnc_didWarnOpenWaitsForSendOpen = NO;
         return;
     }
 
-    BranchRequestOpen *openReq = [self openRequestCallingHandler:callHandler];
+    BranchRequestOpen *openReq = [self openRequest];
     self.openSentThisForegroundPeriod = YES;
     [[BranchLogger shared] logDebug: @"Branch sendOpen network request queued." error:nil];
     [self.requestQueue enqueue:openReq withPriority:NSOperationQueuePriorityHigh];

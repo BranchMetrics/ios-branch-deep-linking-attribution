@@ -841,4 +841,63 @@ typedef NS_ENUM(NSInteger, BranchResolveStubMode) {
                           @"No open may reach the wire once the re-read observes automatic open tracking disabled.");
 }
 
+#pragma mark - Warm link before activation
+
+// iPadOS delivers a warm link through scene:continueUserActivity: before the app is active again.
+// The link's attributed open belongs to the activation that follows, so that activation must not
+// re-arm and send a second, unattributed open.
+- (void)testWarmLinkResolvedBeforeTheActivationSendsOneOpen {
+    self.stub.deepLinkMode = BranchResolveStubModeLinkPayload;
+
+    [self.branch applicationWillResignActive];
+    [self waitForIsolationQueue:@"the resign handler to run"];
+
+    [self.branch requestDeepLinkData:kResolvedLinkURL callback:nil];
+    [self drainQueue];
+
+    XCTAssertEqualObjects([self postedEndpoints], (@[kDeepLinkEndpoint, kOpenEndpoint]),
+                          @"Precondition: the link must resolve and send its attributed open before the activation.");
+
+    [self.branch applicationDidBecomeActive];
+    [self waitForIsolationQueue:@"the foreground handler to run"];
+    [self drainQueue];
+
+    XCTAssertEqualObjects([self postedEndpoints], (@[kDeepLinkEndpoint, kOpenEndpoint]),
+                          @"The activation after a warm link must not send a second open.");
+    XCTAssertEqualObjects([self postedOpenBodies].firstObject[@"link_data"][BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK],
+                          kResolvedLinkURL,
+                          @"The only open must be the link's attributed open.");
+}
+
+#pragma mark - Opens do not call the deep link callback
+
+// Installs a stored deep link handler that counts its invocations, and restores the original after the test.
+- (NSMutableArray<NSDictionary *> *)installCountingDeepLinkHandler {
+    id savedHandler = [self.branch valueForKey:@"deepLinkHandler"];
+    __weak Branch *weakBranch = self.branch;
+    [self addTeardownBlock:^{
+        [weakBranch setValue:savedHandler forKey:@"deepLinkHandler"];
+    }];
+
+    NSMutableArray<NSDictionary *> *deliveries = [NSMutableArray array];
+    [self.branch setValue:^(NSDictionary *params, NSError *error, UIScene *scene) {
+        @synchronized (deliveries) {
+            [deliveries addObject:params ?: @{}];
+        }
+    } forKey:@"deepLinkHandler"];
+    return deliveries;
+}
+
+- (void)testForegroundOpenDoesNotCallTheStoredDeepLinkHandler {
+    NSMutableArray<NSDictionary *> *deliveries = [self installCountingDeepLinkHandler];
+
+    [self foregroundWithoutResign];
+    [self drainQueue];
+
+    XCTAssertEqualObjects([self postedEndpoints], @[kOpenEndpoint],
+                          @"Precondition: the activation must send its unattributed open.");
+    XCTAssertEqual(deliveries.count, (NSUInteger)0,
+                   @"An open must not call the stored deep link handler.");
+}
+
 @end
