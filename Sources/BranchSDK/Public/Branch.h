@@ -455,9 +455,9 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Convenience overload for `application:didFinishLaunchingWithOptions:`.
 
  Extracts the Branch URL from `launchOptions` and calls `requestDeepLinkData:callback:` with it.
- The callback is stored and invoked for this launch, for every later deep link result and for every
- app foreground in the process, whichever entry point delivers the link. A later call replaces it;
- nil clears it.
+ The callback is stored and invoked for this launch and for every later deep link result in the
+ process, whichever entry point delivers the link. Opens, including the open sent on foreground, do
+ not invoke it. A later call replaces it; nil clears it.
  Note: Call either this method or `requestDeepLinkDataWithSceneOptions:scene:callback:`, not both. Use this
  one in an app without a scene delegate, in a SwiftUI app and on tvOS.
  */
@@ -533,9 +533,10 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  `requestDeepLinkDataWithScene:continueUserActivity:` called with the same scene. Each scene keeps its
  own callback, so calling this from several windows does not replace the callback of another window.
  A scene's callback is removed when the scene disconnects; passing nil removes it immediately.
- The most recent non-nil callback also receives results that have no scene callback, such as an open
- sent on foreground, an AppDelegate entry point, or a scene that is no longer connected. Its `scene`
- argument is the connected scene whose link produced the result, or nil for those results.
+ The most recent non-nil callback also receives deep link results that have no scene callback, such
+ as a link from an AppDelegate entry point or from a scene that is no longer connected. Its `scene`
+ argument is the connected scene whose link produced the result, or nil for those results. Opens,
+ including the open sent on foreground, do not invoke any callback.
  
  Note: Call either this method or `requestDeepLinkDataWithLaunchOptions:callback:`, not both. Use this one
  in an app with a `UIWindowSceneDelegate`.
