@@ -57,6 +57,68 @@ private func logBranchMessage(_ message: String, level: BranchLogLevel, error: E
     }
 }
 
+#if DEBUG
+/// Appends lines to Documents/branchlogs.txt, the capture scripts/run_l1_instrumented.sh pulls
+/// from the simulator and scripts/validate_l1_logs.py parses.
+enum TestLogFile {
+    private static let lock = NSLock()
+
+    /// Path of branchlogs.txt in the app's Documents directory.
+    static let url: URL = FileManager.default
+        .urls(for: .documentDirectory, in: .userDomainMask)[0]
+        .appendingPathComponent("branchlogs.txt")
+
+    /// Deletes branchlogs.txt.
+    static func reset() {
+        lock.lock()
+        defer { lock.unlock() }
+        try? FileManager.default.removeItem(at: url)
+    }
+
+    /// Appends text to branchlogs.txt, creating the file if needed.
+    static func append(_ text: String) {
+        guard let data = text.data(using: .utf8) else { return }
+        lock.lock()
+        defer { lock.unlock() }
+        if let handle = try? FileHandle(forWritingTo: url) {
+            handle.seekToEndOfFile()
+            handle.write(data)
+            handle.closeFile()
+        } else {
+            try? data.write(to: url)
+        }
+    }
+
+    /// Appends text as one line.
+    static func appendLine(_ text: String) {
+        append(text + "\n")
+    }
+
+    /// Returns object as compact single-line JSON with sorted keys, or "{}" when it is not serializable.
+    static func json(_ object: Any?) -> String {
+        guard let object = object, JSONSerialization.isValidJSONObject(object),
+              let data = try? JSONSerialization.data(withJSONObject: object, options: [.sortedKeys, .withoutEscapingSlashes]),
+              let string = String(data: data, encoding: .utf8) else {
+            return "{}"
+        }
+        return string
+    }
+
+    /// Writes a request and its response in the `[BranchLog] Got <requestServiceURL> Request: <json>` shape.
+    /// - Parameters:
+    ///   - request: Request body sent to requestServiceURL.
+    ///   - response: Response body, or nil when there was none.
+    ///   - requestServiceURL: Branch API endpoint the request was posted to.
+    static func logRequest(_ request: [AnyHashable: Any]?, response: [AnyHashable: Any]?, requestServiceURL: String?) {
+        let endpoint = requestServiceURL ?? ""
+        appendLine("[BranchLog] Got \(endpoint) Request: \(json(request ?? [:]))")
+        if let response = response {
+            appendLine("[BranchLog] Got Response for request (\(endpoint)): \(json(response))")
+        }
+    }
+}
+#endif
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -64,6 +126,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+
+        #if DEBUG
+        TestLogFile.reset()
+        #endif
 
         guard let branchKeys = Bundle.main.object(forInfoDictionaryKey: "branch_key") as? [String: String],
               let liveKey = branchKeys["live"] else {
@@ -75,7 +141,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         configuration.logLevel = .verbose
         configuration.loggingCallback = { message, level, error in
             logBranchMessage(message, level: level, error: error)
+            #if DEBUG
+            let text = error.map { "\(message) | \($0)" } ?? message
+            TestLogFile.appendLine("[Branch] [\(level.rawValue)] \(text)")
+            #endif
         }
+        #if DEBUG
+        configuration.requestTracingCallback = { _, request, response, _, requestServiceURL in
+            TestLogFile.logRequest(request, response: response, requestServiceURL: requestServiceURL)
+        }
+        #endif
         // Send opens automatically on launch, on foreground and for resolved deep links.
         // This is the SDK default; it is set here so the test app does not depend on it.
         configuration.automaticOpenEvents = true

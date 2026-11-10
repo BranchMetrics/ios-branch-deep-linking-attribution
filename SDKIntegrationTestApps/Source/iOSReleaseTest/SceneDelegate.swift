@@ -19,11 +19,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
 
+        let callback: ([AnyHashable: Any]?, Error?, UIScene?) -> Void = { params, error, linkScene in
+            print("Deep Link Params ***********************: \(params ?? [:]), error: \(String(describing: error)), scene: \(String(describing: linkScene))")
+            #if DEBUG
+            TestHooks.logSceneCallback(scene: TestHooks.primarySceneName, params: params, error: error)
+            #endif
+        }
+
+        #if DEBUG
+        if TestHooks.deliverColdLink(to: scene, callback: callback) {
+            return
+        }
+        #endif
+
         // Callback variant — NS_SWIFT_NAME. This callback also receives the results of the
         // openURLContexts and userActivity calls below for this scene.
-        Branch.sharedInstance()?.requestDeepLinkData(sceneOptions: connectionOptions, scene: scene) { params, error, linkScene in
-            print("Deep Link Params ***********************: \(params ?? [:]), error: \(String(describing: error)), scene: \(String(describing: linkScene))")
-        }
+        Branch.sharedInstance()?.requestDeepLinkData(sceneOptions: connectionOptions, scene: scene, callback: callback)
 
         // Async/await variant — NS_SWIFT_ASYNC_NAME. Use instead of the callback variant above, not with it:
         // Task {
@@ -153,6 +164,10 @@ class SecondarySceneDelegate: UIResponder, UIWindowSceneDelegate {
         // openURLContexts and userActivity calls below for this scene.
         Branch.sharedInstance()?.requestDeepLinkData(sceneOptions: options, scene: scene) { params, error, linkScene in
             print(" **********: Scene 2 Deep Link Params: \(params ?? [:]), error: \(String(describing: error)), scene: \(String(describing: linkScene))")
+            #if DEBUG
+            TestHooks.logSceneCallback(scene: TestHooks.secondarySceneName, params: params, error: error)
+            TestHooks.deliverSceneLinkIfRequested()
+            #endif
         }
 
         // Async/await variant — NS_SWIFT_ASYNC_NAME. Use instead of the callback variant above, not with it:
@@ -207,3 +222,100 @@ class SecondarySceneDelegate: UIResponder, UIWindowSceneDelegate {
         return NSUserActivity(activityType: SceneKind.secondaryActivityType)
     }
 }
+
+
+// MARK: - UI test hooks
+
+#if DEBUG
+/// Launch-argument hooks the L1 UI tests (iOSReleaseTestUITests) use to deliver links and to record
+/// which scene's deep link callback received each result. Every result is written to branchlogs.txt.
+enum TestHooks {
+    /// Name written for Scene 1 in `[SceneCallback]` lines.
+    static let primarySceneName = "scene1"
+    /// Name written for Scene 2 in `[SceneCallback]` lines.
+    static let secondarySceneName = "scene2"
+
+    /// URL of the `-testDeepLinkURL` launch argument, or nil when it is absent or invalid.
+    static var coldLinkURL: URL? { urlArgument("testDeepLinkURL") }
+
+    /// URL of the `-testSceneLinkURL` launch argument, or nil when it is absent or invalid.
+    static var sceneLinkURL: URL? { urlArgument("testSceneLinkURL") }
+
+    /// Scene name of the `-testSceneLinkTarget` launch argument, `scene1` or `scene2`. Defaults to `scene2`.
+    static var sceneLinkTarget: String {
+        UserDefaults.standard.string(forKey: "testSceneLinkTarget") ?? secondarySceneName
+    }
+
+    private static var sceneLinkDelivered = false
+
+    /// Writes `[SceneCallback] scene=<scene> params=<json>` to branchlogs.txt, and a
+    /// `[SceneCallbackError] scene=<scene> error=<description>` line when error is non-nil.
+    /// - Parameters:
+    ///   - scene: Name of the scene whose callback received the result.
+    ///   - params: Deep link params the callback received.
+    ///   - error: Error the callback received.
+    static func logSceneCallback(scene: String, params: [AnyHashable: Any]?, error: Error?) {
+        TestLogFile.appendLine("[SceneCallback] scene=\(scene) params=\(TestLogFile.json(params ?? [:]))")
+        if let error = error {
+            TestLogFile.appendLine("[SceneCallbackError] scene=\(scene) error=\(error.localizedDescription)")
+        }
+    }
+
+    /// When `-testDeepLinkURL` is present, registers callback for scene without sending the
+    /// no-link lookup, then delivers the URL to scene as a Universal Link user activity.
+    /// - Parameters:
+    ///   - scene: Scene being connected.
+    ///   - callback: Deep link callback to register for scene.
+    /// - Returns: true when the link was delivered, false when the launch argument is absent.
+    static func deliverColdLink(to scene: UIScene, callback: @escaping ([AnyHashable: Any]?, Error?, UIScene?) -> Void) -> Bool {
+        guard let url = coldLinkURL, let branch = Branch.sharedInstance() else { return false }
+
+        let selector = NSSelectorFromString("setSceneDeepLinkHandler:forSceneIdentifier:")
+        guard branch.responds(to: selector) else {
+            fatalError("[TestHook] Branch no longer responds to setSceneDeepLinkHandler:forSceneIdentifier:")
+        }
+        let handler: @convention(block) (NSDictionary?, NSError?, UIScene?) -> Void = { params, error, linkScene in
+            callback(params as? [AnyHashable: Any], error, linkScene)
+        }
+        branch.perform(selector, with: handler, with: scene.session.persistentIdentifier)
+
+        print("[TestHook] Delivering -testDeepLinkURL to \(primarySceneName): \(url)")
+        branch.requestDeepLinkData(scene: scene, userActivity: universalLinkActivity(url))
+        return true
+    }
+
+    /// When `-testSceneLinkURL` is present, delivers it once to the `-testSceneLinkTarget` scene as a
+    /// Universal Link user activity. Call on the main thread after Scene 2's first callback.
+    static func deliverSceneLinkIfRequested() {
+        guard !sceneLinkDelivered, let url = sceneLinkURL else { return }
+
+        let target = sceneLinkTarget
+        let targetDelegateClass: AnyClass = target == primarySceneName ? SceneDelegate.self : SecondarySceneDelegate.self
+        guard let scene = UIApplication.shared.connectedScenes.first(where: {
+            $0.delegate.map { type(of: $0) == targetDelegateClass } ?? false
+        }) else {
+            TestLogFile.appendLine("[TestHook] no connected scene for -testSceneLinkTarget \(target)")
+            return
+        }
+
+        sceneLinkDelivered = true
+        TestLogFile.appendLine("[TestHook] delivering -testSceneLinkURL to \(target)")
+        Branch.sharedInstance()?.requestDeepLinkData(scene: scene, userActivity: universalLinkActivity(url))
+    }
+
+    private static func universalLinkActivity(_ url: URL) -> NSUserActivity {
+        let activity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
+        activity.webpageURL = url
+        return activity
+    }
+
+    private static func urlArgument(_ key: String) -> URL? {
+        guard let value = UserDefaults.standard.string(forKey: key), !value.isEmpty else { return nil }
+        guard let url = URL(string: value) else {
+            print("[TestHook] -\(key) is not a valid URL: \(value)")
+            return nil
+        }
+        return url
+    }
+}
+#endif

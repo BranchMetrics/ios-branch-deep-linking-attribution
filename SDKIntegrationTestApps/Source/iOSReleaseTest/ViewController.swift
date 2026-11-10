@@ -24,6 +24,7 @@ class ViewController: UIViewController {
         titleLabel.textAlignment = .center
         titleLabel.textColor = .label
         titleLabel.text = sceneName
+        titleLabel.accessibilityIdentifier = sceneName == "Scene 1" ? "sceneTitle-scene1" : "sceneTitle-scene2"
 
         let stack = UIStackView(arrangedSubviews: [titleLabel])
         stack.axis = .vertical
@@ -33,6 +34,7 @@ class ViewController: UIViewController {
         if sceneName == "Scene 1" {
             let openSceneButton = UIButton(type: .system)
             openSceneButton.setTitle("Open Scene 2", for: .normal)
+            openSceneButton.accessibilityIdentifier = "openScene2"
             openSceneButton.addAction(UIAction { _ in SceneKind.openSecondary() }, for: .touchUpInside)
             if !UIApplication.shared.supportsMultipleScenes {
                 openSceneButton.isEnabled = false
