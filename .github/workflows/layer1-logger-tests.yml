@@ -16,13 +16,16 @@ on:
       - "Sources/BranchSDK/**"
       - "Sources/BranchSwiftSDK/**"
       - "Branch-TestBed/**"
+      - "SDKIntegrationTestApps/**"
       # .github/** so a re-added vendor workflow runs the guard step below.
       - ".github/**"
       - "scripts/validate_l1_logs.py"
       - "scripts/check_foreground_markers.py"
+      - "scripts/check_scene_routing.py"
       - "scripts/test_validate_l1_logs.py"
       - "scripts/test_validate_l1_logs_contracts.py"
       - "scripts/test_check_foreground_markers.py"
+      - "scripts/test_check_scene_routing.py"
       - "scripts/fixtures/**"
       - "scripts/run_l1_instrumented.sh"
       - "scripts/run_h2_hot.sh"
@@ -38,13 +41,16 @@ on:
       - "Sources/BranchSDK/**"
       - "Sources/BranchSwiftSDK/**"
       - "Branch-TestBed/**"
+      - "SDKIntegrationTestApps/**"
       # .github/** so a re-added vendor workflow runs the guard step below.
       - ".github/**"
       - "scripts/validate_l1_logs.py"
       - "scripts/check_foreground_markers.py"
+      - "scripts/check_scene_routing.py"
       - "scripts/test_validate_l1_logs.py"
       - "scripts/test_validate_l1_logs_contracts.py"
       - "scripts/test_check_foreground_markers.py"
+      - "scripts/test_check_scene_routing.py"
       - "scripts/fixtures/**"
       - "scripts/run_l1_instrumented.sh"
       - "scripts/run_h2_hot.sh"
@@ -61,7 +67,9 @@ jobs:
   validate-wire-logs:
     runs-on: macos-15
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
-    timeout-minutes: 30
+    # Two builds (iOSReleaseTest for the L1 and multi-scene captures, TestBed for H2) and an
+    # iPad boot for the multi-scene captures.
+    timeout-minutes: 45
 
     steps:
       - name: Checkout
@@ -99,6 +107,64 @@ jobs:
           ./scripts/getSimulator
           echo "name=$(cat ./iphoneSim)" >> "$GITHUB_OUTPUT"
 
+      # The multi-scene captures need a device that can open a second scene.
+      # ./scripts/getSimulator picks an iPhone, so pick an iPad on the newest
+      # iOS runtime the image has.
+      - name: Resolve iPad simulator
+        id: ipad
+        run: |
+          set -euo pipefail
+          name=$(xcrun simctl list devices available -j | python3 -c '
+          import json, re, sys
+          devices = json.load(sys.stdin)["devices"]
+          def version(runtime):
+              return [int(n) for n in re.findall(r"\d+", runtime.rsplit("iOS-", 1)[-1])]
+          for runtime in sorted((r for r in devices if ".iOS-" in r), key=version, reverse=True):
+              ipads = sorted(d["name"] for d in devices[runtime] if d.get("isAvailable") and d["name"].startswith("iPad"))
+              if ipads:
+                  print(ipads[0])
+                  break
+          ')
+          if [ -z "$name" ]; then
+            echo "::error::no iPad simulator on this runner; the multi-scene captures cannot run"
+            exit 1
+          fi
+          echo "iPad simulator: $name"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+
+      # Ad-hoc signing, as for the TestBed below. Its own derived data so the
+      # two projects' .xctestrun files never mix.
+      - name: Build iOSReleaseTest for testing
+        run: |
+          xcodebuild build-for-testing \
+            -project SDKIntegrationTestApps/iOSReleaseTest-SPM/iOSReleaseTest.xcodeproj \
+            -scheme iOSReleaseTest-L1 \
+            -derivedDataPath ./DerivedData-iOSReleaseTest \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.name }},OS=latest" \
+            CODE_SIGNING_ALLOWED=YES \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGN_STYLE=Manual \
+            DEVELOPMENT_TEAM="" \
+            PROVISIONING_PROFILE_SPECIFIER=""
+
+      - name: Assert iOSReleaseTest carries associated domains
+        run: |
+          set -euo pipefail
+          BIN="./DerivedData-iOSReleaseTest/Build/Products/Debug-iphonesimulator/iOSReleaseTest.app/iOSReleaseTest"
+          if [ ! -f "$BIN" ]; then
+            echo "::error::iOSReleaseTest binary not found at $BIN; the build step may have moved or failed"
+            exit 1
+          fi
+          STRINGS_OUT="$(strings -a "$BIN")"
+          COUNT="$(grep -c com.apple.developer.associated-domains <<< "$STRINGS_OUT" || true)"
+          echo "associated-domains entitlement entries in the iOSReleaseTest binary: $COUNT (routing is not verified by this step)"
+          if ! [ "$COUNT" -gt 0 ] 2>/dev/null; then
+            echo "::error::iOSReleaseTest was built without the associated-domains entitlement; Universal Link scenarios cannot run"
+            exit 1
+          fi
+
+      # The TestBed serves only the hot_uriScheme and warm_uriScheme steps.
       # Ad-hoc signing embeds the entitlements without a certificate. The overrides
       # apply to every target, including the UI test runner the project leaves unsigned.
       - name: Build TestBed for testing
@@ -133,8 +199,9 @@ jobs:
             exit 1
           fi
 
-      # Three scenarios, three captures. Each needs its own run: the app
-      # deletes branchlogs.txt on every launch, so one run cannot hold two.
+      # One capture per scenario, all from iOSReleaseTest. Each needs its own
+      # run: the app deletes branchlogs.txt on every launch, so one run cannot
+      # hold two.
       #
       # Each scenario wipes first and establishes whatever state it needs, so
       # the steps are independent and reordering them is safe. cold_https
@@ -142,39 +209,94 @@ jobs:
       # entered by a link.
       - name: Capture install, a launch with no link
         env:
-          DERIVED_DATA_DIR: ./DerivedData
+          DERIVED_DATA_DIR: ./DerivedData-iOSReleaseTest
           SIM_NAME: ${{ steps.sim.outputs.name }}
           SIM_OS: latest
-          PROJECT_PATH: Branch-TestBed/Branch-TestBed.xcodeproj
-          SCHEME: TestBed-GPTDriverTests
-          BUNDLE_ID: io.branch.sdk.Branch-TestBed
+          PROJECT_PATH: SDKIntegrationTestApps/iOSReleaseTest-SPM/iOSReleaseTest.xcodeproj
+          SCHEME: iOSReleaseTest-L1
+          BUNDLE_ID: io.branch.link-simulator
         run: |
-          ONLY_TESTING=TestBed-GPTDriverTests/L1WireValidationTest \
+          ONLY_TESTING=iOSReleaseTestUITests/L1WireValidationTest \
           OUTPUT_LOG=wire-install.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
 
       - name: Capture cold_firstInstall, a link with no prior install
         env:
-          DERIVED_DATA_DIR: ./DerivedData
+          DERIVED_DATA_DIR: ./DerivedData-iOSReleaseTest
           SIM_NAME: ${{ steps.sim.outputs.name }}
           SIM_OS: latest
-          PROJECT_PATH: Branch-TestBed/Branch-TestBed.xcodeproj
-          SCHEME: TestBed-GPTDriverTests
-          BUNDLE_ID: io.branch.sdk.Branch-TestBed
+          PROJECT_PATH: SDKIntegrationTestApps/iOSReleaseTest-SPM/iOSReleaseTest.xcodeproj
+          SCHEME: iOSReleaseTest-L1
+          BUNDLE_ID: io.branch.link-simulator
         run: |
-          ONLY_TESTING=TestBed-GPTDriverTests/ColdLinkWireValidationTest \
+          ONLY_TESTING=iOSReleaseTestUITests/ColdLinkWireValidationTest \
           OUTPUT_LOG=wire-cold_firstInstall.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
 
       - name: Capture cold_https, a link on a device that already has the app
         env:
-          DERIVED_DATA_DIR: ./DerivedData
+          DERIVED_DATA_DIR: ./DerivedData-iOSReleaseTest
           SIM_NAME: ${{ steps.sim.outputs.name }}
           SIM_OS: latest
-          PROJECT_PATH: Branch-TestBed/Branch-TestBed.xcodeproj
-          SCHEME: TestBed-GPTDriverTests
-          BUNDLE_ID: io.branch.sdk.Branch-TestBed
+          PROJECT_PATH: SDKIntegrationTestApps/iOSReleaseTest-SPM/iOSReleaseTest.xcodeproj
+          SCHEME: iOSReleaseTest-L1
+          BUNDLE_ID: io.branch.link-simulator
         run: |
-          ONLY_TESTING=TestBed-GPTDriverTests/ColdLinkInstalledWireValidationTest \
+          ONLY_TESTING=iOSReleaseTestUITests/ColdLinkInstalledWireValidationTest \
           OUTPUT_LOG=wire-cold_https.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
+
+      # Multi-scene captures run on an iPad, the only simulator that can open
+      # a second scene. Each starts from a fresh install, so no restored
+      # Scene 2 session is carried in from an earlier step.
+      - name: Capture multiscene_open, Scene 2 opened with nil options
+        env:
+          DERIVED_DATA_DIR: ./DerivedData-iOSReleaseTest
+          SIM_NAME: ${{ steps.ipad.outputs.name }}
+          SIM_OS: latest
+          PROJECT_PATH: SDKIntegrationTestApps/iOSReleaseTest-SPM/iOSReleaseTest.xcodeproj
+          SCHEME: iOSReleaseTest-L1
+          BUNDLE_ID: io.branch.link-simulator
+          REQUIRE_MULTI_SCENE: "1"
+        run: |
+          ONLY_TESTING=iOSReleaseTestUITests/MultiSceneOpenWireTest \
+          OUTPUT_LOG=wire-multiscene_open.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
+
+      - name: Capture multiscene_link_scene2, a link delivered to Scene 2
+        env:
+          DERIVED_DATA_DIR: ./DerivedData-iOSReleaseTest
+          SIM_NAME: ${{ steps.ipad.outputs.name }}
+          SIM_OS: latest
+          PROJECT_PATH: SDKIntegrationTestApps/iOSReleaseTest-SPM/iOSReleaseTest.xcodeproj
+          SCHEME: iOSReleaseTest-L1
+          BUNDLE_ID: io.branch.link-simulator
+          REQUIRE_MULTI_SCENE: "1"
+        run: |
+          ONLY_TESTING=iOSReleaseTestUITests/MultiSceneLinkToScene2WireTest \
+          OUTPUT_LOG=wire-multiscene_link_scene2.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
+
+      - name: Capture multiscene_link_scene1, a link delivered to Scene 1
+        env:
+          DERIVED_DATA_DIR: ./DerivedData-iOSReleaseTest
+          SIM_NAME: ${{ steps.ipad.outputs.name }}
+          SIM_OS: latest
+          PROJECT_PATH: SDKIntegrationTestApps/iOSReleaseTest-SPM/iOSReleaseTest.xcodeproj
+          SCHEME: iOSReleaseTest-L1
+          BUNDLE_ID: io.branch.link-simulator
+          REQUIRE_MULTI_SCENE: "1"
+        run: |
+          ONLY_TESTING=iOSReleaseTestUITests/MultiSceneLinkToScene1WireTest \
+          OUTPUT_LOG=wire-multiscene_link_scene1.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
+
+      - name: Capture multiscene_foreground, a foreground with two scenes connected
+        env:
+          DERIVED_DATA_DIR: ./DerivedData-iOSReleaseTest
+          SIM_NAME: ${{ steps.ipad.outputs.name }}
+          SIM_OS: latest
+          PROJECT_PATH: SDKIntegrationTestApps/iOSReleaseTest-SPM/iOSReleaseTest.xcodeproj
+          SCHEME: iOSReleaseTest-L1
+          BUNDLE_ID: io.branch.link-simulator
+          REQUIRE_MULTI_SCENE: "1"
+        run: |
+          ONLY_TESTING=iOSReleaseTestUITests/MultiSceneForegroundWireTest \
+          OUTPUT_LOG=wire-multiscene_foreground.txt UNINSTALL_FIRST=1 ./scripts/run_l1_instrumented.sh
 
       # hot_uriScheme on the same device. The driver reinstalls the TestBed,
       # so the install capture above is already copied out. Only receipt lines
@@ -256,6 +378,21 @@ jobs:
           check install wire-install.txt
           check cold_firstInstall wire-cold_firstInstall.txt
           check cold_https wire-cold_https.txt
+          # Multi-scene: the wire contract, then which scene's callback got each result.
+          # TODO(EMT-4495): add --require-link-data to the link scenarios once
+          # L1Fixture.link points at a real nipunreleasetest.app.link link.
+          route () {
+            echo "::group::$1 routing"
+            if ! python3 scripts/check_scene_routing.py "$2" --scenario "$1" 2>&1 \
+                 | sed "s/^FAILED:/FAILED: [$1 routing]/" | tee -a /tmp/l1-output.txt; then
+              rc=1
+            fi
+            echo "::endgroup::"
+          }
+          for scenario in multiscene_open multiscene_link_scene2 multiscene_link_scene1 multiscene_foreground; do
+            check "$scenario" "wire-$scenario.txt"
+            route "$scenario" "wire-$scenario.txt"
+          done
           exit $rc
 
       # The wire contract counts the delivery delta, and the marker checker
@@ -338,9 +475,9 @@ jobs:
           {
             echo "### Layer 1 — SDK wire validation"
             echo
-            cat wire-install.txt wire-cold_firstInstall.txt wire-cold_https.txt 2>/dev/null \
+            cat wire-install.txt wire-cold_firstInstall.txt wire-cold_https.txt wire-multiscene_*.txt 2>/dev/null \
               | grep -o 'Got https://[^ ]*' \
-              | sed 's|.*api2.branch.io||' | sort | uniq -c > /tmp/l1-endpoints.txt || true
+              | sed -E 's|Got https://[^/]+||' | sort | uniq -c > /tmp/l1-endpoints.txt || true
             if [ -s /tmp/l1-endpoints.txt ]; then
               echo "| endpoint | requests |"
               echo "| --- | ---: |"
@@ -355,9 +492,11 @@ jobs:
             echo "| --- | --- |"
             if [ "${{ steps.validate.outcome }}" = "success" ]; then
               echo "| Cold | cold_https and cold_firstInstall pass |"
+              echo "| Multi-scene | multiscene_open, multiscene_link_scene2, multiscene_link_scene1 and multiscene_foreground pass |"
               echo "| Negative and guards | install passes, the rest not implemented |"
             else
               echo "| Cold | see failures below |"
+              echo "| Multi-scene | see failures below |"
               echo "| Negative and guards | see failures below |"
             fi
             hot_defer="hot_https_foreground not run: a GitHub runner does not route Universal Links to the simulator"
@@ -402,7 +541,7 @@ jobs:
                 echo "<details><summary>Captured wire log</summary>"
                 echo
                 echo '```'
-                cat wire-install.txt wire-cold_firstInstall.txt wire-cold_https.txt \
+                cat wire-install.txt wire-cold_firstInstall.txt wire-cold_https.txt wire-multiscene_*.txt \
                   > /tmp/l1-all.txt 2>/dev/null || true
                 if [ -s /tmp/l1-all.txt ]; then head -c 40000 /tmp/l1-all.txt; echo; else echo "(no capture was produced)"; fi
                 echo '```'
@@ -428,6 +567,7 @@ jobs:
             wire-install.txt
             wire-cold_firstInstall.txt
             wire-cold_https.txt
+            wire-multiscene_*.txt
           retention-days: 7
 
       # After the upload, so a hot_uriScheme-only or warm_uriScheme-only failure
