@@ -33,9 +33,27 @@ attribution-level tiers, and the uncontracted-endpoint case.
 
 ## Scenarios
 
-Each scenario is one harness invocation with its own capture.
-`-[AppDelegate setBranchLogFile]` deletes `branchlogs.txt` on every launch,
-so two scenarios sharing one run would leave only the last one's capture.
+Each scenario is one harness invocation with its own capture. The app under
+test deletes `branchlogs.txt` on every launch, so two scenarios sharing one run
+would leave only the last one's capture.
+
+`run_l1_instrumented.sh` drives the scene-based iOSReleaseTest app
+(`SDKIntegrationTestApps/iOSReleaseTest-SPM`, scheme `iOSReleaseTest-L1`,
+UI tests in `SDKIntegrationTestApps/Source/iOSReleaseTestUITests/`) by default.
+Build it first:
+
+```bash
+xcodebuild build-for-testing \
+  -project SDKIntegrationTestApps/iOSReleaseTest-SPM/iOSReleaseTest.xcodeproj \
+  -scheme iOSReleaseTest-L1 -derivedDataPath ./DerivedData \
+  -destination "platform=iOS Simulator,name=iPhone 16,OS=latest" \
+  CODE_SIGNING_ALLOWED=YES CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="-" \
+  CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM="" PROVISIONING_PROFILE_SPECIFIER=""
+```
+
+The TestBed still serves `run_h2_hot.sh` (hot_uriScheme, warm_uriScheme) and
+the `deeplink` scenario below; point `PROJECT_PATH`, `SCHEME`, `ONLY_TESTING`
+and `BUNDLE_ID` at it to run those.
 
 Each scenario declares a contract: the exact number of requests per endpoint,
 which endpoints must not appear, and the order between them. There is no global
@@ -47,7 +65,9 @@ rule any more — a scenario that requires an open says so in its contract.
 ./scripts/run_l1_instrumented.sh
 python3 scripts/validate_l1_logs.py branchlogs.txt --scenario install
 
-# deeplink: taps "Request DeepLink", which posts /v3/deeplink
+# deeplink (TestBed): taps "Request DeepLink", which posts /v3/deeplink
+PROJECT_PATH=Branch-TestBed/Branch-TestBed.xcodeproj SCHEME=TestBed-GPTDriverTests \
+BUNDLE_ID=io.branch.sdk.Branch-TestBed \
 ONLY_TESTING=TestBed-GPTDriverTests/DeepLinkWireValidationTest \
 OUTPUT_LOG=branchlogs-deeplink.txt \
   ./scripts/run_l1_instrumented.sh
@@ -56,13 +76,38 @@ python3 scripts/validate_l1_logs.py branchlogs-deeplink.txt --scenario deeplink
 
 ```bash
 # cold_https / cold_firstInstall: a Universal Link into a cold launch. The
-# TestBed puts the link in launchOptions (TestBedDeepLinkTestHook), as iOS does,
-# so requestDeepLinkDataWithLaunchOptions: sends no nil-URL lookup. Expect one
-# /v3/deeplink; cold_https then has 1 open, cold_firstInstall 2.
-ONLY_TESTING=TestBed-GPTDriverTests/ColdLinkInstalledWireValidationTest \
+# app's -testDeepLinkURL hook registers Scene 1's callback without the
+# empty-options lookup and delivers the link with
+# requestDeepLinkData(scene:userActivity:). Expect one /v3/deeplink and one open.
+ONLY_TESTING=iOSReleaseTestUITests/ColdLinkInstalledWireValidationTest \
 OUTPUT_LOG=wire-cold_https.txt ./scripts/run_l1_instrumented.sh
 python3 scripts/validate_l1_logs.py wire-cold_https.txt --scenario cold_https
 ```
+
+Multi-scene scenarios need an iPad; `REQUIRE_MULTI_SCENE=1` makes the runner
+refuse any other simulator. Each scene callback is written to the capture as
+`[SceneCallback] scene=<scene1|scene2> params=<json>`, and
+`check_scene_routing.py` asserts which scene received each result.
+
+| scenario | UI test class | what it drives |
+| --- | --- | --- |
+| `multiscene_open` | `MultiSceneOpenWireTest` | cold launch, then Scene 2 opened with nil options |
+| `multiscene_link_scene2` | `MultiSceneLinkToScene2WireTest` | as above, then a link delivered to Scene 2 |
+| `multiscene_link_scene1` | `MultiSceneLinkToScene1WireTest` | as above, then a link delivered to Scene 1 |
+| `multiscene_foreground` | `MultiSceneForegroundWireTest` | as `multiscene_open`, then background and foreground |
+
+```bash
+SIM_NAME="iPad (A16)" REQUIRE_MULTI_SCENE=1 \
+ONLY_TESTING=iOSReleaseTestUITests/MultiSceneLinkToScene2WireTest \
+OUTPUT_LOG=wire-multiscene_link_scene2.txt ./scripts/run_l1_instrumented.sh
+python3 scripts/validate_l1_logs.py wire-multiscene_link_scene2.txt --scenario multiscene_link_scene2
+python3 scripts/check_scene_routing.py wire-multiscene_link_scene2.txt \
+  --scenario multiscene_link_scene2 --require-link-data
+```
+
+`--require-link-data` also fails when the link's callback lacks
+`+clicked_branch_link: true`, so a fixture link that stops resolving does not
+pass on counts alone.
 
 An unrecognised or missing `--scenario` exits 2, so a typo in a CI matrix
 cannot silently validate a capture against nothing.

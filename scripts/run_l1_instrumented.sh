@@ -1,25 +1,32 @@
 #!/usr/bin/env bash
 #
-# L1 instrumentation runner for the iOS Branch SDK TestBed.
+# L1 instrumentation runner for the iOS Branch SDK.
 #
 # Invoked from .github/workflows/layer1-logger-tests.yml after the workflow
-# has already built the TestBed app via `xcodebuild build-for-testing`. This
-# script:
+# has already built the app under test via `xcodebuild build-for-testing`.
+# This script:
 #   1. Identifies / boots a target simulator.
 #   2. Runs the class ONLY_TESTING selects via `xcodebuild test-without-building`.
-#   3. Pulls branchlogs.txt out of the simulator's TestBed app sandbox so
+#   3. Pulls the capture (LOG_RELATIVE_PATH) out of the app's sandbox so
 #      the Python validator (validate_l1_logs.py) can parse it.
 #
 # Required env / inputs:
 #   DERIVED_DATA_DIR     - path to the build-for-testing output (default ./DerivedData)
 #   SIM_NAME             - simulator device name (default "iPhone 16")
+#   SIM_UDID             - simulator UDID; when set it is used as is, so a name
+#                          shared by several runtimes picks the intended one
 #   SIM_OS               - simulator iOS version, "latest" or explicit (default "latest")
-#   PROJECT_PATH         - path to .xcodeproj (default Branch-TestBed/Branch-TestBed.xcodeproj)
-#   SCHEME               - scheme name (default TestBed-GPTDriverTests)
+#   PROJECT_PATH         - path to .xcodeproj (default
+#                          SDKIntegrationTestApps/iOSReleaseTest-SPM/iOSReleaseTest.xcodeproj)
+#   SCHEME               - scheme name (default iOSReleaseTest-L1)
 #   ONLY_TESTING         - xcodebuild -only-testing selector (default
-#                          TestBed-GPTDriverTests/L1WireValidationTest)
-#   BUNDLE_ID            - TestBed app bundle id (default io.branch.sdk.Branch-TestBed)
+#                          iOSReleaseTestUITests/L1WireValidationTest)
+#   BUNDLE_ID            - app bundle id (default io.branch.link-simulator)
+#   LOG_RELATIVE_PATH    - capture path inside the app's data container
+#                          (default Documents/branchlogs.txt)
 #   OUTPUT_LOG           - destination for the pulled file (default branchlogs.txt)
+#   REQUIRE_MULTI_SCENE  - 1 fails before running unless SIM_NAME is an iPad,
+#                          since an iPhone cannot open a second scene (default 0)
 #   UNINSTALL_FIRST      - 1 (default) wipes the app before running, so the SDK
 #                          treats the launch as a first install. 0 keeps the
 #                          prior install, the only way to drive a launch on an
@@ -39,12 +46,15 @@ set -euo pipefail
 DERIVED_DATA_DIR="${DERIVED_DATA_DIR:-./DerivedData}"
 SIM_NAME="${SIM_NAME:-iPhone 16}"
 SIM_OS="${SIM_OS:-latest}"
-PROJECT_PATH="${PROJECT_PATH:-Branch-TestBed/Branch-TestBed.xcodeproj}"
-SCHEME="${SCHEME:-TestBed-GPTDriverTests}"
-ONLY_TESTING="${ONLY_TESTING:-TestBed-GPTDriverTests/L1WireValidationTest}"
-BUNDLE_ID="${BUNDLE_ID:-io.branch.sdk.Branch-TestBed}"
+SIM_UDID="${SIM_UDID:-}"
+PROJECT_PATH="${PROJECT_PATH:-SDKIntegrationTestApps/iOSReleaseTest-SPM/iOSReleaseTest.xcodeproj}"
+SCHEME="${SCHEME:-iOSReleaseTest-L1}"
+ONLY_TESTING="${ONLY_TESTING:-iOSReleaseTestUITests/L1WireValidationTest}"
+BUNDLE_ID="${BUNDLE_ID:-io.branch.link-simulator}"
+LOG_RELATIVE_PATH="${LOG_RELATIVE_PATH:-Documents/branchlogs.txt}"
 OUTPUT_LOG="${OUTPUT_LOG:-branchlogs.txt}"
 UNINSTALL_FIRST="${UNINSTALL_FIRST:-1}"
+REQUIRE_MULTI_SCENE="${REQUIRE_MULTI_SCENE:-0}"
 
 echo "==> L1 instrumentation starting"
 echo "    Derived data dir : $DERIVED_DATA_DIR"
@@ -53,6 +63,17 @@ echo "    Scheme           : $SCHEME"
 echo "    Only testing     : $ONLY_TESTING"
 echo "    Bundle id        : $BUNDLE_ID"
 echo "    Uninstall first  : $UNINSTALL_FIRST"
+echo "    Multi-scene      : $REQUIRE_MULTI_SCENE"
+
+if [ "$REQUIRE_MULTI_SCENE" = "1" ]; then
+    case "$SIM_NAME" in
+        iPad*) ;;
+        *)
+            echo "ERROR: REQUIRE_MULTI_SCENE=1 needs an iPad simulator; '$SIM_NAME' cannot open a second scene."
+            exit 1
+            ;;
+    esac
+fi
 
 # Boot the simulator first so subsequent simctl commands target an awake
 # device. `simctl boot` is idempotent (no-op if already booted).
@@ -63,6 +84,7 @@ echo "==> Booting simulator '$SIM_NAME'..."
 # silently returns no matches. Drop the bash-level name filter and let
 # the Python below do the name match — the JSON already only contains
 # available devices.
+if [ -z "$SIM_UDID" ]; then
 SIM_UDID=$(xcrun simctl list devices available -j \
     | python3 -c '
 import json, sys
@@ -74,6 +96,7 @@ for runtime, devices in data["devices"].items():
             sys.exit(0)
 sys.exit(1)
 ' "$SIM_NAME") || true
+fi
 
 if [ -z "$SIM_UDID" ]; then
     echo "ERROR: no available simulator named '$SIM_NAME'. Listing available:"
@@ -86,7 +109,7 @@ xcrun simctl boot "$SIM_UDID" 2>/dev/null || true
 xcrun simctl bootstatus "$SIM_UDID" -b
 
 if [ "$UNINSTALL_FIRST" = "1" ]; then
-    echo "==> Uninstalling any prior TestBed install..."
+    echo "==> Uninstalling any prior install of $BUNDLE_ID..."
     xcrun simctl uninstall "$SIM_UDID" "$BUNDLE_ID" 2>/dev/null || true
 else
     echo "==> Keeping any prior install (UNINSTALL_FIRST=0)"
@@ -113,11 +136,11 @@ xcodebuild test-without-building \
 
 # Even if tests failed, attempt to pull the log file so the validator (and
 # upload-artifact step) can surface a useful failure reason.
-echo "==> Locating TestBed app container..."
+echo "==> Locating app container for $BUNDLE_ID..."
 APP_DATA=""
 if APP_DATA=$(xcrun simctl get_app_container "$SIM_UDID" "$BUNDLE_ID" data 2>/dev/null); then
     echo "    Container: $APP_DATA"
-    LOG_SOURCE="$APP_DATA/Documents/branchlogs.txt"
+    LOG_SOURCE="$APP_DATA/$LOG_RELATIVE_PATH"
     if [ -f "$LOG_SOURCE" ]; then
         cp "$LOG_SOURCE" "$OUTPUT_LOG"
         echo "==> Pulled $OUTPUT_LOG ($(wc -l < "$OUTPUT_LOG" | tr -d ' ') lines)"

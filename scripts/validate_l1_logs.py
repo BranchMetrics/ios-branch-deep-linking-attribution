@@ -312,6 +312,37 @@ SCENARIO_CONTRACTS = {
         "order": (("/v3/deeplink", "/v3/events/open"),),
         "fields": {},
     },
+    # Multi-scene captures from iOSReleaseTest on an iPad. Each launches with no link, so Scene 1
+    # sends the nil-URL lookup and the launch open, then opens Scene 2 with nil options, which
+    # sends a second nil-URL lookup (Branch.m requestDeepLinkDataWithSceneOptions:). Opening a
+    # scene resigns the app, so that lookup re-arms the foreground period and is followed by an
+    # organic open of its own. scripts/check_scene_routing.py checks which scene's callback
+    # received each result.
+    "multiscene_open": {
+        "counts": {"/v3/deeplink": 2, "/v3/events/open": 2},
+        "order": (("/v3/deeplink", "/v3/events/open"),),
+        "fields": {},
+    },
+    # multiscene_open, then a link delivered to Scene 2 after its lookup completes: one more
+    # resolve and the open that follows it.
+    "multiscene_link_scene2": {
+        "counts": {"/v3/deeplink": 3, "/v3/events/open": 3},
+        "order": (("/v3/deeplink", "/v3/events/open"),),
+        "fields": {},
+    },
+    # The same, with the link delivered to Scene 1.
+    "multiscene_link_scene1": {
+        "counts": {"/v3/deeplink": 3, "/v3/events/open": 3},
+        "order": (("/v3/deeplink", "/v3/events/open"),),
+        "fields": {},
+    },
+    # multiscene_open, then a background and foreground with both scenes connected: one open
+    # for the new foreground period, not one per scene, and no resolve.
+    "multiscene_foreground": {
+        "counts": {"/v3/deeplink": 2, "/v3/events/open": 3},
+        "order": (("/v3/deeplink", "/v3/events/open"),),
+        "fields": {},
+    },
 }
 
 

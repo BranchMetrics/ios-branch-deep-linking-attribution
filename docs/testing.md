@@ -9,9 +9,12 @@ where tests are hosted under `Branch-TestBed/`.
 **A test added to `Branch-TestBed/Branch-SDK-Tests/` will not run in CI on this line.** Put new
 unit tests in `BranchSDKTests/`.
 
-`Branch-TestBed/` still exists and holds the keyless wire-validation harness
-(`Branch-TestBed/TestBed-GPTDriverTests/`). The L1 gate drives it through the scheme with
-`-only-testing`, one class per run.
+The keyless L1 wire captures run on the scene-based iOSReleaseTest app: UI tests in
+`SDKIntegrationTestApps/Source/iOSReleaseTestUITests/`, built through the shared
+`iOSReleaseTest-L1` scheme of `SDKIntegrationTestApps/iOSReleaseTest-SPM/iOSReleaseTest.xcodeproj`.
+The L1 gate drives it with `-only-testing`, one class per run, on an iPhone for install and the
+cold links and on an iPad for the multi-scene captures. `Branch-TestBed/` still holds the harness
+for the hot and warm URI scheme captures (`scripts/run_h2_hot.sh`). See `scripts/README.md`.
 
 ## Running them
 
