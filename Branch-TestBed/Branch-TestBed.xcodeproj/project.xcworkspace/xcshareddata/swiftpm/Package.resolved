@@ -1,6 +1,15 @@
 {
-  "originHash" : "bb99ce17c563a1c551806f1d8b2d31aef8e86c9f5237904897126d663a729026",
+  "originHash" : "26a8755a4eef15168965b20a99c560a637749b04ffc5a86156c6810517ae7c6e",
   "pins" : [
+    {
+      "identity" : "facebook-ios-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/meta/facebook-ios-sdk",
+      "state" : {
+        "revision" : "7c3fb7856063fa1074d330616f4070f2ed10a49b",
+        "version" : "19.0.1"
+      }
+    },
     {
       "identity" : "google-ads-on-device-conversion-ios-sdk",
       "kind" : "remoteSourceControl",

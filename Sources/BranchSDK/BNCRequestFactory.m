@@ -620,7 +620,9 @@
             }
         }
         
-        [dictionary bnc_safeSetObject:self.deviceInfo.anonId forKey:@"anon_id"];
+        if ([self shouldIncludeFbSdkAnonId]) {
+            [dictionary bnc_safeSetObject:[self.deviceInfo fbSdkAnonId] forKey:BRANCH_REQUEST_KEY_ANON_ID];
+        }
         [dictionary bnc_safeSetObject:self.deviceInfo.localIPAddress forKey:@"local_ip"];
 
         [dictionary bnc_safeSetObject:self.deviceInfo.optedInStatus forKey:@"opted_in_status"];
@@ -664,6 +666,14 @@
     return dictionary;
 }
 
+// Meta (FBSDK) anonymous ID is a device identifier, so follow the same rule as IDFV: omit it at attribution level None.
+- (BOOL)shouldIncludeFbSdkAnonId {
+    if (![self.preferenceHelper attributionLevelInitialized]) {
+        return YES;
+    }
+    return ![[self.preferenceHelper attributionLevel] isEqualToString:BranchAttributionLevelNone];
+}
+
 // install, open and latd
 - (void)addV1DictionaryToJSON:(NSMutableDictionary *)json {
     [self updateDeviceInfoToMutableDictionary:json];
@@ -698,7 +708,9 @@
                 [self safeSetValue:self.deviceInfo.vendorId forKey:BRANCH_REQUEST_KEY_IOS_VENDOR_ID onDict:dict];
             }
             
-            [self safeSetValue:self.deviceInfo.anonId forKey:@"anon_id" onDict:dict];
+            if ([self shouldIncludeFbSdkAnonId]) {
+                [self safeSetValue:[self.deviceInfo fbSdkAnonId] forKey:BRANCH_REQUEST_KEY_ANON_ID onDict:dict];
+            }
             
             [self safeSetValue:[self.deviceInfo localIPAddress] forKey:@"local_ip" onDict:dict];
             

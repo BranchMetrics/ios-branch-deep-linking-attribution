@@ -29,6 +29,7 @@
 
 @interface BNCDeviceInfo()
 @property (nonatomic, copy, readwrite) NSString *randomId;
+@property (nonatomic, copy, readwrite) NSString *cachedFbSdkAnonId;
 @end
 
 @implementation BNCDeviceInfo
@@ -57,13 +58,55 @@
     }
 }
 
-- (NSString *)loadAnonID {
-    NSString *tmp = [BNCPreferenceHelper sharedInstance].anonID;
-    if (!tmp) {
-        tmp = [NSUUID UUID].UUIDString;
-        [BNCPreferenceHelper sharedInstance].anonID = tmp;
+// Reads the Meta (FBSDK) anonymous ID via reflection. Do not use retrievePersistedAnonymousID or the
+// persisted JSON file, both can be empty on first launch. anonymousID is synchronous and creates the ID if needed.
+- (NSString *)readFbSdkAnonIdFromMetaSDK {
+    Class cls = NSClassFromString(@"FBSDKBasicUtility");
+    SEL sel = NSSelectorFromString(@"anonymousID");
+    if (!cls || ![cls respondsToSelector:sel]) {
+        return nil; // Meta SDK not present
     }
-    return tmp;
+    typedef id (*AnonymousIDFn)(id, SEL);
+    AnonymousIDFn fn = (AnonymousIDFn)[cls methodForSelector:sel];
+    id value = fn ? fn((id)cls, sel) : nil;
+    if (![value isKindOfClass:[NSString class]]) {
+        return nil;
+    }
+    return (NSString *)value;
+}
+
+// Meta anonymous IDs always start with "XZ".
+- (BOOL)isValidFbSdkAnonId:(NSString *)value {
+    return [value isKindOfClass:[NSString class]] && value.length > 2 && [value hasPrefix:@"XZ"];
+}
+
+- (NSString *)fbSdkAnonId {
+    @synchronized (self) {
+        if (self.cachedFbSdkAnonId) {
+            return self.cachedFbSdkAnonId;
+        }
+
+        BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+
+        // 1. Value saved from the Meta SDK in an earlier session. Uses its own key (bnc_fb_sdk_anon_id),
+        //    so the GUID older Branch SDKs saved in bnc_anon_id is never read.
+        NSString *savedValue = preferenceHelper.fbSdkAnonID;
+        if ([self isValidFbSdkAnonId:savedValue]) {
+            self.cachedFbSdkAnonId = savedValue;
+            return savedValue;
+        }
+
+        // 2. Not saved yet, read from the Meta SDK and save it.
+        NSString *value = [self readFbSdkAnonIdFromMetaSDK];
+        if ([self isValidFbSdkAnonId:value]) {
+            self.cachedFbSdkAnonId = value;
+            preferenceHelper.fbSdkAnonID = value;
+            return value;
+        }
+
+        // Invalid or missing: nothing cached or saved, so the next request tries again.
+        return nil;
+    }
 }
 
 - (void)loadDeviceInfo {
@@ -72,7 +115,6 @@
     // The random id is regenerated per app launch.  This maintains existing behavior.
     self.randomId = [[NSUUID UUID] UUIDString];
     self.vendorId = [[UIDevice currentDevice].identifierForVendor UUIDString];
-    self.anonId = [self loadAnonID];
     [self checkAdvertisingIdentifier];
 
     self.brandName = [BNCSystemObserver brand];

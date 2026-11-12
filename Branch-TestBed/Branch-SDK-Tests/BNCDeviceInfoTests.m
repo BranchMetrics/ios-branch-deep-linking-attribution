@@ -9,6 +9,35 @@
 #import <XCTest/XCTest.h>
 #import "BNCDeviceInfo.h"
 #import "BNCUserAgentCollector.h"
+#import "BNCPreferenceHelper.h"
+
+@interface BNCPreferenceHelper(LegacyAnonIDTest)
+- (void)writeObjectToDefaults:(NSString *)key value:(NSObject *)value;
+@end
+
+// Stand-in for the Meta SDK class. The test target does not link FBSDK, so BNCDeviceInfo's reflection finds this class.
+@interface FBSDKBasicUtility : NSObject
++ (void)bnc_setTestAnonymousID:(NSString *)anonymousID;
++ (NSInteger)bnc_callCount;
++ (NSString *)anonymousID;
+@end
+
+static NSString *bnc_testFBAnonymousID = nil;
+static NSInteger bnc_testFBCallCount = 0;
+
+@implementation FBSDKBasicUtility
++ (void)bnc_setTestAnonymousID:(NSString *)anonymousID {
+    bnc_testFBAnonymousID = [anonymousID copy];
+    bnc_testFBCallCount = 0;
+}
++ (NSInteger)bnc_callCount {
+    return bnc_testFBCallCount;
+}
++ (NSString *)anonymousID {
+    bnc_testFBCallCount++;
+    return bnc_testFBAnonymousID;
+}
+@end
 
 @interface BNCDeviceInfoTests : XCTestCase
 @property (nonatomic, strong, readwrite) BNCDeviceInfo *deviceInfo;
@@ -19,6 +48,8 @@
 - (void)setUp {
     [self workaroundUserAgentLazyLoad];
     self.deviceInfo = [BNCDeviceInfo new];
+    [[BNCPreferenceHelper sharedInstance] writeObjectToDefaults:@"bnc_anon_id" value:nil];
+    [BNCPreferenceHelper sharedInstance].fbSdkAnonID = nil;
 }
 
 // user agent needs to be loaded
@@ -31,7 +62,9 @@
 }
 
 - (void)tearDown {
-
+    [FBSDKBasicUtility bnc_setTestAnonymousID:nil];
+    [[BNCPreferenceHelper sharedInstance] writeObjectToDefaults:@"bnc_anon_id" value:nil];
+    [BNCPreferenceHelper sharedInstance].fbSdkAnonID = nil;
 }
 
 - (void)testHardwareId {
@@ -62,14 +95,6 @@
     // verify vendorId is a valid UUID
     NSUUID *vendorId = [[NSUUID alloc] initWithUUIDString:self.deviceInfo.vendorId];
     XCTAssertNotNil(vendorId);
-}
-
-- (void)testAnonId {
-    XCTAssertNotNil(self.deviceInfo.anonId);
-    
-    // verify anonId is a valid UUID
-    NSUUID *anonId = [[NSUUID alloc] initWithUUIDString:self.deviceInfo.anonId];
-    XCTAssertNotNil(anonId);
 }
 
 - (void)testOptedInStatus {
@@ -185,6 +210,91 @@
     
     XCTAssert([expectedName isEqualToString:self.deviceInfo.pluginName]);
     XCTAssert([expectedVersion isEqualToString:self.deviceInfo.pluginVersion]);
+}
+
+- (void)testFbSdkAnonIdValid {
+    [FBSDKBasicUtility bnc_setTestAnonymousID:@"XZ1234-ABCD"];
+    XCTAssertEqualObjects(@"XZ1234-ABCD", [self.deviceInfo fbSdkAnonId]);
+}
+
+- (void)testFbSdkAnonIdNil {
+    [FBSDKBasicUtility bnc_setTestAnonymousID:nil];
+    XCTAssertNil([self.deviceInfo fbSdkAnonId]);
+}
+
+- (void)testFbSdkAnonIdEmpty {
+    [FBSDKBasicUtility bnc_setTestAnonymousID:@""];
+    XCTAssertNil([self.deviceInfo fbSdkAnonId]);
+}
+
+- (void)testFbSdkAnonIdWithoutXZPrefixIsDiscarded {
+    [FBSDKBasicUtility bnc_setTestAnonymousID:@"AB1234-ABCD"];
+    XCTAssertNil([self.deviceInfo fbSdkAnonId]);
+
+    [FBSDKBasicUtility bnc_setTestAnonymousID:@"XZ"];
+    XCTAssertNil([self.deviceInfo fbSdkAnonId]);
+
+    [FBSDKBasicUtility bnc_setTestAnonymousID:@"xz1234"];
+    XCTAssertNil([self.deviceInfo fbSdkAnonId]);
+}
+
+- (void)testFbSdkAnonIdValidValueIsCached {
+    [FBSDKBasicUtility bnc_setTestAnonymousID:@"XZ1234-ABCD"];
+    XCTAssertEqualObjects(@"XZ1234-ABCD", [self.deviceInfo fbSdkAnonId]);
+    XCTAssertEqualObjects(@"XZ1234-ABCD", [self.deviceInfo fbSdkAnonId]);
+    XCTAssertEqual(1, [FBSDKBasicUtility bnc_callCount]);
+}
+
+- (void)testFbSdkAnonIdEmptyValueIsNotCached {
+    [FBSDKBasicUtility bnc_setTestAnonymousID:@""];
+    XCTAssertNil([self.deviceInfo fbSdkAnonId]);
+    XCTAssertNil([self.deviceInfo fbSdkAnonId]);
+    XCTAssertEqual(2, [FBSDKBasicUtility bnc_callCount]);
+
+    // Re-read picks up the value once Meta returns one
+    [FBSDKBasicUtility bnc_setTestAnonymousID:@"XZ5678-EFGH"];
+    XCTAssertEqualObjects(@"XZ5678-EFGH", [self.deviceInfo fbSdkAnonId]);
+}
+
+- (void)testFbSdkAnonIdValidValueIsSavedToPreferences {
+    [FBSDKBasicUtility bnc_setTestAnonymousID:@"XZ1234-ABCD"];
+    XCTAssertEqualObjects(@"XZ1234-ABCD", [self.deviceInfo fbSdkAnonId]);
+    XCTAssertEqualObjects(@"XZ1234-ABCD", [BNCPreferenceHelper sharedInstance].fbSdkAnonID);
+}
+
+- (void)testFbSdkAnonIdInvalidValueIsNotSavedToPreferences {
+    [FBSDKBasicUtility bnc_setTestAnonymousID:@"AB1234-ABCD"];
+    XCTAssertNil([self.deviceInfo fbSdkAnonId]);
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].fbSdkAnonID);
+}
+
+- (void)testFbSdkAnonIdSavedValueIsUsedBeforeMetaSDK {
+    [BNCPreferenceHelper sharedInstance].fbSdkAnonID = @"XZ9999-SAVED";
+    [FBSDKBasicUtility bnc_setTestAnonymousID:@"XZ1234-ABCD"];
+    XCTAssertEqualObjects(@"XZ9999-SAVED", [self.deviceInfo fbSdkAnonId]);
+    XCTAssertEqual(0, [FBSDKBasicUtility bnc_callCount], @"Meta SDK should not be called when a value is saved");
+}
+
+- (void)testFbSdkAnonIdInvalidSavedValueIsReplacedByMetaValue {
+    [BNCPreferenceHelper sharedInstance].fbSdkAnonID = @"not-a-meta-id";
+    [FBSDKBasicUtility bnc_setTestAnonymousID:@"XZ1234-ABCD"];
+    XCTAssertEqualObjects(@"XZ1234-ABCD", [self.deviceInfo fbSdkAnonId]);
+    XCTAssertEqualObjects(@"XZ1234-ABCD", [BNCPreferenceHelper sharedInstance].fbSdkAnonID);
+}
+
+// Upgrade from an older Branch SDK that saved its own GUID in bnc_anon_id.
+- (void)testUpgradeLegacyGuidIsNeverUsed {
+    [[BNCPreferenceHelper sharedInstance] writeObjectToDefaults:@"bnc_anon_id" value:[NSUUID UUID].UUIDString];
+    [FBSDKBasicUtility bnc_setTestAnonymousID:nil];
+    XCTAssertNil([self.deviceInfo fbSdkAnonId]);
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].fbSdkAnonID);
+}
+
+- (void)testUpgradeLegacyGuidIsIgnoredWhenMetaValueIsAvailable {
+    [[BNCPreferenceHelper sharedInstance] writeObjectToDefaults:@"bnc_anon_id" value:[NSUUID UUID].UUIDString];
+    [FBSDKBasicUtility bnc_setTestAnonymousID:@"XZ1234-ABCD"];
+    XCTAssertEqualObjects(@"XZ1234-ABCD", [self.deviceInfo fbSdkAnonId]);
+    XCTAssertEqualObjects(@"XZ1234-ABCD", [BNCPreferenceHelper sharedInstance].fbSdkAnonID);
 }
 
 @end

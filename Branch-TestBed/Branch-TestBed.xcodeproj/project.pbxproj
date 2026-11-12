@@ -272,6 +272,7 @@
 		F1CF14111F4CC79F00BB2694 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		F75975E5DF4BEE735A974B7D /* SessionAndLogsHybridTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 506B6E3C699AD53EFF4F5D9B /* SessionAndLogsHybridTest.swift */; };
 		FA0EDB9AC11B2D654496E492 /* TestScrollHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 704F26B57C08A695724807D8 /* TestScrollHelpers.swift */; };
+		FB5D0A000000000000000007 /* FacebookBasics in Frameworks */ = {isa = PBXBuildFile; productRef = FB5D0A000000000000000014 /* FacebookBasics */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -325,6 +326,13 @@
 			remoteInfo = Branch;
 		};
 		F1D4F9B11F323F01002D13FF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 670016581940F51400A9E103 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6700165F1940F51400A9E103;
+			remoteInfo = "Branch-TestBed";
+		};
+		FB5D0A000000000000000008 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 670016581940F51400A9E103 /* Project object */;
 			proxyType = 1;
@@ -639,6 +647,7 @@
 		E7FC47722DFC7B020072B3ED /* BranchConfigurationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = BranchConfigurationController.m; path = ../Sources/BranchSDK/BranchConfigurationController.m; sourceTree = "<group>"; };
 		F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-TestBed-UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC260E701BE220B2E128811D /* Smoke.xctestplan */ = {isa = PBXFileReference; includeInIndex = 1; path = Smoke.xctestplan; sourceTree = "<group>"; };
+		FB5D0A000000000000000002 /* Reflection_FBSDK_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Reflection_FBSDK_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -651,6 +660,11 @@
 			explicitFolders = (
 			);
 			path = Reflection_ODM_Tests;
+			sourceTree = "<group>";
+		};
+		FB5D0A000000000000000003 /* Reflection_FBSDK_Tests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Reflection_FBSDK_Tests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -728,6 +742,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				0372076425E8418F00F29C30 /* libBranch.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FB5D0A000000000000000005 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB5D0A000000000000000007 /* FacebookBasics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1061,6 +1083,7 @@
 				4D93D85E2098D43C00CFABA6 /* Branch-TestBed-UITests */,
 				5FC4CF7D24860C320001E701 /* cannedData */,
 				E7AC74612DB064BC002D8C40 /* Reflection_ODM_Tests */,
+				FB5D0A000000000000000003 /* Reflection_FBSDK_Tests */,
 				670016621940F51400A9E103 /* Frameworks */,
 				670016611940F51400A9E103 /* Products */,
 				6582C60A6E8FB0C91C7EBE0C /* TestBed-GPTDriverTests */,
@@ -1076,6 +1099,7 @@
 				F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */,
 				5F8B7B3B21B5F5CD009CE0A6 /* Branch-SDK-Unhosted-Tests.xctest */,
 				E7AC74602DB064BC002D8C40 /* Reflection_ODM_Tests.xctest */,
+				FB5D0A000000000000000002 /* Reflection_FBSDK_Tests.xctest */,
 				ACF0972B844F3483686EF054 /* TestBed-GPTDriverTests.xctest */,
 			);
 			name = Products;
@@ -1422,6 +1446,30 @@
 			productReference = F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		FB5D0A000000000000000001 /* Reflection_FBSDK_Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FB5D0A000000000000000010 /* Build configuration list for PBXNativeTarget "Reflection_FBSDK_Tests" */;
+			buildPhases = (
+				FB5D0A000000000000000004 /* Sources */,
+				FB5D0A000000000000000005 /* Frameworks */,
+				FB5D0A000000000000000006 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FB5D0A000000000000000009 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				FB5D0A000000000000000003 /* Reflection_FBSDK_Tests */,
+			);
+			name = Reflection_FBSDK_Tests;
+			packageProductDependencies = (
+				FB5D0A000000000000000014 /* FacebookBasics */,
+			);
+			productName = Reflection_FBSDK_Tests;
+			productReference = FB5D0A000000000000000002 /* Reflection_FBSDK_Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1468,6 +1516,10 @@
 						CreatedOnToolsVersion = 16.2;
 						TestTargetID = 6700165F1940F51400A9E103;
 					};
+					FB5D0A000000000000000001 = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = 6700165F1940F51400A9E103;
+					};
 					F1D4F9AB1F323F01002D13FF = {
 						CreatedOnToolsVersion = 8.3.1;
 						DevelopmentTeam = R63EM248DP;
@@ -1489,6 +1541,7 @@
 				E7AC74792DB0700D002D8C40 /* XCLocalSwiftPackageReference "ios-branch-deep-linking-attribution" */,
 				E732827D2E5F7D92005CACC8 /* XCRemoteSwiftPackageReference "google-ads-on-device-conversion-ios-sdk" */,
 				D0973F95A101C4673FDC92A1 /* XCRemoteSwiftPackageReference "gptd-swift" */,
+				FB5D0A000000000000000013 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
 			);
 			productRefGroup = 670016611940F51400A9E103 /* Products */;
 			projectDirPath = "";
@@ -1501,6 +1554,7 @@
 				F1D4F9AB1F323F01002D13FF /* Branch-TestBed-UITests */,
 				E7AC745F2DB064BC002D8C40 /* Reflection_ODM_Tests */,
 				AAC5A9A76F3DBB04E6638F31 /* TestBed-GPTDriverTests */,
+				FB5D0A000000000000000001 /* Reflection_FBSDK_Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -1552,6 +1606,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F1D4F9AA1F323F01002D13FF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FB5D0A000000000000000006 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1782,6 +1843,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FB5D0A000000000000000004 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1825,6 +1893,11 @@
 			isa = PBXTargetDependency;
 			target = 6700165F1940F51400A9E103 /* Branch-TestBed */;
 			targetProxy = F1D4F9B11F323F01002D13FF /* PBXContainerItemProxy */;
+		};
+		FB5D0A000000000000000009 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6700165F1940F51400A9E103 /* Branch-TestBed */;
+			targetProxy = FB5D0A000000000000000008 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2327,6 +2400,60 @@
 			};
 			name = Release;
 		};
+		FB5D0A000000000000000011 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = R63EM248DP;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "branch.Reflection-FBSDK-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Branch-TestBed.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Branch-TestBed";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+			};
+			name = Debug;
+		};
+		FB5D0A000000000000000012 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = R63EM248DP;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "branch.Reflection-FBSDK-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Branch-TestBed.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Branch-TestBed";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2402,6 +2529,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		FB5D0A000000000000000010 /* Build configuration list for PBXNativeTarget "Reflection_FBSDK_Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FB5D0A000000000000000011 /* Debug */,
+				FB5D0A000000000000000012 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
@@ -2428,6 +2564,14 @@
 				minimumVersion = 2.3.0;
 			};
 		};
+		FB5D0A000000000000000013 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/meta/facebook-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 19.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -2444,6 +2588,11 @@
 		E7AC747A2DB0700D002D8C40 /* BranchSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BranchSDK;
+		};
+		FB5D0A000000000000000014 /* FacebookBasics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FB5D0A000000000000000013 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookBasics;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

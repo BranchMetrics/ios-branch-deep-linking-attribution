@@ -378,7 +378,7 @@
     XCTAssertNil(self.prefHelper.lastStrongMatchDate);
     XCTAssertNil(self.prefHelper.userIdentity);
     XCTAssertNil(self.prefHelper.referringURLQueryParameters);
-    XCTAssertNil(self.prefHelper.anonID);
+    XCTAssertNil(self.prefHelper.fbSdkAnonID);
 }
 
 - (void)testSaveBranchAnalyticsData {

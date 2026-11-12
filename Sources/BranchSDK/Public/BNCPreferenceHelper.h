@@ -27,7 +27,8 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 
 @property (copy, nonatomic) NSString *randomizedDeviceToken;
 @property (copy, nonatomic) NSString *randomizedBundleToken;
-@property (copy, nonatomic) NSString *anonID;
+// Meta (FBSDK) anon ID, sent as anon_id. Saved under its own key so the GUID older SDK versions saved in bnc_anon_id is never picked up.
+@property (copy, nonatomic) NSString *fbSdkAnonID;
 
 @property (copy, nonatomic) NSString *sessionID;
 @property (copy, nonatomic) NSString *linkClickIdentifier;
