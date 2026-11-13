@@ -10,6 +10,21 @@
 #import "BNCRequestFactory.h"
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
+#import "BNCPreferenceHelper.h"
+#import "BNCDeviceInfo.h"
+#import "Branch.h"
+
+// Test stand-in for the Meta SDK, defined in BNCDeviceInfoTests.m
+@interface FBSDKBasicUtility : NSObject
++ (void)bnc_setTestAnonymousID:(NSString *)anonymousID;
+@end
+
+// BNCRequestFactory uses the BNCDeviceInfo singleton, which caches the anon id in memory. Tests reset it.
+@interface BNCDeviceInfo (AnonIDTest)
+- (void)setCachedFbSdkAnonId:(NSString *)value;
+@end
+
+static NSString * const BNCTestFBSDKAnonID = @"XZ00000000-0000-0000-0000-000000000000";
 
 @interface BNCRequestFactoryTests : XCTestCase
 @property (nonatomic, copy, readwrite) NSString *requestUUID;
@@ -21,10 +36,14 @@
 - (void)setUp {
     _requestUUID = [[NSUUID UUID ] UUIDString];
     _requestCreationTimeStamp = BNCWireFormatFromDate([NSDate date]);
+    [BNCPreferenceHelper sharedInstance].fbSdkAnonID = nil;
+    [[BNCDeviceInfo getInstance] setCachedFbSdkAnonId:nil];
 }
 
 - (void)tearDown {
-    
+    [FBSDKBasicUtility bnc_setTestAnonymousID:nil];
+    [BNCPreferenceHelper sharedInstance].fbSdkAnonID = nil;
+    [[BNCDeviceInfo getInstance] setCachedFbSdkAnonId:nil];
 }
 
 - (void)testInitWithBranchKeyNil {
@@ -229,6 +248,42 @@
     
     XCTAssertTrue(self.requestCreationTimeStamp  == [json objectForKey:BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP]);
     XCTAssertTrue([self.requestUUID isEqualToString:[json objectForKey:BRANCH_REQUEST_KEY_REQUEST_UUID]]);
+}
+
+- (void)testFbSdkAnonIdOnInstall {
+    [FBSDKBasicUtility bnc_setTestAnonymousID:BNCTestFBSDKAnonID];
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
+    NSDictionary *json = [factory dataForInstallWithURLString:@"https://branch.io"];
+    XCTAssertEqualObjects(BNCTestFBSDKAnonID, json[BRANCH_REQUEST_KEY_ANON_ID]);
+}
+
+- (void)testFbSdkAnonIdOnOpen {
+    [FBSDKBasicUtility bnc_setTestAnonymousID:BNCTestFBSDKAnonID];
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
+    NSDictionary *json = [factory dataForOpenWithURLString:@"https://branch.io"];
+    XCTAssertEqualObjects(BNCTestFBSDKAnonID, json[BRANCH_REQUEST_KEY_ANON_ID]);
+}
+
+- (void)testFbSdkAnonIdOnEvent {
+    [FBSDKBasicUtility bnc_setTestAnonymousID:BNCTestFBSDKAnonID];
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
+    NSDictionary *json = [factory dataForEventWithEventDictionary:[NSMutableDictionary new]];
+    XCTAssertEqualObjects(BNCTestFBSDKAnonID, json[@"user_data"][BRANCH_REQUEST_KEY_ANON_ID]);
+}
+
+- (void)testFbSdkAnonIdOmittedForAttributionLevelNone {
+    [FBSDKBasicUtility bnc_setTestAnonymousID:BNCTestFBSDKAnonID];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    NSString *savedLevel = preferenceHelper.attributionLevel;
+    preferenceHelper.attributionLevel = BranchAttributionLevelNone;
+
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
+    NSDictionary *installJSON = [factory dataForInstallWithURLString:@"https://branch.io"];
+    XCTAssertNil(installJSON[BRANCH_REQUEST_KEY_ANON_ID]);
+    NSDictionary *eventJSON = [factory dataForEventWithEventDictionary:[NSMutableDictionary new]];
+    XCTAssertNil(eventJSON[@"user_data"][BRANCH_REQUEST_KEY_ANON_ID]);
+
+    preferenceHelper.attributionLevel = savedLevel ?: BranchAttributionLevelFull;
 }
 
 @end

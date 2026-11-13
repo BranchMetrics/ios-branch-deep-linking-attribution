@@ -680,13 +680,7 @@ static NSString *bnc_branchKey = nil;
 }
 
 + (void)setAnonID:(NSString *)anonID {
-    @synchronized (self) {
-        if (anonID && [anonID isKindOfClass:[NSString class]]) {
-            [BNCPreferenceHelper sharedInstance].anonID = anonID;
-        } else {
-            [[BranchLogger shared] logWarning:@"Invalid anonID provided. Must be a non-nil NSString." error:nil];
-        }
-    }
+    [[BranchLogger shared] logWarning:@"setAnonID: is deprecated and the provided value will not be used. Branch now reads the Meta Anon ID directly from the Meta (Facebook) SDK. Link the Facebook SDK (FBSDKCoreKit) in your app so Branch can fetch it automatically." error:nil];
 }
 
 - (void)setConsumerProtectionAttributionLevel:(BranchAttributionLevel)level {

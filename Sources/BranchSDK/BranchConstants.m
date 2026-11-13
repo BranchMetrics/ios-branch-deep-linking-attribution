@@ -71,6 +71,7 @@ NSString * const BRANCH_REQUEST_KEY_GCLID = @"gclid";
 NSString * const BRANCH_REQUEST_KEY_ODM_INFO = @"odm_info";
 NSString * const BRANCH_REQUEST_KEY_ODM_FIRST_OPEN_TIMESTAMP = @"odm_first_open_timestamp";
 NSString * const BRANCH_REQUEST_KEY_META_CAMPAIGN_IDS = @"meta_campaign_ids";
+NSString * const BRANCH_REQUEST_KEY_ANON_ID = @"anon_id";
 NSString * const BRANCH_URL_QUERY_PARAMETERS_NAME_KEY = @"name";
 NSString * const BRANCH_URL_QUERY_PARAMETERS_VALUE_KEY = @"value";
 NSString * const BRANCH_URL_QUERY_PARAMETERS_TIMESTAMP_KEY = @"timestamp";
