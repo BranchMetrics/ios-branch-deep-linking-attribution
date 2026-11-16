@@ -124,6 +124,7 @@ static NSMutableArray<NSURLRequest *> *bnc_mockRequests = nil;
 @property (nonatomic, strong) NSArray<NSString *> *originalSavedPatternList;
 @property (nonatomic, assign) NSInteger originalSavedPatternListVersion;
 @property (nonatomic, assign) IMP originalNetworkServiceClassIMP;
+@property (nonatomic, assign) BOOL originalSingletonHasUpdatedPatternList;
 @end
 
 @implementation BNCURLFilterTests
@@ -145,6 +146,12 @@ static NSMutableArray<NSURLRequest *> *bnc_mockRequests = nil;
 
 // +[Branch setNetworkServiceClass:] can only be set once per process, so swap the getter instead.
 - (void)installMockNetworkService {
+    // The Branch singleton requests the skip list for its own filter after a session init, through this mock too.
+    // Mark it updated before installing the mock so those requests are not counted.
+    BNCURLFilter *singletonFilter = [[Branch getInstance] valueForKey:@"urlFilter"];
+    self.originalSingletonHasUpdatedPatternList = singletonFilter.hasUpdatedPatternList;
+    singletonFilter.hasUpdatedPatternList = YES;
+
     Method method = class_getClassMethod(Branch.class, @selector(networkServiceClass));
     IMP mockIMP = imp_implementationWithBlock(^Class(id _self) {
         return BNCURLFilterTestNetworkService.class;
@@ -157,6 +164,9 @@ static NSMutableArray<NSURLRequest *> *bnc_mockRequests = nil;
         Method method = class_getClassMethod(Branch.class, @selector(networkServiceClass));
         method_setImplementation(method, self.originalNetworkServiceClassIMP);
         self.originalNetworkServiceClassIMP = NULL;
+
+        BNCURLFilter *singletonFilter = [[Branch getInstance] valueForKey:@"urlFilter"];
+        singletonFilter.hasUpdatedPatternList = self.originalSingletonHasUpdatedPatternList;
     }
 }
 
@@ -333,6 +343,8 @@ static NSMutableArray<NSURLRequest *> *bnc_mockRequests = nil;
     [patternList addObject:@"^other\\d+:"];
     XCTAssertTrue([filter shouldIgnoreURL:[NSURL URLWithString:@"branch123://"]]);
     XCTAssertFalse([filter shouldIgnoreURL:[NSURL URLWithString:@"other123://"]]);
+    // the regexes are compiled on set, so matching alone can't detect a missing copy; check the stored list
+    XCTAssertEqualObjects(filter.patternList, @[@"^branch\\d+:"]);
 }
 
 - (void)testConcurrentCustomPatternListAndMatching {
