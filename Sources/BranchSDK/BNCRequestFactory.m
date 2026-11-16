@@ -639,7 +639,7 @@
         [dictionary bnc_safeSetObject:self.deviceInfo.screenHeight forKey:@"screen_height"];
         [dictionary bnc_safeSetObject:self.deviceInfo.screenWidth forKey:@"screen_width"];
         [dictionary bnc_safeSetObject:self.deviceInfo.locale forKey:@"locale"];
-        [dictionary bnc_safeSetObject:self.deviceInfo.timezone forKey:@"timezone"];
+        [dictionary bnc_safeSetObject:[self.deviceInfo timezone] forKey:@"timezone"];
         [dictionary bnc_safeSetObject:self.deviceInfo.country forKey:@"country"];
         [dictionary bnc_safeSetObject:self.deviceInfo.language forKey:@"language"];
         [dictionary bnc_safeSetObject:[self.deviceInfo connectionType] forKey:@"connection_type"];
@@ -715,7 +715,7 @@
         [self safeSetValue:self.deviceInfo.osBuildVersion forKey:@"build" onDict:dict];
         [self safeSetValue:self.deviceInfo.environment forKey:@"environment" onDict:dict];
         [self safeSetValue:self.deviceInfo.locale forKey:@"locale" onDict:dict];
-        [self safeSetValue:self.deviceInfo.timezone forKey:@"timezone" onDict:dict];
+        [self safeSetValue:[self.deviceInfo timezone] forKey:@"timezone" onDict:dict];
         [self safeSetValue:self.deviceInfo.country forKey:@"country" onDict:dict];
         [self safeSetValue:self.deviceInfo.language forKey:@"language" onDict:dict];
         [self safeSetValue:self.deviceInfo.brandName forKey:BRANCH_REQUEST_KEY_BRAND onDict:dict];

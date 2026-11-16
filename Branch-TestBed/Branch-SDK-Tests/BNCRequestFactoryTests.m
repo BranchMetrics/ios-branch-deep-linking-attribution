@@ -7,10 +7,29 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <objc/runtime.h>
 #import "BNCRequestFactory.h"
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
 #import "BNCDeviceInfo.h"
+
+// Runs block with the process time zone set to name, then restores it.
+// localTimeZone follows the system time zone, which honors TZ.
+static void BNCRunWithSystemTimeZone(NSString *name, void (^block)(void)) {
+    char *originalTZ = getenv("TZ");
+    NSString *restoreTZ = originalTZ ? @(originalTZ) : nil;
+    setenv("TZ", name.UTF8String, 1);
+    [NSTimeZone resetSystemTimeZone];
+
+    block();
+
+    if (restoreTZ) {
+        setenv("TZ", restoreTZ.UTF8String, 1);
+    } else {
+        unsetenv("TZ");
+    }
+    [NSTimeZone resetSystemTimeZone];
+}
 
 @interface BNCRequestFactoryTests : XCTestCase
 @property (nonatomic, copy, readwrite) NSString *requestUUID;
@@ -269,15 +288,33 @@
     XCTAssertEqualObjects([NSTimeZone localTimeZone].name, [userData objectForKey:@"timezone"]);
 }
 
+- (void)testRequestsUseTimezoneAtRequestTime {
+    [BNCDeviceInfo getInstance]; // Loaded before the zone changes, as at app launch.
+    NSString *otherZone = [[NSTimeZone localTimeZone].name isEqualToString:@"Asia/Seoul"] ? @"America/New_York" : @"Asia/Seoul";
+
+    __block NSDictionary *install = nil;
+    __block NSDictionary *event = nil;
+    BNCRunWithSystemTimeZone(otherZone, ^{
+        BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
+        install = [factory dataForInstallWithURLString:@"https://branch.io"];
+        event = [factory dataForEventWithEventDictionary:[@{@"name": @"ADD_TO_CART"} mutableCopy]];
+    });
+
+    XCTAssertEqualObjects(otherZone, [install objectForKey:@"timezone"]);
+    XCTAssertEqualObjects(otherZone, [[event objectForKey:@"user_data"] objectForKey:@"timezone"]);
+}
+
 - (void)testTimezoneOmittedWhenDeviceReportsNone {
-    BNCDeviceInfo *deviceInfo = [BNCDeviceInfo getInstance];
-    NSString *original = deviceInfo.timezone;
-    deviceInfo.timezone = nil;
+    // Stub the getter to return nil, as if the device reported no name.
+    Method getter = class_getInstanceMethod([BNCDeviceInfo class], @selector(timezone));
+    IMP stub = imp_implementationWithBlock(^NSString *(id deviceInfo) { return nil; });
+    IMP original = method_setImplementation(getter, stub);
 
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
     NSDictionary *install = [factory dataForInstallWithURLString:@"https://branch.io"];
     NSDictionary *event = [factory dataForEventWithEventDictionary:[@{@"name": @"ADD_TO_CART"} mutableCopy]];
-    deviceInfo.timezone = original;
+    method_setImplementation(getter, original);
+    imp_removeBlock(stub);
 
     XCTAssertNil([install objectForKey:@"timezone"]);
     XCTAssertNotNil([install objectForKey:@"locale"]);

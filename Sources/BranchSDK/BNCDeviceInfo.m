@@ -90,7 +90,6 @@
     self.screenScale = [BNCSystemObserver screenScale];
 
     self.locale = [NSLocale currentLocale].localeIdentifier;
-    self.timezone = [NSTimeZone localTimeZone].name;
     self.country = [[NSLocale currentLocale] countryCode];
     self.language = [[NSLocale currentLocale] languageCode];
     self.environment = [BNCSystemObserver environment];
@@ -104,6 +103,10 @@
 
 - (NSString *)connectionType {
     return [[BNCReachability shared] reachabilityStatus];
+}
+
+- (NSString *)timezone {
+    return [NSTimeZone localTimeZone].name;
 }
 
 - (NSString *)userAgentString {

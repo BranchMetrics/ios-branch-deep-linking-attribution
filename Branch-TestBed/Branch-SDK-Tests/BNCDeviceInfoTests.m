@@ -10,6 +10,24 @@
 #import "BNCDeviceInfo.h"
 #import "BNCUserAgentCollector.h"
 
+// Runs block with the process time zone set to name, then restores it.
+// localTimeZone follows the system time zone, which honors TZ.
+static void BNCRunWithSystemTimeZone(NSString *name, void (^block)(void)) {
+    char *originalTZ = getenv("TZ");
+    NSString *restoreTZ = originalTZ ? @(originalTZ) : nil;
+    setenv("TZ", name.UTF8String, 1);
+    [NSTimeZone resetSystemTimeZone];
+
+    block();
+
+    if (restoreTZ) {
+        setenv("TZ", restoreTZ.UTF8String, 1);
+    } else {
+        unsetenv("TZ");
+    }
+    [NSTimeZone resetSystemTimeZone];
+}
+
 @interface BNCDeviceInfoTests : XCTestCase
 @property (nonatomic, strong, readwrite) BNCDeviceInfo *deviceInfo;
 @end
@@ -161,23 +179,24 @@
 }
 
 - (void)testTimezoneIsExactlyWhatTheDeviceReports {
-    // localTimeZone follows the system time zone, which honors TZ.
-    char *originalTZ = getenv("TZ");
-    NSString *restoreTZ = originalTZ ? @(originalTZ) : nil;
-
+    __block NSString *timezone = nil;
     // Legacy alias of Asia/Kolkata; must not be canonicalized.
-    setenv("TZ", "Asia/Calcutta", 1);
-    [NSTimeZone resetSystemTimeZone];
-    BNCDeviceInfo *deviceInfo = [BNCDeviceInfo new];
+    BNCRunWithSystemTimeZone(@"Asia/Calcutta", ^{
+        timezone = [BNCDeviceInfo new].timezone;
+    });
 
-    if (restoreTZ) {
-        setenv("TZ", restoreTZ.UTF8String, 1);
-    } else {
-        unsetenv("TZ");
-    }
-    [NSTimeZone resetSystemTimeZone];
+    XCTAssertEqualObjects(@"Asia/Calcutta", timezone);
+}
 
-    XCTAssertEqualObjects(@"Asia/Calcutta", deviceInfo.timezone);
+- (void)testTimezoneFollowsChangesAfterLaunch {
+    NSString *otherZone = [[NSTimeZone localTimeZone].name isEqualToString:@"Asia/Seoul"] ? @"America/New_York" : @"Asia/Seoul";
+    __block NSString *timezone = nil;
+    // self.deviceInfo was created in setUp, before the zone changes.
+    BNCRunWithSystemTimeZone(otherZone, ^{
+        timezone = self.deviceInfo.timezone;
+    });
+
+    XCTAssertEqualObjects(otherZone, timezone);
 }
 
 - (void)testCountry {

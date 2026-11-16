@@ -39,6 +39,7 @@
 @property (nonatomic, assign, readwrite) BOOL isFirstOptIn;
 - (NSString *)localIPAddress;
 - (NSString *)connectionType;
+- (NSString *)timezone; //!< The current IANA time zone name (Asia/Seoul, etc).
 
 @property (nonatomic, copy, readwrite) NSString *brandName;
 @property (nonatomic, copy, readwrite) NSString *modelName;
@@ -51,7 +52,6 @@
 @property (nonatomic, copy, readwrite) NSNumber *screenHeight;
 @property (nonatomic, copy, readwrite) NSNumber *screenScale;
 @property (nonatomic, copy, readwrite) NSString *locale;
-@property (nonatomic, copy, readwrite) NSString *timezone; //!< The IANA time zone name (Asia/Seoul, etc).
 @property (nonatomic, copy, readwrite) NSString *country; //!< The iso2 Country name (us, in,etc).
 @property (nonatomic, copy, readwrite) NSString *language; //!< The iso2 language code (en, ml).
 - (NSString *)userAgentString;
