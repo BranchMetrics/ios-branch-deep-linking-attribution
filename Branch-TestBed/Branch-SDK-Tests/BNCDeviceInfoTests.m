@@ -154,6 +154,32 @@
     XCTAssert([locale isEqualToString:self.deviceInfo.locale]);
 }
 
+- (void)testTimezone {
+    NSString *timezone = [NSTimeZone localTimeZone].name;
+    XCTAssertNotNil(timezone);
+    XCTAssertEqualObjects(timezone, self.deviceInfo.timezone);
+}
+
+- (void)testTimezoneIsExactlyWhatTheDeviceReports {
+    // localTimeZone follows the system time zone, which honors TZ.
+    char *originalTZ = getenv("TZ");
+    NSString *restoreTZ = originalTZ ? @(originalTZ) : nil;
+
+    // Legacy alias of Asia/Kolkata; must not be canonicalized.
+    setenv("TZ", "Asia/Calcutta", 1);
+    [NSTimeZone resetSystemTimeZone];
+    BNCDeviceInfo *deviceInfo = [BNCDeviceInfo new];
+
+    if (restoreTZ) {
+        setenv("TZ", restoreTZ.UTF8String, 1);
+    } else {
+        unsetenv("TZ");
+    }
+    [NSTimeZone resetSystemTimeZone];
+
+    XCTAssertEqualObjects(@"Asia/Calcutta", deviceInfo.timezone);
+}
+
 - (void)testCountry {
     NSString *locale = [NSLocale currentLocale].localeIdentifier;
     XCTAssertNotNil(locale);

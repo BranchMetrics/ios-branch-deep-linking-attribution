@@ -10,6 +10,7 @@
 #import "BNCRequestFactory.h"
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
+#import "BNCDeviceInfo.h"
 
 @interface BNCRequestFactoryTests : XCTestCase
 @property (nonatomic, copy, readwrite) NSString *requestUUID;
@@ -226,9 +227,62 @@
     BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
     NSDictionary *json = [factory dataForLATDWithDataDictionary:@{}.mutableCopy];
     XCTAssertNotNil(json);
-    
+
     XCTAssertTrue(self.requestCreationTimeStamp  == [json objectForKey:BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP]);
     XCTAssertTrue([self.requestUUID isEqualToString:[json objectForKey:BRANCH_REQUEST_KEY_REQUEST_UUID]]);
+}
+
+- (void)testDataForInstallIncludesTimezone {
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
+    NSDictionary *json = [factory dataForInstallWithURLString:@"https://branch.io"];
+
+    XCTAssertEqualObjects([NSTimeZone localTimeZone].name, [json objectForKey:@"timezone"]);
+}
+
+- (void)testDataForOpenIncludesTimezone {
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
+    NSDictionary *json = [factory dataForOpenWithURLString:@"https://branch.io"];
+
+    XCTAssertEqualObjects([NSTimeZone localTimeZone].name, [json objectForKey:@"timezone"]);
+}
+
+- (void)testDataForEventIncludesTimezoneInUserData {
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
+    NSDictionary *json = [factory dataForEventWithEventDictionary:[@{@"name": @"ADD_TO_CART"} mutableCopy]];
+
+    NSDictionary *userData = [json objectForKey:@"user_data"];
+    XCTAssertEqualObjects([NSTimeZone localTimeZone].name, [userData objectForKey:@"timezone"]);
+}
+
+- (void)testDataForShortURLIncludesTimezone {
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
+    NSDictionary *json = [factory dataForShortURLWithLinkDataDictionary:@{}.mutableCopy isSpotlightRequest:NO];
+
+    XCTAssertEqualObjects([NSTimeZone localTimeZone].name, [json objectForKey:@"timezone"]);
+}
+
+- (void)testDataForLATDIncludesTimezoneInUserData {
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
+    NSDictionary *json = [factory dataForLATDWithDataDictionary:@{}.mutableCopy];
+
+    NSDictionary *userData = [json objectForKey:@"user_data"];
+    XCTAssertEqualObjects([NSTimeZone localTimeZone].name, [userData objectForKey:@"timezone"]);
+}
+
+- (void)testTimezoneOmittedWhenDeviceReportsNone {
+    BNCDeviceInfo *deviceInfo = [BNCDeviceInfo getInstance];
+    NSString *original = deviceInfo.timezone;
+    deviceInfo.timezone = nil;
+
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
+    NSDictionary *install = [factory dataForInstallWithURLString:@"https://branch.io"];
+    NSDictionary *event = [factory dataForEventWithEventDictionary:[@{@"name": @"ADD_TO_CART"} mutableCopy]];
+    deviceInfo.timezone = original;
+
+    XCTAssertNil([install objectForKey:@"timezone"]);
+    XCTAssertNotNil([install objectForKey:@"locale"]);
+    XCTAssertNil([[event objectForKey:@"user_data"] objectForKey:@"timezone"]);
+    XCTAssertNotNil([[event objectForKey:@"user_data"] objectForKey:@"locale"]);
 }
 
 @end

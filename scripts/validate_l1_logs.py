@@ -50,6 +50,7 @@ REQUIRED_COMMON = [
     "os_version",
     "country",
     "language",
+    "timezone",
     "local_ip",
     "screen_dpi",
     "screen_height",
