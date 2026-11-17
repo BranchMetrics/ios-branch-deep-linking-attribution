@@ -882,10 +882,10 @@ Sets a custom base safetrack URL for non-linking calls to the Branch API.
 /**
  Deprecated. The provided value is ignored.
  Branch now reads the Meta Anon ID directly from the Meta (Facebook) SDK and sends it as `anon_id`.
- Link the Facebook SDK (FBSDKCoreKit) in your app so Branch can fetch it automatically.
+ Link the Facebook SDK  in your app so Branch can fetch it automatically.
  @param anonID Ignored.
  */
-+ (void)setAnonID:(NSString *)anonID __attribute__((deprecated(("The value is ignored. Link the Facebook SDK (FBSDKCoreKit) so Branch can read the Meta Anon ID automatically."))));
++ (void)setAnonID:(NSString *)anonID __attribute__((deprecated(("The value is ignored. Link the Facebook SDK so Branch can read the Meta Anon ID automatically."))));
 
 /**
  * Enumeration representing different levels of consumer protection attribution levels
