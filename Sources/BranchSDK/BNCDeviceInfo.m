@@ -61,8 +61,7 @@
     }
 }
 
-// Reads the Meta (FBSDK) anonymous ID via reflection. Do not use retrievePersistedAnonymousID or the
-// persisted JSON file, both can be empty on first launch. anonymousID is synchronous and creates the ID if needed.
+// Returns +[FBSDKBasicUtility anonymousID] via reflection, or nil if the Meta SDK is not present.
 - (NSString *)readFbSdkAnonIdFromMetaSDK {
     Class cls = NSClassFromString(self.fbSdkUtilityClassName);
     SEL sel = NSSelectorFromString(@"anonymousID");

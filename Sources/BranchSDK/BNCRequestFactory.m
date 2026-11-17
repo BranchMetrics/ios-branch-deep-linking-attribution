@@ -666,7 +666,7 @@
     return dictionary;
 }
 
-// Meta (FBSDK) anonymous ID is a device identifier, so follow the same rule as IDFV: omit it at attribution level None.
+// Returns NO at attribution level None, YES otherwise or when the level is unset.
 - (BOOL)shouldIncludeFbSdkAnonId {
     if (![self.preferenceHelper attributionLevelInitialized]) {
         return YES;
