@@ -29,6 +29,9 @@
 
 @interface BNCDeviceInfo()
 @property (nonatomic, copy, readwrite) NSString *randomId;
+@property (nonatomic, copy, readwrite) NSString *cachedFbSdkAnonId;
+// Name of the Meta SDK class that provides +anonymousID.
+@property (nonatomic, copy, readwrite) NSString *fbSdkUtilityClassName;
 @end
 
 @implementation BNCDeviceInfo
@@ -45,6 +48,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
+        self.fbSdkUtilityClassName = @"FBSDKBasicUtility";
         [self loadDeviceInfo];
     }
     return self;
@@ -57,13 +61,39 @@
     }
 }
 
-- (NSString *)loadAnonID {
-    NSString *tmp = [BNCPreferenceHelper sharedInstance].anonID;
-    if (!tmp) {
-        tmp = [NSUUID UUID].UUIDString;
-        [BNCPreferenceHelper sharedInstance].anonID = tmp;
+// Returns +[FBSDKBasicUtility anonymousID] via reflection, or nil if the Meta SDK is not present.
+- (NSString *)readFbSdkAnonIdFromMetaSDK {
+    Class cls = NSClassFromString(self.fbSdkUtilityClassName);
+    SEL sel = NSSelectorFromString(@"anonymousID");
+    if (!cls || ![cls respondsToSelector:sel]) {
+        return nil; // Meta SDK not present
     }
-    return tmp;
+    typedef id (*AnonymousIDFn)(id, SEL);
+    AnonymousIDFn fn = (AnonymousIDFn)[cls methodForSelector:sel];
+    id value = fn ? fn((id)cls, sel) : nil;
+    if (![value isKindOfClass:[NSString class]]) {
+        return nil;
+    }
+    return (NSString *)value;
+}
+
+// Meta anonymous IDs always start with "XZ".
+- (BOOL)isValidFbSdkAnonId:(NSString *)value {
+    return [value isKindOfClass:[NSString class]] && value.length > 2 && [value hasPrefix:@"XZ"];
+}
+
+- (NSString *)fbSdkAnonId {
+    @synchronized (self) {
+        if (self.cachedFbSdkAnonId) {
+            return self.cachedFbSdkAnonId;
+        }
+        NSString *value = [self readFbSdkAnonIdFromMetaSDK];
+        if (![self isValidFbSdkAnonId:value]) {
+            return nil;
+        }
+        self.cachedFbSdkAnonId = value;
+        return value;
+    }
 }
 
 - (void)loadDeviceInfo {
@@ -72,7 +102,6 @@
     // The random id is regenerated per app launch.  This maintains existing behavior.
     self.randomId = [[NSUUID UUID] UUIDString];
     self.vendorId = [[UIDevice currentDevice].identifierForVendor UUIDString];
-    self.anonId = [self loadAnonID];
     [self checkAdvertisingIdentifier];
 
     self.brandName = [BNCSystemObserver brand];

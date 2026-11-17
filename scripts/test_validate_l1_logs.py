@@ -102,6 +102,29 @@ class MissingFieldTests(unittest.TestCase):
             )
 
 
+class MetaAnonIdTests(unittest.TestCase):
+    """The TestBed links the Meta SDK, so install and open must carry Meta's
+    anon_id ("XZ" prefix), never a missing value or a Branch-generated GUID."""
+
+    def test_anon_id_required_on_install_and_open(self):
+        self.assertIn("anon_id", v.REQUIRED_PER_ENDPOINT["/v1/install"])
+        self.assertIn("anon_id", v.REQUIRED_PER_ENDPOINT["/v1/open"])
+
+    def test_missing_anon_id_fails(self):
+        errors, _ = _run_validation("missing_anon_id.txt")
+        self.assertTrue(
+            any("(/v1/install): missing required field 'anon_id'" in e for e in errors),
+            f"Expected anon_id-missing error, got: {errors}",
+        )
+
+    def test_non_meta_anon_id_fails(self):
+        errors, _ = _run_validation("legacy_anon_id.txt")
+        self.assertTrue(
+            any("(/v1/install): anon_id" in e and "is not a Meta anon ID" in e for e in errors),
+            f"Expected non-Meta anon_id error, got: {errors}",
+        )
+
+
 class V2NestingTests(unittest.TestCase):
     """iOS nests device fields under user_data on /v2/event/* — lookup must
     descend into the nested block to find them."""

@@ -378,7 +378,6 @@
     XCTAssertNil(self.prefHelper.lastStrongMatchDate);
     XCTAssertNil(self.prefHelper.userIdentity);
     XCTAssertNil(self.prefHelper.referringURLQueryParameters);
-    XCTAssertNil(self.prefHelper.anonID);
 }
 
 - (void)testSaveBranchAnalyticsData {

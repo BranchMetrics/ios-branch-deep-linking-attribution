@@ -14,6 +14,7 @@
 #import "BranchConstants.h"
 #import "NSString+Branch.h"
 #import "BNCSKAdNetwork.h"
+#import "BNCDeviceInfo.h"
 
 static const NSTimeInterval DEFAULT_TIMEOUT = 5.5;
 static const NSTimeInterval DEFAULT_THIRD_PARTY_APIS_TIMEOUT = 0.5; // 500ms default
@@ -129,7 +130,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     firstAppLaunchTime = _firstAppLaunchTime,
     highestConversionValueSent = _highestConversionValueSent,
     referringURLQueryParameters = _referringURLQueryParameters,
-    anonID = _anonID,
     patternListURL = _patternListURL,
     eeaRegion = _eeaRegion,
     adPersonalizationConsent = _adPersonalizationConsent,
@@ -272,19 +272,17 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
+// Returns the Meta anon ID sent as anon_id, or nil if the Meta SDK is not present.
 - (NSString *)anonID {
-    if (!_anonID) {
-        _anonID = [self readStringFromDefaults:@"bnc_anon_id"];
-    }
-    return _anonID;
+    return [[BNCDeviceInfo getInstance] fbSdkAnonId];
 }
 
+// No-op.
 - (void)setAnonID:(NSString *)anonID {
-    if (![_anonID isEqualToString:anonID]) {
-        _anonID = anonID;
-        [self writeObjectToDefaults:@"bnc_anon_id" value:anonID];
-    }
 }
+#pragma clang diagnostic pop
 
 - (NSString *)sessionID {
     if (!_sessionID) {
@@ -970,7 +968,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         self.lastStrongMatchDate = nil;
         self.userIdentity = nil;
         self.referringURLQueryParameters = nil;
-        self.anonID = nil;
         [[BranchLogger shared] logVerbose:@"Tracking information cleared" error:nil];
     }
 }

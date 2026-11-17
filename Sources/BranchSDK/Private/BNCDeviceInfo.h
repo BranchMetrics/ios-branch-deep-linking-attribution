@@ -32,7 +32,11 @@
 @property (nonatomic, copy, readwrite) NSString *hardwareIdType;
 @property (nonatomic, assign, readwrite) BOOL isRealHardwareId;
 
-@property (nonatomic, copy, readwrite) NSString *anonId;
+/*
+ Meta (FBSDK) anonymous ID, sent as `anon_id`. Read once per launch from +[FBSDKBasicUtility anonymousID]
+ and cached in memory. Returns nil if the Meta SDK is not present or the value does not start with "XZ".
+ */
+- (NSString *)fbSdkAnonId;
 @property (nonatomic, copy, readwrite) NSString *advertiserId;
 @property (nonatomic, copy, readwrite) NSString *vendorId;
 @property (nonatomic, copy, readwrite) NSString *optedInStatus;

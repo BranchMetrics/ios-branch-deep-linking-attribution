@@ -11,7 +11,23 @@
 #import "BNCRequestFactory.h"
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
+#import "BNCPreferenceHelper.h"
 #import "BNCDeviceInfo.h"
+#import "Branch.h"
+
+// Test stand-in for the Meta SDK, defined in BNCDeviceInfoTests.m
+@interface BNCTestFBSDKBasicUtility : NSObject
++ (void)bnc_setTestAnonymousID:(NSString *)anonymousID;
+@end
+
+// BNCRequestFactory uses the BNCDeviceInfo singleton, which caches the anon id in memory. Tests reset it
+// and point it at the stand-in, then restore the real Meta class name.
+@interface BNCDeviceInfo (AnonIDTest)
+- (void)setCachedFbSdkAnonId:(NSString *)value;
+- (void)setFbSdkUtilityClassName:(NSString *)name;
+@end
+
+static NSString * const BNCTestFBSDKAnonID = @"XZ00000000-0000-0000-0000-000000000000";
 
 // Runs block with the process time zone set to name, then restores it.
 // localTimeZone follows the system time zone, which honors TZ.
@@ -41,10 +57,14 @@ static void BNCRunWithSystemTimeZone(NSString *name, void (^block)(void)) {
 - (void)setUp {
     _requestUUID = [[NSUUID UUID ] UUIDString];
     _requestCreationTimeStamp = BNCWireFormatFromDate([NSDate date]);
+    [[BNCDeviceInfo getInstance] setFbSdkUtilityClassName:@"BNCTestFBSDKBasicUtility"];
+    [[BNCDeviceInfo getInstance] setCachedFbSdkAnonId:nil];
 }
 
 - (void)tearDown {
-    
+    [BNCTestFBSDKBasicUtility bnc_setTestAnonymousID:nil];
+    [[BNCDeviceInfo getInstance] setFbSdkUtilityClassName:@"FBSDKBasicUtility"];
+    [[BNCDeviceInfo getInstance] setCachedFbSdkAnonId:nil];
 }
 
 - (void)testInitWithBranchKeyNil {
@@ -249,6 +269,42 @@ static void BNCRunWithSystemTimeZone(NSString *name, void (^block)(void)) {
 
     XCTAssertTrue(self.requestCreationTimeStamp  == [json objectForKey:BRANCH_REQUEST_KEY_REQUEST_CREATION_TIME_STAMP]);
     XCTAssertTrue([self.requestUUID isEqualToString:[json objectForKey:BRANCH_REQUEST_KEY_REQUEST_UUID]]);
+}
+
+- (void)testFbSdkAnonIdOnInstall {
+    [BNCTestFBSDKBasicUtility bnc_setTestAnonymousID:BNCTestFBSDKAnonID];
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
+    NSDictionary *json = [factory dataForInstallWithURLString:@"https://branch.io"];
+    XCTAssertEqualObjects(BNCTestFBSDKAnonID, json[BRANCH_REQUEST_KEY_ANON_ID]);
+}
+
+- (void)testFbSdkAnonIdOnOpen {
+    [BNCTestFBSDKBasicUtility bnc_setTestAnonymousID:BNCTestFBSDKAnonID];
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
+    NSDictionary *json = [factory dataForOpenWithURLString:@"https://branch.io"];
+    XCTAssertEqualObjects(BNCTestFBSDKAnonID, json[BRANCH_REQUEST_KEY_ANON_ID]);
+}
+
+- (void)testFbSdkAnonIdOnEvent {
+    [BNCTestFBSDKBasicUtility bnc_setTestAnonymousID:BNCTestFBSDKAnonID];
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
+    NSDictionary *json = [factory dataForEventWithEventDictionary:[NSMutableDictionary new]];
+    XCTAssertEqualObjects(BNCTestFBSDKAnonID, json[@"user_data"][BRANCH_REQUEST_KEY_ANON_ID]);
+}
+
+- (void)testFbSdkAnonIdOmittedForAttributionLevelNone {
+    [BNCTestFBSDKBasicUtility bnc_setTestAnonymousID:BNCTestFBSDKAnonID];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
+    NSString *savedLevel = preferenceHelper.attributionLevel;
+    preferenceHelper.attributionLevel = BranchAttributionLevelNone;
+
+    BNCRequestFactory *factory = [[BNCRequestFactory alloc] initWithBranchKey:@"key_abcd" UUID:self.requestUUID TimeStamp:self.requestCreationTimeStamp];
+    NSDictionary *installJSON = [factory dataForInstallWithURLString:@"https://branch.io"];
+    XCTAssertNil(installJSON[BRANCH_REQUEST_KEY_ANON_ID]);
+    NSDictionary *eventJSON = [factory dataForEventWithEventDictionary:[NSMutableDictionary new]];
+    XCTAssertNil(eventJSON[@"user_data"][BRANCH_REQUEST_KEY_ANON_ID]);
+
+    preferenceHelper.attributionLevel = savedLevel;
 }
 
 - (void)testDataForInstallIncludesTimezone {
