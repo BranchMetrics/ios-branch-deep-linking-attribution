@@ -30,6 +30,8 @@
 @interface BNCDeviceInfo()
 @property (nonatomic, copy, readwrite) NSString *randomId;
 @property (nonatomic, copy, readwrite) NSString *cachedFbSdkAnonId;
+// Name of the Meta SDK class that provides +anonymousID.
+@property (nonatomic, copy, readwrite) NSString *fbSdkUtilityClassName;
 @end
 
 @implementation BNCDeviceInfo
@@ -46,6 +48,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
+        self.fbSdkUtilityClassName = @"FBSDKBasicUtility";
         [self loadDeviceInfo];
     }
     return self;
@@ -61,7 +64,7 @@
 // Reads the Meta (FBSDK) anonymous ID via reflection. Do not use retrievePersistedAnonymousID or the
 // persisted JSON file, both can be empty on first launch. anonymousID is synchronous and creates the ID if needed.
 - (NSString *)readFbSdkAnonIdFromMetaSDK {
-    Class cls = NSClassFromString(@"FBSDKBasicUtility");
+    Class cls = NSClassFromString(self.fbSdkUtilityClassName);
     SEL sel = NSSelectorFromString(@"anonymousID");
     if (!cls || ![cls respondsToSelector:sel]) {
         return nil; // Meta SDK not present

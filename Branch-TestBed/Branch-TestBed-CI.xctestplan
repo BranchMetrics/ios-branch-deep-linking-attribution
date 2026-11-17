@@ -26,13 +26,6 @@
         "identifier" : "7E6B3B501AA42D0E005F45BF",
         "name" : "Branch-SDK-Tests"
       }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:Branch-TestBed.xcodeproj",
-        "identifier" : "FB5D0A000000000000000001",
-        "name" : "Reflection_FBSDK_Tests"
-      }
     }
   ],
   "version" : 1

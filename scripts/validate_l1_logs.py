@@ -3,8 +3,9 @@ Layer 1 wire-validation for the Branch iOS SDK.
 
 Parses branchlogs.txt (captured during the L1 instrumented run), extracts each
 wire request, and asserts the SDK is emitting every device/SDK field that must
-be on the wire. Presence-only check — a missing field fails the run; field
-contents are not type-checked.
+be on the wire. Presence check — a missing field fails the run; field
+contents are not type-checked, except `anon_id`, which must be Meta's ID
+(starts with "XZ"). The TestBed app links the Meta SDK, so it is always sent.
 
 On success the validator prints the full payload for every captured request
 plus a per-field check table so reviewers can verify what actually went over
@@ -60,10 +61,14 @@ REQUIRED_COMMON = [
 
 # Endpoint-specific additions on top of REQUIRED_COMMON.
 REQUIRED_PER_ENDPOINT = {
-    "/v1/install": ["is_hardware_id_real", "first_install_time"],
-    "/v1/open": ["randomized_device_token"],
+    "/v1/install": ["is_hardware_id_real", "first_install_time", "anon_id"],
+    "/v1/open": ["randomized_device_token", "anon_id"],
     "/v1/url": [],
 }
+
+# Meta anon IDs start with this prefix. Anything else (e.g. the GUID older
+# Branch SDKs generated) means the SDK did not read the value from Meta.
+META_ANON_ID_PREFIX = "XZ"
 
 
 def parse_branch_logs(file_path):
@@ -162,6 +167,14 @@ def validate_request(entry, idx, total):
         else:
             print(f"  {marker} {field:<35} MISSING")
             errors.append(f"Request {idx} ({uri}): missing required field '{field}'")
+
+    anon_id = lookup_field(request, "anon_id")
+    if "anon_id" in fields and is_present(anon_id):
+        if not (isinstance(anon_id, str) and anon_id.startswith(META_ANON_ID_PREFIX)):
+            errors.append(
+                f"Request {idx} ({uri}): anon_id '{anon_id}' is not a Meta anon ID "
+                f"(expected prefix '{META_ANON_ID_PREFIX}')"
+            )
 
     return errors
 

@@ -29,16 +29,19 @@ install-must-be-captured guard.
 
 ## What gets validated
 
-Presence-only. A required field is either there (pass) or absent (fail).
-No type checks, no value-format checks — those are intentionally left to
-the backend ingestion gate.
+Presence only. A required field is either there (pass) or absent (fail).
+No type checks and no value-format checks, which are left to the backend
+ingestion gate. The one exception is `anon_id`, which must start with `XZ`
+(Meta's anon ID). The TestBed app links the Meta SDK (`FacebookBasics`), so
+a missing or non-`XZ` value means the SDK's reflection read of
+`+[FBSDKBasicUtility anonymousID]` broke.
 
 The required field list lives at the top of `validate_l1_logs.py`:
 
 - `REQUIRED_COMMON` — fields the SDK puts on every `/v1/*` request.
 - `REQUIRED_PER_ENDPOINT` — additional fields per endpoint
-  (`is_hardware_id_real` and `first_install_time` on `/v1/install`;
-  `randomized_device_token` on `/v1/open`).
+  (`is_hardware_id_real`, `first_install_time` and `anon_id` on
+  `/v1/install`; `randomized_device_token` and `anon_id` on `/v1/open`).
 
 Required-field checks are scoped to `/v1/*` only. Captured non-v1
 endpoints (e.g. `/v2/event/*`, where iOS uses a different schema with
