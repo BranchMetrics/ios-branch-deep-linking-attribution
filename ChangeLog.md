@@ -1,5 +1,10 @@
 Branch iOS SDK Change Log
 
+v.3.15.0
+— Added `timezone` to install, open, link and event requests.
+— Deprecated `+[Branch setAnonID:]` . The value passed to `setAnonID:` is now ignored. The SDK now reads Meta's anonymous ID (`anon_id`) from the Facebook SDK(via reflection), when the app includes it. 
+— Fixed a possible crash when a deep link was handled while the URL skip list was being updated from the server or replaced with `setUrlPatternsToIgnore:`. 
+
 v.3.14.2
 — Fixed crash for malformed or nil strings coming from pasteboard or spotlight.
 
