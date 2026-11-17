@@ -14,6 +14,7 @@
 #import "BranchConstants.h"
 #import "NSString+Branch.h"
 #import "BNCSKAdNetwork.h"
+#import "BNCDeviceInfo.h"
 
 static const NSTimeInterval DEFAULT_TIMEOUT = 5.5;
 static const NSTimeInterval DEFAULT_THIRD_PARTY_APIS_TIMEOUT = 0.5; // 500ms default
@@ -32,7 +33,6 @@ static NSString * const BRANCH_PREFS_KEY_PATTERN_LIST_URL = @"bnc_pattern_list_u
 
 static NSString * const BRANCH_PREFS_KEY_RANDOMIZED_DEVICE_TOKEN = @"bnc_randomized_device_token";
 static NSString * const BRANCH_PREFS_KEY_RANDOMIZED_BUNDLE_TOKEN = @"bnc_randomized_bundle_token";
-static NSString * const BRANCH_PREFS_KEY_FB_SDK_ANON_ID = @"bnc_fb_sdk_anon_id";
 
 static NSString * const BRANCH_PREFS_KEY_SESSION_ID = @"bnc_session_id";
 static NSString * const BRANCH_PREFS_KEY_IDENTITY = @"bnc_identity";
@@ -130,7 +130,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     firstAppLaunchTime = _firstAppLaunchTime,
     highestConversionValueSent = _highestConversionValueSent,
     referringURLQueryParameters = _referringURLQueryParameters,
-    fbSdkAnonID = _fbSdkAnonID,
     patternListURL = _patternListURL,
     eeaRegion = _eeaRegion,
     adPersonalizationConsent = _adPersonalizationConsent,
@@ -273,23 +272,17 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     }
 }
 
-- (NSString *)fbSdkAnonID {
-    @synchronized (self) {
-        if (!_fbSdkAnonID) {
-            _fbSdkAnonID = [self readStringFromDefaults:BRANCH_PREFS_KEY_FB_SDK_ANON_ID];
-        }
-        return _fbSdkAnonID;
-    }
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
+// Returns the Meta anon ID sent as anon_id, or nil if the Meta SDK is not present.
+- (NSString *)anonID {
+    return [[BNCDeviceInfo getInstance] fbSdkAnonId];
 }
 
-- (void)setFbSdkAnonID:(NSString *)fbSdkAnonID {
-    @synchronized (self) {
-        if (![_fbSdkAnonID isEqualToString:fbSdkAnonID]) {
-            _fbSdkAnonID = fbSdkAnonID;
-            [self writeObjectToDefaults:BRANCH_PREFS_KEY_FB_SDK_ANON_ID value:fbSdkAnonID];
-        }
-    }
+// No-op.
+- (void)setAnonID:(NSString *)anonID {
 }
+#pragma clang diagnostic pop
 
 - (NSString *)sessionID {
     if (!_sessionID) {
@@ -975,7 +968,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
         self.lastStrongMatchDate = nil;
         self.userIdentity = nil;
         self.referringURLQueryParameters = nil;
-        self.fbSdkAnonID = nil;
         [[BranchLogger shared] logVerbose:@"Tracking information cleared" error:nil];
     }
 }

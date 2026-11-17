@@ -361,8 +361,6 @@
 }
 
 - (void)testSetAnonID_IsIgnored {
-    [BNCPreferenceHelper sharedInstance].fbSdkAnonID = nil;
-
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [Branch setAnonID:@"static-test-anon-id-12345"];
@@ -370,8 +368,10 @@
     [Branch setAnonID:@""];
 #pragma clang diagnostic pop
 
-    // Deprecated API is a no-op: the value is not stored and is never sent as anon_id.
-    XCTAssertNil([BNCPreferenceHelper sharedInstance].fbSdkAnonID);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    XCTAssertNotEqualObjects(@"static-test-anon-id-12345", [BNCPreferenceHelper sharedInstance].anonID);
+#pragma clang diagnostic pop
 }
 
 - (void)testHandleDeepLink_UniversalLinkWithBranchReferrer_ReturnsYes {

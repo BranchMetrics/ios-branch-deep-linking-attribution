@@ -36,13 +36,11 @@ static NSString * const BNCTestFBSDKAnonID = @"XZ00000000-0000-0000-0000-0000000
 - (void)setUp {
     _requestUUID = [[NSUUID UUID ] UUIDString];
     _requestCreationTimeStamp = BNCWireFormatFromDate([NSDate date]);
-    [BNCPreferenceHelper sharedInstance].fbSdkAnonID = nil;
     [[BNCDeviceInfo getInstance] setCachedFbSdkAnonId:nil];
 }
 
 - (void)tearDown {
     [FBSDKBasicUtility bnc_setTestAnonymousID:nil];
-    [BNCPreferenceHelper sharedInstance].fbSdkAnonID = nil;
     [[BNCDeviceInfo getInstance] setCachedFbSdkAnonId:nil];
 }
 

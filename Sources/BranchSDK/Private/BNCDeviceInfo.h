@@ -33,13 +33,8 @@
 @property (nonatomic, assign, readwrite) BOOL isRealHardwareId;
 
 /*
- Meta (FBSDK) anonymous ID, sent as `anon_id`. Branch no longer generates its own anon id.
- Read via reflection of +[FBSDKBasicUtility anonymousID].
- Lookup order: in-memory cache, then BNCPreferenceHelper.fbSdkAnonID (bnc_fb_sdk_anon_id), then the Meta SDK.
- A valid ("XZ"-prefixed) value from the Meta SDK is cached in memory and saved to bnc_fb_sdk_anon_id.
- An empty or invalid value is never cached or saved, and nil is returned.
- Upgrade: the legacy GUID in bnc_anon_id is never read.
- Branch never writes or modifies Meta's own copy of this value.
+ Meta (FBSDK) anonymous ID, sent as `anon_id`. Read once per launch from +[FBSDKBasicUtility anonymousID]
+ and cached in memory. Returns nil if the Meta SDK is not present or the value does not start with "XZ".
  */
 - (NSString *)fbSdkAnonId;
 @property (nonatomic, copy, readwrite) NSString *advertiserId;

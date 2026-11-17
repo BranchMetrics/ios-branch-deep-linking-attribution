@@ -80,10 +80,13 @@ static NSString * const BNCMetaAnonIDFileName = @"com-facebook-sdk-PersistedAnon
     XCTAssertEqualObjects(branchValue, [self metaPersistedAnonymousID]);
 }
 
-- (void)testFbSdkAnonIdIsSavedToPreferences {
-    NSString *branchValue = [[BNCDeviceInfo getInstance] fbSdkAnonId];
-    XCTAssertNotNil(branchValue);
-    XCTAssertEqualObjects(branchValue, [BNCPreferenceHelper sharedInstance].fbSdkAnonID);
+- (void)testDeprecatedPreferenceHelperAnonIDReturnsMetaValue {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    NSString *helperValue = [BNCPreferenceHelper sharedInstance].anonID;
+#pragma clang diagnostic pop
+    XCTAssertNotNil(helperValue);
+    XCTAssertEqualObjects([self metaAnonymousID], helperValue);
 }
 
 - (void)testFbSdkAnonIdIsStableAcrossReads {

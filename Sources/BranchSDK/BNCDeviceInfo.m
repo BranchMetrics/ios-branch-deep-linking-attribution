@@ -85,27 +85,12 @@
         if (self.cachedFbSdkAnonId) {
             return self.cachedFbSdkAnonId;
         }
-
-        BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
-
-        // 1. Value saved from the Meta SDK in an earlier session. Uses its own key (bnc_fb_sdk_anon_id),
-        //    so the GUID older Branch SDKs saved in bnc_anon_id is never read.
-        NSString *savedValue = preferenceHelper.fbSdkAnonID;
-        if ([self isValidFbSdkAnonId:savedValue]) {
-            self.cachedFbSdkAnonId = savedValue;
-            return savedValue;
-        }
-
-        // 2. Not saved yet, read from the Meta SDK and save it.
         NSString *value = [self readFbSdkAnonIdFromMetaSDK];
-        if ([self isValidFbSdkAnonId:value]) {
-            self.cachedFbSdkAnonId = value;
-            preferenceHelper.fbSdkAnonID = value;
-            return value;
+        if (![self isValidFbSdkAnonId:value]) {
+            return nil;
         }
-
-        // Invalid or missing: nothing cached or saved, so the next request tries again.
-        return nil;
+        self.cachedFbSdkAnonId = value;
+        return value;
     }
 }
 
