@@ -93,6 +93,14 @@ class MissingFieldTests(unittest.TestCase):
             f"Expected country-missing error, got: {errors}",
         )
 
+    def test_missing_timezone_fails_on_every_v1_endpoint(self):
+        errors, _ = _run_validation("missing_timezone.txt")
+        for uri in ("/v1/install", "/v1/open", "/v1/url"):
+            self.assertTrue(
+                any(f"({uri}): missing required field 'timezone'" in e for e in errors),
+                f"Expected timezone-missing error on {uri}, got: {errors}",
+            )
+
 
 class V2NestingTests(unittest.TestCase):
     """iOS nests device fields under user_data on /v2/event/* — lookup must

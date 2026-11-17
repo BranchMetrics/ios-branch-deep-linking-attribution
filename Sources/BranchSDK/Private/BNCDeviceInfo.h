@@ -39,6 +39,7 @@
 @property (nonatomic, assign, readwrite) BOOL isFirstOptIn;
 - (NSString *)localIPAddress;
 - (NSString *)connectionType;
+- (NSString *)timezone; //!< The current IANA time zone name (Asia/Seoul, etc).
 
 @property (nonatomic, copy, readwrite) NSString *brandName;
 @property (nonatomic, copy, readwrite) NSString *modelName;
