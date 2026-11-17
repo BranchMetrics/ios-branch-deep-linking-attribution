@@ -44,6 +44,24 @@ static NSInteger bnc_testFBCallCount = 0;
 }
 @end
 
+// Runs block with the process time zone set to name, then restores it.
+// localTimeZone follows the system time zone, which honors TZ.
+static void BNCRunWithSystemTimeZone(NSString *name, void (^block)(void)) {
+    char *originalTZ = getenv("TZ");
+    NSString *restoreTZ = originalTZ ? @(originalTZ) : nil;
+    setenv("TZ", name.UTF8String, 1);
+    [NSTimeZone resetSystemTimeZone];
+
+    block();
+
+    if (restoreTZ) {
+        setenv("TZ", restoreTZ.UTF8String, 1);
+    } else {
+        unsetenv("TZ");
+    }
+    [NSTimeZone resetSystemTimeZone];
+}
+
 @interface BNCDeviceInfoTests : XCTestCase
 @property (nonatomic, strong, readwrite) BNCDeviceInfo *deviceInfo;
 @end
@@ -181,6 +199,33 @@ static NSInteger bnc_testFBCallCount = 0;
     NSString *locale = [NSLocale currentLocale].localeIdentifier;
     XCTAssertNotNil(locale);
     XCTAssert([locale isEqualToString:self.deviceInfo.locale]);
+}
+
+- (void)testTimezone {
+    NSString *timezone = [NSTimeZone localTimeZone].name;
+    XCTAssertNotNil(timezone);
+    XCTAssertEqualObjects(timezone, self.deviceInfo.timezone);
+}
+
+- (void)testTimezoneIsExactlyWhatTheDeviceReports {
+    __block NSString *timezone = nil;
+    // Legacy alias of Asia/Kolkata; must not be canonicalized.
+    BNCRunWithSystemTimeZone(@"Asia/Calcutta", ^{
+        timezone = [BNCDeviceInfo new].timezone;
+    });
+
+    XCTAssertEqualObjects(@"Asia/Calcutta", timezone);
+}
+
+- (void)testTimezoneFollowsChangesAfterLaunch {
+    NSString *otherZone = [[NSTimeZone localTimeZone].name isEqualToString:@"Asia/Seoul"] ? @"America/New_York" : @"Asia/Seoul";
+    __block NSString *timezone = nil;
+    // self.deviceInfo was created in setUp, before the zone changes.
+    BNCRunWithSystemTimeZone(otherZone, ^{
+        timezone = self.deviceInfo.timezone;
+    });
+
+    XCTAssertEqualObjects(otherZone, timezone);
 }
 
 - (void)testCountry {

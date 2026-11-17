@@ -134,6 +134,10 @@
     return [[BNCReachability shared] reachabilityStatus];
 }
 
+- (NSString *)timezone {
+    return [NSTimeZone localTimeZone].name;
+}
+
 - (NSString *)userAgentString {
     #if !TARGET_OS_TV
     return [BNCUserAgentCollector instance].userAgent;
