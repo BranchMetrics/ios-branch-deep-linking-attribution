@@ -2092,6 +2092,11 @@
 				GCC_PREFIX_HEADER = "Branch-TestBed/Branch-TestBed-Prefix.pch";
 				INFOPLIST_FILE = "Branch-TestBed/Branch-TestBed-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -2114,6 +2119,11 @@
 				GCC_PREFIX_HEADER = "Branch-TestBed/Branch-TestBed-Prefix.pch";
 				INFOPLIST_FILE = "Branch-TestBed/Branch-TestBed-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
