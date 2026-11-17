@@ -370,6 +370,13 @@ static NSMutableArray<NSURLRequest *> *bnc_mockRequests = nil;
 - (void)testConcurrentSetUrlPatternsToIgnore {
     Branch *branch = [Branch getInstance];
 
+    // Restore the singleton's user filter afterwards. setUrlPatternsToIgnore:@[] can't do it: an empty
+    // list leaves a filter with the full default list installed, which leaks into later tests.
+    BNCURLFilter *originalUserURLFilter = [branch valueForKey:@"userURLFilter"];
+    [self addTeardownBlock:^{
+        [branch setValue:originalUserURLFilter forKey:@"userURLFilter"];
+    }];
+
     dispatch_queue_t queue = dispatch_queue_create("BNCURLFilterTests.concurrent", DISPATCH_QUEUE_CONCURRENT);
     dispatch_group_t group = dispatch_group_create();
     for (NSUInteger i = 0; i < 1000; i++) {
@@ -379,7 +386,10 @@ static NSMutableArray<NSURLRequest *> *bnc_mockRequests = nil;
     }
     dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
 
-    [branch setUrlPatternsToIgnore:@[]];
+    // One complete filter won; it holds exactly one of the patterns that were set.
+    BNCURLFilter *userURLFilter = [branch valueForKey:@"userURLFilter"];
+    XCTAssertEqual(userURLFilter.patternList.count, 1);
+    XCTAssertTrue([userURLFilter.patternList.firstObject hasPrefix:@"^branchtest"]);
 }
 
 #pragma mark Default list
