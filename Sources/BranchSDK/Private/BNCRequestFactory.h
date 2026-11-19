@@ -27,6 +27,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSDictionary *)dataForOpenWithURLString:(nullable NSString *)urlString;
 - (NSDictionary *)dataForDeepLinkWithURLString:(nullable NSString *)urlString;
 - (NSDictionary *)dataForRequestOpenWithURLString:(nullable NSString *)urlString;
+
+// Request open body with link_data set to linkData when non-nil, added before the device trust params.
+- (NSDictionary *)dataForRequestOpenWithURLString:(nullable NSString *)urlString linkData:(nullable NSDictionary *)linkData;
 - (void)addDeviceTrustParams:(NSMutableDictionary *)json;
 - (void)addSignatureAndNonceParams:(NSMutableDictionary *)json;
 

@@ -288,7 +288,14 @@
 }
 
 - (NSDictionary *)dataForRequestOpenWithURLString:(NSString *)urlString {
+    return [self dataForRequestOpenWithURLString:urlString linkData:nil];
+}
+
+- (NSDictionary *)dataForRequestOpenWithURLString:(NSString *)urlString linkData:(NSDictionary *)linkData {
     NSMutableDictionary *json = [self requestOpenJSONWithURLString:urlString];
+    if (linkData) {
+        json[@"link_data"] = linkData;
+    }
     [self addDeviceTrustParams:json];
     return json;
 }

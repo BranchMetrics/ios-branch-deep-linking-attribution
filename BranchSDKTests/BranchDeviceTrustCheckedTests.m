@@ -25,6 +25,8 @@
 @property (nonatomic, assign) NSInteger releaseCount;
 @property (nonatomic, assign) NSInteger signCount;
 @property (nonatomic, assign) NSInteger attestCount;
+@property (nonatomic, copy) NSDictionary *lastAttestedParams;
+@property (nonatomic, copy) NSDictionary *lastSignedParams;
 @end
 
 @implementation BNCFakeSecureSDKProvider
@@ -33,11 +35,13 @@
 
 - (NSDictionary *)addDeviceTrustParams:(NSDictionary *)params {
     self.attestCount++;
+    self.lastAttestedParams = params;
     return @{ BRANCH_REQUEST_KEY_SECURE_CONTEXT: @{ BRANCH_REQUEST_KEY_SECURE_CONTEXT_INITIALIZATION: @{ @"attestation_object": @"b64" } } };
 }
 
 - (NSDictionary *)addSignatureAndNonceForParams:(NSDictionary *)params {
     self.signCount++;
+    self.lastSignedParams = params;
     return @{ BRANCH_REQUEST_KEY_SECURE_CONTEXT: @{ @"activity_context": @{ @"nonce": @"n" } } };
 }
 
@@ -260,6 +264,26 @@
     XCTAssertEqual(self.provider.signCount, 1);
     XCTAssertFalse([BNCRequestFactory paramsCarryInitializationContext:json]);
     XCTAssertNotNil(json[BRANCH_REQUEST_KEY_SECURE_CONTEXT]);
+}
+
+- (void)testRequestOpenAttestsOverLinkData {
+    NSDictionary *linkData = @{ @"+clicked_branch_link": @YES };
+
+    NSDictionary *json = [[self factory] dataForRequestOpenWithURLString:nil linkData:linkData];
+
+    XCTAssertEqualObjects(json[@"link_data"], linkData);
+    XCTAssertEqualObjects(self.provider.lastAttestedParams[@"link_data"], linkData);
+}
+
+- (void)testRequestOpenSignsOverLinkDataAfterDeviceTrustIsChecked {
+    [BNCPreferenceHelper sharedInstance].deviceTrustChecked = YES;
+    NSDictionary *linkData = @{ @"+clicked_branch_link": @YES };
+
+    NSDictionary *json = [[self factory] dataForRequestOpenWithURLString:nil linkData:linkData];
+
+    XCTAssertEqual(self.provider.signCount, 1);
+    XCTAssertEqualObjects(json[@"link_data"], linkData);
+    XCTAssertEqualObjects(self.provider.lastSignedParams[@"link_data"], linkData);
 }
 
 @end
