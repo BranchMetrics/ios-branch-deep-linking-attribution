@@ -97,9 +97,6 @@
         return;
     }
 
-    // The backend learns the HMAC secret only from an acknowledged initialization_context. Until
-    // then any signature is over a key it does not hold, so send no secure context at all. This is
-    // what keeps /v3/deeplink unsigned at attribution level NONE, where no open ever attests.
     if (!self.preferenceHelper.deviceTrustChecked) {
         [[BranchLogger shared] logVerbose:@"Device trust not yet acknowledged; skipping request signature." error:nil];
         return;
@@ -284,13 +281,20 @@
 }
 
 - (NSDictionary *)dataForDeepLinkWithURLString:(NSString *)urlString {
-    NSMutableDictionary *json = [[self dataForRequestOpenWithURLString:urlString] mutableCopy];
+    NSMutableDictionary *json = [self requestOpenJSONWithURLString:urlString];
     json[@"ios_app_link_url"] = urlString;
     [self addSignatureAndNonceParams:json];
     return json;
 }
 
 - (NSDictionary *)dataForRequestOpenWithURLString:(NSString *)urlString {
+    NSMutableDictionary *json = [self requestOpenJSONWithURLString:urlString];
+    [self addDeviceTrustParams:json];
+    return json;
+}
+
+// Builds the request body shared by /v3/events/open and /v3/deeplink, without device trust params.
+- (NSMutableDictionary *)requestOpenJSONWithURLString:(NSString *)urlString {
 
     NSMutableDictionary *json = [NSMutableDictionary new];
 
@@ -350,8 +354,6 @@
 
     // Add Enhanced Web UX params
     [self addWebUXParams:json];
-    
-    [self addDeviceTrustParams:json];
 
     return json;
 }

@@ -24,6 +24,7 @@
 @interface BNCFakeSecureSDKProvider : NSObject <BranchSecureSDKProvider>
 @property (nonatomic, assign) NSInteger releaseCount;
 @property (nonatomic, assign) NSInteger signCount;
+@property (nonatomic, assign) NSInteger attestCount;
 @end
 
 @implementation BNCFakeSecureSDKProvider
@@ -31,7 +32,8 @@
 - (void)initializeBranchSecureSDKWithBranchKey:(NSString *)branchKey {}
 
 - (NSDictionary *)addDeviceTrustParams:(NSDictionary *)params {
-    return @{};
+    self.attestCount++;
+    return @{ BRANCH_REQUEST_KEY_SECURE_CONTEXT: @{ BRANCH_REQUEST_KEY_SECURE_CONTEXT_INITIALIZATION: @{ @"attestation_object": @"b64" } } };
 }
 
 - (NSDictionary *)addSignatureAndNonceForParams:(NSDictionary *)params {
@@ -225,6 +227,38 @@
     [factory addSignatureAndNonceParams:json];
 
     XCTAssertEqual(self.provider.signCount, 1);
+    XCTAssertNotNil(json[BRANCH_REQUEST_KEY_SECURE_CONTEXT]);
+}
+
+#pragma mark - Attestation is sent only on the open request
+
+- (BNCRequestFactory *)factory {
+    return [[BNCRequestFactory alloc] initWithBranchKey:@"key_live_test" UUID:@"uuid" TimeStamp:@0];
+}
+
+- (void)testRequestOpenAttestsBeforeDeviceTrustIsChecked {
+    NSDictionary *json = [[self factory] dataForRequestOpenWithURLString:nil];
+
+    XCTAssertEqual(self.provider.attestCount, 1);
+    XCTAssertTrue([BNCRequestFactory paramsCarryInitializationContext:json]);
+}
+
+- (void)testDeepLinkDoesNotAttestBeforeDeviceTrustIsChecked {
+    NSDictionary *json = [[self factory] dataForDeepLinkWithURLString:@"https://example.app.link/abc"];
+
+    XCTAssertEqual(self.provider.attestCount, 0);
+    XCTAssertEqual(self.provider.signCount, 0);
+    XCTAssertNil(json[BRANCH_REQUEST_KEY_SECURE_CONTEXT]);
+}
+
+- (void)testDeepLinkIsSignedOnceAfterDeviceTrustIsChecked {
+    [BNCPreferenceHelper sharedInstance].deviceTrustChecked = YES;
+
+    NSDictionary *json = [[self factory] dataForDeepLinkWithURLString:@"https://example.app.link/abc"];
+
+    XCTAssertEqual(self.provider.attestCount, 0);
+    XCTAssertEqual(self.provider.signCount, 1);
+    XCTAssertFalse([BNCRequestFactory paramsCarryInitializationContext:json]);
     XCTAssertNotNil(json[BRANCH_REQUEST_KEY_SECURE_CONTEXT]);
 }
 
