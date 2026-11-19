@@ -32,6 +32,7 @@ NSString * const kTestBedBtnConsumerProtectionLevel   = @"btn_consumer_protectio
 NSString * const kTestBedBtnNotificationSend          = @"btn_notification_send";
 NSString * const kTestBedBtnPluginNotifyInit          = @"btn_plugin_notify_init";
 NSString * const kTestBedBtnRequestDeepLink           = @"btn_request_deeplink";
+NSString * const kTestBedBtnIndexOnSpotlight          = @"btn_index_on_spotlight";
 
 #pragma mark - Buttons (Paste Control scene)
 
