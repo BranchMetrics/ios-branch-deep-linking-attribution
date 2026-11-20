@@ -240,6 +240,12 @@
 - (NSDictionary *)dataForDeepLinkWithURLString:(NSString *)urlString {
     NSMutableDictionary *json = [[self dataForRequestOpenWithURLString:urlString] mutableCopy];
     json[@"ios_app_link_url"] = urlString;
+
+    // First launch without a launch link: no randomized bundle token yet and no urlString.
+    // Checks the pasteboard once per install when checkPasteboardOnInstall is set.
+    if (urlString.length == 0 && !self.preferenceHelper.randomizedBundleToken && !json[BRANCH_REQUEST_KEY_LOCAL_URL]) {
+        [self addLocalURLToInstallJSON:json];
+    }
     return json;
 }
 
@@ -486,10 +492,10 @@
             if (localURLString){
                 pasteboardURL = [[NSURL alloc] initWithString:localURLString];
             } else {
-                pasteboardURL = [[BNCPasteboard sharedInstance] checkForBranchLink];
+                pasteboardURL = [self checkPasteboardOncePerInstall];
             }
         } else {
-            pasteboardURL = [[BNCPasteboard sharedInstance] checkForBranchLink];
+            pasteboardURL = [self checkPasteboardOncePerInstall];
         }
 
         if (pasteboardURL) {
@@ -497,6 +503,15 @@
             [self clearLocalURLFromStorage];
         }
     }
+}
+
+// Reads the pasteboard for a Branch link. Returns nil without reading if it was already read before the install open saved a randomized bundle token.
+- (nullable NSURL *)checkPasteboardOncePerInstall {
+    if (self.preferenceHelper.pasteboardChecked) {
+        return nil;
+    }
+    self.preferenceHelper.pasteboardChecked = YES;
+    return [[BNCPasteboard sharedInstance] checkForBranchLink];
 }
 
 // If the client uses a UIPasteControl, force a new open to fetch the payload

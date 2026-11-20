@@ -435,6 +435,14 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory_Unthreaded(void);
     return [self readBoolFromDefaults:@"_appleAttributionTokenChecked"];
 }
 
+- (void)setPasteboardChecked:(BOOL)pasteboardChecked {
+    [self writeBoolToDefaults:@"_pasteboardChecked" value:pasteboardChecked];
+}
+
+- (BOOL)pasteboardChecked {
+    return [self readBoolFromDefaults:@"_pasteboardChecked"];
+}
+
 - (void)setHasOptedInBefore:(BOOL)hasOptedInBefore {
     [self writeBoolToDefaults:@"_hasOptedInBefore" value:hasOptedInBefore];
 }

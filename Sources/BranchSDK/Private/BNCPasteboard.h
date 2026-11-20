@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
  Indicates if the client wishes to check for Branch links on install. By default, this is NO.
  
  Set via BranchConfiguration.checkPasteboardOnInstall
- Checked by BranchInstallRequest.makeRequest before checking the pasteboard for a Branch link.
+ Checked when building the first-launch /v3/deeplink payload before checking the pasteboard for a Branch link.
  */
 @property (nonatomic, assign) BOOL checkOnInstall;
 
