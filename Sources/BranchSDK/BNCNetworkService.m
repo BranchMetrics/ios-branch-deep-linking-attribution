@@ -52,22 +52,6 @@
     [self.sessionTask cancel];
 }
 
-// only used in logging? Consider removing
-- (NSString *)stringFromResponseData {
-    NSString *string = nil;
-    if ([self.responseData isKindOfClass:[NSData class]]) {
-        string = [[NSString alloc] initWithData:(NSData*)self.responseData encoding:NSUTF8StringEncoding];
-    }
-    if (!string && [self.responseData isKindOfClass:[NSData class]]) {
-        string = [NSString stringWithFormat:@"<NSData of length %ld.>",
-            (long)[(NSData*)self.responseData length]];
-    }
-    if (!string) {
-        string = self.responseData.description;
-    }
-    return string;
-}
-
 @end
 
 #pragma mark - BNCNetworkService
@@ -137,14 +121,6 @@
 
         return _session;
     }
-}
-
-- (void) setSuspendOperations:(BOOL)suspendOperations {
-    self.sessionQueue.suspended = suspendOperations;
-}
-
-- (BOOL) operationsAreSuspended {
-    return self.sessionQueue.isSuspended;
 }
 
 #pragma mark - Operations

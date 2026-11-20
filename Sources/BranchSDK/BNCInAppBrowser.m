@@ -41,10 +41,6 @@ NS_ASSUME_NONNULL_BEGIN
     [self openURLInSafariVC:url overViewController:topVC];
 }
 
-+ (BOOL)isSafariServicesFrameworkLinked {
-    return (NSClassFromString(@"SFSafariViewController") != nil);
-}
-
 - (void)openURLInSafariVC:(NSURL *)url overViewController:(UIViewController *)topVC {
 
     Class safariClass = NSClassFromString(@"SFSafariViewController");
