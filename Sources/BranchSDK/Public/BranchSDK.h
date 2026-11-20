@@ -22,7 +22,6 @@ FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 #import "BranchDMAParameters.h"
 #import "BranchPluginSupport.h"
 
-#import "BranchScene.h"
 #import "BranchDelegate.h"
 
 #import "BranchEvent.h"

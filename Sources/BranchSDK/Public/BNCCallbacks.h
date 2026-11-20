@@ -12,9 +12,10 @@
 #import <Foundation/Foundation.h>
 #endif
 
-@class BranchUniversalObject, BranchLinkProperties;
+@class BranchUniversalObject, BranchLinkProperties, UIScene;
 
 typedef void (^callbackWithParams) (NSDictionary * _Nullable params, NSError * _Nullable error);
+typedef void (^callbackWithParamsAndScene) (NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable_result scene);
 typedef void (^callbackWithUrl) (NSString * _Nullable url, NSError * _Nullable error);
 typedef void (^callbackWithStatus) (BOOL changed, NSError * _Nullable error);
 typedef void (^callbackWithList) (NSArray * _Nullable list, NSError * _Nullable error);

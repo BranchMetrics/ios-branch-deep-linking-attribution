@@ -42,7 +42,6 @@
 #import "BranchLogger.h"
 // Not used by Branch singleton public API
 //#import "BranchEvent.h"
-//#import "BranchScene.h"
 //#import "BranchPluginSupport.h"
 //#import "BranchQRCode.h"
 //#import "BNCConfig.h"
@@ -456,9 +455,11 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Convenience overload for `application:didFinishLaunchingWithOptions:`.
 
  Extracts the Branch URL from `launchOptions` and calls `requestDeepLinkData:callback:` with it.
- The callback is stored and invoked for this launch, for every later deep link result and for every
- app foreground in the process, whichever entry point delivers the link. A later call replaces it;
- nil clears it.
+ The callback is stored and invoked for this launch and for every later deep link result in the
+ process, whichever entry point delivers the link. Opens, including the open sent on foreground, do
+ not invoke it. A later call replaces it; nil clears it.
+ Note: Call either this method or `requestDeepLinkDataWithSceneOptions:scene:callback:`, not both. Use this
+ one in an app without a scene delegate, in a SwiftUI app and on tvOS.
  */
 - (void)requestDeepLinkDataWithLaunchOptions:(nullable NSDictionary *)options
                                     callback:(nullable callbackWithParams)callback
@@ -527,14 +528,22 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Branch link resolves that link; a Spotlight activity with a non-Branch identifier is recorded and
  resolves without a URL of its own. Pass nil for `connectionOptions` or an empty options object for
  cold starts with no incoming link.
- The callback is stored the same way as in `requestDeepLinkDataWithLaunchOptions:callback:`.
-
- Available on iOS 13.0+ and macCatalyst 13.1+.
+ The callback is stored for `scene` and receives every later deep link result for that scene: the
+ result of this call, and of `requestDeepLinkDataWithScene:openURLContexts:` and
+ `requestDeepLinkDataWithScene:continueUserActivity:` called with the same scene. Each scene keeps its
+ own callback, so calling this from several windows does not replace the callback of another window.
+ A scene's callback is removed when the scene disconnects; passing nil removes it immediately.
+ The most recent non-nil callback also receives deep link results that have no scene callback, such
+ as a link from an AppDelegate entry point or from a scene that is no longer connected. Its `scene`
+ argument is the connected scene whose link produced the result, or nil for those results. Opens,
+ including the open sent on foreground, do not invoke any callback.
+ 
+ Note: Call either this method or `requestDeepLinkDataWithLaunchOptions:callback:`, not both. Use this one
+ in an app with a `UIWindowSceneDelegate`.
  */
 - (void)requestDeepLinkDataWithSceneOptions:(nullable UISceneConnectionOptions *)connectionOptions
                                       scene:(UIScene *)scene
-                                   callback:(nullable callbackWithParams)callback
-    API_AVAILABLE(ios(13.0), macCatalyst(13.1))
+                                   callback:(nullable callbackWithParamsAndScene)callback
     NS_SWIFT_NAME(requestDeepLinkData(sceneOptions:scene:callback:))
     NS_SWIFT_ASYNC_NAME(requestDeepLinkData(sceneOptions:scene:));
 #endif
@@ -545,13 +554,11 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  Extracts the first URL from URLContexts and calls `requestDeepLinkData:callback:` with it.
  Delivers the result to the callback registered with `requestDeepLinkDataWithLaunchOptions:callback:`.
 
- Available on iOS 13.0+.
  @param scene The UIScene from `scene:openURLContexts:`.
  @param urlContexts The URL contexts from `scene:openURLContexts:`.
  */
 - (void)requestDeepLinkDataWithScene:(UIScene *)scene
                       openURLContexts:(NSSet<UIOpenURLContext *> *)urlContexts
-    API_AVAILABLE(ios(13.0))
     NS_SWIFT_NAME(requestDeepLinkData(scene:openURLContexts:));
 
 /**
@@ -562,13 +569,11 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  activity with a non-Branch identifier is recorded and resolves without a URL of its own.
  Delivers the result to the callback registered with `requestDeepLinkDataWithLaunchOptions:callback:`.
 
- Available on iOS 13.0+.
  @param scene The UIScene from `scene:continueUserActivity:`.
  @param userActivity The NSUserActivity from `scene:continueUserActivity:`.
  */
 - (void)requestDeepLinkDataWithScene:(UIScene *)scene
                 continueUserActivity:(NSUserActivity *)userActivity
-    API_AVAILABLE(ios(13.0))
     NS_SWIFT_NAME(requestDeepLinkData(scene:userActivity:));
 
 #pragma mark - Attribution Methods

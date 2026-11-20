@@ -75,7 +75,7 @@ final class BranchSwiftNameTests: XCTestCase {
     #if !os(tvOS)
     /// `requestDeepLinkDataWithSceneOptions:scene:callback:` → `requestDeepLinkData(sceneOptions:scene:callback:)`
     func testSwiftNameRequestDeepLinkDataSceneOptionsSceneCallback() {
-        let method: (UIScene.ConnectionOptions?, UIScene, (([AnyHashable: Any]?, Error?) -> Void)?) -> Void =
+        let method: (UIScene.ConnectionOptions?, UIScene, (([AnyHashable: Any]?, Error?, UIScene?) -> Void)?) -> Void =
             branch.requestDeepLinkData(sceneOptions:scene:callback:)
         _ = method
 
@@ -106,7 +106,7 @@ final class BranchSwiftNameTests: XCTestCase {
     #if !os(tvOS)
     /// `requestDeepLinkDataWithSceneOptions:scene:callback:` → `requestDeepLinkData(sceneOptions:scene:) async throws`
     func testAsyncNameRequestDeepLinkDataSceneOptionsScene() {
-        let method: (UIScene.ConnectionOptions?, UIScene) async throws -> [AnyHashable: Any] =
+        let method: (UIScene.ConnectionOptions?, UIScene) async throws -> ([AnyHashable: Any], UIScene?) =
             branch.requestDeepLinkData(sceneOptions:scene:)
         _ = method
         XCTAssertTrue(branch.responds(to: NSSelectorFromString("requestDeepLinkDataWithSceneOptions:scene:callback:")))
