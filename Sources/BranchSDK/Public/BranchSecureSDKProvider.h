@@ -18,9 +18,8 @@
 
 @required
 
-/// Initializes the fraud defense system: generates attestation + ECDH keys and prefetches
-/// a server challenge via GET /v3/challenge, all in parallel.
-/// Call this early (e.g. at app launch) before any fraud defense checks are performed.
+/// Generates attestation and ECDH keys and prefetches a server challenge via GET /v3/challenge.
+/// Called by Branch when the provider is assigned to fraudDefenseHandler.
 - (void)initializeBranchSecureSDKWithBranchKey:(NSString * _Nonnull)branchKey;
 
 /// Layer 1: performs device attestation using the given params as input to the attestation hash.

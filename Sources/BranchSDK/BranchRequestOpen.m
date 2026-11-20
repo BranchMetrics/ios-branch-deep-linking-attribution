@@ -80,8 +80,6 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper sharedInstance];
     BOOL carriedInitializationContext = [BNCRequestFactory paramsCarryInitializationContext:self.requestParams];
     if (error && preferenceHelper.dropURLOpen) {
-        // The dummy success below was never acknowledged by the server, so it must not mark the
-        // device as registered. Hand the claim back so the next open attests in its place.
         if (carriedInitializationContext) {
             [[Branch sharedInstance].fraudDefenseHandler releaseAttestationClaim];
             carriedInitializationContext = NO;
@@ -105,7 +103,6 @@
         return;
     }
 
-    // The server has the initialization_context now, so later requests switch to Layer 2.
     if (carriedInitializationContext) {
         preferenceHelper.deviceTrustChecked = YES;
         [[Branch sharedInstance].fraudDefenseHandler releaseAttestationClaim];
