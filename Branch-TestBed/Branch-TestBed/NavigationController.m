@@ -7,7 +7,6 @@
 //
 
 #import "NavigationController.h"
-#import "LogOutputViewController.h"
 #import "ViewController.h"
 
 @interface NavigationController ()
@@ -24,17 +23,5 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-@synthesize deepLinkingCompletionDelegate;
-- (void)configureControlWithData:(NSDictionary *)data {
-    LogOutputViewController *logOutputViewController = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
-    [self pushViewController:logOutputViewController animated:YES];
-    NSString *deeplinkText = [data objectForKey:@"deeplink_text"];
-    if (deeplinkText) {
-        NSString *logOutput = [NSString stringWithFormat:@"Successfully Deeplinked:\n\n%@\nSession Details:\n\n%@", deeplinkText, data.description];
-        logOutputViewController.logOutput = logOutput;
-    }
-}
-
 
 @end

@@ -11,13 +11,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  The BranchConfigurationController class contains SDK configuration information.
- *  .This information is sent to backend as `operational_metrics` with v1/install request.
+ *  This information is sent to backend as `operational_metrics` with the install open request.
  */
 
 @interface BranchConfigurationController : NSObject
 
 @property (nonatomic, copy) NSString *branchKeySource;
-@property (assign, nonatomic) BOOL deferInitForPluginRuntime;
 @property (assign, nonatomic) BOOL checkPasteboardOnInstall;
 
 + (instancetype)sharedInstance;

@@ -20,7 +20,6 @@
 #import "BranchLinkProperties.h"
 #import "BranchUniversalObject.h"
 #import "BranchLastAttributedTouchData.h"
-#import "BranchDeepLinkingController.h"
 #import "BranchDelegate.h"
 
 #if !TARGET_OS_TV
@@ -164,7 +163,6 @@ extern NSString * __nonnull const BNCCanonicalIdList;
 extern NSString * __nonnull const BNCPurchaseAmount;
 extern NSString * __nonnull const BNCPurchaseCurrency;
 extern NSString * __nonnull const BNCCanonicalIdList;
-extern NSString * __nonnull const BNCRegisterViewEvent;
 extern NSString * __nonnull const BNCAddToWishlistEvent;
 extern NSString * __nonnull const BNCAddToCartEvent;
 extern NSString * __nonnull const BNCPurchaseInitiatedEvent;
@@ -363,74 +361,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  */
 + (void)updateConfiguration:(BranchConfiguration *)configuration;
 
-/**
- Allow Branch to handle a link opening the app, returning whether it was from a Branch link or not.
-
- @param url The url that caused the app to be opened.
- */
-- (BOOL)handleDeepLink:(nullable NSURL *)url;
-
-- (BOOL)handleDeepLink:(nullable NSURL *)url sceneIdentifier:(nullable NSString *)sceneIdentifier;
-
-/**
- Have Branch end the current deep link session and start a new session with the provided URL.
-
- @param url     The URL to use to start the new session.
- @return        Returns true if the passed URL can be handled by Branch.
- */
-
--(BOOL)handleDeepLinkWithNewSession:(nullable NSURL *)url;
-
-/**
- Allow Branch to handle restoration from an NSUserActivity, returning whether or not it was
- from a Branch link.
-
- @param userActivity The NSUserActivity that caused the app to be opened.
- */
-
-- (BOOL)continueUserActivity:(nullable NSUserActivity *)userActivity;
-
-- (BOOL)continueUserActivity:(nullable NSUserActivity *)userActivity sceneIdentifier:(nullable NSString *)sceneIdentifier;
-
-/**
- Call this method from inside your app delegate's `application:openURL:sourceApplication:annotation:`
- method so that Branch can open the passed URL. This method is for pre-iOS 9 compatibility: If you don't need
- pre-iOS 9 compatibility, override your app delegate's `application:openURL:options:` method instead and use
- the Branch `application:openURL:options:` to open the URL.
-
- @warning Pre-iOS 9 compatibility only.
-
- @param application         The application that was passed to your app delegate.
- @param url                 The URL that was passed to your app delegate.
- @param sourceApplication   The sourceApplication that was passed to your app delegate.
- @param annotation          The annotation that was passed to your app delegate.
- @return                    Returns `YES` if Branch handled the passed URL.
- */
-- (BOOL)application:(nullable UIApplication *)application
-            openURL:(nullable NSURL *)url
-  sourceApplication:(nullable NSString *)sourceApplication
-         annotation:(nullable id)annotation;
-
-- (BOOL)sceneIdentifier:(nullable NSString *)sceneIdentifier
-                openURL:(nullable NSURL *)url
-      sourceApplication:(nullable NSString *)sourceApplication
-             annotation:(nullable id)annotation;
-
-/**
- Call this method from inside your app delegate's `application:openURL:options:` method so that Branch can
- open the passed URL.
-
- This is the preferred Branch method to call inside your `application:openURL:options:` method.
-
- @param application         The application that was passed to your app delegate.
- @param url                 The URL that was passed to your app delegate.
- @param options             The options dictionary that was passed to your app delegate.
- @return                    Returns `YES` if Branch handled the passed URL.
- */
-- (BOOL)application:(nullable UIApplication *)application
-            openURL:(nullable NSURL *)url
-            options:(nullable NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options;
-
 ///--------------------------------
 /// @name Push Notification Support
 ///--------------------------------
@@ -468,9 +398,8 @@ extern NSString * __nonnull const BNCSpotlightFeature;
 /**
  Convenience method for `application:openURL:options:` to handle custom URI schemes.
 
- Runs the same URL preprocessing as the legacy deep link handler (referring-URL query parameters,
- the URL skiplist, allowed-scheme filtering and `link_click_id` extraction) and then calls
- `requestDeepLinkData:callback:` with the URL.
+ Applies referring-URL query parameters, the URL skiplist, allowed-scheme filtering and
+ `link_click_id` extraction, then calls `requestDeepLinkData:callback:` with the URL.
  Delivers the result to the callback registered with `requestDeepLinkDataWithLaunchOptions:callback:`.
  @param url The URL from `application:openURL:options:`
  */
@@ -596,16 +525,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  @param initBlock         dispatch_block_t object to be executed prior to session initialization
  */
 - (void)dispatchToIsolationQueue:(dispatch_block_t)initBlock;
-
-/**
- DO NOT USE unless you are implementing deferred initialization for plugins.
-
- Platforms such as React Native and Unity, have slow runtime startups. This results in early lifecycle events before client code can run.
- When `deferInitForPlugin` is true in `branch.json`, `+[Branch initialize:]` will cache itself until this method is called.
- 
- Note that while init is deferred, other calls to the Branch SDK may result in errors. For that reason, do not use this feature for general SDK init deferral.
- */
-- (void)notifyNativeToInit;
 
 #pragma mark - Configuration methods
 
@@ -1123,18 +1042,6 @@ extern NSString * __nonnull const BNCSpotlightFeature;
  @warning This is meant for use internally only (exposed for the sake of testing) and should not be used by apps.
  */
 - (id)initWithInterface:(BNCServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache preferenceHelper:(BNCPreferenceHelper *)preferenceHelper key:(NSString *)key;
-
-/**
- Method used by BranchUniversalObject to register a view on content
- 
- This method should only be invoked after the session opened by `+[Branch initialize:]` completes, either within the deep link callback or after a delay.
- If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
- As a result, you may experience issues where the deep link callback does not fire. Again, the solution to this issue is to only invoke this method after you have called `+[Branch initialize:]`.
-
- @warning This is meant for use internally only and should not be used by apps.
- */
-- (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback
-    __attribute__((deprecated(("This API is deprecated. Please use BranchEvent:BranchStandardEventViewItem instead."))));
 
 - (void) sendServerRequest:(BNCServerRequest*)request;
 - (void) sendServerRequestWithoutSession:(BNCServerRequest*)request __attribute__((deprecated(("This API is deprecated. Please use sendServerRequest instead."))));

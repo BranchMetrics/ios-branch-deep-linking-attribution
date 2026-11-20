@@ -11,9 +11,7 @@
 #import <Foundation/Foundation.h>
 #endif
 
-#if !TARGET_OS_TV
 #import <UIKit/UIKit.h>
-#endif
 
 #import "BNCCallbacks.h"
 #import "BranchAttributionLevel.h"
@@ -65,6 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
     API_AVAILABLE(ios(13.0), macCatalyst(13.1))
     NS_SWIFT_NAME(requestDeepLinkData(sceneOptions:scene:callback:))
     NS_SWIFT_ASYNC_NAME(requestDeepLinkData(sceneOptions:scene:));
+#endif
 
 - (void)requestDeepLinkDataWithScene:(UIScene *)scene
                       openURLContexts:(NSSet<UIOpenURLContext *> *)urlContexts
@@ -75,7 +74,6 @@ NS_ASSUME_NONNULL_BEGIN
                 continueUserActivity:(NSUserActivity *)userActivity
     API_AVAILABLE(ios(13.0))
     NS_SWIFT_NAME(requestDeepLinkData(scene:userActivity:));
-#endif
 
 #pragma mark - Attribution open
 

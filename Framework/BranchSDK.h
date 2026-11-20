@@ -33,7 +33,6 @@ FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 
 #import <BranchSDK/BranchLastAttributedTouchData.h>
 
-#import <BranchSDK/BranchDeepLinkingController.h>
 
 #import <BranchSDK/BranchShareLink.h>
 #import <BranchSDK/BranchCSSearchableItemAttributeSet.h>

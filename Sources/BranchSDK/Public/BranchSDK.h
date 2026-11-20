@@ -32,7 +32,6 @@ FOUNDATION_EXPORT const unsigned char BranchSDKVersionString[];
 
 #import "BranchLastAttributedTouchData.h"
 
-#import "BranchDeepLinkingController.h"
 #import "BranchLogger.h"
 
 #import "BranchShareLink.h"

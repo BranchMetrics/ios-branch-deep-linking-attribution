@@ -10,11 +10,11 @@
 #import "BranchJsonConfig.h"
 
 NSString * _Nonnull const BranchJsonConfigDebugModeOption = @"debugMode";
-NSString * _Nonnull const BranchJsonConfigDeferInitForPluginRuntimeOption = @"deferInitForPluginRuntime";
 NSString * _Nonnull const BranchJsonConfigEnableLogging = @"enableLogging";
 NSString * _Nonnull const BranchJsonConfigCheckPasteboardOnInstall = @"checkPasteboardOnInstall";
 NSString * _Nonnull const BranchJsonConfigAPIUrl = @"apiUrl";
 NSString * _Nonnull const BranchJsonConfigCPPLevel = @"consumerProtectionAttributionLevel";
+static NSString * const BranchJsonConfigRemovedDeferInitForPluginRuntimeOption = @"deferInitForPluginRuntime";
 
 @interface BranchJsonConfig()
 @property (nonatomic, strong) NSDictionary *configuration;
@@ -58,6 +58,10 @@ NSString * _Nonnull const BranchJsonConfigCPPLevel = @"consumerProtectionAttribu
     if (![object isKindOfClass:NSDictionary.class]) {
         [[BranchLogger shared] logError:@"Contents of branch.json should be a JSON object." error:nil];
         return;
+    }
+
+    if (object[BranchJsonConfigRemovedDeferInitForPluginRuntimeOption]) {
+        [[BranchLogger shared] logWarning:@"branch.json option deferInitForPluginRuntime is no longer supported and is ignored. Set automaticOpenEvents to NO on BranchConfiguration and call -sendOpen once the plugin runtime is ready." error:nil];
     }
 
     self.configuration = object;
@@ -112,12 +116,6 @@ NSString * _Nonnull const BranchJsonConfigCPPLevel = @"consumerProtectionAttribu
 - (BOOL)debugMode
 {
     NSNumber *number = self[BranchJsonConfigDebugModeOption];
-    return number.boolValue;
-}
-
-- (BOOL)deferInitForPluginRuntime
-{
-    NSNumber *number = self[BranchJsonConfigDeferInitForPluginRuntimeOption];
     return number.boolValue;
 }
 

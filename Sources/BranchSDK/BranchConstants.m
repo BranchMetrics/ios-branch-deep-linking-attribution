@@ -85,7 +85,6 @@ NSString * const BRANCH_REQUEST_ENDPOINT_USER_COMPLETED_ACTION = @"event";
 NSString * const BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL = @"url";
 NSString * const BRANCH_REQUEST_ENDPOINT_OPEN = @"open";
 NSString * const BRANCH_REQUEST_ENDPOINT_INSTALL = @"install";
-NSString * const BRANCH_REQUEST_ENDPOINT_REGISTER_VIEW = @"register-view";
 NSString * const BRANCH_REQUEST_ENDPOINT_LATD = @"cpid/latd";
 
 NSString * const BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN = @"randomized_bundle_token";
@@ -157,7 +156,6 @@ NSString * const BRANCH_ENTITIES_KEY = @"e";
 NSString * const BRANCH_REQUEST_KEY_APPLE_ATTRIBUTION_TOKEN = @"apple_attribution_token";
 
 NSString * const BRANCH_CRASHLYTICS_SDK_VERSION_KEY = @"io.branch.sdk.version";
-NSString * const BRANCH_CRASHLYTICS_LOW_MEMORY_KEY = @"io.branch.device.lowmemory";
 
 NSString * const BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI = @"external_intent_uri";
 
@@ -179,7 +177,6 @@ NSString * const WEB_UX_IN_APP_WEBVIEW = @"IN_APP_WEBVIEW";
 NSString * const WEB_UX_EXTERNAL_BROWSER = @"EXTERNAL_BROWSER";
 
 NSString * const BRANCH_REQUEST_KEY_OPERATIONAL_METRICS = @"operational_metrics";
-NSString * const BRANCH_REQUEST_KEY_DEFER_INIT_FOR_PLUGIN_RUNTIME = @"deferInitForPluginRuntime";
 NSString * const BRANCH_REQUEST_KEY_CHECK_PASTEBOARD_ON_INSTALL= @"checkPasteboardOnInstall";
 
 NSString * const BRANCH_REQUEST_KEY_BRANCH_KEY_SOURCE = @"branch_key_source";
