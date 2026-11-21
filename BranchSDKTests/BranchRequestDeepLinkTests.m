@@ -70,6 +70,13 @@ static NSString * const kResolvedLinkPayloadJSON =
 @property (nonatomic, copy) NSString *savedExternalIntentURI;
 @property (nonatomic, assign) BOOL savedDropURLOpen;
 @property (nonatomic, copy) id savedDeepLinkHandler;
+// First-launch state. The install open test also writes the device token, pasteboard flag and
+// register-app flag, so those are restored too.
+@property (nonatomic, copy) NSString *savedInstallParams;
+@property (nonatomic, copy) NSString *savedBundleToken;
+@property (nonatomic, copy) NSString *savedDeviceToken;
+@property (nonatomic, assign) BOOL savedPasteboardChecked;
+@property (nonatomic, assign) BOOL savedInvokeRegisterApp;
 @end
 
 @implementation BranchRequestDeepLinkTests
@@ -91,8 +98,16 @@ static NSString * const kResolvedLinkPayloadJSON =
     self.savedExternalIntentURI = preferenceHelper.externalIntentURI;
     self.savedDropURLOpen = preferenceHelper.dropURLOpen;
     self.savedDeepLinkHandler = [self.branch valueForKey:@"deepLinkHandler"];
+    self.savedInstallParams = preferenceHelper.installParams;
+    self.savedBundleToken = preferenceHelper.randomizedBundleToken;
+    self.savedDeviceToken = preferenceHelper.randomizedDeviceToken;
+    self.savedPasteboardChecked = preferenceHelper.pasteboardChecked;
+    self.savedInvokeRegisterApp = preferenceHelper.invokeRegisterApp;
 
     preferenceHelper.sessionParams = nil;
+    // A first-ever launch: no bundle token yet, nothing attributed yet.
+    preferenceHelper.installParams = nil;
+    preferenceHelper.randomizedBundleToken = nil;
     preferenceHelper.dropURLOpen = NO;
     preferenceHelper.referringURL = nil;
     // Deterministic regardless of ambient state: sendOpen is a no-op at level None.
@@ -103,6 +118,10 @@ static NSString * const kResolvedLinkPayloadJSON =
     // fixed, so the clean slate is asserted rather than assumed.
     XCTAssertNil(preferenceHelper.sessionParams,
                  @"Precondition: sessionParams must be empty before the test runs.");
+    XCTAssertNil(preferenceHelper.installParams,
+                 @"Precondition: installParams must be empty before the test runs.");
+    XCTAssertNil(preferenceHelper.randomizedBundleToken,
+                 @"Precondition: this must look like a first-ever launch.");
 
     // A disposable, permanently-suspended queue. Requests enqueued during a test can be read
     // back without touching the network. Never cancel or resume it — cancelling a suspended,
@@ -126,6 +145,11 @@ static NSString * const kResolvedLinkPayloadJSON =
     preferenceHelper.universalLinkUrl = self.savedUniversalLinkURL;
     preferenceHelper.externalIntentURI = self.savedExternalIntentURI;
     preferenceHelper.dropURLOpen = self.savedDropURLOpen;
+    preferenceHelper.installParams = self.savedInstallParams;
+    preferenceHelper.randomizedBundleToken = self.savedBundleToken;
+    preferenceHelper.randomizedDeviceToken = self.savedDeviceToken;
+    preferenceHelper.pasteboardChecked = self.savedPasteboardChecked;
+    preferenceHelper.invokeRegisterApp = self.savedInvokeRegisterApp;
 
     // Drain any already-scheduled async block against this clean baseline.
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
@@ -286,6 +310,137 @@ static NSString * const kResolvedLinkPayloadJSON =
                   @"The web-redirect path returns early, but the resolved params must still be persisted.");
     XCTAssertEqualObjects(params[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK], kResolvedLinkURL);
     XCTAssertEqualObjects(params[@"$canonical_identifier"], @"content/12345");
+}
+
+#pragma mark - First referring params from deep link resolution
+
+// A clicked link resolved on a first launch is saved as the first referring params.
+- (void)testFirstLaunchResolutionOfClickedLinkPopulatesFirstReferringParams {
+    BranchRequestDeepLink *request = [[BranchRequestDeepLink alloc] initWithCallback:nil];
+    request.urlString = kResolvedLinkURL;
+    request.uri = kResolvedLinkURL;
+
+    [request processResponse:[self resolvedDeepLinkResponse] error:nil];
+
+    NSDictionary *firstParams = [self.branch getFirstReferringParams];
+    XCTAssertTrue([firstParams[BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK] boolValue],
+                  @"A clicked link resolved on a first launch must be readable via getFirstReferringParams.");
+    XCTAssertEqualObjects(firstParams[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK], kResolvedLinkURL);
+    XCTAssertEqualObjects(firstParams[@"$canonical_identifier"], @"content/12345");
+    XCTAssertEqualObjects(firstParams[@"~campaign"], @"beta launch",
+                          @"The whole payload must be saved, not just the fields the SDK reads internally.");
+}
+
+// An organic first launch has no referring link to save.
+- (void)testFirstLaunchOrganicResolutionLeavesFirstReferringParamsEmpty {
+    BranchRequestDeepLink *request = [[BranchRequestDeepLink alloc] initWithCallback:nil];
+
+    NSString *organicPayload = @"{\"+clicked_branch_link\":false,\"+is_first_session\":true}";
+    [request processResponse:[self responseWithData:@{ BRANCH_RESPONSE_KEY_SESSION_DATA: organicPayload }] error:nil];
+
+    XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].sessionParams, organicPayload,
+                          @"Control: the organic payload must still be saved as the latest params.");
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].installParams,
+                 @"An organic resolution must not write the first referring params.");
+}
+
+// Once the install open has saved a bundle token, a resolved link is an open, not an install.
+- (void)testLaterLaunchResolutionDoesNotWriteFirstReferringParams {
+    [BNCPreferenceHelper sharedInstance].randomizedBundleToken = @"existing_bundle_token";
+
+    BranchRequestDeepLink *request = [[BranchRequestDeepLink alloc] initWithCallback:nil];
+    request.urlString = kResolvedLinkURL;
+    request.uri = kResolvedLinkURL;
+
+    [request processResponse:[self resolvedDeepLinkResponse] error:nil];
+
+    XCTAssertTrue([[self.branch getLatestReferringParams][BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK] boolValue],
+                  @"Control: the resolved link must still be saved as the latest params.");
+    XCTAssertNil([BNCPreferenceHelper sharedInstance].installParams,
+                 @"A resolution after the install open must not write the first referring params.");
+}
+
+// The first link wins when a second resolves before a bundle token exists.
+- (void)testSecondFirstLaunchResolutionDoesNotOverwriteFirstReferringParams {
+    [BNCPreferenceHelper sharedInstance].installParams =
+        @"{\"+clicked_branch_link\":true,\"~campaign\":\"original install\"}";
+
+    BranchRequestDeepLink *request = [[BranchRequestDeepLink alloc] initWithCallback:nil];
+    request.urlString = kResolvedLinkURL;
+    request.uri = kResolvedLinkURL;
+
+    [request processResponse:[self resolvedDeepLinkResponse] error:nil];
+
+    XCTAssertEqualObjects([self.branch getFirstReferringParams][@"~campaign"], @"original install",
+                          @"A later resolution must not overwrite the first referring params.");
+}
+
+// The reported flow: the link resolves, then the install open returns with no "data" key.
+- (void)testInstallOpenWithoutDataPreservesFirstReferringParams {
+    BranchRequestDeepLink *request = [[BranchRequestDeepLink alloc] initWithCallback:nil];
+    request.urlString = kResolvedLinkURL;
+    request.uri = kResolvedLinkURL;
+    [request processResponse:[self resolvedDeepLinkResponse] error:nil];
+
+    NSString *installParams = [BNCPreferenceHelper sharedInstance].installParams;
+    XCTAssertNotNil(installParams, @"Precondition: the resolution must write the first referring params.");
+
+    // Shaped like a real /v3/events/open response: tokens and a link, no "data".
+    BranchRequestOpen *openRequest = [[BranchRequestOpen alloc] initWithCallback:nil isInstall:YES];
+    [openRequest processResponse:[self responseWithData:@{
+        BRANCH_RESPONSE_KEY_RANDOMIZED_BUNDLE_TOKEN: @"bundle_token",
+        BRANCH_RESPONSE_KEY_RANDOMIZED_DEVICE_TOKEN: @"device_token",
+        @"link": @"https://example.app.link?%24randomized_bundle_token=bundle_token"
+    }] error:nil];
+
+    XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].randomizedBundleToken, @"bundle_token",
+                          @"Control: the install open must have been processed.");
+    XCTAssertEqualObjects([BNCPreferenceHelper sharedInstance].installParams, installParams,
+                          @"An install open with no session data must leave the first referring params intact.");
+    XCTAssertEqualObjects([self.branch getFirstReferringParams][BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK], kResolvedLinkURL);
+}
+
+// An app reading the first referring params inside its launch callback gets the install data.
+- (void)testFirstReferringParamsAvailableInsideResolutionCallback {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"requestDeepLinkData callback invoked"];
+    __block NSDictionary *firstParamsInCallback = nil;
+
+    [self.branch requestDeepLinkData:kResolvedLinkURL callback:^(NSDictionary *params, NSError *error) {
+        firstParamsInCallback = [self.branch getFirstReferringParams];
+        [expectation fulfill];
+    }];
+
+    BranchRequestDeepLink *enqueued =
+        (BranchRequestDeepLink *)[self firstEnqueuedRequestOfClassNamed:@"BranchRequestDeepLink"];
+    XCTAssertNotNil(enqueued, @"requestDeepLinkData: must enqueue a deep link resolution request.");
+
+    [enqueued processResponse:[self resolvedDeepLinkResponse] error:nil];
+    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+
+    XCTAssertTrue([firstParamsInCallback[BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK] boolValue],
+                  @"getFirstReferringParams must not be empty inside the launch callback on a first launch.");
+    XCTAssertEqualObjects(firstParamsInCallback[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK], kResolvedLinkURL);
+}
+
+// The web-redirect path returns before the callback, but still saves the first referring params.
+- (void)testWebRedirectResolutionPopulatesFirstReferringParams {
+    BranchRequestDeepLinkWebRedirectStub *request =
+        [[BranchRequestDeepLinkWebRedirectStub alloc] initWithCallback:nil];
+    request.urlString = kResolvedLinkURL;
+    request.uri = kResolvedLinkURL;
+
+    BNCServerResponse *response = [self responseWithData:@{
+        BRANCH_RESPONSE_KEY_SESSION_DATA: kResolvedLinkPayloadJSON,
+        BRANCH_RESPONSE_KEY_INVOKE_FEATURES: @{
+            BRANCH_RESPONSE_KEY_ENHANCED_WEB_LINK_UX: WEB_UX_EXTERNAL_BROWSER,
+            BRANCH_RESPONSE_KEY_WEB_LINK_REDIRECT_URL: @"https://example.com/landing"
+        }
+    }];
+    [request processResponse:response error:nil];
+
+    XCTAssertNotNil([BNCPreferenceHelper sharedInstance].installParams,
+                    @"The web-redirect path must still write the first referring params.");
+    XCTAssertEqualObjects([self.branch getFirstReferringParams][BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK], kResolvedLinkURL);
 }
 
 #pragma mark - EMT-4029: skiplisted URLs must not be resolved

@@ -134,6 +134,15 @@
     }
 
     preferenceHelper.sessionParams = sessionData;
+
+    // Saves a clicked link resolved before the first install as the first referring params.
+    // The first link wins; a later resolution never overwrites them.
+    if (preferenceHelper.randomizedBundleToken == nil && preferenceHelper.installParams.length == 0) {
+        NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
+        if ([sessionDataDict[BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK] isEqual:@1]) {
+            preferenceHelper.installParams = sessionData;
+        }
+    }
 }
 
 - (BOOL) invokeFeatures:(NSDictionary *)invokeFeatures {

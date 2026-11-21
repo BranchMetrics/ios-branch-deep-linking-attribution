@@ -208,10 +208,8 @@ static NSString * const kClickedLinkPayloadJSON =
 
 #pragma mark - Tests
 
-// getFirstReferringParams is backed by installParams, which is only written when the open
-// knows it is an install. On the 4.0 path it never does, so first-referring attribution is
-// empty for the lifetime of the app.
-- (void)testFirstLaunchOpenWithClickedLinkPopulatesFirstReferringParams {
+// An install open response that carries session data from a clicked link is written to the install params.
+- (void)testFirstLaunchOpenResponseWithSessionDataPopulatesFirstReferringParams {
     [self settleFirstLaunchOpenWithResponse:[self openResponseWithExtras:@{}]];
 
     NSDictionary *firstParams = [self.branch getFirstReferringParams];
